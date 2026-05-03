@@ -240,8 +240,4 @@ public partial class ViewerPage : ContentPage
     private void OnCenterTapped(object sender, EventArgs e) => ShowMenu();
     private void OnBottomTapped(object sender, EventArgs e) { /* Annotations futures */ }
 
-    private void OnExitApplicationClicked(object sender, EventArgs e)
-    {
-        Application.Current?.Quit();
-    }
 }

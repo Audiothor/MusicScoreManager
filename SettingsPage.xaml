@@ -14,7 +14,8 @@
                        FontSize="24" 
                        FontAttributes="Bold"
                        HorizontalOptions="Center" />
-                <Label Text="v0.1.6" 
+                <Label x:Name="VersionLabel" 
+                       Text="v0.0.0" 
                        TextColor="#888888" 
                        FontSize="14" 
                        HorizontalOptions="Center" />
@@ -66,6 +67,15 @@
                     </Grid>
                 </VerticalStackLayout>
             </Border>
+
+            <Button Text="QUITTER L'APPLICATION" 
+                    BackgroundColor="#CC0000" 
+                    TextColor="White" 
+                    FontAttributes="Bold" 
+                    CornerRadius="10"
+                    HeightRequest="50"
+                    Margin="0,20,0,0" 
+                    Clicked="OnExitClicked" />
         </VerticalStackLayout>
     </ScrollView>
 

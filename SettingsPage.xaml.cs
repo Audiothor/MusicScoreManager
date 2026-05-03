@@ -5,6 +5,7 @@ public partial class SettingsPage : ContentPage
     public SettingsPage()
     {
         InitializeComponent();
+        VersionLabel.Text = $"v{AppInfo.VersionString}";
     }
 
     private async void OnSettingsScoresTapped(object sender, TappedEventArgs e)
@@ -14,6 +15,11 @@ public partial class SettingsPage : ContentPage
 
     private async void OnNotImplementedTapped(object sender, TappedEventArgs e)
     {
-        await DisplayAlertAsync("En construction", "Ces paramètres seront disponibles dans une prochaine mise à jour.", "OK");
+        await DisplayAlert("En construction", "Ces paramètres seront disponibles dans une prochaine mise à jour.", "OK");
+    }
+
+    private void OnExitClicked(object sender, EventArgs e)
+    {
+        Application.Current?.Quit();
     }
 }
