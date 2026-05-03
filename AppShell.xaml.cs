@@ -7,13 +7,8 @@ public partial class AppShell : Shell
         InitializeComponent();
     }
 
-    protected override void OnNavigating(ShellNavigatingEventArgs args)
+    private void OnExitClicked(object sender, EventArgs e)
     {
-        base.OnNavigating(args);
-
-        if (args.Target?.Location?.OriginalString?.Contains("ExitApp") == true)
-        {
-            Application.Current?.Quit();
-        }
+        Application.Current?.Quit();
     }
 }
