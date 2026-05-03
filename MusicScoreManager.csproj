@@ -11,11 +11,17 @@
 		<OutputType>Exe</OutputType>
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
-		<ApplicationDisplayVersion>0.1.8</ApplicationDisplayVersion>
-		<ApplicationVersion>9</ApplicationVersion>
+		<ApplicationDisplayVersion>0.1.16</ApplicationDisplayVersion>
+		<ApplicationVersion>17</ApplicationVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
+
+	<!-- Branding : Icône et Splash Screen (Logo rectangulaire et large) -->
+	<ItemGroup>
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\Images\app_logo.png" Color="#121212" />
+		<MauiSplashScreen Include="Resources\Splash\app_splash.png" Color="#121212" BaseSize="512,512" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.20" />
