@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MusicScoreManager.Models"
+             x:Class="MusicScoreManager.TagsPage"
+             BackgroundColor="#121212">
+
+    <Grid RowDefinitions="Auto, Auto, *">
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="15,15,15,5" ColumnSpacing="10">
+            <Label Grid.Column="0"
+                   Text="Gérer les Étiquettes"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="#FFFFFF"
+                   VerticalOptions="Center" />
+
+            <Button Grid.Column="1"
+                    Text="+"
+                    FontSize="24"
+                    FontAttributes="Bold"
+                    WidthRequest="50"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    BackgroundColor="#007ACC"
+                    TextColor="White"
+                    Clicked="OnAddTagClicked" />
+        </Grid>
+
+        <SearchBar Grid.Row="1"
+                   x:Name="SearchTagBar"
+                   Placeholder="Rechercher une étiquette..."
+                   PlaceholderColor="#888888"
+                       TextColor="#FFFFFF"
+                       BackgroundColor="#1E1E1E"
+                   Margin="15,0,15,15"
+                   TextChanged="OnSearchBarTextChanged" />
+
+        <CollectionView Grid.Row="2"
+                        x:Name="TagsCollectionView"
+                        Margin="15,0"
+                        SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Tag">
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItem Text="Renommer" 
+                                           BackgroundColor="LightBlue" 
+                                           Invoked="OnRenameTagInvoked" 
+                                           CommandParameter="{Binding .}" />
+                                <SwipeItem Text="Supprimer" 
+                                           BackgroundColor="Red" 
+                                           Invoked="OnDeleteTagInvoked" 
+                                           CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+                        <Border Stroke="#333333" 
+                                StrokeThickness="1" 
+                                BackgroundColor="#1E1E1E" 
+                                Padding="15">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+                            <Grid ColumnDefinitions="Auto, *">
+                                <BoxView Grid.Column="0"
+                                         Color="{Binding ColorHex}"
+                                         WidthRequest="15"
+                                         HeightRequest="15"
+                                         CornerRadius="7.5"
+                                         VerticalOptions="Center"
+                                         Margin="0,0,15,0" />
+                                <Label Grid.Column="1"
+                                       Text="{Binding Name}" 
+                                       FontSize="16" 
+                                       TextColor="White" 
+                                       VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                    <Label Text="Aucune étiquette n'a été créée."
+                           TextColor="#888888"
+                           HorizontalOptions="Center" />
+                </StackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+    </Grid>
+</ContentPage>

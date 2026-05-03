@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MusicScoreManager.ToolsPage"
+             BackgroundColor="#121212"
+             Title="Outils">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Margin="20">
+            <Label Text="Gestion des données" 
+                   TextColor="White" 
+                   FontSize="20" 
+                   FontAttributes="Bold" />
+
+            <Button Text="Sauvegarder la base de données"
+                    BackgroundColor="#007ACC"
+                    TextColor="White"
+                    CornerRadius="8"
+                    HeightRequest="50"
+                    Clicked="OnBackupClicked" />
+
+            <Button Text="Restaurer une sauvegarde"
+                    BackgroundColor="#D35400"
+                    TextColor="White"
+                    CornerRadius="8"
+                    HeightRequest="50"
+                    Clicked="OnRestoreClicked" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

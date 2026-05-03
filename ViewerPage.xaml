@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MusicScoreManager.ViewerPage"
+             BackgroundColor="#000000"
+             Title="{Binding Title}"
+             Shell.NavBarIsVisible="False">
+
+    <Grid>
+        <!-- Vue pour Image avec Pinch-to-Zoom basique -->
+        <ScrollView x:Name="ImageScrollView" IsVisible="False">
+            <Grid>
+                <Image x:Name="ScoreImage" Aspect="AspectFit">
+                    <Image.GestureRecognizers>
+                        <PinchGestureRecognizer PinchUpdated="OnPinchUpdated" />
+                        <PanGestureRecognizer PanUpdated="OnPanUpdated" />
+                    </Image.GestureRecognizers>
+                </Image>
+            </Grid>
+        </ScrollView>
+
+        <!-- Vue pour PDF -->
+        <WebView x:Name="PdfWebView" IsVisible="False" Navigated="OnPdfWebViewNavigated" Navigating="OnPdfWebViewNavigating" />
+
+        <!-- Zone de clic basse (commune ou image) pour afficher le menu -->
+        <BoxView x:Name="ImageBottomMenuZone" 
+                 IsVisible="False"
+                 Color="#01000000" 
+                 VerticalOptions="End" 
+                 HeightRequest="150" 
+                 HorizontalOptions="Fill">
+            <BoxView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnBottomMenuTapped" />
+            </BoxView.GestureRecognizers>
+        </BoxView>
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MusicScoreManager.Models"
+             x:Class="MusicScoreManager.ScoresPage"
+             BackgroundColor="#121212">
+
+    <Grid RowDefinitions="Auto, Auto, *">
+
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto" Margin="15,15,15,10" ColumnSpacing="10">
+            <SearchBar Grid.Column="0"
+                       x:Name="SearchScoreBar"
+                       Placeholder="Rechercher..."
+                       PlaceholderColor="#888888"
+                       TextColor="#FFFFFF"
+                       BackgroundColor="#1E1E1E"
+                       TextChanged="OnSearchBarTextChanged" />
+            
+            <Button Grid.Column="1"
+                    Text="⇅"
+                    FontSize="20"
+                    FontAttributes="Bold"
+                    WidthRequest="50"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    BackgroundColor="#333333"
+                    TextColor="White"
+                    Clicked="OnSortClicked" />
+
+            <Button Grid.Column="2"
+                    Text="+"
+                    FontSize="24"
+                    FontAttributes="Bold"
+                    WidthRequest="50"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    BackgroundColor="#007ACC"
+                    TextColor="White"
+                    Clicked="OnImportClicked" />
+        </Grid>
+
+        <ScrollView Grid.Row="1" Orientation="Horizontal" Margin="15,0,15,15">
+            <HorizontalStackLayout x:Name="TagFiltersStack" Spacing="10" />
+        </ScrollView>
+
+        <CollectionView Grid.Row="2"
+                        x:Name="ScoresCollectionView"
+                        Margin="15,0"
+                        SelectionMode="Single"
+                        SelectionChanged="OnScoreSelected">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Score">
+                    <Border Stroke="#333333" 
+                            StrokeThickness="1" 
+                            BackgroundColor="#1E1E1E" 
+                            Padding="10">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto, Auto">
+                            <Label Grid.Row="0" Grid.Column="0"
+                                   Text="{Binding Title}" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold" 
+                                   TextColor="White" 
+                                   VerticalOptions="Center" 
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="2" />
+                                   
+                            <Label Grid.Row="0" Grid.Column="1"
+                                   Text="{Binding Type}" 
+                                   FontSize="12" 
+                                   TextColor="#AAAAAA" 
+                                   VerticalOptions="Center"
+                                   Margin="0,0,10,0" />
+
+                            <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2"
+                                    Text="⋮"
+                                    FontSize="24"
+                                    FontAttributes="Bold"
+                                    TextColor="White"
+                                    BackgroundColor="Transparent"
+                                    VerticalOptions="Center"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CommandParameter="{Binding .}"
+                                    Clicked="OnScoreOptionsClicked" />
+                                   
+                            <Label Grid.Row="1" Grid.ColumnSpan="2"
+                                   Text="{Binding DateAdded, StringFormat='{0:dd/MM/yyyy}'}" 
+                                   FontSize="12" 
+                                   TextColor="#888888" 
+                                   Margin="0,0,0,10"/>
+                                   
+                            <FlexLayout Grid.Row="2" Grid.ColumnSpan="3"
+                                        BindableLayout.ItemsSource="{Binding AppliedTags}"
+                                        Wrap="Wrap"
+                                        Direction="Row">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:Tag">
+                                        <Border BackgroundColor="{Binding ColorHex}"
+                                                StrokeThickness="0"
+                                                Padding="8,4"
+                                                Margin="0,0,5,5">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="12" />
+                                            </Border.StrokeShape>
+                                            <Label Text="{Binding Name}" 
+                                                   TextColor="White" 
+                                                   FontSize="12" 
+                                                   FontAttributes="Bold" />
+                                        </Border>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </FlexLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                    <Label Text="Aucune partition trouvée."
+                           TextColor="#888888"
+                           HorizontalOptions="Center" />
+                </StackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+    </Grid>
+
+</ContentPage>

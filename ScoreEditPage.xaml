@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MusicScoreManager.ScoreEditPage"
+             BackgroundColor="#121212"
+             Title="Éditer la partition">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Margin="20">
+            
+            <Label Text="Titre" TextColor="#AAAAAA" />
+            <Entry x:Name="TitleEntry" 
+                   TextColor="White" 
+                   BackgroundColor="#1E1E1E" 
+                   ClearButtonVisibility="WhileEditing" />
+
+            <Label Text="Chemin du fichier (Optionnel, modification risquée)" TextColor="#AAAAAA" />
+            <Entry x:Name="PathEntry" 
+                   TextColor="White" 
+                   BackgroundColor="#1E1E1E" 
+                   ClearButtonVisibility="WhileEditing" />
+
+            <Label Text="Étiquettes (Appuyez pour affecter)" TextColor="#AAAAAA" />
+            
+            <FlexLayout x:Name="TagsFlexLayout" Wrap="Wrap" Direction="Row" />
+
+            <Button Text="Enregistrer" 
+                    BackgroundColor="#007ACC" 
+                    TextColor="White" 
+                    FontAttributes="Bold"
+                    CornerRadius="8"
+                    HeightRequest="50"
+                    Margin="0,20,0,0"
+                    Clicked="OnSaveClicked" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

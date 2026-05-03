@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="MusicScoreManager.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:MusicScoreManager"
+    Title="MusicScoreManager">
+
+    <Shell.TitleView>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+            <Label Text="Music Score Manager" 
+                   FontAttributes="Bold" 
+                   FontSize="20" 
+                   TextColor="White"
+                   VerticalOptions="Center" />
+            <Label Text=" v0.1.4" 
+                   FontSize="12" 
+                   TextColor="LightGray"
+                   VerticalOptions="End" 
+                   Margin="5,0,0,2" />
+        </StackLayout>
+    </Shell.TitleView>
+
+    <TabBar>
+        <Tab Title="Partitions" Icon="🎵">
+            <ShellContent ContentTemplate="{DataTemplate local:ScoresPage}" Route="ScoresPage" />
+        </Tab>
+        <Tab Title="Setlists" Icon="📋">
+            <ShellContent ContentTemplate="{DataTemplate local:SetlistsPage}" Route="SetlistsPage" />
+        </Tab>
+        <Tab Title="Étiquettes" Icon="🏷️">
+            <ShellContent ContentTemplate="{DataTemplate local:TagsPage}" Route="TagsPage" />
+        </Tab>
+        <Tab Title="Outils" Icon="🛠️">
+            <ShellContent ContentTemplate="{DataTemplate local:ToolsPage}" Route="ToolsPage" />
+        </Tab>
+        <Tab Title="Paramètres" Icon="⚙️">
+            <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" Route="SettingsPage" />
+        </Tab>
+    </TabBar>
+
+</Shell>
