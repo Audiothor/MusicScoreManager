@@ -38,7 +38,8 @@
         <CollectionView Grid.Row="2"
                         x:Name="TagsCollectionView"
                         Margin="15,0"
-                        SelectionMode="None">
+                        SelectionMode="Single"
+                        SelectionChanged="OnTagSelected">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10" />
             </CollectionView.ItemsLayout>

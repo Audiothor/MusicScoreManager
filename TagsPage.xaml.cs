@@ -42,6 +42,17 @@ public partial class TagsPage : ContentPage
         await Navigation.PushAsync(new TagEditPage(newTag, _databaseService));
     }
 
+    private async void OnTagSelected(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.CurrentSelection.FirstOrDefault() is Tag tag)
+        {
+            await Navigation.PushAsync(new TagEditPage(tag, _databaseService));
+            
+            // Désélectionner
+            TagsCollectionView.SelectedItem = null;
+        }
+    }
+
     private async void OnRenameTagInvoked(object sender, EventArgs e)
     {
         if (sender is SwipeItem item && item.CommandParameter is Tag tag)
