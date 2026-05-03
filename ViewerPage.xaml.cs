@@ -7,6 +7,9 @@ public partial class ViewerPage : ContentPage
     private readonly Score _score;
     private double currentScale = 1;
     private double startScale = 1;
+    private int _currentPage = 1;
+    private int _maxPages = 1;
+    private int _currentRotation = 0;
 
     public ViewerPage(Score score)
     {
@@ -22,8 +25,9 @@ public partial class ViewerPage : ContentPage
         if (_score.Type == ScoreType.Image)
         {
             ImageScrollView.IsVisible = true;
-            ImageBottomMenuZone.IsVisible = true;
+            ImageTouchGrid.IsVisible = true;
             ScoreImage.Source = ImageSource.FromFile(_score.FilePath);
+            UpdatePageIndicator();
         }
         else if (_score.Type == ScoreType.PDF)
         {
@@ -117,54 +121,105 @@ public partial class ViewerPage : ContentPage
     {
         if (e.Url != null && e.Url.StartsWith("http://musicscore/menu"))
         {
-            e.Cancel = true; // Empêche la navigation réelle
-            
-            int max = 1;
-            int current = 1;
-            
-            try 
-            {
-                var query = e.Url.Split('?')[1];
-                var parts = query.Split('&');
-                foreach(var part in parts)
-                {
-                    if (part.StartsWith("max=")) max = int.Parse(part.Substring(4));
-                    if (part.StartsWith("current=")) current = int.Parse(part.Substring(8));
-                }
-            } 
-            catch { }
-
-            ShowMenu(max, current);
+            e.Cancel = true;
+            ParsePageParams(e.Url);
+            ShowMenu();
+        }
+        else if (e.Url != null && e.Url.StartsWith("http://musicscore/pageinfo"))
+        {
+            e.Cancel = true;
+            ParsePageParams(e.Url);
+            UpdatePageIndicator();
         }
     }
 
-    private async void ShowMenu(int maxPages, int currentPage)
+    private void ParsePageParams(string url)
     {
-        string action = await DisplayActionSheet($"Page {currentPage} / {maxPages}", "Annuler", null, "Aller à une page...", "Retour à l'accueil");
-        
-        if (action == "Retour à l'accueil")
+        try 
         {
-            await Navigation.PopAsync();
-        }
-        else if (action == "Aller à une page...")
-        {
-            string result = await DisplayPromptAsync("Navigation", $"Entrez un numéro de page (1 - {maxPages}) :", keyboard: Keyboard.Numeric);
-            if (int.TryParse(result, out int pageNum))
+            var query = url.Split('?')[1];
+            var parts = query.Split('&');
+            foreach(var part in parts)
             {
-                if (pageNum >= 1 && pageNum <= maxPages)
+                if (part.StartsWith("max=")) _maxPages = int.Parse(part.Substring(4));
+                if (part.StartsWith("current=")) _currentPage = int.Parse(part.Substring(8));
+            }
+        } 
+        catch { }
+    }
+
+    private void UpdatePageIndicator()
+    {
+        bool showPageNumber = Preferences.Default.Get("ShowPageNumber", true);
+        double fontSize = Preferences.Default.Get("PageNumberFontSize", 14.0);
+
+        if (showPageNumber)
+        {
+            PageIndicator.IsVisible = true;
+            PageIndicator.FontSize = fontSize;
+            PageIndicator.Text = $"{_currentPage} / {_maxPages}";
+        }
+        else
+        {
+            PageIndicator.IsVisible = false;
+        }
+    }
+
+    private void ShowMenu()
+    {
+        MenuTitleLabel.Text = _score.Title;
+        MenuTypeLabel.Text = _score.Type.ToString();
+        CentralMenuOverlay.IsVisible = true;
+    }
+
+    private async void OnRotateClicked(object sender, EventArgs e)
+    {
+        _currentRotation = (_currentRotation + 90) % 360;
+        
+        if (_score.Type == ScoreType.Image)
+        {
+            ScoreImage.Rotation = _currentRotation;
+        }
+        else
+        {
+            await PdfWebView.EvaluateJavaScriptAsync($"setRotation({_currentRotation})");
+        }
+    }
+
+    private async void OnGoToPageClicked(object sender, EventArgs e)
+    {
+        CentralMenuOverlay.IsVisible = false;
+        string result = await DisplayPromptAsync("Navigation", $"Entrez un numéro de page (1 - {_maxPages}) :", keyboard: Keyboard.Numeric);
+        if (int.TryParse(result, out int pageNum))
+        {
+            if (pageNum >= 1 && pageNum <= _maxPages)
+            {
+                if (_score.Type == ScoreType.PDF)
                 {
                     await PdfWebView.EvaluateJavaScriptAsync($"goToPage({pageNum})");
+                }
+                else
+                {
+                    // Pour une image, maxPage est tjs 1
                 }
             }
         }
     }
 
-    private async void OnBottomMenuTapped(object sender, TappedEventArgs e)
+    private async void OnBackClicked(object sender, EventArgs e)
     {
-        string action = await DisplayActionSheet("Image", "Annuler", null, "Retour à l'accueil");
-        if (action == "Retour à l'accueil")
-        {
-            await Navigation.PopAsync();
-        }
+        await Navigation.PopAsync();
     }
+
+    private void OnCloseMenuClicked(object sender, EventArgs e)
+    {
+        CentralMenuOverlay.IsVisible = false;
+    }
+
+    // Gestionnaires pour Images
+    private void OnPrevTapped(object sender, EventArgs e) { /* Image unique, pas de page préc */ }
+    private void OnNextTapped(object sender, EventArgs e) { /* Image unique, pas de page suiv */ }
+    private void OnCenterTapped(object sender, EventArgs e) => ShowMenu();
+    private void OnBottomTapped(object sender, EventArgs e) { /* Annotations futures */ }
+
 }

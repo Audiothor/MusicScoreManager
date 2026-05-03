@@ -36,6 +36,12 @@
             width: 30%;
             height: 80%;
         }
+        #center-zone {
+            top: 0;
+            left: 30%;
+            width: 40%;
+            height: 80%;
+        }
         #right-zone {
             top: 0;
             right: 0;
@@ -52,8 +58,9 @@
 </head>
 <body>
     <div id="left-zone" class="tap-zone" onclick="prevPage(event)" ontouchend="prevPage(event)"></div>
+    <div id="center-zone" class="tap-zone" onclick="openMenu(event)" ontouchend="openMenu(event)"></div>
     <div id="right-zone" class="tap-zone" onclick="nextPage(event)" ontouchend="nextPage(event)"></div>
-    <div id="bottom-zone" class="tap-zone" onclick="openMenu(event)" ontouchend="openMenu(event)"></div>
+    <div id="bottom-zone" class="tap-zone" onclick="onBottomZoneTapped(event)" ontouchend="onBottomZoneTapped(event)"></div>
 
     <canvas id="pdf-canvas"></canvas>
 
@@ -62,10 +69,16 @@
 
         let pdfDoc = null;
         let pageNum = 1;
+        let rotation = 0;
         const scale = 2.0;
 
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d');
+
+        function setRotation(deg) {
+            rotation = deg;
+            renderPage(pageNum);
+        }
 
         async function loadPdf(base64Data) {
             try {
@@ -91,7 +104,7 @@
             if (!pdfDoc) return;
             
             const page = await pdfDoc.getPage(num);
-            const viewport = page.getViewport({ scale: scale });
+            const viewport = page.getViewport({ scale: scale, rotation: rotation });
 
             canvas.height = viewport.height;
             canvas.width = viewport.width;
@@ -102,6 +115,12 @@
             };
 
             await page.render(renderContext).promise;
+            reportPageInfo();
+        }
+
+        function reportPageInfo() {
+            // Notifier le C# du changement de page pour l'indicateur xx/yy
+            window.location.href = 'http://musicscore/pageinfo?max=' + (pdfDoc ? pdfDoc.numPages : 1) + '&current=' + pageNum;
         }
 
         function prevPage(e) {
@@ -128,8 +147,13 @@
 
         function openMenu(e) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
-            // Utiliser http://musicscore/menu pour contourner le blocage app:// d'Android WebView
             window.location.href = 'http://musicscore/menu?max=' + (pdfDoc ? pdfDoc.numPages : 1) + '&current=' + pageNum;
+        }
+
+        function onBottomZoneTapped(e) {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            // Placeholder pour les annotations futures
+            console.log("Bottom zone tapped - Annotations mode coming soon");
         }
     </script>
 </body>

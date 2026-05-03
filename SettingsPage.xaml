@@ -14,7 +14,7 @@
                        FontSize="24" 
                        FontAttributes="Bold"
                        HorizontalOptions="Center" />
-                <Label Text="v0.1.5" 
+                <Label Text="v0.1.6" 
                        TextColor="#888888" 
                        FontSize="14" 
                        HorizontalOptions="Center" />

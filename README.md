@@ -1,4 +1,4 @@
-# Music Score Manager v0.1.5
+# Music Score Manager v0.1.6
 
 **Music Score Manager** is a cross-platform mobile application built with **.NET MAUI** designed for musicians to manage, organize, and view their sheet music (PDFs and Images) efficiently. 
 
@@ -87,4 +87,4 @@ It features a robust tagging system, setlist management, and a high-performance 
 
 ---
 
-**Développé par Audiothor** - *Version 0.1.5*
+**Développé par Audiothor** - *Version 0.1.6*
