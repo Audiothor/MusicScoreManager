@@ -5,7 +5,7 @@ namespace MusicScoreManager.Services
 {
     public class DatabaseService
     {
-        private SQLiteAsyncConnection _database;
+        private SQLiteAsyncConnection? _database;
         private readonly string _databasePath;
 
         public DatabaseService()
@@ -30,7 +30,7 @@ namespace MusicScoreManager.Services
         public async Task<List<Score>> GetScoresAsync()
         {
             await Init();
-            var scores = await _database.Table<Score>().ToListAsync();
+            var scores = await _database!.Table<Score>().ToListAsync();
             await LoadTagsForScoresAsync(scores);
             return scores;
         }
@@ -40,7 +40,7 @@ namespace MusicScoreManager.Services
             if (scores == null || scores.Count == 0) return;
             
             var allTags = await GetTagsAsync();
-            var allScoreTags = await _database.Table<ScoreTag>().ToListAsync();
+            var allScoreTags = await _database!.Table<ScoreTag>().ToListAsync();
 
             foreach (var score in scores)
             {
@@ -49,10 +49,10 @@ namespace MusicScoreManager.Services
             }
         }
 
-        public async Task<Score> GetScoreAsync(int id)
+        public async Task<Score?> GetScoreAsync(int id)
         {
             await Init();
-            var score = await _database.Table<Score>().Where(i => i.Id == id).FirstOrDefaultAsync();
+            var score = await _database!.Table<Score>().Where(i => i.Id == id).FirstOrDefaultAsync();
             if (score != null)
                 await LoadTagsForScoresAsync(new List<Score> { score });
             return score;
@@ -64,34 +64,34 @@ namespace MusicScoreManager.Services
             
             // Si l'Id n'est pas 0, on met à jour. Sinon on l'insère (AutoIncrement).
             if (score.Id != 0)
-                return await _database.UpdateAsync(score);
+                return await _database!.UpdateAsync(score);
             else
-                return await _database.InsertAsync(score);
+                return await _database!.InsertAsync(score);
         }
 
         public async Task<int> DeleteScoreAsync(Score score)
         {
             await Init();
-            await _database.Table<ScoreTag>().Where(st => st.ScoreId == score.Id).DeleteAsync();
-            return await _database.DeleteAsync(score);
+            await _database!.Table<ScoreTag>().Where(st => st.ScoreId == score.Id).DeleteAsync();
+            return await _database!.DeleteAsync(score);
         }
 
         public async Task UpdateScoreTagsAsync(int scoreId, List<int> tagIds)
         {
             await Init();
             // Supprimer les anciens liens
-            await _database.Table<ScoreTag>().Where(st => st.ScoreId == scoreId).DeleteAsync();
+            await _database!.Table<ScoreTag>().Where(st => st.ScoreId == scoreId).DeleteAsync();
 
             // Ajouter les nouveaux liens
             var newMappings = tagIds.Select(id => new ScoreTag { ScoreId = scoreId, TagId = id });
-            await _database.InsertAllAsync(newMappings);
+            await _database!.InsertAllAsync(newMappings);
         }
 
         public async Task<List<Score>> SearchScoresAsync(string query, int? tagId = null)
         {
             await Init();
             
-            var queryable = _database.Table<Score>();
+            var queryable = _database!.Table<Score>();
             
             if (!string.IsNullOrWhiteSpace(query))
                 queryable = queryable.Where(s => s.Title.Contains(query));
@@ -116,47 +116,47 @@ namespace MusicScoreManager.Services
         public async Task<List<Setlist>> GetSetlistsAsync()
         {
             await Init();
-            return await _database.Table<Setlist>().ToListAsync();
+            return await _database!.Table<Setlist>().ToListAsync();
         }
 
         public async Task<int> SaveSetlistAsync(Setlist setlist)
         {
             await Init();
             if (setlist.Id != 0)
-                return await _database.UpdateAsync(setlist);
+                return await _database!.UpdateAsync(setlist);
             else
-                return await _database.InsertAsync(setlist);
+                return await _database!.InsertAsync(setlist);
         }
 
         public async Task<int> DeleteSetlistAsync(Setlist setlist)
         {
             await Init();
             // Delete associated SetlistScore entries
-            await _database.Table<SetlistScore>().Where(ss => ss.SetlistId == setlist.Id).DeleteAsync();
-            return await _database.DeleteAsync(setlist);
+            await _database!.Table<SetlistScore>().Where(ss => ss.SetlistId == setlist.Id).DeleteAsync();
+            return await _database!.DeleteAsync(setlist);
         }
 
         // --- Tags ---
         public async Task<List<Tag>> GetTagsAsync()
         {
             await Init();
-            return await _database.Table<Tag>().ToListAsync();
+            return await _database!.Table<Tag>().ToListAsync();
         }
 
         public async Task<int> SaveTagAsync(Tag tag)
         {
             await Init();
             if (tag.Id != 0)
-                return await _database.UpdateAsync(tag);
+                return await _database!.UpdateAsync(tag);
             else
-                return await _database.InsertAsync(tag);
+                return await _database!.InsertAsync(tag);
         }
 
         public async Task<int> DeleteTagAsync(Tag tag)
         {
             await Init();
-            await _database.Table<ScoreTag>().Where(st => st.TagId == tag.Id).DeleteAsync();
-            return await _database.DeleteAsync(tag);
+            await _database!.Table<ScoreTag>().Where(st => st.TagId == tag.Id).DeleteAsync();
+            return await _database!.DeleteAsync(tag);
         }
     }
 }

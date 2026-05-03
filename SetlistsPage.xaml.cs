@@ -44,7 +44,7 @@ public partial class SetlistsPage : ContentPage
 
     private async void OnSortClicked(object sender, EventArgs e)
     {
-        string action = await DisplayActionSheet("Trier par", "Annuler", null, 
+        string action = await DisplayActionSheetAsync("Trier par", "Annuler", null, 
             "Nom (A-Z)", "Nom (Z-A)", "Date de création (Récent)", "Date de création (Ancien)");
 
         if (action == "Nom (A-Z)") _currentSort = "NameAsc";
@@ -85,7 +85,7 @@ public partial class SetlistsPage : ContentPage
     {
         if (sender is SwipeItem item && item.CommandParameter is Setlist setlist)
         {
-            bool answer = await DisplayAlert("Supprimer", $"Voulez-vous vraiment supprimer '{setlist.Name}' ?", "Oui", "Non");
+            bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer '{setlist.Name}' ?", "Oui", "Non");
             if (answer)
             {
                 await _databaseService.DeleteSetlistAsync(setlist);

@@ -120,7 +120,7 @@ public partial class TagEditPage : ContentPage
     {
         if (string.IsNullOrWhiteSpace(NameEntry.Text))
         {
-            await DisplayAlert("Erreur", "Le nom ne peut pas être vide.", "OK");
+            await DisplayAlertAsync("Erreur", "Le nom ne peut pas être vide.", "OK");
             return;
         }
 
@@ -131,7 +131,7 @@ public partial class TagEditPage : ContentPage
 
     private async void OnDeleteClicked(object sender, EventArgs e)
     {
-        bool answer = await DisplayAlert("Supprimer", $"Voulez-vous vraiment supprimer l'étiquette '{_tag.Name}' ?\nCela la retirera de toutes les partitions.", "Oui", "Non");
+        bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer l'étiquette '{_tag.Name}' ?\nCela la retirera de toutes les partitions.", "Oui", "Non");
         if (answer)
         {
             await _databaseService.DeleteTagAsync(_tag);

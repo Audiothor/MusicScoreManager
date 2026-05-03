@@ -80,7 +80,7 @@ public partial class ScoreEditPage : ContentPage
     {
         if (string.IsNullOrWhiteSpace(TitleEntry.Text))
         {
-            await DisplayAlert("Erreur", "Le titre ne peut pas être vide.", "OK");
+            await DisplayAlertAsync("Erreur", "Le titre ne peut pas être vide.", "OK");
             return;
         }
 

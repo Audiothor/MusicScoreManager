@@ -14,6 +14,6 @@ public partial class SettingsPage : ContentPage
 
     private async void OnNotImplementedTapped(object sender, TappedEventArgs e)
     {
-        await DisplayAlert("En construction", "Ces paramètres seront disponibles dans une prochaine mise à jour.", "OK");
+        await DisplayAlertAsync("En construction", "Ces paramètres seront disponibles dans une prochaine mise à jour.", "OK");
     }
 }

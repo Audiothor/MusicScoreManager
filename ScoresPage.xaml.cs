@@ -110,7 +110,7 @@ public partial class ScoresPage : ContentPage
 
     private async void OnSortClicked(object sender, EventArgs e)
     {
-        string action = await DisplayActionSheet("Trier par", "Annuler", null, 
+        string action = await DisplayActionSheetAsync("Trier par", "Annuler", null, 
             "Titre (A-Z)", "Titre (Z-A)", "Date d'ajout (Récent)", "Date d'ajout (Ancien)");
 
         if (action == "Titre (A-Z)") _currentSort = "TitleAsc";
@@ -126,7 +126,7 @@ public partial class ScoresPage : ContentPage
     {
         if (sender is Button button && button.CommandParameter is Models.Score score)
         {
-            string action = await DisplayActionSheet("Options de la partition", "Annuler", "Supprimer", 
+            string action = await DisplayActionSheetAsync("Options de la partition", "Annuler", "Supprimer", 
                 "Éditer les caractéristiques", "Transférer (à venir)");
 
             if (action == "Éditer les caractéristiques")
@@ -135,11 +135,11 @@ public partial class ScoresPage : ContentPage
             }
             else if (action == "Transférer (à venir)")
             {
-                await DisplayAlert("Transfert", "Le transfert vers un autre appareil sera disponible dans une prochaine mise à jour.", "OK");
+                await DisplayAlertAsync("Transfert", "Le transfert vers un autre appareil sera disponible dans une prochaine mise à jour.", "OK");
             }
             else if (action == "Supprimer")
             {
-                bool answer = await DisplayAlert("Supprimer", $"Voulez-vous vraiment supprimer '{score.Title}' ?", "Oui", "Non");
+                bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer '{score.Title}' ?", "Oui", "Non");
                 if (answer)
                 {
                     await _databaseService.DeleteScoreAsync(score);

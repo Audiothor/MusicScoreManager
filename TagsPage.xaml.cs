@@ -65,7 +65,7 @@ public partial class TagsPage : ContentPage
     {
         if (sender is SwipeItem item && item.CommandParameter is Tag tag)
         {
-            bool answer = await DisplayAlert("Supprimer", $"Voulez-vous vraiment supprimer l'étiquette '{tag.Name}' ?", "Oui", "Non");
+            bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer l'étiquette '{tag.Name}' ?", "Oui", "Non");
             if (answer)
             {
                 await _databaseService.DeleteTagAsync(tag);
