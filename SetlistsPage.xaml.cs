@@ -104,4 +104,8 @@ public partial class SetlistsPage : ContentPage
             SetlistsCollectionView.SelectedItem = null;
         }
     }
+    private void OnExitClicked(object sender, EventArgs e)
+    {
+        Application.Current?.Quit();
+    }
 }

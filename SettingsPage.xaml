@@ -5,69 +5,84 @@
              BackgroundColor="#121212"
              Title="Paramètres">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="20" Margin="20">
-            <!-- En-tête -->
-            <VerticalStackLayout HorizontalOptions="Center" Margin="0,0,0,20">
-                <Label Text="Music Score Manager" 
-                       TextColor="White" 
-                       FontSize="24" 
-                       FontAttributes="Bold"
-                       HorizontalOptions="Center" />
-                <Label x:Name="VersionLabel" 
-                       Text="v0.0.0" 
-                       TextColor="#888888" 
-                       FontSize="14" 
-                       HorizontalOptions="Center" />
-            </VerticalStackLayout>
-
-            <!-- Liste des sous-paramètres -->
-            <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="0">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                
-                <VerticalStackLayout>
-                    <Grid Padding="15" BackgroundColor="Transparent">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnSettingsScoresTapped" />
-                        </Grid.GestureRecognizers>
-                        <Label Text="Paramètres Partitions" TextColor="White" FontSize="16" VerticalOptions="Center" />
-                        <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
-                    </Grid>
-                    
-                    <BoxView HeightRequest="1" Color="#333333" />
-                    
-                    <Grid Padding="15" BackgroundColor="Transparent">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnNotImplementedTapped" />
-                        </Grid.GestureRecognizers>
-                        <Label Text="Paramètres Setlists" TextColor="White" FontSize="16" VerticalOptions="Center" />
-                        <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
-                    </Grid>
-
-                    <BoxView HeightRequest="1" Color="#333333" />
-
-                    <Grid Padding="15" BackgroundColor="Transparent">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnNotImplementedTapped" />
-                        </Grid.GestureRecognizers>
-                        <Label Text="Paramètres Etiquettes" TextColor="White" FontSize="16" VerticalOptions="Center" />
-                        <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
-                    </Grid>
-
-                    <BoxView HeightRequest="1" Color="#333333" />
-
-                    <Grid Padding="15" BackgroundColor="Transparent">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnNotImplementedTapped" />
-                        </Grid.GestureRecognizers>
-                        <Label Text="Paramètres application" TextColor="White" FontSize="16" VerticalOptions="Center" />
-                        <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
-                    </Grid>
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Spacing="20" Margin="20">
+                <!-- En-tête -->
+                <VerticalStackLayout HorizontalOptions="Center" Margin="0,0,0,20">
+                    <Label Text="Music Score Manager" 
+                           TextColor="White" 
+                           FontSize="24" 
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center" />
+                    <Label x:Name="VersionLabel" 
+                           Text="v0.0.0" 
+                           TextColor="#888888" 
+                           FontSize="14" 
+                           HorizontalOptions="Center" />
                 </VerticalStackLayout>
-            </Border>
-        </VerticalStackLayout>
-    </ScrollView>
+
+                <!-- Liste des sous-paramètres -->
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    
+                    <VerticalStackLayout>
+                        <Grid Padding="15" BackgroundColor="Transparent">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnSettingsScoresTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Text="Paramètres Partitions" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
+                        
+                        <BoxView HeightRequest="1" Color="#333333" />
+                        
+                        <Grid Padding="15" BackgroundColor="Transparent">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnNotImplementedTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Text="Paramètres Setlists" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="#333333" />
+
+                        <Grid Padding="15" BackgroundColor="Transparent">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnNotImplementedTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Text="Paramètres Etiquettes" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="#333333" />
+
+                        <Grid Padding="15" BackgroundColor="Transparent">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnNotImplementedTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Text="Paramètres application" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Croix ultra-discrète en bas à droite -->
+        <Label Text="✕"
+               TextColor="#444444"
+               FontSize="20"
+               HorizontalOptions="End"
+               VerticalOptions="End"
+               Margin="0,0,5,5"
+               ZIndex="100">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnExitClicked" />
+            </Label.GestureRecognizers>
+        </Label>
+    </Grid>
 
 </ContentPage>

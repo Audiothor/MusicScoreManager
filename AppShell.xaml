@@ -7,32 +7,18 @@
     Title="MusicScoreManager">
 
     <Shell.TitleView>
-        <Grid ColumnDefinitions="*, Auto" HorizontalOptions="Fill" Margin="0,0,10,0">
-            <StackLayout Grid.Column="0" Orientation="Horizontal" HorizontalOptions="CenterAndExpand" VerticalOptions="Center">
-                <Label Text="Music Score Manager" 
-                       FontAttributes="Bold" 
-                       FontSize="20" 
-                       TextColor="White"
-                       VerticalOptions="Center" />
-                <Label Text=" v0.1.8" 
-                       FontSize="12" 
-                       TextColor="LightGray"
-                       VerticalOptions="End" 
-                       Margin="5,0,0,2" />
-            </StackLayout>
-
-            <Button Grid.Column="1"
-                    Text="✕"
-                    TextColor="White"
-                    BackgroundColor="Transparent"
-                    FontSize="22"
-                    FontAttributes="Bold"
-                    WidthRequest="44"
-                    HeightRequest="44"
-                    Padding="0"
-                    HorizontalOptions="End"
-                    Clicked="OnExitClicked" />
-        </Grid>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+            <Label Text="Music Score Manager" 
+                   FontAttributes="Bold" 
+                   FontSize="20" 
+                   TextColor="White"
+                   VerticalOptions="Center" />
+            <Label Text=" v0.1.8" 
+                   FontSize="12" 
+                   TextColor="LightGray"
+                   VerticalOptions="End" 
+                   Margin="5,0,0,2" />
+        </StackLayout>
     </Shell.TitleView>
 
     <TabBar>

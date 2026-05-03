@@ -158,4 +158,8 @@ public partial class ScoresPage : ContentPage
             }
         }
     }
+    private void OnExitClicked(object sender, EventArgs e)
+    {
+        Application.Current?.Quit();
+    }
 }
