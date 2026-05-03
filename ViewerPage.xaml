@@ -51,11 +51,31 @@
                 Padding="30"
                 WidthRequest="300">
             <VerticalStackLayout Spacing="15">
-                <Label x:Name="MenuTitleLabel" FontSize="20" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" />
-                <Label x:Name="MenuTypeLabel" FontSize="14" TextColor="LightGray" HorizontalTextAlignment="Center" />
+                <!-- Bandeau Header avec bouton Exit -->
+                <Grid ColumnDefinitions="*, Auto">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label x:Name="MenuTitleLabel" FontSize="20" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Start" />
+                        <Label x:Name="MenuTypeLabel" FontSize="14" TextColor="LightGray" HorizontalTextAlignment="Start" />
+                    </VerticalStackLayout>
+                    
+                    <Button Grid.Column="1" 
+                            Text="✕" 
+                            TextColor="White"
+                            BackgroundColor="#CC0000"
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            CornerRadius="20"
+                            Padding="0"
+                            VerticalOptions="Start"
+                            HorizontalOptions="End"
+                            Clicked="OnExitApplicationClicked" />
+                </Grid>
+
                 <Button Text="Rotation 90°" Clicked="OnRotateClicked" />
                 <Button Text="Retour à l'accueil" BackgroundColor="#C0392B" TextColor="White" Clicked="OnBackClicked" />
-                <Button Text="Fermer" Clicked="OnCloseMenuClicked" />
+                <Button Text="Masquer Menu" Clicked="OnCloseMenuClicked" />
             </VerticalStackLayout>
         </Border>
     </Grid>
