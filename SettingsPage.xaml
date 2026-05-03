@@ -67,15 +67,6 @@
                     </Grid>
                 </VerticalStackLayout>
             </Border>
-
-            <Button Text="QUITTER L'APPLICATION" 
-                    BackgroundColor="#CC0000" 
-                    TextColor="White" 
-                    FontAttributes="Bold" 
-                    CornerRadius="10"
-                    HeightRequest="50"
-                    Margin="0,20,0,0" 
-                    Clicked="OnExitClicked" />
         </VerticalStackLayout>
     </ScrollView>
 

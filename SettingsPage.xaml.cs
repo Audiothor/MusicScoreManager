@@ -17,9 +17,4 @@ public partial class SettingsPage : ContentPage
     {
         await DisplayAlert("En construction", "Ces paramètres seront disponibles dans une prochaine mise à jour.", "OK");
     }
-
-    private void OnExitClicked(object sender, EventArgs e)
-    {
-        Application.Current?.Quit();
-    }
 }
