@@ -120,7 +120,7 @@
 
         function reportPageInfo() {
             // Notifier le C# du changement de page pour l'indicateur xx/yy
-            window.location.href = 'http://musicscore/pageinfo?max=' + (pdfDoc ? pdfDoc.numPages : 1) + '&current=' + pageNum;
+            window.location.href = 'app://musicscore/pageinfo?max=' + (pdfDoc ? pdfDoc.numPages : 1) + '&current=' + pageNum;
         }
 
         function prevPage(e) {
@@ -147,7 +147,7 @@
 
         function openMenu(e) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
-            window.location.href = 'http://musicscore/menu?max=' + (pdfDoc ? pdfDoc.numPages : 1) + '&current=' + pageNum;
+            window.location.href = 'app://musicscore/menu?max=' + (pdfDoc ? pdfDoc.numPages : 1) + '&current=' + pageNum;
         }
 
         function onBottomZoneTapped(e) {

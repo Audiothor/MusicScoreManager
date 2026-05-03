@@ -39,8 +39,8 @@
                     Clicked="OnImportClicked" />
         </Grid>
 
-        <ScrollView Grid.Row="1" Orientation="Horizontal" Margin="15,0,15,15">
-            <HorizontalStackLayout x:Name="TagFiltersStack" Spacing="10" />
+        <ScrollView Grid.Row="1" Orientation="Horizontal" Margin="15,0,15,15" HeightRequest="40">
+            <HorizontalStackLayout x:Name="TagFiltersStack" Spacing="10" VerticalOptions="Center" />
         </ScrollView>
 
         <CollectionView Grid.Row="2"
@@ -60,7 +60,7 @@
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
-                        <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto, Auto">
+                        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto, Auto">
                             <Label Grid.Row="0" Grid.Column="0"
                                    Text="{Binding Title}" 
                                    FontSize="16" 

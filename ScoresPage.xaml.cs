@@ -19,8 +19,17 @@ public partial class ScoresPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await LoadTagFiltersAsync();
-        await LoadScoresAsync();
+        try 
+        {
+            // Un petit délai laisse le temps au layout de se stabiliser
+            await Task.Delay(100);
+            await LoadTagFiltersAsync();
+            await LoadScoresAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error in ScoresPage.OnAppearing: {ex.Message}");
+        }
     }
 
     private async Task LoadTagFiltersAsync()
@@ -38,6 +47,7 @@ public partial class ScoresPage : ContentPage
                 StrokeThickness = isSelected ? 2 : 0,
                 Stroke = Colors.White,
                 Padding = new Thickness(15, 8),
+                VerticalOptions = LayoutOptions.Center,
                 StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 }
             };
 

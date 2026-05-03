@@ -7,6 +7,7 @@ namespace MusicScoreManager.Services
     {
         private SQLiteAsyncConnection? _database;
         private readonly string _databasePath;
+        private readonly SemaphoreSlim _semaphore = new(1, 1);
 
         public DatabaseService()
         {
@@ -19,12 +20,25 @@ namespace MusicScoreManager.Services
             if (_database is not null)
                 return;
 
-            _database = new SQLiteAsyncConnection(_databasePath);
-            await _database.CreateTableAsync<Score>();
-            await _database.CreateTableAsync<Setlist>();
-            await _database.CreateTableAsync<SetlistScore>();
-            await _database.CreateTableAsync<Tag>();
-            await _database.CreateTableAsync<ScoreTag>();
+            await _semaphore.WaitAsync();
+            try
+            {
+                if (_database is not null)
+                    return;
+
+                var db = new SQLiteAsyncConnection(_databasePath);
+                await db.CreateTableAsync<Score>();
+                await db.CreateTableAsync<Setlist>();
+                await db.CreateTableAsync<SetlistScore>();
+                await db.CreateTableAsync<Tag>();
+                await db.CreateTableAsync<ScoreTag>();
+                
+                _database = db; // On ne l'assigne qu'à la toute fin
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         public async Task<List<Score>> GetScoresAsync()
@@ -37,10 +51,10 @@ namespace MusicScoreManager.Services
 
         private async Task LoadTagsForScoresAsync(List<Score> scores)
         {
-            if (scores == null || scores.Count == 0) return;
+            if (scores == null || scores.Count == 0 || _database == null) return;
             
-            var allTags = await GetTagsAsync();
-            var allScoreTags = await _database!.Table<ScoreTag>().ToListAsync();
+            var allTags = await _database.Table<Tag>().ToListAsync();
+            var allScoreTags = await _database.Table<ScoreTag>().ToListAsync();
 
             foreach (var score in scores)
             {

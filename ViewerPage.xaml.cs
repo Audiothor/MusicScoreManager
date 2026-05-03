@@ -20,28 +20,62 @@ public partial class ViewerPage : ContentPage
         LoadContentAsync();
     }
 
+    private void OnPdfWebViewNavigating(object sender, WebNavigatingEventArgs e)
+    {
+        if (e.Url != null && e.Url.StartsWith("app://musicscore/menu"))
+        {
+            e.Cancel = true;
+            ParsePageParams(e.Url);
+            ShowMenu();
+        }
+        else if (e.Url != null && e.Url.StartsWith("app://musicscore/pageinfo"))
+        {
+            e.Cancel = true;
+            ParsePageParams(e.Url);
+        }
+    }
+
     private async void LoadContentAsync()
     {
-        if (_score.Type == ScoreType.Image)
+        try 
         {
-            ImageScrollView.IsVisible = true;
-            ImageTouchGrid.IsVisible = true;
-            ScoreImage.Source = ImageSource.FromFile(_score.FilePath);
-            UpdatePageIndicator();
-        }
-        else if (_score.Type == ScoreType.PDF)
-        {
-            PdfWebView.IsVisible = true;
-            if (DeviceInfo.Platform == DevicePlatform.Android)
+            if (_score.Type == ScoreType.Image)
+            {
+                if (File.Exists(_score.FilePath))
+                {
+                    ScoreImage.Source = ImageSource.FromFile(_score.FilePath);
+                    ImageScrollView.IsVisible = true;
+                    PdfWebView.IsVisible = false;
+                    UpdatePageIndicator();
+                }
+                else 
+                {
+                    await DisplayAlert("Erreur", "Fichier introuvable: " + _score.FilePath, "OK");
+                }
+            }
+            else if (_score.Type == ScoreType.PDF)
             {
                 await EnsurePdfJsReadyAsync();
-                string viewerPath = Path.Combine(FileSystem.CacheDirectory, "pdfjs", "viewer.html");
-                PdfWebView.Source = $"file://{viewerPath}";
+                
+                string pdfjsDir = Path.Combine(FileSystem.CacheDirectory, "pdfjs");
+                string viewerPath = Path.Combine(pdfjsDir, "viewer.html");
+
+                var data = await File.ReadAllBytesAsync(_score.FilePath);
+                string base64 = Convert.ToBase64String(data);
+
+                PdfWebView.Source = new UrlWebViewSource { Url = $"file://{viewerPath}" };
+                PdfWebView.IsVisible = true;
+
+                // Délai réduit pour éviter le clignotement
+                await Task.Delay(200);
+                await PdfWebView.EvaluateJavaScriptAsync($"loadPdf('{base64}')");
+                
+                // ImageTouchGrid.IsVisible = false;
             }
-            else
-            {
-                PdfWebView.Source = _score.FilePath;
-            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("ERREUR", ex.Message, "OK");
         }
     }
 
@@ -49,15 +83,15 @@ public partial class ViewerPage : ContentPage
     {
         string cacheDir = FileSystem.CacheDirectory;
         string pdfjsDir = Path.Combine(cacheDir, "pdfjs");
-        if (!Directory.Exists(pdfjsDir))
-        {
-            Directory.CreateDirectory(pdfjsDir);
-        }
+        
+        if (!Directory.Exists(pdfjsDir)) Directory.CreateDirectory(pdfjsDir);
 
         string[] files = { "pdf.min.js", "pdf.worker.min.js", "viewer.html" };
+        
         foreach (var file in files)
         {
             string dest = Path.Combine(pdfjsDir, file);
+            // On force l'écrasement pour être sûr d'avoir la version sans bug
             try
             {
                 using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
@@ -66,7 +100,7 @@ public partial class ViewerPage : ContentPage
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error copying {file}: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error copying {file}: {ex.Message}");
             }
         }
     }
@@ -117,41 +151,25 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private void OnPdfWebViewNavigating(object sender, WebNavigatingEventArgs e)
-    {
-        if (e.Url != null && e.Url.StartsWith("http://musicscore/menu"))
-        {
-            e.Cancel = true;
-            ParsePageParams(e.Url);
-            ShowMenu();
-        }
-        else if (e.Url != null && e.Url.StartsWith("http://musicscore/pageinfo"))
-        {
-            e.Cancel = true;
-            ParsePageParams(e.Url);
-            UpdatePageIndicator();
-        }
-    }
-
     private void ParsePageParams(string url)
     {
-        try 
+        try
         {
-            var query = url.Split('?')[1];
-            var parts = query.Split('&');
-            foreach(var part in parts)
-            {
-                if (part.StartsWith("max=")) _maxPages = int.Parse(part.Substring(4));
-                if (part.StartsWith("current=")) _currentPage = int.Parse(part.Substring(8));
-            }
-        } 
+            var uri = new Uri(url);
+            var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+            
+            if (int.TryParse(query["max"], out int max)) _maxPages = max;
+            if (int.TryParse(query["current"], out int current)) _currentPage = current;
+            
+            UpdatePageIndicator();
+        }
         catch { }
     }
 
     private void UpdatePageIndicator()
     {
         bool showPageNumber = Preferences.Default.Get("ShowPageNumber", true);
-        double fontSize = Preferences.Default.Get("PageNumberFontSize", 14.0);
+        double fontSize = Preferences.Default.Get("PageNumberSize", 14.0);
 
         if (showPageNumber)
         {

@@ -40,8 +40,9 @@ namespace MusicScoreManager.Services
                 var result = await FilePicker.Default.PickAsync(options);
                 if (result != null)
                 {
-                    // Copie en local pour sécuriser l'accès
-                    var newFileName = $"{Guid.NewGuid()}_{result.FileName}";
+                    // Copie en local pour sécuriser l'accès (on remplace les espaces pour éviter des bugs de chemin)
+                    var sanitizedFileName = result.FileName.Replace(" ", "_");
+                    var newFileName = $"{Guid.NewGuid()}_{sanitizedFileName}";
                     var localFilePath = Path.Combine(FileSystem.AppDataDirectory, newFileName);
 
                     using var stream = await result.OpenReadAsync();
