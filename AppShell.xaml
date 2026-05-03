@@ -13,7 +13,7 @@
                    FontSize="20" 
                    TextColor="White"
                    VerticalOptions="Center" />
-            <Label Text=" v0.1.4" 
+            <Label Text=" v0.1.5" 
                    FontSize="12" 
                    TextColor="LightGray"
                    VerticalOptions="End" 

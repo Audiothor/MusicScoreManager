@@ -47,3 +47,6 @@ bld/
 
 # Windows
 Thumbs.db
+
+# Internal Context
+MSM_CONTEXT.md
