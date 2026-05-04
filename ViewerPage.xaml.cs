@@ -1,4 +1,5 @@
 using MusicScoreManager.Models;
+using MusicScoreManager.Services;
 
 namespace MusicScoreManager;
 
@@ -8,6 +9,7 @@ public partial class ViewerPage : ContentPage
     private readonly List<Score>? _setlistScores;
     private int _currentIndex = -1;
     private bool _isContinuous = true;
+    private readonly DatabaseService _databaseService;
 
     private double currentScale = 1;
     private double startScale = 1;
@@ -22,6 +24,7 @@ public partial class ViewerPage : ContentPage
         _setlistScores = setlistScores;
         _currentIndex = currentIndex;
         _isContinuous = isContinuous;
+        _databaseService = new DatabaseService();
         Title = _score.Title;
 
         if (_score.IsRotationSaved)
@@ -30,6 +33,18 @@ public partial class ViewerPage : ContentPage
         }
 
         LoadContentAsync();
+        SetupMenuUI();
+    }
+
+    private void SetupMenuUI()
+    {
+        SaveRotationSwitch.IsToggled = _score.IsRotationSaved;
+        UpdateRotateButtonText();
+    }
+
+    private void UpdateRotateButtonText()
+    {
+        RotateBtn.Text = $"Rotation {_currentRotation}°";
     }
 
     private void OnPdfWebViewNavigating(object sender, WebNavigatingEventArgs e)
@@ -220,6 +235,7 @@ public partial class ViewerPage : ContentPage
     private async void OnRotateClicked(object sender, EventArgs e)
     {
         _currentRotation = (_currentRotation + 90) % 360;
+        UpdateRotateButtonText();
         
         if (_score.Type == ScoreType.Image)
         {
@@ -229,6 +245,31 @@ public partial class ViewerPage : ContentPage
         {
             await PdfWebView.EvaluateJavaScriptAsync($"setRotation({_currentRotation})");
         }
+
+        if (SaveRotationSwitch.IsToggled)
+        {
+            await SaveRotationToDbAsync();
+        }
+    }
+
+    private async void OnSaveRotationToggled(object sender, ToggledEventArgs e)
+    {
+        if (e.Value)
+        {
+            await SaveRotationToDbAsync();
+        }
+        else
+        {
+            _score.IsRotationSaved = false;
+            await _databaseService.SaveScoreAsync(_score);
+        }
+    }
+
+    private async Task SaveRotationToDbAsync()
+    {
+        _score.Rotation = _currentRotation;
+        _score.IsRotationSaved = true;
+        await _databaseService.SaveScoreAsync(_score);
     }
 
     private async void OnGoToPageClicked(object sender, EventArgs e)

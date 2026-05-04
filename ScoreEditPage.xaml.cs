@@ -17,9 +17,6 @@ public partial class ScoreEditPage : ContentPage
 
         TitleEntry.Text = _score.Title;
         PathEntry.Text = _score.FilePath;
-        SaveRotationSwitch.IsToggled = _score.IsRotationSaved;
-        _currentRotation = _score.Rotation;
-        UpdateRotationUI();
         
         if (_score.AppliedTags != null)
         {
@@ -79,19 +76,6 @@ public partial class ScoreEditPage : ContentPage
         }
     }
 
-    private int _currentRotation = 0;
-
-    private void OnRotateClicked(object sender, EventArgs e)
-    {
-        _currentRotation = (_currentRotation + 90) % 360;
-        UpdateRotationUI();
-    }
-
-    private void UpdateRotationUI()
-    {
-        RotationLabel.Text = $"Rotation : {_currentRotation}°";
-    }
-
     private async void OnCancelClicked(object sender, EventArgs e)
     {
         await Navigation.PopAsync();
@@ -107,8 +91,6 @@ public partial class ScoreEditPage : ContentPage
 
         _score.Title = TitleEntry.Text.Trim();
         _score.FilePath = PathEntry.Text?.Trim() ?? string.Empty;
-        _score.Rotation = _currentRotation;
-        _score.IsRotationSaved = SaveRotationSwitch.IsToggled;
 
         // On sauvegarde d'abord le score pour être sûr qu'il ait un Id (si nouveau)
         await _databaseService.SaveScoreAsync(_score);

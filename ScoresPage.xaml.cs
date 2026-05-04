@@ -8,6 +8,7 @@ public partial class ScoresPage : ContentPage
     private readonly ImportService _importService;
     private string _currentSort = "TitleAsc";
     private int? _selectedTagFilterId = null;
+    private Models.Score? _selectedScoreForMenu;
 
     public ScoresPage(DatabaseService databaseService, ImportService importService)
     {
@@ -132,31 +133,58 @@ public partial class ScoresPage : ContentPage
             await LoadScoresAsync(SearchScoreBar.Text);
     }
 
-    private async void OnScoreOptionsClicked(object sender, EventArgs e)
+    private void OnScoreOptionsClicked(object sender, EventArgs e)
     {
         if (sender is Button button && button.CommandParameter is Models.Score score)
         {
-            string action = await DisplayActionSheetAsync("Options de la partition", "Annuler", "Supprimer", 
-                "Éditer les caractéristiques", "Transférer (à venir)");
+            _selectedScoreForMenu = score;
+            ScoreMenuTitleLabel.Text = score.Title;
+            ScoreMenuOverlay.IsVisible = true;
+        }
+    }
 
-            if (action == "Éditer les caractéristiques")
+    private async void OnMenuEditClicked(object sender, EventArgs e)
+    {
+        ScoreMenuOverlay.IsVisible = false;
+        if (_selectedScoreForMenu != null)
+        {
+            await Navigation.PushAsync(new ScoreEditPage(_selectedScoreForMenu, _databaseService));
+        }
+    }
+
+    private async void OnMenuRenameClicked(object sender, EventArgs e)
+    {
+        ScoreMenuOverlay.IsVisible = false;
+        if (_selectedScoreForMenu != null)
+        {
+            string newTitle = await DisplayPromptAsync("Renommer", "Nouveau titre :", "OK", "Annuler", initialValue: _selectedScoreForMenu.Title);
+            if (!string.IsNullOrWhiteSpace(newTitle))
             {
-                await Navigation.PushAsync(new ScoreEditPage(score, _databaseService));
-            }
-            else if (action == "Transférer (à venir)")
-            {
-                await DisplayAlertAsync("Transfert", "Le transfert vers un autre appareil sera disponible dans une prochaine mise à jour.", "OK");
-            }
-            else if (action == "Supprimer")
-            {
-                bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer '{score.Title}' ?", "Oui", "Non");
-                if (answer)
-                {
-                    await _databaseService.DeleteScoreAsync(score);
-                    await LoadScoresAsync(SearchScoreBar.Text);
-                }
+                _selectedScoreForMenu.Title = newTitle.Trim();
+                await _databaseService.SaveScoreAsync(_selectedScoreForMenu);
+                await LoadScoresAsync(SearchScoreBar.Text);
             }
         }
+    }
+
+    private async void OnMenuDeleteClicked(object sender, EventArgs e)
+    {
+        ScoreMenuOverlay.IsVisible = false;
+        if (_selectedScoreForMenu != null)
+        {
+            bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer '{_selectedScoreForMenu.Title}' ?", "Oui", "Non");
+            if (answer)
+            {
+                await _databaseService.DeleteScoreAsync(_selectedScoreForMenu);
+                await LoadScoresAsync(SearchScoreBar.Text);
+            }
+        }
+    }
+
+    private void OnMenuCancelClicked(object sender, EventArgs e)
+    {
+        ScoreMenuOverlay.IsVisible = false;
+        _selectedScoreForMenu = null;
     }
     private void OnExitClicked(object sender, EventArgs e)
     {

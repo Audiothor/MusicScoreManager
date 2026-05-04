@@ -74,9 +74,15 @@
                 <Label x:Name="MenuTitleLabel" FontSize="20" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" />
                 <Label x:Name="MenuTypeLabel" FontSize="14" TextColor="LightGray" HorizontalTextAlignment="Center" />
 
-                <Button Text="Rotation 90°" Clicked="OnRotateClicked" />
+                <Button x:Name="RotateBtn" Text="Rotation 90°" BackgroundColor="#007ACC" TextColor="White" Clicked="OnRotateClicked" />
+                
+                <Grid ColumnDefinitions="*, Auto" Margin="0,5">
+                    <Label Text="Mémoriser" TextColor="White" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" x:Name="SaveRotationSwitch" OnColor="#007ACC" ThumbColor="White" Toggled="OnSaveRotationToggled" />
+                </Grid>
+
                 <Button Text="Retour à l'accueil" BackgroundColor="#C0392B" TextColor="White" Clicked="OnBackClicked" />
-                <Button Text="Masquer Menu" Clicked="OnCloseMenuClicked" />
+                <Button Text="Annuler" BackgroundColor="#333333" TextColor="White" Clicked="OnCloseMenuClicked" />
             </VerticalStackLayout>
         </Border>
     </Grid>
