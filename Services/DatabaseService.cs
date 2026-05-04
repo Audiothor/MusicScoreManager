@@ -212,5 +212,82 @@ namespace MusicScoreManager.Services
             await _database!.Table<ScoreTag>().Where(st => st.TagId == tag.Id).DeleteAsync();
             return await _database!.DeleteAsync(tag);
         }
+
+        // --- Backups ---
+        public string GetBackupsFolder()
+        {
+            string folder = Path.Combine(FileSystem.AppDataDirectory, "backups");
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+            return folder;
+        }
+
+        public async Task<string> BackupDatabaseAsync()
+        {
+            string folder = GetBackupsFolder();
+            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            string backupFileName = $"scores_backup_{timestamp}.db3";
+            string backupPath = Path.Combine(folder, backupFileName);
+
+            // On s'assure que la DB est bien fermée ou synchronisée ? 
+            // Avec SQLiteAsyncConnection, une simple copie de fichier suffit si on n'écrit pas.
+            File.Copy(_databasePath, backupPath, true);
+            
+            return backupPath;
+        }
+
+        public List<BackupFile> GetBackups()
+        {
+            string folder = GetBackupsFolder();
+            var files = Directory.GetFiles(folder, "scores_backup_*.db3");
+            
+            return files.Select(f => new BackupFile 
+            { 
+                FileName = Path.GetFileName(f), 
+                FullPath = f, 
+                Date = File.GetCreationTime(f) 
+            })
+            .OrderByDescending(b => b.Date)
+            .ToList();
+        }
+
+        public void PurgeBackups(int maxKeep)
+        {
+            var backups = GetBackups();
+            if (backups.Count > maxKeep)
+            {
+                var toDelete = backups.Skip(maxKeep).ToList();
+                foreach (var b in toDelete)
+                {
+                    if (File.Exists(b.FullPath))
+                        File.Delete(b.FullPath);
+                }
+            }
+        }
+
+        public async Task RestoreBackupAsync(string backupPath)
+        {
+            if (!File.Exists(backupPath))
+                throw new FileNotFoundException("Fichier de sauvegarde introuvable.");
+
+            // Pour restaurer, on doit idéalement couper la connexion actuelle
+            if (_database != null)
+            {
+                await _database.CloseAsync();
+                _database = null;
+            }
+
+            File.Copy(backupPath, _databasePath, true);
+            
+            // La base sera réinitialisée au prochain appel via Init()
+        }
+    }
+
+    public class BackupFile
+    {
+        public string FileName { get; set; } = string.Empty;
+        public string FullPath { get; set; } = string.Empty;
+        public DateTime Date { get; set; }
+        public string DisplayDate => Date.ToString("dd/MM/yyyy HH:mm");
     }
 }

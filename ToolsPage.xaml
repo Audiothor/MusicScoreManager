@@ -7,24 +7,113 @@
 
     <ScrollView>
         <VerticalStackLayout Spacing="20" Margin="20">
-            <Label Text="Gestion des données" 
+            <Label Text="Gestion des sauvegardes" 
                    TextColor="White" 
                    FontSize="20" 
                    FontAttributes="Bold" />
 
-            <Button Text="Sauvegarder la base de données"
+            <Border BackgroundColor="#1E1E1E" Padding="15" StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Paramètres de sauvegarde automatique" 
+                           TextColor="#AAAAAA" 
+                           FontAttributes="Bold" />
+                    
+                    <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto" ColumnSpacing="10" RowSpacing="10">
+                        <Label Grid.Row="0" Grid.Column="0" 
+                               Text="Intervalle (jours)" 
+                               TextColor="White" 
+                               VerticalOptions="Center" />
+                        <Entry Grid.Row="0" Grid.Column="1" 
+                               x:Name="IntervalEntry" 
+                               Text="30"
+                               WidthRequest="80" 
+                               Keyboard="Numeric" 
+                               TextColor="White"
+                               HorizontalTextAlignment="Center"
+                               BackgroundColor="#333333" />
+                        
+                        <Label Grid.Row="1" Grid.Column="0" 
+                               Text="Nombre de copies à garder" 
+                               TextColor="White" 
+                               VerticalOptions="Center" />
+                        <Entry Grid.Row="1" Grid.Column="1" 
+                               x:Name="MaxKeepEntry" 
+                               Text="6"
+                               WidthRequest="80" 
+                               Keyboard="Numeric" 
+                               TextColor="White"
+                               HorizontalTextAlignment="Center"
+                               BackgroundColor="#333333" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="15" Margin="0,10,0,0">
+                        <Button Grid.Column="0" 
+                                Text="Annuler" 
+                                BackgroundColor="#444444" 
+                                TextColor="White" 
+                                Clicked="OnCancelSettingsClicked" />
+                        <Button Grid.Column="1" 
+                                Text="Enregistrer" 
+                                BackgroundColor="#28A745" 
+                                TextColor="White" 
+                                Clicked="OnSaveSettingsClicked" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Sauvegarder la base de données maintenant"
                     BackgroundColor="#007ACC"
                     TextColor="White"
                     CornerRadius="8"
                     HeightRequest="50"
                     Clicked="OnBackupClicked" />
 
-            <Button Text="Restaurer une sauvegarde"
-                    BackgroundColor="#D35400"
-                    TextColor="White"
-                    CornerRadius="8"
-                    HeightRequest="50"
-                    Clicked="OnRestoreClicked" />
+            <Label Text="Historique des sauvegardes" 
+                   TextColor="#AAAAAA" 
+                   Margin="0,10,0,0" />
+            
+            <Label x:Name="FolderPathLabel" 
+                   TextColor="#666666" 
+                   FontSize="10" 
+                   LineBreakMode="CharacterWrap" />
+
+            <CollectionView x:Name="BackupsCollectionView" HeightRequest="250" Margin="0,10">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="15" Padding="0,10">
+                            <Label Grid.Column="0" 
+                                   Text="{Binding DisplayDate}" 
+                                   TextColor="White" 
+                                   FontAttributes="Bold" 
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="1" 
+                                   Text="{Binding FileName}" 
+                                   TextColor="#888888" 
+                                   FontSize="11" 
+                                   VerticalOptions="Center" 
+                                   LineBreakMode="TailTruncation" />
+                            <Button Grid.Column="2" 
+                                    Text="Restaurer" 
+                                    FontSize="10"
+                                    HeightRequest="35"
+                                    Padding="10,0"
+                                    BackgroundColor="#D35400"
+                                    TextColor="White"
+                                    CommandParameter="{Binding .}"
+                                    Clicked="OnItemRestoreClicked" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <Label Text="Aucune sauvegarde trouvée." 
+                           TextColor="#555555" 
+                           HorizontalOptions="Center" 
+                           Margin="0,20" />
+                </CollectionView.EmptyView>
+            </CollectionView>
         </VerticalStackLayout>
     </ScrollView>
 

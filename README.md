@@ -1,43 +1,39 @@
-# Music Score Manager v0.1.6
+# Music Score Manager v0.2.1
 
-**Music Score Manager** is a cross-platform mobile application built with **.NET MAUI** designed for musicians to manage, organize, and view their sheet music (PDFs and Images) efficiently. 
-
-It features a robust tagging system, setlist management, and a high-performance internal viewer optimized for live performance.
+**Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser et visualiser leurs partitions (PDF et Images) de manière efficace, particulièrement en situation de concert.
 
 ---
 
-## 🚀 Fonctionnalités (v0.1.4)
+## 🚀 Fonctionnalités Clés (v0.2.0)
 
 ### 🎵 Gestion des Partitions
 - **Import intelligent** : Support des fichiers PDF et Images (JPG, PNG).
 - **Organisation visuelle** : Affichage sous forme de cartes avec titres et types.
-- **Menu contextuel (⋮)** : Accès rapide à l'édition des propriétés, au transfert (en cours) et à la suppression.
-- **Tri avancé** : Filtrage par titre (A-Z/Z-A) ou par date d'ajout.
+- **Filtrage & Tri** : Recherche textuelle, filtrage par étiquettes et tris (A-Z, Date).
+- **Édition complète** : Modification des titres, des chemins et des étiquettes avec gestion des erreurs et navigation fluide.
 
 ### 🏷️ Système d'Étiquettes (Chips)
-- **Gestion Globale** : Créez, modifiez et supprimez des étiquettes avec des couleurs personnalisées.
-- **Affichage moderne** : Les étiquettes apparaissent sous forme de "Chips" colorées de style Android.
-- **Filtrage Rapide** : Un carrousel horizontal sur l'accueil permet de filtrer instantanément vos partitions par catégorie (Jazz, Rock, Classique, etc.).
-- **Édition visuelle** : Affectation des étiquettes aux partitions via un panneau de sélection tactile.
+- **Gestion Globale** : Créez et personnalisez vos étiquettes avec des couleurs (Palette + Sliders RGB).
+- **Filtrage Rapide** : Carrousel horizontal pour filtrer instantanément par catégorie.
 
-### 📋 Setlists
-- **Listes ordonnées** : Créez des listes de morceaux pour vos concerts ou répétitions.
-- **Gestion complète** : Ajout, renommage et suppression de setlists avec tri par date ou nom.
+### 📋 Gestion de Setlists (Nouveauté v0.2.0)
+- **Mode Édition Avancé** : Réordonnez vos partitions par **glisser-déposer**.
+- **Gestion des Statuts** : Marquez vos listes comme `À venir`, `Active` ou `Terminée` avec filtrage sur l'accueil.
+- **Lecture en Continu** : Transition automatique entre les morceaux d'une même liste.
+- **Mode Concert (Verrouillage)** : Bouton de verrouillage persistant pour désactiver toute modification accidentelle sur scène.
 
 ### 📖 Lecteur Interne Optimisé
-- **Moteur PDF.js** : Intégration d'un lecteur PDF haute performance.
-- **Zones tactiles invisibles** :
-    - **Gauche** : Page précédente.
-    - **Droite** : Page suivante.
-    - **Bas** : Menu contextuel (Retour accueil, Saut de page).
-- **Plein écran** : Immersion totale dans la partition.
+- **Moteur PDF.js** & Rendu Image natif.
+- **Navigation Tactile** :
+    - **Zone Gauche** : Page précédente (ou morceau précédent de la setlist).
+    - **Zone Droite** : Page suivante (ou morceau suivant de la setlist).
+    - **Zone Bas** : Menu contextuel.
+- **Plein écran automatique** : Masquage de la barre de navigation pour une immersion totale.
 
-### 🛠️ Outils & Paramètres
-- **Backup & Restauration** : Préparé pour la sauvegarde de la base de données SQLite.
-- **Personnalisation** : 
-    - Activation/Désactivation du numéro de page actuel.
-    - Réglage dynamique de la taille du numéro de page.
-    - Sauvegarde persistante des préférences utilisateur.
+### 🛡️ Gestion des Sauvegardes
+- **Sauvegarde Automatique** : Déclenchement au lancement selon un intervalle paramétrable (ex: tous les 30 jours).
+- **Règle de Rétention** : Garde uniquement un nombre défini de copies (ex: 6) pour économiser l'espace.
+- **Restauration en un clic** : Restaurez n'importe quelle version précédente depuis l'historique avec avertissement de sécurité.
 
 ---
 
@@ -46,45 +42,26 @@ It features a robust tagging system, setlist management, and a high-performance 
 - **Framework** : .NET 10 (MAUI)
 - **Base de données** : SQLite (via sqlite-net-pcl)
 - **Lecteur PDF** : PDF.js (injecté via WebView)
-- **Langages** : C#, XAML, JavaScript, CSS, HTML5
-
----
-
-## 📥 Installation & Configuration
-
-### Prérequis
-- **Visual Studio 2022** (version 17.8+) avec la charge de travail **Développement .NET MAUI**.
-- **SDK Android** (API 34/35+ recommandé).
-
-### Plateforme Android
-1. Clonez le dépôt :
-   ```bash
-   git clone https://github.com/Audiothor/MusicScoreManager.git
-   ```
-2. Ouvrez `MusicScoreManager.sln` dans Visual Studio.
-3. Assurez-vous que le framework cible est défini sur `net10.0-android`.
-4. Connectez un appareil physique ou lancez un émulateur.
-5. Appuyez sur **F5** pour compiler et déployer.
-
-*Note : Pour les PDF, l'application utilise des ressources statiques situées dans `Resources/Raw/pdfjs/`. Celles-ci sont automatiquement déployées avec l'APK.*
+- **Logiciel de compilation** : Visual Studio 2022 (v17.8+)
 
 ---
 
 ## 📂 Structure du Projet
 
-- `/Models` : Définition des entités (Score, Setlist, Tag, ScoreTag).
+- `/Models` : Entités (Score, Setlist, Tag, BackupFile).
 - `/Services` : Logique métier (DatabaseService, ImportService).
 - `/Resources/Raw/pdfjs` : Moteur de rendu PDF interne.
-- `AppShell.xaml` : Architecture de navigation (TabBar).
+- `AppShell.xaml` : Navigation principale par onglets.
 
 ---
 
-## 🗺️ Roadmap
-- [ ] Partage de partitions entre appareils via Wi-Fi/Bluetooth.
-- [ ] Interface détaillée pour la gestion interne des Setlists.
-- [ ] Synchronisation Cloud (OneDrive/Google Drive).
-- [ ] Version iOS et Windows Desktop finalisée.
+## 📥 Installation
+
+1. Clonez le dépôt.
+2. Ouvrez la solution dans Visual Studio 2022.
+3. Ciblez le framework `net10.0-android36.0` (ou supérieur).
+4. Déployez sur votre tablette ou smartphone Android.
 
 ---
 
-**Développé par Audiothor** - *Version 0.1.6*
+**Développé par Audiothor** - *Version 0.2.0 "Concert Ready"*
