@@ -41,7 +41,7 @@
 
                 <Label Text="Étiquettes" TextColor="#AAAAAA" />
                 
-                <FlexLayout x:Name="SelectedTagsFlexLayout" Wrap="Wrap" Direction="Row">
+                <FlexLayout x:Name="SelectedTagsFlexLayout" Wrap="Wrap" Direction="Row" AlignItems="Start">
                     <!-- Tags sélectionnés ici -->
                     <Button Text="+" 
                             BackgroundColor="#333333" 
@@ -100,7 +100,11 @@
                                TextChanged="OnTagSearchTextChanged" />
 
                     <ScrollView Grid.Row="2">
-                        <FlexLayout x:Name="AllTagsFlexLayout" Wrap="Wrap" Direction="Row" />
+                        <FlexLayout x:Name="AllTagsFlexLayout" 
+                                    Wrap="Wrap" 
+                                    Direction="Row" 
+                                    AlignItems="Start" 
+                                    AlignContent="Start" />
                     </ScrollView>
 
                     <Button Grid.Row="3" Text="Terminer" 
