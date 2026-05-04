@@ -131,17 +131,53 @@ public partial class SetlistsPage : ContentPage
         }
     }
 
+    private async void OnSetlistMenuTapped(object sender, EventArgs e)
+    {
+        if (sender is Button button && button.CommandParameter is Setlist setlist)
+        {
+            string action = await DisplayActionSheetAsync(setlist.Name, "Annuler", null, "Éditer", "Renommer", "Supprimer");
+
+            if (action == "Éditer")
+            {
+                await Navigation.PushAsync(new SetlistEditPage(setlist, _databaseService));
+            }
+            else if (action == "Renommer")
+            {
+                await RenameSetlistAsync(setlist);
+            }
+            else if (action == "Supprimer")
+            {
+                await DeleteSetlistAsync(setlist);
+            }
+        }
+    }
+
+    private async Task RenameSetlistAsync(Setlist setlist)
+    {
+        string result = await DisplayPromptAsync("Renommer", "Entrez le nouveau nom :", initialValue: setlist.Name);
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+            setlist.Name = result.Trim();
+            await _databaseService.SaveSetlistAsync(setlist);
+            await LoadSetlistsAsync(SearchSetlistBar.Text);
+        }
+    }
+
+    private async Task DeleteSetlistAsync(Setlist setlist)
+    {
+        bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer '{setlist.Name}' ?", "Oui", "Non");
+        if (answer)
+        {
+            await _databaseService.DeleteSetlistAsync(setlist);
+            await LoadSetlistsAsync(SearchSetlistBar.Text);
+        }
+    }
+
     private async void OnRenameSetlistInvoked(object sender, EventArgs e)
     {
         if (sender is SwipeItem item && item.CommandParameter is Setlist setlist)
         {
-            string result = await DisplayPromptAsync("Renommer", "Entrez le nouveau nom :", initialValue: setlist.Name);
-            if (!string.IsNullOrWhiteSpace(result))
-            {
-                setlist.Name = result.Trim();
-                await _databaseService.SaveSetlistAsync(setlist);
-                await LoadSetlistsAsync(SearchSetlistBar.Text);
-            }
+            await RenameSetlistAsync(setlist);
         }
     }
 
@@ -149,21 +185,15 @@ public partial class SetlistsPage : ContentPage
     {
         if (sender is SwipeItem item && item.CommandParameter is Setlist setlist)
         {
-            bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer '{setlist.Name}' ?", "Oui", "Non");
-            if (answer)
-            {
-                await _databaseService.DeleteSetlistAsync(setlist);
-                await LoadSetlistsAsync(SearchSetlistBar.Text);
-            }
+            await DeleteSetlistAsync(setlist);
         }
     }
 
-    private async void OnSetlistSelected(object sender, SelectionChangedEventArgs e)
+    private async void OnSetlistTapped(object sender, EventArgs e)
     {
-        if (e.CurrentSelection.FirstOrDefault() is Setlist selectedSetlist)
+        if (sender is Border border && border.GestureRecognizers[0] is TapGestureRecognizer tap && tap.CommandParameter is Setlist selectedSetlist)
         {
             await Navigation.PushAsync(new SetlistEditPage(selectedSetlist, _databaseService));
-            SetlistsCollectionView.SelectedItem = null;
         }
     }
     private void OnExitClicked(object sender, EventArgs e)

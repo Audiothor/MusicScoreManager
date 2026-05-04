@@ -154,18 +154,29 @@
         </CollectionView>
 
         <!-- Boutons d'action -->
-        <Grid Grid.Row="2" ColumnDefinitions="*, *" ColumnSpacing="15" Margin="0,15,0,0">
-            <Button Grid.Column="0" 
-                    Text="Annuler" 
-                    BackgroundColor="#333333" 
-                    TextColor="White" 
-                    Clicked="OnCancelClicked" />
-            <Button Grid.Column="1" 
-                    Text="Enregistrer" 
-                    BackgroundColor="#007ACC" 
-                    TextColor="White" 
-                    FontAttributes="Bold" 
-                    Clicked="OnSaveClicked" />
-        </Grid>
+        <VerticalStackLayout Grid.Row="2" Spacing="10" Margin="0,15,0,0">
+            <Button x:Name="DeleteSetlistButton"
+                    Text="Supprimer la setlist"
+                    BackgroundColor="Transparent"
+                    TextColor="#FF4444"
+                    BorderColor="#FF4444"
+                    BorderWidth="1"
+                    HeightRequest="45"
+                    Clicked="OnDeleteSetlistClicked" />
+
+            <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
+                <Button Grid.Column="0" 
+                        Text="Annuler" 
+                        BackgroundColor="#333333" 
+                        TextColor="White" 
+                        Clicked="OnCancelClicked" />
+                <Button Grid.Column="1" 
+                        Text="Enregistrer" 
+                        BackgroundColor="#007ACC" 
+                        TextColor="White" 
+                        FontAttributes="Bold" 
+                        Clicked="OnSaveClicked" />
+            </Grid>
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>

@@ -57,6 +57,7 @@ public partial class SetlistEditPage : ContentPage
         StatusStack.Opacity = _isLocked ? 0.5 : 1.0;
         ContinuousSwitch.IsEnabled = !_isLocked;
         AddScoreButton.IsVisible = !_isLocked;
+        DeleteSetlistButton.IsVisible = !_isLocked;
 
         // Désactivation du réordonnancement
         ScoresCollectionView.CanReorderItems = !_isLocked;
@@ -215,6 +216,16 @@ public partial class SetlistEditPage : ContentPage
     private async void OnCancelClicked(object sender, EventArgs e)
     {
         await Navigation.PopAsync();
+    }
+
+    private async void OnDeleteSetlistClicked(object sender, EventArgs e)
+    {
+        bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer la setlist '{_setlist.Name}' ?", "Oui", "Non");
+        if (answer)
+        {
+            await _databaseService.DeleteSetlistAsync(_setlist);
+            await Navigation.PopAsync();
+        }
     }
 }
 

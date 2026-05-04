@@ -46,8 +46,7 @@
         <CollectionView Grid.Row="2"
                         x:Name="SetlistsCollectionView"
                         Margin="15,0"
-                        SelectionMode="Single"
-                        SelectionChanged="OnSetlistSelected">
+                        SelectionMode="None">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10" />
             </CollectionView.ItemsLayout>
@@ -73,7 +72,10 @@
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="10" />
                             </Border.StrokeShape>
-                            <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, *">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnSetlistTapped" CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto, *">
                                 <Label Grid.Row="0" Grid.Column="0"
                                        Text="{Binding Name}" 
                                        FontSize="18" 
@@ -103,8 +105,22 @@
                                                FontAttributes="Bold" />
                                     </Border>
                                 </HorizontalStackLayout>
+
+                                <Button Grid.Row="0" Grid.Column="2"
+                                        Text="⋮" 
+                                        FontSize="24" 
+                                        TextColor="#888888" 
+                                        BackgroundColor="Transparent"
+                                        BorderWidth="0"
+                                        WidthRequest="50"
+                                        HeightRequest="50"
+                                        Padding="0"
+                                        VerticalOptions="Center" 
+                                HorizontalOptions="End"
+                                        Clicked="OnSetlistMenuTapped"
+                                        CommandParameter="{Binding .}" />
                                        
-                                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
                                        Text="{Binding DateCreated, StringFormat='Créé le {0:dd/MM/yyyy}'}" 
                                        FontSize="12" 
                                        TextColor="#888888" 
