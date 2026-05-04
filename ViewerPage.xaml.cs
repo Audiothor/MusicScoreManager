@@ -24,6 +24,11 @@ public partial class ViewerPage : ContentPage
         _isContinuous = isContinuous;
         Title = _score.Title;
 
+        if (_score.IsRotationSaved)
+        {
+            _currentRotation = _score.Rotation;
+        }
+
         LoadContentAsync();
     }
 
@@ -61,6 +66,7 @@ public partial class ViewerPage : ContentPage
                 if (File.Exists(_score.FilePath))
                 {
                     ScoreImage.Source = ImageSource.FromFile(_score.FilePath);
+                    ScoreImage.Rotation = _currentRotation;
                     ImageScrollView.IsVisible = true;
                     ImageTouchGrid.IsVisible = true;
                     PdfWebView.IsVisible = false;
@@ -89,6 +95,11 @@ public partial class ViewerPage : ContentPage
 
                 await Task.Delay(200);
                 await PdfWebView.EvaluateJavaScriptAsync($"loadPdf('{base64}')");
+                
+                if (_currentRotation != 0)
+                {
+                    await PdfWebView.EvaluateJavaScriptAsync($"setRotation({_currentRotation})");
+                }
             }
         }
         catch (Exception ex)
@@ -133,6 +144,8 @@ public partial class ViewerPage : ContentPage
                     byte[] pdfBytes = await File.ReadAllBytesAsync(_score.FilePath);
                     string base64 = Convert.ToBase64String(pdfBytes);
                     await PdfWebView.EvaluateJavaScriptAsync($"loadPdf('{base64}')");
+                    if (_currentRotation != 0)
+                        await PdfWebView.EvaluateJavaScriptAsync($"setRotation({_currentRotation})");
                 }
                 catch { }
             }

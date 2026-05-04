@@ -21,6 +21,9 @@ namespace MusicScoreManager.Models
 
         public DateTime DateAdded { get; set; }
 
+        public int Rotation { get; set; }
+        public bool IsRotationSaved { get; set; }
+
         [Ignore]
         public List<Tag> AppliedTags { get; set; } = new List<Tag>();
     }
