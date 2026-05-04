@@ -4,26 +4,8 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:MusicScoreManager"
-    Title="MusicScoreManager">
-
-    <Shell.TitleView>
-        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
-            <Image Source="app_logo.png" 
-                   HeightRequest="40" 
-                   VerticalOptions="Center" 
-                   Margin="0,0,10,0" />
-            <Label Text="Music Score Manager" 
-                   FontAttributes="Bold" 
-                   FontSize="18" 
-                   TextColor="White"
-                   VerticalOptions="Center" />
-            <Label Text=" v0.1.16" 
-                   FontSize="10" 
-                   TextColor="LightGray"
-                   VerticalOptions="End" 
-                   Margin="5,0,0,5" />
-        </StackLayout>
-    </Shell.TitleView>
+    Title="MusicScoreManager"
+    Shell.NavBarIsVisible="False">
 
     <TabBar>
         <Tab Title="Partitions" Icon="🎵">

@@ -24,6 +24,9 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ToolsPage>();
 		builder.Services.AddSingleton<SettingsPage>();
 		builder.Services.AddTransient<SettingsScoresPage>();
+		builder.Services.AddTransient<SettingsSetlistsPage>();
+		builder.Services.AddTransient<SetlistEditPage>();
+		builder.Services.AddTransient<ScoreSelectionPage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

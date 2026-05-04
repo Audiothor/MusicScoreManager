@@ -5,8 +5,27 @@
              BackgroundColor="#121212"
              Title="Paramètres Partitions">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="20" Margin="20">
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header personnalisé avec bouton Retour -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
+            <Button Grid.Column="0" 
+                    Text="← Retour" 
+                    BackgroundColor="Transparent" 
+                    TextColor="#007ACC" 
+                    FontAttributes="Bold"
+                    Clicked="OnBackClicked" />
+            <Label Grid.Column="1" 
+                   Text="Paramètres Partitions" 
+                   TextColor="White" 
+                   FontSize="18" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center"
+                   Margin="0,0,80,0" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20" Margin="20">
             
             <Label Text="Affichage" 
                    TextColor="#007ACC" 
@@ -51,4 +70,5 @@
         </VerticalStackLayout>
     </ScrollView>
 
+    </Grid>
 </ContentPage>

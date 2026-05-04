@@ -41,7 +41,7 @@
                         
                         <Grid Padding="15" BackgroundColor="Transparent">
                             <Grid.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnNotImplementedTapped" />
+                                <TapGestureRecognizer Tapped="OnSettingsSetlistsTapped" />
                             </Grid.GestureRecognizers>
                             <Label Text="Paramètres Setlists" TextColor="White" FontSize="16" VerticalOptions="Center" />
                             <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
@@ -51,7 +51,7 @@
 
                         <Grid Padding="15" BackgroundColor="Transparent">
                             <Grid.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnNotImplementedTapped" />
+                                <TapGestureRecognizer Tapped="OnSettingsTagsTapped" />
                             </Grid.GestureRecognizers>
                             <Label Text="Paramètres Etiquettes" TextColor="White" FontSize="16" VerticalOptions="Center" />
                             <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
@@ -61,7 +61,7 @@
 
                         <Grid Padding="15" BackgroundColor="Transparent">
                             <Grid.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnNotImplementedTapped" />
+                                <TapGestureRecognizer Tapped="OnSettingsAppTapped" />
                             </Grid.GestureRecognizers>
                             <Label Text="Paramètres application" TextColor="White" FontSize="16" VerticalOptions="Center" />
                             <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />

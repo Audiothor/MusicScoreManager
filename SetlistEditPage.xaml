@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MusicScoreManager.Models"
+             x:Class="MusicScoreManager.SetlistEditPage"
+             Title="Éditer la Setlist"
+             BackgroundColor="#121212">
+
+    <Grid RowDefinitions="Auto, *, Auto" Padding="15">
+        
+        <!-- En-tête : Détails Setlist -->
+        <VerticalStackLayout Grid.Row="0" Spacing="15" Margin="0,0,0,20">
+            <Border Stroke="#333333" Padding="10" BackgroundColor="#1E1E1E">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Nom de la Setlist" TextColor="#888888" FontSize="12" />
+                    <Entry x:Name="NameEntry" 
+                           Placeholder="Ex: Concert d'été" 
+                           TextColor="White" 
+                           FontSize="18" 
+                           FontAttributes="Bold" />
+                    
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Date du Concert" TextColor="#888888" FontSize="12" />
+                            <DatePicker x:Name="ConcertDatePicker" TextColor="White" MinimumDate="2020-01-01" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Heure du Concert" TextColor="#888888" FontSize="12" />
+                            <TimePicker x:Name="ConcertTimePicker" TextColor="White" Format="HH:mm" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Label Text="Statut" TextColor="#888888" FontSize="12" Margin="0,5,0,0" />
+                    <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                        <HorizontalStackLayout x:Name="StatusStack" Spacing="10" Grid.Column="0">
+                            <!-- Les chips seront générés dynamiquement dans le code-behind -->
+                        </HorizontalStackLayout>
+
+                        <Border Grid.Column="1" 
+                                x:Name="LockBorder"
+                                BackgroundColor="#28A745"
+                                Padding="15,5"
+                                StrokeThickness="1"
+                                Stroke="#28A745"
+                                VerticalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="15" />
+                            </Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnLockTapped" />
+                            </Border.GestureRecognizers>
+                            <Label x:Name="LockIconLabel" 
+                                   Text="DÉVERROUILLÉ 🔓" 
+                                   TextColor="White" 
+                                   FontSize="12" 
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Center" 
+                                   VerticalOptions="Center" />
+                        </Border>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="#333333" Margin="0,5" />
+
+                    <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Lecture en continu" TextColor="White" FontSize="14" FontAttributes="Bold" />
+                            <Label Text="Passe automatiquement au morceau suivant" TextColor="#888888" FontSize="11" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1" x:Name="ContinuousSwitch" IsToggled="True" OnColor="#007ACC" ThumbColor="White" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Grid ColumnDefinitions="*, Auto">
+                <Label Grid.Column="0" Text="Partitions" TextColor="White" FontSize="20" FontAttributes="Bold" VerticalOptions="Center" />
+                <Button Grid.Column="1" 
+                        x:Name="AddScoreButton"
+                        Text="+ Ajouter" 
+                        BackgroundColor="#007ACC" 
+                        TextColor="White" 
+                        Clicked="OnAddScoreClicked" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <!-- Liste des partitions (Réordonnable) -->
+        <CollectionView Grid.Row="1"
+                        x:Name="ScoresCollectionView"
+                        SelectionMode="Single"
+                        CanReorderItems="True"
+                        ReorderCompleted="OnReorderCompleted">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10" BackgroundColor="#1E1E1E" Margin="0,1" ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Numéro -->
+                        <Label Grid.Column="0" 
+                               Text="{Binding DisplayOrder}"
+                               TextColor="#007ACC" 
+                               FontSize="16" 
+                               FontAttributes="Bold" 
+                               VerticalOptions="Center" />
+                        
+                        <!-- Titre -->
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="{Binding Score.Title}" TextColor="White" FontSize="15" FontAttributes="Bold" MaxLines="1" LineBreakMode="TailTruncation" />
+                            <Label Text="{Binding Score.Type}" TextColor="#888888" FontSize="11" />
+                        </VerticalStackLayout>
+
+                        <!-- Bouton Voir -->
+                        <Button Grid.Column="2" 
+                                Text="👁" 
+                                BackgroundColor="#333333" 
+                                TextColor="White" 
+                                WidthRequest="45"
+                                HeightRequest="40"
+                                Padding="0"
+                                Clicked="OnScoreViewClicked" 
+                                CommandParameter="{Binding .}" />
+
+                        <!-- Bouton Supprimer -->
+                        <Button Grid.Column="3" 
+                                Text="✕" 
+                                BackgroundColor="Transparent" 
+                                TextColor="#FF4444" 
+                                FontSize="18"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                Padding="0"
+                                IsVisible="{Binding IsNotLocked}"
+                                Clicked="OnRemoveScoreClicked" 
+                                CommandParameter="{Binding .}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <Label Text="Aucune partition. Cliquez sur + pour en ajouter." 
+                       TextColor="#555555" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center" 
+                       Margin="0,50,0,0" />
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <!-- Boutons d'action -->
+        <Grid Grid.Row="2" ColumnDefinitions="*, *" ColumnSpacing="15" Margin="0,15,0,0">
+            <Button Grid.Column="0" 
+                    Text="Annuler" 
+                    BackgroundColor="#333333" 
+                    TextColor="White" 
+                    Clicked="OnCancelClicked" />
+            <Button Grid.Column="1" 
+                    Text="Enregistrer" 
+                    BackgroundColor="#007ACC" 
+                    TextColor="White" 
+                    FontAttributes="Bold" 
+                    Clicked="OnSaveClicked" />
+        </Grid>
+    </Grid>
+</ContentPage>

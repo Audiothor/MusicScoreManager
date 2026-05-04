@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MusicScoreManager.SettingsSetlistsPage"
+             BackgroundColor="#121212"
+             Title="Paramètres Setlists">
+
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header personnalisé avec bouton Retour -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
+            <Button Grid.Column="0" 
+                    Text="← Retour" 
+                    BackgroundColor="Transparent" 
+                    TextColor="#007ACC" 
+                    FontAttributes="Bold"
+                    Clicked="OnBackClicked" />
+            <Label Grid.Column="1" 
+                   Text="Paramètres Setlists" 
+                   TextColor="White" 
+                   FontSize="18" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center"
+                   Margin="0,0,80,0" /> <!-- Compenser le bouton retour pour centrer -->
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20" Margin="20">
+                
+                <Label Text="Comportement par défaut" 
+                       TextColor="#007ACC" 
+                       FontSize="18" 
+                       FontAttributes="Bold" />
+
+                <!-- Option : Lecture en continu par défaut -->
+                <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="Lecture en continu par défaut" 
+                               TextColor="White" 
+                               FontSize="16" />
+                        <Label Text="Définit si les nouvelles setlists auront cette option activée" 
+                               TextColor="#888888" 
+                               FontSize="12" />
+                    </VerticalStackLayout>
+                    <Switch Grid.Column="1" 
+                            x:Name="DefaultContinuousSwitch"
+                            OnColor="#007ACC"
+                            ThumbColor="White"
+                            Toggled="OnDefaultContinuousToggled" />
+                </Grid>
+
+                <BoxView HeightRequest="1" Color="#333333" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

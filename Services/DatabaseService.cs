@@ -150,6 +150,46 @@ namespace MusicScoreManager.Services
             return await _database!.DeleteAsync(setlist);
         }
 
+        public async Task<List<Score>> GetScoresForSetlistAsync(int setlistId)
+        {
+            await Init();
+            var associations = await _database!.Table<SetlistScore>()
+                                             .Where(ss => ss.SetlistId == setlistId)
+                                             .OrderBy(ss => ss.Order)
+                                             .ToListAsync();
+            
+            var scoreIds = associations.Select(a => a.ScoreId).ToList();
+            var allScores = await GetScoresAsync();
+            
+            // Return scores in the specified order
+            return scoreIds.Select(id => allScores.FirstOrDefault(s => s.Id == id))
+                          .Where(s => s != null)
+                          .Cast<Score>()
+                          .ToList();
+        }
+
+        public async Task UpdateSetlistScoresAsync(int setlistId, List<int> scoreIds)
+        {
+            await Init();
+            
+            // Supprimer les anciennes associations
+            await _database!.Table<SetlistScore>().Where(ss => ss.SetlistId == setlistId).DeleteAsync();
+            
+            // Ajouter les nouvelles avec le bon ordre
+            var newAssociations = new List<SetlistScore>();
+            for (int i = 0; i < scoreIds.Count; i++)
+            {
+                newAssociations.Add(new SetlistScore 
+                { 
+                    SetlistId = setlistId, 
+                    ScoreId = scoreIds[i], 
+                    Order = i + 1 
+                });
+            }
+            
+            await _database!.InsertAllAsync(newAssociations);
+        }
+
         // --- Tags ---
         public async Task<List<Tag>> GetTagsAsync()
         {

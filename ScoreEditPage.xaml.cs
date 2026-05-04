@@ -76,6 +76,11 @@ public partial class ScoreEditPage : ContentPage
         }
     }
 
+    private async void OnCancelClicked(object sender, EventArgs e)
+    {
+        await Navigation.PopAsync();
+    }
+
     private async void OnSaveClicked(object sender, EventArgs e)
     {
         if (string.IsNullOrWhiteSpace(TitleEntry.Text))

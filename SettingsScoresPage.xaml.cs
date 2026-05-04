@@ -20,4 +20,9 @@ public partial class SettingsScoresPage : ContentPage
     {
         Preferences.Default.Set("PageNumberSize", e.NewValue);
     }
+
+    private async void OnBackClicked(object sender, EventArgs e)
+    {
+        await Navigation.PopAsync();
+    }
 }

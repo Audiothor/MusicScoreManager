@@ -13,9 +13,19 @@ public partial class SettingsPage : ContentPage
         await Navigation.PushAsync(new SettingsScoresPage());
     }
 
-    private async void OnNotImplementedTapped(object sender, TappedEventArgs e)
+    private async void OnSettingsSetlistsTapped(object sender, TappedEventArgs e)
     {
-        await DisplayAlert("En construction", "Ces paramètres seront disponibles dans une prochaine mise à jour.", "OK");
+        await Navigation.PushAsync(new SettingsSetlistsPage());
+    }
+
+    private async void OnSettingsTagsTapped(object sender, TappedEventArgs e)
+    {
+        await DisplayAlertAsync("En construction", "Ces paramètres seront disponibles prochainement.", "OK");
+    }
+
+    private async void OnSettingsAppTapped(object sender, TappedEventArgs e)
+    {
+        await DisplayAlertAsync("En construction", "Les paramètres globaux de l'application seront disponibles prochainement.", "OK");
     }
     private void OnExitClicked(object sender, EventArgs e)
     {

@@ -125,14 +125,22 @@
 
         function prevPage(e) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
-            if (!pdfDoc || pageNum <= 1) return;
+            if (!pdfDoc) return;
+            if (pageNum <= 1) {
+                window.location.href = 'app://musicscore/start';
+                return;
+            }
             pageNum--;
             renderPage(pageNum);
         }
 
         function nextPage(e) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
-            if (!pdfDoc || pageNum >= pdfDoc.numPages) return;
+            if (!pdfDoc) return;
+            if (pageNum >= pdfDoc.numPages) {
+                window.location.href = 'app://musicscore/end';
+                return;
+            }
             pageNum++;
             renderPage(pageNum);
         }

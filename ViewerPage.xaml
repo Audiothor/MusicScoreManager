@@ -17,12 +17,32 @@
             <Image x:Name="ScoreImage" 
                    Aspect="AspectFit" 
                    HorizontalOptions="Fill" 
-                   VerticalOptions="Fill">
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnCenterTapped" />
-                </Image.GestureRecognizers>
-            </Image>
+                   VerticalOptions="Fill" />
         </ScrollView>
+
+        <!-- Zones tactiles pour les images (transparentes) -->
+        <Grid x:Name="ImageTouchGrid" IsVisible="False" BackgroundColor="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <ContentView Grid.Column="0" BackgroundColor="Transparent">
+                <ContentView.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnPrevTapped" />
+                </ContentView.GestureRecognizers>
+            </ContentView>
+            <ContentView Grid.Column="1" BackgroundColor="Transparent">
+                <ContentView.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnCenterTapped" />
+                </ContentView.GestureRecognizers>
+            </ContentView>
+            <ContentView Grid.Column="2" BackgroundColor="Transparent">
+                <ContentView.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnNextTapped" />
+                </ContentView.GestureRecognizers>
+            </ContentView>
+        </Grid>
 
         <!-- Le PDF -->
         <WebView x:Name="PdfWebView" 

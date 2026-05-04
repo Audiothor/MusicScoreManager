@@ -4,18 +4,25 @@ namespace MusicScoreManager;
 
 public partial class ViewerPage : ContentPage
 {
-    private readonly Score _score;
+    private Score _score;
+    private readonly List<Score>? _setlistScores;
+    private int _currentIndex = -1;
+    private bool _isContinuous = true;
+
     private double currentScale = 1;
     private double startScale = 1;
     private int _currentPage = 1;
     private int _maxPages = 1;
     private int _currentRotation = 0;
 
-    public ViewerPage(Score score)
+    public ViewerPage(Score score, List<Score>? setlistScores = null, int currentIndex = -1, bool isContinuous = true)
     {
         InitializeComponent();
         _score = score;
-        Title = score.Title;
+        _setlistScores = setlistScores;
+        _currentIndex = currentIndex;
+        _isContinuous = isContinuous;
+        Title = _score.Title;
 
         LoadContentAsync();
     }
@@ -33,6 +40,16 @@ public partial class ViewerPage : ContentPage
             e.Cancel = true;
             ParsePageParams(e.Url);
         }
+        else if (e.Url != null && e.Url.StartsWith("app://musicscore/end"))
+        {
+            e.Cancel = true;
+            HandleEndOfScore();
+        }
+        else if (e.Url != null && e.Url.StartsWith("app://musicscore/start"))
+        {
+            e.Cancel = true;
+            HandleStartOfScore();
+        }
     }
 
     private async void LoadContentAsync()
@@ -45,12 +62,15 @@ public partial class ViewerPage : ContentPage
                 {
                     ScoreImage.Source = ImageSource.FromFile(_score.FilePath);
                     ImageScrollView.IsVisible = true;
+                    ImageTouchGrid.IsVisible = true;
                     PdfWebView.IsVisible = false;
+                    _currentPage = 1;
+                    _maxPages = 1;
                     UpdatePageIndicator();
                 }
                 else 
                 {
-                    await DisplayAlert("Erreur", "Fichier introuvable: " + _score.FilePath, "OK");
+                    await DisplayAlertAsync("Erreur", "Fichier introuvable: " + _score.FilePath, "OK");
                 }
             }
             else if (_score.Type == ScoreType.PDF)
@@ -65,17 +85,15 @@ public partial class ViewerPage : ContentPage
 
                 PdfWebView.Source = new UrlWebViewSource { Url = $"file://{viewerPath}" };
                 PdfWebView.IsVisible = true;
+                ImageTouchGrid.IsVisible = false;
 
-                // Délai réduit pour éviter le clignotement
                 await Task.Delay(200);
                 await PdfWebView.EvaluateJavaScriptAsync($"loadPdf('{base64}')");
-                
-                // ImageTouchGrid.IsVisible = false;
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("ERREUR", ex.Message, "OK");
+            await DisplayAlertAsync("ERREUR", ex.Message, "OK");
         }
     }
 
@@ -91,7 +109,6 @@ public partial class ViewerPage : ContentPage
         foreach (var file in files)
         {
             string dest = Path.Combine(pdfjsDir, file);
-            // On force l'écrasement pour être sûr d'avoir la version sans bug
             try
             {
                 using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
@@ -117,10 +134,7 @@ public partial class ViewerPage : ContentPage
                     string base64 = Convert.ToBase64String(pdfBytes);
                     await PdfWebView.EvaluateJavaScriptAsync($"loadPdf('{base64}')");
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Erreur lors de l'injection du PDF : " + ex.Message);
-                }
+                catch { }
             }
         }
     }
@@ -136,8 +150,8 @@ public partial class ViewerPage : ContentPage
         if (e.Status == GestureStatus.Running)
         {
             currentScale += (e.Scale - 1) * startScale;
-            currentScale = Math.Max(1, currentScale); // Empêche de trop dézoomer
-            currentScale = Math.Min(4, currentScale); // Empêche de trop zoomer
+            currentScale = Math.Max(1, currentScale);
+            currentScale = Math.Min(4, currentScale);
             ScoreImage.Scale = currentScale;
         }
     }
@@ -216,10 +230,6 @@ public partial class ViewerPage : ContentPage
                 {
                     await PdfWebView.EvaluateJavaScriptAsync($"goToPage({pageNum})");
                 }
-                else
-                {
-                    // Pour une image, maxPage est tjs 1
-                }
             }
         }
     }
@@ -234,10 +244,50 @@ public partial class ViewerPage : ContentPage
         CentralMenuOverlay.IsVisible = false;
     }
 
-    // Gestionnaires pour Images
-    private void OnPrevTapped(object sender, EventArgs e) { /* Image unique, pas de page préc */ }
-    private void OnNextTapped(object sender, EventArgs e) { /* Image unique, pas de page suiv */ }
-    private void OnCenterTapped(object sender, EventArgs e) => ShowMenu();
-    private void OnBottomTapped(object sender, EventArgs e) { /* Annotations futures */ }
+    private void OnPrevTapped(object sender, EventArgs e) 
+    {
+        if (_score.Type == ScoreType.Image)
+        {
+            HandleStartOfScore();
+        }
+    }
+    
+    private void OnNextTapped(object sender, EventArgs e) 
+    {
+        if (_score.Type == ScoreType.Image)
+        {
+            HandleEndOfScore();
+        }
+    }
 
+    private void OnCenterTapped(object sender, EventArgs e) => ShowMenu();
+
+    private async void HandleEndOfScore()
+    {
+        if (_setlistScores != null && _currentIndex != -1)
+        {
+            if (_isContinuous && _currentIndex < _setlistScores.Count - 1)
+            {
+                _currentIndex++;
+                var nextScore = _setlistScores[_currentIndex];
+                await Navigation.PushAsync(new ViewerPage(nextScore, _setlistScores, _currentIndex, _isContinuous));
+                Navigation.RemovePage(this);
+            }
+            else
+            {
+                await Navigation.PopAsync();
+            }
+        }
+    }
+
+    private async void HandleStartOfScore()
+    {
+        if (_setlistScores != null && _currentIndex > 0)
+        {
+            _currentIndex--;
+            var prevScore = _setlistScores[_currentIndex];
+            await Navigation.PushAsync(new ViewerPage(prevScore, _setlistScores, _currentIndex, _isContinuous));
+            Navigation.RemovePage(this);
+        }
+    }
 }

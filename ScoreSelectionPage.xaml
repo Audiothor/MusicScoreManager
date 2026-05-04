@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MusicScoreManager"
+             x:Class="MusicScoreManager.ScoreSelectionPage"
+             Title="Sélectionner des partitions"
+             BackgroundColor="#121212">
+
+    <Grid RowDefinitions="Auto, Auto, *, Auto">
+        
+        <!-- Recherche -->
+        <Grid Grid.Row="0" Margin="15,15,15,10">
+            <SearchBar x:Name="SearchScoreBar"
+                       Placeholder="Rechercher par nom..."
+                       PlaceholderColor="#888888"
+                       TextColor="#FFFFFF"
+                       BackgroundColor="#1E1E1E"
+                       TextChanged="OnSearchBarTextChanged" />
+        </Grid>
+
+        <!-- Filtres par Tags -->
+        <ScrollView Grid.Row="1" Orientation="Horizontal" Margin="15,0,15,15" HeightRequest="40">
+            <HorizontalStackLayout x:Name="TagFiltersStack" Spacing="10" VerticalOptions="Center" />
+        </ScrollView>
+
+        <!-- Liste des partitions -->
+        <CollectionView Grid.Row="2"
+                        x:Name="ScoresCollectionView"
+                        Margin="15,0"
+                        SelectionMode="None"> <!-- Mode None car on gère par CheckBox -->
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="local:SelectableScore">
+                    <Border Stroke="#333333" 
+                            StrokeThickness="1" 
+                            BackgroundColor="#1E1E1E" 
+                            Padding="10">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnRowTapped" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        
+                        <Grid ColumnDefinitions="*, Auto">
+                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                <Label Text="{Binding Score.Title}" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White" />
+                                <FlexLayout BindableLayout.ItemsSource="{Binding Score.AppliedTags}"
+                                            Wrap="Wrap"
+                                            Direction="Row">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BackgroundColor="{Binding ColorHex}"
+                                                    StrokeThickness="0"
+                                                    Padding="6,2"
+                                                    Margin="0,2,4,0">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="10" />
+                                                </Border.StrokeShape>
+                                                <Label Text="{Binding Name}" 
+                                                       TextColor="White" 
+                                                       FontSize="10" 
+                                                       FontAttributes="Bold" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </FlexLayout>
+                            </VerticalStackLayout>
+                            
+                            <CheckBox Grid.Column="1" 
+                                      IsChecked="{Binding IsSelected}"
+                                      Color="#007ACC"
+                                      VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Boutons d'action en bas -->
+        <Grid Grid.Row="3" ColumnDefinitions="*, *" ColumnSpacing="15" Padding="15" BackgroundColor="#121212">
+            <Button Grid.Column="0"
+                    Text="Annuler"
+                    BackgroundColor="#333333"
+                    TextColor="White"
+                    Clicked="OnCancelClicked" />
+            <Button Grid.Column="1"
+                    Text="Ajouter à la Setlist"
+                    BackgroundColor="#007ACC"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    Clicked="OnConfirmSelectionClicked" />
+        </Grid>
+    </Grid>
+</ContentPage>

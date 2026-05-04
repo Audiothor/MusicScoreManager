@@ -5,7 +5,7 @@
              x:Class="MusicScoreManager.SetlistsPage"
              BackgroundColor="#121212">
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, Auto, *">
         <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto" Margin="15,15,15,15" ColumnSpacing="10">
             <SearchBar Grid.Column="0"
                        x:Name="SearchSetlistBar"
@@ -38,7 +38,12 @@
                     Clicked="OnAddSetlistClicked" />
         </Grid>
 
-        <CollectionView Grid.Row="1"
+        <!-- Filtres par Statut -->
+        <ScrollView Grid.Row="1" Orientation="Horizontal" Margin="15,0,15,10" HeightRequest="40">
+            <HorizontalStackLayout x:Name="StatusFiltersStack" Spacing="10" VerticalOptions="Center" />
+        </ScrollView>
+
+        <CollectionView Grid.Row="2"
                         x:Name="SetlistsCollectionView"
                         Margin="15,0"
                         SelectionMode="Single"
@@ -68,8 +73,8 @@
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="10" />
                             </Border.StrokeShape>
-                            <Grid RowDefinitions="Auto, *">
-                                <Label Grid.Row="0"
+                            <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, *">
+                                <Label Grid.Row="0" Grid.Column="0"
                                        Text="{Binding Name}" 
                                        FontSize="18" 
                                        FontAttributes="Bold" 
@@ -77,8 +82,29 @@
                                        VerticalOptions="Center" 
                                        LineBreakMode="TailTruncation"
                                        MaxLines="1" />
+
+                                <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="5" VerticalOptions="Center" Margin="10,0,0,0">
+                                    <Label Text="🔒" 
+                                           TextColor="#DC3545" 
+                                           FontSize="14" 
+                                           IsVisible="{Binding IsLocked}" 
+                                           VerticalOptions="Center" />
+
+                                    <Border BackgroundColor="{Binding StatusColor}"
+                                            Padding="8,2"
+                                            StrokeThickness="0"
+                                            VerticalOptions="Center">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="5" />
+                                        </Border.StrokeShape>
+                                        <Label Text="{Binding StatusText}" 
+                                               TextColor="White" 
+                                               FontSize="10" 
+                                               FontAttributes="Bold" />
+                                    </Border>
+                                </HorizontalStackLayout>
                                        
-                                <Label Grid.Row="1"
+                                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                        Text="{Binding DateCreated, StringFormat='Créé le {0:dd/MM/yyyy}'}" 
                                        FontSize="12" 
                                        TextColor="#888888" 
@@ -98,7 +124,7 @@
         </CollectionView>
 
         <!-- Croix ultra-discrète en bas à droite -->
-        <Label Grid.Row="1"
+        <Label Grid.Row="2"
                Text="✕"
                TextColor="#444444"
                FontSize="20"

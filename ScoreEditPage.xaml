@@ -5,33 +5,62 @@
              BackgroundColor="#121212"
              Title="Éditer la partition">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="20" Margin="20">
-            
-            <Label Text="Titre" TextColor="#AAAAAA" />
-            <Entry x:Name="TitleEntry" 
-                   TextColor="White" 
-                   BackgroundColor="#1E1E1E" 
-                   ClearButtonVisibility="WhileEditing" />
-
-            <Label Text="Chemin du fichier (Optionnel, modification risquée)" TextColor="#AAAAAA" />
-            <Entry x:Name="PathEntry" 
-                   TextColor="White" 
-                   BackgroundColor="#1E1E1E" 
-                   ClearButtonVisibility="WhileEditing" />
-
-            <Label Text="Étiquettes (Appuyez pour affecter)" TextColor="#AAAAAA" />
-            
-            <FlexLayout x:Name="TagsFlexLayout" Wrap="Wrap" Direction="Row" />
-
-            <Button Text="Enregistrer" 
-                    BackgroundColor="#007ACC" 
-                    TextColor="White" 
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header personnalisé -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
+            <Button Grid.Column="0" 
+                    Text="← Retour" 
+                    BackgroundColor="Transparent" 
+                    TextColor="#007ACC" 
                     FontAttributes="Bold"
-                    CornerRadius="8"
-                    HeightRequest="50"
-                    Margin="0,20,0,0"
-                    Clicked="OnSaveClicked" />
-        </VerticalStackLayout>
-    </ScrollView>
+                    Clicked="OnCancelClicked" />
+            <Label Grid.Column="1" 
+                   Text="Éditer la partition" 
+                   TextColor="White" 
+                   FontSize="18" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center"
+                   Margin="0,0,80,0" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20" Margin="20">
+                
+                <Label Text="Titre" TextColor="#AAAAAA" />
+                <Entry x:Name="TitleEntry" 
+                       TextColor="White" 
+                       BackgroundColor="#1E1E1E" 
+                       ClearButtonVisibility="WhileEditing" />
+
+                <Label Text="Chemin du fichier (Optionnel, modification risquée)" TextColor="#AAAAAA" />
+                <Entry x:Name="PathEntry" 
+                       TextColor="White" 
+                       BackgroundColor="#1E1E1E" 
+                       ClearButtonVisibility="WhileEditing" />
+
+                <Label Text="Étiquettes (Appuyez pour affecter)" TextColor="#AAAAAA" />
+                
+                <FlexLayout x:Name="TagsFlexLayout" Wrap="Wrap" Direction="Row" />
+
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="15" Margin="0,20,0,0">
+                    <Button Grid.Column="0"
+                            Text="Annuler" 
+                            BackgroundColor="#333333" 
+                            TextColor="White" 
+                            CornerRadius="8"
+                            HeightRequest="50"
+                            Clicked="OnCancelClicked" />
+                    <Button Grid.Column="1"
+                            Text="Enregistrer" 
+                            BackgroundColor="#007ACC" 
+                            TextColor="White" 
+                            FontAttributes="Bold"
+                            CornerRadius="8"
+                            HeightRequest="50"
+                            Clicked="OnSaveClicked" />
+                </Grid>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>
