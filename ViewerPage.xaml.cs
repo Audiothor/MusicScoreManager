@@ -25,7 +25,7 @@ public partial class ViewerPage : ContentPage
     private IAudioPlayer? _metronomeAudioPlayer;
     private IAudioPlayer? _preCountAudioPlayer;
     private bool _isMetronomePlaying = false;
-    private bool _isPdfReady = false;
+    private bool _isScoreReady = false;
     private bool _isAudioPlaying = false;
     private bool _isDraggingAudioSlider = false;
     private ScoreAudioFile? _selectedAudioFile;
@@ -55,7 +55,7 @@ public partial class ViewerPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        
+
         // Optimisation : on laisse l'interface et la partition se charger d'abord
         await Task.Delay(500);
         InitializeMetronome();
@@ -101,8 +101,9 @@ public partial class ViewerPage : ContentPage
         else if (e.Url != null && e.Url.StartsWith("app://musicscore/ready"))
         {
             e.Cancel = true;
-            _isPdfReady = true;
-            if (_score.ShowMetronome) StartMetronome();
+            _isScoreReady = true;
+            // Démarrer si on veut le visuel OU le son
+            if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
         }
     }
 
@@ -111,14 +112,14 @@ public partial class ViewerPage : ContentPage
         // On force le son du métronome à OFF à l'ouverture, l'utilisateur l'activera via le menu si besoin
         _score.HasMetronomeSound = false;
 
-        try 
+        try
         {
             string fullPath = _settingsService.GetAbsolutePath(_score.FilePath);
-            
+
             // OPTIMISATION : Vérifier si une version en cache existe
             string ext = Path.GetExtension(fullPath);
             string cachePath = Path.Combine(FileSystem.CacheDirectory, "SetlistCache", $"{_score.Id}{ext}");
-            
+
             _pdfFilePath = "current.pdf"; // Par défaut
 
             if (File.Exists(cachePath))
@@ -141,8 +142,11 @@ public partial class ViewerPage : ContentPage
                     _currentPage = 1;
                     _maxPages = 1;
                     UpdatePageIndicator();
+                    
+                    _isScoreReady = true;
+                    if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
                 }
-                else 
+                else
                 {
                     await DisplayAlertAsync("Erreur", "Fichier introuvable: " + fullPath, "OK");
                 }
@@ -156,12 +160,12 @@ public partial class ViewerPage : ContentPage
                 }
 
                 await EnsurePdfJsReadyAsync();
-                
+
                 string pdfjsDir = Path.Combine(FileSystem.CacheDirectory, "pdfjs");
                 string viewerPath = Path.Combine(pdfjsDir, "viewer.html");
 
                 // PLUS DE COPIE ICI ! On utilise _pdfFilePath défini plus haut
-                
+
                 PdfWebView.Source = new UrlWebViewSource { Url = $"file://{viewerPath}" };
                 PdfWebView.IsVisible = true;
                 ImageTouchGrid.IsVisible = false;
@@ -180,15 +184,15 @@ public partial class ViewerPage : ContentPage
     {
         string cacheDir = FileSystem.CacheDirectory;
         string pdfjsDir = Path.Combine(cacheDir, "pdfjs");
-        
+
         if (!Directory.Exists(pdfjsDir)) Directory.CreateDirectory(pdfjsDir);
 
         string[] files = { "pdf.min.js", "pdf.worker.min.js", "viewer.html" };
-        
+
         foreach (var file in files)
         {
             string dest = Path.Combine(pdfjsDir, file);
-            
+
             // OPTIMISATION : On ne copie que si le fichier n'existe pas déjà dans le cache
             if (!File.Exists(dest))
             {
@@ -212,7 +216,7 @@ public partial class ViewerPage : ContentPage
         {
             // On charge le PDF directement avec son chemin optimisé (Zéro-Copie)
             await PdfWebView.EvaluateJavaScriptAsync($"loadPdf('{_pdfFilePath}')");
-            
+
             if (_currentRotation != 0)
             {
                 await PdfWebView.EvaluateJavaScriptAsync($"setRotation({_currentRotation})");
@@ -252,10 +256,10 @@ public partial class ViewerPage : ContentPage
         {
             var uri = new Uri(url);
             var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-            
+
             if (int.TryParse(query["max"], out int max)) _maxPages = max;
             if (int.TryParse(query["current"], out int current)) _currentPage = current;
-            
+
             UpdatePageIndicator();
         }
         catch { }
@@ -282,9 +286,9 @@ public partial class ViewerPage : ContentPage
     {
         MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
         MetronomeOverlay.IsVisible = _score.ShowMetronome;
-        
+
         // Initialiser la source audio via Plugin.Maui.Audio pour un son à faible latence et sans craquement
-        try 
+        try
         {
             var stream = await FileSystem.OpenAppPackageFileAsync("click.wav");
             _metronomeAudioPlayer = AudioManager.Current.CreatePlayer(stream);
@@ -293,9 +297,9 @@ public partial class ViewerPage : ContentPage
         {
             System.Diagnostics.Debug.WriteLine($"Erreur audio: {ex.Message}");
         }
-        
+
         if (_score.ShowMetronome) StartMetronome();
-        
+
         // Générer et charger le son de pré-compte
         await InitializePreCountSoundAsync();
     }
@@ -306,7 +310,7 @@ public partial class ViewerPage : ContentPage
         {
             string preCountPath = Path.Combine(FileSystem.CacheDirectory, "precount.wav");
             GenerateBeepWav(preCountPath, 880, 0.1); // Un bip à 880Hz (La) de 100ms
-            
+
             using var stream = File.OpenRead(preCountPath);
             _preCountAudioPlayer = AudioManager.Current.CreatePlayer(stream);
         }
@@ -329,7 +333,7 @@ public partial class ViewerPage : ContentPage
 
         using var fs = new FileStream(filePath, FileMode.Create);
         using var bw = new BinaryWriter(fs);
-        
+
         bw.Write(new char[] { 'R', 'I', 'F', 'F' });
         bw.Write(36 + samples * 2);
         bw.Write(new char[] { 'W', 'A', 'V', 'E' });
@@ -349,7 +353,7 @@ public partial class ViewerPage : ContentPage
     private async void StartMetronome()
     {
         StopMetronome();
-        if (_score.BPM <= 0 || !_isPdfReady) return;
+        if (_score.BPM <= 0 || !_isScoreReady) return;
 
         _isMetronomePlaying = true;
         _metronomeCts = new System.Threading.CancellationTokenSource();
@@ -360,11 +364,11 @@ public partial class ViewerPage : ContentPage
         {
             var stopwatch = new System.Diagnostics.Stopwatch();
             int intervalMs = (int)(60000.0 / _score.BPM);
-            
+
             while (!token.IsCancellationRequested && _isMetronomePlaying)
             {
                 stopwatch.Restart();
-                
+
                 // Exécuter le tick
                 MetronomeTick();
 
@@ -386,7 +390,8 @@ public partial class ViewerPage : ContentPage
         // Flash visuel (uniquement si le métronome est visible)
         if (_score.ShowMetronome)
         {
-            MainThread.BeginInvokeOnMainThread(() => {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
                 MetronomeLight.Color = Color.FromArgb("#007ACC");
                 Task.Delay(50).ContinueWith(_ => MainThread.BeginInvokeOnMainThread(() => MetronomeLight.Color = Color.FromArgb("#333333")));
             });
@@ -429,7 +434,7 @@ public partial class ViewerPage : ContentPage
                     await this.DisplayAlertAsync("BPM Invalide", "Le tempo doit être compris entre 60 et 200 BPM.", "OK");
                     return;
                 }
-                
+
                 _score.BPM = newBpm;
                 MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
                 if (_isMetronomePlaying) StartMetronome(); // Redémarre avec le nouvel intervalle
@@ -439,6 +444,18 @@ public partial class ViewerPage : ContentPage
         else if (action == "Couper le son" || action == "Activer le son")
         {
             _score.HasMetronomeSound = (action == "Activer le son");
+            
+            // Si on a besoin du métronome (son OU visuel) et qu'il ne tourne pas, on le lance
+            if ((_score.HasMetronomeSound || _score.ShowMetronome) && !_isMetronomePlaying) 
+            {
+                StartMetronome();
+            }
+            // Si on n'a plus besoin de rien, on arrête
+            else if (!_score.HasMetronomeSound && !_score.ShowMetronome)
+            {
+                StopMetronome();
+            }
+            
             await _databaseService.SaveScoreAsync(_score);
         }
     }
@@ -459,12 +476,14 @@ public partial class ViewerPage : ContentPage
             string fullPath = _settingsService.GetAbsolutePath(_selectedAudioFile.FilePath, isAudio: true);
             AudioPlayer.Source = MediaSource.FromFile(fullPath);
             AudioPlayer.PositionChanged += OnAudioPositionChanged;
-            
+
             // Écouter PropertyChanged car Duration peut ne pas être prêt immédiatement à MediaOpened
-            AudioPlayer.PropertyChanged += (s, e) => {
+            AudioPlayer.PropertyChanged += (s, e) =>
+            {
                 if (e.PropertyName == nameof(CommunityToolkit.Maui.Views.MediaElement.Duration))
                 {
-                    MainThread.BeginInvokeOnMainThread(() => {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
                         AudioTotalTimeLabel.Text = AudioPlayer.Duration.ToString(@"m\:ss");
                         AudioSlider.Maximum = AudioPlayer.Duration.TotalSeconds;
                     });
@@ -477,7 +496,8 @@ public partial class ViewerPage : ContentPage
     {
         if (!_isDraggingAudioSlider)
         {
-            MainThread.BeginInvokeOnMainThread(() => {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
                 AudioCurrentTimeLabel.Text = e.Position.ToString(@"m\:ss");
                 AudioSlider.Value = e.Position.TotalSeconds;
             });
@@ -498,11 +518,11 @@ public partial class ViewerPage : ContentPage
             if (_score.PreCountMeasures > 0)
             {
                 AudioPlayBtn.IsEnabled = false;
-                
+
                 bool wasMetronomeRunning = _isMetronomePlaying;
                 StopMetronome();
 
-                int totalBeeps = _score.PreCountMeasures; 
+                int totalBeeps = _score.PreCountMeasures;
                 int intervalMs = (int)(60000.0 / _score.BPM);
 
                 for (int i = 0; i < totalBeeps; i++)
@@ -514,7 +534,7 @@ public partial class ViewerPage : ContentPage
                 // DÉMARRAGE SYNCHRONISÉ : on lance l'audio ET le métronome continu en même temps
                 if (wasMetronomeRunning) StartMetronome();
                 AudioPlayer.Play();
-                
+
                 AudioPlayBtn.IsEnabled = true;
             }
             else
@@ -529,7 +549,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnAudioToStartClicked(object sender, EventArgs e) => AudioPlayer.SeekTo(TimeSpan.Zero);
     private void OnAudioToEndClicked(object sender, EventArgs e) => AudioPlayer.SeekTo(AudioPlayer.Duration);
-    
+
     private void OnAudioSliderDragStarted(object sender, EventArgs e)
     {
         _isDraggingAudioSlider = true;
@@ -554,7 +574,16 @@ public partial class ViewerPage : ContentPage
     {
         _score.ShowMetronome = e.Value;
         MetronomeOverlay.IsVisible = e.Value;
-        if (e.Value) StartMetronome(); else StopMetronome();
+        
+        if (e.Value) 
+        {
+            StartMetronome();
+        }
+        else if (!_score.HasMetronomeSound)
+        {
+            StopMetronome();
+        }
+        
         await _databaseService.SaveScoreAsync(_score);
     }
 
@@ -575,7 +604,7 @@ public partial class ViewerPage : ContentPage
     {
         _currentRotation = (_currentRotation + 90) % 360;
         UpdateRotateButtonText();
-        
+
         if (_score.Type == ScoreType.Image)
         {
             ScoreImage.Rotation = _currentRotation;
@@ -621,15 +650,15 @@ public partial class ViewerPage : ContentPage
         CentralMenuOverlay.IsVisible = false;
     }
 
-    private void OnPrevTapped(object sender, EventArgs e) 
+    private void OnPrevTapped(object sender, EventArgs e)
     {
         if (_score.Type == ScoreType.Image)
         {
             HandleStartOfScore();
         }
     }
-    
-    private void OnNextTapped(object sender, EventArgs e) 
+
+    private void OnNextTapped(object sender, EventArgs e)
     {
         if (_score.Type == ScoreType.Image)
         {
