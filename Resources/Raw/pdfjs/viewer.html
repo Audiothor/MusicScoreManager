@@ -14,14 +14,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            width: 100vw;
             height: 100vh;
             overflow: hidden;
             position: relative;
         }
         canvas {
+            display: block;
+            margin: auto;
             max-width: 100%;
-            max-height: 100vh;
+            max-height: 100%;
             object-fit: contain;
+            image-rendering: high-quality;
         }
         
         /* Zones de clics transparentes */
@@ -80,17 +84,24 @@
             renderPage(pageNum);
         }
 
-        async function loadPdf(base64Data) {
+        async function loadPdf(source) {
             try {
-                const pdfData = atob(base64Data);
-                const uint8Array = new Uint8Array(pdfData.length);
-                for (let i = 0; i < pdfData.length; i++) {
-                    uint8Array[i] = pdfData.charCodeAt(i);
+                let loadingTask;
+                
+                // Si la source se termine par .pdf, on charge par URL (Direct File Access)
+                if (typeof source === 'string' && source.toLowerCase().endsWith('.pdf')) {
+                    loadingTask = pdfjsLib.getDocument(source);
+                } else {
+                    // Sinon on traite comme du Base64 (Ancienne méthode / Fallback)
+                    const pdfData = atob(source);
+                    const uint8Array = new Uint8Array(pdfData.length);
+                    for (let i = 0; i < pdfData.length; i++) {
+                        uint8Array[i] = pdfData.charCodeAt(i);
+                    }
+                    loadingTask = pdfjsLib.getDocument({ data: uint8Array });
                 }
 
-                const loadingTask = pdfjsLib.getDocument({ data: uint8Array });
                 pdfDoc = await loadingTask.promise;
-                
                 pageNum = 1;
                 await renderPage(pageNum);
                 return "SUCCESS";
@@ -104,18 +115,32 @@
             if (!pdfDoc) return;
             
             const page = await pdfDoc.getPage(num);
+            
+            // Calculer le viewport à l'échelle demandée
+            // On ajoute la rotation demandée par l'utilisateur à la rotation native du PDF
             const viewport = page.getViewport({ scale: scale, rotation: rotation });
 
             canvas.height = viewport.height;
             canvas.width = viewport.width;
 
+            // Optionnel: On peut ajuster le scale dynamiquement ici si besoin
+            
             const renderContext = {
                 canvasContext: ctx,
-                viewport: viewport
+                viewport: viewport,
+                enableWebGL: true
             };
+
+            // Nettoyage du contexte avant nouveau rendu
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             await page.render(renderContext).promise;
             reportPageInfo();
+
+            // Signaler que le PDF est prêt (pour le métronome)
+            if (num === 1) {
+                window.location.href = 'app://musicscore/ready';
+            }
         }
 
         function reportPageInfo() {

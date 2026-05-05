@@ -5,14 +5,35 @@ namespace MusicScoreManager;
 public partial class ToolsPage : ContentPage
 {
     private readonly DatabaseService _databaseService;
+    private readonly SettingsService _settingsService;
 
     public ToolsPage()
     {
         InitializeComponent();
         _databaseService = new DatabaseService();
+        _settingsService = new SettingsService();
         FolderPathLabel.Text = $"Chemin : {_databaseService.GetBackupsFolder()}";
         LoadSettings();
         LoadBackupsList();
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        LoadSettings();
+        LoadBackupsList();
+        UpdateWarningText();
+    }
+
+    private void UpdateWarningText()
+    {
+        string scoresPath = _settingsService.ScoresRootDirectory;
+        string audioPath = _settingsService.AudioRootDirectory;
+
+        BackupWarningLabel.Text = $"Important : La sauvegarde ne concerne UNIQUEMENT que la base de données (titres, tags, liens).\n\n" +
+                                  $"Les fichiers physiques des partitions situés dans :\n{scoresPath}\n\n" +
+                                  $"ainsi que les fichiers audio situés dans :\n{audioPath}\n\n" +
+                                  $"NE SONT PAS PRIS EN COMPTE. Vous devez les sauvegarder manuellement.";
     }
 
     private void LoadSettings()

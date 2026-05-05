@@ -61,14 +61,33 @@
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
                         <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto, Auto">
-                            <Label Grid.Row="0" Grid.Column="0"
-                                   Text="{Binding Title}" 
-                                   FontSize="16" 
-                                   FontAttributes="Bold" 
-                                   TextColor="White" 
-                                   VerticalOptions="Center" 
-                                   LineBreakMode="TailTruncation"
-                                   MaxLines="2" />
+                            <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="5">
+                                <Label Text="⚠️" 
+                                       TextColor="Red" 
+                                       FontSize="16" 
+                                       VerticalOptions="Center"
+                                       IsVisible="{Binding IsFileMissing}" />
+                                <Label Text="🔗" 
+                                       TextColor="#007ACC" 
+                                       FontSize="16" 
+                                       VerticalOptions="Center"
+                                       IsVisible="{Binding IsExternal}" />
+                                <Label Text="{Binding Title}" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       VerticalOptions="Center" 
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="2">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsFileMissing}" Value="True">
+                                            <Setter Property="TextColor" Value="Red" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsFileMissing}" Value="False">
+                                            <Setter Property="TextColor" Value="White" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </HorizontalStackLayout>
                                    
                             <Label Grid.Row="0" Grid.Column="1"
                                    Text="{Binding Type}" 

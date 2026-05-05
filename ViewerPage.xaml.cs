@@ -13,6 +13,7 @@ public partial class ViewerPage : ContentPage
     private int _currentIndex = -1;
     private bool _isContinuous = true;
     private readonly DatabaseService _databaseService;
+    private readonly SettingsService _settingsService;
 
     private double currentScale = 1;
     private double startScale = 1;
@@ -20,9 +21,11 @@ public partial class ViewerPage : ContentPage
     private int _maxPages = 1;
     private int _currentRotation = 0;
 
-    private System.Threading.Timer? _metronomeTimer;
+    private System.Threading.CancellationTokenSource? _metronomeCts;
     private IAudioPlayer? _metronomeAudioPlayer;
+    private IAudioPlayer? _preCountAudioPlayer;
     private bool _isMetronomePlaying = false;
+    private bool _isPdfReady = false;
     private bool _isAudioPlaying = false;
     private bool _isDraggingAudioSlider = false;
     private ScoreAudioFile? _selectedAudioFile;
@@ -35,6 +38,7 @@ public partial class ViewerPage : ContentPage
         _currentIndex = currentIndex;
         _isContinuous = isContinuous;
         _databaseService = new DatabaseService();
+        _settingsService = new SettingsService();
         Title = _score.Title;
 
         if (_score.IsRotationSaved)
@@ -88,22 +92,28 @@ public partial class ViewerPage : ContentPage
             e.Cancel = true;
             HandleEndOfScore();
         }
-        else if (e.Url != null && e.Url.StartsWith("app://musicscore/start"))
+        else if (e.Url != null && e.Url.StartsWith("app://musicscore/ready"))
         {
             e.Cancel = true;
-            HandleStartOfScore();
+            _isPdfReady = true;
+            if (_score.ShowMetronome) StartMetronome();
         }
     }
 
     private async void LoadContentAsync()
     {
+        // On force le son du métronome à OFF à l'ouverture, l'utilisateur l'activera via le menu si besoin
+        _score.HasMetronomeSound = false;
+
         try 
         {
+            string fullPath = _settingsService.GetAbsolutePath(_score.FilePath);
+
             if (_score.Type == ScoreType.Image)
             {
-                if (File.Exists(_score.FilePath))
+                if (File.Exists(fullPath))
                 {
-                    ScoreImage.Source = ImageSource.FromFile(_score.FilePath);
+                    ScoreImage.Source = ImageSource.FromFile(fullPath);
                     ScoreImage.Rotation = _currentRotation;
                     ImageScrollView.IsVisible = true;
                     ImageTouchGrid.IsVisible = true;
@@ -114,25 +124,34 @@ public partial class ViewerPage : ContentPage
                 }
                 else 
                 {
-                    await DisplayAlertAsync("Erreur", "Fichier introuvable: " + _score.FilePath, "OK");
+                    await DisplayAlertAsync("Erreur", "Fichier introuvable: " + fullPath, "OK");
                 }
             }
             else if (_score.Type == ScoreType.PDF)
             {
+                if (!File.Exists(fullPath))
+                {
+                    await DisplayAlertAsync("Erreur", "Fichier PDF introuvable: " + fullPath, "OK");
+                    return;
+                }
+
                 await EnsurePdfJsReadyAsync();
                 
                 string pdfjsDir = Path.Combine(FileSystem.CacheDirectory, "pdfjs");
                 string viewerPath = Path.Combine(pdfjsDir, "viewer.html");
+                string tempPdfPath = Path.Combine(pdfjsDir, "current.pdf");
 
-                var data = await File.ReadAllBytesAsync(_score.FilePath);
-                string base64 = Convert.ToBase64String(data);
+                // Copier le fichier PDF vers le dossier cache de pdfjs pour accès direct
+                File.Copy(fullPath, tempPdfPath, true);
 
                 PdfWebView.Source = new UrlWebViewSource { Url = $"file://{viewerPath}" };
                 PdfWebView.IsVisible = true;
                 ImageTouchGrid.IsVisible = false;
 
-                await Task.Delay(200);
-                await PdfWebView.EvaluateJavaScriptAsync($"loadPdf('{base64}')");
+                // On attend que la WebView soit prête
+                await Task.Delay(300);
+                // On passe simplement le nom du fichier local
+                await PdfWebView.EvaluateJavaScriptAsync("loadPdf('current.pdf')");
                 
                 if (_currentRotation != 0)
                 {
@@ -265,56 +284,138 @@ public partial class ViewerPage : ContentPage
         }
         
         if (_score.ShowMetronome) StartMetronome();
+        
+        // Générer et charger le son de pré-compte
+        await InitializePreCountSoundAsync();
     }
 
-    private void StartMetronome()
+    private async Task InitializePreCountSoundAsync()
+    {
+        try
+        {
+            string preCountPath = Path.Combine(FileSystem.CacheDirectory, "precount.wav");
+            GenerateBeepWav(preCountPath, 880, 0.1); // Un bip à 880Hz (La) de 100ms
+            
+            using var stream = File.OpenRead(preCountPath);
+            _preCountAudioPlayer = AudioManager.Current.CreatePlayer(stream);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Erreur génération bip: {ex.Message}");
+        }
+    }
+
+    private void GenerateBeepWav(string filePath, double frequency, double durationSeconds)
+    {
+        int sampleRate = 44100;
+        int samples = (int)(sampleRate * durationSeconds);
+        short[] wave = new short[samples];
+
+        for (int i = 0; i < samples; i++)
+        {
+            wave[i] = (short)(Math.Sin(2 * Math.PI * frequency * i / sampleRate) * short.MaxValue * 0.5);
+        }
+
+        using var fs = new FileStream(filePath, FileMode.Create);
+        using var bw = new BinaryWriter(fs);
+        
+        bw.Write(new char[] { 'R', 'I', 'F', 'F' });
+        bw.Write(36 + samples * 2);
+        bw.Write(new char[] { 'W', 'A', 'V', 'E' });
+        bw.Write(new char[] { 'f', 'm', 't', ' ' });
+        bw.Write(16);
+        bw.Write((short)1);
+        bw.Write((short)1);
+        bw.Write(sampleRate);
+        bw.Write(sampleRate * 2);
+        bw.Write((short)2);
+        bw.Write((short)16);
+        bw.Write(new char[] { 'd', 'a', 't', 'a' });
+        bw.Write(samples * 2);
+        for (int i = 0; i < samples; i++) bw.Write(wave[i]);
+    }
+
+    private async void StartMetronome()
     {
         StopMetronome();
-        if (_score.BPM <= 0) return;
+        if (_score.BPM <= 0 || !_isPdfReady) return;
 
-        int intervalMs = (int)(60000.0 / _score.BPM);
-        _metronomeTimer = new System.Threading.Timer(MetronomeTick, null, 0, intervalMs);
         _isMetronomePlaying = true;
+        _metronomeCts = new System.Threading.CancellationTokenSource();
+        var token = _metronomeCts.Token;
+
+        // Boucle de haute précision sur un thread d'arrière-plan
+        _ = Task.Run(async () =>
+        {
+            var stopwatch = new System.Diagnostics.Stopwatch();
+            int intervalMs = (int)(60000.0 / _score.BPM);
+            
+            while (!token.IsCancellationRequested && _isMetronomePlaying)
+            {
+                stopwatch.Restart();
+                
+                // Exécuter le tick
+                MetronomeTick();
+
+                // Attendre le prochain intervalle avec précision
+                int elapsed = (int)stopwatch.ElapsedMilliseconds;
+                int waitTime = intervalMs - elapsed;
+                if (waitTime > 0)
+                {
+                    await Task.Delay(waitTime, token);
+                }
+            }
+        }, token);
     }
 
-    private void MetronomeTick(object? state)
+    private void MetronomeTick(bool isPreCount = false)
     {
-        // Flash visuel sur le thread principal
+        // Flash visuel
         MainThread.BeginInvokeOnMainThread(() => {
-            MetronomeLight.Color = Colors.Red;
+            MetronomeLight.Color = isPreCount ? Colors.Yellow : Colors.Red;
             Task.Delay(100).ContinueWith(_ => MainThread.BeginInvokeOnMainThread(() => MetronomeLight.Color = Color.FromArgb("#333333")));
         });
         
-        // Son à faible latence sur un thread d'arrière-plan
-        if (_score.HasMetronomeSound && _metronomeAudioPlayer != null)
+        // Son
+        if (_score.HasMetronomeSound)
         {
-            _metronomeAudioPlayer.Seek(0);
-            _metronomeAudioPlayer.Play();
+            if (isPreCount && _preCountAudioPlayer != null)
+            {
+                _preCountAudioPlayer.Seek(0);
+                _preCountAudioPlayer.Play();
+            }
+            else if (!isPreCount && _metronomeAudioPlayer != null)
+            {
+                _metronomeAudioPlayer.Seek(0);
+                _metronomeAudioPlayer.Play();
+            }
         }
     }
 
     private void StopMetronome()
     {
-        if (_metronomeTimer != null)
-        {
-            _metronomeTimer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
-            _metronomeTimer.Dispose();
-            _metronomeTimer = null;
-        }
         _isMetronomePlaying = false;
+        _metronomeCts?.Cancel();
+        _metronomeCts = null;
         MainThread.BeginInvokeOnMainThread(() => MetronomeLight.Color = Color.FromArgb("#333333"));
     }
 
     private async void OnMetronomeOverlayTapped(object sender, EventArgs e)
     {
         string soundOption = _score.HasMetronomeSound ? "Couper le son" : "Activer le son";
-        string action = await DisplayActionSheet("Paramètres du Métronome", "Annuler", null, "Changer le BPM", soundOption);
+        string? action = await this.DisplayActionSheetAsync("Paramètres du Métronome", "Annuler", null, "Changer le BPM", soundOption);
 
         if (action == "Changer le BPM")
         {
-            string newBpmStr = await DisplayPromptAsync("Nouveau BPM", "Entrez le nouveau tempo :", keyboard: Keyboard.Numeric, initialValue: _score.BPM.ToString());
-            if (int.TryParse(newBpmStr, out int newBpm) && newBpm > 0)
+            string? newBpmStr = await this.DisplayPromptAsync("Nouveau BPM", "Entrez le nouveau tempo (60-200) :", keyboard: Keyboard.Numeric, initialValue: _score.BPM.ToString());
+            if (int.TryParse(newBpmStr, out int newBpm))
             {
+                if (newBpm < 60 || newBpm > 200)
+                {
+                    await this.DisplayAlertAsync("BPM Invalide", "Le tempo doit être compris entre 60 et 200 BPM.", "OK");
+                    return;
+                }
+                
                 _score.BPM = newBpm;
                 MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
                 if (_isMetronomePlaying) StartMetronome(); // Redémarre avec le nouvel intervalle
@@ -341,7 +442,8 @@ public partial class ViewerPage : ContentPage
 
         if (_selectedAudioFile != null)
         {
-            AudioPlayer.Source = MediaSource.FromFile(_selectedAudioFile.FilePath);
+            string fullPath = _settingsService.GetAbsolutePath(_selectedAudioFile.FilePath, isAudio: true);
+            AudioPlayer.Source = MediaSource.FromFile(fullPath);
             AudioPlayer.PositionChanged += OnAudioPositionChanged;
             
             // Écouter PropertyChanged car Duration peut ne pas être prêt immédiatement à MediaOpened
@@ -378,29 +480,34 @@ public partial class ViewerPage : ContentPage
         }
         else
         {
-            // Pré-compte si défini
+            // Pré-compte synchronisé
             if (_score.PreCountMeasures > 0)
             {
                 AudioPlayBtn.IsEnabled = false;
-                int totalBeeps = _score.PreCountMeasures; // On assume 4 temps par mesure pour l'instant
+                
+                bool wasMetronomeRunning = _isMetronomePlaying;
+                StopMetronome();
+
+                int totalBeeps = _score.PreCountMeasures; 
+                int intervalMs = (int)(60000.0 / _score.BPM);
+
                 for (int i = 0; i < totalBeeps; i++)
                 {
-                    MetronomeLight.Color = Colors.Yellow;
-                    
-                    if (_score.HasMetronomeSound && _metronomeAudioPlayer != null)
-                    {
-                        _metronomeAudioPlayer.Seek(0);
-                        _metronomeAudioPlayer.Play();
-                    }
-
-                    await Task.Delay(100);
-                    MetronomeLight.Color = Color.FromArgb("#333333");
-                    await Task.Delay((int)(60000.0 / _score.BPM) - 100);
+                    MetronomeTick(isPreCount: true);
+                    await Task.Delay(intervalMs);
                 }
+
+                // DÉMARRAGE SYNCHRONISÉ : on lance l'audio ET le métronome continu en même temps
+                if (wasMetronomeRunning) StartMetronome();
+                AudioPlayer.Play();
+                
                 AudioPlayBtn.IsEnabled = true;
             }
+            else
+            {
+                AudioPlayer.Play();
+            }
 
-            AudioPlayer.Play();
             AudioPlayBtn.Text = "⏸";
             _isAudioPlaying = true;
         }

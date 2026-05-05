@@ -71,6 +71,20 @@
                     HeightRequest="50"
                     Clicked="OnBackupClicked" />
 
+            <Border Stroke="#D35400" StrokeThickness="1" BackgroundColor="#2D1A05" Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="⚠️ Avertissement" TextColor="#D35400" FontAttributes="Bold" />
+                    <Label x:Name="BackupWarningLabel" 
+                           TextColor="#E67E22" 
+                           FontSize="12" 
+                           LineBreakMode="WordWrap"
+                           Text="La sauvegarde ne concerne que la base de données. Vos fichiers ne sont pas inclus." />
+                </VerticalStackLayout>
+            </Border>
+
             <Label Text="Historique des sauvegardes" 
                    TextColor="#AAAAAA" 
                    Margin="0,10,0,0" />

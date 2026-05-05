@@ -14,5 +14,11 @@ namespace MusicScoreManager.Models
         public string FilePath { get; set; } = string.Empty;
 
         public bool IsSelected { get; set; } = false;
+        
+        [Ignore]
+        public bool IsFileMissing { get; set; }
+
+        [Ignore]
+        public bool IsExternal { get; set; }
     }
 }

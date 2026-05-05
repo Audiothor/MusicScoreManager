@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MusicScoreManager.SettingsAppPage"
+             BackgroundColor="#121212"
+             Title="Paramètres Application">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="20">
+            <Label Text="Bibliothèque" TextColor="#FF3366" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0" />
+            
+            <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Répertoire des partitions (PDF, Images)" TextColor="White" FontAttributes="Bold" />
+                    <Label x:Name="ScoresPathLabel" Text="Chemin actuel" TextColor="#888888" FontSize="12" LineBreakMode="CharacterWrap" />
+                    
+                    <Button Text="Changer le répertoire" 
+                            Clicked="OnChangeScoresPathClicked"
+                            BackgroundColor="#2C2C2C" 
+                            TextColor="White"
+                            Margin="0,10,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Répertoire des fichiers audio (MP3, WAV, AIF)" TextColor="White" FontAttributes="Bold" />
+                    <Label x:Name="AudioPathLabel" Text="Chemin actuel" TextColor="#888888" FontSize="12" LineBreakMode="CharacterWrap" />
+                    
+                    <Button Text="Changer le répertoire" 
+                            Clicked="OnChangeAudioPathClicked"
+                            BackgroundColor="#2C2C2C" 
+                            TextColor="White"
+                            Margin="0,10,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="Note: Sur Android, l'utilisation d'un dossier public permet d'accéder aux fichiers depuis un PC (USB). Si vous changez le répertoire, assurez-vous d'y déplacer manuellement vos fichiers." 
+                   TextColor="#888888" FontSize="12" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

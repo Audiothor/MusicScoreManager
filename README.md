@@ -2,19 +2,19 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v0.3.0
+# Music Score Manager v1.0.0
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser et visualiser leurs partitions (PDF et Images) de manière efficace, particulièrement en situation de concert.
 
 ---
 
-## 🚀 Fonctionnalités Clés (v0.2.0)
+## 🚀 Fonctionnalités Clés (v1.0.0)
 
-### 🎵 Gestion des Partitions
-- **Import intelligent** : Support des fichiers PDF et Images (JPG, PNG).
-- **Organisation visuelle** : Affichage sous forme de cartes avec titres et types.
-- **Filtrage & Tri** : Recherche textuelle, filtrage par étiquettes et tris (A-Z, Date).
-- **Édition complète** : Modification des titres, des chemins et des étiquettes avec gestion des erreurs et navigation fluide.
+### 🎵 Gestion des Partitions & Stockage (Refonte v1.0)
+- **Stockage Public Unique** : Définissez vos propres répertoires pour les partitions et l'audio.
+- **Import Intelligent** : Choisissez entre "Copier" (interne) ou "Lier" (externe).
+- **Indicateurs Visuels** : Icône 🔗 pour repérer les fichiers hors bibliothèque.
+- **Rapatriement Rapide** : Importez physiquement un fichier lié en un clic.
 
 ### 🏷️ Système d'Étiquettes (Chips)
 - **Gestion Globale** : Créez et personnalisez vos étiquettes avec des couleurs (Palette + Sliders RGB).
@@ -26,13 +26,18 @@
 - **Lecture en Continu** : Transition automatique entre les morceaux d'une même liste.
 - **Mode Concert (Verrouillage)** : Bouton de verrouillage persistant pour désactiver toute modification accidentelle sur scène.
 
-### 📖 Lecteur Interne Optimisé
+### 📖 Lecteur Ultra-Performant (v1.0)
+- **Accès Disque Direct** : Chargement instantané des PDF, même volumineux (plus de Base64).
+- **Consommation Mémoire** : Optimisée pour les tablettes d'entrée de gamme.
 - **Moteur PDF.js** & Rendu Image natif.
 - **Navigation Tactile** :
     - **Zone Gauche** : Page précédente (ou morceau précédent de la setlist).
     - **Zone Droite** : Page suivante (ou morceau suivant de la setlist).
     - **Zone Bas** : Menu contextuel.
-- **Plein écran automatique** : Masquage de la barre de navigation pour une immersion totale.
+### ⏱️ Métronome Pro & Audio Sync
+- **Haute Précision** : Nouvelle boucle temporelle sans dérive CPU.
+- **Bip de Pré-compte** : Son distinctif (880Hz) généré dynamiquement.
+- **Synchronisation Parfaite** : L'audio démarre précisément sur le premier temps fort après le pré-compte.
 
 ### 🛡️ Gestion des Sauvegardes
 - **Sauvegarde Automatique** : Déclenchement au lancement selon un intervalle paramétrable (ex: tous les 30 jours).
@@ -69,4 +74,4 @@
 
 ---
 
-**Développé par Audiothor** - *Version 0.2.0 "Concert Ready"*
+**Développé par Audiothor** - *Version 1.0.0 "Public Library Edition"*

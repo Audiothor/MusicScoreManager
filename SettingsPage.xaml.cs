@@ -25,7 +25,7 @@ public partial class SettingsPage : ContentPage
 
     private async void OnSettingsAppTapped(object sender, TappedEventArgs e)
     {
-        await DisplayAlertAsync("En construction", "Les paramètres globaux de l'application seront disponibles prochainement.", "OK");
+        await Navigation.PushAsync(new SettingsAppPage());
     }
     private void OnExitClicked(object sender, EventArgs e)
     {

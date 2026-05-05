@@ -27,11 +27,17 @@ namespace MusicScoreManager.Models
         // Metronome
         public bool ShowMetronome { get; set; } = false;
         public int BPM { get; set; } = 120;
-        public bool HasMetronomeSound { get; set; } = true;
+        public bool HasMetronomeSound { get; set; } = false;
 
         // Audio
         public bool ShowAudioPlayer { get; set; } = false;
         public int PreCountMeasures { get; set; } = 4;
+
+        [Ignore]
+        public bool IsFileMissing { get; set; }
+
+        [Ignore]
+        public bool IsExternal { get; set; }
 
         [Ignore]
         public List<Tag> AppliedTags { get; set; } = new List<Tag>();

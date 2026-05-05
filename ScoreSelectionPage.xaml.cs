@@ -109,10 +109,15 @@ public partial class ScoreSelectionPage : ContentPage
         FilterScores();
     }
 
-    private void OnRowTapped(object sender, TappedEventArgs e)
+    private async void OnRowTapped(object sender, TappedEventArgs e)
     {
         if (e.Parameter is SelectableScore selectable)
         {
+            if (selectable.Score.IsFileMissing)
+            {
+                await this.DisplayAlertAsync("Fichier manquant", "Cette partition ne peut pas être ajoutée car son fichier est introuvable.", "OK");
+                return;
+            }
             selectable.IsSelected = !selectable.IsSelected;
         }
     }

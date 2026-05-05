@@ -111,6 +111,13 @@ public partial class ScoresPage : ContentPage
     {
         if (e.CurrentSelection.FirstOrDefault() is Models.Score selectedScore)
         {
+            if (selectedScore.IsFileMissing)
+            {
+                await this.DisplayAlertAsync("Fichier manquant", "Le fichier de cette partition est introuvable. Veuillez vérifier votre répertoire de partitions dans les paramètres.", "OK");
+                ScoresCollectionView.SelectedItem = null;
+                return;
+            }
+
             // Naviguer vers le ViewerPage
             await Navigation.PushAsync(new ViewerPage(selectedScore));
             

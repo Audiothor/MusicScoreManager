@@ -33,11 +33,27 @@
                        BackgroundColor="#1E1E1E" 
                        ClearButtonVisibility="WhileEditing" />
 
-                <Label Text="Chemin du fichier (Optionnel, modification risquée)" TextColor="#AAAAAA" />
-                <Entry x:Name="PathEntry" 
-                       TextColor="White" 
-                       BackgroundColor="#1E1E1E" 
-                       ClearButtonVisibility="WhileEditing" />
+                <HorizontalStackLayout Spacing="5">
+                    <Label Text="Chemin du fichier" TextColor="#AAAAAA" VerticalOptions="Center" />
+                    <Label x:Name="ExternalScoreIcon" Text="🔗" TextColor="#007ACC" FontSize="18" VerticalOptions="Center" IsVisible="False" />
+                    <Label x:Name="ExternalScoreLabel" Text="(Externe)" TextColor="#007ACC" FontSize="10" VerticalOptions="Center" IsVisible="False" />
+                </HorizontalStackLayout>
+                
+                <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                    <Entry x:Name="PathEntry" 
+                           TextColor="White" 
+                           BackgroundColor="#1E1E1E" 
+                           ClearButtonVisibility="WhileEditing" />
+                    <Button Grid.Column="1" 
+                            x:Name="ImportScoreButton"
+                            Text="Rapatrier" 
+                            IsVisible="False"
+                            BackgroundColor="#007ACC" 
+                            TextColor="White" 
+                            HeightRequest="35"
+                            Padding="10,0"
+                            Clicked="OnImportScoreToLibraryClicked" />
+                </Grid>
 
                 <Label Text="Étiquettes" TextColor="#AAAAAA" />
                 
@@ -65,16 +81,11 @@
                     <Switch Grid.Column="1" x:Name="MetronomeSwitch" OnColor="#007ACC" ThumbColor="White" />
                 </Grid>
 
-                <Grid ColumnDefinitions="*, Auto" Margin="0,5,0,0">
-                    <Label Text="Jouer le son du métronome" TextColor="#AAAAAA" VerticalOptions="Center" />
-                    <Switch Grid.Column="1" x:Name="HasMetronomeSoundSwitch" OnColor="#007ACC" ThumbColor="White" />
-                </Grid>
-
                 <Grid ColumnDefinitions="*, Auto">
                     <Label Text="Tempo (BPM)" TextColor="#AAAAAA" VerticalOptions="Center" />
                     <HorizontalStackLayout Grid.Column="1" Spacing="10">
                         <Entry x:Name="BpmEntry" Text="120" Keyboard="Numeric" WidthRequest="80" TextColor="White" BackgroundColor="#1E1E1E" HorizontalTextAlignment="Center" />
-                        <Stepper x:Name="BpmStepper" Minimum="40" Maximum="240" Increment="1" Value="120" />
+                        <Stepper x:Name="BpmStepper" Minimum="60" Maximum="200" Increment="1" Value="120" />
                     </HorizontalStackLayout>
                 </Grid>
 

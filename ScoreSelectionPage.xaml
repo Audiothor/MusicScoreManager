@@ -46,10 +46,26 @@
                         
                         <Grid ColumnDefinitions="*, Auto">
                             <VerticalStackLayout Grid.Column="0" Spacing="2">
-                                <Label Text="{Binding Score.Title}" 
-                                       FontSize="16" 
-                                       FontAttributes="Bold" 
-                                       TextColor="White" />
+                                <HorizontalStackLayout Spacing="5">
+                                    <Label Text="⚠️" 
+                                           TextColor="Red" 
+                                           FontSize="16" 
+                                           VerticalOptions="Center"
+                                           IsVisible="{Binding Score.IsFileMissing}" />
+                                    <Label Text="{Binding Score.Title}" 
+                                           FontSize="16" 
+                                           FontAttributes="Bold" 
+                                           VerticalOptions="Center">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Score.IsFileMissing}" Value="True">
+                                                <Setter Property="TextColor" Value="Red" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Score.IsFileMissing}" Value="False">
+                                                <Setter Property="TextColor" Value="White" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </HorizontalStackLayout>
                                 <FlexLayout BindableLayout.ItemsSource="{Binding Score.AppliedTags}"
                                             Wrap="Wrap"
                                             Direction="Row">

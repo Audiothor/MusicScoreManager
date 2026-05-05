@@ -8,9 +8,11 @@ namespace MusicScoreManager.Services
         private SQLiteAsyncConnection? _database;
         private readonly string _databasePath;
         private readonly SemaphoreSlim _semaphore = new(1, 1);
+        private readonly SettingsService _settingsService;
 
         public DatabaseService()
         {
+            _settingsService = new SettingsService();
             // La base de données scores.db3 selon les spécifications.
             _databasePath = Path.Combine(FileSystem.AppDataDirectory, "scores.db3");
         }
@@ -62,7 +64,20 @@ namespace MusicScoreManager.Services
             {
                 var tagIds = allScoreTags.Where(st => st.ScoreId == score.Id).Select(st => st.TagId).ToList();
                 score.AppliedTags = allTags.Where(t => tagIds.Contains(t.Id)).ToList();
-                score.AudioFiles = allAudioFiles.Where(af => af.ScoreId == score.Id).ToList();
+                
+                var scoreAudioFiles = allAudioFiles.Where(af => af.ScoreId == score.Id).ToList();
+                foreach (var af in scoreAudioFiles)
+                {
+                    var fullPath = _settingsService.GetAbsolutePath(af.FilePath, isAudio: true);
+                    af.IsFileMissing = !File.Exists(fullPath);
+                    af.IsExternal = Path.IsPathRooted(af.FilePath); // Un chemin enraciné dans la DB = Hors bibliothèque (car on stocke en relatif normalement)
+                }
+                score.AudioFiles = scoreAudioFiles;
+
+                // Vérification du fichier de partition principal
+                var scorePath = _settingsService.GetAbsolutePath(score.FilePath);
+                score.IsFileMissing = !File.Exists(scorePath);
+                score.IsExternal = Path.IsPathRooted(score.FilePath);
             }
         }
 
@@ -318,6 +333,7 @@ namespace MusicScoreManager.Services
         public string FileName { get; set; } = string.Empty;
         public string FullPath { get; set; } = string.Empty;
         public DateTime Date { get; set; }
+        public bool IsExternal { get; set; }
         public string DisplayDate => Date.ToString("dd/MM/yyyy HH:mm");
     }
 }

@@ -7,6 +7,7 @@ public partial class ScoreEditPage : ContentPage
 {
     private readonly Score _score;
     private readonly DatabaseService _databaseService;
+    private readonly SettingsService _settingsService;
     private List<int> _selectedTagIds = new List<int>();
     private List<Tag> _allTags = new List<Tag>();
 
@@ -15,19 +16,23 @@ public partial class ScoreEditPage : ContentPage
         InitializeComponent();
         _score = score;
         _databaseService = databaseService;
+        _settingsService = new SettingsService();
 
         TitleEntry.Text = _score.Title;
         PathEntry.Text = _score.FilePath;
         
         MetronomeSwitch.IsToggled = _score.ShowMetronome;
-        HasMetronomeSoundSwitch.IsToggled = _score.HasMetronomeSound;
         BpmEntry.Text = _score.BPM.ToString();
         BpmStepper.Value = _score.BPM;
         PreCountEntry.Text = _score.PreCountMeasures.ToString();
         PreCountStepper.Value = _score.PreCountMeasures;
 
         BpmStepper.ValueChanged += (s, e) => BpmEntry.Text = ((int)e.NewValue).ToString();
-        BpmEntry.TextChanged += (s, e) => { if (int.TryParse(e.NewTextValue, out int val)) BpmStepper.Value = val; };
+        BpmEntry.TextChanged += (s, e) => { 
+            if (int.TryParse(e.NewTextValue, out int val)) {
+                if (val >= 60 && val <= 200) BpmStepper.Value = val; 
+            }
+        };
 
         PreCountStepper.ValueChanged += (s, e) => PreCountEntry.Text = ((int)e.NewValue).ToString();
         PreCountEntry.TextChanged += (s, e) => { if (int.TryParse(e.NewTextValue, out int val)) PreCountStepper.Value = val; };
@@ -37,7 +42,16 @@ public partial class ScoreEditPage : ContentPage
             _selectedTagIds = _score.AppliedTags.Select(t => t.Id).ToList();
         }
 
+        UpdateExternalIndicators();
         LoadDataAsync();
+    }
+
+    private void UpdateExternalIndicators()
+    {
+        bool isExternal = Path.IsPathRooted(PathEntry.Text);
+        ExternalScoreIcon.IsVisible = isExternal;
+        ExternalScoreLabel.IsVisible = isExternal;
+        ImportScoreButton.IsVisible = isExternal;
     }
 
     private async void LoadDataAsync()
@@ -134,42 +148,52 @@ public partial class ScoreEditPage : ContentPage
         AudioFilesList.Children.Clear();
         foreach (var af in _score.AudioFiles)
         {
-            var grid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Auto }, new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Auto } }, ColumnSpacing = 10 };
+            var grid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { 
+                new ColumnDefinition { Width = GridLength.Auto }, 
+                new ColumnDefinition { Width = GridLength.Star }, 
+                new ColumnDefinition { Width = GridLength.Auto },
+                new ColumnDefinition { Width = GridLength.Auto } 
+            }, ColumnSpacing = 10 };
             
             var checkbox = new CheckBox { IsChecked = af.IsSelected, Color = Color.FromArgb("#007ACC"), VerticalOptions = LayoutOptions.Center };
-            checkbox.CheckedChanged += (s, e) =>
-            {
-                if (e.Value)
-                {
-                    // Décocher les autres
-                    foreach (var other in _score.AudioFiles.Where(x => x != af))
-                    {
-                        other.IsSelected = false;
-                    }
+            // ... (CheckedChanged logic stays same)
+            checkbox.CheckedChanged += (s, e) => {
+                if (e.Value) {
+                    foreach (var other in _score.AudioFiles.Where(x => x != af)) other.IsSelected = false;
                     af.IsSelected = true;
                     RefreshAudioFilesUI();
-                }
-                else
-                {
-                    af.IsSelected = false;
-                }
+                } else af.IsSelected = false;
             };
 
-            var label = new Label { Text = af.FileName, TextColor = Colors.White, VerticalOptions = LayoutOptions.Center, LineBreakMode = LineBreakMode.TailTruncation };
-            
-            var deleteBtn = new Button { Text = "✕", BackgroundColor = Colors.Transparent, TextColor = Colors.Red, WidthRequest = 40, HeightRequest = 40, VerticalOptions = LayoutOptions.Center };
-            deleteBtn.Clicked += (s, e) =>
+            var nameStack = new HorizontalStackLayout { Spacing = 5, VerticalOptions = LayoutOptions.Center };
+            if (Path.IsPathRooted(af.FilePath))
             {
+                nameStack.Children.Add(new Label { Text = "🔗", TextColor = Color.FromArgb("#007ACC"), VerticalOptions = LayoutOptions.Center });
+            }
+            nameStack.Children.Add(new Label { Text = af.FileName, TextColor = Colors.White, VerticalOptions = LayoutOptions.Center, LineBreakMode = LineBreakMode.TailTruncation });
+
+            var actionsStack = new HorizontalStackLayout { Spacing = 5 };
+
+            if (Path.IsPathRooted(af.FilePath))
+            {
+                var importBtn = new Button { Text = "Rapatrier", FontSize = 10, HeightRequest = 30, Padding = new Thickness(5, 0), BackgroundColor = Color.FromArgb("#007ACC"), TextColor = Colors.White };
+                importBtn.Clicked += async (s, e) => await OnImportAudioToLibraryClicked(af);
+                actionsStack.Children.Add(importBtn);
+            }
+
+            var deleteBtn = new Button { Text = "✕", BackgroundColor = Colors.Transparent, TextColor = Colors.Red, WidthRequest = 40, HeightRequest = 40, VerticalOptions = LayoutOptions.Center };
+            deleteBtn.Clicked += (s, e) => {
                 _score.AudioFiles.Remove(af);
                 RefreshAudioFilesUI();
             };
+            actionsStack.Children.Add(deleteBtn);
 
             grid.Children.Add(checkbox);
             Grid.SetColumn(checkbox, 0);
-            grid.Children.Add(label);
-            Grid.SetColumn(label, 1);
-            grid.Children.Add(deleteBtn);
-            Grid.SetColumn(deleteBtn, 2);
+            grid.Children.Add(nameStack);
+            Grid.SetColumn(nameStack, 1);
+            grid.Children.Add(actionsStack);
+            Grid.SetColumn(actionsStack, 2);
 
             AudioFilesList.Children.Add(grid);
         }
@@ -195,20 +219,56 @@ public partial class ScoreEditPage : ContentPage
 
             if (result != null)
             {
-                var sanitizedFileName = result.FileName.Replace(" ", "_");
-                var newFileName = $"{Guid.NewGuid()}_{sanitizedFileName}";
-                var localFilePath = Path.Combine(FileSystem.AppDataDirectory, newFileName);
+                var rootDir = _settingsService.AudioRootDirectory;
+                if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
 
-                using var stream = await result.OpenReadAsync();
-                using var fileStream = File.Create(localFilePath);
-                await stream.CopyToAsync(fileStream);
+                string finalStoredPath;
+                bool isAlreadyInRoot = result.FullPath.StartsWith(rootDir, StringComparison.OrdinalIgnoreCase);
+
+                if (isAlreadyInRoot)
+                {
+                    finalStoredPath = _settingsService.GetRelativePath(result.FullPath, isAudio: true);
+                }
+                else
+                {
+                    string? action = await this.DisplayActionSheetAsync("Fichier audio externe", "Annuler", null, 
+                        "Copier vers la bibliothèque Audio", 
+                        "Lier le fichier original (Externe)");
+
+                    if (action == "Copier vers la bibliothèque Audio")
+                    {
+                        var sanitizedFileName = result.FileName.Replace(" ", "_");
+                        var localFilePath = Path.Combine(rootDir, sanitizedFileName);
+                        
+                        if (File.Exists(localFilePath))
+                        {
+                            var fileNameOnly = Path.GetFileNameWithoutExtension(sanitizedFileName);
+                            var extension = Path.GetExtension(sanitizedFileName);
+                            localFilePath = Path.Combine(rootDir, $"{fileNameOnly}_{DateTime.Now:yyyyMMddHHmmss}{extension}");
+                        }
+
+                        using var stream = await result.OpenReadAsync();
+                        using var fileStream = File.Create(localFilePath);
+                        await stream.CopyToAsync(fileStream);
+                        
+                        finalStoredPath = _settingsService.GetRelativePath(localFilePath, isAudio: true);
+                    }
+                    else if (action == "Lier le fichier original (Externe)")
+                    {
+                        finalStoredPath = result.FullPath;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
 
                 _score.AudioFiles.Add(new ScoreAudioFile
                 {
                     ScoreId = _score.Id,
                     FileName = result.FileName,
-                    FilePath = localFilePath,
-                    IsSelected = _score.AudioFiles.Count == 0 // Sélectionner si c'est le premier
+                    FilePath = finalStoredPath,
+                    IsSelected = _score.AudioFiles.Count == 0
                 });
 
                 RefreshAudioFilesUI();
@@ -216,7 +276,67 @@ public partial class ScoreEditPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", "Impossible d'ajouter le fichier audio: " + ex.Message, "OK");
+            await this.DisplayAlertAsync("Erreur", $"Impossible d'importer le fichier : {ex.Message}", "OK");
+        }
+    }
+
+    private async void OnImportScoreToLibraryClicked(object sender, EventArgs e)
+    {
+        string currentPath = PathEntry.Text;
+        if (!Path.IsPathRooted(currentPath)) return;
+
+        string? newPath = await CopyFileToLibrary(currentPath, false);
+        if (newPath != null)
+        {
+            PathEntry.Text = newPath;
+            UpdateExternalIndicators();
+            await this.DisplayAlertAsync("Succès", "La partition a été rapatriée dans votre dossier Scores.", "OK");
+        }
+    }
+
+    private async Task OnImportAudioToLibraryClicked(ScoreAudioFile af)
+    {
+        if (!Path.IsPathRooted(af.FilePath)) return;
+
+        string? newPath = await CopyFileToLibrary(af.FilePath, true);
+        if (newPath != null)
+        {
+            af.FilePath = newPath;
+            RefreshAudioFilesUI();
+            await this.DisplayAlertAsync("Succès", "Le fichier audio a été rapatrié dans votre dossier Audio.", "OK");
+        }
+    }
+
+    private async Task<string?> CopyFileToLibrary(string sourcePath, bool isAudio)
+    {
+        try
+        {
+            if (!File.Exists(sourcePath))
+            {
+                await this.DisplayAlertAsync("Erreur", "Le fichier original n'est plus accessible.", "OK");
+                return null;
+            }
+
+            var rootDir = isAudio ? _settingsService.AudioRootDirectory : _settingsService.ScoresRootDirectory;
+            if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
+
+            var fileName = Path.GetFileName(sourcePath).Replace(" ", "_");
+            var destPath = Path.Combine(rootDir, fileName);
+
+            if (File.Exists(destPath))
+            {
+                var fileNameOnly = Path.GetFileNameWithoutExtension(fileName);
+                var extension = Path.GetExtension(fileName);
+                destPath = Path.Combine(rootDir, $"{fileNameOnly}_{DateTime.Now:yyyyMMddHHmmss}{extension}");
+            }
+
+            File.Copy(sourcePath, destPath);
+            return _settingsService.GetRelativePath(destPath, isAudio);
+        }
+        catch (Exception ex)
+        {
+            await this.DisplayAlertAsync("Erreur", "Échec de la copie : " + ex.Message, "OK");
+            return null;
         }
     }
 
@@ -237,8 +357,17 @@ public partial class ScoreEditPage : ContentPage
         _score.FilePath = PathEntry.Text?.Trim() ?? string.Empty;
         
         _score.ShowMetronome = MetronomeSwitch.IsToggled;
-        _score.HasMetronomeSound = HasMetronomeSoundSwitch.IsToggled;
-        if (int.TryParse(BpmEntry.Text, out int bpm)) _score.BPM = bpm;
+        
+        if (int.TryParse(BpmEntry.Text, out int bpm))
+        {
+            if (bpm < 60 || bpm > 200)
+            {
+                await this.DisplayAlertAsync("BPM Invalide", "Le tempo doit être compris entre 60 et 200 BPM.", "OK");
+                return;
+            }
+            _score.BPM = bpm;
+        }
+        
         if (int.TryParse(PreCountEntry.Text, out int preCount)) _score.PreCountMeasures = preCount;
 
         // On sauvegarde d'abord le score pour être sûr qu'il ait un Id (si nouveau)

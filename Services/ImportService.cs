@@ -5,10 +5,12 @@ namespace MusicScoreManager.Services
     public class ImportService
     {
         private readonly DatabaseService _databaseService;
+        private readonly SettingsService _settingsService;
 
         public ImportService(DatabaseService databaseService)
         {
             _databaseService = databaseService;
+            _settingsService = new SettingsService();
         }
 
         public async Task<Score?> ImportScoreAsync()
@@ -40,14 +42,52 @@ namespace MusicScoreManager.Services
                 var result = await FilePicker.Default.PickAsync(options);
                 if (result != null)
                 {
-                    // Copie en local pour sécuriser l'accès (on remplace les espaces pour éviter des bugs de chemin)
-                    var sanitizedFileName = result.FileName.Replace(" ", "_");
-                    var newFileName = $"{Guid.NewGuid()}_{sanitizedFileName}";
-                    var localFilePath = Path.Combine(FileSystem.AppDataDirectory, newFileName);
+                    var rootDir = _settingsService.ScoresRootDirectory;
+                    if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
 
-                    using var stream = await result.OpenReadAsync();
-                    using var fileStream = File.Create(localFilePath);
-                    await stream.CopyToAsync(fileStream);
+                    string finalStoredPath;
+                    bool isAlreadyInRoot = result.FullPath.StartsWith(rootDir, StringComparison.OrdinalIgnoreCase);
+
+                    if (isAlreadyInRoot)
+                    {
+                        finalStoredPath = _settingsService.GetRelativePath(result.FullPath);
+                    }
+                    else
+                    {
+                        string? action = await Application.Current!.MainPage!.DisplayActionSheetAsync(
+                            "Organisation de la bibliothèque", 
+                            "Annuler", 
+                            null, 
+                            "Copier vers la bibliothèque (Conseillé)", 
+                            "Lier le fichier original (Externe)");
+
+                        if (action == "Copier vers la bibliothèque (Conseillé)")
+                        {
+                            var sanitizedFileName = result.FileName.Replace(" ", "_");
+                            var localFilePath = Path.Combine(rootDir, sanitizedFileName);
+                            
+                            if (File.Exists(localFilePath))
+                            {
+                                var fileNameOnly = Path.GetFileNameWithoutExtension(sanitizedFileName);
+                                var extension = Path.GetExtension(sanitizedFileName);
+                                localFilePath = Path.Combine(rootDir, $"{fileNameOnly}_{DateTime.Now:yyyyMMddHHmmss}{extension}");
+                            }
+
+                            using var stream = await result.OpenReadAsync();
+                            using var fileStream = File.Create(localFilePath);
+                            await stream.CopyToAsync(fileStream);
+                            
+                            finalStoredPath = _settingsService.GetRelativePath(localFilePath);
+                        }
+                        else if (action == "Lier le fichier original (Externe)")
+                        {
+                            finalStoredPath = result.FullPath;
+                        }
+                        else
+                        {
+                            return null; // Annulation
+                        }
+                    }
 
                     var ext = Path.GetExtension(result.FileName).ToLowerInvariant();
                     var type = ext == ".pdf" ? ScoreType.PDF : ScoreType.Image;
@@ -55,7 +95,7 @@ namespace MusicScoreManager.Services
                     var score = new Score
                     {
                         Title = Path.GetFileNameWithoutExtension(result.FileName),
-                        FilePath = localFilePath,
+                        FilePath = finalStoredPath,
                         Type = type,
                         DateAdded = DateTime.Now
                     };
