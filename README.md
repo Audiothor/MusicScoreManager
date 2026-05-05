@@ -2,13 +2,18 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.0.0
+# Music Score Manager v1.0.1
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser et visualiser leurs partitions (PDF et Images) de manière efficace, particulièrement en situation de concert.
 
 ---
 
-## 🚀 Fonctionnalités Clés (v1.0.0)
+## 🚀 Fonctionnalités Clés (v1.0.1)
+
+### ⚡ Performance "Zero-Copy" (Nouveauté v1.0.1)
+- **Mise en Cache Automatique** : Les setlists sont pré-chargées en tâche de fond dans un stockage ultra-rapide.
+- **Chargement Direct** : Suppression des copies disques lors de l'ouverture d'un PDF, rendant la transition entre morceaux instantanée.
+- **Indicateur de Statut** : Visualisation en temps réel de l'état du cache (⏳/⚡) dans l'éditeur de setlist.
 
 ### 🎵 Gestion des Partitions & Stockage (Refonte v1.0)
 - **Stockage Public Unique** : Définissez vos propres répertoires pour les partitions et l'audio.

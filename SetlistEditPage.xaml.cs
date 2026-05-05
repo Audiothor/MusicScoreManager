@@ -7,6 +7,7 @@ namespace MusicScoreManager;
 public partial class SetlistEditPage : ContentPage
 {
     private readonly DatabaseService _databaseService;
+    private readonly SettingsService _settingsService;
     private Setlist _setlist;
     private ObservableCollection<OrderedScore> _orderedScores = new();
     private bool _isLoaded = false;
@@ -17,6 +18,7 @@ public partial class SetlistEditPage : ContentPage
         InitializeComponent();
         _setlist = setlist;
         _databaseService = databaseService;
+        _settingsService = new SettingsService();
 
         BindingContext = _setlist;
         SetupUI();
@@ -123,9 +125,9 @@ public partial class SetlistEditPage : ContentPage
         return border;
     }
 
-    private async void OnScoreViewClicked(object sender, EventArgs e)
+    private async void OnScoreRowTapped(object sender, TappedEventArgs e)
     {
-        if (sender is Button button && button.CommandParameter is OrderedScore orderedScore)
+        if (e.Parameter is OrderedScore orderedScore)
         {
             var allScores = _orderedScores.Select(os => os.Score).ToList();
             int index = allScores.IndexOf(orderedScore.Score);
@@ -154,6 +156,66 @@ public partial class SetlistEditPage : ContentPage
         _orderedScores = new ObservableCollection<OrderedScore>(
             scores.Select((s, index) => new OrderedScore { Score = s, DisplayOrder = index + 1, IsLocked = _isLocked }));
         ScoresCollectionView.ItemsSource = _orderedScores;
+        
+        // Lancement de la mise en cache en arrière-plan
+        _ = PrepareSetlistCacheAsync(scores);
+    }
+
+    private async Task PrepareSetlistCacheAsync(List<Score> scores)
+    {
+        try
+        {
+            MainThread.BeginInvokeOnMainThread(() => {
+                CacheStatusIcon.Text = "⏳";
+                CacheStatusText.Text = "Mise en cache...";
+            });
+
+            string cacheDir = Path.Combine(FileSystem.CacheDirectory, "SetlistCache");
+            if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
+
+            foreach (var score in scores)
+            {
+                string originalPath = _settingsService.GetAbsolutePath(score.FilePath);
+                if (File.Exists(originalPath))
+                {
+                    string ext = Path.GetExtension(originalPath);
+                    string cachePath = Path.Combine(cacheDir, $"{score.Id}{ext}");
+                    
+                    // On ne copie que si le fichier n'est pas déjà là ou s'il est plus récent
+                    if (!File.Exists(cachePath) || File.GetLastWriteTime(originalPath) > File.GetLastWriteTime(cachePath))
+                    {
+                        using var sourceStream = File.OpenRead(originalPath);
+                        using var destStream = File.Create(cachePath);
+                        await sourceStream.CopyToAsync(destStream);
+                    }
+                }
+            }
+
+            // NETTOYAGE : Supprimer du cache les fichiers qui ne sont plus dans cette setlist
+            var validCacheFiles = scores.Select(s => $"{s.Id}{Path.GetExtension(s.FilePath)}").ToList();
+            var existingFiles = Directory.GetFiles(cacheDir);
+            foreach (var file in existingFiles)
+            {
+                string fileName = Path.GetFileName(file);
+                if (!validCacheFiles.Contains(fileName))
+                {
+                    File.Delete(file);
+                }
+            }
+
+            MainThread.BeginInvokeOnMainThread(() => {
+                CacheStatusIcon.Text = "⚡";
+                CacheStatusText.Text = "Cache OK";
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Cache error: {ex.Message}");
+            MainThread.BeginInvokeOnMainThread(() => {
+                CacheStatusIcon.Text = "❌";
+                CacheStatusText.Text = "Erreur Cache";
+            });
+        }
     }
 
     private void UpdateOrderNumbers()
@@ -162,6 +224,8 @@ public partial class SetlistEditPage : ContentPage
         {
             _orderedScores[i].DisplayOrder = i + 1;
         }
+        // Mise à jour du cache si l'ordre change (optionnel mais propre)
+        _ = PrepareSetlistCacheAsync(_orderedScores.Select(os => os.Score).ToList());
     }
 
     private void OnReorderCompleted(object sender, EventArgs e)
@@ -175,12 +239,19 @@ public partial class SetlistEditPage : ContentPage
         await Navigation.PushModalAsync(selectionPage);
         
         var selectedScores = await selectionPage.SelectionTask.Task;
+        bool added = false;
         foreach (var score in selectedScores)
         {
             if (!_orderedScores.Any(os => os.Score.Id == score.Id))
             {
                 _orderedScores.Add(new OrderedScore { Score = score, DisplayOrder = _orderedScores.Count + 1 });
+                added = true;
             }
+        }
+
+        if (added)
+        {
+            _ = PrepareSetlistCacheAsync(_orderedScores.Select(os => os.Score).ToList());
         }
     }
 
@@ -190,6 +261,7 @@ public partial class SetlistEditPage : ContentPage
         {
             _orderedScores.Remove(orderedScore);
             UpdateOrderNumbers();
+            _ = PrepareSetlistCacheAsync(_orderedScores.Select(os => os.Score).ToList());
         }
     }
 

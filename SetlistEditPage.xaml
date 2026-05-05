@@ -34,12 +34,18 @@
                     </Grid>
 
                     <Label Text="Statut" TextColor="#888888" FontSize="12" Margin="0,5,0,0" />
-                    <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                    <Grid ColumnDefinitions="*, Auto, Auto" VerticalOptions="Center">
                         <HorizontalStackLayout x:Name="StatusStack" Spacing="10" Grid.Column="0">
                             <!-- Les chips seront générés dynamiquement dans le code-behind -->
                         </HorizontalStackLayout>
 
-                        <Border Grid.Column="1" 
+                        <!-- Indicateur de CACHE -->
+                        <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center" Margin="0,0,15,0">
+                            <Label x:Name="CacheStatusIcon" Text="⏳" FontSize="18" VerticalOptions="Center" />
+                            <Label x:Name="CacheStatusText" Text="Cache..." TextColor="#888888" FontSize="11" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <Border Grid.Column="2" 
                                 x:Name="LockBorder"
                                 BackgroundColor="#28A745"
                                 Padding="15,5"
@@ -104,32 +110,28 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <!-- Numéro -->
-                        <Label Grid.Column="0" 
-                               Text="{Binding DisplayOrder}"
-                               TextColor="#007ACC" 
-                               FontSize="16" 
-                               FontAttributes="Bold" 
-                               VerticalOptions="Center" />
-                        
-                        <!-- Titre -->
-                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                            <Label Text="{Binding Score.Title}" TextColor="White" FontSize="15" FontAttributes="Bold" MaxLines="1" LineBreakMode="TailTruncation" />
-                            <Label Text="{Binding Score.Type}" TextColor="#888888" FontSize="11" />
-                        </VerticalStackLayout>
+                        <!-- Zone Cliquable (Numéro + Titre) -->
+                        <Grid Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions="Auto, *" ColumnSpacing="15">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnScoreRowTapped" CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
 
-                        <!-- Bouton Voir -->
-                        <Button Grid.Column="2" 
-                                Text="👁" 
-                                BackgroundColor="#333333" 
-                                TextColor="White" 
-                                WidthRequest="45"
-                                HeightRequest="40"
-                                Padding="0"
-                                Clicked="OnScoreViewClicked" 
-                                CommandParameter="{Binding .}" />
+                            <!-- Numéro -->
+                            <Label Grid.Column="0" 
+                                   Text="{Binding DisplayOrder}"
+                                   TextColor="#007ACC" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold" 
+                                   VerticalOptions="Center" />
+                            
+                            <!-- Titre -->
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="{Binding Score.Title}" TextColor="White" FontSize="15" FontAttributes="Bold" MaxLines="1" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding Score.Type}" TextColor="#888888" FontSize="11" />
+                            </VerticalStackLayout>
+                        </Grid>
 
-                        <!-- Bouton Supprimer -->
+                        <!-- Bouton Supprimer (Reste à droite) -->
                         <Button Grid.Column="3" 
                                 Text="✕" 
                                 BackgroundColor="Transparent" 

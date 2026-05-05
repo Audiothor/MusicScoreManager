@@ -54,7 +54,7 @@ namespace MusicScoreManager.Services
                     }
                     else
                     {
-                        string? action = await Application.Current!.MainPage!.DisplayActionSheetAsync(
+                        string? action = await Shell.Current.DisplayActionSheetAsync(
                             "Organisation de la bibliothèque", 
                             "Annuler", 
                             null, 

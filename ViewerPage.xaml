@@ -10,7 +10,10 @@
 
     <Grid BackgroundColor="Black">
         <!-- MediaElement pour la lecture audio et les bips -->
-        <toolkit:MediaElement x:Name="AudioPlayer" IsVisible="False" />
+        <toolkit:MediaElement x:Name="AudioPlayer" 
+                              IsVisible="False" 
+                              ShouldShowPlaybackControls="False"
+                              ShouldKeepScreenOn="True" />
 
         <!-- L'image avec zoom (ScrollView) -->
         <ScrollView x:Name="ImageScrollView" 
@@ -107,7 +110,7 @@
                IsVisible="False" 
                HorizontalOptions="End" 
                VerticalOptions="End" 
-               Margin="10, 5" 
+               Margin="0, 0, 10, 2" 
                TextColor="White" 
                BackgroundColor="#80000000" 
                Padding="10,5" />

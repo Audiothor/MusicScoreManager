@@ -29,6 +29,7 @@ public partial class ViewerPage : ContentPage
     private bool _isAudioPlaying = false;
     private bool _isDraggingAudioSlider = false;
     private ScoreAudioFile? _selectedAudioFile;
+    private string _pdfFilePath = "current.pdf";
 
     public ViewerPage(Score score, List<Score>? setlistScores = null, int currentIndex = -1, bool isContinuous = true)
     {
@@ -92,6 +93,11 @@ public partial class ViewerPage : ContentPage
             e.Cancel = true;
             HandleEndOfScore();
         }
+        else if (e.Url != null && e.Url.StartsWith("app://musicscore/start"))
+        {
+            e.Cancel = true;
+            HandleStartOfScore();
+        }
         else if (e.Url != null && e.Url.StartsWith("app://musicscore/ready"))
         {
             e.Cancel = true;
@@ -108,6 +114,20 @@ public partial class ViewerPage : ContentPage
         try 
         {
             string fullPath = _settingsService.GetAbsolutePath(_score.FilePath);
+            
+            // OPTIMISATION : Vérifier si une version en cache existe
+            string ext = Path.GetExtension(fullPath);
+            string cachePath = Path.Combine(FileSystem.CacheDirectory, "SetlistCache", $"{_score.Id}{ext}");
+            
+            _pdfFilePath = "current.pdf"; // Par défaut
+
+            if (File.Exists(cachePath))
+            {
+                fullPath = cachePath;
+                // On utilise un chemin relatif par rapport au dossier pdfjs pour éviter les problèmes de sécurité WebView
+                _pdfFilePath = $"../SetlistCache/{_score.Id}{ext}";
+                System.Diagnostics.Debug.WriteLine($"[CACHE] Chargement DIRECT (Zero-Copy) pour {_score.Title}");
+            }
 
             if (_score.Type == ScoreType.Image)
             {
@@ -139,24 +159,15 @@ public partial class ViewerPage : ContentPage
                 
                 string pdfjsDir = Path.Combine(FileSystem.CacheDirectory, "pdfjs");
                 string viewerPath = Path.Combine(pdfjsDir, "viewer.html");
-                string tempPdfPath = Path.Combine(pdfjsDir, "current.pdf");
 
-                // Copier le fichier PDF vers le dossier cache de pdfjs pour accès direct
-                File.Copy(fullPath, tempPdfPath, true);
-
+                // PLUS DE COPIE ICI ! On utilise _pdfFilePath défini plus haut
+                
                 PdfWebView.Source = new UrlWebViewSource { Url = $"file://{viewerPath}" };
                 PdfWebView.IsVisible = true;
                 ImageTouchGrid.IsVisible = false;
 
-                // On attend que la WebView soit prête
-                await Task.Delay(300);
-                // On passe simplement le nom du fichier local
-                await PdfWebView.EvaluateJavaScriptAsync("loadPdf('current.pdf')");
-                
-                if (_currentRotation != 0)
-                {
-                    await PdfWebView.EvaluateJavaScriptAsync($"setRotation({_currentRotation})");
-                }
+                // Le chargement effectif loadPdf sera fait dans OnPdfWebViewNavigated
+                // pour garantir que le moteur viewer.html est prêt.
             }
         }
         catch (Exception ex)
@@ -177,34 +188,34 @@ public partial class ViewerPage : ContentPage
         foreach (var file in files)
         {
             string dest = Path.Combine(pdfjsDir, file);
-            try
+            
+            // OPTIMISATION : On ne copie que si le fichier n'existe pas déjà dans le cache
+            if (!File.Exists(dest))
             {
-                using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
-                using var fileStream = File.Create(dest);
-                await stream.CopyToAsync(fileStream);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error copying {file}: {ex.Message}");
+                try
+                {
+                    using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
+                    using var fileStream = File.Create(dest);
+                    await stream.CopyToAsync(fileStream);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error copying {file}: {ex.Message}");
+                }
             }
         }
     }
 
     private async void OnPdfWebViewNavigated(object sender, WebNavigatedEventArgs e)
     {
-        if (_score.Type == ScoreType.PDF && DeviceInfo.Platform == DevicePlatform.Android)
+        if (_score.Type == ScoreType.PDF && e.Result == WebNavigationResult.Success)
         {
-            if (e.Result == WebNavigationResult.Success)
+            // On charge le PDF directement avec son chemin optimisé (Zéro-Copie)
+            await PdfWebView.EvaluateJavaScriptAsync($"loadPdf('{_pdfFilePath}')");
+            
+            if (_currentRotation != 0)
             {
-                try
-                {
-                    byte[] pdfBytes = await File.ReadAllBytesAsync(_score.FilePath);
-                    string base64 = Convert.ToBase64String(pdfBytes);
-                    await PdfWebView.EvaluateJavaScriptAsync($"loadPdf('{base64}')");
-                    if (_currentRotation != 0)
-                        await PdfWebView.EvaluateJavaScriptAsync($"setRotation({_currentRotation})");
-                }
-                catch { }
+                await PdfWebView.EvaluateJavaScriptAsync($"setRotation({_currentRotation})");
             }
         }
     }
@@ -370,23 +381,26 @@ public partial class ViewerPage : ContentPage
 
     private void MetronomeTick(bool isPreCount = false)
     {
-        // Flash visuel
-        MainThread.BeginInvokeOnMainThread(() => {
-            MetronomeLight.Color = isPreCount ? Colors.Yellow : Colors.Red;
-            Task.Delay(100).ContinueWith(_ => MainThread.BeginInvokeOnMainThread(() => MetronomeLight.Color = Color.FromArgb("#333333")));
-        });
-        
+        if (!_isMetronomePlaying && !isPreCount) return;
+
+        // Flash visuel (uniquement si le métronome est visible)
+        if (_score.ShowMetronome)
+        {
+            MainThread.BeginInvokeOnMainThread(() => {
+                MetronomeLight.Color = Color.FromArgb("#007ACC");
+                Task.Delay(50).ContinueWith(_ => MainThread.BeginInvokeOnMainThread(() => MetronomeLight.Color = Color.FromArgb("#333333")));
+            });
+        }
+
         // Son
         if (_score.HasMetronomeSound)
         {
             if (isPreCount && _preCountAudioPlayer != null)
             {
-                _preCountAudioPlayer.Seek(0);
                 _preCountAudioPlayer.Play();
             }
             else if (!isPreCount && _metronomeAudioPlayer != null)
             {
-                _metronomeAudioPlayer.Seek(0);
                 _metronomeAudioPlayer.Play();
             }
         }
@@ -676,12 +690,17 @@ public partial class ViewerPage : ContentPage
 
     private async void HandleStartOfScore()
     {
-        if (_setlistScores != null && _currentIndex > 0)
+        if (_setlistScores != null && _currentIndex > 0 && _isContinuous)
         {
             _currentIndex--;
             var prevScore = _setlistScores[_currentIndex];
             await Navigation.PushAsync(new ViewerPage(prevScore, _setlistScores, _currentIndex, _isContinuous));
             Navigation.RemovePage(this);
+        }
+        else
+        {
+            // Si on est au début (ou que le mode continu est OFF), on ferme le visualiseur
+            await Navigation.PopAsync();
         }
     }
 }

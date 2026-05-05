@@ -11,15 +11,15 @@
 		<OutputType>Exe</OutputType>
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
-		<ApplicationDisplayVersion>0.3.0</ApplicationDisplayVersion>
-		<ApplicationVersion>30</ApplicationVersion>
+		<ApplicationDisplayVersion>1.0.1</ApplicationDisplayVersion>
+		<ApplicationVersion>101</ApplicationVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<!-- Branding : Icône et Splash Screen (Logo rectangulaire et large) -->
 	<ItemGroup>
-		<MauiIcon Include="Resources\AppIcon\appicon_new.png" Color="#121212" />
+		<MauiIcon Include="Resources\AppIcon\appiconfg.svg" Color="#121212" />
 		<MauiSplashScreen Include="Resources\Splash\app_splash_padded.png" Color="#121212" BaseSize="512,512" />
 	</ItemGroup>
 
