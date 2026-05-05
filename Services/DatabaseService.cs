@@ -32,6 +32,7 @@ namespace MusicScoreManager.Services
                 await db.CreateTableAsync<SetlistScore>();
                 await db.CreateTableAsync<Tag>();
                 await db.CreateTableAsync<ScoreTag>();
+                await db.CreateTableAsync<ScoreAudioFile>();
                 
                 _database = db; // On ne l'assigne qu'à la toute fin
             }
@@ -40,26 +41,28 @@ namespace MusicScoreManager.Services
                 _semaphore.Release();
             }
         }
-
+ 
         public async Task<List<Score>> GetScoresAsync()
         {
             await Init();
             var scores = await _database!.Table<Score>().ToListAsync();
-            await LoadTagsForScoresAsync(scores);
+            await LoadDetailsForScoresAsync(scores);
             return scores;
         }
-
-        private async Task LoadTagsForScoresAsync(List<Score> scores)
+ 
+        private async Task LoadDetailsForScoresAsync(List<Score> scores)
         {
             if (scores == null || scores.Count == 0 || _database == null) return;
             
             var allTags = await _database.Table<Tag>().ToListAsync();
             var allScoreTags = await _database.Table<ScoreTag>().ToListAsync();
-
+            var allAudioFiles = await _database.Table<ScoreAudioFile>().ToListAsync();
+ 
             foreach (var score in scores)
             {
                 var tagIds = allScoreTags.Where(st => st.ScoreId == score.Id).Select(st => st.TagId).ToList();
                 score.AppliedTags = allTags.Where(t => tagIds.Contains(t.Id)).ToList();
+                score.AudioFiles = allAudioFiles.Where(af => af.ScoreId == score.Id).ToList();
             }
         }
 
@@ -68,7 +71,7 @@ namespace MusicScoreManager.Services
             await Init();
             var score = await _database!.Table<Score>().Where(i => i.Id == id).FirstOrDefaultAsync();
             if (score != null)
-                await LoadTagsForScoresAsync(new List<Score> { score });
+                await LoadDetailsForScoresAsync(new List<Score> { score });
             return score;
         }
 
@@ -111,7 +114,7 @@ namespace MusicScoreManager.Services
                 queryable = queryable.Where(s => s.Title.Contains(query));
 
             var scores = await queryable.ToListAsync();
-            await LoadTagsForScoresAsync(scores);
+            await LoadDetailsForScoresAsync(scores);
 
             if (tagId.HasValue)
             {
@@ -119,6 +122,33 @@ namespace MusicScoreManager.Services
             }
 
             return scores;
+        }
+
+        // --- Audio Files ---
+        public async Task<int> SaveAudioFileAsync(ScoreAudioFile audioFile)
+        {
+            await Init();
+            if (audioFile.Id != 0)
+                return await _database!.UpdateAsync(audioFile);
+            else
+                return await _database!.InsertAsync(audioFile);
+        }
+
+        public async Task<int> DeleteAudioFileAsync(ScoreAudioFile audioFile)
+        {
+            await Init();
+            return await _database!.DeleteAsync(audioFile);
+        }
+
+        public async Task SetSelectedAudioFileAsync(int scoreId, int audioFileId)
+        {
+            await Init();
+            var audioFiles = await _database!.Table<ScoreAudioFile>().Where(af => af.ScoreId == scoreId).ToListAsync();
+            foreach (var af in audioFiles)
+            {
+                af.IsSelected = (af.Id == audioFileId);
+                await _database.UpdateAsync(af);
+            }
         }
 
         public async Task<List<Score>> GetScoresByTagAsync(int tagId)

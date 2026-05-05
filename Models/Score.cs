@@ -24,7 +24,19 @@ namespace MusicScoreManager.Models
         public int Rotation { get; set; }
         public bool IsRotationSaved { get; set; } = true;
 
+        // Metronome
+        public bool ShowMetronome { get; set; } = false;
+        public int BPM { get; set; } = 120;
+        public bool HasMetronomeSound { get; set; } = true;
+
+        // Audio
+        public bool ShowAudioPlayer { get; set; } = false;
+        public int PreCountMeasures { get; set; } = 4;
+
         [Ignore]
         public List<Tag> AppliedTags { get; set; } = new List<Tag>();
+
+        [Ignore]
+        public List<ScoreAudioFile> AudioFiles { get; set; } = new List<ScoreAudioFile>();
     }
 }

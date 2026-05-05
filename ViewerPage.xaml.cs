@@ -1,5 +1,8 @@
 using MusicScoreManager.Models;
 using MusicScoreManager.Services;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Views;
+using Plugin.Maui.Audio;
 
 namespace MusicScoreManager;
 
@@ -16,6 +19,13 @@ public partial class ViewerPage : ContentPage
     private int _currentPage = 1;
     private int _maxPages = 1;
     private int _currentRotation = 0;
+
+    private System.Threading.Timer? _metronomeTimer;
+    private IAudioPlayer? _metronomeAudioPlayer;
+    private bool _isMetronomePlaying = false;
+    private bool _isAudioPlaying = false;
+    private bool _isDraggingAudioSlider = false;
+    private ScoreAudioFile? _selectedAudioFile;
 
     public ViewerPage(Score score, List<Score>? setlistScores = null, int currentIndex = -1, bool isContinuous = true)
     {
@@ -34,10 +44,23 @@ public partial class ViewerPage : ContentPage
 
         LoadContentAsync();
         SetupMenuUI();
+        // Le métronome et l'audio sont initialisés en différé dans OnAppearing
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        
+        // Optimisation : on laisse l'interface et la partition se charger d'abord
+        await Task.Delay(500);
+        InitializeMetronome();
+        InitializeAudio();
     }
 
     private void SetupMenuUI()
     {
+        MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
+        MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer;
         SaveRotationSwitch.IsToggled = _score.IsRotationSaved;
         UpdateRotateButtonText();
     }
@@ -225,10 +248,205 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private async void InitializeMetronome()
+    {
+        MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+        MetronomeOverlay.IsVisible = _score.ShowMetronome;
+        
+        // Initialiser la source audio via Plugin.Maui.Audio pour un son à faible latence et sans craquement
+        try 
+        {
+            var stream = await FileSystem.OpenAppPackageFileAsync("click.wav");
+            _metronomeAudioPlayer = AudioManager.Current.CreatePlayer(stream);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Erreur audio: {ex.Message}");
+        }
+        
+        if (_score.ShowMetronome) StartMetronome();
+    }
+
+    private void StartMetronome()
+    {
+        StopMetronome();
+        if (_score.BPM <= 0) return;
+
+        int intervalMs = (int)(60000.0 / _score.BPM);
+        _metronomeTimer = new System.Threading.Timer(MetronomeTick, null, 0, intervalMs);
+        _isMetronomePlaying = true;
+    }
+
+    private void MetronomeTick(object? state)
+    {
+        // Flash visuel sur le thread principal
+        MainThread.BeginInvokeOnMainThread(() => {
+            MetronomeLight.Color = Colors.Red;
+            Task.Delay(100).ContinueWith(_ => MainThread.BeginInvokeOnMainThread(() => MetronomeLight.Color = Color.FromArgb("#333333")));
+        });
+        
+        // Son à faible latence sur un thread d'arrière-plan
+        if (_score.HasMetronomeSound && _metronomeAudioPlayer != null)
+        {
+            _metronomeAudioPlayer.Seek(0);
+            _metronomeAudioPlayer.Play();
+        }
+    }
+
+    private void StopMetronome()
+    {
+        if (_metronomeTimer != null)
+        {
+            _metronomeTimer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
+            _metronomeTimer.Dispose();
+            _metronomeTimer = null;
+        }
+        _isMetronomePlaying = false;
+        MainThread.BeginInvokeOnMainThread(() => MetronomeLight.Color = Color.FromArgb("#333333"));
+    }
+
+    private async void OnMetronomeOverlayTapped(object sender, EventArgs e)
+    {
+        string soundOption = _score.HasMetronomeSound ? "Couper le son" : "Activer le son";
+        string action = await DisplayActionSheet("Paramètres du Métronome", "Annuler", null, "Changer le BPM", soundOption);
+
+        if (action == "Changer le BPM")
+        {
+            string newBpmStr = await DisplayPromptAsync("Nouveau BPM", "Entrez le nouveau tempo :", keyboard: Keyboard.Numeric, initialValue: _score.BPM.ToString());
+            if (int.TryParse(newBpmStr, out int newBpm) && newBpm > 0)
+            {
+                _score.BPM = newBpm;
+                MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+                if (_isMetronomePlaying) StartMetronome(); // Redémarre avec le nouvel intervalle
+                await _databaseService.SaveScoreAsync(_score);
+            }
+        }
+        else if (action == "Couper le son" || action == "Activer le son")
+        {
+            _score.HasMetronomeSound = (action == "Activer le son");
+            await _databaseService.SaveScoreAsync(_score);
+        }
+    }
+
+    private bool _isAudioInitialized = false;
+
+    private void InitializeAudio()
+    {
+        if (_isAudioInitialized) return;
+        _isAudioInitialized = true;
+
+        _selectedAudioFile = _score.AudioFiles.FirstOrDefault(af => af.IsSelected);
+        AudioPlayerOverlay.IsVisible = _score.ShowAudioPlayer && _selectedAudioFile != null;
+        MenuAudioSwitch.IsEnabled = _selectedAudioFile != null;
+
+        if (_selectedAudioFile != null)
+        {
+            AudioPlayer.Source = MediaSource.FromFile(_selectedAudioFile.FilePath);
+            AudioPlayer.PositionChanged += OnAudioPositionChanged;
+            
+            // Écouter PropertyChanged car Duration peut ne pas être prêt immédiatement à MediaOpened
+            AudioPlayer.PropertyChanged += (s, e) => {
+                if (e.PropertyName == nameof(CommunityToolkit.Maui.Views.MediaElement.Duration))
+                {
+                    MainThread.BeginInvokeOnMainThread(() => {
+                        AudioTotalTimeLabel.Text = AudioPlayer.Duration.ToString(@"m\:ss");
+                        AudioSlider.Maximum = AudioPlayer.Duration.TotalSeconds;
+                    });
+                }
+            };
+        }
+    }
+
+    private void OnAudioPositionChanged(object? sender, MediaPositionChangedEventArgs e)
+    {
+        if (!_isDraggingAudioSlider)
+        {
+            MainThread.BeginInvokeOnMainThread(() => {
+                AudioCurrentTimeLabel.Text = e.Position.ToString(@"m\:ss");
+                AudioSlider.Value = e.Position.TotalSeconds;
+            });
+        }
+    }
+
+    private async void OnAudioPlayPauseClicked(object sender, EventArgs e)
+    {
+        if (_isAudioPlaying)
+        {
+            AudioPlayer.Pause();
+            AudioPlayBtn.Text = "▶";
+            _isAudioPlaying = false;
+        }
+        else
+        {
+            // Pré-compte si défini
+            if (_score.PreCountMeasures > 0)
+            {
+                AudioPlayBtn.IsEnabled = false;
+                int totalBeeps = _score.PreCountMeasures; // On assume 4 temps par mesure pour l'instant
+                for (int i = 0; i < totalBeeps; i++)
+                {
+                    MetronomeLight.Color = Colors.Yellow;
+                    
+                    if (_score.HasMetronomeSound && _metronomeAudioPlayer != null)
+                    {
+                        _metronomeAudioPlayer.Seek(0);
+                        _metronomeAudioPlayer.Play();
+                    }
+
+                    await Task.Delay(100);
+                    MetronomeLight.Color = Color.FromArgb("#333333");
+                    await Task.Delay((int)(60000.0 / _score.BPM) - 100);
+                }
+                AudioPlayBtn.IsEnabled = true;
+            }
+
+            AudioPlayer.Play();
+            AudioPlayBtn.Text = "⏸";
+            _isAudioPlaying = true;
+        }
+    }
+
+    private void OnAudioToStartClicked(object sender, EventArgs e) => AudioPlayer.SeekTo(TimeSpan.Zero);
+    private void OnAudioToEndClicked(object sender, EventArgs e) => AudioPlayer.SeekTo(AudioPlayer.Duration);
+    
+    private void OnAudioSliderDragStarted(object sender, EventArgs e)
+    {
+        _isDraggingAudioSlider = true;
+    }
+
+    private void OnAudioSliderValueChanged(object sender, ValueChangedEventArgs e)
+    {
+        if (_isDraggingAudioSlider)
+        {
+            // Mettre à jour l'étiquette pendant le déplacement manuel du slider
+            AudioCurrentTimeLabel.Text = TimeSpan.FromSeconds(e.NewValue).ToString(@"m\:ss");
+        }
+    }
+
+    private void OnAudioSliderDragCompleted(object sender, EventArgs e)
+    {
+        _isDraggingAudioSlider = false;
+        AudioPlayer.SeekTo(TimeSpan.FromSeconds(AudioSlider.Value));
+    }
+
+    private async void OnMenuMetronomeToggled(object sender, ToggledEventArgs e)
+    {
+        _score.ShowMetronome = e.Value;
+        MetronomeOverlay.IsVisible = e.Value;
+        if (e.Value) StartMetronome(); else StopMetronome();
+        await _databaseService.SaveScoreAsync(_score);
+    }
+
+    private async void OnMenuAudioToggled(object sender, ToggledEventArgs e)
+    {
+        _score.ShowAudioPlayer = e.Value;
+        AudioPlayerOverlay.IsVisible = e.Value && _selectedAudioFile != null;
+        await _databaseService.SaveScoreAsync(_score);
+    }
+
     private void ShowMenu()
     {
         MenuTitleLabel.Text = _score.Title;
-        MenuTypeLabel.Text = _score.Type.ToString();
         CentralMenuOverlay.IsVisible = true;
     }
 
@@ -272,22 +490,6 @@ public partial class ViewerPage : ContentPage
         await _databaseService.SaveScoreAsync(_score);
     }
 
-    private async void OnGoToPageClicked(object sender, EventArgs e)
-    {
-        CentralMenuOverlay.IsVisible = false;
-        string result = await DisplayPromptAsync("Navigation", $"Entrez un numéro de page (1 - {_maxPages}) :", keyboard: Keyboard.Numeric);
-        if (int.TryParse(result, out int pageNum))
-        {
-            if (pageNum >= 1 && pageNum <= _maxPages)
-            {
-                if (_score.Type == ScoreType.PDF)
-                {
-                    await PdfWebView.EvaluateJavaScriptAsync($"goToPage({pageNum})");
-                }
-            }
-        }
-    }
-
     private async void OnBackClicked(object sender, EventArgs e)
     {
         await Navigation.PopAsync();
@@ -315,6 +517,37 @@ public partial class ViewerPage : ContentPage
     }
 
     private void OnCenterTapped(object sender, EventArgs e) => ShowMenu();
+
+    private async void OnGoToPageClicked(object sender, EventArgs e)
+    {
+        string result = await DisplayPromptAsync("Aller à la page", $"Entrez un numéro de page (1-{_maxPages})", "OK", "Annuler", initialValue: _currentPage.ToString(), keyboard: Keyboard.Numeric);
+        if (int.TryParse(result, out int pageNum))
+        {
+            await GoToPage(pageNum);
+            CentralMenuOverlay.IsVisible = false;
+        }
+    }
+
+    private async Task GoToPage(int pageNum)
+    {
+        if (pageNum >= 1 && pageNum <= _maxPages)
+        {
+            _currentPage = pageNum;
+            if (_score.Type == ScoreType.PDF)
+            {
+                await PdfWebView.EvaluateJavaScriptAsync($"goToPage({pageNum})");
+            }
+            UpdatePageIndicator();
+        }
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        StopMetronome();
+        AudioPlayer.Stop();
+        AudioPlayer.Source = null; // Libérer le fichier
+    }
 
     private async void HandleEndOfScore()
     {

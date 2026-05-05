@@ -58,7 +58,7 @@
 </head>
 <body>
     <div id="left-zone" class="tap-zone" onclick="prevPage(event)" ontouchend="prevPage(event)"></div>
-    <div id="center-zone" class="tap-zone" onclick="openMenu(event)" ontouchend="openMenu(event)"></div>
+    <div id="center-zone" class="tap-zone" onclick="handleCenterTap(event)"></div>
     <div id="right-zone" class="tap-zone" onclick="nextPage(event)" ontouchend="nextPage(event)"></div>
     <div id="bottom-zone" class="tap-zone" onclick="onBottomZoneTapped(event)" ontouchend="onBottomZoneTapped(event)"></div>
 
@@ -153,6 +153,16 @@
             }
         }
 
+        let lastTap = 0;
+        function handleCenterTap(e) {
+            const now = new Date().getTime();
+            const timesince = now - lastTap;
+            if ((timesince < 300) && (timesince > 0)) {
+                openMenu(e);
+            }
+            lastTap = now;
+        }
+
         function openMenu(e) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
             window.location.href = 'app://musicscore/menu?max=' + (pdfDoc ? pdfDoc.numPages : 1) + '&current=' + pageNum;
@@ -160,8 +170,8 @@
 
         function onBottomZoneTapped(e) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
-            // Placeholder pour les annotations futures
-            console.log("Bottom zone tapped - Annotations mode coming soon");
+            // Réservé pour les annotations
+            console.log("Bottom zone - Reserved for annotations");
         }
     </script>
 </body>

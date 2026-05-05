@@ -19,19 +19,33 @@ public partial class ScoreEditPage : ContentPage
         TitleEntry.Text = _score.Title;
         PathEntry.Text = _score.FilePath;
         
+        MetronomeSwitch.IsToggled = _score.ShowMetronome;
+        HasMetronomeSoundSwitch.IsToggled = _score.HasMetronomeSound;
+        BpmEntry.Text = _score.BPM.ToString();
+        BpmStepper.Value = _score.BPM;
+        PreCountEntry.Text = _score.PreCountMeasures.ToString();
+        PreCountStepper.Value = _score.PreCountMeasures;
+
+        BpmStepper.ValueChanged += (s, e) => BpmEntry.Text = ((int)e.NewValue).ToString();
+        BpmEntry.TextChanged += (s, e) => { if (int.TryParse(e.NewTextValue, out int val)) BpmStepper.Value = val; };
+
+        PreCountStepper.ValueChanged += (s, e) => PreCountEntry.Text = ((int)e.NewValue).ToString();
+        PreCountEntry.TextChanged += (s, e) => { if (int.TryParse(e.NewTextValue, out int val)) PreCountStepper.Value = val; };
+
         if (_score.AppliedTags != null)
         {
             _selectedTagIds = _score.AppliedTags.Select(t => t.Id).ToList();
         }
 
-        LoadTagsAsync();
+        LoadDataAsync();
     }
 
-    private async void LoadTagsAsync()
+    private async void LoadDataAsync()
     {
         _allTags = await _databaseService.GetTagsAsync();
         RefreshSelectedTagsUI();
         RefreshAllTagsPickerUI();
+        RefreshAudioFilesUI();
     }
 
     private void RefreshSelectedTagsUI()
@@ -115,6 +129,97 @@ public partial class ScoreEditPage : ContentPage
         RefreshAllTagsPickerUI(e.NewTextValue);
     }
 
+    private void RefreshAudioFilesUI()
+    {
+        AudioFilesList.Children.Clear();
+        foreach (var af in _score.AudioFiles)
+        {
+            var grid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition { Width = GridLength.Auto }, new ColumnDefinition { Width = GridLength.Star }, new ColumnDefinition { Width = GridLength.Auto } }, ColumnSpacing = 10 };
+            
+            var checkbox = new CheckBox { IsChecked = af.IsSelected, Color = Color.FromArgb("#007ACC"), VerticalOptions = LayoutOptions.Center };
+            checkbox.CheckedChanged += (s, e) =>
+            {
+                if (e.Value)
+                {
+                    // Décocher les autres
+                    foreach (var other in _score.AudioFiles.Where(x => x != af))
+                    {
+                        other.IsSelected = false;
+                    }
+                    af.IsSelected = true;
+                    RefreshAudioFilesUI();
+                }
+                else
+                {
+                    af.IsSelected = false;
+                }
+            };
+
+            var label = new Label { Text = af.FileName, TextColor = Colors.White, VerticalOptions = LayoutOptions.Center, LineBreakMode = LineBreakMode.TailTruncation };
+            
+            var deleteBtn = new Button { Text = "✕", BackgroundColor = Colors.Transparent, TextColor = Colors.Red, WidthRequest = 40, HeightRequest = 40, VerticalOptions = LayoutOptions.Center };
+            deleteBtn.Clicked += (s, e) =>
+            {
+                _score.AudioFiles.Remove(af);
+                RefreshAudioFilesUI();
+            };
+
+            grid.Children.Add(checkbox);
+            Grid.SetColumn(checkbox, 0);
+            grid.Children.Add(label);
+            Grid.SetColumn(label, 1);
+            grid.Children.Add(deleteBtn);
+            Grid.SetColumn(deleteBtn, 2);
+
+            AudioFilesList.Children.Add(grid);
+        }
+    }
+
+    private async void OnAddAudioClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            var customFileType = new FilePickerFileType(
+                new Dictionary<DevicePlatform, IEnumerable<string>>
+                {
+                    { DevicePlatform.iOS, new[] { "public.audio" } },
+                    { DevicePlatform.Android, new[] { "audio/*" } },
+                    { DevicePlatform.WinUI, new[] { ".mp3", ".wav", ".aif", ".aiff" } },
+                });
+
+            var result = await FilePicker.Default.PickAsync(new PickOptions
+            {
+                PickerTitle = "Sélectionnez un fichier audio",
+                FileTypes = customFileType
+            });
+
+            if (result != null)
+            {
+                var sanitizedFileName = result.FileName.Replace(" ", "_");
+                var newFileName = $"{Guid.NewGuid()}_{sanitizedFileName}";
+                var localFilePath = Path.Combine(FileSystem.AppDataDirectory, newFileName);
+
+                using var stream = await result.OpenReadAsync();
+                using var fileStream = File.Create(localFilePath);
+                await stream.CopyToAsync(fileStream);
+
+                _score.AudioFiles.Add(new ScoreAudioFile
+                {
+                    ScoreId = _score.Id,
+                    FileName = result.FileName,
+                    FilePath = localFilePath,
+                    IsSelected = _score.AudioFiles.Count == 0 // Sélectionner si c'est le premier
+                });
+
+                RefreshAudioFilesUI();
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Erreur", "Impossible d'ajouter le fichier audio: " + ex.Message, "OK");
+        }
+    }
+
     private async void OnCancelClicked(object sender, EventArgs e)
     {
         await Navigation.PopAsync();
@@ -130,12 +235,36 @@ public partial class ScoreEditPage : ContentPage
 
         _score.Title = TitleEntry.Text.Trim();
         _score.FilePath = PathEntry.Text?.Trim() ?? string.Empty;
+        
+        _score.ShowMetronome = MetronomeSwitch.IsToggled;
+        _score.HasMetronomeSound = HasMetronomeSoundSwitch.IsToggled;
+        if (int.TryParse(BpmEntry.Text, out int bpm)) _score.BPM = bpm;
+        if (int.TryParse(PreCountEntry.Text, out int preCount)) _score.PreCountMeasures = preCount;
 
         // On sauvegarde d'abord le score pour être sûr qu'il ait un Id (si nouveau)
         await _databaseService.SaveScoreAsync(_score);
         
         // Puis on met à jour les tags
         await _databaseService.UpdateScoreTagsAsync(_score.Id, _selectedTagIds);
+
+        // Sauvegarde des fichiers audio associés
+        // On commence par supprimer les anciens liens en base
+        // Note: Dans une version plus propre, on comparerait pour ne pas tout supprimer/réinsérer
+        // Mais ici on va faire simple :
+        var existingAudio = await _databaseService.GetScoreAsync(_score.Id);
+        if (existingAudio != null)
+        {
+            foreach (var af in existingAudio.AudioFiles)
+            {
+                await _databaseService.DeleteAudioFileAsync(af);
+            }
+        }
+
+        foreach (var af in _score.AudioFiles)
+        {
+            af.ScoreId = _score.Id;
+            await _databaseService.SaveAudioFileAsync(af);
+        }
 
         await Navigation.PopAsync();
     }

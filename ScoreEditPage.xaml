@@ -55,6 +55,50 @@
                             Clicked="OnAddTagClicked" />
                 </FlexLayout>
 
+                <BoxView HeightRequest="1" Color="#333333" Margin="0,10" />
+
+                <!-- SECTION MÉTRONOME -->
+                <Label Text="Métronome" TextColor="White" FontSize="18" FontAttributes="Bold" />
+                
+                <Grid ColumnDefinitions="*, Auto">
+                    <Label Text="Activer par défaut sur cette partition" TextColor="#AAAAAA" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" x:Name="MetronomeSwitch" OnColor="#007ACC" ThumbColor="White" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*, Auto" Margin="0,5,0,0">
+                    <Label Text="Jouer le son du métronome" TextColor="#AAAAAA" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" x:Name="HasMetronomeSoundSwitch" OnColor="#007ACC" ThumbColor="White" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*, Auto">
+                    <Label Text="Tempo (BPM)" TextColor="#AAAAAA" VerticalOptions="Center" />
+                    <HorizontalStackLayout Grid.Column="1" Spacing="10">
+                        <Entry x:Name="BpmEntry" Text="120" Keyboard="Numeric" WidthRequest="80" TextColor="White" BackgroundColor="#1E1E1E" HorizontalTextAlignment="Center" />
+                        <Stepper x:Name="BpmStepper" Minimum="40" Maximum="240" Increment="1" Value="120" />
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <BoxView HeightRequest="1" Color="#333333" Margin="0,10" />
+
+                <!-- SECTION AUDIO -->
+                <Label Text="Fichiers Audio" TextColor="White" FontSize="18" FontAttributes="Bold" />
+                
+                <Label Text="Pré-compte (Mesures)" TextColor="#AAAAAA" />
+                <HorizontalStackLayout Spacing="10">
+                    <Entry x:Name="PreCountEntry" Text="4" Keyboard="Numeric" WidthRequest="60" TextColor="White" BackgroundColor="#1E1E1E" HorizontalTextAlignment="Center" />
+                    <Stepper x:Name="PreCountStepper" Minimum="0" Maximum="8" Increment="1" Value="4" />
+                </HorizontalStackLayout>
+
+                <VerticalStackLayout x:Name="AudioFilesList" Spacing="10">
+                    <!-- Liste des fichiers audio générée dynamiquement -->
+                </VerticalStackLayout>
+
+                <Button Text="Ajouter un fichier audio (.mp3, .wav, .aiff)" 
+                        BackgroundColor="#333333" 
+                        TextColor="White" 
+                        HorizontalOptions="Start"
+                        Clicked="OnAddAudioClicked" />
+
                 <Grid ColumnDefinitions="*, *" ColumnSpacing="15" Margin="0,20,0,0">
                     <Button Grid.Column="0"
                             Text="Annuler" 
