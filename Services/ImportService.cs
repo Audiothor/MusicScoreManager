@@ -55,29 +55,18 @@ namespace MusicScoreManager.Services
                     {
                         try 
                         {
-                            // On énumère tous les fichiers pour faire une comparaison de nom insensible à la casse
-                            // C'est plus lent mais beaucoup plus fiable sur Android/SD Card
                             var fileInfoSource = new FileInfo(result.FullPath);
                             long sourceLength = fileInfoSource.Length;
                             string targetFileName = result.FileName;
 
-                            var allFiles = Directory.EnumerateFiles(rootDir, "*", SearchOption.AllDirectories);
-                            foreach (var potentialPath in allFiles)
+                            string? foundPath = FindFileRecursively(rootDir, targetFileName, sourceLength);
+                            if (foundPath != null)
                             {
-                                string currentFileName = Path.GetFileName(potentialPath);
-                                if (currentFileName.Equals(targetFileName, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    var fileInfoDest = new FileInfo(potentialPath);
-                                    if (sourceLength == fileInfoDest.Length)
-                                    {
-                                        isAlreadyInRoot = true;
-                                        result = new FileResult(potentialPath);
-                                        break;
-                                    }
-                                }
+                                isAlreadyInRoot = true;
+                                result = new FileResult(foundPath);
                             }
                         }
-                        catch { /* Ignore les erreurs d'accès */ }
+                        catch { /* Ignore */ }
                     }
 
                     if (isAlreadyInRoot)
@@ -163,6 +152,32 @@ namespace MusicScoreManager.Services
                     return status;
                 return await Permissions.RequestAsync<Permissions.StorageRead>();
             }
+        private string? FindFileRecursively(string dir, string fileName, long size)
+        {
+            try
+            {
+                // Vérifier les fichiers du dossier actuel
+                foreach (var file in Directory.EnumerateFiles(dir))
+                {
+                    if (Path.GetFileName(file).Equals(fileName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        try
+                        {
+                            if (new FileInfo(file).Length == size) return file;
+                        }
+                        catch { }
+                    }
+                }
+
+                // Explorer les sous-dossiers
+                foreach (var subDir in Directory.EnumerateDirectories(dir))
+                {
+                    var found = FindFileRecursively(subDir, fileName, size);
+                    if (found != null) return found;
+                }
+            }
+            catch { /* Dossier inaccessible, on passe au suivant */ }
+            return null;
         }
     }
 }

@@ -232,26 +232,15 @@ public partial class ScoreEditPage : ContentPage
                 {
                     try 
                     {
-                        // On énumère tous les fichiers pour faire une comparaison de nom insensible à la casse
-                        // Plus fiable sur Android/SD Card
                         var fileInfoSource = new FileInfo(result.FullPath);
                         long sourceLength = fileInfoSource.Length;
                         string targetFileName = result.FileName;
 
-                        var allFiles = Directory.EnumerateFiles(rootDir, "*", SearchOption.AllDirectories);
-                        foreach (var potentialPath in allFiles)
+                        string? foundPath = FindFileRecursively(rootDir, targetFileName, sourceLength);
+                        if (foundPath != null)
                         {
-                            string currentFileName = Path.GetFileName(potentialPath);
-                            if (currentFileName.Equals(targetFileName, StringComparison.OrdinalIgnoreCase))
-                            {
-                                var fileInfoDest = new FileInfo(potentialPath);
-                                if (sourceLength == fileInfoDest.Length)
-                                {
-                                    isAlreadyInRoot = true;
-                                    result = new FileResult(potentialPath);
-                                    break;
-                                }
-                            }
+                            isAlreadyInRoot = true;
+                            result = new FileResult(foundPath);
                         }
                     }
                     catch { /* Ignore */ }
@@ -428,5 +417,31 @@ public partial class ScoreEditPage : ContentPage
         }
 
         await Navigation.PopAsync();
+    }
+        private string? FindFileRecursively(string dir, string fileName, long size)
+        {
+            try
+            {
+                foreach (var file in Directory.EnumerateFiles(dir))
+                {
+                    if (Path.GetFileName(file).Equals(fileName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        try
+                        {
+                            if (new FileInfo(file).Length == size) return file;
+                        }
+                        catch { }
+                    }
+                }
+
+                foreach (var subDir in Directory.EnumerateDirectories(dir))
+                {
+                    var found = FindFileRecursively(subDir, fileName, size);
+                    if (found != null) return found;
+                }
+            }
+            catch { }
+            return null;
+        }
     }
 }
