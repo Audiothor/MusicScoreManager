@@ -5,47 +5,67 @@
              BackgroundColor="#121212"
              Title="Paramètres Application">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="20" Padding="20">
-            <Label Text="Bibliothèque" TextColor="#FF3366" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0" />
-            
-            <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header personnalisé avec bouton Retour -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
+            <Button Grid.Column="0" 
+                    Text="← Retour" 
+                    BackgroundColor="Transparent" 
+                    TextColor="#007ACC" 
+                    FontAttributes="Bold"
+                    Clicked="OnBackClicked" />
+            <Label Grid.Column="1" 
+                   Text="Paramètres Application" 
+                   TextColor="White" 
+                   FontSize="18" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center"
+                   Margin="0,0,80,0" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20" Padding="20">
+                <Label Text="Bibliothèque" TextColor="#FF3366" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0" />
                 
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="Répertoire des partitions (PDF, Images)" TextColor="White" FontAttributes="Bold" />
-                    <Label x:Name="ScoresPathLabel" Text="Chemin actuel" TextColor="#888888" FontSize="12" LineBreakMode="CharacterWrap" />
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
                     
-                    <Button Text="Changer le répertoire" 
-                            Clicked="OnChangeScoresPathClicked"
-                            BackgroundColor="#2C2C2C" 
-                            TextColor="White"
-                            Margin="0,10,0,0" />
-                </VerticalStackLayout>
-            </Border>
-
-            <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="Répertoire des fichiers audio (MP3, WAV, AIF)" TextColor="White" FontAttributes="Bold" />
-                    <Label x:Name="AudioPathLabel" Text="Chemin actuel" TextColor="#888888" FontSize="12" LineBreakMode="CharacterWrap" />
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Répertoire des partitions (PDF, Images)" TextColor="White" FontAttributes="Bold" />
+                        <Label x:Name="ScoresPathLabel" Text="Chemin actuel" TextColor="#888888" FontSize="12" LineBreakMode="CharacterWrap" />
+                        
+                        <Button Text="Changer le répertoire" 
+                                Clicked="OnChangeScoresPathClicked"
+                                BackgroundColor="#2C2C2C" 
+                                TextColor="White"
+                                Margin="0,10,0,0" />
+                    </VerticalStackLayout>
+                </Border>
+    
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
                     
-                    <Button Text="Changer le répertoire" 
-                            Clicked="OnChangeAudioPathClicked"
-                            BackgroundColor="#2C2C2C" 
-                            TextColor="White"
-                            Margin="0,10,0,0" />
-                </VerticalStackLayout>
-            </Border>
-
-            <Label Text="Note: Sur Android, l'utilisation d'un dossier public permet d'accéder aux fichiers depuis un PC (USB). Si vous changez le répertoire, assurez-vous d'y déplacer manuellement vos fichiers." 
-                   TextColor="#888888" FontSize="12" />
-
-        </VerticalStackLayout>
-    </ScrollView>
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Répertoire des fichiers audio (MP3, WAV, AIF)" TextColor="White" FontAttributes="Bold" />
+                        <Label x:Name="AudioPathLabel" Text="Chemin actuel" TextColor="#888888" FontSize="12" LineBreakMode="CharacterWrap" />
+                        
+                        <Button Text="Changer le répertoire" 
+                                Clicked="OnChangeAudioPathClicked"
+                                BackgroundColor="#2C2C2C" 
+                                TextColor="White"
+                                Margin="0,10,0,0" />
+                    </VerticalStackLayout>
+                </Border>
+    
+                <Label Text="Note: Sur Android, l'utilisation d'un dossier public permet d'accéder aux fichiers depuis un PC (USB). Si vous changez le répertoire, assurez-vous d'y déplacer manuellement vos fichiers." 
+                       TextColor="#888888" FontSize="12" />
+    
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

@@ -20,6 +20,11 @@ public partial class SettingsAppPage : ContentPage
         AudioPathLabel.Text = _settingsService.AudioRootDirectory;
     }
 
+    private async void OnBackClicked(object sender, EventArgs e)
+    {
+        await Navigation.PopAsync();
+    }
+
     private async void OnChangeScoresPathClicked(object sender, EventArgs e)
     {
         var result = await FolderPicker.Default.PickAsync(_settingsService.ScoresRootDirectory, default);
