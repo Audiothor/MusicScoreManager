@@ -115,7 +115,11 @@
                         HorizontalOptions="Fill" 
                         VerticalOptions="Fill" 
                         ZIndex="10"
-                        InputTransparent="True" />
+                        InputTransparent="False">
+            <AbsoluteLayout.GestureRecognizers>
+                <DropGestureRecognizer Drop="OnStickerDrop" AllowDrop="True" />
+            </AbsoluteLayout.GestureRecognizers>
+        </AbsoluteLayout>
 
         <!-- Sélecteur de Stickers (S'affiche au-dessus de la barre) -->
         <Border x:Name="StickerPickerOverlay"
@@ -168,11 +172,12 @@
                                     Margin="5" BackgroundColor="#404040" 
                                     StrokeShape="RoundRectangle 8">
                                 <Border.GestureRecognizers>
-                                    <PanGestureRecognizer PanUpdated="OnStickerPickerPanUpdated" />
+                                    <DragGestureRecognizer DragStarting="OnStickerDragStarting" />
                                 </Border.GestureRecognizers>
                                 <Label Text="{Binding .}" 
                                        TextColor="White" 
                                        FontSize="28" 
+                                       InputTransparent="True"
                                        HorizontalOptions="Center" 
                                        VerticalOptions="Center" />
                             </Border>

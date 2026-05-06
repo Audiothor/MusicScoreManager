@@ -871,77 +871,41 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private Label? _ghostSticker = null;
-    private void OnStickerPickerPanUpdated(object? sender, PanUpdatedEventArgs e)
+    private void OnStickerDragStarting(object? sender, DragStartingEventArgs e)
     {
-        if (sender is not View view || view.BindingContext is not string sticker) return;
-
-        switch (e.StatusType)
+        if (sender is View view && view.BindingContext is string sticker)
         {
-            case GestureStatus.Started:
-                _ghostSticker = new Label
-                {
-                    Text = sticker,
-                    TextColor = Colors.White,
-                    FontSize = 30,
-                    ZIndex = 100,
-                    InputTransparent = true,
-                    HorizontalTextAlignment = TextAlignment.Center,
-                    VerticalTextAlignment = TextAlignment.Center
-                };
-                
-                AbsoluteLayout.SetLayoutFlags(_ghostSticker, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
+            e.Data.Properties.Add("Sticker", sticker);
+            // On masque le sélecteur pendant le drag
+            StickerPickerOverlay.IsVisible = false;
+        }
+    }
 
-                // On l'ajoute au conteneur global pour qu'il puisse sortir du menu
-                AnnotationsContainer.InputTransparent = false;
-                AnnotationsContainer.Children.Add(_ghostSticker);
-                break;
+    private async void OnStickerDrop(object? sender, DropEventArgs e)
+    {
+        if (e.Data.Properties.TryGetValue("Sticker", out var stickerObj) && stickerObj is string sticker)
+        {
+            var position = e.GetPosition(AnnotationsContainer);
+            if (position == null) return;
 
-            case GestureStatus.Running:
-                if (_ghostSticker == null) return;
+            // Calculer les coordonnées relatives (0.0 à 1.0)
+            double relX = position.Value.X / AnnotationsContainer.Width;
+            double relY = position.Value.Y / AnnotationsContainer.Height;
 
-                // On calcule le point de départ au milieu de l'écran horizontalement
-                // et au niveau du menu verticalement
-                double centerX = AnnotationsContainer.Width / 2;
-                double menuY = AnnotationsContainer.Height - 150 + StickerPickerOverlay.TranslationY;
-                
-                // On applique le mouvement total depuis ce point
-                double finalX = centerX + e.TotalX;
-                double finalY = menuY + e.TotalY;
-                
-                AbsoluteLayout.SetLayoutBounds(_ghostSticker, new Rect(finalX - 30, finalY - 30, 60, 60));
-                break;
+            var annotation = new Annotation
+            {
+                ScoreId = _score.Id,
+                Type = AnnotationType.Sticker,
+                Content = sticker,
+                X = relX,
+                Y = relY,
+                Scale = 1.0,
+                PageNumber = _currentPage
+            };
 
-            case GestureStatus.Completed:
-            case GestureStatus.Canceled:
-                if (_ghostSticker == null) return;
-
-                // Calculer la position relative finale
-                var bounds = AbsoluteLayout.GetLayoutBounds(_ghostSticker);
-                double relX = bounds.X / AnnotationsContainer.Width;
-                double relY = bounds.Y / AnnotationsContainer.Height;
-
-                var annotation = new Annotation
-                {
-                    ScoreId = _score.Id,
-                    Type = AnnotationType.Sticker,
-                    Content = sticker,
-                    X = relX,
-                    Y = relY,
-                    Scale = 1.0,
-                    PageNumber = _currentPage
-                };
-
-                _databaseService.SaveAnnotationAsync(annotation).ContinueWith(_ => {
-                    MainThread.BeginInvokeOnMainThread(() => {
-                        _annotations.Add(annotation);
-                        AnnotationsContainer.Children.Remove(_ghostSticker);
-                        AnnotationsContainer.InputTransparent = true;
-                        _ghostSticker = null;
-                        RenderAnnotations();
-                    });
-                });
-                break;
+            await _databaseService.SaveAnnotationAsync(annotation);
+            _annotations.Add(annotation);
+            RenderAnnotations();
         }
     }
 
