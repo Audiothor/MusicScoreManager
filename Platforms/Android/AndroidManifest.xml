@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <!-- Permissions pour lire les partitions -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Permissions pour lire les partitions et l'audio partout sur Android -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     
-    <application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true" android:usesCleartextTraffic="true" android:label="MusicScoreManager">
+    <application android:allowBackup="true" 
+                 android:icon="@mipmap/appicon" 
+                 android:roundIcon="@mipmap/appicon_round" 
+                 android:supportsRtl="true" 
+                 android:usesCleartextTraffic="true" 
+                 android:label="MusicScoreManager"
+                 android:requestLegacyExternalStorage="true">
     </application>
 </manifest>

@@ -55,6 +55,7 @@ public partial class ViewerPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        System.Diagnostics.Debug.WriteLine("[Viewer] OnAppearing appelé.");
 
         // Optimisation : on laisse l'interface et la partition se charger d'abord
         await Task.Delay(500);
@@ -109,74 +110,109 @@ public partial class ViewerPage : ContentPage
 
     private async void LoadContentAsync()
     {
-        // On force le son du métronome à OFF à l'ouverture, l'utilisateur l'activera via le menu si besoin
         _score.HasMetronomeSound = false;
+        System.Diagnostics.Debug.WriteLine($"[Viewer] --- Début chargement partition: {_score.Title} ---");
 
         try
         {
+            if (string.IsNullOrEmpty(_score.FilePath))
+            {
+                System.Diagnostics.Debug.WriteLine("[Viewer] ERREUR : _score.FilePath est NULL ou vide");
+                await DisplayAlert("Erreur", "Chemin du fichier manquant", "OK");
+                return;
+            }
+
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Path stocké: {_score.FilePath}");
             string fullPath = _settingsService.GetAbsolutePath(_score.FilePath);
+            System.Diagnostics.Debug.WriteLine($"[Viewer] FullPath calculé: {fullPath}");
 
-            // OPTIMISATION : Vérifier si une version en cache existe
-            string ext = Path.GetExtension(fullPath);
+            string ext = Path.GetExtension(fullPath)?.ToLowerInvariant() ?? "";
             string cachePath = Path.Combine(FileSystem.CacheDirectory, "SetlistCache", $"{_score.Id}{ext}");
+            System.Diagnostics.Debug.WriteLine($"[Viewer] CachePath cible: {cachePath}");
 
-            _pdfFilePath = "current.pdf"; // Par défaut
+            _pdfFilePath = "current.pdf"; 
 
-            if (File.Exists(cachePath))
+            if (File.Exists(cachePath) && new FileInfo(cachePath).Length > 0)
             {
                 fullPath = cachePath;
-                // On utilise un chemin relatif par rapport au dossier pdfjs pour éviter les problèmes de sécurité WebView
                 _pdfFilePath = $"../SetlistCache/{_score.Id}{ext}";
-                System.Diagnostics.Debug.WriteLine($"[CACHE] Chargement DIRECT (Zero-Copy) pour {_score.Title}");
+                System.Diagnostics.Debug.WriteLine($"[Viewer] ✅ UTILISATION DU CACHE");
             }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"[Viewer] ⚠️ Cache absent ou vide. Utilisation de l'original.");
+            }
+
+            bool exists = File.Exists(fullPath);
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Fichier existe physiquement ? {exists}");
+
+            if (!exists)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Viewer] ERREUR : Le fichier n'existe pas au chemin : {fullPath}");
+                await DisplayAlert("Fichier introuvable", $"Le fichier est introuvable :\n{fullPath}", "OK");
+                return;
+            }
+
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Type détecté: {_score.Type}");
 
             if (_score.Type == ScoreType.Image)
             {
-                if (File.Exists(fullPath))
+                System.Diagnostics.Debug.WriteLine("[Viewer] Mode IMAGE");
+                
+                try 
                 {
-                    ScoreImage.Source = ImageSource.FromFile(fullPath);
-                    ScoreImage.Rotation = _currentRotation;
-                    ImageScrollView.IsVisible = true;
-                    ImageTouchGrid.IsVisible = true;
-                    PdfWebView.IsVisible = false;
-                    _currentPage = 1;
-                    _maxPages = 1;
-                    UpdatePageIndicator();
-                    
-                    _isScoreReady = true;
-                    if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
+                    byte[] imageBytes = File.ReadAllBytes(fullPath);
+                    ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(imageBytes));
+                    System.Diagnostics.Debug.WriteLine($"[Viewer] Image chargée ({imageBytes.Length} octets)");
                 }
-                else
+                catch (Exception imgEx)
                 {
-                    await DisplayAlertAsync("Erreur", "Fichier introuvable: " + fullPath, "OK");
+                    System.Diagnostics.Debug.WriteLine($"[Viewer] ECHEC chargement Image: {imgEx.Message}");
+                    await DisplayAlert("Erreur Lecture", $"{imgEx.Message}\n\nL'application n'a pas la permission d'accéder à ce dossier sur la carte SD.", "OK");
+                    ScoreImage.Source = ImageSource.FromFile(fullPath); 
                 }
+
+                ScoreImage.Rotation = _currentRotation;
+                ImageScrollView.IsVisible = true;
+                ImageTouchGrid.IsVisible = true;
+                PdfWebView.IsVisible = false;
+                _currentPage = 1;
+                _maxPages = 1;
+                UpdatePageIndicator();
+                
+                _isScoreReady = true;
+                if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
             }
             else if (_score.Type == ScoreType.PDF)
             {
-                if (!File.Exists(fullPath))
-                {
-                    await DisplayAlertAsync("Erreur", "Fichier PDF introuvable: " + fullPath, "OK");
-                    return;
-                }
-
-                await EnsurePdfJsReadyAsync();
-
-                string pdfjsDir = Path.Combine(FileSystem.CacheDirectory, "pdfjs");
-                string viewerPath = Path.Combine(pdfjsDir, "viewer.html");
-
-                // PLUS DE COPIE ICI ! On utilise _pdfFilePath défini plus haut
-
-                PdfWebView.Source = new UrlWebViewSource { Url = $"file://{viewerPath}" };
-                PdfWebView.IsVisible = true;
+                System.Diagnostics.Debug.WriteLine("[Viewer] Mode PDF");
+                ImageScrollView.IsVisible = false;
                 ImageTouchGrid.IsVisible = false;
+                PdfWebView.IsVisible = true;
 
-                // Le chargement effectif loadPdf sera fait dans OnPdfWebViewNavigated
-                // pour garantir que le moteur viewer.html est prêt.
+                if (DeviceInfo.Platform == DevicePlatform.Android)
+                {
+                    await EnsurePdfJsReadyAsync();
+                    string pdfjsDir = Path.Combine(FileSystem.CacheDirectory, "pdfjs");
+                    string viewerPath = Path.Combine(pdfjsDir, "viewer.html");
+                    
+                    // On utilise le viewer dans le cache pour qu'il puisse accéder aux fichiers file://
+                    string pdfJsUrl = $"file://{viewerPath}?file={Uri.EscapeDataString("file://" + fullPath)}#page=1";
+                    
+                    System.Diagnostics.Debug.WriteLine($"[Viewer] WebView Source (PDF.js Cache): {pdfJsUrl}");
+                    PdfWebView.Source = new UrlWebViewSource { Url = pdfJsUrl };
+                }
+                else
+                {
+                    PdfWebView.Source = fullPath;
+                }
             }
+            System.Diagnostics.Debug.WriteLine("[Viewer] --- Fin de LoadContentAsync ---");
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("ERREUR", ex.Message, "OK");
+            System.Diagnostics.Debug.WriteLine($"[Viewer] CRASH dans LoadContentAsync: {ex.Message}");
+            await DisplayAlert("Erreur de chargement", $"{ex.Message}\n\nFichier: {_score.FilePath}", "OK");
         }
     }
 

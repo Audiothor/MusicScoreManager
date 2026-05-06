@@ -122,12 +122,12 @@ namespace MusicScoreManager.Services
                         }
                     }
 
-                    var ext = Path.GetExtension(result.FileName).ToLowerInvariant();
+                    var ext = Path.GetExtension(result.FullPath)?.ToLowerInvariant() ?? "";
                     var type = ext == ".pdf" ? ScoreType.PDF : ScoreType.Image;
 
                     var score = new Score
                     {
-                        Title = Path.GetFileNameWithoutExtension(result.FileName),
+                        Title = Path.GetFileNameWithoutExtension(result.FileName ?? result.FullPath),
                         FilePath = finalStoredPath,
                         Type = type,
                         DateAdded = DateTime.Now

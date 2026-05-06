@@ -76,11 +76,19 @@ namespace MusicScoreManager.Services
         {
             if (string.IsNullOrWhiteSpace(fullPath)) return string.Empty;
             
-            var root = isAudio ? AudioRootDirectory : ScoresRootDirectory;
-            if (fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase))
+            try
             {
-                return Path.GetRelativePath(root, fullPath);
+                var root = isAudio ? AudioRootDirectory : ScoresRootDirectory;
+                
+                string normFullPath = Path.GetFullPath(fullPath);
+                string normRoot = Path.GetFullPath(root);
+
+                if (normFullPath.StartsWith(normRoot, StringComparison.OrdinalIgnoreCase))
+                {
+                    return Path.GetRelativePath(normRoot, normFullPath);
+                }
             }
+            catch { }
             
             return fullPath; 
         }
