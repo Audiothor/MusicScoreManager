@@ -11,15 +11,20 @@
 		<OutputType>Exe</OutputType>
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
-		<ApplicationDisplayVersion>1.0.2</ApplicationDisplayVersion>
-		<ApplicationVersion>102</ApplicationVersion>
+		<AssemblyName>MusicScoreManager</AssemblyName>
+		<ApplicationTitle>MusicScoreManager</ApplicationTitle>
+		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
+		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
+
+		<ApplicationDisplayVersion>1.0.3</ApplicationDisplayVersion>
+		<ApplicationVersion>103</ApplicationVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<!-- Branding : Icône et Splash Screen (Logo rectangulaire et large) -->
 	<ItemGroup>
-		<MauiIcon Include="Resources\AppIcon\appiconfg.svg" Color="#121212" />
+		<MauiIcon Include="Resources\AppIcon\appicon_new.png" Color="#121212" />
 		<MauiSplashScreen Include="Resources\Splash\app_splash_padded.png" Color="#121212" BaseSize="512,512" />
 	</ItemGroup>
 
