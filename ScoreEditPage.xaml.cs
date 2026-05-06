@@ -236,11 +236,23 @@ public partial class ScoreEditPage : ContentPage
                         long sourceLength = fileInfoSource.Length;
                         string targetFileName = result.FileName;
 
-                        string? foundPath = FindFileRecursively(rootDir, targetFileName, sourceLength);
-                        if (foundPath != null)
+                        // 1. Test direct dans la racine audio
+                        string directPath = Path.Combine(rootDir, targetFileName);
+                        if (File.Exists(directPath) && new FileInfo(directPath).Length == sourceLength)
                         {
                             isAlreadyInRoot = true;
-                            result = new FileResult(foundPath);
+                            result = new FileResult(directPath);
+                        }
+                        
+                        // 2. Scan récursif si non trouvé
+                        if (!isAlreadyInRoot)
+                        {
+                            string? foundPath = FindFileRecursively(rootDir, targetFileName, sourceLength);
+                            if (foundPath != null)
+                            {
+                                isAlreadyInRoot = true;
+                                result = new FileResult(foundPath);
+                            }
                         }
                     }
                     catch { /* Ignore */ }

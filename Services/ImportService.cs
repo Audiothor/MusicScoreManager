@@ -59,11 +59,23 @@ namespace MusicScoreManager.Services
                             long sourceLength = fileInfoSource.Length;
                             string targetFileName = result.FileName;
 
-                            string? foundPath = FindFileRecursively(rootDir, targetFileName, sourceLength);
-                            if (foundPath != null)
+                            // 1. Test direct dans la racine (très rapide et évite le scan)
+                            string directPath = Path.Combine(rootDir, targetFileName);
+                            if (File.Exists(directPath) && new FileInfo(directPath).Length == sourceLength)
                             {
                                 isAlreadyInRoot = true;
-                                result = new FileResult(foundPath);
+                                result = new FileResult(directPath);
+                            }
+                            
+                            // 2. Si pas trouvé en direct, scan récursif robuste
+                            if (!isAlreadyInRoot)
+                            {
+                                string? foundPath = FindFileRecursively(rootDir, targetFileName, sourceLength);
+                                if (foundPath != null)
+                                {
+                                    isAlreadyInRoot = true;
+                                    result = new FileResult(foundPath);
+                                }
                             }
                         }
                         catch { /* Ignore */ }
