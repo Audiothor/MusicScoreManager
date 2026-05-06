@@ -22,7 +22,7 @@ public partial class SettingsAppPage : ContentPage
 
     private async void OnChangeScoresPathClicked(object sender, EventArgs e)
     {
-        var result = await FolderPicker.Default.PickAsync(default);
+        var result = await FolderPicker.Default.PickAsync(_settingsService.ScoresRootDirectory, default);
 
         if (result != null && result.IsSuccessful && result.Folder != null)
         {
@@ -37,7 +37,7 @@ public partial class SettingsAppPage : ContentPage
 
     private async void OnChangeAudioPathClicked(object sender, EventArgs e)
     {
-        var result = await FolderPicker.Default.PickAsync(default);
+        var result = await FolderPicker.Default.PickAsync(_settingsService.AudioRootDirectory, default);
 
         if (result != null && result.IsSuccessful && result.Folder != null)
         {

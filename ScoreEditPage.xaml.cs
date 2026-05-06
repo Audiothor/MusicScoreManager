@@ -223,7 +223,29 @@ public partial class ScoreEditPage : ContentPage
                 if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
 
                 string finalStoredPath;
+                
+                // Vérification intelligente : soit le chemin commence par le root (Windows), 
+                // soit un fichier de même nom et même taille existe déjà dans le root (Android workaround)
                 bool isAlreadyInRoot = result.FullPath.StartsWith(rootDir, StringComparison.OrdinalIgnoreCase);
+
+                if (!isAlreadyInRoot)
+                {
+                    var potentialPath = Path.Combine(rootDir, result.FileName);
+                    if (File.Exists(potentialPath))
+                    {
+                        try 
+                        {
+                            var fileInfoSource = new FileInfo(result.FullPath);
+                            var fileInfoDest = new FileInfo(potentialPath);
+                            if (fileInfoSource.Length == fileInfoDest.Length)
+                            {
+                                isAlreadyInRoot = true;
+                                result = new FilePickerResult(potentialPath); // On utilise le chemin local
+                            }
+                        }
+                        catch { /* Ignore */ }
+                    }
+                }
 
                 if (isAlreadyInRoot)
                 {
