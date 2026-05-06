@@ -828,6 +828,7 @@ public partial class ViewerPage : ContentPage
                 double newY = _barYBase + e.TotalY;
                 AnnotationBar.TranslationY = newY;
                 StickerPickerOverlay.TranslationY = newY;
+                StickerSettingsBar.TranslationY = newY;
                 // PageIndicator.TranslationY = newY; // On ne déplace plus l'indicateur
                 break;
         }
@@ -836,7 +837,11 @@ public partial class ViewerPage : ContentPage
     private void OnAnnotationToggleTapped(object sender, EventArgs e)
     {
         AnnotationBar.IsVisible = !AnnotationBar.IsVisible;
-        if (!AnnotationBar.IsVisible) StickerPickerOverlay.IsVisible = false;
+        if (!AnnotationBar.IsVisible)
+        {
+            StickerPickerOverlay.IsVisible = false;
+            StickerSettingsBar.IsVisible = false;
+        }
 
         // Ajuster la position de l'indicateur de page
         PageIndicator.Margin = new Thickness(0, 0, 10, AnnotationBar.IsVisible ? 65 : 2);
@@ -845,18 +850,22 @@ public partial class ViewerPage : ContentPage
     private async void OnAnnotationTextClicked(object sender, EventArgs e)
     {
         StickerPickerOverlay.IsVisible = false;
+        StickerSettingsBar.IsVisible = false;
         await DisplayAlert("Info", "L'annotation de texte arrive bientôt !", "OK");
     }
 
     private async void OnAnnotationDrawClicked(object sender, EventArgs e)
     {
         StickerPickerOverlay.IsVisible = false;
+        StickerSettingsBar.IsVisible = false;
         await DisplayAlert("Info", "Le mode dessin arrive bientôt !", "OK");
     }
 
     private void OnAnnotationStickersClicked(object sender, EventArgs e)
     {
         StickerPickerOverlay.IsVisible = !StickerPickerOverlay.IsVisible;
+        StickerSettingsBar.IsVisible = StickerPickerOverlay.IsVisible;
+        
         if (StickerPickerOverlay.IsVisible && StickerCategoriesCollection.ItemsSource == null)
         {
             InitializeAnnotationUI();
@@ -881,6 +890,25 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private string _currentStickerColor = "#000000";
+
+    private void OnStickerColorTapped(object sender, TappedEventArgs e)
+    {
+        if (e.Parameter is string color)
+        {
+            _currentStickerColor = color switch
+            {
+                "White" => "#FFFFFF",
+                "Black" => "#000000",
+                "Red" => "#FF0000",
+                "Blue" => "#007ACC",
+                _ => "#000000"
+            };
+            
+            // On pourrait ajouter un effet visuel sur la couleur sélectionnée ici
+        }
+    }
+
     private async void OnStickerDrop(object? sender, DropEventArgs e)
     {
         if (e.Data.Properties.TryGetValue("Sticker", out var stickerObj) && stickerObj is string sticker)
@@ -899,7 +927,8 @@ public partial class ViewerPage : ContentPage
                 Content = sticker,
                 X = relX,
                 Y = relY,
-                Scale = 1.0,
+                Scale = StickerSizeSlider.Value,
+                Color = _currentStickerColor,
                 PageNumber = _currentPage
             };
 
@@ -1002,7 +1031,7 @@ public partial class ViewerPage : ContentPage
                 var label = new Label
                 {
                     Text = ann.Content,
-                    TextColor = Colors.White,
+                    TextColor = Color.FromArgb(ann.Color),
                     FontSize = 30 * ann.Scale,
                     BackgroundColor = Colors.Transparent,
                     HorizontalTextAlignment = TextAlignment.Center,
