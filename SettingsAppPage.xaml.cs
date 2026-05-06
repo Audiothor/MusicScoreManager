@@ -1,4 +1,5 @@
 using MusicScoreManager.Services;
+using CommunityToolkit.Maui.Storage;
 
 namespace MusicScoreManager;
 
@@ -21,12 +22,11 @@ public partial class SettingsAppPage : ContentPage
 
     private async void OnChangeScoresPathClicked(object sender, EventArgs e)
     {
-        string? newPath = await this.DisplayPromptAsync("Répertoire des partitions", 
-            "Entrez le chemin absolu vers le dossier racine de vos partitions :", 
-            initialValue: _settingsService.ScoresRootDirectory);
+        var result = await FolderPicker.Default.PickAsync(default);
 
-        if (!string.IsNullOrWhiteSpace(newPath))
+        if (result != null && result.IsSuccessful && result.Folder != null)
         {
+            string newPath = result.Folder.Path;
             if (await ValidateAndSetPath(newPath, true))
             {
                 _settingsService.ScoresRootDirectory = newPath;
@@ -37,12 +37,11 @@ public partial class SettingsAppPage : ContentPage
 
     private async void OnChangeAudioPathClicked(object sender, EventArgs e)
     {
-        string? newPath = await this.DisplayPromptAsync("Répertoire audio", 
-            "Entrez le chemin absolu vers le dossier racine de vos fichiers audio :", 
-            initialValue: _settingsService.AudioRootDirectory);
+        var result = await FolderPicker.Default.PickAsync(default);
 
-        if (!string.IsNullOrWhiteSpace(newPath))
+        if (result != null && result.IsSuccessful && result.Folder != null)
         {
+            string newPath = result.Folder.Path;
             if (await ValidateAndSetPath(newPath, false))
             {
                 _settingsService.AudioRootDirectory = newPath;
