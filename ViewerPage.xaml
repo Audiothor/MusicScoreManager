@@ -199,22 +199,23 @@
             <Border.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
             </Border.GestureRecognizers>
-            <Grid ColumnDefinitions="Auto, Auto, Auto, *" Padding="10,0">
+            <Grid ColumnDefinitions="Auto, Auto, Auto, *, Auto" Padding="10,0">
                 <Button Grid.Column="0" Text="Texte" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" />
                 <Button Grid.Column="1" Text="Dessin" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" />
                 <Button Grid.Column="2" Text="Stickers" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" />
-                <!-- Espace à droite -->
+                <!-- Espace -->
                 <BoxView Grid.Column="3" Color="Transparent" />
+                <!-- Bouton Supprimer -->
+                <Button Grid.Column="4" Text="Supprimer" BackgroundColor="#CCFF0000" TextColor="White" Clicked="OnDeleteSelectedAnnotationClicked" FontAttributes="Bold" />
             </Grid>
         </Border>
 
-        <!-- Indicateur de page (on le remonte un peu pour pas qu'il soit sous la barre si besoin, 
-             ou on le laisse s'il est au dessus dans le Z-index) -->
+        <!-- Indicateur de page (tout en bas) -->
         <Label x:Name="PageIndicator" 
                IsVisible="False" 
                HorizontalOptions="End" 
                VerticalOptions="End" 
-               Margin="0, 0, 10, 65" 
+               Margin="0, 0, 10, 5" 
                TextColor="White" 
                BackgroundColor="#80000000" 
                Padding="10,5" />

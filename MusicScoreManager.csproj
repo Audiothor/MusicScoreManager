@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.2.7</ApplicationDisplayVersion>
-		<ApplicationVersion>127</ApplicationVersion>
-		<!-- Version actuelle : v1.2.7 "Drag & Drop Edition" -->
+		<ApplicationDisplayVersion>1.3.1</ApplicationDisplayVersion>
+		<ApplicationVersion>131</ApplicationVersion>
+		<!-- Version actuelle : v1.3.1 "Management Update" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>

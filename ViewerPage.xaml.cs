@@ -967,12 +967,32 @@ public partial class ViewerPage : ContentPage
         RenderAnnotations();
     }
 
+    private Annotation? _selectedAnnotation = null;
+
+    private async void OnDeleteSelectedAnnotationClicked(object? sender, EventArgs e)
+    {
+        if (_selectedAnnotation == null)
+        {
+            await DisplayAlert("Supprimer", "Veuillez d'abord sélectionner une annotation en touchant un sticker.", "OK");
+            return;
+        }
+
+        bool confirm = await DisplayAlert("Supprimer", "Voulez-vous supprimer l'annotation sélectionnée ?", "Oui", "Non");
+        if (confirm)
+        {
+            await _databaseService.DeleteAnnotationAsync(_selectedAnnotation);
+            _annotations.Remove(_selectedAnnotation);
+            _selectedAnnotation = null;
+            RenderAnnotations();
+        }
+    }
+
     private void RenderAnnotations()
     {
         if (AnnotationsContainer == null) return;
         AnnotationsContainer.Children.Clear();
 
-        // On ne rend que les annotations de la page actuelle (si PDF)
+        // On ne rend que les annotations de la page actuelle
         var pageAnnotations = _annotations.Where(a => a.PageNumber == _currentPage).ToList();
 
         foreach (var ann in pageAnnotations)
@@ -986,7 +1006,8 @@ public partial class ViewerPage : ContentPage
                     FontSize = 30 * ann.Scale,
                     BackgroundColor = Colors.Transparent,
                     HorizontalTextAlignment = TextAlignment.Center,
-                    VerticalTextAlignment = TextAlignment.Center
+                    VerticalTextAlignment = TextAlignment.Center,
+                    Opacity = (ann == _selectedAnnotation) ? 0.6 : 1.0 // Effet visuel de sélection
                 };
 
                 // On positionne le sticker
@@ -997,7 +1018,15 @@ public partial class ViewerPage : ContentPage
 
                 AbsoluteLayout.SetLayoutBounds(label, new Rect(absX - 30, absY - 30, 60, 60));
 
-                // Ajouter des gestes (Delete sur double tap)
+                // Geste de sélection
+                var selectTap = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+                selectTap.Tapped += (s, e) => {
+                    _selectedAnnotation = ann;
+                    RenderAnnotations(); // Mettre à jour l'opacité
+                };
+                label.GestureRecognizers.Add(selectTap);
+
+                // Geste de suppression rapide (double tap) - Optionnel mais pratique
                 var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
                 doubleTap.Tapped += async (s, e) => {
                     bool confirm = await DisplayAlert("Supprimer", "Supprimer cette annotation ?", "Oui", "Non");
@@ -1005,12 +1034,13 @@ public partial class ViewerPage : ContentPage
                     {
                         await _databaseService.DeleteAnnotationAsync(ann);
                         _annotations.Remove(ann);
+                        if (_selectedAnnotation == ann) _selectedAnnotation = null;
                         RenderAnnotations();
                     }
                 };
                 label.GestureRecognizers.Add(doubleTap);
 
-                // AJOUT DU DRAG (Déplacement)
+                // AJOUT DU DRAG (Déplacement après pose)
                 var pan = new PanGestureRecognizer();
                 double startX = 0, startY = 0;
                 pan.PanUpdated += async (s, e) => {
@@ -1019,6 +1049,8 @@ public partial class ViewerPage : ContentPage
                         case GestureStatus.Started:
                             startX = label.TranslationX;
                             startY = label.TranslationY;
+                            _selectedAnnotation = ann; // On sélectionne aussi au drag
+                            RenderAnnotations();
                             break;
                         case GestureStatus.Running:
                             label.TranslationX = startX + e.TotalX;
@@ -1032,7 +1064,6 @@ public partial class ViewerPage : ContentPage
                             ann.X = finalAbsX / AnnotationsContainer.Width;
                             ann.Y = finalAbsY / AnnotationsContainer.Height;
                             
-                            // Réinitialiser les translations et sauvegarder
                             label.TranslationX = 0;
                             label.TranslationY = 0;
                             
