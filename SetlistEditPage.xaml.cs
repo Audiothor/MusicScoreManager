@@ -175,31 +175,48 @@ public partial class SetlistEditPage : ContentPage
 
             foreach (var score in scores)
             {
-                string originalPath = _settingsService.GetAbsolutePath(score.FilePath);
-                if (File.Exists(originalPath))
+                try 
                 {
-                    string ext = Path.GetExtension(originalPath);
-                    string cachePath = Path.Combine(cacheDir, $"{score.Id}{ext}");
-                    
-                    // On ne copie que si le fichier n'est pas déjà là ou s'il est plus récent
-                    if (!File.Exists(cachePath) || File.GetLastWriteTime(originalPath) > File.GetLastWriteTime(cachePath))
+                    if (string.IsNullOrWhiteSpace(score.FilePath)) continue;
+
+                    string originalPath = _settingsService.GetAbsolutePath(score.FilePath);
+                    if (File.Exists(originalPath))
                     {
-                        using var sourceStream = File.OpenRead(originalPath);
-                        using var destStream = File.Create(cachePath);
-                        await sourceStream.CopyToAsync(destStream);
+                        string ext = Path.GetExtension(originalPath) ?? ".tmp";
+                        string cachePath = Path.Combine(cacheDir, $"{score.Id}{ext}");
+                        
+                        // On ne copie que si le fichier n'est pas déjà là ou s'il est plus récent
+                        if (!File.Exists(cachePath) || File.GetLastWriteTime(originalPath) > File.GetLastWriteTime(cachePath))
+                        {
+                            using var sourceStream = File.OpenRead(originalPath);
+                            using var destStream = File.Create(cachePath);
+                            await sourceStream.CopyToAsync(destStream);
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Fichier individuel en erreur : {score.Title} - {ex.Message}");
+                    // On continue la boucle pour les autres fichiers
                 }
             }
 
             // NETTOYAGE : Supprimer du cache les fichiers qui ne sont plus dans cette setlist
-            var validCacheFiles = scores.Select(s => $"{s.Id}{Path.GetExtension(s.FilePath)}").ToList();
-            var existingFiles = Directory.GetFiles(cacheDir);
-            foreach (var file in existingFiles)
+            var validCacheFiles = scores
+                .Where(s => !string.IsNullOrEmpty(s.FilePath))
+                .Select(s => $"{s.Id}{Path.GetExtension(s.FilePath)}")
+                .ToList();
+
+            if (Directory.Exists(cacheDir))
             {
-                string fileName = Path.GetFileName(file);
-                if (!validCacheFiles.Contains(fileName))
+                var existingFiles = Directory.GetFiles(cacheDir);
+                foreach (var file in existingFiles)
                 {
-                    File.Delete(file);
+                    string fileName = Path.GetFileName(file);
+                    if (!validCacheFiles.Contains(fileName))
+                    {
+                        try { File.Delete(file); } catch { }
+                    }
                 }
             }
 
