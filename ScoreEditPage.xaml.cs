@@ -242,7 +242,7 @@ public partial class ScoreEditPage : ContentPage
                             if (fileInfoSource.Length == fileInfoDest.Length)
                             {
                                 isAlreadyInRoot = true;
-                                result = new FilePickerResult(potentialPath);
+                                result = new FileResult(potentialPath);
                                 break;
                             }
                         }
