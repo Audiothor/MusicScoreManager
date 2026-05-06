@@ -55,18 +55,25 @@ namespace MusicScoreManager.Services
                     {
                         try 
                         {
-                            // Recherche récursive dans tous les sous-dossiers
-                            var matchingFiles = Directory.EnumerateFiles(rootDir, result.FileName, SearchOption.AllDirectories);
+                            // On énumère tous les fichiers pour faire une comparaison de nom insensible à la casse
+                            // C'est plus lent mais beaucoup plus fiable sur Android/SD Card
                             var fileInfoSource = new FileInfo(result.FullPath);
-                            
-                            foreach (var potentialPath in matchingFiles)
+                            long sourceLength = fileInfoSource.Length;
+                            string targetFileName = result.FileName;
+
+                            var allFiles = Directory.EnumerateFiles(rootDir, "*", SearchOption.AllDirectories);
+                            foreach (var potentialPath in allFiles)
                             {
-                                var fileInfoDest = new FileInfo(potentialPath);
-                                if (fileInfoSource.Length == fileInfoDest.Length)
+                                string currentFileName = Path.GetFileName(potentialPath);
+                                if (currentFileName.Equals(targetFileName, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    isAlreadyInRoot = true;
-                                    result = new FileResult(potentialPath);
-                                    break;
+                                    var fileInfoDest = new FileInfo(potentialPath);
+                                    if (sourceLength == fileInfoDest.Length)
+                                    {
+                                        isAlreadyInRoot = true;
+                                        result = new FileResult(potentialPath);
+                                        break;
+                                    }
                                 }
                             }
                         }
