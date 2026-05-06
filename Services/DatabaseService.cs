@@ -35,6 +35,7 @@ namespace MusicScoreManager.Services
                 await db.CreateTableAsync<Tag>();
                 await db.CreateTableAsync<ScoreTag>();
                 await db.CreateTableAsync<ScoreAudioFile>();
+                await db.CreateTableAsync<Annotation>();
                 
                 _database = db; // On ne l'assigne qu'à la toute fin
             }
@@ -326,6 +327,37 @@ namespace MusicScoreManager.Services
             
             // La base sera réinitialisée au prochain appel via Init()
         }
+
+        #region Annotations
+
+        public async Task<List<Annotation>> GetAnnotationsForScoreAsync(int scoreId)
+        {
+            await Init();
+            return await _database!.Table<Annotation>()
+                                  .Where(a => a.ScoreId == scoreId)
+                                  .ToListAsync();
+        }
+
+        public async Task<int> SaveAnnotationAsync(Annotation annotation)
+        {
+            await Init();
+            if (annotation.Id != 0)
+            {
+                return await _database!.UpdateAsync(annotation);
+            }
+            else
+            {
+                return await _database!.InsertAsync(annotation);
+            }
+        }
+
+        public async Task<int> DeleteAnnotationAsync(Annotation annotation)
+        {
+            await Init();
+            return await _database!.DeleteAsync(annotation);
+        }
+
+        #endregion
     }
 
     public class BackupFile

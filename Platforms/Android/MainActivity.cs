@@ -22,7 +22,7 @@ public class MainActivity : MauiAppCompatActivity
                 try
                 {
                     Android.Content.Intent intent = new Android.Content.Intent(Android.Provider.Settings.ActionManageAppAllFilesAccessPermission);
-                    Android.Net.Uri uri = Android.Net.Uri.FromParts("package", PackageName, null);
+                    Android.Net.Uri uri = Android.Net.Uri.FromParts("package", PackageName!, null);
                     intent.SetData(uri);
                     StartActivity(intent);
                 }

@@ -36,11 +36,19 @@
                     <TapGestureRecognizer Tapped="OnPrevTapped" />
                 </ContentView.GestureRecognizers>
             </ContentView>
-            <ContentView Grid.Column="1" BackgroundColor="Transparent">
-                <ContentView.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnCenterTapped" NumberOfTapsRequired="2" />
-                </ContentView.GestureRecognizers>
-            </ContentView>
+            <Grid Grid.Column="1" RowDefinitions="*, Auto">
+                <ContentView Grid.Row="0" BackgroundColor="Transparent">
+                    <ContentView.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnCenterTapped" NumberOfTapsRequired="2" />
+                        <TapGestureRecognizer Tapped="OnCenterSingleTapped" NumberOfTapsRequired="1" />
+                    </ContentView.GestureRecognizers>
+                </ContentView>
+                <ContentView Grid.Row="1" BackgroundColor="Transparent" HeightRequest="100">
+                    <ContentView.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnAnnotationToggleTapped" />
+                    </ContentView.GestureRecognizers>
+                </ContentView>
+            </Grid>
             <ContentView Grid.Column="2" BackgroundColor="Transparent">
                 <ContentView.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnNextTapped" />
@@ -102,12 +110,106 @@
             </Grid>
         </Border>
 
-        <!-- Indicateur de page -->
+        <!-- Conteneur pour les Annotations (Stickers, etc.) -->
+        <AbsoluteLayout x:Name="AnnotationsContainer" 
+                        HorizontalOptions="Fill" 
+                        VerticalOptions="Fill" 
+                        ZIndex="10"
+                        InputTransparent="True" />
+
+        <!-- Sélecteur de Stickers (S'affiche au-dessus de la barre) -->
+        <Border x:Name="StickerPickerOverlay"
+                IsVisible="False"
+                VerticalOptions="End"
+                HorizontalOptions="Fill"
+                BackgroundColor="#EE000000"
+                HeightRequest="150"
+                Margin="10,0,10,70"
+                Padding="10"
+                StrokeThickness="1"
+                Stroke="#444444">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+            
+            <VerticalStackLayout Spacing="5">
+                <!-- Catégories -->
+                <CollectionView x:Name="StickerCategoriesCollection"
+                                HeightRequest="40"
+                                SelectionMode="Single"
+                                SelectionChanged="OnStickerCategoryChanged">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label Text="{Binding Name}" 
+                                   TextColor="White" 
+                                   FontSize="14" 
+                                   VerticalTextAlignment="Center"
+                                   Padding="10,5"
+                                   BackgroundColor="#333333" />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <BoxView HeightRequest="1" Color="#444444" />
+
+                <!-- Stickers de la catégorie -->
+                <CollectionView x:Name="StickersCollection" 
+                                HeightRequest="80"
+                                SelectionMode="None">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border WidthRequest="60" HeightRequest="60" 
+                                    Margin="5" BackgroundColor="#404040" 
+                                    StrokeShape="RoundRectangle 8">
+                                <Border.GestureRecognizers>
+                                    <PanGestureRecognizer PanUpdated="OnStickerPickerPanUpdated" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding .}" 
+                                       TextColor="White" 
+                                       FontSize="28" 
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center" />
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Barre d'Annotations (Bas) -->
+        <Border x:Name="AnnotationBar"
+                VerticalOptions="End"
+                HorizontalOptions="Fill"
+                BackgroundColor="#80000000"
+                HeightRequest="45"
+                StrokeThickness="0"
+                IsVisible="False"
+                ZIndex="20">
+            <Border.GestureRecognizers>
+                <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
+            </Border.GestureRecognizers>
+            <Grid ColumnDefinitions="Auto, Auto, Auto, *" Padding="10,0">
+                <Button Grid.Column="0" Text="Texte" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" />
+                <Button Grid.Column="1" Text="Dessin" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" />
+                <Button Grid.Column="2" Text="Stickers" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" />
+                <!-- Espace à droite -->
+                <BoxView Grid.Column="3" Color="Transparent" />
+            </Grid>
+        </Border>
+
+        <!-- Indicateur de page (on le remonte un peu pour pas qu'il soit sous la barre si besoin, 
+             ou on le laisse s'il est au dessus dans le Z-index) -->
         <Label x:Name="PageIndicator" 
                IsVisible="False" 
                HorizontalOptions="End" 
                VerticalOptions="End" 
-               Margin="0, 0, 10, 2" 
+               Margin="0, 0, 10, 65" 
                TextColor="White" 
                BackgroundColor="#80000000" 
                Padding="10,5" />

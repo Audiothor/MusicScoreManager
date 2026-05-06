@@ -31,6 +31,11 @@ public partial class ViewerPage : ContentPage
     private ScoreAudioFile? _selectedAudioFile;
     private string _pdfFilePath = "current.pdf";
 
+    private readonly AnnotationService _annotationService;
+    private string? _pendingSticker = null;
+    private bool _isAnnotationMode = false;
+    private List<Annotation> _annotations = new();
+
     public ViewerPage(Score score, List<Score>? setlistScores = null, int currentIndex = -1, bool isContinuous = true)
     {
         InitializeComponent();
@@ -40,7 +45,10 @@ public partial class ViewerPage : ContentPage
         _isContinuous = isContinuous;
         _databaseService = new DatabaseService();
         _settingsService = new SettingsService();
+        _annotationService = new AnnotationService();
+
         Title = _score.Title;
+        InitializeAnnotationUI();
 
         if (_score.IsRotationSaved)
         {
@@ -61,6 +69,25 @@ public partial class ViewerPage : ContentPage
         await Task.Delay(500);
         InitializeMetronome();
         InitializeAudio();
+        LoadAnnotationsAsync();
+    }
+
+    private async void LoadAnnotationsAsync()
+    {
+        try
+        {
+            _annotations = await _databaseService.GetAnnotationsForScoreAsync(_score.Id);
+            RenderAnnotations();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur chargement annotations: {ex.Message}");
+        }
+    }
+
+    private void InitializeAnnotationUI()
+    {
+        StickerCategoriesCollection.ItemsSource = _annotationService.GetStickerCategories();
     }
 
     private void SetupMenuUI()
@@ -130,7 +157,7 @@ public partial class ViewerPage : ContentPage
             string cachePath = Path.Combine(FileSystem.CacheDirectory, "SetlistCache", $"{_score.Id}{ext}");
             System.Diagnostics.Debug.WriteLine($"[Viewer] CachePath cible: {cachePath}");
 
-            _pdfFilePath = "current.pdf"; 
+            _pdfFilePath = "current.pdf";
 
             if (File.Exists(cachePath) && new FileInfo(cachePath).Length > 0)
             {
@@ -158,8 +185,8 @@ public partial class ViewerPage : ContentPage
             if (_score.Type == ScoreType.Image)
             {
                 System.Diagnostics.Debug.WriteLine("[Viewer] Mode IMAGE");
-                
-                try 
+
+                try
                 {
                     byte[] imageBytes = File.ReadAllBytes(fullPath);
                     ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(imageBytes));
@@ -169,7 +196,7 @@ public partial class ViewerPage : ContentPage
                 {
                     System.Diagnostics.Debug.WriteLine($"[Viewer] ECHEC chargement Image: {imgEx.Message}");
                     await DisplayAlert("Erreur Lecture", $"{imgEx.Message}\n\nL'application n'a pas la permission d'accéder à ce dossier sur la carte SD.", "OK");
-                    ScoreImage.Source = ImageSource.FromFile(fullPath); 
+                    ScoreImage.Source = ImageSource.FromFile(fullPath);
                 }
 
                 ScoreImage.Rotation = _currentRotation;
@@ -179,7 +206,7 @@ public partial class ViewerPage : ContentPage
                 _currentPage = 1;
                 _maxPages = 1;
                 UpdatePageIndicator();
-                
+
                 _isScoreReady = true;
                 if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
             }
@@ -195,10 +222,10 @@ public partial class ViewerPage : ContentPage
                     await EnsurePdfJsReadyAsync();
                     string pdfjsDir = Path.Combine(FileSystem.CacheDirectory, "pdfjs");
                     string viewerPath = Path.Combine(pdfjsDir, "viewer.html");
-                    
+
                     // On utilise le viewer dans le cache pour qu'il puisse accéder aux fichiers file://
                     string pdfJsUrl = $"file://{viewerPath}?file={Uri.EscapeDataString("file://" + fullPath)}#page=1";
-                    
+
                     System.Diagnostics.Debug.WriteLine($"[Viewer] WebView Source (PDF.js Cache): {pdfJsUrl}");
                     PdfWebView.Source = new UrlWebViewSource { Url = pdfJsUrl };
                 }
@@ -311,6 +338,8 @@ public partial class ViewerPage : ContentPage
             PageIndicator.IsVisible = true;
             PageIndicator.FontSize = fontSize;
             PageIndicator.Text = $"{_currentPage} / {_maxPages}";
+            PageIndicator.IsVisible = true;
+            RenderAnnotations();
         }
         else
         {
@@ -480,9 +509,9 @@ public partial class ViewerPage : ContentPage
         else if (action == "Couper le son" || action == "Activer le son")
         {
             _score.HasMetronomeSound = (action == "Activer le son");
-            
+
             // Si on a besoin du métronome (son OU visuel) et qu'il ne tourne pas, on le lance
-            if ((_score.HasMetronomeSound || _score.ShowMetronome) && !_isMetronomePlaying) 
+            if ((_score.HasMetronomeSound || _score.ShowMetronome) && !_isMetronomePlaying)
             {
                 StartMetronome();
             }
@@ -491,7 +520,7 @@ public partial class ViewerPage : ContentPage
             {
                 StopMetronome();
             }
-            
+
             await _databaseService.SaveScoreAsync(_score);
         }
     }
@@ -610,8 +639,8 @@ public partial class ViewerPage : ContentPage
     {
         _score.ShowMetronome = e.Value;
         MetronomeOverlay.IsVisible = e.Value;
-        
-        if (e.Value) 
+
+        if (e.Value)
         {
             StartMetronome();
         }
@@ -619,7 +648,7 @@ public partial class ViewerPage : ContentPage
         {
             StopMetronome();
         }
-        
+
         await _databaseService.SaveScoreAsync(_score);
     }
 
@@ -704,6 +733,16 @@ public partial class ViewerPage : ContentPage
 
     private void OnCenterTapped(object sender, EventArgs e) => ShowMenu();
 
+    private void OnCenterSingleTapped(object sender, EventArgs e)
+    {
+        if (AnnotationBar.IsVisible)
+        {
+            AnnotationBar.IsVisible = false;
+            StickerPickerOverlay.IsVisible = false;
+            PageIndicator.Margin = new Thickness(0, 0, 10, 2);
+        }
+    }
+
     private async void OnGoToPageClicked(object sender, EventArgs e)
     {
         string result = await DisplayPromptAsync("Aller à la page", $"Entrez un numéro de page (1-{_maxPages})", "OK", "Annuler", initialValue: _currentPage.ToString(), keyboard: Keyboard.Numeric);
@@ -725,6 +764,12 @@ public partial class ViewerPage : ContentPage
             }
             UpdatePageIndicator();
         }
+    }
+
+    protected override void OnSizeAllocated(double width, double height)
+    {
+        base.OnSizeAllocated(width, height);
+        RenderAnnotations();
     }
 
     protected override void OnDisappearing()
@@ -768,4 +813,276 @@ public partial class ViewerPage : ContentPage
             await Navigation.PopAsync();
         }
     }
+
+    #region Annotations
+
+    private double _barYBase = 0;
+    private void OnAnnotationBarPanUpdated(object? sender, PanUpdatedEventArgs e)
+    {
+        switch (e.StatusType)
+        {
+            case GestureStatus.Started:
+                _barYBase = AnnotationBar.TranslationY;
+                break;
+            case GestureStatus.Running:
+                double newY = _barYBase + e.TotalY;
+                AnnotationBar.TranslationY = newY;
+                StickerPickerOverlay.TranslationY = newY;
+                // PageIndicator.TranslationY = newY; // On ne déplace plus l'indicateur
+                break;
+        }
+    }
+
+    private void OnAnnotationToggleTapped(object sender, EventArgs e)
+    {
+        AnnotationBar.IsVisible = !AnnotationBar.IsVisible;
+        if (!AnnotationBar.IsVisible) StickerPickerOverlay.IsVisible = false;
+
+        // Ajuster la position de l'indicateur de page
+        PageIndicator.Margin = new Thickness(0, 0, 10, AnnotationBar.IsVisible ? 65 : 2);
+    }
+
+    private async void OnAnnotationTextClicked(object sender, EventArgs e)
+    {
+        StickerPickerOverlay.IsVisible = false;
+        await DisplayAlert("Info", "L'annotation de texte arrive bientôt !", "OK");
+    }
+
+    private async void OnAnnotationDrawClicked(object sender, EventArgs e)
+    {
+        StickerPickerOverlay.IsVisible = false;
+        await DisplayAlert("Info", "Le mode dessin arrive bientôt !", "OK");
+    }
+
+    private void OnAnnotationStickersClicked(object sender, EventArgs e)
+    {
+        StickerPickerOverlay.IsVisible = !StickerPickerOverlay.IsVisible;
+        if (StickerPickerOverlay.IsVisible && StickerCategoriesCollection.ItemsSource == null)
+        {
+            InitializeAnnotationUI();
+        }
+    }
+
+    private void OnStickerCategoryChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (e.CurrentSelection.FirstOrDefault() is StickerCategory category)
+        {
+            StickersCollection.ItemsSource = category.Stickers;
+        }
+    }
+
+    private Label? _ghostSticker = null;
+    private void OnStickerPickerPanUpdated(object? sender, PanUpdatedEventArgs e)
+    {
+        if (sender is not View view || view.BindingContext is not string sticker) return;
+
+        switch (e.StatusType)
+        {
+            case GestureStatus.Started:
+                _ghostSticker = new Label
+                {
+                    Text = sticker,
+                    TextColor = Colors.White,
+                    FontSize = 30,
+                    ZIndex = 100,
+                    InputTransparent = true,
+                    HorizontalTextAlignment = TextAlignment.Center,
+                    VerticalTextAlignment = TextAlignment.Center
+                };
+                
+                AbsoluteLayout.SetLayoutFlags(_ghostSticker, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
+
+                // On l'ajoute au conteneur global pour qu'il puisse sortir du menu
+                AnnotationsContainer.InputTransparent = false;
+                AnnotationsContainer.Children.Add(_ghostSticker);
+                break;
+
+            case GestureStatus.Running:
+                if (_ghostSticker == null) return;
+
+                // On calcule le point de départ au milieu de l'écran horizontalement
+                // et au niveau du menu verticalement
+                double centerX = AnnotationsContainer.Width / 2;
+                double menuY = AnnotationsContainer.Height - 150 + StickerPickerOverlay.TranslationY;
+                
+                // On applique le mouvement total depuis ce point
+                double finalX = centerX + e.TotalX;
+                double finalY = menuY + e.TotalY;
+                
+                AbsoluteLayout.SetLayoutBounds(_ghostSticker, new Rect(finalX - 30, finalY - 30, 60, 60));
+                break;
+
+            case GestureStatus.Completed:
+            case GestureStatus.Canceled:
+                if (_ghostSticker == null) return;
+
+                // Calculer la position relative finale
+                var bounds = AbsoluteLayout.GetLayoutBounds(_ghostSticker);
+                double relX = bounds.X / AnnotationsContainer.Width;
+                double relY = bounds.Y / AnnotationsContainer.Height;
+
+                var annotation = new Annotation
+                {
+                    ScoreId = _score.Id,
+                    Type = AnnotationType.Sticker,
+                    Content = sticker,
+                    X = relX,
+                    Y = relY,
+                    Scale = 1.0,
+                    PageNumber = _currentPage
+                };
+
+                _databaseService.SaveAnnotationAsync(annotation).ContinueWith(_ => {
+                    MainThread.BeginInvokeOnMainThread(() => {
+                        _annotations.Add(annotation);
+                        AnnotationsContainer.Children.Remove(_ghostSticker);
+                        AnnotationsContainer.InputTransparent = true;
+                        _ghostSticker = null;
+                        RenderAnnotations();
+                    });
+                });
+                break;
+        }
+    }
+
+    private async void OnStickerSelected(object? sender, SelectionChangedEventArgs e)
+    {
+        if (e.CurrentSelection.FirstOrDefault() is string sticker)
+        {
+            _pendingSticker = sticker;
+            StickerPickerOverlay.IsVisible = false;
+
+            // On active le mode placement
+            _isAnnotationMode = true;
+            AnnotationsContainer.InputTransparent = false;
+
+            // On ajoute un geste de tap temporaire pour placer le sticker
+            var tap = new TapGestureRecognizer();
+            tap.Tapped += OnPlacementTapped;
+            AnnotationsContainer.GestureRecognizers.Clear();
+            AnnotationsContainer.GestureRecognizers.Add(tap);
+
+            await DisplayAlert("Placement", $"Touchez la partition pour placer : {sticker}", "OK");
+        }
+
+        // Déselectionner pour pouvoir sélectionner le même sticker plus tard
+        if (sender is CollectionView cv) cv.SelectedItem = null;
+    }
+
+    private async void OnPlacementTapped(object? sender, TappedEventArgs e)
+    {
+        if (!_isAnnotationMode || _pendingSticker == null) return;
+
+        var position = e.GetPosition(AnnotationsContainer);
+        if (position == null) return;
+
+        // Calculer les coordonnées relatives (0.0 à 1.0)
+        double relX = position.Value.X / AnnotationsContainer.Width;
+        double relY = position.Value.Y / AnnotationsContainer.Height;
+
+        var annotation = new Annotation
+        {
+            ScoreId = _score.Id,
+            Type = AnnotationType.Sticker,
+            Content = _pendingSticker,
+            X = relX,
+            Y = relY,
+            Scale = 1.0,
+            PageNumber = _currentPage
+        };
+
+        await _databaseService.SaveAnnotationAsync(annotation);
+        _annotations.Add(annotation);
+
+        // Sortir du mode placement
+        _isAnnotationMode = false;
+        AnnotationsContainer.InputTransparent = true;
+        AnnotationsContainer.GestureRecognizers.Clear();
+        _pendingSticker = null;
+
+        RenderAnnotations();
+    }
+
+    private void RenderAnnotations()
+    {
+        if (AnnotationsContainer == null) return;
+        AnnotationsContainer.Children.Clear();
+
+        // On ne rend que les annotations de la page actuelle (si PDF)
+        var pageAnnotations = _annotations.Where(a => a.PageNumber == _currentPage).ToList();
+
+        foreach (var ann in pageAnnotations)
+        {
+            if (ann.Type == AnnotationType.Sticker)
+            {
+                var label = new Label
+                {
+                    Text = ann.Content,
+                    TextColor = Colors.White,
+                    FontSize = 30 * ann.Scale,
+                    BackgroundColor = Colors.Transparent,
+                    HorizontalTextAlignment = TextAlignment.Center,
+                    VerticalTextAlignment = TextAlignment.Center
+                };
+
+                // On positionne le sticker
+                AbsoluteLayout.SetLayoutFlags(label, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
+
+                double absX = ann.X * AnnotationsContainer.Width;
+                double absY = ann.Y * AnnotationsContainer.Height;
+
+                AbsoluteLayout.SetLayoutBounds(label, new Rect(absX - 30, absY - 30, 60, 60));
+
+                // Ajouter des gestes (Delete sur double tap)
+                var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
+                doubleTap.Tapped += async (s, e) => {
+                    bool confirm = await DisplayAlert("Supprimer", "Supprimer cette annotation ?", "Oui", "Non");
+                    if (confirm)
+                    {
+                        await _databaseService.DeleteAnnotationAsync(ann);
+                        _annotations.Remove(ann);
+                        RenderAnnotations();
+                    }
+                };
+                label.GestureRecognizers.Add(doubleTap);
+
+                // AJOUT DU DRAG (Déplacement)
+                var pan = new PanGestureRecognizer();
+                double startX = 0, startY = 0;
+                pan.PanUpdated += async (s, e) => {
+                    switch (e.StatusType)
+                    {
+                        case GestureStatus.Started:
+                            startX = label.TranslationX;
+                            startY = label.TranslationY;
+                            break;
+                        case GestureStatus.Running:
+                            label.TranslationX = startX + e.TotalX;
+                            label.TranslationY = startY + e.TotalY;
+                            break;
+                        case GestureStatus.Completed:
+                            // Calculer la nouvelle position relative
+                            double finalAbsX = (ann.X * AnnotationsContainer.Width) + label.TranslationX;
+                            double finalAbsY = (ann.Y * AnnotationsContainer.Height) + label.TranslationY;
+                            
+                            ann.X = finalAbsX / AnnotationsContainer.Width;
+                            ann.Y = finalAbsY / AnnotationsContainer.Height;
+                            
+                            // Réinitialiser les translations et sauvegarder
+                            label.TranslationX = 0;
+                            label.TranslationY = 0;
+                            
+                            await _databaseService.SaveAnnotationAsync(ann);
+                            RenderAnnotations();
+                            break;
+                    }
+                };
+                label.GestureRecognizers.Add(pan);
+
+                AnnotationsContainer.Children.Add(label);
+            }
+        }
+    }
+
+    #endregion
 }
