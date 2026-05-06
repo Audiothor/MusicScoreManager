@@ -230,21 +230,24 @@ public partial class ScoreEditPage : ContentPage
 
                 if (!isAlreadyInRoot)
                 {
-                    var potentialPath = Path.Combine(rootDir, result.FileName);
-                    if (File.Exists(potentialPath))
+                    try 
                     {
-                        try 
+                        // Recherche récursive dans tous les sous-dossiers audio
+                        var matchingFiles = Directory.EnumerateFiles(rootDir, result.FileName, SearchOption.AllDirectories);
+                        var fileInfoSource = new FileInfo(result.FullPath);
+                        
+                        foreach (var potentialPath in matchingFiles)
                         {
-                            var fileInfoSource = new FileInfo(result.FullPath);
                             var fileInfoDest = new FileInfo(potentialPath);
                             if (fileInfoSource.Length == fileInfoDest.Length)
                             {
                                 isAlreadyInRoot = true;
-                                result = new FilePickerResult(potentialPath); // On utilise le chemin local
+                                result = new FilePickerResult(potentialPath);
+                                break;
                             }
                         }
-                        catch { /* Ignore */ }
                     }
+                    catch { /* Ignore */ }
                 }
 
                 if (isAlreadyInRoot)

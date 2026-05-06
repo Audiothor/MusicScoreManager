@@ -53,21 +53,24 @@ namespace MusicScoreManager.Services
                     
                     if (!isAlreadyInRoot)
                     {
-                        var potentialPath = Path.Combine(rootDir, result.FileName);
-                        if (File.Exists(potentialPath))
+                        try 
                         {
-                            try 
+                            // Recherche récursive dans tous les sous-dossiers
+                            var matchingFiles = Directory.EnumerateFiles(rootDir, result.FileName, SearchOption.AllDirectories);
+                            var fileInfoSource = new FileInfo(result.FullPath);
+                            
+                            foreach (var potentialPath in matchingFiles)
                             {
-                                var fileInfoSource = new FileInfo(result.FullPath);
                                 var fileInfoDest = new FileInfo(potentialPath);
                                 if (fileInfoSource.Length == fileInfoDest.Length)
                                 {
                                     isAlreadyInRoot = true;
-                                    result = new FilePickerResult(potentialPath); // On utilise le chemin local
+                                    result = new FileResult(potentialPath);
+                                    break;
                                 }
                             }
-                            catch { /* Ignore les erreurs de lecture de fichiers système */ }
                         }
+                        catch { /* Ignore les erreurs d'accès */ }
                     }
 
                     if (isAlreadyInRoot)
