@@ -418,7 +418,8 @@ public partial class ScoreEditPage : ContentPage
 
         await Navigation.PopAsync();
     }
-        private string? FindFileRecursively(string dir, string fileName, long size)
+
+    private string? FindFileRecursively(string dir, string fileName, long size)
         {
             try
             {
@@ -442,6 +443,5 @@ public partial class ScoreEditPage : ContentPage
             }
             catch { }
             return null;
-        }
     }
 }

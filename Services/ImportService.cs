@@ -152,6 +152,8 @@ namespace MusicScoreManager.Services
                     return status;
                 return await Permissions.RequestAsync<Permissions.StorageRead>();
             }
+        }
+
         private string? FindFileRecursively(string dir, string fileName, long size)
         {
             try
