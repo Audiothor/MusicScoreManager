@@ -904,6 +904,7 @@ public partial class ViewerPage : ContentPage
                     if (StickersCollection != null)
                     {
                         StickersCollection.ItemsSource = category.Stickers;
+                        StickersCollection.SelectedItem = null; // Reset selection
                     }
                 });
             }
@@ -919,8 +920,12 @@ public partial class ViewerPage : ContentPage
         if (sender is View view && view.BindingContext is string sticker)
         {
             e.Data.Properties.Add("Sticker", sticker);
-            // On masque le sélecteur pendant le drag
+            e.Data.Properties.Add("Color", _currentStickerColor);
+            e.Data.Properties.Add("Scale", StickerSizeSlider.Value);
+
+            // On masque le sélecteur pendant le drag pour bien voir où on pose
             StickerPickerOverlay.IsVisible = false;
+            StickerSettingsBar.IsVisible = false;
         }
     }
 
@@ -947,10 +952,16 @@ public partial class ViewerPage : ContentPage
     {
         if (e.Data.Properties.TryGetValue("Sticker", out var stickerObj) && stickerObj is string sticker)
         {
+            // Récupérer les réglages choisis
+            e.Data.Properties.TryGetValue("Color", out var colorObj);
+            string color = (colorObj as string) ?? _currentStickerColor;
+            
+            e.Data.Properties.TryGetValue("Scale", out var scaleObj);
+            double scale = (scaleObj is double s) ? s : StickerSizeSlider.Value;
+
             var position = e.GetPosition(AnnotationsContainer);
             if (position == null) return;
 
-            // Calculer les coordonnées relatives (0.0 à 1.0)
             double relX = position.Value.X / AnnotationsContainer.Width;
             double relY = position.Value.Y / AnnotationsContainer.Height;
 
@@ -961,8 +972,8 @@ public partial class ViewerPage : ContentPage
                 Content = sticker,
                 X = relX,
                 Y = relY,
-                Scale = StickerSizeSlider.Value,
-                Color = _currentStickerColor,
+                Scale = scale,
+                Color = color,
                 PageNumber = _currentPage
             };
 
@@ -972,28 +983,14 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private async void OnStickerSelected(object? sender, SelectionChangedEventArgs e)
+    private void OnStickerSelected(object? sender, SelectionChangedEventArgs e)
     {
         if (e.CurrentSelection.FirstOrDefault() is string sticker)
         {
             _pendingSticker = sticker;
-            StickerPickerOverlay.IsVisible = false;
-
-            // On active le mode placement
-            _isAnnotationMode = true;
-            AnnotationsContainer.InputTransparent = false;
-
-            // On ajoute un geste de tap temporaire pour placer le sticker
-            var tap = new TapGestureRecognizer();
-            tap.Tapped += OnPlacementTapped;
-            AnnotationsContainer.GestureRecognizers.Clear();
-            AnnotationsContainer.GestureRecognizers.Add(tap);
-
-            await DisplayAlertAsync("Placement", $"Touchez la partition pour placer : {sticker}", "OK");
+            // On laisse l'overlay ouvert pour permettre la personnalisation (couleur/taille)
+            // L'utilisateur glissera ensuite le sticker pour le placer
         }
-
-        // Déselectionner pour pouvoir sélectionner le même sticker plus tard
-        if (sender is CollectionView cv) cv.SelectedItem = null;
     }
 
     private async void OnPlacementTapped(object? sender, TappedEventArgs e)

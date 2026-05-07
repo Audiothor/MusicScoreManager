@@ -200,7 +200,8 @@
                 <!-- Stickers de la catégorie -->
                 <CollectionView x:Name="StickersCollection" 
                                 HeightRequest="100"
-                                SelectionMode="None"
+                                SelectionMode="Single"
+                                SelectionChanged="OnStickerSelected"
                                 HorizontalOptions="Fill"
                                 HorizontalScrollBarVisibility="Always">
                     <CollectionView.ItemsLayout>
@@ -208,10 +209,26 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Border HeightRequest="60" 
+                            <Border x:Name="StickerBorder"
+                                    HeightRequest="60" 
                                     Margin="5" BackgroundColor="#404040" 
                                     Padding="10,0"
-                                    StrokeShape="RoundRectangle 8">
+                                    StrokeShape="RoundRectangle 8"
+                                    StrokeThickness="2">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Stroke" Value="Transparent" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Selected">
+                                            <VisualState.Setters>
+                                                <Setter Property="Stroke" Value="Red" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
                                 <Border.GestureRecognizers>
                                     <DragGestureRecognizer DragStarting="OnStickerDragStarting" />
                                 </Border.GestureRecognizers>
