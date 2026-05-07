@@ -90,7 +90,15 @@ public partial class ViewerPage : ContentPage
     {
         var favorites = await _databaseService.GetFavoriteStickersAsync();
         var favTexts = favorites.Select(f => f.Text).ToList();
-        StickerCategoriesCollection.ItemsSource = _annotationService.GetStickerCategories(favTexts);
+        var categories = _annotationService.GetStickerCategories(favTexts);
+        
+        StickerCategoriesCollection.ItemsSource = categories;
+        
+        // Sélectionner "Favoris" par défaut (le premier)
+        if (categories.Count > 0)
+        {
+            StickerCategoriesCollection.SelectedItem = categories[0];
+        }
     }
 
     private void SetupMenuUI()

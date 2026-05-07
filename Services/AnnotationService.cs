@@ -14,15 +14,12 @@ public class AnnotationService
     {
         var categories = new List<StickerCategory>();
 
-        // Ajouter les favoris en premier si présents
-        if (favorites != null && favorites.Count > 0)
+        // Toujours ajouter la catégorie Favoris (même si vide pour l'instant)
+        categories.Add(new StickerCategory
         {
-            categories.Add(new StickerCategory
-            {
-                Name = "Favoris",
-                Stickers = favorites
-            });
-        }
+            Name = "Favoris",
+            Stickers = favorites ?? new List<string>()
+        });
 
         categories.AddRange(new List<StickerCategory>
         {
