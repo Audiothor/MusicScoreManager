@@ -58,25 +58,38 @@ namespace MusicScoreManager.Services
         {
             if (scores == null || scores.Count == 0 || _database == null) return;
             
-            var allTags = await _database.Table<Tag>().ToListAsync();
-            var allScoreTags = await _database.Table<ScoreTag>().ToListAsync();
-            var allAudioFiles = await _database.Table<ScoreAudioFile>().ToListAsync();
+            var scoreIds = scores.Select(s => s.Id).ToList();
+
+            // Chargement CIBLÉ des relations ScoreTag
+            var relevantScoreTags = await _database.Table<ScoreTag>()
+                                                 .Where(st => scoreIds.Contains(st.ScoreId))
+                                                 .ToListAsync();
+            
+            var tagIds = relevantScoreTags.Select(st => st.TagId).Distinct().ToList();
+            var relevantTags = await _database.Table<Tag>()
+                                            .Where(t => tagIds.Contains(t.Id))
+                                            .ToListAsync();
+
+            // Chargement CIBLÉ des fichiers audio
+            var relevantAudioFiles = await _database.Table<ScoreAudioFile>()
+                                                  .Where(af => scoreIds.Contains(af.ScoreId))
+                                                  .ToListAsync();
  
             foreach (var score in scores)
             {
-                var tagIds = allScoreTags.Where(st => st.ScoreId == score.Id).Select(st => st.TagId).ToList();
-                score.AppliedTags = allTags.Where(t => tagIds.Contains(t.Id)).ToList();
+                var sId = score.Id;
+                var currentScoreTagIds = relevantScoreTags.Where(st => st.ScoreId == sId).Select(st => st.TagId).ToList();
+                score.AppliedTags = relevantTags.Where(t => currentScoreTagIds.Contains(t.Id)).ToList();
                 
-                var scoreAudioFiles = allAudioFiles.Where(af => af.ScoreId == score.Id).ToList();
+                var scoreAudioFiles = relevantAudioFiles.Where(af => af.ScoreId == sId).ToList();
                 foreach (var af in scoreAudioFiles)
                 {
                     var fullPath = _settingsService.GetAbsolutePath(af.FilePath, isAudio: true);
                     af.IsFileMissing = !File.Exists(fullPath);
-                    af.IsExternal = Path.IsPathRooted(af.FilePath); // Un chemin enraciné dans la DB = Hors bibliothèque (car on stocke en relatif normalement)
+                    af.IsExternal = Path.IsPathRooted(af.FilePath);
                 }
                 score.AudioFiles = scoreAudioFiles;
 
-                // Vérification du fichier de partition principal
                 var scorePath = _settingsService.GetAbsolutePath(score.FilePath);
                 score.IsFileMissing = !File.Exists(scorePath);
                 score.IsExternal = Path.IsPathRooted(score.FilePath);

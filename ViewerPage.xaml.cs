@@ -60,13 +60,12 @@ public partial class ViewerPage : ContentPage
         // Le métronome et l'audio sont initialisés en différé dans OnAppearing
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
         System.Diagnostics.Debug.WriteLine("[Viewer] OnAppearing appelé.");
 
-        // Optimisation : on laisse l'interface et la partition se charger d'abord
-        await Task.Delay(500);
+        // On lance les initialisations en parallèle sans délai artificiel
         InitializeMetronome();
         InitializeAudio();
         LoadAnnotationsAsync();

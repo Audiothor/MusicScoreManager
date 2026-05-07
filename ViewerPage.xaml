@@ -212,8 +212,7 @@
                                 HeightRequest="100"
                                 SelectionMode="Single"
                                 SelectionChanged="OnStickerSelected"
-                                HorizontalOptions="Fill"
-                                HorizontalScrollBarVisibility="Always">
+                                HorizontalOptions="Fill">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15" />
                     </CollectionView.ItemsLayout>
