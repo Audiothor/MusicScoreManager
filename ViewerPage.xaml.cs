@@ -302,11 +302,9 @@ public partial class ViewerPage : ContentPage
         {
             string dest = Path.Combine(pdfjsDir, file);
 
-            // OPTIMISATION : On ne copie que si le fichier n'existe pas déjà dans le cache
-            if (!File.Exists(dest))
+            // On force la mise à jour pour être sûr que les nouveaux viewer.html sont bien là
+            try
             {
-                try
-                {
                     using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
                     using var fileStream = File.Create(dest);
                     await stream.CopyToAsync(fileStream);
@@ -315,7 +313,6 @@ public partial class ViewerPage : ContentPage
                 {
                     System.Diagnostics.Debug.WriteLine($"Error copying {file}: {ex.Message}");
                 }
-            }
         }
     }
 
