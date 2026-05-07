@@ -1,11 +1,35 @@
-using MusicScoreManager.Models;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace MusicScoreManager.Services;
+
+public class StickerItem : INotifyPropertyChanged
+{
+    public string Text { get; set; } = string.Empty;
+    
+    private string _color = "#FFFFFF";
+    public string Color
+    {
+        get => _color;
+        set { _color = value; OnPropertyChanged(); }
+    }
+
+    private double _scale = 1.0;
+    public double Scale
+    {
+        get => _scale;
+        set { _scale = value; OnPropertyChanged(); }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}
 
 public class StickerCategory
 {
     public string Name { get; set; } = string.Empty;
-    public List<string> Stickers { get; set; } = new();
+    public List<StickerItem> Stickers { get; set; } = new();
 }
 
 public class AnnotationService
@@ -14,46 +38,30 @@ public class AnnotationService
     {
         var categories = new List<StickerCategory>();
 
-        // Toujours ajouter la catégorie Favoris (même si vide pour l'instant)
         categories.Add(new StickerCategory
         {
             Name = "Favoris",
-            Stickers = favorites ?? new List<string>()
+            Stickers = (favorites ?? new List<string>()).Select(s => new StickerItem { Text = s }).ToList()
         });
 
-        categories.AddRange(new List<StickerCategory>
+        var predefined = new List<(string Name, List<string> Items)>
         {
-            new StickerCategory 
-            { 
-                Name = "Doigtés", 
-                Stickers = new List<string> { "1", "2", "3", "4", "5", "0", "T", "+", "1-2", "2-3", "3-4", "4-5" } 
-            },
-            new StickerCategory 
-            { 
-                Name = "Rythme", 
-                Stickers = new List<string> { "↑", "↓", "v", "•", "|", "Rall.", "Accel.", "A tempo", "Rit.", "♩ =" } 
-            },
-            new StickerCategory 
-            { 
-                Name = "Nuances", 
-                Stickers = new List<string> { "pp", "p", "mp", "mf", "f", "ff", "sfz", "<", ">", "Cantabile", "Dolce", "Marcato", "Legato", "Staccato" } 
-            },
-            new StickerCategory 
-            { 
-                Name = "Structure", 
-                Stickers = new List<string> { "A", "B", "C", "D", "1", "2", "3", "Coda", "Segno", "D.C.", "Fine", "VI-DE", "→", "V.S." } 
-            },
-            new StickerCategory 
-            { 
-                Name = "Technique", 
-                Stickers = new List<string> { "Π", "V", "Pizz.", "Arco", "Ped.", "*", ",", "//" } 
-            },
-            new StickerCategory 
-            { 
-                Name = "Travail", 
-                Stickers = new List<string> { "!", "?", "👁", "À travailler", "OK", "Rythme faux", "Justesse", "🔴", "🟢", "🔵" } 
-            }
-        });
+            ("Doigtés", new List<string> { "1", "2", "3", "4", "5", "0", "T", "+", "1-2", "2-3", "3-4", "4-5" }),
+            ("Rythme", new List<string> { "↑", "↓", "v", "•", "|", "Rall.", "Accel.", "A tempo", "Rit.", "♩ =" }),
+            ("Nuances", new List<string> { "pp", "p", "mp", "mf", "f", "ff", "sfz", "<", ">", "Cantabile", "Dolce", "Marcato", "Legato", "Staccato" }),
+            ("Structure", new List<string> { "A", "B", "C", "D", "1", "2", "3", "Coda", "Segno", "D.C.", "Fine", "VI-DE", "→", "V.S." }),
+            ("Technique", new List<string> { "Π", "V", "Pizz.", "Arco", "Ped.", "*", ",", "//" }),
+            ("Travail", new List<string> { "!", "?", "👁", "À travailler", "OK", "Rythme faux", "Justesse", "🔴", "🟢", "🔵" })
+        };
+
+        foreach (var p in predefined)
+        {
+            categories.Add(new StickerCategory
+            {
+                Name = p.Name,
+                Stickers = p.Items.Select(s => new StickerItem { Text = s }).ToList()
+            });
+        }
 
         return categories;
     }

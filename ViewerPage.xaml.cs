@@ -917,9 +917,9 @@ public partial class ViewerPage : ContentPage
 
     private void OnStickerDragStarting(object? sender, DragStartingEventArgs e)
     {
-        if (sender is View view && view.BindingContext is string sticker)
+        if (sender is View view && view.BindingContext is StickerItem sticker)
         {
-            e.Data.Properties.Add("Sticker", sticker);
+            e.Data.Properties.Add("Sticker", sticker.Text);
             // On ne masque plus les bandeaux car l'utilisateur veut qu'ils restent visibles
         }
     }
@@ -944,6 +944,21 @@ public partial class ViewerPage : ContentPage
             {
                 CurrentColorIndicator.Color = Color.FromArgb(_currentStickerColor);
             }
+
+            // APERÇU : Mettre à jour le sticker sélectionné dans le picker
+            if (StickersCollection?.SelectedItem is StickerItem selectedSticker)
+            {
+                selectedSticker.Color = _currentStickerColor;
+            }
+        }
+    }
+
+    private void OnStickerSizeChanged(object? sender, ValueChangedEventArgs e)
+    {
+        // APERÇU : Mettre à jour le sticker sélectionné dans le picker
+        if (StickersCollection?.SelectedItem is StickerItem selectedSticker)
+        {
+            selectedSticker.Scale = e.NewValue;
         }
     }
 
@@ -984,9 +999,14 @@ public partial class ViewerPage : ContentPage
 
     private void OnStickerSelected(object? sender, SelectionChangedEventArgs e)
     {
-        if (e.CurrentSelection.FirstOrDefault() is string sticker)
+        if (e.CurrentSelection.FirstOrDefault() is StickerItem sticker)
         {
-            _pendingSticker = sticker;
+            _pendingSticker = sticker.Text;
+            
+            // Appliquer les réglages actuels pour l'aperçu immédiat
+            sticker.Color = _currentStickerColor;
+            sticker.Scale = StickerSizeSlider.Value;
+            
             // On laisse l'overlay ouvert pour permettre la personnalisation (couleur/taille)
             // L'utilisateur glissera ensuite le sticker pour le placer
         }
