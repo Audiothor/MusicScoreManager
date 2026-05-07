@@ -164,7 +164,7 @@
                 VerticalOptions="End"
                 HorizontalOptions="Fill"
                 BackgroundColor="#EE000000"
-                HeightRequest="150"
+                HeightRequest="180"
                 Margin="10,0,10,70"
                 Padding="10"
                 StrokeThickness="1"
@@ -199,8 +199,9 @@
 
                 <!-- Stickers de la catégorie -->
                 <CollectionView x:Name="StickersCollection" 
-                                HeightRequest="85"
+                                HeightRequest="100"
                                 SelectionMode="None"
+                                HorizontalOptions="Fill"
                                 HorizontalScrollBarVisibility="Always">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15" />
