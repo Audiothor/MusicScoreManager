@@ -307,7 +307,6 @@ public partial class ViewerPage : ContentPage
                 {
                     System.Diagnostics.Debug.WriteLine($"Error copying {file}: {ex.Message}");
                 }
-            }
         }
     }
 
