@@ -5,6 +5,7 @@ namespace MusicScoreManager.Services
 {
     public class DatabaseService
     {
+        private static SQLiteAsyncConnection? _database;
         private static Task? _initTask;
         private static readonly object _initLock = new();
         private readonly string _databasePath;
