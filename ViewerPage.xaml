@@ -184,12 +184,26 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Label Text="{Binding Name}" 
-                                   TextColor="White" 
-                                   FontSize="14" 
-                                   VerticalTextAlignment="Center"
-                                   Padding="10,5"
-                                   BackgroundColor="#333333" />
+                            <Border StrokeShape="RoundRectangle 4" Padding="0" BackgroundColor="#2C2C2C">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="Selected">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="#007ACC" />
+                                                <Setter TargetName="CatLabel" Property="TextColor" Value="White" />
+                                                <Setter TargetName="CatLabel" Property="FontAttributes" Value="Bold" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <Label x:Name="CatLabel" 
+                                       Text="{Binding Name}" 
+                                       TextColor="#BBBBBB" 
+                                       FontSize="13" 
+                                       VerticalTextAlignment="Center"
+                                       Padding="12,5" />
+                            </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
@@ -198,8 +212,9 @@
 
                 <!-- Stickers de la catégorie -->
                 <CollectionView x:Name="StickersCollection" 
-                                HeightRequest="80"
-                                SelectionMode="None">
+                                HeightRequest="85"
+                                SelectionMode="None"
+                                HorizontalScrollBarVisibility="Always">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15" />
                     </CollectionView.ItemsLayout>
