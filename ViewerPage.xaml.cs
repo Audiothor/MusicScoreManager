@@ -158,6 +158,11 @@ public partial class ViewerPage : ContentPage
             // Démarrer si on veut le visuel OU le son
             if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
         }
+        else if (e.Url != null && e.Url.StartsWith("app://musicscore/annotations"))
+        {
+            e.Cancel = true;
+            MainThread.BeginInvokeOnMainThread(() => OnAnnotationToggleTapped(this, EventArgs.Empty));
+        }
     }
 
     private async void LoadContentAsync()

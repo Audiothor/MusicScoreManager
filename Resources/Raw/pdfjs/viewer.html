@@ -195,8 +195,7 @@
 
         function onBottomZoneTapped(e) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
-            // Réservé pour les annotations
-            console.log("Bottom zone - Reserved for annotations");
+            window.location.href = 'app://musicscore/annotations';
         }
 
         // Auto-chargement au démarrage si un paramètre 'file' est présent
