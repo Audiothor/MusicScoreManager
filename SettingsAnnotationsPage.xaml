@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MusicScoreManager.Models"
+             x:Class="MusicScoreManager.SettingsAnnotationsPage"
+             BackgroundColor="#121212"
+             Title="Paramètres Annotations">
+
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
+            <Button Grid.Column="0" 
+                    Text="← Retour" 
+                    BackgroundColor="Transparent" 
+                    TextColor="#007ACC" 
+                    FontAttributes="Bold"
+                    Clicked="OnBackClicked" />
+            <Label Grid.Column="1" 
+                   Text="Gestion des Stickers Favoris" 
+                   TextColor="White" 
+                   FontSize="18" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center"
+                   Margin="0,0,80,0" />
+        </Grid>
+
+        <VerticalStackLayout Grid.Row="1" Spacing="20" Padding="20">
+            <!-- Ajout d'un nouveau favori -->
+            <Label Text="Ajouter un sticker personnalisé" TextColor="#007ACC" FontAttributes="Bold" />
+            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                <Entry x:Name="FavoriteEntry" 
+                       Placeholder="Ex: Attention, Vibrato, ..." 
+                       PlaceholderColor="#666666"
+                       TextColor="White" 
+                       BackgroundColor="#1E1E1E" />
+                <Button Grid.Column="1" 
+                        Text="+" 
+                        BackgroundColor="#007ACC" 
+                        TextColor="White" 
+                        WidthRequest="50"
+                        Clicked="OnAddFavoriteClicked" />
+            </Grid>
+
+            <BoxView HeightRequest="1" Color="#333333" Margin="0,10" />
+
+            <!-- Liste des favoris -->
+            <Label Text="Mes Stickers Favoris" TextColor="#007ACC" FontAttributes="Bold" />
+            <CollectionView x:Name="FavoritesCollection" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:FavoriteSticker">
+                        <Grid ColumnDefinitions="*, Auto" Padding="10" Margin="0,5">
+                            <Label Text="{Binding Text}" TextColor="White" VerticalOptions="Center" FontSize="16" />
+                            <Button Grid.Column="1" 
+                                    Text="✕" 
+                                    BackgroundColor="Transparent" 
+                                    TextColor="#C0392B" 
+                                    FontSize="18"
+                                    Clicked="OnDeleteFavoriteClicked"
+                                    CommandParameter="{Binding .}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <Label Text="Aucun favori enregistré." 
+                           TextColor="#666666" 
+                           HorizontalOptions="Center" 
+                           Margin="0,20" />
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

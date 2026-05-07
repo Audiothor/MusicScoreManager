@@ -36,6 +36,7 @@ namespace MusicScoreManager.Services
                 await db.CreateTableAsync<ScoreTag>();
                 await db.CreateTableAsync<ScoreAudioFile>();
                 await db.CreateTableAsync<Annotation>();
+                await db.CreateTableAsync<FavoriteSticker>();
                 
                 _database = db; // On ne l'assigne qu'à la toute fin
             }
@@ -328,6 +329,31 @@ namespace MusicScoreManager.Services
             // La base sera réinitialisée au prochain appel via Init()
         }
 
+        #region Favorite Stickers
+
+        public async Task<List<FavoriteSticker>> GetFavoriteStickersAsync()
+        {
+            await Init();
+            return await _database!.Table<FavoriteSticker>().ToListAsync();
+        }
+
+        public async Task<int> SaveFavoriteStickerAsync(FavoriteSticker sticker)
+        {
+            await Init();
+            if (sticker.Id != 0)
+                return await _database!.UpdateAsync(sticker);
+            else
+                return await _database!.InsertAsync(sticker);
+        }
+
+        public async Task<int> DeleteFavoriteStickerAsync(FavoriteSticker sticker)
+        {
+            await Init();
+            return await _database!.DeleteAsync(sticker);
+        }
+
+        #endregion
+
         #region Annotations
 
         public async Task<List<Annotation>> GetAnnotationsForScoreAsync(int scoreId)
@@ -356,6 +382,8 @@ namespace MusicScoreManager.Services
             await Init();
             return await _database!.DeleteAsync(annotation);
         }
+
+        #endregion
 
         #endregion
     }

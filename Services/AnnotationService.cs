@@ -10,9 +10,21 @@ public class StickerCategory
 
 public class AnnotationService
 {
-    public List<StickerCategory> GetStickerCategories()
+    public List<StickerCategory> GetStickerCategories(List<string>? favorites = null)
     {
-        return new List<StickerCategory>
+        var categories = new List<StickerCategory>();
+
+        // Ajouter les favoris en premier si présents
+        if (favorites != null && favorites.Count > 0)
+        {
+            categories.Add(new StickerCategory
+            {
+                Name = "Favoris",
+                Stickers = favorites
+            });
+        }
+
+        categories.AddRange(new List<StickerCategory>
         {
             new StickerCategory 
             { 
@@ -44,6 +56,8 @@ public class AnnotationService
                 Name = "Travail", 
                 Stickers = new List<string> { "!", "?", "👁", "À travailler", "OK", "Rythme faux", "Justesse", "🔴", "🟢", "🔵" } 
             }
-        };
+        });
+
+        return categories;
     }
 }

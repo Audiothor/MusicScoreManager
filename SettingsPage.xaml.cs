@@ -23,6 +23,11 @@ public partial class SettingsPage : ContentPage
         await DisplayAlertAsync("En construction", "Ces paramètres seront disponibles prochainement.", "OK");
     }
 
+    private async void OnSettingsAnnotationsTapped(object sender, TappedEventArgs e)
+    {
+        await Navigation.PushAsync(new SettingsAnnotationsPage());
+    }
+
     private async void OnSettingsAppTapped(object sender, TappedEventArgs e)
     {
         await Navigation.PushAsync(new SettingsAppPage());

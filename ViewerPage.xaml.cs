@@ -2,6 +2,7 @@ using MusicScoreManager.Models;
 using MusicScoreManager.Services;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Views;
+using System.Linq;
 using Plugin.Maui.Audio;
 
 namespace MusicScoreManager;
@@ -85,9 +86,11 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private void InitializeAnnotationUI()
+    private async void InitializeAnnotationUI()
     {
-        StickerCategoriesCollection.ItemsSource = _annotationService.GetStickerCategories();
+        var favorites = await _databaseService.GetFavoriteStickersAsync();
+        var favTexts = favorites.Select(f => f.Text).ToList();
+        StickerCategoriesCollection.ItemsSource = _annotationService.GetStickerCategories(favTexts);
     }
 
     private void SetupMenuUI()
