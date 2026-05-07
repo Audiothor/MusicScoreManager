@@ -1,4 +1,4 @@
-Spécifications Techniques : Music Score Manager
+Spécifications Techniques : Music Score Manager (v1.5.0 Stable)
 1. Vision du Produit
 
 Application multiplateforme (Cible prioritaire : Android 12+ et Windows 11) permettant aux musiciens de stocker, organiser et annoter leurs partitions sous format PDF et Image.
