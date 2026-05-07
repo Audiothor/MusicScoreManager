@@ -203,62 +203,65 @@ public partial class ViewerPage : ContentPage
                 return;
             }
 
-            System.Diagnostics.Debug.WriteLine($"[Viewer] Type détecté: {_score.Type}");
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Type détecté");
 
             if (_score.Type == ScoreType.Image)
             {
                 System.Diagnostics.Debug.WriteLine("[Viewer] Mode IMAGE");
-
                 try
                 {
-                    // On laisse MAUI gérer le chargement natif qui est beaucoup plus rapide (décodage matériel)
+                    // Lecture en tâche de fond pour la robustesse (SD Card / SAF)
+                    byte[] imageBytes = await Task.Run(() => File.ReadAllBytes(fullPath));
                     MainThread.BeginInvokeOnMainThread(() => {
-                        ScoreImage.Source = ImageSource.FromFile(fullPath);
+                        ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(imageBytes));
+                        ScoreImage.Rotation = _currentRotation;
+                        ImageScrollView.IsVisible = true;
+                        ImageTouchGrid.IsVisible = true;
+                        PdfWebView.IsVisible = false;
+                        _currentPage = 1;
+                        _maxPages = 1;
+                        UpdatePageIndicator();
+                        _isScoreReady = true;
+                        if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
                     });
-                    System.Diagnostics.Debug.WriteLine($"[Viewer] Image source assignée: {fullPath}");
                 }
                 catch (Exception imgEx)
                 {
                     System.Diagnostics.Debug.WriteLine($"[Viewer] ECHEC chargement Image: {imgEx.Message}");
-                    await DisplayAlertAsync("Erreur Lecture", $"{imgEx.Message}\n\nL'application n'a pas la permission d'accéder à ce dossier sur la carte SD.", "OK");
-                    ScoreImage.Source = ImageSource.FromFile(fullPath);
+                    MainThread.BeginInvokeOnMainThread(async () => {
+                        await DisplayAlertAsync("Erreur Lecture", $"{imgEx.Message}\n\nL'application n'a pas la permission d'accéder à ce dossier.", "OK");
+                    });
                 }
-
-                ScoreImage.Rotation = _currentRotation;
-                ImageScrollView.IsVisible = true;
-                ImageTouchGrid.IsVisible = true;
-                PdfWebView.IsVisible = false;
-                _currentPage = 1;
-                _maxPages = 1;
-                UpdatePageIndicator();
-
-                _isScoreReady = true;
-                if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
             }
             else if (_score.Type == ScoreType.PDF)
             {
                 System.Diagnostics.Debug.WriteLine("[Viewer] Mode PDF");
-                ImageScrollView.IsVisible = false;
-                ImageTouchGrid.IsVisible = false;
-                PdfWebView.IsVisible = true;
+                MainThread.BeginInvokeOnMainThread(() => {
+                    ImageScrollView.IsVisible = false;
+                    ImageTouchGrid.IsVisible = false;
+                    PdfWebView.IsVisible = true;
+                });
 
                 if (DeviceInfo.Platform == DevicePlatform.Android)
                 {
                     await EnsurePdfJsReadyAsync();
                     string pdfjsDir = Path.Combine(FileSystem.CacheDirectory, "pdfjs");
                     string viewerPath = Path.Combine(pdfjsDir, "viewer.html");
-
-                    // On utilise le viewer dans le cache pour qu'il puisse accéder aux fichiers file://
                     string pdfJsUrl = $"file://{viewerPath}?file={Uri.EscapeDataString("file://" + fullPath)}#page=1";
 
-                    System.Diagnostics.Debug.WriteLine($"[Viewer] WebView Source (PDF.js Cache): {pdfJsUrl}");
-                    PdfWebView.Source = new UrlWebViewSource { Url = pdfJsUrl };
+                    System.Diagnostics.Debug.WriteLine($"[Viewer] WebView Source: {pdfJsUrl}");
+                    MainThread.BeginInvokeOnMainThread(() => {
+                        PdfWebView.Source = new UrlWebViewSource { Url = pdfJsUrl };
+                    });
                 }
                 else
                 {
-                    PdfWebView.Source = fullPath;
+                    MainThread.BeginInvokeOnMainThread(() => {
+                        PdfWebView.Source = fullPath;
+                    });
                 }
             }
+
             System.Diagnostics.Debug.WriteLine("[Viewer] --- Fin de LoadContentAsync ---");
         }
         catch (Exception ex)
