@@ -5,15 +5,14 @@ namespace MusicScoreManager.Services
 {
     public class DatabaseService
     {
-        private SQLiteAsyncConnection? _database;
+        private static SQLiteAsyncConnection? _database;
+        private static readonly SemaphoreSlim _initSemaphore = new(1, 1);
         private readonly string _databasePath;
-        private readonly SemaphoreSlim _semaphore = new(1, 1);
         private readonly SettingsService _settingsService;
 
         public DatabaseService()
         {
             _settingsService = new SettingsService();
-            // La base de données scores.db3 selon les spécifications.
             _databasePath = Path.Combine(FileSystem.AppDataDirectory, "scores.db3");
         }
 
@@ -22,13 +21,17 @@ namespace MusicScoreManager.Services
             if (_database is not null)
                 return;
 
-            await _semaphore.WaitAsync();
+            await _initSemaphore.WaitAsync();
             try
             {
                 if (_database is not null)
                     return;
 
-                var db = new SQLiteAsyncConnection(_databasePath);
+                var db = new SQLiteAsyncConnection(_databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
+                
+                // Activer WAL pour de meilleures perfs en lecture/écriture concurrente
+                await db.ExecuteScalarAsync<string>("PRAGMA journal_mode=WAL;");
+
                 await db.CreateTableAsync<Score>();
                 await db.CreateTableAsync<Setlist>();
                 await db.CreateTableAsync<SetlistScore>();
@@ -38,11 +41,11 @@ namespace MusicScoreManager.Services
                 await db.CreateTableAsync<Annotation>();
                 await db.CreateTableAsync<FavoriteSticker>();
                 
-                _database = db; // On ne l'assigne qu'à la toute fin
+                _database = db;
             }
             finally
             {
-                _semaphore.Release();
+                _initSemaphore.Release();
             }
         }
  

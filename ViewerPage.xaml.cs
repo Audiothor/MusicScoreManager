@@ -60,24 +60,24 @@ public partial class ViewerPage : ContentPage
         // Le métronome et l'audio sont initialisés en différé dans OnAppearing
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
         System.Diagnostics.Debug.WriteLine("[Viewer] OnAppearing appelé.");
 
-        // On lance les initialisations en parallèle sans délai artificiel
-        InitializeMetronome();
-        InitializeAudio();
-        LoadAnnotationsAsync();
-        InitializeAnnotationUI();
+        // Initialisations asynchrones
+        await Task.Run(() => InitializeMetronome());
+        await Task.Run(() => InitializeAudio());
+        await LoadAnnotationsAsync();
+        await InitializeAnnotationUI();
     }
 
-    private async void LoadAnnotationsAsync()
+    private async Task LoadAnnotationsAsync()
     {
         try
         {
             _annotations = await _databaseService.GetAnnotationsForScoreAsync(_score.Id);
-            RenderAnnotations();
+            MainThread.BeginInvokeOnMainThread(() => RenderAnnotations());
         }
         catch (Exception ex)
         {
@@ -86,7 +86,7 @@ public partial class ViewerPage : ContentPage
     }
 
     private bool _isAnnotationUIInitialized = false;
-    private async void InitializeAnnotationUI()
+    private async Task InitializeAnnotationUI()
     {
         if (_isAnnotationUIInitialized) return;
         _isAnnotationUIInitialized = true;
@@ -209,8 +209,11 @@ public partial class ViewerPage : ContentPage
 
                 try
                 {
-                    byte[] imageBytes = File.ReadAllBytes(fullPath);
-                    ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(imageBytes));
+                    // On lit le fichier en arrière-plan pour ne pas bloquer le thread UI
+                    byte[] imageBytes = await Task.Run(() => File.ReadAllBytes(fullPath));
+                    MainThread.BeginInvokeOnMainThread(() => {
+                        ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(imageBytes));
+                    });
                     System.Diagnostics.Debug.WriteLine($"[Viewer] Image chargée ({imageBytes.Length} octets)");
                 }
                 catch (Exception imgEx)
