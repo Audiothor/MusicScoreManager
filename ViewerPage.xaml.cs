@@ -1215,7 +1215,8 @@ public partial class ViewerPage : ContentPage
         // Masquer les enfants excédentaires
         for (int i = pageAnnotations.Count; i < AnnotationsContainer.Children.Count; i++)
         {
-            AnnotationsContainer.Children[i].IsVisible = false;
+            if (AnnotationsContainer.Children[i] is VisualElement ve)
+                ve.IsVisible = false;
         }
     }
 
