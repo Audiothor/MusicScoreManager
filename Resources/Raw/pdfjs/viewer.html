@@ -198,6 +198,16 @@
             // Réservé pour les annotations
             console.log("Bottom zone - Reserved for annotations");
         }
+
+        // Auto-chargement au démarrage si un paramètre 'file' est présent
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const file = urlParams.get('file');
+            if (file) {
+                console.log("Auto-loading PDF from URL param: " + file);
+                loadPdf(file);
+            }
+        };
     </script>
 </body>
 </html>

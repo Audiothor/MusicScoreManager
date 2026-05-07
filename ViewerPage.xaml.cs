@@ -262,6 +262,7 @@ public partial class ViewerPage : ContentPage
                     string pdfJsUrl = $"{finalViewerPath}?file={Uri.EscapeDataString(finalFilePath)}#page=1";
 
                     System.Diagnostics.Debug.WriteLine($"[Viewer] WebView Source finale: {pdfJsUrl}");
+                    _pdfFilePath = finalFilePath; 
                     MainThread.BeginInvokeOnMainThread(() => {
                         PdfWebView.Source = new UrlWebViewSource { Url = pdfJsUrl };
                     });
@@ -314,13 +315,16 @@ public partial class ViewerPage : ContentPage
     {
         if (_score.Type == ScoreType.PDF && e.Result == WebNavigationResult.Success)
         {
-            // On charge le PDF directement avec son chemin optimisé (Zéro-Copie)
-            await PdfWebView.EvaluateJavaScriptAsync($"loadPdf('{_pdfFilePath}')");
-
+            System.Diagnostics.Debug.WriteLine("[Viewer] WebView Navigated - Auto-load en cours...");
+            
             if (_currentRotation != 0)
             {
+                await Task.Delay(500);
                 await PdfWebView.EvaluateJavaScriptAsync($"setRotation({_currentRotation})");
             }
+            
+            _isScoreReady = true;
+            if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
         }
     }
 
