@@ -104,6 +104,16 @@ public partial class ViewerPage : ContentPage
             MainThread.BeginInvokeOnMainThread(() => {
                 if (StickerCategoriesCollection != null)
                 {
+                    // Appliquer réglages initiaux
+                    foreach(var cat in categories)
+                    {
+                        foreach(var s in cat.Stickers)
+                        {
+                            s.Color = _currentStickerColor;
+                            s.BackgroundColor = _currentStickerBgColor;
+                            s.Scale = StickerSizeSlider.Value;
+                        }
+                    }
                     StickerCategoriesCollection.ItemsSource = categories;
                 }
             });
@@ -927,6 +937,14 @@ public partial class ViewerPage : ContentPage
                 MainThread.BeginInvokeOnMainThread(() => {
                     if (StickersCollection != null)
                     {
+                        // Appliquer les réglages actuels à TOUS les stickers de cette catégorie pour l'aperçu
+                        foreach (var s in category.Stickers)
+                        {
+                            s.Color = _currentStickerColor;
+                            s.BackgroundColor = _currentStickerBgColor;
+                            s.Scale = StickerSizeSlider.Value;
+                        }
+                        
                         StickersCollection.ItemsSource = category.Stickers;
                         StickersCollection.SelectedItem = null; // Reset selection
                     }
@@ -949,6 +967,7 @@ public partial class ViewerPage : ContentPage
     }
 
     private string _currentStickerColor = "#FFFFFF";
+    private string _currentStickerBgColor = "Transparent";
 
     private void OnStickerColorTapped(object sender, TappedEventArgs e)
     {
@@ -963,16 +982,33 @@ public partial class ViewerPage : ContentPage
                 _ => "#FFFFFF"
             };
             
-            // Mise à jour visuelle de l'indicateur
-            if (CurrentColorIndicator != null)
-            {
-                CurrentColorIndicator.Color = Color.FromArgb(_currentStickerColor);
-            }
-
             // APERÇU : Mettre à jour le sticker sélectionné dans le picker
             if (StickersCollection?.SelectedItem is StickerItem selectedSticker)
             {
                 selectedSticker.Color = _currentStickerColor;
+            }
+        }
+    }
+
+    private void OnStickerBgColorTapped(object sender, TappedEventArgs e)
+    {
+        if (e.Parameter is string color)
+        {
+            _currentStickerBgColor = color switch
+            {
+                "Transparent" => "Transparent",
+                "DarkGray" => "#333333",
+                "Ivory" => "#FFFFE0",
+                "Red" => "#FF0000",
+                "Yellow" => "#FFFF00",
+                "Green" => "#2ECC71",
+                _ => "Transparent"
+            };
+            
+            // APERÇU : Mettre à jour le sticker sélectionné dans le picker
+            if (StickersCollection?.SelectedItem is StickerItem selectedSticker)
+            {
+                selectedSticker.BackgroundColor = _currentStickerBgColor;
             }
         }
     }
@@ -1002,6 +1038,7 @@ public partial class ViewerPage : ContentPage
         {
             // On prend DIRECTEMENT les valeurs actuelles des réglettes pour être sûr
             string color = _currentStickerColor;
+            string bgColor = _currentStickerBgColor;
             double scale = StickerSizeSlider.Value;
 
             var position = e.GetPosition(AnnotationsContainer);
@@ -1019,6 +1056,7 @@ public partial class ViewerPage : ContentPage
                 Y = relY,
                 Scale = scale,
                 Color = color,
+                BackgroundColor = bgColor,
                 PageNumber = _currentPage
             };
 
@@ -1039,10 +1077,8 @@ public partial class ViewerPage : ContentPage
             
             // Appliquer les réglages actuels pour l'aperçu immédiat
             sticker.Color = _currentStickerColor;
+            sticker.BackgroundColor = _currentStickerBgColor;
             sticker.Scale = StickerSizeSlider.Value;
-            
-            // On laisse l'overlay ouvert pour permettre la personnalisation (couleur/taille)
-            // L'utilisateur glissera ensuite le sticker pour le placer
         }
     }
 
@@ -1129,57 +1165,76 @@ public partial class ViewerPage : ContentPage
         for (int i = 0; i < pageAnnotations.Count; i++)
         {
             var ann = pageAnnotations[i];
-            Label label;
+            Border border;
 
             if (i < AnnotationsContainer.Children.Count)
             {
-                label = (Label)AnnotationsContainer.Children[i];
+                border = (Border)AnnotationsContainer.Children[i];
             }
             else
             {
-                label = CreateStickerLabel();
-                AnnotationsContainer.Children.Add(label);
+                border = CreateStickerBorder();
+                AnnotationsContainer.Children.Add(border);
             }
 
+            var label = (Label)border.Content;
+
             // Mise à jour des propriétés (plus rapide que recréer)
-            label.BindingContext = ann;
+            border.BindingContext = ann;
             label.Text = ann.Content;
             label.TextColor = Color.FromArgb(ann.Color);
-            label.FontSize = 30 * ann.Scale;
-            label.Opacity = (ann == _selectedAnnotation) ? 0.6 : 1.0;
+            
+            // Correction taille de police proportionnelle
+            label.FontSize = 24 * ann.Scale; 
+            
+            border.BackgroundColor = Color.FromArgb(ann.BackgroundColor);
+            border.Opacity = (ann == _selectedAnnotation) ? 0.6 : 1.0;
 
             // Positionnement
             double absX = ann.X * AnnotationsContainer.Width;
             double absY = ann.Y * AnnotationsContainer.Height;
-            AbsoluteLayout.SetLayoutBounds(label, new Rect(absX - 30, absY - 30, 60, 60));
+            
+            // On adapte la taille du border au contenu ou on garde une taille fixe scalee
+            double size = 50 * ann.Scale;
+            AbsoluteLayout.SetLayoutBounds(border, new Rect(absX - (size/2), absY - (size/2), size, size));
         }
     }
 
-    private Label CreateStickerLabel()
+    private Border CreateStickerBorder()
     {
         var label = new Label
         {
             BackgroundColor = Colors.Transparent,
             HorizontalTextAlignment = TextAlignment.Center,
-            VerticalTextAlignment = TextAlignment.Center
+            VerticalTextAlignment = TextAlignment.Center,
+            InputTransparent = true
         };
-        AbsoluteLayout.SetLayoutFlags(label, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
+
+        var border = new Border
+        {
+            Padding = new Thickness(5, 0),
+            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
+            StrokeThickness = 0,
+            Content = label
+        };
+
+        AbsoluteLayout.SetLayoutFlags(border, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
 
         // Geste de sélection
         var selectTap = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
         selectTap.Tapped += (s, e) => {
-            if (s is Label l && l.BindingContext is Annotation ann)
+            if (s is Border b && b.BindingContext is Annotation ann)
             {
                 _selectedAnnotation = ann;
-                RenderAnnotations(); // Mettre à jour l'opacité
+                RenderAnnotations(); 
             }
         };
-        label.GestureRecognizers.Add(selectTap);
+        border.GestureRecognizers.Add(selectTap);
 
         // Geste de suppression rapide (double tap)
         var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
         doubleTap.Tapped += async (s, e) => {
-            if (s is Label l && l.BindingContext is Annotation ann)
+            if (s is Border b && b.BindingContext is Annotation ann)
             {
                 await _databaseService.DeleteAnnotationAsync(ann);
                 _annotations.Remove(ann);
@@ -1187,43 +1242,42 @@ public partial class ViewerPage : ContentPage
                 RenderAnnotations();
             }
         };
-        label.GestureRecognizers.Add(doubleTap);
+        border.GestureRecognizers.Add(doubleTap);
 
         // Déplacement (Pan)
         var pan = new PanGestureRecognizer();
         double startX = 0, startY = 0;
         pan.PanUpdated += async (s, e) => {
-            if (s is Label l && l.BindingContext is Annotation ann)
+            if (s is Border b && b.BindingContext is Annotation ann)
             {
                 switch (e.StatusType)
                 {
                     case GestureStatus.Started:
-                        startX = l.TranslationX;
-                        startY = l.TranslationY;
+                        startX = b.TranslationX;
+                        startY = b.TranslationY;
                         _selectedAnnotation = ann;
-                        // On évite de rappeler RenderAnnotations ici si possible, ou on le fait de façon légère
-                        l.Opacity = 0.6;
+                        b.Opacity = 0.6;
                         break;
                     case GestureStatus.Running:
-                        l.TranslationX = startX + e.TotalX;
-                        l.TranslationY = startY + e.TotalY;
+                        b.TranslationX = startX + e.TotalX;
+                        b.TranslationY = startY + e.TotalY;
                         break;
                     case GestureStatus.Completed:
-                        double finalAbsX = (ann.X * AnnotationsContainer.Width) + l.TranslationX;
-                        double finalAbsY = (ann.Y * AnnotationsContainer.Height) + l.TranslationY;
+                        double finalAbsX = (ann.X * AnnotationsContainer.Width) + b.TranslationX;
+                        double finalAbsY = (ann.Y * AnnotationsContainer.Height) + b.TranslationY;
                         ann.X = finalAbsX / AnnotationsContainer.Width;
                         ann.Y = finalAbsY / AnnotationsContainer.Height;
-                        l.TranslationX = 0;
-                        l.TranslationY = 0;
+                        b.TranslationX = 0;
+                        b.TranslationY = 0;
                         await _databaseService.SaveAnnotationAsync(ann);
                         RenderAnnotations();
                         break;
                 }
             }
         };
-        label.GestureRecognizers.Add(pan);
+        border.GestureRecognizers.Add(pan);
 
-        return label;
+        return border;
     }
 
     #endregion

@@ -31,6 +31,7 @@ public class Annotation
     public double Scale { get; set; } = 1.0;
 
     public string Color { get; set; } = "#FFFFFF";
+    public string BackgroundColor { get; set; } = "Transparent";
 
     public int PageNumber { get; set; } = 1;
 
