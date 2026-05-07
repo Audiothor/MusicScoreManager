@@ -199,8 +199,9 @@
 
                 <!-- Stickers de la catégorie -->
                 <CollectionView x:Name="StickersCollection" 
-                                HeightRequest="80"
-                                SelectionMode="None">
+                                HeightRequest="85"
+                                SelectionMode="None"
+                                HorizontalScrollBarVisibility="Always">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15" />
                     </CollectionView.ItemsLayout>
