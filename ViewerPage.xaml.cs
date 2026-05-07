@@ -102,10 +102,6 @@ public partial class ViewerPage : ContentPage
                 if (StickerCategoriesCollection != null)
                 {
                     StickerCategoriesCollection.ItemsSource = categories;
-                    if (categories.Count > 0)
-                    {
-                        StickerCategoriesCollection.SelectedItem = categories[0];
-                    }
                 }
             });
         }
@@ -900,9 +896,21 @@ public partial class ViewerPage : ContentPage
 
     private void OnStickerCategoryChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (e.CurrentSelection.FirstOrDefault() is StickerCategory category)
+        try
         {
-            StickersCollection.ItemsSource = category.Stickers;
+            if (e.CurrentSelection.FirstOrDefault() is StickerCategory category)
+            {
+                MainThread.BeginInvokeOnMainThread(() => {
+                    if (StickersCollection != null)
+                    {
+                        StickersCollection.ItemsSource = category.Stickers;
+                    }
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur changement catégorie: {ex.Message}");
         }
     }
 
