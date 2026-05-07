@@ -297,9 +297,11 @@ public partial class ViewerPage : ContentPage
         {
             string dest = Path.Combine(pdfjsDir, file);
 
-            // Pour cette version on force le rafraîchissement pour éliminer toute corruption
-            try
+            // OPTIMISATION : On ne copie que si le fichier n'existe pas déjà dans le cache
+            if (!File.Exists(dest))
             {
+                try
+                {
                     using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
                     using var fileStream = File.Create(dest);
                     await stream.CopyToAsync(fileStream);
