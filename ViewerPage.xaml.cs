@@ -920,16 +920,11 @@ public partial class ViewerPage : ContentPage
         if (sender is View view && view.BindingContext is string sticker)
         {
             e.Data.Properties.Add("Sticker", sticker);
-            e.Data.Properties.Add("Color", _currentStickerColor);
-            e.Data.Properties.Add("Scale", StickerSizeSlider.Value);
-
-            // On masque le sélecteur pendant le drag pour bien voir où on pose
-            StickerPickerOverlay.IsVisible = false;
-            StickerSettingsBar.IsVisible = false;
+            // On ne masque plus les bandeaux car l'utilisateur veut qu'ils restent visibles
         }
     }
 
-    private string _currentStickerColor = "#000000";
+    private string _currentStickerColor = "#FFFFFF";
 
     private void OnStickerColorTapped(object sender, TappedEventArgs e)
     {
@@ -941,10 +936,14 @@ public partial class ViewerPage : ContentPage
                 "Black" => "#000000",
                 "Red" => "#FF0000",
                 "Blue" => "#007ACC",
-                _ => "#000000"
+                _ => "#FFFFFF"
             };
             
-            // On pourrait ajouter un effet visuel sur la couleur sélectionnée ici
+            // Mise à jour visuelle de l'indicateur
+            if (CurrentColorIndicator != null)
+            {
+                CurrentColorIndicator.Color = Color.FromArgb(_currentStickerColor);
+            }
         }
     }
 
@@ -952,12 +951,9 @@ public partial class ViewerPage : ContentPage
     {
         if (e.Data.Properties.TryGetValue("Sticker", out var stickerObj) && stickerObj is string sticker)
         {
-            // Récupérer les réglages choisis
-            e.Data.Properties.TryGetValue("Color", out var colorObj);
-            string color = (colorObj as string) ?? _currentStickerColor;
-            
-            e.Data.Properties.TryGetValue("Scale", out var scaleObj);
-            double scale = (scaleObj is double s) ? s : StickerSizeSlider.Value;
+            // On prend DIRECTEMENT les valeurs actuelles des réglettes pour être sûr
+            string color = _currentStickerColor;
+            double scale = StickerSizeSlider.Value;
 
             var position = e.GetPosition(AnnotationsContainer);
             if (position == null) return;
@@ -980,6 +976,9 @@ public partial class ViewerPage : ContentPage
             await _databaseService.SaveAnnotationAsync(annotation);
             _annotations.Add(annotation);
             RenderAnnotations();
+
+            // Une fois posé, on peut masquer les bandeaux pour libérer de l'espace si besoin
+            // mais l'utilisateur a demandé qu'ils ne partent pas. On les laisse donc.
         }
     }
 

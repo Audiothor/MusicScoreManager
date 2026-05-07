@@ -151,6 +151,9 @@
                     <Ellipse WidthRequest="22" HeightRequest="22" Fill="#007ACC">
                         <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Blue"/></Ellipse.GestureRecognizers>
                     </Ellipse>
+                    
+                    <!-- Aperçu de la couleur active -->
+                    <BoxView x:Name="CurrentColorIndicator" WidthRequest="30" HeightRequest="4" Color="White" VerticalOptions="End" Margin="10,0,0,0" />
                 </HorizontalStackLayout>
                 
                 <Label Grid.Column="2" Text="Taille:" TextColor="White" VerticalOptions="Center" Margin="20,0,10,0" />
