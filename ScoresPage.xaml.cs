@@ -17,67 +17,71 @@ public partial class ScoresPage : ContentPage
         _importService = importService;
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-        try 
+        _ = Task.Run(async () =>
         {
-            // Un petit délai laisse le temps au layout de se stabiliser
-            await Task.Delay(100);
-            await LoadTagFiltersAsync();
-            await LoadScoresAsync();
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error in ScoresPage.OnAppearing: {ex.Message}");
-        }
+            try 
+            {
+                // On laisse un peu de temps pour l'animation de transition
+                await Task.Delay(50);
+                await LoadTagFiltersAsync();
+                await LoadScoresAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in ScoresPage.OnAppearing: {ex.Message}");
+            }
+        });
     }
 
     private async Task LoadTagFiltersAsync()
     {
         var tags = await _databaseService.GetTagsAsync();
-        TagFiltersStack.Children.Clear();
-
-        foreach (var tag in tags)
-        {
-            bool isSelected = _selectedTagFilterId == tag.Id;
-
-            var border = new Border
+        
+        MainThread.BeginInvokeOnMainThread(() => {
+            TagFiltersStack.Children.Clear();
+            foreach (var tag in tags)
             {
-                BackgroundColor = Color.FromArgb(tag.ColorHex),
-                StrokeThickness = isSelected ? 2 : 0,
-                Stroke = Colors.White,
-                Padding = new Thickness(15, 8),
-                VerticalOptions = LayoutOptions.Center,
-                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 }
-            };
+                bool isSelected = _selectedTagFilterId == tag.Id;
 
-            var label = new Label
-            {
-                Text = tag.Name,
-                TextColor = Colors.White,
-                FontAttributes = FontAttributes.Bold,
-                VerticalOptions = LayoutOptions.Center
-            };
-            
-            border.Content = label;
+                var border = new Border
+                {
+                    BackgroundColor = Color.FromArgb(tag.ColorHex),
+                    StrokeThickness = isSelected ? 2 : 0,
+                    Stroke = Colors.White,
+                    Padding = new Thickness(15, 8),
+                    VerticalOptions = LayoutOptions.Center,
+                    StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 }
+                };
 
-            var tapGesture = new TapGestureRecognizer();
-            tapGesture.Tapped += async (s, e) =>
-            {
-                if (_selectedTagFilterId == tag.Id)
-                    _selectedTagFilterId = null; // Désélectionner
-                else
-                    _selectedTagFilterId = tag.Id; // Sélectionner
+                var label = new Label
+                {
+                    Text = tag.Name,
+                    TextColor = Colors.White,
+                    FontAttributes = FontAttributes.Bold,
+                    VerticalOptions = LayoutOptions.Center
+                };
+                
+                border.Content = label;
 
-                // Recharger l'UI des filtres pour la surbrillance
-                await LoadTagFiltersAsync();
-                await LoadScoresAsync(SearchScoreBar.Text);
-            };
-            border.GestureRecognizers.Add(tapGesture);
+                var tapGesture = new TapGestureRecognizer();
+                tapGesture.Tapped += async (s, e) =>
+                {
+                    if (_selectedTagFilterId == tag.Id)
+                        _selectedTagFilterId = null;
+                    else
+                        _selectedTagFilterId = tag.Id;
 
-            TagFiltersStack.Children.Add(border);
-        }
+                    await LoadTagFiltersAsync();
+                    await LoadScoresAsync(SearchScoreBar.Text);
+                };
+                border.GestureRecognizers.Add(tapGesture);
+
+                TagFiltersStack.Children.Add(border);
+            }
+        });
     }
 
     private async Task LoadScoresAsync(string query = "")
@@ -89,7 +93,9 @@ public partial class ScoresPage : ContentPage
         else if (_currentSort == "DateAsc") scores = scores.OrderBy(s => s.DateAdded).ToList();
         else if (_currentSort == "DateDesc") scores = scores.OrderByDescending(s => s.DateAdded).ToList();
 
-        ScoresCollectionView.ItemsSource = scores;
+        MainThread.BeginInvokeOnMainThread(() => {
+            ScoresCollectionView.ItemsSource = scores;
+        });
     }
 
     private async void OnSearchBarTextChanged(object sender, TextChangedEventArgs e)

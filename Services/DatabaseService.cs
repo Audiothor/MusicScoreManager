@@ -6,7 +6,7 @@ namespace MusicScoreManager.Services
     public class DatabaseService
     {
         private static SQLiteAsyncConnection? _database;
-        private static readonly SemaphoreSlim _initSemaphore = new(1, 1);
+        private static Task? _initTask;
         private readonly string _databasePath;
         private readonly SettingsService _settingsService;
 
@@ -16,21 +16,17 @@ namespace MusicScoreManager.Services
             _databasePath = Path.Combine(FileSystem.AppDataDirectory, "scores.db3");
         }
 
-        private async Task Init()
+        private Task Init()
         {
-            if (_database is not null)
-                return;
-
-            await _initSemaphore.WaitAsync();
-            try
+            // Utilisation d'une tâche statique pour garantir que l'init ne se fait qu'UNE FOIS
+            // durant toute la vie de l'application.
+            return _initTask ??= Task.Run(async () =>
             {
-                if (_database is not null)
-                    return;
-
                 var db = new SQLiteAsyncConnection(_databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
                 
                 // Activer WAL pour de meilleures perfs en lecture/écriture concurrente
                 await db.ExecuteScalarAsync<string>("PRAGMA journal_mode=WAL;");
+                await db.ExecuteScalarAsync<string>("PRAGMA synchronous=NORMAL;");
 
                 await db.CreateTableAsync<Score>();
                 await db.CreateTableAsync<Setlist>();
@@ -42,11 +38,7 @@ namespace MusicScoreManager.Services
                 await db.CreateTableAsync<FavoriteSticker>();
                 
                 _database = db;
-            }
-            finally
-            {
-                _initSemaphore.Release();
-            }
+            });
         }
  
         public async Task<List<Score>> GetScoresAsync()
@@ -61,41 +53,63 @@ namespace MusicScoreManager.Services
         {
             if (scores == null || scores.Count == 0 || _database == null) return;
             
-            var scoreIds = scores.Select(s => s.Id).ToList();
+            // Si on a beaucoup de scores, on charge TOUTES les tables de jointure une fois
+            // et on fait le mapping en mémoire (BEAUCOUP plus rapide que Contains sur Android)
+            List<ScoreTag> allScoreTags;
+            List<Tag> allTags;
+            List<ScoreAudioFile> allAudioFiles;
 
-            // Chargement CIBLÉ des relations ScoreTag
-            var relevantScoreTags = await _database.Table<ScoreTag>()
-                                                 .Where(st => scoreIds.Contains(st.ScoreId))
-                                                 .ToListAsync();
-            
-            var tagIds = relevantScoreTags.Select(st => st.TagId).Distinct().ToList();
-            var relevantTags = await _database.Table<Tag>()
-                                            .Where(t => tagIds.Contains(t.Id))
-                                            .ToListAsync();
+            if (scores.Count > 10)
+            {
+                allScoreTags = await _database.Table<ScoreTag>().ToListAsync();
+                allTags = await _database.Table<Tag>().ToListAsync();
+                allAudioFiles = await _database.Table<ScoreAudioFile>().ToListAsync();
+            }
+            else
+            {
+                var ids = scores.Select(s => s.Id).ToList();
+                allScoreTags = await _database.Table<ScoreTag>().Where(st => ids.Contains(st.ScoreId)).ToListAsync();
+                var tagIds = allScoreTags.Select(st => st.TagId).Distinct().ToList();
+                allTags = await _database.Table<Tag>().Where(t => tagIds.Contains(t.Id)).ToListAsync();
+                allAudioFiles = await _database.Table<ScoreAudioFile>().Where(af => ids.Contains(af.ScoreId)).ToListAsync();
+            }
 
-            // Chargement CIBLÉ des fichiers audio
-            var relevantAudioFiles = await _database.Table<ScoreAudioFile>()
-                                                  .Where(af => scoreIds.Contains(af.ScoreId))
-                                                  .ToListAsync();
- 
+            var tagsLookup = allTags.ToDictionary(t => t.Id);
+            var scoreTagsGrouped = allScoreTags.GroupBy(st => st.ScoreId).ToDictionary(g => g.Key, g => g.ToList());
+            var audioFilesGrouped = allAudioFiles.GroupBy(af => af.ScoreId).ToDictionary(g => g.Key, g => g.ToList());
+
             foreach (var score in scores)
             {
-                var sId = score.Id;
-                var currentScoreTagIds = relevantScoreTags.Where(st => st.ScoreId == sId).Select(st => st.TagId).ToList();
-                score.AppliedTags = relevantTags.Where(t => currentScoreTagIds.Contains(t.Id)).ToList();
-                
-                var scoreAudioFiles = relevantAudioFiles.Where(af => af.ScoreId == sId).ToList();
-                foreach (var af in scoreAudioFiles)
+                if (scoreTagsGrouped.TryGetValue(score.Id, out var sTags))
                 {
-                    var fullPath = _settingsService.GetAbsolutePath(af.FilePath, isAudio: true);
-                    af.IsFileMissing = !File.Exists(fullPath);
-                    af.IsExternal = Path.IsPathRooted(af.FilePath);
+                    score.AppliedTags = sTags.Select(st => tagsLookup.TryGetValue(st.TagId, out var t) ? t : null)
+                                            .Where(t => t != null).Cast<Tag>().ToList();
                 }
-                score.AudioFiles = scoreAudioFiles;
+                else score.AppliedTags = new();
 
-                var scorePath = _settingsService.GetAbsolutePath(score.FilePath);
-                score.IsFileMissing = !File.Exists(scorePath);
-                score.IsExternal = Path.IsPathRooted(score.FilePath);
+                score.AudioFiles = audioFilesGrouped.TryGetValue(score.Id, out var afs) ? afs : new();
+                
+                // Optimisation : On ne vérifie l'existence physique QUE si on a peu de scores (ex: ouverture partition)
+                // ou si on est en train de rendre un item spécifique (mais ici on le fait pour tous)
+                // Pour la liste principale, on accepte un léger décalage ou on le fera en tâche de fond.
+                if (scores.Count <= 5)
+                {
+                    foreach (var af in score.AudioFiles)
+                    {
+                        var afPath = _settingsService.GetAbsolutePath(af.FilePath, isAudio: true);
+                        af.IsFileMissing = !File.Exists(afPath);
+                        af.IsExternal = Path.IsPathRooted(af.FilePath);
+                    }
+                    var sPath = _settingsService.GetAbsolutePath(score.FilePath);
+                    score.IsFileMissing = !File.Exists(sPath);
+                    score.IsExternal = Path.IsPathRooted(score.FilePath);
+                }
+                else
+                {
+                    // Valeurs par défaut rapides pour la liste
+                    score.IsExternal = Path.IsPathRooted(score.FilePath);
+                    // On ne check pas File.Exists ici pour la grosse liste
+                }
             }
         }
 
