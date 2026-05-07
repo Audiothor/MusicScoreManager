@@ -15,7 +15,16 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid BackgroundColor="Black">
+    <Grid BackgroundColor="White">
+        <!-- Le PDF en premier pour être sûr qu'il n'est pas recouvert -->
+        <WebView x:Name="PdfWebView" 
+                 IsVisible="False" 
+                 BackgroundColor="White"
+                 HorizontalOptions="FillAndExpand"
+                 VerticalOptions="FillAndExpand"
+                 Navigated="OnPdfWebViewNavigated"
+                 Navigating="OnPdfWebViewNavigating" />
+
         <!-- MediaElement pour la lecture audio et les bips -->
         <toolkit:MediaElement x:Name="AudioPlayer" IsVisible="False" />
 
@@ -63,14 +72,7 @@
             </ContentView>
         </Grid>
 
-        <!-- Le PDF -->
-        <WebView x:Name="PdfWebView" 
-                 IsVisible="False" 
-                 BackgroundColor="White"
-                 HorizontalOptions="FillAndExpand"
-                 VerticalOptions="FillAndExpand"
-                 Navigated="OnPdfWebViewNavigated"
-                 Navigating="OnPdfWebViewNavigating" />
+
 
         <!-- Overlay MÉTRONOME (Haut-Droite) -->
         <Border x:Name="MetronomeOverlay" 
