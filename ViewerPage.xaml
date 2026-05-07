@@ -15,8 +15,8 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid BackgroundColor="White">
-        <!-- Le PDF en premier pour être sûr qu'il n'est pas recouvert -->
+    <Grid BackgroundColor="Black">
+        <!-- Le PDF -->
         <WebView x:Name="PdfWebView" 
                  IsVisible="False" 
                  BackgroundColor="White"
@@ -271,15 +271,14 @@
                 <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
             </Border.GestureRecognizers>
             <Grid ColumnDefinitions="Auto, Auto, Auto, *, Auto, Auto" Padding="10,0">
-                <Button Grid.Column="0" Text="Texte" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" />
-                <Button Grid.Column="1" Text="Dessin" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" />
-                <Button Grid.Column="2" Text="Stickers" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" />
-                <!-- Espace -->
+                <Button Grid.Column="0" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="18" FontAttributes="Bold" Padding="10,0" />
+                <Button Grid.Column="1" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="18" Padding="10,0" />
+                <Button Grid.Column="2" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="18" Padding="10,0" />
+                
                 <BoxView Grid.Column="3" Color="Transparent" />
-                <!-- Bouton Reset -->
-                <Button Grid.Column="4" Text="Reset" BackgroundColor="#CC333333" TextColor="White" Clicked="OnResetAnnotationsClicked" Margin="0,0,10,0" />
-                <!-- Bouton Supprimer -->
-                <Button Grid.Column="5" Text="Supprimer" BackgroundColor="#CCFF0000" TextColor="White" Clicked="OnDeleteSelectedAnnotationClicked" FontAttributes="Bold" />
+                
+                <Button Grid.Column="4" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="20" Padding="10,0" />
+                <Button Grid.Column="5" Text="✕" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="20" Padding="10,0" FontAttributes="Bold" />
             </Grid>
         </Border>
 
