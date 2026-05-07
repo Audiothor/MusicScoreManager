@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.4.20</ApplicationDisplayVersion>
-		<ApplicationVersion>1420</ApplicationVersion>
-		<!-- Version actuelle : v1.4.20 "PDF & Image Stability Fix" -->
+		<ApplicationDisplayVersion>1.4.21</ApplicationDisplayVersion>
+		<ApplicationVersion>1421</ApplicationVersion>
+		<!-- Version actuelle : v1.4.21 "PDF Sync Fix" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>

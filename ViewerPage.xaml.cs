@@ -54,18 +54,20 @@ public partial class ViewerPage : ContentPage
         {
             _currentRotation = _score.Rotation;
         }
-
-        LoadContentAsync();
-        SetupMenuUI();
-        // Le métronome et l'audio sont initialisés en différé dans OnAppearing
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
         System.Diagnostics.Debug.WriteLine("[Viewer] OnAppearing appelé.");
+        
+        // On attend que la page soit bien affichée pour charger le contenu lourd
+        MainThread.BeginInvokeOnMainThread(() => {
+            LoadContentAsync();
+            SetupMenuUI();
+        });
 
-        // On lance tout sans attendre pour libérer le thread UI immédiatement
+        // On lance le reste en arrière-plan
         _ = Task.Run(async () => {
             InitializeMetronome();
             InitializeAudio();
