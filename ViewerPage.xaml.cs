@@ -167,7 +167,7 @@ public partial class ViewerPage : ContentPage
             if (string.IsNullOrEmpty(_score.FilePath))
             {
                 System.Diagnostics.Debug.WriteLine("[Viewer] ERREUR : _score.FilePath est NULL ou vide");
-                await DisplayAlert("Erreur", "Chemin du fichier manquant", "OK");
+                await DisplayAlertAsync("Erreur", "Chemin du fichier manquant", "OK");
                 return;
             }
 
@@ -198,7 +198,7 @@ public partial class ViewerPage : ContentPage
             if (!exists)
             {
                 System.Diagnostics.Debug.WriteLine($"[Viewer] ERREUR : Le fichier n'existe pas au chemin : {fullPath}");
-                await DisplayAlert("Fichier introuvable", $"Le fichier est introuvable :\n{fullPath}", "OK");
+                await DisplayAlertAsync("Fichier introuvable", $"Le fichier est introuvable :\n{fullPath}", "OK");
                 return;
             }
 
@@ -217,7 +217,7 @@ public partial class ViewerPage : ContentPage
                 catch (Exception imgEx)
                 {
                     System.Diagnostics.Debug.WriteLine($"[Viewer] ECHEC chargement Image: {imgEx.Message}");
-                    await DisplayAlert("Erreur Lecture", $"{imgEx.Message}\n\nL'application n'a pas la permission d'accéder à ce dossier sur la carte SD.", "OK");
+                    await DisplayAlertAsync("Erreur Lecture", $"{imgEx.Message}\n\nL'application n'a pas la permission d'accéder à ce dossier sur la carte SD.", "OK");
                     ScoreImage.Source = ImageSource.FromFile(fullPath);
                 }
 
@@ -261,7 +261,7 @@ public partial class ViewerPage : ContentPage
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"[Viewer] CRASH dans LoadContentAsync: {ex.Message}");
-            await DisplayAlert("Erreur de chargement", $"{ex.Message}\n\nFichier: {_score.FilePath}", "OK");
+            await DisplayAlertAsync("Erreur de chargement", $"{ex.Message}\n\nFichier: {_score.FilePath}", "OK");
         }
     }
 
@@ -873,14 +873,14 @@ public partial class ViewerPage : ContentPage
     {
         StickerPickerOverlay.IsVisible = false;
         StickerSettingsBar.IsVisible = false;
-        await DisplayAlert("Info", "L'annotation de texte arrive bientôt !", "OK");
+        await DisplayAlertAsync("Info", "L'annotation de texte arrive bientôt !", "OK");
     }
 
     private async void OnAnnotationDrawClicked(object sender, EventArgs e)
     {
         StickerPickerOverlay.IsVisible = false;
         StickerSettingsBar.IsVisible = false;
-        await DisplayAlert("Info", "Le mode dessin arrive bientôt !", "OK");
+        await DisplayAlertAsync("Info", "Le mode dessin arrive bientôt !", "OK");
     }
 
     private void OnAnnotationStickersClicked(object sender, EventArgs e)
@@ -989,7 +989,7 @@ public partial class ViewerPage : ContentPage
             AnnotationsContainer.GestureRecognizers.Clear();
             AnnotationsContainer.GestureRecognizers.Add(tap);
 
-            await DisplayAlert("Placement", $"Touchez la partition pour placer : {sticker}", "OK");
+            await DisplayAlertAsync("Placement", $"Touchez la partition pour placer : {sticker}", "OK");
         }
 
         // Déselectionner pour pouvoir sélectionner le même sticker plus tard
@@ -1036,11 +1036,11 @@ public partial class ViewerPage : ContentPage
     {
         if (_selectedAnnotation == null)
         {
-            await DisplayAlert("Supprimer", "Veuillez d'abord sélectionner une annotation en touchant un sticker.", "OK");
+            await DisplayAlertAsync("Supprimer", "Veuillez d'abord sélectionner une annotation en touchant un sticker.", "OK");
             return;
         }
 
-        bool confirm = await DisplayAlert("Supprimer", "Voulez-vous supprimer l'annotation sélectionnée ?", "Oui", "Non");
+        bool confirm = await DisplayAlertAsync("Supprimer", "Voulez-vous supprimer l'annotation sélectionnée ?", "Oui", "Non");
         if (confirm)
         {
             await _databaseService.DeleteAnnotationAsync(_selectedAnnotation);
@@ -1092,7 +1092,7 @@ public partial class ViewerPage : ContentPage
                 // Geste de suppression rapide (double tap) - Optionnel mais pratique
                 var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
                 doubleTap.Tapped += async (s, e) => {
-                    bool confirm = await DisplayAlert("Supprimer", "Supprimer cette annotation ?", "Oui", "Non");
+                    bool confirm = await DisplayAlertAsync("Supprimer", "Supprimer cette annotation ?", "Oui", "Non");
                     if (confirm)
                     {
                         await _databaseService.DeleteAnnotationAsync(ann);

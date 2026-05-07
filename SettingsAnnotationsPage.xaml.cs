@@ -44,7 +44,7 @@ public partial class SettingsAnnotationsPage : ContentPage
     {
         if (sender is Button btn && btn.CommandParameter is FavoriteSticker fav)
         {
-            bool confirm = await DisplayAlert("Supprimer", $"Supprimer le sticker '{fav.Text}' ?", "Oui", "Non");
+            bool confirm = await DisplayAlertAsync("Supprimer", $"Supprimer le sticker '{fav.Text}' ?", "Oui", "Non");
             if (confirm)
             {
                 await _databaseService.DeleteFavoriteStickerAsync(fav);
