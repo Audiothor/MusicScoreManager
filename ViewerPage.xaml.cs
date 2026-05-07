@@ -1188,15 +1188,27 @@ public partial class ViewerPage : ContentPage
             label.FontSize = 24 * ann.Scale; 
             
             border.BackgroundColor = Color.FromArgb(ann.BackgroundColor);
-            border.Opacity = (ann == _selectedAnnotation) ? 0.6 : 1.0;
+            
+            if (ann == _selectedAnnotation)
+            {
+                border.Stroke = Colors.Red;
+                border.StrokeThickness = 2;
+            }
+            else
+            {
+                border.Stroke = Colors.Transparent;
+                border.StrokeThickness = 0;
+            }
 
-            // Positionnement
+            // Positionnement dynamique basé sur la taille réelle du contenu
+            var sizeRequest = border.Measure(double.PositiveInfinity, double.PositiveInfinity);
+            double w = sizeRequest.Request.Width;
+            double h = sizeRequest.Request.Height;
+
             double absX = ann.X * AnnotationsContainer.Width;
             double absY = ann.Y * AnnotationsContainer.Height;
             
-            // On adapte la taille du border au contenu ou on garde une taille fixe scalee
-            double size = 50 * ann.Scale;
-            AbsoluteLayout.SetLayoutBounds(border, new Rect(absX - (size/2), absY - (size/2), size, size));
+            AbsoluteLayout.SetLayoutBounds(border, new Rect(absX - (w/2), absY - (h/2), w, h));
         }
     }
 
@@ -1212,7 +1224,7 @@ public partial class ViewerPage : ContentPage
 
         var border = new Border
         {
-            Padding = new Thickness(5, 0),
+            Padding = new Thickness(10, 5),
             StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
             StrokeThickness = 0,
             Content = label
@@ -1256,7 +1268,7 @@ public partial class ViewerPage : ContentPage
                         startX = b.TranslationX;
                         startY = b.TranslationY;
                         _selectedAnnotation = ann;
-                        b.Opacity = 0.6;
+                        RenderAnnotations(); // Pour mettre la bordure rouge
                         break;
                     case GestureStatus.Running:
                         b.TranslationX = startX + e.TotalX;
