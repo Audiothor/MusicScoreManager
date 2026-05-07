@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.4.33</ApplicationDisplayVersion>
-		<ApplicationVersion>1433</ApplicationVersion>
-		<!-- Version actuelle : v1.4.33 "Sticker Layout Fix" -->
+		<ApplicationDisplayVersion>1.4.34</ApplicationDisplayVersion>
+		<ApplicationVersion>1434</ApplicationVersion>
+		<!-- Version actuelle : v1.4.34 "Final Build Fix" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>

@@ -1201,14 +1201,21 @@ public partial class ViewerPage : ContentPage
             }
 
             // Positionnement dynamique basé sur la taille réelle du contenu
-            var sizeRequest = border.Measure(double.PositiveInfinity, double.PositiveInfinity);
-            double w = sizeRequest.Request.Width;
-            double h = sizeRequest.Request.Height;
+            var size = border.Measure(double.PositiveInfinity, double.PositiveInfinity);
+            double w = size.Width;
+            double h = size.Height;
 
             double absX = ann.X * AnnotationsContainer.Width;
             double absY = ann.Y * AnnotationsContainer.Height;
             
             AbsoluteLayout.SetLayoutBounds(border, new Rect(absX - (w/2), absY - (h/2), w, h));
+            border.IsVisible = true;
+        }
+
+        // Masquer les enfants excédentaires
+        for (int i = pageAnnotations.Count; i < AnnotationsContainer.Children.Count; i++)
+        {
+            AnnotationsContainer.Children[i].IsVisible = false;
         }
     }
 
