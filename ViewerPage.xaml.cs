@@ -1040,11 +1040,25 @@ public partial class ViewerPage : ContentPage
             return;
         }
 
-        bool confirm = await DisplayAlertAsync("Supprimer", "Voulez-vous supprimer l'annotation sélectionnée ?", "Oui", "Non");
+        await _databaseService.DeleteAnnotationAsync(_selectedAnnotation);
+        _annotations.Remove(_selectedAnnotation);
+        _selectedAnnotation = null;
+        RenderAnnotations();
+    }
+
+    private async void OnResetAnnotationsClicked(object? sender, EventArgs e)
+    {
+        if (_annotations.Count == 0)
+        {
+            await DisplayAlertAsync("Reset", "Il n'y a aucune annotation à supprimer sur cette partition.", "OK");
+            return;
+        }
+
+        bool confirm = await DisplayAlertAsync("Reset", "Voulez-vous supprimer TOUTES les annotations de cette partition ?", "Oui", "Non");
         if (confirm)
         {
-            await _databaseService.DeleteAnnotationAsync(_selectedAnnotation);
-            _annotations.Remove(_selectedAnnotation);
+            await _databaseService.DeleteAllAnnotationsForScoreAsync(_score.Id);
+            _annotations.Clear();
             _selectedAnnotation = null;
             RenderAnnotations();
         }
@@ -1092,14 +1106,10 @@ public partial class ViewerPage : ContentPage
                 // Geste de suppression rapide (double tap) - Optionnel mais pratique
                 var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
                 doubleTap.Tapped += async (s, e) => {
-                    bool confirm = await DisplayAlertAsync("Supprimer", "Supprimer cette annotation ?", "Oui", "Non");
-                    if (confirm)
-                    {
-                        await _databaseService.DeleteAnnotationAsync(ann);
-                        _annotations.Remove(ann);
-                        if (_selectedAnnotation == ann) _selectedAnnotation = null;
-                        RenderAnnotations();
-                    }
+                    await _databaseService.DeleteAnnotationAsync(ann);
+                    _annotations.Remove(ann);
+                    if (_selectedAnnotation == ann) _selectedAnnotation = null;
+                    RenderAnnotations();
                 };
                 label.GestureRecognizers.Add(doubleTap);
 

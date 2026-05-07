@@ -383,6 +383,12 @@ namespace MusicScoreManager.Services
             return await _database!.DeleteAsync(annotation);
         }
 
+        public async Task<int> DeleteAllAnnotationsForScoreAsync(int scoreId)
+        {
+            await Init();
+            return await _database!.Table<Annotation>().Where(a => a.ScoreId == scoreId).DeleteAsync();
+        }
+
         #endregion
     }
 
