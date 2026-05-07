@@ -237,21 +237,31 @@ public partial class ViewerPage : ContentPage
             }
             else if (_score.Type == ScoreType.PDF)
             {
-                System.Diagnostics.Debug.WriteLine("[Viewer] Mode PDF");
+                System.Diagnostics.Debug.WriteLine("[Viewer] Mode PDF - Démarrage chargement WebView");
                 MainThread.BeginInvokeOnMainThread(() => {
                     ImageScrollView.IsVisible = false;
                     ImageTouchGrid.IsVisible = false;
                     PdfWebView.IsVisible = true;
+                    PdfWebView.Source = null; // On vide pour forcer le refresh
                 });
 
                 if (DeviceInfo.Platform == DevicePlatform.Android)
                 {
                     await EnsurePdfJsReadyAsync();
+                    
+                    // On attend un court instant que la WebView soit prête dans le layout
+                    await Task.Delay(200);
+
                     string pdfjsDir = Path.Combine(FileSystem.CacheDirectory, "pdfjs");
                     string viewerPath = Path.Combine(pdfjsDir, "viewer.html");
-                    string pdfJsUrl = $"file://{viewerPath}?file={Uri.EscapeDataString("file://" + fullPath)}#page=1";
+                    
+                    // Construction robuste avec 3 slashs
+                    string finalViewerPath = viewerPath.StartsWith("/") ? $"file://{viewerPath}" : $"file:///{viewerPath}";
+                    string finalFilePath = fullPath.StartsWith("/") ? $"file://{fullPath}" : $"file:///{fullPath}";
+                    
+                    string pdfJsUrl = $"{finalViewerPath}?file={Uri.EscapeDataString(finalFilePath)}#page=1";
 
-                    System.Diagnostics.Debug.WriteLine($"[Viewer] WebView Source: {pdfJsUrl}");
+                    System.Diagnostics.Debug.WriteLine($"[Viewer] WebView Source finale: {pdfJsUrl}");
                     MainThread.BeginInvokeOnMainThread(() => {
                         PdfWebView.Source = new UrlWebViewSource { Url = pdfJsUrl };
                     });
@@ -286,11 +296,9 @@ public partial class ViewerPage : ContentPage
         {
             string dest = Path.Combine(pdfjsDir, file);
 
-            // OPTIMISATION : On ne copie que si le fichier n'existe pas déjà dans le cache
-            if (!File.Exists(dest))
+            // Pour cette version on force le rafraîchissement pour éliminer toute corruption
+            try
             {
-                try
-                {
                     using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
                     using var fileStream = File.Create(dest);
                     await stream.CopyToAsync(fileStream);
