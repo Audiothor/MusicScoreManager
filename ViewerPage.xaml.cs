@@ -953,13 +953,23 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private void OnStickerSizeChanged(object? sender, ValueChangedEventArgs e)
+    private CancellationTokenSource? _sliderCts;
+    private async void OnStickerSizeChanged(object? sender, ValueChangedEventArgs e)
     {
-        // APERÇU : Mettre à jour le sticker sélectionné dans le picker
-        if (StickersCollection?.SelectedItem is StickerItem selectedSticker)
+        _sliderCts?.Cancel();
+        _sliderCts = new CancellationTokenSource();
+        var token = _sliderCts.Token;
+
+        try 
         {
-            selectedSticker.Scale = e.NewValue;
+            // Debouncing pour éviter de saturer le thread UI pendant que le slider bouge
+            await Task.Delay(30, token); 
+            if (StickersCollection?.SelectedItem is StickerItem selectedSticker)
+            {
+                selectedSticker.Scale = e.NewValue;
+            }
         }
+        catch (OperationCanceledException) { }
     }
 
     private async void OnStickerDrop(object? sender, DropEventArgs e)
@@ -1083,89 +1093,113 @@ public partial class ViewerPage : ContentPage
     private void RenderAnnotations()
     {
         if (AnnotationsContainer == null) return;
-        AnnotationsContainer.Children.Clear();
 
         // On ne rend que les annotations de la page actuelle
         var pageAnnotations = _annotations.Where(a => a.PageNumber == _currentPage).ToList();
 
-        foreach (var ann in pageAnnotations)
+        // 1. Recyclage : Supprimer les labels en trop
+        while (AnnotationsContainer.Children.Count > pageAnnotations.Count)
+            AnnotationsContainer.Children.RemoveAt(AnnotationsContainer.Children.Count - 1);
+
+        // 2. Mise à jour ou création des labels
+        for (int i = 0; i < pageAnnotations.Count; i++)
         {
-            if (ann.Type == AnnotationType.Sticker)
+            var ann = pageAnnotations[i];
+            Label label;
+
+            if (i < AnnotationsContainer.Children.Count)
             {
-                var label = new Label
-                {
-                    Text = ann.Content,
-                    TextColor = Color.FromArgb(ann.Color),
-                    FontSize = 30 * ann.Scale,
-                    BackgroundColor = Colors.Transparent,
-                    HorizontalTextAlignment = TextAlignment.Center,
-                    VerticalTextAlignment = TextAlignment.Center,
-                    Opacity = (ann == _selectedAnnotation) ? 0.6 : 1.0 // Effet visuel de sélection
-                };
-
-                // On positionne le sticker
-                AbsoluteLayout.SetLayoutFlags(label, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
-
-                double absX = ann.X * AnnotationsContainer.Width;
-                double absY = ann.Y * AnnotationsContainer.Height;
-
-                AbsoluteLayout.SetLayoutBounds(label, new Rect(absX - 30, absY - 30, 60, 60));
-
-                // Geste de sélection
-                var selectTap = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
-                selectTap.Tapped += (s, e) => {
-                    _selectedAnnotation = ann;
-                    RenderAnnotations(); // Mettre à jour l'opacité
-                };
-                label.GestureRecognizers.Add(selectTap);
-
-                // Geste de suppression rapide (double tap) - Optionnel mais pratique
-                var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
-                doubleTap.Tapped += async (s, e) => {
-                    await _databaseService.DeleteAnnotationAsync(ann);
-                    _annotations.Remove(ann);
-                    if (_selectedAnnotation == ann) _selectedAnnotation = null;
-                    RenderAnnotations();
-                };
-                label.GestureRecognizers.Add(doubleTap);
-
-                // AJOUT DU DRAG (Déplacement après pose)
-                var pan = new PanGestureRecognizer();
-                double startX = 0, startY = 0;
-                pan.PanUpdated += async (s, e) => {
-                    switch (e.StatusType)
-                    {
-                        case GestureStatus.Started:
-                            startX = label.TranslationX;
-                            startY = label.TranslationY;
-                            _selectedAnnotation = ann; // On sélectionne aussi au drag
-                            RenderAnnotations();
-                            break;
-                        case GestureStatus.Running:
-                            label.TranslationX = startX + e.TotalX;
-                            label.TranslationY = startY + e.TotalY;
-                            break;
-                        case GestureStatus.Completed:
-                            // Calculer la nouvelle position relative
-                            double finalAbsX = (ann.X * AnnotationsContainer.Width) + label.TranslationX;
-                            double finalAbsY = (ann.Y * AnnotationsContainer.Height) + label.TranslationY;
-                            
-                            ann.X = finalAbsX / AnnotationsContainer.Width;
-                            ann.Y = finalAbsY / AnnotationsContainer.Height;
-                            
-                            label.TranslationX = 0;
-                            label.TranslationY = 0;
-                            
-                            await _databaseService.SaveAnnotationAsync(ann);
-                            RenderAnnotations();
-                            break;
-                    }
-                };
-                label.GestureRecognizers.Add(pan);
-
+                label = (Label)AnnotationsContainer.Children[i];
+            }
+            else
+            {
+                label = CreateStickerLabel();
                 AnnotationsContainer.Children.Add(label);
             }
+
+            // Mise à jour des propriétés (plus rapide que recréer)
+            label.BindingContext = ann;
+            label.Text = ann.Content;
+            label.TextColor = Color.FromArgb(ann.Color);
+            label.FontSize = 30 * ann.Scale;
+            label.Opacity = (ann == _selectedAnnotation) ? 0.6 : 1.0;
+
+            // Positionnement
+            double absX = ann.X * AnnotationsContainer.Width;
+            double absY = ann.Y * AnnotationsContainer.Height;
+            AbsoluteLayout.SetLayoutBounds(label, new Rect(absX - 30, absY - 30, 60, 60));
         }
+    }
+
+    private Label CreateStickerLabel()
+    {
+        var label = new Label
+        {
+            BackgroundColor = Colors.Transparent,
+            HorizontalTextAlignment = TextAlignment.Center,
+            VerticalTextAlignment = TextAlignment.Center
+        };
+        AbsoluteLayout.SetLayoutFlags(label, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
+
+        // Geste de sélection
+        var selectTap = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+        selectTap.Tapped += (s, e) => {
+            if (s is Label l && l.BindingContext is Annotation ann)
+            {
+                _selectedAnnotation = ann;
+                RenderAnnotations(); // Mettre à jour l'opacité
+            }
+        };
+        label.GestureRecognizers.Add(selectTap);
+
+        // Geste de suppression rapide (double tap)
+        var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
+        doubleTap.Tapped += async (s, e) => {
+            if (s is Label l && l.BindingContext is Annotation ann)
+            {
+                await _databaseService.DeleteAnnotationAsync(ann);
+                _annotations.Remove(ann);
+                if (_selectedAnnotation == ann) _selectedAnnotation = null;
+                RenderAnnotations();
+            }
+        };
+        label.GestureRecognizers.Add(doubleTap);
+
+        // Déplacement (Pan)
+        var pan = new PanGestureRecognizer();
+        double startX = 0, startY = 0;
+        pan.PanUpdated += async (s, e) => {
+            if (s is Label l && l.BindingContext is Annotation ann)
+            {
+                switch (e.StatusType)
+                {
+                    case GestureStatus.Started:
+                        startX = l.TranslationX;
+                        startY = l.TranslationY;
+                        _selectedAnnotation = ann;
+                        // On évite de rappeler RenderAnnotations ici si possible, ou on le fait de façon légère
+                        l.Opacity = 0.6;
+                        break;
+                    case GestureStatus.Running:
+                        l.TranslationX = startX + e.TotalX;
+                        l.TranslationY = startY + e.TotalY;
+                        break;
+                    case GestureStatus.Completed:
+                        double finalAbsX = (ann.X * AnnotationsContainer.Width) + l.TranslationX;
+                        double finalAbsY = (ann.Y * AnnotationsContainer.Height) + l.TranslationY;
+                        ann.X = finalAbsX / AnnotationsContainer.Width;
+                        ann.Y = finalAbsY / AnnotationsContainer.Height;
+                        l.TranslationX = 0;
+                        l.TranslationY = 0;
+                        await _databaseService.SaveAnnotationAsync(ann);
+                        RenderAnnotations();
+                        break;
+                }
+            }
+        };
+        label.GestureRecognizers.Add(pan);
+
+        return label;
     }
 
     #endregion
