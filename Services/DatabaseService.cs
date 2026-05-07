@@ -384,8 +384,6 @@ namespace MusicScoreManager.Services
         }
 
         #endregion
-
-        #endregion
     }
 
     public class BackupFile
