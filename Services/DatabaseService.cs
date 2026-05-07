@@ -5,8 +5,8 @@ namespace MusicScoreManager.Services
 {
     public class DatabaseService
     {
-        private static SQLiteAsyncConnection? _database;
         private static Task? _initTask;
+        private static readonly object _initLock = new();
         private readonly string _databasePath;
         private readonly SettingsService _settingsService;
 
@@ -18,27 +18,28 @@ namespace MusicScoreManager.Services
 
         private Task Init()
         {
-            // Utilisation d'une tâche statique pour garantir que l'init ne se fait qu'UNE FOIS
-            // durant toute la vie de l'application.
-            return _initTask ??= Task.Run(async () =>
+            lock (_initLock)
             {
-                var db = new SQLiteAsyncConnection(_databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
-                
-                // Activer WAL pour de meilleures perfs en lecture/écriture concurrente
-                await db.ExecuteScalarAsync<string>("PRAGMA journal_mode=WAL;");
-                await db.ExecuteScalarAsync<string>("PRAGMA synchronous=NORMAL;");
+                if (_initTask != null) return _initTask;
 
-                await db.CreateTableAsync<Score>();
-                await db.CreateTableAsync<Setlist>();
-                await db.CreateTableAsync<SetlistScore>();
-                await db.CreateTableAsync<Tag>();
-                await db.CreateTableAsync<ScoreTag>();
-                await db.CreateTableAsync<ScoreAudioFile>();
-                await db.CreateTableAsync<Annotation>();
-                await db.CreateTableAsync<FavoriteSticker>();
-                
-                _database = db;
-            });
+                _initTask = Task.Run(async () =>
+                {
+                    var db = new SQLiteAsyncConnection(_databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
+                    
+                    // On évite les PRAGMA complexes qui peuvent geler au démarrage sur certains Android
+                    await db.CreateTableAsync<Score>();
+                    await db.CreateTableAsync<Setlist>();
+                    await db.CreateTableAsync<SetlistScore>();
+                    await db.CreateTableAsync<Tag>();
+                    await db.CreateTableAsync<ScoreTag>();
+                    await db.CreateTableAsync<ScoreAudioFile>();
+                    await db.CreateTableAsync<Annotation>();
+                    await db.CreateTableAsync<FavoriteSticker>();
+                    
+                    _database = db;
+                });
+                return _initTask;
+            }
         }
  
         public async Task<List<Score>> GetScoresAsync()

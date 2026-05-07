@@ -211,12 +211,11 @@ public partial class ViewerPage : ContentPage
 
                 try
                 {
-                    // On lit le fichier en arrière-plan pour ne pas bloquer le thread UI
-                    byte[] imageBytes = await Task.Run(() => File.ReadAllBytes(fullPath));
+                    // On laisse MAUI gérer le chargement natif qui est beaucoup plus rapide (décodage matériel)
                     MainThread.BeginInvokeOnMainThread(() => {
-                        ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(imageBytes));
+                        ScoreImage.Source = ImageSource.FromFile(fullPath);
                     });
-                    System.Diagnostics.Debug.WriteLine($"[Viewer] Image chargée ({imageBytes.Length} octets)");
+                    System.Diagnostics.Debug.WriteLine($"[Viewer] Image source assignée: {fullPath}");
                 }
                 catch (Exception imgEx)
                 {
