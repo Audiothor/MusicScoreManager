@@ -205,18 +205,20 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Border WidthRequest="60" HeightRequest="60" 
+                            <Border HeightRequest="60" 
                                     Margin="5" BackgroundColor="#404040" 
+                                    Padding="10,0"
                                     StrokeShape="RoundRectangle 8">
                                 <Border.GestureRecognizers>
                                     <DragGestureRecognizer DragStarting="OnStickerDragStarting" />
                                 </Border.GestureRecognizers>
                                 <Label Text="{Binding .}" 
                                        TextColor="White" 
-                                       FontSize="28" 
-                                       InputTransparent="True"
-                                       HorizontalOptions="Center" 
-                                       VerticalOptions="Center" />
+                                       FontSize="22" 
+                                       LineBreakMode="NoWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center"
+                                       InputTransparent="True" />
                             </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
