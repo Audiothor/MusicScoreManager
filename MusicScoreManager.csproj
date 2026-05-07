@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.4.4</ApplicationDisplayVersion>
-		<ApplicationVersion>144</ApplicationVersion>
-		<!-- Version actuelle : v1.4.4 "Selector UI Improvements" -->
+		<ApplicationDisplayVersion>1.4.5</ApplicationDisplayVersion>
+		<ApplicationVersion>145</ApplicationVersion>
+		<!-- Version actuelle : v1.4.5 "Stability Update" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>

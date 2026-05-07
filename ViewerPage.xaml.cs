@@ -49,7 +49,6 @@ public partial class ViewerPage : ContentPage
         _annotationService = new AnnotationService();
 
         Title = _score.Title;
-        InitializeAnnotationUI();
 
         if (_score.IsRotationSaved)
         {
@@ -71,6 +70,7 @@ public partial class ViewerPage : ContentPage
         InitializeMetronome();
         InitializeAudio();
         LoadAnnotationsAsync();
+        InitializeAnnotationUI();
     }
 
     private async void LoadAnnotationsAsync()
@@ -86,18 +86,33 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private bool _isAnnotationUIInitialized = false;
     private async void InitializeAnnotationUI()
     {
-        var favorites = await _databaseService.GetFavoriteStickersAsync();
-        var favTexts = favorites.Select(f => f.Text).ToList();
-        var categories = _annotationService.GetStickerCategories(favTexts);
-        
-        StickerCategoriesCollection.ItemsSource = categories;
-        
-        // Sélectionner "Favoris" par défaut (le premier)
-        if (categories.Count > 0)
+        if (_isAnnotationUIInitialized) return;
+        _isAnnotationUIInitialized = true;
+
+        try
         {
-            StickerCategoriesCollection.SelectedItem = categories[0];
+            var favorites = await _databaseService.GetFavoriteStickersAsync();
+            var favTexts = favorites.Select(f => f.Text).ToList();
+            var categories = _annotationService.GetStickerCategories(favTexts);
+            
+            MainThread.BeginInvokeOnMainThread(() => {
+                if (StickerCategoriesCollection != null)
+                {
+                    StickerCategoriesCollection.ItemsSource = categories;
+                    if (categories.Count > 0)
+                    {
+                        StickerCategoriesCollection.SelectedItem = categories[0];
+                    }
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            _isAnnotationUIInitialized = false;
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur initialisation UI: {ex.Message}");
         }
     }
 
