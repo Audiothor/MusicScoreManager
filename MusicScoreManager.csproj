@@ -21,6 +21,9 @@
 		<!-- Version actuelle : v1.5.0 "Stable UI & Stickers" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		
+		<!-- Support des architectures physiques (ARM64) et émulateurs (x64) -->
+		<RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">android-arm64;android-x64</RuntimeIdentifiers>
 	</PropertyGroup>
 
 	<!-- Branding : Icône et Splash Screen (Logo rectangulaire et large) -->
