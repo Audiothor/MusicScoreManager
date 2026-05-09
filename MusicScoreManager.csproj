@@ -2,7 +2,7 @@
 
 <PropertyGroup>
 		<!-- On définit les versions Android AVANT tout le reste -->
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">31.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">36.0</TargetPlatformVersion>
 
 		<TargetFrameworks>net10.0-android36.0;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
