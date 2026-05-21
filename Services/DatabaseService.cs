@@ -153,7 +153,7 @@ namespace MusicScoreManager.Services
             await _database!.InsertAllAsync(newMappings);
         }
 
-        public async Task<List<Score>> SearchScoresAsync(string query, int? tagId = null)
+        public async Task<List<Score>> SearchScoresAsync(string query, List<int>? tagIds)
         {
             await Init();
             
@@ -165,12 +165,18 @@ namespace MusicScoreManager.Services
             var scores = await queryable.ToListAsync();
             await LoadDetailsForScoresAsync(scores);
 
-            if (tagId.HasValue)
+            if (tagIds != null && tagIds.Any())
             {
-                scores = scores.Where(s => s.AppliedTags.Any(t => t.Id == tagId.Value)).ToList();
+                // Un score doit contenir TOUS les tags sélectionnés
+                scores = scores.Where(s => tagIds.All(id => s.AppliedTags.Any(t => t.Id == id))).ToList();
             }
 
             return scores;
+        }
+
+        public async Task<List<Score>> SearchScoresAsync(string query, int? tagId = null)
+        {
+            return await SearchScoresAsync(query, tagId.HasValue ? new List<int> { tagId.Value } : null);
         }
 
         // --- Audio Files ---

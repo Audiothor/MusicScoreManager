@@ -7,7 +7,7 @@
 
     <Grid RowDefinitions="Auto, Auto, *">
 
-        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto" Margin="15,15,15,10" ColumnSpacing="10">
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto, Auto" Margin="15,15,15,10" ColumnSpacing="10">
             <SearchBar Grid.Column="0"
                        x:Name="SearchScoreBar"
                        Placeholder="Rechercher..."
@@ -17,6 +17,16 @@
                        TextChanged="OnSearchBarTextChanged" />
             
             <Button Grid.Column="1"
+                    Text="🏷️"
+                    FontSize="20"
+                    WidthRequest="50"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    BackgroundColor="#333333"
+                    TextColor="White"
+                    Clicked="OnTagsFilterButtonClicked" />
+            
+            <Button Grid.Column="2"
                     Text="⇅"
                     FontSize="20"
                     FontAttributes="Bold"
@@ -27,7 +37,7 @@
                     TextColor="White"
                     Clicked="OnSortClicked" />
 
-            <Button Grid.Column="2"
+            <Button Grid.Column="3"
                     Text="+"
                     FontSize="24"
                     FontAttributes="Bold"
@@ -39,8 +49,13 @@
                     Clicked="OnImportClicked" />
         </Grid>
 
-        <ScrollView Grid.Row="1" Orientation="Horizontal" Margin="15,0,15,15" HeightRequest="40">
-            <HorizontalStackLayout x:Name="TagFiltersStack" Spacing="10" VerticalOptions="Center" />
+        <ScrollView Grid.Row="1" 
+                    Orientation="Horizontal" 
+                    Margin="15,0,15,15" 
+                    HeightRequest="40" 
+                    x:Name="ActiveTagsScrollView" 
+                    IsVisible="False">
+            <HorizontalStackLayout x:Name="ActiveTagsStack" Spacing="10" VerticalOptions="Center" />
         </ScrollView>
 
         <CollectionView Grid.Row="2"
@@ -211,6 +226,106 @@
                         </Label.GestureRecognizers>
                     </Label>
                 </VerticalStackLayout>
+            </Border>
+        </ContentView>
+        <!-- Overlay de Filtrage et Tri des Étiquettes -->
+        <ContentView x:Name="TagsFilterOverlay" 
+                     Grid.RowSpan="3"
+                     IsVisible="False" 
+                     BackgroundColor="#A0000000" 
+                     ZIndex="999">
+            <Border BackgroundColor="#1E1E1E" 
+                    Stroke="#333333"
+                    StrokeThickness="1.5"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" 
+                    WidthRequest="360"
+                    MaximumHeightRequest="600"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="15" />
+                </Border.StrokeShape>
+                <Grid RowDefinitions="Auto, Auto, Auto, *, Auto" RowSpacing="15">
+                    
+                    <!-- Header -->
+                    <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                        <Label Grid.Column="0"
+                               Text="Filtrer par étiquettes" 
+                               TextColor="White" 
+                               FontAttributes="Bold"
+                               FontSize="18" 
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="✕"
+                               TextColor="#888888"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Margin="5">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnTagsFilterCloseClicked" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+
+                    <!-- Barre de recherche pour étiquettes -->
+                    <Grid Grid.Row="1" ColumnDefinitions="*, Auto" ColumnSpacing="8">
+                        <Entry Grid.Column="0"
+                               x:Name="TagSearchEntry"
+                               Placeholder="Rechercher une étiquette..."
+                               PlaceholderColor="#888888"
+                               TextColor="White"
+                               BackgroundColor="#2A2A2A"
+                               HeightRequest="40"
+                               TextChanged="OnTagSearchEntryTextChanged" />
+                        <Button Grid.Column="1"
+                                Text="⇅"
+                                ToolTipProperties.Text="Trier les étiquettes"
+                                BackgroundColor="#333333"
+                                TextColor="White"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                Clicked="OnTagSortClicked" />
+                    </Grid>
+
+                    <!-- Infos de tri actuel -->
+                    <Label Grid.Row="2"
+                           x:Name="TagSortIndicatorLabel"
+                           Text="Tri : A-Z"
+                           TextColor="#888888"
+                           FontSize="12"
+                           Margin="0,-5,0,0" />
+
+                    <!-- Liste des étiquettes (Scrollable) -->
+                    <ScrollView Grid.Row="3" VerticalScrollBarVisibility="Always" HeightRequest="200" Margin="0,5">
+                        <FlexLayout x:Name="OverlayTagsContainer" 
+                                    Wrap="Wrap" 
+                                    Direction="Row" 
+                                    JustifyContent="Start" 
+                                    AlignItems="Start" 
+                                    AlignContent="Start" />
+                    </ScrollView>
+
+                    <!-- Actions bas de page -->
+                    <Grid Grid.Row="4" ColumnDefinitions="*, *" ColumnSpacing="10" Margin="0,5,0,0">
+                        <Button Grid.Column="0"
+                                Text="Tout effacer"
+                                BackgroundColor="#333333"
+                                TextColor="White"
+                                CornerRadius="8"
+                                HeightRequest="44"
+                                Clicked="OnClearAllTagsClicked" />
+                        <Button Grid.Column="1"
+                                Text="Appliquer"
+                                BackgroundColor="#007ACC"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                CornerRadius="8"
+                                HeightRequest="44"
+                                Clicked="OnApplyTagsFilterClicked" />
+                    </Grid>
+                </Grid>
             </Border>
         </ContentView>
     </Grid>

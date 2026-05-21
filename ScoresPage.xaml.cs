@@ -7,7 +7,10 @@ public partial class ScoresPage : ContentPage
     private readonly DatabaseService _databaseService;
     private readonly ImportService _importService;
     private string _currentSort = "TitleAsc";
-    private int? _selectedTagFilterId = null;
+    private readonly List<int> _selectedTagIds = new();
+    private List<Models.Tag> _allTags = new();
+    private string _tagSearchQuery = string.Empty;
+    private string _tagSortType = "NameAsc"; // "NameAsc", "NameDesc", "SelectedFirst", "Color"
     private Models.Score? _selectedScoreForMenu;
 
     public ScoresPage(DatabaseService databaseService, ImportService importService)
@@ -26,8 +29,13 @@ public partial class ScoresPage : ContentPage
             {
                 // On laisse un peu de temps pour l'animation de transition
                 await Task.Delay(50);
-                await LoadTagFiltersAsync();
-                await LoadScoresAsync();
+                _allTags = await _databaseService.GetTagsAsync();
+                
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    UpdateActiveTagsChips();
+                    await LoadScoresAsync(SearchScoreBar.Text);
+                });
             }
             catch (Exception ex)
             {
@@ -36,57 +44,70 @@ public partial class ScoresPage : ContentPage
         });
     }
 
-    private async Task LoadTagFiltersAsync()
+    private void UpdateActiveTagsChips()
     {
-        var tags = await _databaseService.GetTagsAsync();
+        ActiveTagsStack.Children.Clear();
+        var activeTags = _allTags.Where(t => _selectedTagIds.Contains(t.Id)).ToList();
         
-        MainThread.BeginInvokeOnMainThread(() => {
-            TagFiltersStack.Children.Clear();
-            foreach (var tag in tags)
+        if (activeTags.Any())
+        {
+            ActiveTagsScrollView.IsVisible = true;
+            foreach (var tag in activeTags)
             {
-                bool isSelected = _selectedTagFilterId == tag.Id;
-
                 var border = new Border
                 {
                     BackgroundColor = Color.FromArgb(tag.ColorHex),
-                    StrokeThickness = isSelected ? 2 : 0,
-                    Stroke = Colors.White,
-                    Padding = new Thickness(15, 8),
+                    StrokeThickness = 0,
+                    Padding = new Thickness(12, 6),
                     VerticalOptions = LayoutOptions.Center,
-                    StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 }
+                    StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 12 }
                 };
+
+                var labelStack = new HorizontalStackLayout { Spacing = 6 };
 
                 var label = new Label
                 {
                     Text = tag.Name,
                     TextColor = Colors.White,
                     FontAttributes = FontAttributes.Bold,
-                    VerticalOptions = LayoutOptions.Center
+                    VerticalOptions = LayoutOptions.Center,
+                    FontSize = 12
                 };
-                
-                border.Content = label;
+
+                var closeLabel = new Label
+                {
+                    Text = "✕",
+                    TextColor = Color.FromArgb("#DDDDDD"),
+                    FontAttributes = FontAttributes.Bold,
+                    VerticalOptions = LayoutOptions.Center,
+                    FontSize = 12
+                };
+
+                labelStack.Children.Add(label);
+                labelStack.Children.Add(closeLabel);
+                border.Content = labelStack;
 
                 var tapGesture = new TapGestureRecognizer();
                 tapGesture.Tapped += async (s, e) =>
                 {
-                    if (_selectedTagFilterId == tag.Id)
-                        _selectedTagFilterId = null;
-                    else
-                        _selectedTagFilterId = tag.Id;
-
-                    await LoadTagFiltersAsync();
+                    _selectedTagIds.Remove(tag.Id);
+                    UpdateActiveTagsChips();
                     await LoadScoresAsync(SearchScoreBar.Text);
                 };
                 border.GestureRecognizers.Add(tapGesture);
 
-                TagFiltersStack.Children.Add(border);
+                ActiveTagsStack.Children.Add(border);
             }
-        });
+        }
+        else
+        {
+            ActiveTagsScrollView.IsVisible = false;
+        }
     }
 
     private async Task LoadScoresAsync(string query = "")
     {
-        var scores = await _databaseService.SearchScoresAsync(query, _selectedTagFilterId);
+        var scores = await _databaseService.SearchScoresAsync(query ?? string.Empty, _selectedTagIds);
 
         if (_currentSort == "TitleAsc") scores = scores.OrderBy(s => s.Title).ToList();
         else if (_currentSort == "TitleDesc") scores = scores.OrderByDescending(s => s.Title).ToList();
@@ -96,6 +117,153 @@ public partial class ScoresPage : ContentPage
         MainThread.BeginInvokeOnMainThread(() => {
             ScoresCollectionView.ItemsSource = scores;
         });
+    }
+
+    private void OnTagsFilterButtonClicked(object sender, EventArgs e)
+    {
+        TagSearchEntry.Text = string.Empty;
+        _tagSearchQuery = string.Empty;
+        TagsFilterOverlay.IsVisible = true;
+        RenderOverlayTags();
+    }
+
+    private void OnTagsFilterCloseClicked(object sender, EventArgs e)
+    {
+        TagsFilterOverlay.IsVisible = false;
+    }
+
+    private void OnTagSearchEntryTextChanged(object sender, TextChangedEventArgs e)
+    {
+        _tagSearchQuery = e.NewTextValue?.Trim() ?? string.Empty;
+        RenderOverlayTags();
+    }
+
+    private void OnTagSortClicked(object sender, EventArgs e)
+    {
+        if (_tagSortType == "NameAsc")
+        {
+            _tagSortType = "NameDesc";
+            TagSortIndicatorLabel.Text = "Tri : Z-A";
+        }
+        else if (_tagSortType == "NameDesc")
+        {
+            _tagSortType = "SelectedFirst";
+            TagSortIndicatorLabel.Text = "Tri : Sélectionnés d'abord";
+        }
+        else if (_tagSortType == "SelectedFirst")
+        {
+            _tagSortType = "Color";
+            TagSortIndicatorLabel.Text = "Tri : Couleur";
+        }
+        else
+        {
+            _tagSortType = "NameAsc";
+            TagSortIndicatorLabel.Text = "Tri : A-Z";
+        }
+
+        RenderOverlayTags();
+    }
+
+    private void RenderOverlayTags()
+    {
+        OverlayTagsContainer.Children.Clear();
+
+        // 1. Filtrer
+        var filteredTags = _allTags.AsEnumerable();
+        if (!string.IsNullOrWhiteSpace(_tagSearchQuery))
+        {
+            filteredTags = filteredTags.Where(t => t.Name.Contains(_tagSearchQuery, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // 2. Trier
+        if (_tagSortType == "NameAsc")
+        {
+            filteredTags = filteredTags.OrderBy(t => t.Name);
+        }
+        else if (_tagSortType == "NameDesc")
+        {
+            filteredTags = filteredTags.OrderByDescending(t => t.Name);
+        }
+        else if (_tagSortType == "SelectedFirst")
+        {
+            filteredTags = filteredTags.OrderByDescending(t => _selectedTagIds.Contains(t.Id)).ThenBy(t => t.Name);
+        }
+        else if (_tagSortType == "Color")
+        {
+            filteredTags = filteredTags.OrderBy(t => t.ColorHex).ThenBy(t => t.Name);
+        }
+
+        var tagsList = filteredTags.ToList();
+
+        foreach (var tag in tagsList)
+        {
+            bool isSelected = _selectedTagIds.Contains(tag.Id);
+
+            var border = new Border
+            {
+                BackgroundColor = isSelected ? Color.FromArgb(tag.ColorHex) : Color.FromArgb("#2A2A2A"),
+                Stroke = isSelected ? Colors.White : Color.FromArgb(tag.ColorHex),
+                StrokeThickness = isSelected ? 2 : 1,
+                Padding = new Thickness(12, 6),
+                Margin = new Thickness(0, 0, 8, 8),
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 12 },
+                Opacity = isSelected ? 1.0 : 0.7
+            };
+
+            var label = new Label
+            {
+                Text = isSelected ? $"✓ {tag.Name}" : tag.Name,
+                TextColor = isSelected ? Colors.White : Color.FromArgb("#E0E0E0"),
+                FontAttributes = FontAttributes.Bold,
+                FontSize = 12,
+                VerticalOptions = LayoutOptions.Center
+            };
+
+            border.Content = label;
+
+            var tap = new TapGestureRecognizer();
+            tap.Tapped += (s, e) =>
+            {
+                if (_selectedTagIds.Contains(tag.Id))
+                {
+                    _selectedTagIds.Remove(tag.Id);
+                }
+                else
+                {
+                    _selectedTagIds.Add(tag.Id);
+                }
+                RenderOverlayTags();
+            };
+            border.GestureRecognizers.Add(tap);
+
+            OverlayTagsContainer.Children.Add(border);
+        }
+
+        if (!tagsList.Any())
+        {
+            var noTagsLabel = new Label
+            {
+                Text = "Aucune étiquette trouvée.",
+                TextColor = Color.FromArgb("#888888"),
+                FontSize = 13,
+                Margin = new Thickness(0, 10, 0, 0),
+                HorizontalOptions = LayoutOptions.Center
+            };
+            OverlayTagsContainer.Children.Add(noTagsLabel);
+        }
+    }
+
+    private void OnClearAllTagsClicked(object sender, EventArgs e)
+    {
+        _selectedTagIds.Clear();
+        RenderOverlayTags();
+    }
+
+    private async void OnApplyTagsFilterClicked(object sender, EventArgs e)
+    {
+        TagsFilterOverlay.IsVisible = false;
+        UpdateActiveTagsChips();
+        await LoadScoresAsync(SearchScoreBar.Text);
     }
 
     private async void OnSearchBarTextChanged(object sender, TextChangedEventArgs e)
