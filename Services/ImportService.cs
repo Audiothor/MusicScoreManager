@@ -15,13 +15,19 @@ namespace MusicScoreManager.Services
 
         public async Task<Score?> ImportScoreAsync()
         {
+            var results = await ImportScoresAsync();
+            return results.FirstOrDefault();
+        }
+
+        public async Task<List<Score>> ImportScoresAsync()
+        {
+            var importedScores = new List<Score>();
             try
             {
                 var status = await CheckAndRequestStoragePermissionAsync();
                 if (status != PermissionStatus.Granted)
                 {
-                    // Permission refusée
-                    return null;
+                    return importedScores;
                 }
 
                 var customFileType = new FilePickerFileType(
@@ -35,114 +41,165 @@ namespace MusicScoreManager.Services
 
                 var options = new PickOptions
                 {
-                    PickerTitle = "Sélectionnez une partition (PDF ou Image)",
+                    PickerTitle = "Sélectionnez une ou plusieurs partitions (PDF ou Image)",
                     FileTypes = customFileType,
                 };
 
-                var result = await FilePicker.Default.PickAsync(options);
-                if (result != null)
+                var results = await FilePicker.Default.PickMultipleAsync(options);
+                if (results != null && results.Any())
                 {
                     var rootDir = _settingsService.ScoresRootDirectory;
                     if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
 
-                    string finalStoredPath;
-                    
-                    // Vérification intelligente : soit le chemin commence par le root (Windows), 
-                    // soit un fichier de même nom et même taille existe déjà dans le root (Android workaround)
-                    bool isAlreadyInRoot = result.FullPath.StartsWith(rootDir, StringComparison.OrdinalIgnoreCase);
-                    
-                    if (!isAlreadyInRoot)
+                    // Séparer les fichiers déjà dans la racine de ceux qui nécessitent une décision d'importation
+                    var filesToProcess = new List<(FileResult File, bool AlreadyInRoot)>();
+                    foreach (var result in results)
                     {
-                        try 
+                        if (result == null) continue;
+                        var fullPath = result.FullPath;
+                        if (string.IsNullOrEmpty(fullPath)) continue;
+                        
+                        bool isAlreadyInRoot = !string.IsNullOrEmpty(rootDir) && fullPath.StartsWith(rootDir, StringComparison.OrdinalIgnoreCase);
+                        
+                        if (!isAlreadyInRoot)
                         {
-                            var fileInfoSource = new FileInfo(result.FullPath);
-                            long sourceLength = fileInfoSource.Length;
-                            string targetFileName = result.FileName;
+                            try 
+                            {
+                                var fileInfoSource = new FileInfo(fullPath);
+                                long sourceLength = fileInfoSource.Length;
+                                string targetFileName = result.FileName ?? Path.GetFileName(fullPath);
 
-                            // 1. Test direct dans la racine (très rapide et évite le scan)
-                            string directPath = Path.Combine(rootDir, targetFileName);
-                            if (File.Exists(directPath) && new FileInfo(directPath).Length == sourceLength)
-                            {
-                                isAlreadyInRoot = true;
-                                result = new FileResult(directPath);
-                            }
-                            
-                            // 2. Si pas trouvé en direct, scan récursif robuste
-                            if (!isAlreadyInRoot)
-                            {
+                                // 1. Test direct dans la racine (très rapide et évite le scan)
+                                string directPath = Path.Combine(rootDir, targetFileName);
+                                if (File.Exists(directPath) && new FileInfo(directPath).Length == sourceLength)
+                                {
+                                    isAlreadyInRoot = true;
+                                    filesToProcess.Add((new FileResult(directPath), true));
+                                    continue;
+                                }
+                                
+                                // 2. Si pas trouvé en direct, scan récursif robuste
                                 string? foundPath = FindFileRecursively(rootDir, targetFileName, sourceLength);
                                 if (foundPath != null)
                                 {
                                     isAlreadyInRoot = true;
-                                    result = new FileResult(foundPath);
+                                    filesToProcess.Add((new FileResult(foundPath), true));
+                                    continue;
                                 }
                             }
+                            catch { /* Ignore */ }
                         }
-                        catch { /* Ignore */ }
+                        
+                        filesToProcess.Add((result, isAlreadyInRoot));
                     }
 
-                    if (isAlreadyInRoot)
-                    {
-                        finalStoredPath = _settingsService.GetRelativePath(result.FullPath);
-                    }
-                    else
-                    {
-                        string? action = await Shell.Current.DisplayActionSheetAsync(
-                            "Organisation de la bibliothèque", 
-                            "Annuler", 
-                            null, 
-                            "Copier vers la bibliothèque (Conseillé)", 
-                            "Lier le fichier original (Externe)");
+                    // Déterminer s'il y a des fichiers externes
+                    var externalFiles = filesToProcess.Where(f => !f.AlreadyInRoot).ToList();
+                    string? globalAction = null;
 
-                        if (action == "Copier vers la bibliothèque (Conseillé)")
+                    if (externalFiles.Count > 0)
+                    {
+                        if (externalFiles.Count == 1)
                         {
-                            var sanitizedFileName = result.FileName.Replace(" ", "_");
-                            var localFilePath = Path.Combine(rootDir, sanitizedFileName);
-                            
-                            if (File.Exists(localFilePath))
-                            {
-                                var fileNameOnly = Path.GetFileNameWithoutExtension(sanitizedFileName);
-                                var extension = Path.GetExtension(sanitizedFileName);
-                                localFilePath = Path.Combine(rootDir, $"{fileNameOnly}_{DateTime.Now:yyyyMMddHHmmss}{extension}");
-                            }
-
-                            using var stream = await result.OpenReadAsync();
-                            using var fileStream = File.Create(localFilePath);
-                            await stream.CopyToAsync(fileStream);
-                            
-                            finalStoredPath = _settingsService.GetRelativePath(localFilePath);
-                        }
-                        else if (action == "Lier le fichier original (Externe)")
-                        {
-                            finalStoredPath = result.FullPath;
+                            globalAction = await Shell.Current.DisplayActionSheetAsync(
+                                "Organisation de la bibliothèque", 
+                                "Annuler", 
+                                null, 
+                                "Copier vers la bibliothèque (Conseillé)", 
+                                "Lier le fichier original (Externe)");
                         }
                         else
                         {
-                            return null; // Annulation
+                            globalAction = await Shell.Current.DisplayActionSheetAsync(
+                                $"Organisation de la bibliothèque ({externalFiles.Count} fichiers)", 
+                                "Annuler", 
+                                null, 
+                                "Copier tous les fichiers vers la bibliothèque (Conseillé)", 
+                                "Lier tous les fichiers originaux (Externe)",
+                                "Choisir au cas par cas");
+                        }
+
+                        if (globalAction == "Annuler" || globalAction == null)
+                        {
+                            return importedScores;
                         }
                     }
 
-                    var ext = Path.GetExtension(result.FullPath)?.ToLowerInvariant() ?? "";
-                    var type = ext == ".pdf" ? ScoreType.PDF : ScoreType.Image;
-
-                    var score = new Score
+                    for (int i = 0; i < filesToProcess.Count; i++)
                     {
-                        Title = Path.GetFileNameWithoutExtension(result.FileName ?? result.FullPath),
-                        FilePath = finalStoredPath,
-                        Type = type,
-                        DateAdded = DateTime.Now
-                    };
+                        var (fileResult, isAlreadyInRoot) = filesToProcess[i];
+                        string finalStoredPath;
 
-                    await _databaseService.SaveScoreAsync(score);
-                    return score;
+                        if (isAlreadyInRoot)
+                        {
+                            finalStoredPath = _settingsService.GetRelativePath(fileResult.FullPath);
+                        }
+                        else
+                        {
+                            string? fileAction = globalAction;
+                            
+                            if (globalAction == "Choisir au cas par cas")
+                            {
+                                fileAction = await Shell.Current.DisplayActionSheetAsync(
+                                    $"Fichier : {fileResult.FileName}", 
+                                    "Passer ce fichier", 
+                                    null, 
+                                    "Copier vers la bibliothèque (Conseillé)", 
+                                    "Lier le fichier original (Externe)");
+                            }
+
+                            if (fileAction == "Copier vers la bibliothèque (Conseillé)" || fileAction == "Copier tous les fichiers vers la bibliothèque (Conseillé)")
+                            {
+                                var sanitizedFileName = fileResult.FileName.Replace(" ", "_");
+                                var localFilePath = Path.Combine(rootDir, sanitizedFileName);
+                                
+                                int counter = 1;
+                                while (File.Exists(localFilePath))
+                                {
+                                    var fileNameOnly = Path.GetFileNameWithoutExtension(sanitizedFileName);
+                                    var extension = Path.GetExtension(sanitizedFileName);
+                                    localFilePath = Path.Combine(rootDir, $"{fileNameOnly}_{counter}{extension}");
+                                    counter++;
+                                }
+
+                                using var stream = await fileResult.OpenReadAsync();
+                                using var fileStream = File.Create(localFilePath);
+                                await stream.CopyToAsync(fileStream);
+                                
+                                finalStoredPath = _settingsService.GetRelativePath(localFilePath);
+                            }
+                            else if (fileAction == "Lier le fichier original (Externe)" || fileAction == "Lier tous les fichiers originaux (Externe)")
+                            {
+                                finalStoredPath = fileResult.FullPath;
+                            }
+                            else
+                            {
+                                continue; // Passer ce fichier
+                            }
+                        }
+
+                        var ext = Path.GetExtension(fileResult.FullPath)?.ToLowerInvariant() ?? "";
+                        var type = ext == ".pdf" ? ScoreType.PDF : ScoreType.Image;
+
+                        var score = new Score
+                        {
+                            Title = Path.GetFileNameWithoutExtension(fileResult.FileName ?? fileResult.FullPath),
+                            FilePath = finalStoredPath,
+                            Type = type,
+                            DateAdded = DateTime.Now
+                        };
+
+                        await _databaseService.SaveScoreAsync(score);
+                        importedScores.Add(score);
+                    }
                 }
             }
             catch (Exception)
             {
-                // Utilisateur a annulé ou erreur système
+                // Erreur système ou annulation
             }
 
-            return null;
+            return importedScores;
         }
 
         private async Task<PermissionStatus> CheckAndRequestStoragePermissionAsync()

@@ -105,8 +105,8 @@ public partial class ScoresPage : ContentPage
 
     private async void OnImportClicked(object sender, EventArgs e)
     {
-        var score = await _importService.ImportScoreAsync();
-        if (score != null)
+        var scores = await _importService.ImportScoresAsync();
+        if (scores != null && scores.Any())
         {
             // Recharger la liste après l'import réussi
             await LoadScoresAsync(SearchScoreBar.Text);

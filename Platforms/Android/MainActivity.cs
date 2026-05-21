@@ -15,15 +15,19 @@ public class MainActivity : MauiAppCompatActivity
 
     private void CheckStoragePermissions()
     {
-        if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
+        if (OperatingSystem.IsAndroidVersionAtLeast(30))
         {
             if (!Android.OS.Environment.IsExternalStorageManager)
             {
                 try
                 {
                     Android.Content.Intent intent = new Android.Content.Intent(Android.Provider.Settings.ActionManageAppAllFilesAccessPermission);
-                    Android.Net.Uri uri = Android.Net.Uri.FromParts("package", PackageName!, null);
-                    intent.SetData(uri);
+                    string pkgName = PackageName ?? string.Empty;
+                    Android.Net.Uri? uri = Android.Net.Uri.FromParts("package", pkgName, null);
+                    if (uri != null)
+                    {
+                        intent.SetData(uri);
+                    }
                     StartActivity(intent);
                 }
                 catch

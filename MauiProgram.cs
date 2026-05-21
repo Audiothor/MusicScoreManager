@@ -2,6 +2,8 @@ using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
 using MusicScoreManager.Services;
 
+#pragma warning disable CA1416
+
 namespace MusicScoreManager;
 
 public static class MauiProgram

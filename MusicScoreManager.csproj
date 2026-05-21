@@ -16,15 +16,14 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.5.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1500</ApplicationVersion>
-		<!-- Version actuelle : v1.5.0 "Stable UI & Stickers" -->
+		<ApplicationDisplayVersion>1.6.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1600</ApplicationVersion>
+		<!-- Version actuelle : v1.6.0 "Multi-Import & Fluid Stickers" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		
 		<!-- Support universel : ARM32, ARM64 et x64 (émulateur) -->
 		<RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">android-arm;android-arm64;android-x64</RuntimeIdentifiers>
-		<AndroidSupportedAbis Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">armeabi-v7a;arm64-v8a;x86_64</AndroidSupportedAbis>
 	</PropertyGroup>
 
 	<!-- Branding : Icône et Splash Screen (Logo rectangulaire et large) -->

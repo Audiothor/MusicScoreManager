@@ -1,6 +1,8 @@
 using MusicScoreManager.Services;
 using CommunityToolkit.Maui.Storage;
 
+#pragma warning disable CA1416
+
 namespace MusicScoreManager;
 
 public partial class SettingsAppPage : ContentPage

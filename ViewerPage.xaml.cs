@@ -917,14 +917,14 @@ public partial class ViewerPage : ContentPage
         await DisplayAlertAsync("Info", "Le mode dessin arrive bientôt !", "OK");
     }
 
-    private void OnAnnotationStickersClicked(object sender, EventArgs e)
+    private async void OnAnnotationStickersClicked(object sender, EventArgs e)
     {
         StickerPickerOverlay.IsVisible = !StickerPickerOverlay.IsVisible;
         StickerSettingsBar.IsVisible = StickerPickerOverlay.IsVisible;
         
         if (StickerPickerOverlay.IsVisible && StickerCategoriesCollection.ItemsSource == null)
         {
-            InitializeAnnotationUI();
+            await InitializeAnnotationUI();
         }
     }
 
@@ -1177,17 +1177,18 @@ public partial class ViewerPage : ContentPage
                 AnnotationsContainer.Children.Add(border);
             }
 
-            var label = (Label)border.Content;
-
-            // Mise à jour des propriétés (plus rapide que recréer)
-            border.BindingContext = ann;
-            label.Text = ann.Content;
-            label.TextColor = Color.FromArgb(ann.Color);
-            
-            // Correction taille de police proportionnelle
-            label.FontSize = 24 * ann.Scale; 
-            
-            border.BackgroundColor = Color.FromArgb(ann.BackgroundColor);
+            if (border.Content is Label label)
+            {
+                // Mise à jour des propriétés (plus rapide que recréer)
+                border.BindingContext = ann;
+                label.Text = ann.Content;
+                label.TextColor = Color.FromArgb(ann.Color);
+                
+                // Correction taille de police proportionnelle
+                label.FontSize = 24 * ann.Scale; 
+                
+                border.BackgroundColor = Color.FromArgb(ann.BackgroundColor);
+            }
             
             if (ann == _selectedAnnotation)
             {
@@ -1289,7 +1290,12 @@ public partial class ViewerPage : ContentPage
                         ann.Y = finalAbsY / AnnotationsContainer.Height;
                         b.TranslationX = 0;
                         b.TranslationY = 0;
+                        RenderAnnotations();
                         await _databaseService.SaveAnnotationAsync(ann);
+                        break;
+                    case GestureStatus.Canceled:
+                        b.TranslationX = 0;
+                        b.TranslationY = 0;
                         RenderAnnotations();
                         break;
                 }
