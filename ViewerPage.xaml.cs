@@ -37,6 +37,8 @@ public partial class ViewerPage : ContentPage
     private bool _isAnnotationMode = false;
     private List<Annotation> _annotations = new();
     private bool _isAnnotationsLocked = true;
+    private AbsoluteLayout ActiveAnnotationsContainer => 
+        (_score != null && _score.Type == ScoreType.Image) ? ImageAnnotationsContainer : AnnotationsContainer;
 
     public ViewerPage(Score score, List<Score>? setlistScores = null, int currentIndex = -1, bool isContinuous = true)
     {
@@ -234,6 +236,8 @@ public partial class ViewerPage : ContentPage
                         ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(imageBytes));
                         ScoreImage.Rotation = _currentRotation;
                         ImageContainer.IsVisible = true;
+                        ImageAnnotationsContainer.IsVisible = true;
+                        AnnotationsContainer.IsVisible = false; // Désactiver l'overlay PDF qui bloque les gestes !
                         ImageTouchGrid.IsVisible = false; // Ne pas afficher la grille transparente qui bloque les gestes de zoom !
                         PdfWebView.IsVisible = false;
                         _currentPage = 1;
@@ -256,6 +260,8 @@ public partial class ViewerPage : ContentPage
                 System.Diagnostics.Debug.WriteLine("[Viewer] Mode PDF - Démarrage chargement WebView");
                 MainThread.BeginInvokeOnMainThread(() => {
                     ImageContainer.IsVisible = false;
+                    ImageAnnotationsContainer.IsVisible = false;
+                    AnnotationsContainer.IsVisible = true; // Activer l'overlay PDF
                     ImageTouchGrid.IsVisible = false;
                     PdfWebView.IsVisible = true;
                     PdfWebView.Source = null; // On vide pour forcer le refresh
@@ -351,9 +357,9 @@ public partial class ViewerPage : ContentPage
     {
         if (e.Status == GestureStatus.Started)
         {
-            startScale = ScoreImage.Scale;
-            ScoreImage.AnchorX = 0.5;
-            ScoreImage.AnchorY = 0.5;
+            startScale = ZoomLayout.Scale;
+            ZoomLayout.AnchorX = 0.5;
+            ZoomLayout.AnchorY = 0.5;
         }
         if (e.Status == GestureStatus.Running)
         {
@@ -362,32 +368,32 @@ public partial class ViewerPage : ContentPage
             targetScale = Math.Max(1, targetScale);
             targetScale = Math.Min(4, targetScale);
             currentScale = targetScale;
-            ScoreImage.Scale = targetScale;
+            ZoomLayout.Scale = targetScale;
 
             if (targetScale <= 1.0)
             {
-                ScoreImage.TranslationX = 0;
-                ScoreImage.TranslationY = 0;
+                ZoomLayout.TranslationX = 0;
+                ZoomLayout.TranslationY = 0;
             }
         }
         if (e.Status == GestureStatus.Completed || e.Status == GestureStatus.Canceled)
         {
-            if (ScoreImage.Scale <= 1.0)
+            if (ZoomLayout.Scale <= 1.0)
             {
-                ScoreImage.TranslationX = 0;
-                ScoreImage.TranslationY = 0;
+                ZoomLayout.TranslationX = 0;
+                ZoomLayout.TranslationY = 0;
             }
         }
     }
 
     private void OnPanUpdated(object sender, PanUpdatedEventArgs e)
     {
-        if (ScoreImage.Scale > 1)
+        if (ZoomLayout.Scale > 1)
         {
             if (e.StatusType == GestureStatus.Started)
             {
-                startTranslationX = ScoreImage.TranslationX;
-                startTranslationY = ScoreImage.TranslationY;
+                startTranslationX = ZoomLayout.TranslationX;
+                startTranslationY = ZoomLayout.TranslationY;
             }
             else if (e.StatusType == GestureStatus.Running)
             {
@@ -396,11 +402,11 @@ public partial class ViewerPage : ContentPage
 
                 // Calculer les limites pour ne pas sortir des bords de l'image agrandie
                 // L'image peut glisser d'au maximum sa taille agrandie moins la taille de l'écran, divisé par 2 (AnchorX = 0.5)
-                double maxTx = Math.Max(0, (ScoreImage.Width * (ScoreImage.Scale - 1)) / 2);
-                double maxTy = Math.Max(0, (ScoreImage.Height * (ScoreImage.Scale - 1)) / 2);
+                double maxTx = Math.Max(0, (ZoomLayout.Width * (ZoomLayout.Scale - 1)) / 2);
+                double maxTy = Math.Max(0, (ZoomLayout.Height * (ZoomLayout.Scale - 1)) / 2);
 
-                ScoreImage.TranslationX = Math.Max(-maxTx, Math.Min(maxTx, targetX));
-                ScoreImage.TranslationY = Math.Max(-maxTy, Math.Min(maxTy, targetY));
+                ZoomLayout.TranslationX = Math.Max(-maxTx, Math.Min(maxTx, targetX));
+                ZoomLayout.TranslationY = Math.Max(-maxTy, Math.Min(maxTy, targetY));
             }
         }
     }
@@ -756,6 +762,7 @@ public partial class ViewerPage : ContentPage
         MenuTitleLabel.Text = _score.Title;
         CentralMenuOverlay.IsVisible = true;
         ImageContainer.InputTransparent = true; // Empêche l'image de bloquer les clics sur le menu !
+        ZoomLayout.InputTransparent = true; // Empêche le layout de zoom de bloquer les clics sur le menu !
         BottomTouchBar.IsVisible = false; // Désactive la zone tactile du bas quand le menu est ouvert
     }
 
@@ -808,12 +815,13 @@ public partial class ViewerPage : ContentPage
     {
         CentralMenuOverlay.IsVisible = false;
         ImageContainer.InputTransparent = false; // Restaure les gestes sur l'image
+        ZoomLayout.InputTransparent = false; // Restaure les gestes sur le layout de zoom
         BottomTouchBar.IsVisible = !AnnotationBar.IsVisible; // Restaure la zone tactile du bas si la barre n'est pas déjà ouverte
     }
 
     private void OnPrevTapped(object sender, EventArgs e)
     {
-        if (ScoreImage.Scale > 1) return;
+        if (ZoomLayout.Scale > 1) return;
         if (_score.Type == ScoreType.Image)
         {
             HandleStartOfScore();
@@ -822,7 +830,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnNextTapped(object sender, EventArgs e)
     {
-        if (ScoreImage.Scale > 1) return;
+        if (ZoomLayout.Scale > 1) return;
         if (_score.Type == ScoreType.Image)
         {
             HandleEndOfScore();
@@ -870,7 +878,7 @@ public partial class ViewerPage : ContentPage
         }
 
         // Si on est zoomé, on bloque le changement de page pour éviter les sauts accidentels en faisant défiler l'image
-        if (ScoreImage.Scale > 1) return;
+        if (ZoomLayout.Scale > 1) return;
 
         // Zone gauche (30%) : Page précédente
         if (x < width * 0.3)
@@ -900,11 +908,11 @@ public partial class ViewerPage : ContentPage
         }
 
         // Double tap sur les côtés quand on est zoomé : réinitialise le zoom à sa taille de départ
-        if (ScoreImage.Scale > 1)
+        if (ZoomLayout.Scale > 1)
         {
-            ScoreImage.Scale = 1;
-            ScoreImage.TranslationX = 0;
-            ScoreImage.TranslationY = 0;
+            ZoomLayout.Scale = 1;
+            ZoomLayout.TranslationX = 0;
+            ZoomLayout.TranslationY = 0;
             currentScale = 1;
         }
     }
@@ -917,6 +925,7 @@ public partial class ViewerPage : ContentPage
             await GoToPage(pageNum);
             CentralMenuOverlay.IsVisible = false;
             ImageContainer.InputTransparent = false; // Restaure les gestes sur l'image
+            ZoomLayout.InputTransparent = false; // Restaure les gestes sur le layout de zoom
             BottomTouchBar.IsVisible = !AnnotationBar.IsVisible; // Restaure la zone tactile du bas si la barre n'est pas déjà ouverte
         }
     }
@@ -996,7 +1005,6 @@ public partial class ViewerPage : ContentPage
                 double newY = _barYBase + e.TotalY;
                 AnnotationBar.TranslationY = newY;
                 StickerPickerOverlay.TranslationY = newY;
-                StickerSettingsBar.TranslationY = newY;
                 // PageIndicator.TranslationY = newY; // On ne déplace plus l'indicateur
                 break;
         }
@@ -1009,7 +1017,6 @@ public partial class ViewerPage : ContentPage
         if (!AnnotationBar.IsVisible)
         {
             StickerPickerOverlay.IsVisible = false;
-            StickerSettingsBar.IsVisible = false;
         }
 
         // Ajuster la position de l'indicateur de page
@@ -1019,26 +1026,31 @@ public partial class ViewerPage : ContentPage
     private async void OnAnnotationTextClicked(object sender, EventArgs e)
     {
         StickerPickerOverlay.IsVisible = false;
-        StickerSettingsBar.IsVisible = false;
         await DisplayAlertAsync("Info", "L'annotation de texte arrive bientôt !", "OK");
     }
 
     private async void OnAnnotationDrawClicked(object sender, EventArgs e)
     {
         StickerPickerOverlay.IsVisible = false;
-        StickerSettingsBar.IsVisible = false;
         await DisplayAlertAsync("Info", "Le mode dessin arrive bientôt !", "OK");
     }
 
     private async void OnAnnotationStickersClicked(object sender, EventArgs e)
     {
         StickerPickerOverlay.IsVisible = !StickerPickerOverlay.IsVisible;
-        StickerSettingsBar.IsVisible = StickerPickerOverlay.IsVisible;
         
         if (StickerPickerOverlay.IsVisible && StickerCategoriesCollection.ItemsSource == null)
         {
             await InitializeAnnotationUI();
         }
+    }
+
+    private void OnCloseAnnotationBarClicked(object sender, EventArgs e)
+    {
+        AnnotationBar.IsVisible = false;
+        BottomTouchBar.IsVisible = true;
+        StickerPickerOverlay.IsVisible = false;
+        PageIndicator.Margin = new Thickness(0, 0, 10, 2);
     }
 
     private void OnStickerCategoryChanged(object? sender, SelectionChangedEventArgs e)
@@ -1154,11 +1166,11 @@ public partial class ViewerPage : ContentPage
             string bgColor = _currentStickerBgColor;
             double scale = StickerSizeSlider.Value;
 
-            var position = e.GetPosition(AnnotationsContainer);
+            var position = e.GetPosition(ActiveAnnotationsContainer);
             if (position == null) return;
 
-            double relX = position.Value.X / AnnotationsContainer.Width;
-            double relY = position.Value.Y / AnnotationsContainer.Height;
+            double relX = position.Value.X / ActiveAnnotationsContainer.Width;
+            double relY = position.Value.Y / ActiveAnnotationsContainer.Height;
 
             var annotation = new Annotation
             {
@@ -1199,12 +1211,12 @@ public partial class ViewerPage : ContentPage
     {
         if (!_isAnnotationMode || _pendingSticker == null) return;
 
-        var position = e.GetPosition(AnnotationsContainer);
+        var position = e.GetPosition(ActiveAnnotationsContainer);
         if (position == null) return;
 
         // Calculer les coordonnées relatives (0.0 à 1.0)
-        double relX = position.Value.X / AnnotationsContainer.Width;
-        double relY = position.Value.Y / AnnotationsContainer.Height;
+        double relX = position.Value.X / ActiveAnnotationsContainer.Width;
+        double relY = position.Value.Y / ActiveAnnotationsContainer.Height;
 
         var annotation = new Annotation
         {
@@ -1222,8 +1234,8 @@ public partial class ViewerPage : ContentPage
 
         // Sortir du mode placement
         _isAnnotationMode = false;
-        AnnotationsContainer.InputTransparent = true;
-        AnnotationsContainer.GestureRecognizers.Clear();
+        ActiveAnnotationsContainer.InputTransparent = true;
+        ActiveAnnotationsContainer.GestureRecognizers.Clear();
         _pendingSticker = null;
 
         RenderAnnotations();
@@ -1271,14 +1283,21 @@ public partial class ViewerPage : ContentPage
 
     private void RenderAnnotations()
     {
-        if (AnnotationsContainer == null) return;
+        if (ActiveAnnotationsContainer == null) return;
+
+        // Clear the inactive one to avoid leftover visual artifacts
+        var inactiveContainer = (_score != null && _score.Type == ScoreType.Image) ? AnnotationsContainer : ImageAnnotationsContainer;
+        if (inactiveContainer != null)
+        {
+            inactiveContainer.Children.Clear();
+        }
 
         // On ne rend que les annotations de la page actuelle
         var pageAnnotations = _annotations.Where(a => a.PageNumber == _currentPage).ToList();
 
         // 1. Recyclage : Supprimer les labels en trop
-        while (AnnotationsContainer.Children.Count > pageAnnotations.Count)
-            AnnotationsContainer.Children.RemoveAt(AnnotationsContainer.Children.Count - 1);
+        while (ActiveAnnotationsContainer.Children.Count > pageAnnotations.Count)
+            ActiveAnnotationsContainer.Children.RemoveAt(ActiveAnnotationsContainer.Children.Count - 1);
 
         // 2. Mise à jour ou création des labels
         for (int i = 0; i < pageAnnotations.Count; i++)
@@ -1286,14 +1305,14 @@ public partial class ViewerPage : ContentPage
             var ann = pageAnnotations[i];
             Border border;
 
-            if (i < AnnotationsContainer.Children.Count)
+            if (i < ActiveAnnotationsContainer.Children.Count)
             {
-                border = (Border)AnnotationsContainer.Children[i];
+                border = (Border)ActiveAnnotationsContainer.Children[i];
             }
             else
             {
                 border = CreateStickerBorder();
-                AnnotationsContainer.Children.Add(border);
+                ActiveAnnotationsContainer.Children.Add(border);
             }
 
             if (border.Content is Label label)
@@ -1325,17 +1344,17 @@ public partial class ViewerPage : ContentPage
             double w = size.Width;
             double h = size.Height;
 
-            double absX = ann.X * AnnotationsContainer.Width;
-            double absY = ann.Y * AnnotationsContainer.Height;
+            double absX = ann.X * ActiveAnnotationsContainer.Width;
+            double absY = ann.Y * ActiveAnnotationsContainer.Height;
             
             AbsoluteLayout.SetLayoutBounds(border, new Rect(absX - (w/2), absY - (h/2), w, h));
             border.IsVisible = true;
         }
 
         // Masquer les enfants excédentaires
-        for (int i = pageAnnotations.Count; i < AnnotationsContainer.Children.Count; i++)
+        for (int i = pageAnnotations.Count; i < ActiveAnnotationsContainer.Children.Count; i++)
         {
-            if (AnnotationsContainer.Children[i] is VisualElement ve)
+            if (ActiveAnnotationsContainer.Children[i] is VisualElement ve)
                 ve.IsVisible = false;
         }
     }
@@ -1404,10 +1423,10 @@ public partial class ViewerPage : ContentPage
                         b.TranslationY = startY + e.TotalY;
                         break;
                     case GestureStatus.Completed:
-                        double finalAbsX = (ann.X * AnnotationsContainer.Width) + b.TranslationX;
-                        double finalAbsY = (ann.Y * AnnotationsContainer.Height) + b.TranslationY;
-                        ann.X = finalAbsX / AnnotationsContainer.Width;
-                        ann.Y = finalAbsY / AnnotationsContainer.Height;
+                        double finalAbsX = (ann.X * ActiveAnnotationsContainer.Width) + b.TranslationX;
+                        double finalAbsY = (ann.Y * ActiveAnnotationsContainer.Height) + b.TranslationY;
+                        ann.X = finalAbsX / ActiveAnnotationsContainer.Width;
+                        ann.Y = finalAbsY / ActiveAnnotationsContainer.Height;
                         b.TranslationX = 0;
                         b.TranslationY = 0;
                         RenderAnnotations();

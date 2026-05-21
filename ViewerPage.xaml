@@ -34,17 +34,34 @@
               HorizontalOptions="Fill" 
               VerticalOptions="Fill"
               BackgroundColor="Black">
-            <Grid.GestureRecognizers>
-                <PinchGestureRecognizer PinchUpdated="OnPinchUpdated" />
-                <PanGestureRecognizer PanUpdated="OnPanUpdated" />
-                <TapGestureRecognizer Tapped="OnImageSingleTapped" NumberOfTapsRequired="1" />
-                <TapGestureRecognizer Tapped="OnImageDoubleTapped" NumberOfTapsRequired="2" />
-            </Grid.GestureRecognizers>
-            <Image x:Name="ScoreImage" 
-                   Aspect="AspectFit" 
-                   HorizontalOptions="Fill" 
-                   VerticalOptions="Fill"
-                   InputTransparent="True" />
+            
+            <Grid x:Name="ZoomLayout"
+                  HorizontalOptions="Fill"
+                  VerticalOptions="Fill">
+                <Grid.GestureRecognizers>
+                    <PinchGestureRecognizer PinchUpdated="OnPinchUpdated" />
+                    <PanGestureRecognizer PanUpdated="OnPanUpdated" />
+                    <TapGestureRecognizer Tapped="OnImageSingleTapped" NumberOfTapsRequired="1" />
+                    <TapGestureRecognizer Tapped="OnImageDoubleTapped" NumberOfTapsRequired="2" />
+                </Grid.GestureRecognizers>
+
+                <Image x:Name="ScoreImage" 
+                       Aspect="AspectFit" 
+                       HorizontalOptions="Fill" 
+                       VerticalOptions="Fill"
+                       InputTransparent="True" />
+
+                <!-- Conteneur d'annotations spécifique pour l'image (pour zoomer avec l'image) -->
+                <AbsoluteLayout x:Name="ImageAnnotationsContainer" 
+                                HorizontalOptions="Fill" 
+                                VerticalOptions="Fill" 
+                                InputTransparent="True"
+                                CascadeInputTransparent="False">
+                    <AbsoluteLayout.GestureRecognizers>
+                        <DropGestureRecognizer Drop="OnStickerDrop" AllowDrop="True" />
+                    </AbsoluteLayout.GestureRecognizers>
+                </AbsoluteLayout>
+            </Grid>
         </Grid>
 
         <!-- Zones tactiles pour les images (transparentes) -->
@@ -139,90 +156,74 @@
             </AbsoluteLayout.GestureRecognizers>
         </AbsoluteLayout>
 
-        <!-- Barre de réglages Stickers (Couleur, Taille, Fond) -->
-        <Border x:Name="StickerSettingsBar"
+        <!-- Sélecteur de Stickers et Réglages (Drawer Unique) -->
+        <Border x:Name="StickerPickerOverlay"
                 IsVisible="False"
                 VerticalOptions="End"
                 HorizontalOptions="Fill"
-                BackgroundColor="#F01E1E1E"
-                HeightRequest="100"
-                Margin="10,0,10,225" 
-                Padding="10,5"
+                BackgroundColor="#EE000000"
+                HeightRequest="240"
+                Margin="10,0,10,70"
+                Padding="10"
                 StrokeThickness="1"
                 Stroke="#444444"
                 ZIndex="25">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10" />
             </Border.StrokeShape>
-            <VerticalStackLayout Spacing="5">
-                <!-- Rangée Couleur Texte -->
-                <Grid ColumnDefinitions="Auto, *, Auto, Auto">
-                    <Label Grid.Column="0" Text="Texte:" TextColor="White" VerticalOptions="Center" Margin="0,0,10,0" FontSize="12" />
-                    <HorizontalStackLayout Grid.Column="1" Spacing="12" VerticalOptions="Center">
-                        <Ellipse WidthRequest="20" HeightRequest="20" Fill="White" Stroke="Gray" StrokeThickness="1">
+            
+            <VerticalStackLayout Spacing="8">
+                <!-- Réglages Stickers Fusionnés -->
+                <Grid ColumnDefinitions="Auto, *, Auto, Auto" RowDefinitions="Auto, Auto" RowSpacing="6" ColumnSpacing="10" Margin="0,0,0,5">
+                    <!-- Ligne 1: Couleur Texte & Taille Slider -->
+                    <Label Grid.Row="0" Grid.Column="0" Text="Texte:" TextColor="White" VerticalOptions="Center" FontSize="12" FontAttributes="Bold" />
+                    <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="12" VerticalOptions="Center">
+                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="White" Stroke="Gray" StrokeThickness="1">
                             <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="White"/></Ellipse.GestureRecognizers>
                         </Ellipse>
-                        <Ellipse WidthRequest="20" HeightRequest="20" Fill="Black" Stroke="Gray" StrokeThickness="1">
+                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="Black" Stroke="Gray" StrokeThickness="1">
                             <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Black"/></Ellipse.GestureRecognizers>
                         </Ellipse>
-                        <Ellipse WidthRequest="20" HeightRequest="20" Fill="Red">
+                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="Red">
                             <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Red"/></Ellipse.GestureRecognizers>
                         </Ellipse>
-                        <Ellipse WidthRequest="20" HeightRequest="20" Fill="#007ACC">
+                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="#007ACC">
                             <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Blue"/></Ellipse.GestureRecognizers>
                         </Ellipse>
                     </HorizontalStackLayout>
                     
-                    <Label Grid.Column="2" Text="Taille:" TextColor="White" VerticalOptions="Center" Margin="10,0,5,0" FontSize="12" />
-                    <Slider Grid.Column="3" x:Name="StickerSizeSlider" Minimum="0.5" Maximum="4.0" Value="1.2" WidthRequest="120" VerticalOptions="Center" ValueChanged="OnStickerSizeChanged" />
-                </Grid>
+                    <Label Grid.Row="0" Grid.Column="2" Text="Taille:" TextColor="White" VerticalOptions="Center" FontSize="12" FontAttributes="Bold" />
+                    <Slider Grid.Row="0" Grid.Column="3" x:Name="StickerSizeSlider" Minimum="0.5" Maximum="4.0" Value="1.2" WidthRequest="110" VerticalOptions="Center" ValueChanged="OnStickerSizeChanged" />
 
-                <!-- Rangée Couleur Fond -->
-                <Grid ColumnDefinitions="Auto, *">
-                    <Label Grid.Column="0" Text="Fond:" TextColor="White" VerticalOptions="Center" Margin="0,0,10,0" FontSize="12" />
-                    <HorizontalStackLayout Grid.Column="1" Spacing="12" VerticalOptions="Center">
-                        <Ellipse WidthRequest="20" HeightRequest="20" Fill="Transparent" Stroke="Gray" StrokeThickness="1">
+                    <!-- Ligne 2: Couleur de Fond -->
+                    <Label Grid.Row="1" Grid.Column="0" Text="Fond:" TextColor="White" VerticalOptions="Center" FontSize="12" FontAttributes="Bold" />
+                    <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Spacing="12" VerticalOptions="Center">
+                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="Transparent" Stroke="Gray" StrokeThickness="1">
                             <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Transparent"/></Ellipse.GestureRecognizers>
                         </Ellipse>
-                        <Ellipse WidthRequest="20" HeightRequest="20" Fill="#333333" Stroke="Gray" StrokeThickness="1">
+                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="#333333" Stroke="Gray" StrokeThickness="1">
                             <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="DarkGray"/></Ellipse.GestureRecognizers>
                         </Ellipse>
-                        <Ellipse WidthRequest="20" HeightRequest="20" Fill="#FFFFE0" Stroke="Gray" StrokeThickness="1">
+                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="#FFFFE0" Stroke="Gray" StrokeThickness="1">
                             <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Ivory"/></Ellipse.GestureRecognizers>
                         </Ellipse>
-                        <Ellipse WidthRequest="20" HeightRequest="20" Fill="Red">
+                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="Red">
                             <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Red"/></Ellipse.GestureRecognizers>
                         </Ellipse>
-                        <Ellipse WidthRequest="20" HeightRequest="20" Fill="Yellow">
+                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="Yellow">
                             <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Yellow"/></Ellipse.GestureRecognizers>
                         </Ellipse>
-                        <Ellipse WidthRequest="20" HeightRequest="20" Fill="#2ECC71">
+                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="#2ECC71">
                             <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Green"/></Ellipse.GestureRecognizers>
                         </Ellipse>
                     </HorizontalStackLayout>
                 </Grid>
-            </VerticalStackLayout>
-        </Border>
 
-        <!-- Sélecteur de Stickers (S'affiche au-dessus de la barre) -->
-        <Border x:Name="StickerPickerOverlay"
-                IsVisible="False"
-                VerticalOptions="End"
-                HorizontalOptions="Fill"
-                BackgroundColor="#EE000000"
-                HeightRequest="180"
-                Margin="10,0,10,70"
-                Padding="10"
-                StrokeThickness="1"
-                Stroke="#444444">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10" />
-            </Border.StrokeShape>
-            
-            <VerticalStackLayout Spacing="5">
+                <BoxView HeightRequest="1" Color="#444444" />
+
                 <!-- Catégories -->
                 <CollectionView x:Name="StickerCategoriesCollection"
-                                HeightRequest="40"
+                                HeightRequest="35"
                                 SelectionMode="Single"
                                 SelectionChanged="OnStickerCategoryChanged">
                     <CollectionView.ItemsLayout>
@@ -231,8 +232,8 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Label Text="{Binding Name}" 
-                                   Padding="15,8"
-                                   FontSize="13"
+                                   Padding="12,5"
+                                   FontSize="12"
                                    TextColor="White"
                                    BackgroundColor="#333333"
                                    VerticalTextAlignment="Center"
@@ -245,7 +246,7 @@
 
                 <!-- Stickers de la catégorie -->
                 <CollectionView x:Name="StickersCollection" 
-                                HeightRequest="100"
+                                HeightRequest="90"
                                 SelectionMode="Single"
                                 SelectionChanged="OnStickerSelected"
                                 HorizontalOptions="Fill">
@@ -255,10 +256,10 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Border x:Name="StickerBorder"
-                                    HeightRequest="60" 
-                                    Margin="5" 
+                                    HeightRequest="55" 
+                                    Margin="3" 
                                     BackgroundColor="{Binding BackgroundColor}" 
-                                    Padding="10,0"
+                                    Padding="8,0"
                                     StrokeShape="RoundRectangle 8"
                                     StrokeThickness="2">
                                 <VisualStateManager.VisualStateGroups>
@@ -304,7 +305,7 @@
             <Border.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
             </Border.GestureRecognizers>
-            <Grid ColumnDefinitions="Auto, Auto, Auto, *, Auto, Auto, Auto" Padding="10,0">
+            <Grid ColumnDefinitions="Auto, Auto, Auto, *, Auto, Auto, Auto, Auto" Padding="10,0">
                 <Button Grid.Column="0" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="18" FontAttributes="Bold" Padding="10,0" />
                 <Button Grid.Column="1" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="18" Padding="10,0" />
                 <Button Grid.Column="2" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="18" Padding="10,0" />
@@ -313,7 +314,8 @@
                 
                 <Button Grid.Column="4" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="20" Padding="10,0" />
                 <Button Grid.Column="5" x:Name="LockUnlockBtn" Text="🔒" BackgroundColor="Transparent" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="18" Padding="10,0" />
-                <Button Grid.Column="6" Text="✕" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="20" Padding="10,0" FontAttributes="Bold" />
+                <Button Grid.Column="6" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="18" Padding="10,0" />
+                <Button Grid.Column="7" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="20" Padding="10,0" FontAttributes="Bold" />
             </Grid>
         </Border>
 
