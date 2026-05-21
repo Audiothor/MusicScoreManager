@@ -756,6 +756,7 @@ public partial class ViewerPage : ContentPage
         MenuTitleLabel.Text = _score.Title;
         CentralMenuOverlay.IsVisible = true;
         ImageContainer.InputTransparent = true; // Empêche l'image de bloquer les clics sur le menu !
+        BottomTouchBar.IsVisible = false; // Désactive la zone tactile du bas quand le menu est ouvert
     }
 
     private async void OnRotateClicked(object sender, EventArgs e)
@@ -807,6 +808,7 @@ public partial class ViewerPage : ContentPage
     {
         CentralMenuOverlay.IsVisible = false;
         ImageContainer.InputTransparent = false; // Restaure les gestes sur l'image
+        BottomTouchBar.IsVisible = !AnnotationBar.IsVisible; // Restaure la zone tactile du bas si la barre n'est pas déjà ouverte
     }
 
     private void OnPrevTapped(object sender, EventArgs e)
@@ -834,6 +836,7 @@ public partial class ViewerPage : ContentPage
         if (AnnotationBar.IsVisible)
         {
             AnnotationBar.IsVisible = false;
+            BottomTouchBar.IsVisible = true; // Réactive la zone tactile du bas !
             StickerPickerOverlay.IsVisible = false;
             PageIndicator.Margin = new Thickness(0, 0, 10, 2);
         }
@@ -853,6 +856,7 @@ public partial class ViewerPage : ContentPage
         if (AnnotationBar.IsVisible)
         {
             AnnotationBar.IsVisible = false;
+            BottomTouchBar.IsVisible = true; // Réactive la zone tactile du bas !
             StickerPickerOverlay.IsVisible = false;
             PageIndicator.Margin = new Thickness(0, 0, 10, 2);
             return;
@@ -913,6 +917,7 @@ public partial class ViewerPage : ContentPage
             await GoToPage(pageNum);
             CentralMenuOverlay.IsVisible = false;
             ImageContainer.InputTransparent = false; // Restaure les gestes sur l'image
+            BottomTouchBar.IsVisible = !AnnotationBar.IsVisible; // Restaure la zone tactile du bas si la barre n'est pas déjà ouverte
         }
     }
 
@@ -1000,6 +1005,7 @@ public partial class ViewerPage : ContentPage
     private void OnAnnotationToggleTapped(object sender, EventArgs e)
     {
         AnnotationBar.IsVisible = !AnnotationBar.IsVisible;
+        BottomTouchBar.IsVisible = !AnnotationBar.IsVisible; // Masque la zone tactile quand la vraie barre d'annotations est ouverte, et inversement
         if (!AnnotationBar.IsVisible)
         {
             StickerPickerOverlay.IsVisible = false;

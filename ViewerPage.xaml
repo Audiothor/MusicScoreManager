@@ -381,5 +381,16 @@
                         Clicked="OnCloseMenuClicked" />
             </VerticalStackLayout>
         </Border>
+
+        <!-- Zone tactile transparente du bas pour activer les annotations (PDF & Images, même zoomés) -->
+        <ContentView x:Name="BottomTouchBar"
+                     VerticalOptions="End"
+                     HeightRequest="80"
+                     BackgroundColor="Transparent"
+                     ZIndex="500">
+            <ContentView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnAnnotationToggleTapped" />
+            </ContentView.GestureRecognizers>
+        </ContentView>
     </Grid>
 </ContentPage>
