@@ -1003,9 +1003,19 @@ public partial class ViewerPage : ContentPage
                 break;
             case GestureStatus.Running:
                 double newY = _barYBase + e.TotalY;
+                
+                // Limiter la translation pour éviter que la barre sorte de l'écran
+                // Ne pas dépasser le bas (newY = 0) ni le haut (margin de sécurité de 80px)
+                double limitTop = -500; // Par défaut si la hauteur n'est pas encore lue
+                if (this.Height > 0)
+                {
+                    limitTop = -this.Height + 80;
+                }
+                
+                newY = Math.Max(limitTop, Math.Min(0, newY));
+                
                 AnnotationBar.TranslationY = newY;
                 StickerPickerOverlay.TranslationY = newY;
-                // PageIndicator.TranslationY = newY; // On ne déplace plus l'indicateur
                 break;
         }
     }
@@ -1017,6 +1027,8 @@ public partial class ViewerPage : ContentPage
         if (!AnnotationBar.IsVisible)
         {
             StickerPickerOverlay.IsVisible = false;
+            AnnotationBar.TranslationY = 0;
+            StickerPickerOverlay.TranslationY = 0;
         }
 
         // Ajuster la position de l'indicateur de page
@@ -1050,6 +1062,11 @@ public partial class ViewerPage : ContentPage
         AnnotationBar.IsVisible = false;
         BottomTouchBar.IsVisible = true;
         StickerPickerOverlay.IsVisible = false;
+        
+        // Réinitialiser la translation pour éviter qu'elle reste décalée lors de la prochaine ouverture
+        AnnotationBar.TranslationY = 0;
+        StickerPickerOverlay.TranslationY = 0;
+        
         PageIndicator.Margin = new Thickness(0, 0, 10, 2);
     }
 
