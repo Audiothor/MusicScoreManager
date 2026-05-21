@@ -344,6 +344,9 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private double startTranslationX = 0;
+    private double startTranslationY = 0;
+
     private void OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
     {
         if (e.Status == GestureStatus.Started)
@@ -358,15 +361,37 @@ public partial class ViewerPage : ContentPage
             currentScale = Math.Max(1, currentScale);
             currentScale = Math.Min(4, currentScale);
             ScoreImage.Scale = currentScale;
+
+            if (currentScale <= 1.0)
+            {
+                ScoreImage.TranslationX = 0;
+                ScoreImage.TranslationY = 0;
+            }
+        }
+        if (e.Status == GestureStatus.Completed || e.Status == GestureStatus.Canceled)
+        {
+            if (ScoreImage.Scale <= 1.0)
+            {
+                ScoreImage.TranslationX = 0;
+                ScoreImage.TranslationY = 0;
+            }
         }
     }
 
     private void OnPanUpdated(object sender, PanUpdatedEventArgs e)
     {
-        if (ScoreImage.Scale > 1 && e.StatusType == GestureStatus.Running)
+        if (ScoreImage.Scale > 1)
         {
-            ScoreImage.TranslationX += e.TotalX;
-            ScoreImage.TranslationY += e.TotalY;
+            if (e.StatusType == GestureStatus.Started)
+            {
+                startTranslationX = ScoreImage.TranslationX;
+                startTranslationY = ScoreImage.TranslationY;
+            }
+            else if (e.StatusType == GestureStatus.Running)
+            {
+                ScoreImage.TranslationX = startTranslationX + e.TotalX;
+                ScoreImage.TranslationY = startTranslationY + e.TotalY;
+            }
         }
     }
 
@@ -774,6 +799,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnPrevTapped(object sender, EventArgs e)
     {
+        if (ScoreImage.Scale > 1) return;
         if (_score.Type == ScoreType.Image)
         {
             HandleStartOfScore();
@@ -782,6 +808,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnNextTapped(object sender, EventArgs e)
     {
+        if (ScoreImage.Scale > 1) return;
         if (_score.Type == ScoreType.Image)
         {
             HandleEndOfScore();

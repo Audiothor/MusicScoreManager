@@ -42,6 +42,10 @@
 
         <!-- Zones tactiles pour les images (transparentes) -->
         <Grid x:Name="ImageTouchGrid" IsVisible="False" BackgroundColor="Transparent">
+            <Grid.GestureRecognizers>
+                <PinchGestureRecognizer PinchUpdated="OnPinchUpdated" />
+                <PanGestureRecognizer PanUpdated="OnPanUpdated" />
+            </Grid.GestureRecognizers>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="4*" />

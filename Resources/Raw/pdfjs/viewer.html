@@ -61,10 +61,10 @@
     </style>
 </head>
 <body>
-    <div id="left-zone" class="tap-zone" onclick="prevPage(event)" ontouchend="prevPage(event)"></div>
-    <div id="center-zone" class="tap-zone" onclick="handleCenterTap(event)"></div>
-    <div id="right-zone" class="tap-zone" onclick="nextPage(event)" ontouchend="nextPage(event)"></div>
-    <div id="bottom-zone" class="tap-zone" onclick="onBottomZoneTapped(event)" ontouchend="onBottomZoneTapped(event)"></div>
+    <div id="left-zone" class="tap-zone" onclick="handleLeftZone(event)"></div>
+    <div id="center-zone" class="tap-zone" onclick="handleCenterZone(event)"></div>
+    <div id="right-zone" class="tap-zone" onclick="handleRightZone(event)"></div>
+    <div id="bottom-zone" class="tap-zone" onclick="handleBottomZone(event)"></div>
 
     <canvas id="pdf-canvas"></canvas>
 
@@ -74,7 +74,76 @@
         let pdfDoc = null;
         let pageNum = 1;
         let rotation = 0;
-        const scale = 2.0;
+        const scale = 1.5; // Optimisé pour réduire de 44% l'occupation mémoire (évite les crashs OOM)
+
+        // Gestion de filtrage intelligent des gestes tactiles
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+        let isMultiTouch = false;
+
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                isMultiTouch = true;
+            } else {
+                isMultiTouch = false;
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+                touchStartTime = Date.now();
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length > 1) {
+                isMultiTouch = true;
+            }
+        }, { passive: true });
+
+        function isValidTap(e) {
+            if (isMultiTouch) return false;
+            // Si le zoom du viewport est actif (zoom par pincement), on ignore le tap pour éviter les sauts
+            if (window.visualViewport && window.visualViewport.scale > 1.05) {
+                return false;
+            }
+            if (e && e.changedTouches && e.changedTouches.length > 0) {
+                const touch = e.changedTouches[0];
+                const dx = touch.clientX - touchStartX;
+                const dy = touch.clientY - touchStartY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const duration = Date.now() - touchStartTime;
+                if (dist > 15 || duration > 300) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function handleLeftZone(e) {
+            if (!isValidTap(e)) return;
+            prevPage(e);
+        }
+
+        function handleRightZone(e) {
+            if (!isValidTap(e)) return;
+            nextPage(e);
+        }
+
+        function handleBottomZone(e) {
+            if (!isValidTap(e)) return;
+            onBottomZoneTapped(e);
+        }
+
+        let lastTap = 0;
+        function handleCenterZone(e) {
+            if (!isValidTap(e)) return;
+            const now = new Date().getTime();
+            const timesince = now - lastTap;
+            if ((timesince < 300) && (timesince > 0)) {
+                openMenu(e);
+            }
+            lastTap = now;
+        }
 
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d');
@@ -176,16 +245,6 @@
                 pageNum = num;
                 renderPage(pageNum);
             }
-        }
-
-        let lastTap = 0;
-        function handleCenterTap(e) {
-            const now = new Date().getTime();
-            const timesince = now - lastTap;
-            if ((timesince < 300) && (timesince > 0)) {
-                openMenu(e);
-            }
-            lastTap = now;
         }
 
         function openMenu(e) {
