@@ -839,8 +839,6 @@ public partial class ViewerPage : ContentPage
 
     private void OnImageSingleTapped(object sender, TappedEventArgs e)
     {
-        if (ScoreImage.Scale > 1) return;
-
         var position = e.GetPosition(this);
         if (position == null) return;
 
@@ -862,9 +860,14 @@ public partial class ViewerPage : ContentPage
         if (y > height - 100)
         {
             OnAnnotationToggleTapped(this, EventArgs.Empty);
+            return;
         }
+
+        // Si on est zoomé, on bloque le changement de page pour éviter les sauts accidentels en faisant défiler l'image
+        if (ScoreImage.Scale > 1) return;
+
         // Zone gauche (30%) : Page précédente
-        else if (x < width * 0.3)
+        if (x < width * 0.3)
         {
             OnPrevTapped(this, EventArgs.Empty);
         }
@@ -877,26 +880,26 @@ public partial class ViewerPage : ContentPage
 
     private void OnImageDoubleTapped(object sender, TappedEventArgs e)
     {
-        // Double tap pour réinitialiser le zoom si on est déjà zoomé
-        if (ScoreImage.Scale > 1)
-        {
-            ScoreImage.Scale = 1;
-            ScoreImage.TranslationX = 0;
-            ScoreImage.TranslationY = 0;
-            currentScale = 1;
-            return;
-        }
-
         var position = e.GetPosition(this);
         if (position == null) return;
 
         double x = position.Value.X;
         double width = this.Width;
 
-        // Double tap au centre (30% - 70%) : Afficher le menu central
+        // Double tap au centre (30% - 70%) : Afficher le menu central (fonctionne toujours, même zoomé !)
         if (x >= width * 0.3 && x <= width * 0.7)
         {
             ShowMenu();
+            return;
+        }
+
+        // Double tap sur les côtés quand on est zoomé : réinitialise le zoom à sa taille de départ
+        if (ScoreImage.Scale > 1)
+        {
+            ScoreImage.Scale = 1;
+            ScoreImage.TranslationX = 0;
+            ScoreImage.TranslationY = 0;
+            currentScale = 1;
         }
     }
 

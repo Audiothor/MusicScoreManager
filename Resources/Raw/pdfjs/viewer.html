@@ -106,8 +106,9 @@
 
         function handleZoneTap(zoneName, e) {
             if (isMultiTouch) return;
-            // Si le zoom du viewport est actif (zoom par pincement), on ignore le tap pour éviter les sauts/fermetures
-            if (window.visualViewport && window.visualViewport.scale > 1.05) {
+            // Si le zoom du viewport est actif, on ignore les zones de navigation gauche/droite pour éviter les sauts involontaires
+            const isZoomed = window.visualViewport && window.visualViewport.scale > 1.05;
+            if (isZoomed && (zoneName === 'left' || zoneName === 'right')) {
                 return;
             }
 
