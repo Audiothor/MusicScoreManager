@@ -30,22 +30,24 @@
 
         <!-- L'image avec zoom (ScrollView) -->
         <ScrollView x:Name="ImageScrollView" 
-                    IsVisible="False" 
-                    Orientation="Both"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill">
+                     IsVisible="False" 
+                     Orientation="Both"
+                     HorizontalOptions="Fill"
+                     VerticalOptions="Fill">
+            <ScrollView.GestureRecognizers>
+                <PinchGestureRecognizer PinchUpdated="OnPinchUpdated" />
+                <PanGestureRecognizer PanUpdated="OnPanUpdated" />
+                <TapGestureRecognizer Tapped="OnImageSingleTapped" NumberOfTapsRequired="1" />
+                <TapGestureRecognizer Tapped="OnImageDoubleTapped" NumberOfTapsRequired="2" />
+            </ScrollView.GestureRecognizers>
             <Image x:Name="ScoreImage" 
-                   Aspect="AspectFit" 
-                   HorizontalOptions="Fill" 
-                   VerticalOptions="Fill" />
+                    Aspect="AspectFit" 
+                    HorizontalOptions="Fill" 
+                    VerticalOptions="Fill" />
         </ScrollView>
 
         <!-- Zones tactiles pour les images (transparentes) -->
         <Grid x:Name="ImageTouchGrid" IsVisible="False" BackgroundColor="Transparent">
-            <Grid.GestureRecognizers>
-                <PinchGestureRecognizer PinchUpdated="OnPinchUpdated" />
-                <PanGestureRecognizer PanUpdated="OnPanUpdated" />
-            </Grid.GestureRecognizers>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="4*" />
@@ -129,7 +131,8 @@
                         HorizontalOptions="Fill" 
                         VerticalOptions="Fill" 
                         ZIndex="10"
-                        InputTransparent="False">
+                        InputTransparent="True"
+                        CascadeInputTransparent="False">
             <AbsoluteLayout.GestureRecognizers>
                 <DropGestureRecognizer Drop="OnStickerDrop" AllowDrop="True" />
             </AbsoluteLayout.GestureRecognizers>

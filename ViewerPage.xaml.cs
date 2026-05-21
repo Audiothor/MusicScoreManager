@@ -234,7 +234,7 @@ public partial class ViewerPage : ContentPage
                         ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(imageBytes));
                         ScoreImage.Rotation = _currentRotation;
                         ImageScrollView.IsVisible = true;
-                        ImageTouchGrid.IsVisible = true;
+                        ImageTouchGrid.IsVisible = false; // Ne pas afficher la grille transparente qui bloque les gestes de zoom !
                         PdfWebView.IsVisible = false;
                         _currentPage = 1;
                         _maxPages = 1;
@@ -357,12 +357,14 @@ public partial class ViewerPage : ContentPage
         }
         if (e.Status == GestureStatus.Running)
         {
-            currentScale += (e.Scale - 1) * startScale;
-            currentScale = Math.Max(1, currentScale);
-            currentScale = Math.Min(4, currentScale);
-            ScoreImage.Scale = currentScale;
+            // Zoom linéaire propre basé sur l'échelle de départ et l'échelle cumulative du pincement
+            double targetScale = startScale * e.Scale;
+            targetScale = Math.Max(1, targetScale);
+            targetScale = Math.Min(4, targetScale);
+            currentScale = targetScale;
+            ScoreImage.Scale = targetScale;
 
-            if (currentScale <= 1.0)
+            if (targetScale <= 1.0)
             {
                 ScoreImage.TranslationX = 0;
                 ScoreImage.TranslationY = 0;
@@ -389,8 +391,16 @@ public partial class ViewerPage : ContentPage
             }
             else if (e.StatusType == GestureStatus.Running)
             {
-                ScoreImage.TranslationX = startTranslationX + e.TotalX;
-                ScoreImage.TranslationY = startTranslationY + e.TotalY;
+                double targetX = startTranslationX + e.TotalX;
+                double targetY = startTranslationY + e.TotalY;
+
+                // Calculer les limites pour ne pas sortir des bords de l'image agrandie
+                // L'image peut glisser d'au maximum sa taille agrandie moins la taille de l'écran, divisé par 2 (AnchorX = 0.5)
+                double maxTx = Math.Max(0, (ScoreImage.Width * (ScoreImage.Scale - 1)) / 2);
+                double maxTy = Math.Max(0, (ScoreImage.Height * (ScoreImage.Scale - 1)) / 2);
+
+                ScoreImage.TranslationX = Math.Max(-maxTx, Math.Min(maxTx, targetX));
+                ScoreImage.TranslationY = Math.Max(-maxTy, Math.Min(maxTy, targetY));
             }
         }
     }
@@ -824,6 +834,69 @@ public partial class ViewerPage : ContentPage
             AnnotationBar.IsVisible = false;
             StickerPickerOverlay.IsVisible = false;
             PageIndicator.Margin = new Thickness(0, 0, 10, 2);
+        }
+    }
+
+    private void OnImageSingleTapped(object sender, TappedEventArgs e)
+    {
+        if (ScoreImage.Scale > 1) return;
+
+        var position = e.GetPosition(this);
+        if (position == null) return;
+
+        double x = position.Value.X;
+        double y = position.Value.Y;
+        double width = this.Width;
+        double height = this.Height;
+
+        // Si la barre d'annotation est visible et qu'on tape dans le vide, on la ferme
+        if (AnnotationBar.IsVisible)
+        {
+            AnnotationBar.IsVisible = false;
+            StickerPickerOverlay.IsVisible = false;
+            PageIndicator.Margin = new Thickness(0, 0, 10, 2);
+            return;
+        }
+
+        // Zone du bas (les 100 derniers pixels) : Afficher / Masquer les annotations
+        if (y > height - 100)
+        {
+            OnAnnotationToggleTapped(this, EventArgs.Empty);
+        }
+        // Zone gauche (30%) : Page précédente
+        else if (x < width * 0.3)
+        {
+            OnPrevTapped(this, EventArgs.Empty);
+        }
+        // Zone droite (30%) : Page suivante
+        else if (x > width * 0.7)
+        {
+            OnNextTapped(this, EventArgs.Empty);
+        }
+    }
+
+    private void OnImageDoubleTapped(object sender, TappedEventArgs e)
+    {
+        // Double tap pour réinitialiser le zoom si on est déjà zoomé
+        if (ScoreImage.Scale > 1)
+        {
+            ScoreImage.Scale = 1;
+            ScoreImage.TranslationX = 0;
+            ScoreImage.TranslationY = 0;
+            currentScale = 1;
+            return;
+        }
+
+        var position = e.GetPosition(this);
+        if (position == null) return;
+
+        double x = position.Value.X;
+        double width = this.Width;
+
+        // Double tap au centre (30% - 70%) : Afficher le menu central
+        if (x >= width * 0.3 && x <= width * 0.7)
+        {
+            ShowMenu();
         }
     }
 

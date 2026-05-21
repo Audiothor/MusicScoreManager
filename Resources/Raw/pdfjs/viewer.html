@@ -61,10 +61,10 @@
     </style>
 </head>
 <body>
-    <div id="left-zone" class="tap-zone" onclick="handleLeftZone(event)"></div>
-    <div id="center-zone" class="tap-zone" onclick="handleCenterZone(event)"></div>
-    <div id="right-zone" class="tap-zone" onclick="handleRightZone(event)"></div>
-    <div id="bottom-zone" class="tap-zone" onclick="handleBottomZone(event)"></div>
+    <div id="left-zone" class="tap-zone"></div>
+    <div id="center-zone" class="tap-zone"></div>
+    <div id="right-zone" class="tap-zone"></div>
+    <div id="bottom-zone" class="tap-zone"></div>
 
     <canvas id="pdf-canvas"></canvas>
 
@@ -81,8 +81,10 @@
         let touchStartY = 0;
         let touchStartTime = 0;
         let isMultiTouch = false;
+        let wasTouchHandled = false;
 
         document.addEventListener('touchstart', function(e) {
+            wasTouchHandled = false;
             if (e.touches.length > 1) {
                 isMultiTouch = true;
             } else {
@@ -100,50 +102,66 @@
             }
         }, { passive: true });
 
-        function isValidTap(e) {
-            if (isMultiTouch) return false;
-            // Si le zoom du viewport est actif (zoom par pincement), on ignore le tap pour éviter les sauts
+        let lastTap = 0;
+
+        function handleZoneTap(zoneName, e) {
+            if (isMultiTouch) return;
+            // Si le zoom du viewport est actif (zoom par pincement), on ignore le tap pour éviter les sauts/fermetures
             if (window.visualViewport && window.visualViewport.scale > 1.05) {
-                return false;
+                return;
             }
+
+            const duration = Date.now() - touchStartTime;
+            if (duration > 300) return; // appui long ignoré
+
             if (e && e.changedTouches && e.changedTouches.length > 0) {
                 const touch = e.changedTouches[0];
                 const dx = touch.clientX - touchStartX;
                 const dy = touch.clientY - touchStartY;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                const duration = Date.now() - touchStartTime;
-                if (dist > 15 || duration > 300) {
-                    return false;
+                if (dist > 15) {
+                    return; // drag/glissement, ignoré
                 }
             }
-            return true;
-        }
 
-        function handleLeftZone(e) {
-            if (!isValidTap(e)) return;
-            prevPage(e);
-        }
-
-        function handleRightZone(e) {
-            if (!isValidTap(e)) return;
-            nextPage(e);
-        }
-
-        function handleBottomZone(e) {
-            if (!isValidTap(e)) return;
-            onBottomZoneTapped(e);
-        }
-
-        let lastTap = 0;
-        function handleCenterZone(e) {
-            if (!isValidTap(e)) return;
-            const now = new Date().getTime();
-            const timesince = now - lastTap;
-            if ((timesince < 300) && (timesince > 0)) {
-                openMenu(e);
+            if (zoneName === 'left') {
+                prevPage(e);
+            } else if (zoneName === 'right') {
+                nextPage(e);
+            } else if (zoneName === 'bottom') {
+                onBottomZoneTapped(e);
+            } else if (zoneName === 'center') {
+                const now = new Date().getTime();
+                const timesince = now - lastTap;
+                if ((timesince < 300) && (timesince > 0)) {
+                    openMenu(e);
+                }
+                lastTap = now;
             }
-            lastTap = now;
         }
+
+        function bindZone(id, zoneName) {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            el.addEventListener('touchend', function(e) {
+                wasTouchHandled = true;
+                handleZoneTap(zoneName, e);
+            });
+
+            el.addEventListener('click', function(e) {
+                if (wasTouchHandled) {
+                    wasTouchHandled = false; // reset
+                    return;
+                }
+                handleZoneTap(zoneName, e);
+            });
+        }
+
+        bindZone('left-zone', 'left');
+        bindZone('center-zone', 'center');
+        bindZone('right-zone', 'right');
+        bindZone('bottom-zone', 'bottom');
 
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d');
