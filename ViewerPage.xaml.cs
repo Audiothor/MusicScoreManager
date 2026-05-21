@@ -233,7 +233,7 @@ public partial class ViewerPage : ContentPage
                     MainThread.BeginInvokeOnMainThread(() => {
                         ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(imageBytes));
                         ScoreImage.Rotation = _currentRotation;
-                        ImageScrollView.IsVisible = true;
+                        ImageContainer.IsVisible = true;
                         ImageTouchGrid.IsVisible = false; // Ne pas afficher la grille transparente qui bloque les gestes de zoom !
                         PdfWebView.IsVisible = false;
                         _currentPage = 1;
@@ -255,7 +255,7 @@ public partial class ViewerPage : ContentPage
             {
                 System.Diagnostics.Debug.WriteLine("[Viewer] Mode PDF - Démarrage chargement WebView");
                 MainThread.BeginInvokeOnMainThread(() => {
-                    ImageScrollView.IsVisible = false;
+                    ImageContainer.IsVisible = false;
                     ImageTouchGrid.IsVisible = false;
                     PdfWebView.IsVisible = true;
                     PdfWebView.Source = null; // On vide pour forcer le refresh
@@ -755,6 +755,7 @@ public partial class ViewerPage : ContentPage
     {
         MenuTitleLabel.Text = _score.Title;
         CentralMenuOverlay.IsVisible = true;
+        ImageContainer.InputTransparent = true; // Empêche l'image de bloquer les clics sur le menu !
     }
 
     private async void OnRotateClicked(object sender, EventArgs e)
@@ -805,6 +806,7 @@ public partial class ViewerPage : ContentPage
     private void OnCloseMenuClicked(object sender, EventArgs e)
     {
         CentralMenuOverlay.IsVisible = false;
+        ImageContainer.InputTransparent = false; // Restaure les gestes sur l'image
     }
 
     private void OnPrevTapped(object sender, EventArgs e)
@@ -910,6 +912,7 @@ public partial class ViewerPage : ContentPage
         {
             await GoToPage(pageNum);
             CentralMenuOverlay.IsVisible = false;
+            ImageContainer.InputTransparent = false; // Restaure les gestes sur l'image
         }
     }
 

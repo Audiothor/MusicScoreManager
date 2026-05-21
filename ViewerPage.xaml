@@ -28,23 +28,24 @@
         <!-- MediaElement pour la lecture audio et les bips -->
         <toolkit:MediaElement x:Name="AudioPlayer" IsVisible="False" />
 
-        <!-- L'image avec zoom (ScrollView) -->
-        <ScrollView x:Name="ImageScrollView" 
-                     IsVisible="False" 
-                     Orientation="Both"
-                     HorizontalOptions="Fill"
-                     VerticalOptions="Fill">
-            <ScrollView.GestureRecognizers>
+        <!-- L'image avec zoom (Grid) -->
+        <Grid x:Name="ImageContainer" 
+              IsVisible="False" 
+              HorizontalOptions="Fill" 
+              VerticalOptions="Fill"
+              BackgroundColor="Black">
+            <Grid.GestureRecognizers>
                 <PinchGestureRecognizer PinchUpdated="OnPinchUpdated" />
                 <PanGestureRecognizer PanUpdated="OnPanUpdated" />
                 <TapGestureRecognizer Tapped="OnImageSingleTapped" NumberOfTapsRequired="1" />
                 <TapGestureRecognizer Tapped="OnImageDoubleTapped" NumberOfTapsRequired="2" />
-            </ScrollView.GestureRecognizers>
+            </Grid.GestureRecognizers>
             <Image x:Name="ScoreImage" 
-                    Aspect="AspectFit" 
-                    HorizontalOptions="Fill" 
-                    VerticalOptions="Fill" />
-        </ScrollView>
+                   Aspect="AspectFit" 
+                   HorizontalOptions="Fill" 
+                   VerticalOptions="Fill"
+                   InputTransparent="True" />
+        </Grid>
 
         <!-- Zones tactiles pour les images (transparentes) -->
         <Grid x:Name="ImageTouchGrid" IsVisible="False" BackgroundColor="Transparent">
