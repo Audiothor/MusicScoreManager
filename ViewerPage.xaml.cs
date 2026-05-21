@@ -36,6 +36,7 @@ public partial class ViewerPage : ContentPage
     private string? _pendingSticker = null;
     private bool _isAnnotationMode = false;
     private List<Annotation> _annotations = new();
+    private bool _isAnnotationsLocked = true;
 
     public ViewerPage(Score score, List<Score>? setlistScores = null, int currentIndex = -1, bool isContinuous = true)
     {
@@ -1150,6 +1151,12 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private void OnLockUnlockClicked(object? sender, EventArgs e)
+    {
+        _isAnnotationsLocked = !_isAnnotationsLocked;
+        LockUnlockBtn.Text = _isAnnotationsLocked ? "🔒" : "🔓";
+    }
+
     private void RenderAnnotations()
     {
         if (AnnotationsContainer == null) return;
@@ -1269,6 +1276,7 @@ public partial class ViewerPage : ContentPage
         var pan = new PanGestureRecognizer();
         double startX = 0, startY = 0;
         pan.PanUpdated += async (s, e) => {
+            if (_isAnnotationsLocked) return;
             if (s is Border b && b.BindingContext is Annotation ann)
             {
                 switch (e.StatusType)

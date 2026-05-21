@@ -296,7 +296,7 @@
             <Border.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
             </Border.GestureRecognizers>
-            <Grid ColumnDefinitions="Auto, Auto, Auto, *, Auto, Auto" Padding="10,0">
+            <Grid ColumnDefinitions="Auto, Auto, Auto, *, Auto, Auto, Auto" Padding="10,0">
                 <Button Grid.Column="0" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="18" FontAttributes="Bold" Padding="10,0" />
                 <Button Grid.Column="1" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="18" Padding="10,0" />
                 <Button Grid.Column="2" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="18" Padding="10,0" />
@@ -304,7 +304,8 @@
                 <BoxView Grid.Column="3" Color="Transparent" />
                 
                 <Button Grid.Column="4" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="20" Padding="10,0" />
-                <Button Grid.Column="5" Text="✕" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="20" Padding="10,0" FontAttributes="Bold" />
+                <Button Grid.Column="5" x:Name="LockUnlockBtn" Text="🔒" BackgroundColor="Transparent" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="18" Padding="10,0" />
+                <Button Grid.Column="6" Text="✕" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="20" Padding="10,0" FontAttributes="Bold" />
             </Grid>
         </Border>
 
