@@ -406,8 +406,8 @@
                     StrokeThickness="1.5"
                     VerticalOptions="Center" 
                     HorizontalOptions="Center" 
-                    WidthRequest="340"
-                    MaximumHeightRequest="550"
+                    WidthRequest="370"
+                    HeightRequest="650"
                     Padding="20">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="15" />
@@ -490,6 +490,7 @@
                                       x:Name="BluetoothDevicesListView" 
                                       BackgroundColor="Transparent"
                                       SeparatorColor="#333333"
+                                      HasUnevenRows="True"
                                       ItemSelected="OnBluetoothDeviceSelected">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="services:BluetoothDeviceInfo">
