@@ -846,6 +846,8 @@ public partial class ViewerPage : ContentPage
             AnnotationBar.IsVisible = false;
             BottomTouchBar.IsVisible = true; // Réactive la zone tactile du bas !
             StickerPickerOverlay.IsVisible = false;
+            _selectedAnnotation = null;
+            RenderAnnotations();
             PageIndicator.Margin = new Thickness(0, 0, 10, 2);
         }
     }
@@ -866,6 +868,8 @@ public partial class ViewerPage : ContentPage
             AnnotationBar.IsVisible = false;
             BottomTouchBar.IsVisible = true; // Réactive la zone tactile du bas !
             StickerPickerOverlay.IsVisible = false;
+            _selectedAnnotation = null;
+            RenderAnnotations();
             PageIndicator.Margin = new Thickness(0, 0, 10, 2);
             return;
         }
@@ -1030,6 +1034,8 @@ public partial class ViewerPage : ContentPage
             StickerPickerOverlay.IsVisible = false;
             AnnotationBar.TranslationY = 0;
             StickerPickerOverlay.TranslationY = 0;
+            _selectedAnnotation = null;
+            RenderAnnotations();
         }
 
         // Ajuster la position de l'indicateur de page
@@ -1068,6 +1074,9 @@ public partial class ViewerPage : ContentPage
         AnnotationBar.TranslationY = 0;
         StickerPickerOverlay.TranslationY = 0;
         
+        _selectedAnnotation = null;
+        RenderAnnotations();
+        
         PageIndicator.Margin = new Thickness(0, 0, 10, 2);
     }
 
@@ -1105,18 +1114,44 @@ public partial class ViewerPage : ContentPage
         if (sender is View view && view.BindingContext is StickerItem sticker)
         {
             e.Data.Properties.Add("Sticker", sticker.Text);
-            // On ne masque plus les bandeaux car l'utilisateur veut qu'ils restent visibles
+            // On désélectionne l'annotation placée lors d'un nouveau glisser-déposer
+            _selectedAnnotation = null;
+            RenderAnnotations();
         }
     }
 
     private string _currentStickerColor = "#FFFFFF";
     private string _currentStickerBgColor = "Transparent";
 
-    private void OnStickerColorTapped(object sender, TappedEventArgs e)
+    private Color ParseColor(string colorStr)
     {
-        if (e.Parameter is string color)
+        if (string.IsNullOrEmpty(colorStr))
+            return Colors.Transparent;
+
+        if (colorStr.Equals("Transparent", StringComparison.OrdinalIgnoreCase))
+            return Colors.Transparent;
+
+        try
         {
-            _currentStickerColor = color switch
+            return Color.FromArgb(colorStr);
+        }
+        catch
+        {
+            return Colors.Transparent;
+        }
+    }
+
+    private async void OnStickerColorTapped(object sender, TappedEventArgs e)
+    {
+        string? colorStr = e.Parameter as string;
+        if (colorStr == null && sender is TapGestureRecognizer tgr)
+        {
+            colorStr = tgr.CommandParameter as string;
+        }
+
+        if (colorStr != null)
+        {
+            _currentStickerColor = colorStr switch
             {
                 "White" => "#FFFFFF",
                 "Black" => "#000000",
@@ -1130,14 +1165,28 @@ public partial class ViewerPage : ContentPage
             {
                 selectedSticker.Color = _currentStickerColor;
             }
+
+            // MODIFICATION DE L'ANNOTATION SÉLECTIONNÉE
+            if (!_isAnnotationsLocked && _selectedAnnotation != null)
+            {
+                _selectedAnnotation.Color = _currentStickerColor;
+                await _databaseService.SaveAnnotationAsync(_selectedAnnotation);
+                RenderAnnotations();
+            }
         }
     }
 
-    private void OnStickerBgColorTapped(object sender, TappedEventArgs e)
+    private async void OnStickerBgColorTapped(object sender, TappedEventArgs e)
     {
-        if (e.Parameter is string color)
+        string? colorStr = e.Parameter as string;
+        if (colorStr == null && sender is TapGestureRecognizer tgr)
         {
-            _currentStickerBgColor = color switch
+            colorStr = tgr.CommandParameter as string;
+        }
+
+        if (colorStr != null)
+        {
+            _currentStickerBgColor = colorStr switch
             {
                 "Transparent" => "Transparent",
                 "DarkGray" => "#333333",
@@ -1152,6 +1201,14 @@ public partial class ViewerPage : ContentPage
             if (StickersCollection?.SelectedItem is StickerItem selectedSticker)
             {
                 selectedSticker.BackgroundColor = _currentStickerBgColor;
+            }
+
+            // MODIFICATION DE L'ANNOTATION SÉLECTIONNÉE
+            if (!_isAnnotationsLocked && _selectedAnnotation != null)
+            {
+                _selectedAnnotation.BackgroundColor = _currentStickerBgColor;
+                await _databaseService.SaveAnnotationAsync(_selectedAnnotation);
+                RenderAnnotations();
             }
         }
     }
@@ -1170,6 +1227,17 @@ public partial class ViewerPage : ContentPage
             if (StickersCollection?.SelectedItem is StickerItem selectedSticker)
             {
                 selectedSticker.Scale = e.NewValue;
+            }
+
+            // MODIFICATION DE L'ANNOTATION SÉLECTIONNÉE
+            if (!_isAnnotationsLocked && _selectedAnnotation != null)
+            {
+                if (Math.Abs(_selectedAnnotation.Scale - e.NewValue) > 0.01)
+                {
+                    _selectedAnnotation.Scale = e.NewValue;
+                    await _databaseService.SaveAnnotationAsync(_selectedAnnotation);
+                    RenderAnnotations();
+                }
             }
         }
         catch (OperationCanceledException) { }
@@ -1222,6 +1290,10 @@ public partial class ViewerPage : ContentPage
             sticker.Color = _currentStickerColor;
             sticker.BackgroundColor = _currentStickerBgColor;
             sticker.Scale = StickerSizeSlider.Value;
+
+            // Nouvelle sélection de sticker ➔ on désélectionne l'annotation placée
+            _selectedAnnotation = null;
+            RenderAnnotations();
         }
     }
 
@@ -1338,12 +1410,12 @@ public partial class ViewerPage : ContentPage
                 // Mise à jour des propriétés (plus rapide que recréer)
                 border.BindingContext = ann;
                 label.Text = ann.Content;
-                label.TextColor = Color.FromArgb(ann.Color);
+                label.TextColor = ParseColor(ann.Color);
                 
                 // Correction taille de police proportionnelle
                 label.FontSize = 24 * ann.Scale; 
                 
-                border.BackgroundColor = Color.FromArgb(ann.BackgroundColor);
+                border.BackgroundColor = ParseColor(ann.BackgroundColor);
             }
             
             if (ann == _selectedAnnotation)
@@ -1403,6 +1475,12 @@ public partial class ViewerPage : ContentPage
             if (s is Border b && b.BindingContext is Annotation ann)
             {
                 _selectedAnnotation = ann;
+                
+                // Synchroniser les contrôles d'édition (couleur texte, couleur fond, taille)
+                _currentStickerColor = ann.Color;
+                _currentStickerBgColor = ann.BackgroundColor;
+                StickerSizeSlider.Value = ann.Scale;
+                
                 RenderAnnotations(); 
             }
         };
