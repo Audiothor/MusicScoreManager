@@ -970,7 +970,8 @@ public partial class ViewerPage : ContentPage
             }
             else
             {
-                await Navigation.PopAsync();
+                // Bloquer le retour à l'accueil en fin de partition/setlist
+                System.Diagnostics.Debug.WriteLine("[Viewer] Bloqué : fin de la setlist/partition, retour accueil évité.");
             }
         }
     }
@@ -986,8 +987,8 @@ public partial class ViewerPage : ContentPage
         }
         else
         {
-            // Si on est au début (ou que le mode continu est OFF), on ferme le visualiseur
-            await Navigation.PopAsync();
+            // Bloquer le retour à l'accueil au début de la partition/setlist
+            System.Diagnostics.Debug.WriteLine("[Viewer] Bloqué : début de la setlist/partition, retour accueil évité.");
         }
     }
 
