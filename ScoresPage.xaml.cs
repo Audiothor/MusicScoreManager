@@ -21,7 +21,6 @@ public partial class ScoresPage : ContentPage
     private Models.Score? _selectedScoreForMenu;
 
     private readonly ObservableCollection<BluetoothDeviceInfo> _discoveredDevices = new();
-    private byte[]? _pendingSendData;
 
     public static readonly BindableProperty IsMultiSelectActiveProperty =
         BindableProperty.Create(nameof(IsMultiSelectActive), typeof(bool), typeof(ScoresPage), false, propertyChanged: OnIsMultiSelectActiveChanged);
@@ -398,18 +397,38 @@ public partial class ScoresPage : ContentPage
             BluetoothTransferStatusLabel.Text = "Préparation des données...";
             BluetoothTransferProgressBar.Progress = 0.05;
 
-            byte[] zipData = await PackageScoresAsync(selectedScores);
+            var filesToSend = new List<BluetoothFilePayload>();
+            foreach (var score in selectedScores)
+            {
+                string absolutePath = _settingsService.GetAbsolutePath(score.FilePath);
+                if (File.Exists(absolutePath))
+                {
+                    byte[] fileBytes = await File.ReadAllBytesAsync(absolutePath);
+                    filesToSend.Add(new BluetoothFilePayload
+                    {
+                        FileName = Path.GetFileName(absolutePath),
+                        Data = fileBytes
+                    });
+                }
+            }
+
+            if (!filesToSend.Any())
+            {
+                await DisplayAlertAsync("Erreur", "Aucun fichier valide n'a pu être trouvé pour l'envoi.", "OK");
+                BluetoothOverlay.IsVisible = false;
+                return;
+            }
 
             BluetoothTransferStatusLabel.Text = "Connexion et envoi...";
             BluetoothTransferProgressBar.Progress = 0.15;
 
             string senderName = DeviceInfo.Name ?? "Appareil Mobile";
 
-            bool success = await _bluetoothService.SendDataAsync(selectedDevice, zipData, senderName, selectedScores.Count);
+            bool success = await _bluetoothService.SendDataAsync(selectedDevice, filesToSend, senderName);
 
             if (success)
             {
-                await DisplayAlertAsync("Succès", $"{selectedScores.Count} partition(s) envoyées avec succès !", "OK");
+                await DisplayAlertAsync("Succès", $"{filesToSend.Count} partition(s) envoyées avec succès et reçues par le destinataire !", "OK");
                 IsMultiSelectActive = false;
             }
             else
@@ -448,292 +467,73 @@ public partial class ScoresPage : ContentPage
         });
     }
 
-    private async Task OnBluetoothDataReceivedAsync(byte[] zipData, string senderName)
+    private async Task OnBluetoothDataReceivedAsync(List<BluetoothFilePayload> receivedFiles, string senderName)
     {
         try
         {
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
-                BluetoothTransferStatusLabel.Text = "Extraction et intégration...";
+                BluetoothTransferStatusLabel.Text = "Enregistrement...";
                 BluetoothTransferProgressBar.Progress = 0.9;
             });
 
-            string tempZipPath = Path.Combine(FileSystem.CacheDirectory, Guid.NewGuid().ToString() + ".zip");
-            await File.WriteAllBytesAsync(tempZipPath, zipData);
+            var scoresRootDir = _settingsService.ScoresRootDirectory;
+            if (!Directory.Exists(scoresRootDir)) Directory.CreateDirectory(scoresRootDir);
 
-            string extractDir = Path.Combine(FileSystem.CacheDirectory, Guid.NewGuid().ToString());
-            Directory.CreateDirectory(extractDir);
-
-            ZipFile.ExtractToDirectory(tempZipPath, extractDir);
-
-            string metadataPath = Path.Combine(extractDir, "metadata.json");
-            if (!File.Exists(metadataPath))
+            foreach (var filePayload in receivedFiles)
             {
-                throw new FileNotFoundException("Fichier metadata.json manquant dans l'archive reçue.");
-            }
+                string originalFileName = filePayload.FileName;
+                string extension = Path.GetExtension(originalFileName);
+                string fileNameWithoutExt = Path.GetFileNameWithoutExtension(originalFileName);
 
-            string jsonMetadata = await File.ReadAllTextAsync(metadataPath);
-            var transferList = JsonSerializer.Deserialize<List<ScoreTransferMetadata>>(jsonMetadata);
+                string scoreTitle = fileNameWithoutExt.Replace("_", " ");
 
-            if (transferList != null && transferList.Any())
-            {
-                var scoresRootDir = _settingsService.ScoresRootDirectory;
-                var audioRootDir = _settingsService.AudioRootDirectory;
+                string targetFileName = originalFileName;
+                string targetFilePath = Path.Combine(scoresRootDir, targetFileName);
 
-                if (!Directory.Exists(scoresRootDir)) Directory.CreateDirectory(scoresRootDir);
-                if (!Directory.Exists(audioRootDir)) Directory.CreateDirectory(audioRootDir);
-
-                var existingTags = await _databaseService.GetTagsAsync();
-
-                foreach (var item in transferList)
+                int counter = 1;
+                while (File.Exists(targetFilePath))
                 {
-                    string srcScorePath = Path.Combine(extractDir, item.FileName);
-                    if (!File.Exists(srcScorePath)) continue;
-
-                    string originalFileName = item.FileName;
-                    var sanitizedFileName = item.Title.Replace(" ", "_") + Path.GetExtension(originalFileName);
-                    var localScorePath = Path.Combine(scoresRootDir, sanitizedFileName);
-
-                    int counter = 1;
-                    while (File.Exists(localScorePath))
-                    {
-                        var fileNameOnly = Path.GetFileNameWithoutExtension(sanitizedFileName);
-                        var extension = Path.GetExtension(sanitizedFileName);
-                        localScorePath = Path.Combine(scoresRootDir, $"{fileNameOnly}_{counter}{extension}");
-                        counter++;
-                    }
-
-                    File.Copy(srcScorePath, localScorePath);
-
-                    var score = new Score
-                    {
-                        Title = item.Title,
-                        FilePath = _settingsService.GetRelativePath(localScorePath),
-                        Type = item.Type,
-                        Rotation = item.Rotation,
-                        IsRotationSaved = item.IsRotationSaved,
-                        ShowMetronome = item.ShowMetronome,
-                        BPM = item.BPM,
-                        HasMetronomeSound = item.HasMetronomeSound,
-                        ShowAudioPlayer = item.ShowAudioPlayer,
-                        PreCountMeasures = item.PreCountMeasures,
-                        DateAdded = DateTime.Now
-                    };
-
-                    await _databaseService.SaveScoreAsync(score);
-
-                    var scoreTagIds = new List<int>();
-                    for (int i = 0; i < item.Tags.Count; i++)
-                    {
-                        string tagName = item.Tags[i];
-                        string tagColor = item.TagColors[i];
-
-                        var tag = existingTags.FirstOrDefault(t => t.Name.Equals(tagName, StringComparison.OrdinalIgnoreCase));
-                        if (tag == null)
-                        {
-                            tag = new Models.Tag
-                            {
-                                Name = tagName,
-                                ColorHex = tagColor
-                            };
-                            await _databaseService.SaveTagAsync(tag);
-                            existingTags.Add(tag);
-                        }
-                        scoreTagIds.Add(tag.Id);
-                    }
-                    if (scoreTagIds.Any())
-                    {
-                        await _databaseService.UpdateScoreTagsAsync(score.Id, scoreTagIds);
-                    }
-
-                    if (item.AudioFiles != null)
-                    {
-                        foreach (var audioFileName in item.AudioFiles)
-                        {
-                            string srcAudioPath = Path.Combine(extractDir, audioFileName);
-                            if (File.Exists(srcAudioPath))
-                            {
-                                string sanitizedAudioName = item.Title.Replace(" ", "_") + "_track" + Path.GetExtension(audioFileName);
-                                string localAudioPath = Path.Combine(audioRootDir, sanitizedAudioName);
-
-                                int aCounter = 1;
-                                while (File.Exists(localAudioPath))
-                                {
-                                    var audioNameOnly = Path.GetFileNameWithoutExtension(sanitizedAudioName);
-                                    var extension = Path.GetExtension(sanitizedAudioName);
-                                    localAudioPath = Path.Combine(audioRootDir, $"{audioNameOnly}_{aCounter}{extension}");
-                                    aCounter++;
-                                }
-
-                                File.Copy(srcAudioPath, localAudioPath);
-
-                                var scoreAudio = new ScoreAudioFile
-                                {
-                                    ScoreId = score.Id,
-                                    FileName = Path.GetFileNameWithoutExtension(localAudioPath),
-                                    FilePath = _settingsService.GetRelativePath(localAudioPath, isAudio: true),
-                                    IsSelected = true
-                                };
-                                await _databaseService.SaveAudioFileAsync(scoreAudio);
-                            }
-                        }
-                    }
-
-                    if (item.Annotations != null)
-                    {
-                        foreach (var annMeta in item.Annotations)
-                        {
-                            var ann = new Annotation
-                            {
-                                ScoreId = score.Id,
-                                Type = annMeta.Type,
-                                Category = annMeta.Category,
-                                Content = annMeta.Content,
-                                X = annMeta.X,
-                                Y = annMeta.Y,
-                                Scale = annMeta.Scale,
-                                Color = annMeta.Color,
-                                BackgroundColor = annMeta.BackgroundColor,
-                                PageNumber = annMeta.PageNumber,
-                                DateCreated = DateTime.Now
-                            };
-                            await _databaseService.SaveAnnotationAsync(ann);
-                        }
-                    }
+                    targetFileName = $"{fileNameWithoutExt}_{counter}{extension}";
+                    targetFilePath = Path.Combine(scoresRootDir, targetFileName);
+                    counter++;
                 }
-            }
 
-            try
-            {
-                File.Delete(tempZipPath);
-                Directory.Delete(extractDir, true);
+                await File.WriteAllBytesAsync(targetFilePath, filePayload.Data);
+
+                var score = new Score
+                {
+                    Title = scoreTitle,
+                    FilePath = _settingsService.GetRelativePath(targetFilePath),
+                    Type = extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase) ? ScoreType.PDF : ScoreType.Image,
+                    Rotation = 0,
+                    IsRotationSaved = false,
+                    ShowMetronome = false,
+                    BPM = 120,
+                    HasMetronomeSound = false,
+                    ShowAudioPlayer = false,
+                    PreCountMeasures = 0,
+                    DateAdded = DateTime.Now
+                };
+
+                await _databaseService.SaveScoreAsync(score);
             }
-            catch { }
 
             await MainThread.InvokeOnMainThreadAsync(async () =>
             {
                 BluetoothOverlay.IsVisible = false;
                 await LoadScoresAsync(SearchScoreBar.Text);
-                await DisplayAlertAsync("Échange réussi", $"{transferList?.Count ?? 0} partition(s) ont été importées avec succès dans votre bibliothèque.", "OK");
+                await DisplayAlertAsync("Échange réussi", $"Réception réussie de {receivedFiles.Count} partition(s) depuis l'appareil {senderName} !", "OK");
             });
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error processing received zip: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error processing received files: {ex.Message}");
             await MainThread.InvokeOnMainThreadAsync(async () =>
             {
                 BluetoothOverlay.IsVisible = false;
                 await DisplayAlertAsync("Échec de l'intégration", $"Une erreur est survenue lors de l'intégration des partitions : {ex.Message}", "OK");
             });
-        }
-    }
-
-    private async Task<byte[]> PackageScoresAsync(List<Models.Score> selectedScores)
-    {
-        string tempDir = Path.Combine(FileSystem.CacheDirectory, Guid.NewGuid().ToString());
-        Directory.CreateDirectory(tempDir);
-
-        try
-        {
-            var transferList = new List<ScoreTransferMetadata>();
-
-            foreach (var score in selectedScores)
-            {
-                var metadata = new ScoreTransferMetadata
-                {
-                    Title = score.Title,
-                    Type = score.Type,
-                    Rotation = score.Rotation,
-                    IsRotationSaved = score.IsRotationSaved,
-                    ShowMetronome = score.ShowMetronome,
-                    BPM = score.BPM,
-                    HasMetronomeSound = score.HasMetronomeSound,
-                    ShowAudioPlayer = score.ShowAudioPlayer,
-                    PreCountMeasures = score.PreCountMeasures
-                };
-
-                string absoluteScorePath = _settingsService.GetAbsolutePath(score.FilePath);
-                if (File.Exists(absoluteScorePath))
-                {
-                    string uniqueScoreFileName = Guid.NewGuid().ToString() + Path.GetExtension(absoluteScorePath);
-                    string destScorePath = Path.Combine(tempDir, uniqueScoreFileName);
-                    File.Copy(absoluteScorePath, destScorePath);
-                    metadata.FileName = uniqueScoreFileName;
-                }
-                else
-                {
-                    continue;
-                }
-
-                if (score.AppliedTags != null)
-                {
-                    foreach (var tag in score.AppliedTags)
-                    {
-                        metadata.Tags.Add(tag.Name);
-                        metadata.TagColors.Add(tag.ColorHex);
-                    }
-                }
-
-                if (score.AudioFiles != null)
-                {
-                    foreach (var af in score.AudioFiles)
-                    {
-                        string absoluteAudioPath = _settingsService.GetAbsolutePath(af.FilePath, isAudio: true);
-                        if (File.Exists(absoluteAudioPath))
-                        {
-                            string uniqueAudioFileName = Guid.NewGuid().ToString() + Path.GetExtension(absoluteAudioPath);
-                            string destAudioPath = Path.Combine(tempDir, uniqueAudioFileName);
-                            File.Copy(absoluteAudioPath, destAudioPath);
-                            metadata.AudioFiles.Add(uniqueAudioFileName);
-                        }
-                    }
-                }
-
-                var annotations = await _databaseService.GetAnnotationsForScoreAsync(score.Id);
-                if (annotations != null)
-                {
-                    foreach (var ann in annotations)
-                    {
-                        metadata.Annotations.Add(new AnnotationMetadata
-                        {
-                            Type = ann.Type,
-                            Category = ann.Category,
-                            Content = ann.Content,
-                            X = ann.X,
-                            Y = ann.Y,
-                            Scale = ann.Scale,
-                            Color = ann.Color,
-                            BackgroundColor = ann.BackgroundColor,
-                            PageNumber = ann.PageNumber
-                        });
-                    }
-                }
-
-                transferList.Add(metadata);
-            }
-
-            string jsonMetadata = JsonSerializer.Serialize(transferList, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(Path.Combine(tempDir, "metadata.json"), jsonMetadata);
-
-            string zipPath = Path.Combine(FileSystem.CacheDirectory, Guid.NewGuid().ToString() + ".zip");
-            ZipFile.CreateFromDirectory(tempDir, zipPath);
-
-            byte[] zipData = await File.ReadAllBytesAsync(zipPath);
-
-            try
-            {
-                File.Delete(zipPath);
-                Directory.Delete(tempDir, true);
-            }
-            catch { }
-
-            return zipData;
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error packaging scores: {ex.Message}");
-            try { Directory.Delete(tempDir, true); } catch { }
-            throw;
         }
     }
 

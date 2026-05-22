@@ -143,7 +143,7 @@ namespace MusicScoreManager.Services
             ScanFinished?.Invoke(this, EventArgs.Empty);
         }
 
-        public async Task StartListeningAsync(Func<string, int, Task<bool>> confirmCallback, Func<byte[], string, Task> onReceiveComplete)
+        public async Task StartListeningAsync(Func<string, int, Task<bool>> confirmCallback, Func<List<BluetoothFilePayload>, string, Task> onReceiveComplete)
         {
             if (_bluetoothAdapter == null || !_bluetoothAdapter.IsEnabled)
             {
@@ -172,11 +172,11 @@ namespace MusicScoreManager.Services
                                 var outputStream = socket.OutputStream;
                                 if (inputStream == null || outputStream == null) return;
 
-                                // 1. Lire Magic Bytes ("MSMTRANS")
+                                // 1. Lire Magic Bytes ("MSMFILES")
                                 byte[] magicBytes = new byte[8];
                                 await ReadExactAsync(inputStream, magicBytes, 8);
                                 string magic = Encoding.UTF8.GetString(magicBytes);
-                                if (magic != "MSMTRANS")
+                                if (magic != "MSMFILES")
                                 {
                                     socket.Close();
                                     return;
@@ -191,20 +191,15 @@ namespace MusicScoreManager.Services
                                 await ReadExactAsync(inputStream, nameBytes, nameLen);
                                 string senderName = Encoding.UTF8.GetString(nameBytes);
 
-                                // 3. Nombre de partitions
-                                byte[] scoreCountBytes = new byte[4];
-                                await ReadExactAsync(inputStream, scoreCountBytes, 4);
-                                int scoreCount = BitConverter.ToInt32(scoreCountBytes, 0);
+                                // 3. Nombre de fichiers
+                                byte[] fileCountBytes = new byte[4];
+                                await ReadExactAsync(inputStream, fileCountBytes, 4);
+                                int fileCount = BitConverter.ToInt32(fileCountBytes, 0);
 
-                                // 4. Taille du ZIP
-                                byte[] zipLenBytes = new byte[8];
-                                await ReadExactAsync(inputStream, zipLenBytes, 8);
-                                long zipLength = BitConverter.ToInt64(zipLenBytes, 0);
+                                // 4. Demander confirmation à l'utilisateur
+                                bool accept = await confirmCallback(senderName, fileCount);
 
-                                // 5. Demander confirmation à l'utilisateur
-                                bool accept = await confirmCallback(senderName, scoreCount);
-
-                                // 6. Renvoyer la décision
+                                // 5. Renvoyer la décision
                                 outputStream.WriteByte(accept ? (byte)1 : (byte)0);
                                 await outputStream.FlushAsync();
 
@@ -214,37 +209,74 @@ namespace MusicScoreManager.Services
                                     return;
                                 }
 
-                                // 7. Recevoir le fichier ZIP
+                                // 6. Recevoir les fichiers un par un
+                                var receivedFiles = new List<BluetoothFilePayload>();
                                 byte[] buffer = new byte[8192];
-                                long totalBytesRead = 0;
-                                using var ms = new MemoryStream();
 
-                                while (totalBytesRead < zipLength)
+                                for (int i = 0; i < fileCount; i++)
                                 {
-                                    int bytesToRead = (int)Math.Min(buffer.Length, zipLength - totalBytesRead);
-                                    int read = await inputStream.ReadAsync(buffer, 0, bytesToRead);
-                                    if (read <= 0) break;
+                                    // 6a. Lire la taille du nom de fichier
+                                    byte[] fNameLenBytes = new byte[4];
+                                    await ReadExactAsync(inputStream, fNameLenBytes, 4);
+                                    int fNameLen = BitConverter.ToInt32(fNameLenBytes, 0);
 
-                                    await ms.WriteAsync(buffer, 0, read);
-                                    totalBytesRead += read;
+                                    // 6b. Lire le nom de fichier
+                                    byte[] fNameBytes = new byte[fNameLen];
+                                    await ReadExactAsync(inputStream, fNameBytes, fNameLen);
+                                    string fileName = Encoding.UTF8.GetString(fNameBytes);
 
-                                    double progress = (double)totalBytesRead / zipLength;
-                                    TransferProgressChanged?.Invoke(this, new BluetoothTransferProgressEventArgs
+                                    // 6c. Lire la taille du fichier
+                                    byte[] fLenBytes = new byte[8];
+                                    await ReadExactAsync(inputStream, fLenBytes, 8);
+                                    long fileLength = BitConverter.ToInt64(fLenBytes, 0);
+
+                                    // 6d. Recevoir le contenu du fichier
+                                    long totalBytesRead = 0;
+                                    using var ms = new MemoryStream();
+
+                                    while (totalBytesRead < fileLength)
                                     {
-                                        Status = $"Réception de {scoreCount} partition(s)...",
-                                        Progress = progress
+                                        int bytesToRead = (int)Math.Min(buffer.Length, fileLength - totalBytesRead);
+                                        int read = await inputStream.ReadAsync(buffer, 0, bytesToRead);
+                                        if (read <= 0) break;
+
+                                        await ms.WriteAsync(buffer, 0, read);
+                                        totalBytesRead += read;
+
+                                        // Progression globale
+                                        double fileProgress = (double)totalBytesRead / fileLength;
+                                        double overallProgress = ((double)i + fileProgress) / fileCount;
+
+                                        TransferProgressChanged?.Invoke(this, new BluetoothTransferProgressEventArgs
+                                        {
+                                            Status = $"Réception de {fileName} ({i + 1}/{fileCount})...",
+                                            Progress = overallProgress
+                                        });
+                                    }
+
+                                    if (totalBytesRead != fileLength)
+                                    {
+                                        throw new IOException($"Erreur de réception de fichier {fileName} : taille attendue {fileLength}, reçue {totalBytesRead}.");
+                                    }
+
+                                    receivedFiles.Add(new BluetoothFilePayload
+                                    {
+                                        FileName = fileName,
+                                        Data = ms.ToArray()
                                     });
                                 }
 
-                                if (totalBytesRead == zipLength)
+                                // 7. Envoyer l'accusé de réception global (ACK)
+                                outputStream.WriteByte((byte)1);
+                                await outputStream.FlushAsync();
+
+                                TransferProgressChanged?.Invoke(this, new BluetoothTransferProgressEventArgs
                                 {
-                                    TransferProgressChanged?.Invoke(this, new BluetoothTransferProgressEventArgs
-                                    {
-                                        Status = "Enregistrement en cours...",
-                                        Progress = 1.0
-                                    });
-                                    await onReceiveComplete(ms.ToArray(), senderName);
-                                }
+                                    Status = "Enregistrement...",
+                                    Progress = 1.0
+                                });
+
+                                await onReceiveComplete(receivedFiles, senderName);
                             }
                             catch (Exception ex)
                             {
@@ -281,7 +313,7 @@ namespace MusicScoreManager.Services
             await Task.CompletedTask;
         }
 
-        public async Task<bool> SendDataAsync(BluetoothDeviceInfo targetDevice, byte[] data, string senderName, int scoreCount)
+        public async Task<bool> SendDataAsync(BluetoothDeviceInfo targetDevice, List<BluetoothFilePayload> files, string senderName)
         {
             if (_bluetoothAdapter == null || targetDevice.NativeDevice is not BluetoothDevice device)
             {
@@ -298,8 +330,8 @@ namespace MusicScoreManager.Services
                 var outputStream = socket.OutputStream;
                 if (inputStream == null || outputStream == null) return false;
 
-                // 1. Envoyer MSMTRANS
-                byte[] magicBytes = Encoding.UTF8.GetBytes("MSMTRANS");
+                // 1. Envoyer MSMFILES
+                byte[] magicBytes = Encoding.UTF8.GetBytes("MSMFILES");
                 await outputStream.WriteAsync(magicBytes, 0, magicBytes.Length);
 
                 // 2. Envoyer Nom de l'émetteur
@@ -308,41 +340,75 @@ namespace MusicScoreManager.Services
                 await outputStream.WriteAsync(lenBytes, 0, lenBytes.Length);
                 await outputStream.WriteAsync(nameBytes, 0, nameBytes.Length);
 
-                // 3. Envoyer Nombre de partitions
-                byte[] scoreCountBytes = BitConverter.GetBytes(scoreCount);
-                await outputStream.WriteAsync(scoreCountBytes, 0, scoreCountBytes.Length);
-
-                // 4. Envoyer Taille ZIP
-                byte[] zipLenBytes = BitConverter.GetBytes((long)data.Length);
-                await outputStream.WriteAsync(zipLenBytes, 0, zipLenBytes.Length);
+                // 3. Envoyer Nombre de fichiers
+                byte[] fileCountBytes = BitConverter.GetBytes(files.Count);
+                await outputStream.WriteAsync(fileCountBytes, 0, fileCountBytes.Length);
                 await outputStream.FlushAsync();
 
-                // 5. Lire la réponse de confirmation
+                // 4. Lire la réponse de confirmation
                 int response = inputStream.ReadByte();
                 if (response != 1)
                 {
                     return false; // Refusé par le destinataire
                 }
 
-                // 6. Envoyer le fichier ZIP
+                // 5. Envoyer les fichiers un par un
                 int bufferSize = 8192;
-                int offset = 0;
-                while (offset < data.Length)
+                for (int i = 0; i < files.Count; i++)
                 {
-                    int bytesToSend = Math.Min(bufferSize, data.Length - offset);
-                    await outputStream.WriteAsync(data, offset, bytesToSend);
-                    offset += bytesToSend;
+                    var file = files[i];
 
-                    double progress = (double)offset / data.Length;
-                    TransferProgressChanged?.Invoke(this, new BluetoothTransferProgressEventArgs
+                    // 5a. Envoyer Taille du nom de fichier et le Nom
+                    byte[] fNameBytes = Encoding.UTF8.GetBytes(file.FileName);
+                    byte[] fNameLenBytes = BitConverter.GetBytes(fNameBytes.Length);
+                    await outputStream.WriteAsync(fNameLenBytes, 0, fNameLenBytes.Length);
+                    await outputStream.WriteAsync(fNameBytes, 0, fNameBytes.Length);
+
+                    // 5b. Envoyer Taille du contenu du fichier
+                    byte[] fLenBytes = BitConverter.GetBytes((long)file.Data.Length);
+                    await outputStream.WriteAsync(fLenBytes, 0, fLenBytes.Length);
+                    await outputStream.FlushAsync();
+
+                    // 5c. Envoyer le contenu
+                    int offset = 0;
+                    while (offset < file.Data.Length)
                     {
-                        Status = $"Envoi de {scoreCount} partition(s)...",
-                        Progress = progress
-                    });
+                        int bytesToSend = Math.Min(bufferSize, file.Data.Length - offset);
+                        await outputStream.WriteAsync(file.Data, offset, bytesToSend);
+                        offset += bytesToSend;
+
+                        // Progression
+                        double fileProgress = (double)offset / file.Data.Length;
+                        double overallProgress = ((double)i + fileProgress) / files.Count;
+
+                        TransferProgressChanged?.Invoke(this, new BluetoothTransferProgressEventArgs
+                        {
+                            Status = $"Envoi de {file.FileName} ({i + 1}/{files.Count})...",
+                            Progress = overallProgress
+                        });
+                    }
+                    await outputStream.FlushAsync();
                 }
 
-                await outputStream.FlushAsync();
-                return true;
+                // 6. Attendre l'accusé de réception global (ACK) de la part du récepteur
+                TransferProgressChanged?.Invoke(this, new BluetoothTransferProgressEventArgs
+                {
+                    Status = "En attente de l'accusé de réception...",
+                    Progress = 0.99
+                });
+
+                int ack = inputStream.ReadByte();
+                if (ack == 1)
+                {
+                    TransferProgressChanged?.Invoke(this, new BluetoothTransferProgressEventArgs
+                    {
+                        Status = "Terminé !",
+                        Progress = 1.0
+                    });
+                    return true;
+                }
+
+                return false;
             }
             catch (Exception ex)
             {
@@ -415,7 +481,7 @@ namespace MusicScoreManager.Services
             await Task.CompletedTask;
         }
 
-        public async Task StartListeningAsync(Func<string, int, Task<bool>> confirmCallback, Func<byte[], string, Task> onReceiveComplete)
+        public async Task StartListeningAsync(Func<string, int, Task<bool>> confirmCallback, Func<List<BluetoothFilePayload>, string, Task> onReceiveComplete)
         {
             await Task.CompletedTask;
         }
@@ -425,7 +491,7 @@ namespace MusicScoreManager.Services
             await Task.CompletedTask;
         }
 
-        public async Task<bool> SendDataAsync(BluetoothDeviceInfo targetDevice, byte[] data, string senderName, int scoreCount)
+        public async Task<bool> SendDataAsync(BluetoothDeviceInfo targetDevice, List<BluetoothFilePayload> files, string senderName)
         {
             await Task.CompletedTask;
             return false;

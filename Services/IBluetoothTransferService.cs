@@ -17,6 +17,12 @@ namespace MusicScoreManager.Services
         public double Progress { get; set; }
     }
 
+    public class BluetoothFilePayload
+    {
+        public string FileName { get; set; } = string.Empty;
+        public byte[] Data { get; set; } = Array.Empty<byte>();
+    }
+
     public interface IBluetoothTransferService
     {
         event EventHandler<BluetoothDeviceInfo> DeviceDiscovered;
@@ -27,10 +33,10 @@ namespace MusicScoreManager.Services
         Task StartScanningAsync();
         Task StopScanningAsync();
         
-        Task StartListeningAsync(Func<string, int, Task<bool>> confirmCallback, Func<byte[], string, Task> onReceiveComplete);
+        Task StartListeningAsync(Func<string, int, Task<bool>> confirmCallback, Func<List<BluetoothFilePayload>, string, Task> onReceiveComplete);
         Task StopListeningAsync();
         
-        Task<bool> SendDataAsync(BluetoothDeviceInfo targetDevice, byte[] data, string senderName, int scoreCount);
+        Task<bool> SendDataAsync(BluetoothDeviceInfo targetDevice, List<BluetoothFilePayload> files, string senderName);
     }
 
     public class ScoreTransferMetadata
