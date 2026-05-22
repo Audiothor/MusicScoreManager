@@ -1,4 +1,6 @@
 using SQLite;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace MusicScoreManager.Models
 {
@@ -8,7 +10,7 @@ namespace MusicScoreManager.Models
         Image
     }
 
-    public class Score
+    public class Score : INotifyPropertyChanged
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -39,10 +41,31 @@ namespace MusicScoreManager.Models
         [Ignore]
         public bool IsExternal { get; set; }
 
+        private bool _isSelected;
+        [Ignore]
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         [Ignore]
         public List<Tag> AppliedTags { get; set; } = new List<Tag>();
 
         [Ignore]
         public List<ScoreAudioFile> AudioFiles { get; set; } = new List<ScoreAudioFile>();
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

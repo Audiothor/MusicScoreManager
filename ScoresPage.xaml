@@ -2,12 +2,14 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:MusicScoreManager.Models"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.ScoresPage"
+             x:Name="ScoresPageRoot"
              BackgroundColor="#121212">
 
     <Grid RowDefinitions="Auto, Auto, *">
 
-        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto, Auto" Margin="15,15,15,10" ColumnSpacing="10">
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto, Auto, Auto" Margin="15,15,15,10" ColumnSpacing="10">
             <SearchBar Grid.Column="0"
                        x:Name="SearchScoreBar"
                        Placeholder="Rechercher..."
@@ -38,6 +40,18 @@
                     Clicked="OnSortClicked" />
 
             <Button Grid.Column="3"
+                    x:Name="MultiSelectToggleButton"
+                    Text="☑"
+                    FontSize="20"
+                    FontAttributes="Bold"
+                    WidthRequest="50"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    BackgroundColor="#333333"
+                    TextColor="White"
+                    Clicked="OnMultiSelectToggleClicked" />
+
+            <Button Grid.Column="4"
                     Text="+"
                     FontSize="24"
                     FontAttributes="Bold"
@@ -75,8 +89,15 @@
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
-                        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto, Auto">
-                            <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="5">
+                        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="Auto, *, Auto, Auto">
+                            <CheckBox Grid.Column="0" Grid.RowSpan="3"
+                                      IsChecked="{Binding IsSelected}"
+                                      IsVisible="{Binding Source={x:Reference ScoresPageRoot}, Path=IsMultiSelectActive}"
+                                      VerticalOptions="Center"
+                                      Margin="0,0,10,0"
+                                      Color="#007ACC" />
+
+                            <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="5">
                                 <Label Text="⚠️" 
                                        TextColor="Red" 
                                        FontSize="16" 
@@ -104,14 +125,14 @@
                                 </Label>
                             </HorizontalStackLayout>
                                    
-                            <Label Grid.Row="0" Grid.Column="1"
+                            <Label Grid.Row="0" Grid.Column="2"
                                    Text="{Binding Type}" 
                                    FontSize="12" 
                                    TextColor="#AAAAAA" 
                                    VerticalOptions="Center"
                                    Margin="0,0,10,0" />
 
-                            <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2"
+                            <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2"
                                     Text="⋮"
                                     FontSize="24"
                                     FontAttributes="Bold"
@@ -123,13 +144,13 @@
                                     CommandParameter="{Binding .}"
                                     Clicked="OnScoreOptionsClicked" />
                                    
-                            <Label Grid.Row="1" Grid.ColumnSpan="2"
+                            <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
                                    Text="{Binding DateAdded, StringFormat='{0:dd/MM/yyyy}'}" 
                                    FontSize="12" 
                                    TextColor="#888888" 
                                    Margin="0,0,0,10"/>
                                    
-                            <FlexLayout Grid.Row="2" Grid.ColumnSpan="3"
+                            <FlexLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3"
                                         BindableLayout.ItemsSource="{Binding AppliedTags}"
                                         Wrap="Wrap"
                                         Direction="Row">
@@ -325,6 +346,195 @@
                                 HeightRequest="44"
                                 Clicked="OnApplyTagsFilterClicked" />
                     </Grid>
+                </Grid>
+            </Border>
+        </ContentView>
+
+        <!-- Barre d'actions Multi-Sélection -->
+        <Border Grid.Row="2"
+                x:Name="MultiSelectActionBar"
+                IsVisible="False"
+                BackgroundColor="#1A1A1A"
+                Stroke="#007ACC"
+                StrokeThickness="1.5"
+                HeightRequest="80"
+                Margin="15,0,15,15"
+                VerticalOptions="End"
+                ZIndex="500">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+            <Grid ColumnDefinitions="*, Auto, Auto" Padding="15,10" ColumnSpacing="15" VerticalOptions="Center">
+                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                    <Label x:Name="SelectedCountLabel"
+                           Text="0 sélectionné"
+                           TextColor="White"
+                           FontAttributes="Bold"
+                           FontSize="14" />
+                    <Label Text="Actions groupées"
+                           TextColor="#888888"
+                           FontSize="11" />
+                </VerticalStackLayout>
+                
+                <Button Grid.Column="1"
+                        Text="🗑️ Supprimer"
+                        BackgroundColor="#CC2929"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        HeightRequest="44"
+                        CornerRadius="8"
+                        Clicked="OnBulkDeleteClicked" />
+                <Button Grid.Column="2"
+                        Text="🔄 Échanger"
+                        BackgroundColor="#007ACC"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        HeightRequest="44"
+                        CornerRadius="8"
+                        Clicked="OnBulkExchangeClicked" />
+            </Grid>
+        </Border>
+
+        <!-- Overlay Échange Bluetooth -->
+        <ContentView x:Name="BluetoothOverlay" 
+                      Grid.RowSpan="3"
+                      IsVisible="False" 
+                      BackgroundColor="#A0000000" 
+                      ZIndex="1005">
+            <Border BackgroundColor="#1E1E1E" 
+                    Stroke="#007ACC"
+                    StrokeThickness="1.5"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" 
+                    WidthRequest="340"
+                    MaximumHeightRequest="550"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="15" />
+                </Border.StrokeShape>
+                <Grid RowDefinitions="Auto, *, Auto" RowSpacing="15">
+                    <!-- Header -->
+                    <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                        <Label x:Name="BluetoothOverlayTitle"
+                               Text="Échange Bluetooth" 
+                               TextColor="White" 
+                               FontAttributes="Bold"
+                               FontSize="18" 
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="✕"
+                               TextColor="#888888"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Margin="5">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnBluetoothCloseClicked" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+
+                    <!-- Content Area -->
+                    <Grid Grid.Row="1" x:Name="BluetoothContentGrid">
+                        <!-- Mode Choix Initial (Si ouvert hors d'une sélection de scores) -->
+                        <VerticalStackLayout x:Name="BluetoothChoiceView" Spacing="15" IsVisible="True" VerticalOptions="Center">
+                            <Label Text="Que souhaitez-vous faire ?" TextColor="#AAAAAA" HorizontalOptions="Center" Margin="0,0,0,10" />
+                            <Button Text="📥 Se mettre en mode Écoute (Recevoir)"
+                                    BackgroundColor="#2A2A2A"
+                                    TextColor="White"
+                                    BorderColor="#007ACC"
+                                    BorderWidth="1"
+                                    CornerRadius="8"
+                                    HeightRequest="50"
+                                    Clicked="OnBluetoothStartListeningClicked" />
+                            <Label Text="Pour envoyer des partitions, sélectionnez-les d'abord avec le mode Multi-Sélection (bouton ☑)." 
+                                   TextColor="#888888" 
+                                   FontSize="12" 
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+
+                        <!-- Mode Écoute (Receveur) -->
+                        <VerticalStackLayout x:Name="BluetoothListeningView" Spacing="20" IsVisible="False" VerticalOptions="Center">
+                            <ActivityIndicator IsRunning="True" Color="#007ACC" HeightRequest="50" WidthRequest="50" HorizontalOptions="Center" />
+                            <Label Text="En attente de connexion..." TextColor="White" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center" />
+                            <Label x:Name="BluetoothListeningStatusLabel" 
+                                   Text="Prêt à recevoir des partitions d'un émetteur." 
+                                   TextColor="#AAAAAA" 
+                                   HorizontalOptions="Center" 
+                                   HorizontalTextAlignment="Center" />
+                            <Button Text="Arrêter l'écoute"
+                                    BackgroundColor="#CC2929"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    HeightRequest="40"
+                                    Clicked="OnBluetoothStopListeningClicked" />
+                        </VerticalStackLayout>
+
+                        <!-- Mode Envoi (Émetteur : Recherche et Liste d'appareils) -->
+                        <Grid x:Name="BluetoothSendingView" RowDefinitions="Auto, *, Auto" RowSpacing="10" IsVisible="False">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <VerticalStackLayout Grid.Row="0" Spacing="5" Margin="0,0,0,5">
+                                <Label Text="Recherche d'appareils à proximité..." TextColor="White" FontAttributes="Bold" FontSize="14" />
+                                <Label Text="Assurez-vous que le destinataire est en 'Mode Écoute' sur son appareil." TextColor="#888888" FontSize="11" />
+                                <ActivityIndicator x:Name="BluetoothScanSpinner" IsRunning="True" Color="#007ACC" HeightRequest="20" WidthRequest="20" HorizontalOptions="Start" />
+                            </VerticalStackLayout>
+                            
+                            <!-- Liste d'appareils -->
+                            <ListView Grid.Row="1" 
+                                      x:Name="BluetoothDevicesListView" 
+                                      BackgroundColor="Transparent"
+                                      SeparatorColor="#333333"
+                                      ItemSelected="OnBluetoothDeviceSelected">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="services:BluetoothDeviceInfo">
+                                        <ViewCell>
+                                            <Grid ColumnDefinitions="*, Auto" Padding="10,5">
+                                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                                                    <Label Text="{Binding Name}" TextColor="White" FontAttributes="Bold" FontSize="14" />
+                                                    <Label Text="{Binding Address}" TextColor="#888888" FontSize="11" />
+                                                </VerticalStackLayout>
+                                                <Label Grid.Column="1" Text="🔗" TextColor="#007ACC" VerticalOptions="Center" />
+                                            </Grid>
+                                        </ViewCell>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            
+                            <Button Grid.Row="2" 
+                                    Text="Relancer la recherche"
+                                    BackgroundColor="#2A2A2A"
+                                    TextColor="White"
+                                    CornerRadius="8"
+                                    HeightRequest="40"
+                                    Clicked="OnBluetoothRescanClicked" />
+                        </Grid>
+
+                        <!-- Mode Transfert en cours -->
+                        <VerticalStackLayout x:Name="BluetoothTransferProgressView" Spacing="20" IsVisible="False" VerticalOptions="Center">
+                            <ActivityIndicator IsRunning="True" Color="#007ACC" HeightRequest="50" WidthRequest="50" HorizontalOptions="Center" />
+                            <Label x:Name="BluetoothTransferStatusLabel" 
+                                   Text="Transfert en cours... 0%" 
+                                   TextColor="White" 
+                                   FontAttributes="Bold" 
+                                   FontSize="16" 
+                                   HorizontalOptions="Center" />
+                            <ProgressBar x:Name="BluetoothTransferProgressBar" Progress="0" ProgressColor="#007ACC" HeightRequest="8" HorizontalOptions="Fill" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <!-- Status Bar / Footer -->
+                    <Label Grid.Row="2"
+                           x:Name="BluetoothOverlayFooter"
+                           Text="Bluetooth Classic RFCOMM"
+                           TextColor="#555555"
+                           FontSize="10"
+                           HorizontalOptions="Center" />
                 </Grid>
             </Border>
         </ContentView>

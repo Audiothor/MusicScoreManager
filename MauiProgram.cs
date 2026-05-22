@@ -23,6 +23,7 @@ public static class MauiProgram
 
 		builder.Services.AddSingleton<DatabaseService>();
 		builder.Services.AddSingleton<ImportService>();
+		builder.Services.AddSingleton<IBluetoothTransferService, BluetoothTransferService>();
 		builder.Services.AddSingleton<ScoresPage>();
 		builder.Services.AddSingleton<SetlistsPage>();
 		builder.Services.AddSingleton<TagsPage>();
