@@ -17,13 +17,26 @@ namespace MusicScoreManager.Services
 #if ANDROID
     public class BluetoothPermissions : Microsoft.Maui.ApplicationModel.Permissions.BasePlatformPermission
     {
-        public override (string androidPermission, bool isRuntime)[] RequiredPermissions => new[]
+        public override (string androidPermission, bool isRuntime)[] RequiredPermissions
         {
-            (Android.Manifest.Permission.BluetoothScan, true),
-            (Android.Manifest.Permission.BluetoothConnect, true),
-            (Android.Manifest.Permission.BluetoothAdvertise, true),
-            (Android.Manifest.Permission.AccessFineLocation, true)
-        };
+            get
+            {
+                var list = new List<(string androidPermission, bool isRuntime)>();
+
+                // Si Android 12 (API 31) ou supérieur, les permissions de proximité sont requises
+                if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.S)
+                {
+                    list.Add((Android.Manifest.Permission.BluetoothScan, true));
+                    list.Add((Android.Manifest.Permission.BluetoothConnect, true));
+                    list.Add((Android.Manifest.Permission.BluetoothAdvertise, true));
+                }
+
+                // Pour toutes les versions d'Android, la position fine est requise pour le scan classique
+                list.Add((Android.Manifest.Permission.AccessFineLocation, true));
+
+                return list.ToArray();
+            }
+        }
     }
 #endif
 
