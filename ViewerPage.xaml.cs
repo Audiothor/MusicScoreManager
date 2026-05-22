@@ -1247,13 +1247,39 @@ public partial class ViewerPage : ContentPage
     {
         if (e.Data.Properties.TryGetValue("Sticker", out var stickerObj) && stickerObj is string sticker)
         {
+            var position = e.GetPosition(ActiveAnnotationsContainer);
+            if (position == null) return;
+
+            // Ignorer le drop s'il se trouve dans la zone du sélecteur ou de la barre d'annotations.
+            // Cela évite de poser accidentellement un sticker lors d'une simple sélection ou d'un réglage.
+            double absY = position.Value.Y;
+            double containerHeight = ActiveAnnotationsContainer.Height;
+
+            if (StickerPickerOverlay.IsVisible)
+            {
+                // Le sélecteur fait 240px de haut + 70px de marge du bas, plus sa translation éventuelle si déplacé verticalement
+                double pickerTop = containerHeight - 320 + StickerPickerOverlay.TranslationY;
+                if (absY > pickerTop)
+                {
+                    System.Diagnostics.Debug.WriteLine("[Viewer] Drop ignoré car situé dans la zone du sélecteur de stickers.");
+                    return;
+                }
+            }
+            else if (AnnotationBar.IsVisible)
+            {
+                // La barre d'annotations fait 45px de haut, plus sa translation
+                double barTop = containerHeight - 60 + AnnotationBar.TranslationY;
+                if (absY > barTop)
+                {
+                    System.Diagnostics.Debug.WriteLine("[Viewer] Drop ignoré car situé dans la zone de la barre d'annotations.");
+                    return;
+                }
+            }
+
             // On prend DIRECTEMENT les valeurs actuelles des réglettes pour être sûr
             string color = _currentStickerColor;
             string bgColor = _currentStickerBgColor;
             double scale = StickerSizeSlider.Value;
-
-            var position = e.GetPosition(ActiveAnnotationsContainer);
-            if (position == null) return;
 
             double relX = position.Value.X / ActiveAnnotationsContainer.Width;
             double relY = position.Value.Y / ActiveAnnotationsContainer.Height;
