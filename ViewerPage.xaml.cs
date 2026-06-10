@@ -1534,6 +1534,7 @@ public partial class ViewerPage : ContentPage
     {
         _isAnnotationsLocked = !_isAnnotationsLocked;
         LockUnlockBtn.Text = _isAnnotationsLocked ? "🔒" : "🔓";
+        LockUnlockBtn.BackgroundColor = _isAnnotationsLocked ? Microsoft.Maui.Graphics.Colors.Transparent : Microsoft.Maui.Graphics.Color.FromArgb("#D32F2F");
         
         if (_isAnnotationsLocked)
         {

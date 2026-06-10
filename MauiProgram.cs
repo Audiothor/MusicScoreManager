@@ -58,27 +58,30 @@ public static class MauiProgram
 			var searchView = handler.PlatformView;
 			if (searchView != null)
 			{
-				// Icône loupe (recherche)
-				int searchIconId = searchView.Context?.Resources?.GetIdentifier("android:id/search_mag_icon", null, null) ?? 0;
-				if (searchIconId != 0)
+				void TintImageViews(Android.Views.View? v)
 				{
-					var searchIcon = searchView.FindViewById<Android.Widget.ImageView>(searchIconId);
-					if (searchIcon != null)
+					if (v == null) return;
+					if (v is Android.Widget.ImageView img)
 					{
-						searchIcon.SetColorFilter(Android.Graphics.Color.White, Android.Graphics.PorterDuff.Mode.SrcIn);
+						img.SetColorFilter(Android.Graphics.Color.White, Android.Graphics.PorterDuff.Mode.SrcIn);
+					}
+					else if (v is Android.Views.ViewGroup group)
+					{
+						for (int i = 0; i < group.ChildCount; i++)
+						{
+							TintImageViews(group.GetChildAt(i));
+						}
 					}
 				}
+				
+				// Apply tint initially
+				TintImageViews(searchView);
 
-				// Icône de fermeture / effacement (croix)
-				int closeIconId = searchView.Context?.Resources?.GetIdentifier("android:id/search_close_btn", null, null) ?? 0;
-				if (closeIconId != 0)
+				// Re-apply tint when layout is fully populated, just in case
+				searchView.LayoutChange += (sender, args) =>
 				{
-					var closeIcon = searchView.FindViewById<Android.Widget.ImageView>(closeIconId);
-					if (closeIcon != null)
-					{
-						closeIcon.SetColorFilter(Android.Graphics.Color.White, Android.Graphics.PorterDuff.Mode.SrcIn);
-					}
-				}
+					TintImageViews(searchView);
+				};
 			}
 #endif
 		});
