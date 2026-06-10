@@ -115,15 +115,16 @@ public partial class ScoreEditPage : ContentPage
         {
             BackgroundColor = isSelected ? Color.FromArgb(tag.ColorHex) : Color.FromArgb("#333333"),
             StrokeThickness = 0,
-            Padding = new Thickness(15, 8),
+            Padding = new Thickness(15, 8, 10, 8),
             Margin = new Thickness(0, 0, 10, 10),
             StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 },
             Content = new Label
             {
-                Text = tag.Name,
+                Text = tag.Name + "  ",
                 TextColor = isSelected ? Colors.White : Color.FromArgb("#AAAAAA"),
                 FontAttributes = FontAttributes.Bold,
-                VerticalOptions = LayoutOptions.Center
+                VerticalOptions = LayoutOptions.Center,
+                LineBreakMode = LineBreakMode.NoWrap
             }
         };
     }

@@ -53,10 +53,47 @@ public partial class ViewerPage : ContentPage
 
         Title = _score.Title;
 
+        // Correction robuste et immédiate du type de partition basé sur l'extension du fichier réel
+        if (!string.IsNullOrEmpty(_score.FilePath))
+        {
+            try
+            {
+                string ext = Path.GetExtension(_score.FilePath)?.ToLowerInvariant() ?? "";
+                var originalType = _score.Type;
+                if (ext == ".pdf")
+                {
+                    _score.Type = ScoreType.PDF;
+                }
+                else if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".gif" || ext == ".webp" || ext == ".bmp")
+                {
+                    _score.Type = ScoreType.Image;
+                }
+
+                if (_score.Type != originalType)
+                {
+                    // Sauvegarder la correction en base de données de manière asynchrone
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await _databaseService.SaveScoreAsync(_score);
+                            System.Diagnostics.Debug.WriteLine($"[Viewer] Type corrigé en {_score.Type} pour {_score.Title} dans la base de données.");
+                        }
+                        catch { }
+                    });
+                }
+            }
+            catch { }
+        }
+
         if (_score.IsRotationSaved)
         {
             _currentRotation = _score.Rotation;
         }
+
+        // Repositionner dynamiquement les annotations lors des changements de taille des conteneurs (rotation, layout, etc.)
+        AnnotationsContainer.SizeChanged += (s, e) => RenderAnnotations();
+        ImageAnnotationsContainer.SizeChanged += (s, e) => RenderAnnotations();
     }
 
     protected override void OnAppearing()
@@ -154,6 +191,12 @@ public partial class ViewerPage : ContentPage
             e.Cancel = true;
             ParsePageParams(e.Url);
         }
+        else if (e.Url != null && e.Url.StartsWith("app://musicscore/rendering"))
+        {
+            e.Cancel = true;
+            _isScoreReady = false;
+            MainThread.BeginInvokeOnMainThread(() => RenderAnnotations());
+        }
         else if (e.Url != null && e.Url.StartsWith("app://musicscore/end"))
         {
             e.Cancel = true;
@@ -244,6 +287,7 @@ public partial class ViewerPage : ContentPage
                         _maxPages = 1;
                         UpdatePageIndicator();
                         _isScoreReady = true;
+                        RenderAnnotations();
                         if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
                     });
                 }
@@ -350,21 +394,24 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private double startTranslationX = 0;
-    private double startTranslationY = 0;
+    private double _lastTotalX = 0;
+    private double _lastTotalY = 0;
+    private bool _isPinching = false;
 
     private void OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
     {
         if (e.Status == GestureStatus.Started)
         {
+            _isPinching = true;
             startScale = ZoomLayout.Scale;
             ZoomLayout.AnchorX = 0.5;
             ZoomLayout.AnchorY = 0.5;
         }
         if (e.Status == GestureStatus.Running)
         {
-            // Zoom linéaire propre basé sur l'échelle de départ et l'échelle cumulative du pincement
-            double targetScale = startScale * e.Scale;
+            _isPinching = true;
+            // e.Scale est un facteur d'échelle relatif (delta) depuis le dernier événement dans MAUI sur Android
+            double targetScale = ZoomLayout.Scale * e.Scale;
             targetScale = Math.Max(1, targetScale);
             targetScale = Math.Min(4, targetScale);
             currentScale = targetScale;
@@ -378,6 +425,7 @@ public partial class ViewerPage : ContentPage
         }
         if (e.Status == GestureStatus.Completed || e.Status == GestureStatus.Canceled)
         {
+            _isPinching = false;
             if (ZoomLayout.Scale <= 1.0)
             {
                 ZoomLayout.TranslationX = 0;
@@ -388,26 +436,40 @@ public partial class ViewerPage : ContentPage
 
     private void OnPanUpdated(object sender, PanUpdatedEventArgs e)
     {
-        if (ZoomLayout.Scale > 1)
+        if (e.StatusType == GestureStatus.Started)
         {
-            if (e.StatusType == GestureStatus.Started)
+            _lastTotalX = 0;
+            _lastTotalY = 0;
+            return;
+        }
+
+        if (e.StatusType == GestureStatus.Running)
+        {
+            double deltaX = e.TotalX - _lastTotalX;
+            double deltaY = e.TotalY - _lastTotalY;
+            _lastTotalX = e.TotalX;
+            _lastTotalY = e.TotalY;
+
+            if (_isPinching)
+                return;
+
+            if (ZoomLayout.Scale > 1)
             {
-                startTranslationX = ZoomLayout.TranslationX;
-                startTranslationY = ZoomLayout.TranslationY;
-            }
-            else if (e.StatusType == GestureStatus.Running)
-            {
-                double targetX = startTranslationX + e.TotalX;
-                double targetY = startTranslationY + e.TotalY;
+                double targetX = ZoomLayout.TranslationX + deltaX;
+                double targetY = ZoomLayout.TranslationY + deltaY;
 
                 // Calculer les limites pour ne pas sortir des bords de l'image agrandie
-                // L'image peut glisser d'au maximum sa taille agrandie moins la taille de l'écran, divisé par 2 (AnchorX = 0.5)
                 double maxTx = Math.Max(0, (ZoomLayout.Width * (ZoomLayout.Scale - 1)) / 2);
                 double maxTy = Math.Max(0, (ZoomLayout.Height * (ZoomLayout.Scale - 1)) / 2);
 
                 ZoomLayout.TranslationX = Math.Max(-maxTx, Math.Min(maxTx, targetX));
                 ZoomLayout.TranslationY = Math.Max(-maxTy, Math.Min(maxTy, targetY));
             }
+        }
+        else if (e.StatusType == GestureStatus.Completed || e.StatusType == GestureStatus.Canceled)
+        {
+            _lastTotalX = 0;
+            _lastTotalY = 0;
         }
     }
 
@@ -421,6 +483,7 @@ public partial class ViewerPage : ContentPage
             if (int.TryParse(query["max"], out int max)) _maxPages = max;
             if (int.TryParse(query["current"], out int current)) _currentPage = current;
 
+            _isScoreReady = true;
             UpdatePageIndicator();
         }
         catch { }
@@ -847,6 +910,16 @@ public partial class ViewerPage : ContentPage
             BottomTouchBar.IsVisible = true; // Réactive la zone tactile du bas !
             StickerPickerOverlay.IsVisible = false;
             _selectedAnnotation = null;
+            _pendingSticker = null;
+            _isAnnotationMode = false;
+            AnnotationsContainer.InputTransparent = true;
+            ImageAnnotationsContainer.InputTransparent = true;
+
+            if (StickersCollection != null)
+            {
+                StickersCollection.SelectedItem = null;
+            }
+
             RenderAnnotations();
             PageIndicator.Margin = new Thickness(0, 0, 10, 2);
         }
@@ -869,6 +942,16 @@ public partial class ViewerPage : ContentPage
             BottomTouchBar.IsVisible = true; // Réactive la zone tactile du bas !
             StickerPickerOverlay.IsVisible = false;
             _selectedAnnotation = null;
+            _pendingSticker = null;
+            _isAnnotationMode = false;
+            AnnotationsContainer.InputTransparent = true;
+            ImageAnnotationsContainer.InputTransparent = true;
+
+            if (StickersCollection != null)
+            {
+                StickersCollection.SelectedItem = null;
+            }
+
             RenderAnnotations();
             PageIndicator.Margin = new Thickness(0, 0, 10, 2);
             return;
@@ -941,6 +1024,8 @@ public partial class ViewerPage : ContentPage
             _currentPage = pageNum;
             if (_score.Type == ScoreType.PDF)
             {
+                _isScoreReady = false;
+                RenderAnnotations();
                 await PdfWebView.EvaluateJavaScriptAsync($"goToPage({pageNum})");
             }
             UpdatePageIndicator();
@@ -1035,6 +1120,16 @@ public partial class ViewerPage : ContentPage
             AnnotationBar.TranslationY = 0;
             StickerPickerOverlay.TranslationY = 0;
             _selectedAnnotation = null;
+            _pendingSticker = null;
+            _isAnnotationMode = false;
+            AnnotationsContainer.InputTransparent = true;
+            ImageAnnotationsContainer.InputTransparent = true;
+
+            if (StickersCollection != null)
+            {
+                StickersCollection.SelectedItem = null;
+            }
+
             RenderAnnotations();
         }
 
@@ -1075,6 +1170,16 @@ public partial class ViewerPage : ContentPage
         StickerPickerOverlay.TranslationY = 0;
         
         _selectedAnnotation = null;
+        _pendingSticker = null;
+        _isAnnotationMode = false;
+        AnnotationsContainer.InputTransparent = true;
+        ImageAnnotationsContainer.InputTransparent = true;
+
+        if (StickersCollection != null)
+        {
+            StickersCollection.SelectedItem = null;
+        }
+
         RenderAnnotations();
         
         PageIndicator.Margin = new Thickness(0, 0, 10, 2);
@@ -1086,6 +1191,11 @@ public partial class ViewerPage : ContentPage
         {
             if (e.CurrentSelection.FirstOrDefault() is StickerCategory category)
             {
+                _pendingSticker = null;
+                _isAnnotationMode = false;
+                AnnotationsContainer.InputTransparent = true;
+                ImageAnnotationsContainer.InputTransparent = true;
+
                 MainThread.BeginInvokeOnMainThread(() => {
                     if (StickersCollection != null)
                     {
@@ -1311,6 +1421,12 @@ public partial class ViewerPage : ContentPage
         if (e.CurrentSelection.FirstOrDefault() is StickerItem sticker)
         {
             _pendingSticker = sticker.Text;
+            _isAnnotationMode = true;
+            
+            if (ActiveAnnotationsContainer != null)
+            {
+                ActiveAnnotationsContainer.InputTransparent = false;
+            }
             
             // Appliquer les réglages actuels pour l'aperçu immédiat
             sticker.Color = _currentStickerColor;
@@ -1334,6 +1450,11 @@ public partial class ViewerPage : ContentPage
         double relX = position.Value.X / ActiveAnnotationsContainer.Width;
         double relY = position.Value.Y / ActiveAnnotationsContainer.Height;
 
+        // Récupérer les styles actuellement configurés dans le bandeau
+        string color = _currentStickerColor;
+        string bgColor = _currentStickerBgColor;
+        double scale = StickerSizeSlider.Value;
+
         var annotation = new Annotation
         {
             ScoreId = _score.Id,
@@ -1341,18 +1462,24 @@ public partial class ViewerPage : ContentPage
             Content = _pendingSticker,
             X = relX,
             Y = relY,
-            Scale = 1.0,
+            Scale = scale,
+            Color = color,
+            BackgroundColor = bgColor,
             PageNumber = _currentPage
         };
 
         await _databaseService.SaveAnnotationAsync(annotation);
         _annotations.Add(annotation);
 
-        // Sortir du mode placement
+        // Sortir du mode placement et désactiver l'interception tactile
         _isAnnotationMode = false;
         ActiveAnnotationsContainer.InputTransparent = true;
-        ActiveAnnotationsContainer.GestureRecognizers.Clear();
         _pendingSticker = null;
+
+        if (StickersCollection != null)
+        {
+            StickersCollection.SelectedItem = null;
+        }
 
         RenderAnnotations();
     }
@@ -1361,6 +1488,12 @@ public partial class ViewerPage : ContentPage
 
     private async void OnDeleteSelectedAnnotationClicked(object? sender, EventArgs e)
     {
+        if (_isAnnotationsLocked)
+        {
+            await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir les modifier.", "OK");
+            return;
+        }
+
         if (_selectedAnnotation == null)
         {
             await DisplayAlertAsync("Supprimer", "Veuillez d'abord sélectionner une annotation en touchant un sticker.", "OK");
@@ -1375,6 +1508,12 @@ public partial class ViewerPage : ContentPage
 
     private async void OnResetAnnotationsClicked(object? sender, EventArgs e)
     {
+        if (_isAnnotationsLocked)
+        {
+            await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir les modifier.", "OK");
+            return;
+        }
+
         if (_annotations.Count == 0)
         {
             await DisplayAlertAsync("Reset", "Il n'y a aucune annotation à supprimer sur cette partition.", "OK");
@@ -1395,6 +1534,12 @@ public partial class ViewerPage : ContentPage
     {
         _isAnnotationsLocked = !_isAnnotationsLocked;
         LockUnlockBtn.Text = _isAnnotationsLocked ? "🔒" : "🔓";
+        
+        if (_isAnnotationsLocked)
+        {
+            _selectedAnnotation = null;
+        }
+        RenderAnnotations();
     }
 
     private void RenderAnnotations()
@@ -1406,6 +1551,20 @@ public partial class ViewerPage : ContentPage
         if (inactiveContainer != null)
         {
             inactiveContainer.Children.Clear();
+            inactiveContainer.IsVisible = false;
+        }
+
+        ActiveAnnotationsContainer.IsVisible = true;
+        ActiveAnnotationsContainer.Opacity = _isScoreReady ? 1 : 0;
+
+        if (!_isScoreReady)
+        {
+            return;
+        }
+
+        if (ActiveAnnotationsContainer.Width <= 0 || ActiveAnnotationsContainer.Height <= 0)
+        {
+            return;
         }
 
         // On ne rend que les annotations de la page actuelle
@@ -1498,6 +1657,7 @@ public partial class ViewerPage : ContentPage
         // Geste de sélection
         var selectTap = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
         selectTap.Tapped += (s, e) => {
+            if (_isAnnotationsLocked) return;
             if (s is Border b && b.BindingContext is Annotation ann)
             {
                 _selectedAnnotation = ann;
@@ -1515,6 +1675,7 @@ public partial class ViewerPage : ContentPage
         // Geste de suppression rapide (double tap)
         var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
         doubleTap.Tapped += async (s, e) => {
+            if (_isAnnotationsLocked) return;
             if (s is Border b && b.BindingContext is Annotation ann)
             {
                 await _databaseService.DeleteAnnotationAsync(ann);

@@ -51,6 +51,38 @@ public static class MauiProgram
 #endif
 		});
 
+		// Configuration SearchBar pour Android (forcer la loupe et l'icône de fermeture en blanc sur fond sombre)
+		Microsoft.Maui.Handlers.SearchBarHandler.Mapper.AppendToMapping("CustomSearchIconColor", (handler, view) =>
+		{
+#if ANDROID
+			var searchView = handler.PlatformView;
+			if (searchView != null)
+			{
+				// Icône loupe (recherche)
+				int searchIconId = searchView.Context?.Resources?.GetIdentifier("android:id/search_mag_icon", null, null) ?? 0;
+				if (searchIconId != 0)
+				{
+					var searchIcon = searchView.FindViewById<Android.Widget.ImageView>(searchIconId);
+					if (searchIcon != null)
+					{
+						searchIcon.SetColorFilter(Android.Graphics.Color.White, Android.Graphics.PorterDuff.Mode.SrcIn);
+					}
+				}
+
+				// Icône de fermeture / effacement (croix)
+				int closeIconId = searchView.Context?.Resources?.GetIdentifier("android:id/search_close_btn", null, null) ?? 0;
+				if (closeIconId != 0)
+				{
+					var closeIcon = searchView.FindViewById<Android.Widget.ImageView>(closeIconId);
+					if (closeIcon != null)
+					{
+						closeIcon.SetColorFilter(Android.Graphics.Color.White, Android.Graphics.PorterDuff.Mode.SrcIn);
+					}
+				}
+			}
+#endif
+		});
+
 		return builder.Build();
 	}
 }

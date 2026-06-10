@@ -61,7 +61,7 @@ public partial class ScoreSelectionPage : ContentPage
         var border = new Border
         {
             BackgroundColor = Color.FromArgb(colorHex),
-            Padding = new Thickness(15, 5),
+            Padding = new Thickness(15, 5, 10, 5),
             StrokeThickness = _selectedTagId == tagId ? 2 : 0,
             Stroke = Colors.White,
             StrokeShape = new RoundRectangle { CornerRadius = 15 }
@@ -69,10 +69,11 @@ public partial class ScoreSelectionPage : ContentPage
 
         border.Content = new Label
         {
-            Text = text,
+            Text = text + "  ",
             TextColor = Colors.White,
             FontAttributes = FontAttributes.Bold,
-            FontSize = 12
+            FontSize = 12,
+            LineBreakMode = LineBreakMode.NoWrap
         };
 
         var tapGesture = new TapGestureRecognizer();

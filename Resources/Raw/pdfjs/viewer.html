@@ -202,6 +202,9 @@
         async function renderPage(num) {
             if (!pdfDoc) return;
             
+            // Signaler au C# que le rendu commence (pour masquer les annotations temporairement)
+            window.location.href = 'app://musicscore/rendering';
+            
             const page = await pdfDoc.getPage(num);
             
             // Calculer le viewport à l'échelle demandée

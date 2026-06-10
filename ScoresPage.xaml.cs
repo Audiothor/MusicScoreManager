@@ -107,7 +107,7 @@ public partial class ScoresPage : ContentPage
                 {
                     BackgroundColor = Color.FromArgb(tag.ColorHex),
                     StrokeThickness = 0,
-                    Padding = new Thickness(12, 6),
+                    Padding = new Thickness(12, 6, 8, 6),
                     VerticalOptions = LayoutOptions.Center,
                     StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 12 }
                 };
@@ -116,11 +116,12 @@ public partial class ScoresPage : ContentPage
 
                 var label = new Label
                 {
-                    Text = tag.Name,
+                    Text = tag.Name + "  ",
                     TextColor = Colors.White,
                     FontAttributes = FontAttributes.Bold,
                     VerticalOptions = LayoutOptions.Center,
-                    FontSize = 12
+                    FontSize = 12,
+                    LineBreakMode = LineBreakMode.NoWrap
                 };
 
                 var closeLabel = new Label
@@ -630,7 +631,7 @@ public partial class ScoresPage : ContentPage
                 BackgroundColor = isSelected ? Color.FromArgb(tag.ColorHex) : Color.FromArgb("#2A2A2A"),
                 Stroke = isSelected ? Colors.White : Color.FromArgb(tag.ColorHex),
                 StrokeThickness = isSelected ? 2 : 1,
-                Padding = new Thickness(12, 6),
+                Padding = new Thickness(12, 6, 8, 6),
                 Margin = new Thickness(0, 0, 8, 8),
                 StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 12 },
                 Opacity = isSelected ? 1.0 : 0.7
@@ -638,11 +639,12 @@ public partial class ScoresPage : ContentPage
 
             var label = new Label
             {
-                Text = isSelected ? $"✓ {tag.Name}" : tag.Name,
+                Text = isSelected ? $"✓ {tag.Name}  " : tag.Name + "  ",
                 TextColor = isSelected ? Colors.White : Color.FromArgb("#E0E0E0"),
                 FontAttributes = FontAttributes.Bold,
                 FontSize = 12,
-                VerticalOptions = LayoutOptions.Center
+                VerticalOptions = LayoutOptions.Center,
+                LineBreakMode = LineBreakMode.NoWrap
             };
 
             border.Content = label;
