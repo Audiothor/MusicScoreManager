@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.8.6</ApplicationDisplayVersion>
-		<ApplicationVersion>1860</ApplicationVersion>
-		<!-- Version actuelle : v1.8.6 "Search Loupe and Padlock Contrast" -->
+		<ApplicationDisplayVersion>1.8.16</ApplicationDisplayVersion>
+		<ApplicationVersion>18160</ApplicationVersion>
+		<!-- Version actuelle : v1.8.16 "Fix Per-Page Rotation State" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		
@@ -26,11 +26,16 @@
 		<RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">android-arm;android-arm64;android-x64</RuntimeIdentifiers>
 	</PropertyGroup>
 
-	<!-- Branding : Icône et Splash Screen (Logo rectangulaire et large) -->
+	<!-- Branding : Icône et Splash Screen -->
 	<ItemGroup>
 		<MauiIcon Include="Resources\AppIcon\appicon.png" ForegroundScale="0.65" Color="#121212" />
-		<MauiSplashScreen Include="Resources\Splash\app_splash_padded.png" Color="#121212" BaseSize="512,512" />
+		<MauiSplashScreen Include="Resources\Splash\app_splash_padded.png" Color="#1A2736" BaseSize="256,256" />
 	</ItemGroup>
+
+	<PropertyGroup>
+		<!-- Désactiver les avertissements d'audit NU1903 pour les paquets SQLite internes transitifs -->
+		<NoWarn>$(NoWarn);NU1903;CS0618</NoWarn>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="14.1.0" />
@@ -38,6 +43,9 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
 		<PackageReference Include="Plugin.Maui.Audio" Version="4.0.0" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+		<PackageReference Include="SQLitePCLRaw.core" Version="2.1.10" />
+		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
+		<PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.10" />
 		<PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="9.0.0" />
 	</ItemGroup>
 

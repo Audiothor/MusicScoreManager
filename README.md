@@ -2,81 +2,109 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.1.1
+# Music Score Manager v1.8.16
 
-**Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser et visualiser leurs partitions (PDF et Images) de manière efficace, particulièrement en situation de concert.
+**Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF et Images) de manière efficace, particulièrement en situation de concert.
 
 ---
 
-## 🚀 Fonctionnalités Clés (v1.0.1)
+## 🚀 Fonctionnalités Clés
 
-### ⚡ Performance "Zero-Copy" (Nouveauté v1.0.1)
+### 🔍 Zoom & Gestes Tactiles Avancés (v1.8.0 - v1.8.16)
+- **Fluid & Precision Zoom** : Zoom dynamique et pan fluide pour les partitions au format Image et PDF.
+- **Rendu PDF Ultra-Rapide avec Pré-rendu (v1.8.14)** : Pré-rendu hors-écran (*Offscreen Canvas Cache*) des pages adjacentes pour des sauts de page instantanés à 0 ms de latence.
+- **Rotation Hybride par Page (v1.8.14 - v1.8.16)** : Choix flexible de pivoter une page spécifique à 90° ou toute la partition, avec persistance SQLite dédiée et synchronisation temps réel par page.
+- **Métadonnées de Fichier (v1.8.15)** : Affichage non modifiable de la taille du fichier, de sa date de dernière modification et de son horodatage d'ajout dans la page d'édition.
+- **Sécurisation des Gestes (Safe Boundaries)** : Gestion intelligente des zones tactiles pour éviter les sorties d'écran et la navigation intempestive aux extrémités de la partition.
+- **Accès Direct au Saut de Page** : Clic direct sur l'indicateur de numérotation de page (`1/5`) pour ouvrir le prompt de changement de page.
+
+### 🎨 Édition & Système d'Annotations Dynamiques (v1.8.1 - v1.8.12)
+- **Tiroir à Stickers Unifié & Bouton Fermer ✕** : Sélection rapide avec bouton de fermeture dédié sur l'overlay.
+- **Réglette de Taille Tactile Élargie** : Slider grand format ergonomique sur ligne dédiée pour un ajustement facile aux doigts.
+- **Placement Délimité Précis (v1.8.12)** : Possibilité de déposer des stickers en dessous de la barre d'annotations même si celle-ci a été déplacée au milieu/haut de l'écran.
+- **Verrouillage Strict (Lock Safety)** : Interdiction d'ajouter ou modifier des stickers si le cadenas est verrouillé avec message d'information explicite.
+- **Édition Temps Réel** : Modification dynamique en mode déverrouillé (couleurs texte/fond et taille).
+
+### ⚡ Performance "Zero-Copy" & Cache Setlists (v1.0.1 - v1.1.1)
 - **Mise en Cache Automatique** : Les setlists sont pré-chargées en tâche de fond dans un stockage ultra-rapide.
-- **Chargement Direct** : Suppression des copies disques lors de l'ouverture d'un PDF, rendant la transition entre morceaux instantanée.
+- **Résilience du Cache** : Tolérance aux fichiers inaccessibles sans interruption du flux principal.
+- **Chargement Direct** : Suppression des copies disques lors de l'ouverture d'un PDF pour une transition instantanée entre morceaux.
 - **Indicateur de Statut** : Visualisation en temps réel de l'état du cache (⏳/⚡) dans l'éditeur de setlist.
 
-### 🎵 Gestion des Partitions & Stockage (Refonte v1.0)
-- **Stockage Public Unique** : Définissez vos propres répertoires pour les partitions et l'audio.
-- **Import Intelligent** : Choisissez entre "Copier" (interne) ou "Lier" (externe).
-- **Indicateurs Visuels** : Icône 🔗 pour repérer les fichiers hors bibliothèque.
-- **Rapatriement Rapide** : Importez physiquement un fichier lié en un clic.
+### 🎵 Gestion des Partitions & Stockage Intelligents (v1.0.5 - v1.1.0)
+- **Stockage Public Configurable** : Définissez vos propres répertoires pour les partitions et les fichiers audio.
+- **Super-Détection & Scan Récursif** : Scan intelligent tolérant et détection automatique des fichiers déjà présents dans l'arborescence racine/sous-dossiers pour éviter la duplication.
+- **Import Hybride** : Choisissez entre "Copier" (interne) ou "Lier" (externe avec icône 🔗 et option de rapatriement rapide).
 
 ### 🏷️ Système d'Étiquettes (Chips)
 - **Gestion Globale** : Créez et personnalisez vos étiquettes avec des couleurs (Palette + Sliders RGB).
 - **Filtrage Rapide** : Carrousel horizontal pour filtrer instantanément par catégorie.
 
-### 📋 Gestion de Setlists (Nouveauté v0.2.0)
+### 📋 Gestion de Setlists (v0.2.0+)
 - **Mode Édition Avancé** : Réordonnez vos partitions par **glisser-déposer**.
 - **Gestion des Statuts** : Marquez vos listes comme `À venir`, `Active` ou `Terminée` avec filtrage sur l'accueil.
 - **Lecture en Continu** : Transition automatique entre les morceaux d'une même liste.
 - **Mode Concert (Verrouillage)** : Bouton de verrouillage persistant pour désactiver toute modification accidentelle sur scène.
 
-### 📖 Lecteur Ultra-Performant (v1.0)
-- **Accès Disque Direct** : Chargement instantané des PDF, même volumineux (plus de Base64).
-- **Consommation Mémoire** : Optimisée pour les tablettes d'entrée de gamme.
-- **Moteur PDF.js** & Rendu Image natif.
-- **Navigation Tactile** :
-    - **Zone Gauche** : Page précédente (ou morceau précédent de la setlist).
-    - **Zone Droite** : Page suivante (ou morceau suivant de la setlist).
-    - **Zone Bas** : Menu contextuel.
 ### ⏱️ Métronome Pro & Audio Sync
-- **Haute Précision** : Nouvelle boucle temporelle sans dérive CPU.
-- **Bip de Pré-compte** : Son distinctif (880Hz) généré dynamiquement.
-- **Synchronisation Parfaite** : L'audio démarre précisément sur le premier temps fort après le pré-compte.
+- **Haute Précision** : Boucle temporelle basée sur `Stopwatch` sans dérive CPU.
+- **Bip de Pré-compte & Synchronisation** : Son distinctif (880Hz) et calage précis du démarrage audio sur le temps fort.
 
 ### 🛡️ Gestion des Sauvegardes
-- **Sauvegarde Automatique** : Déclenchement au lancement selon un intervalle paramétrable (ex: tous les 30 jours).
-- **Règle de Rétention** : Garde uniquement un nombre défini de copies (ex: 6) pour économiser l'espace.
-- **Restauration en un clic** : Restaurez n'importe quelle version précédente depuis l'historique avec avertissement de sécurité.
+- **Sauvegarde Automatique & Rétention** : Sauvegarde automatique configurable avec rétention paramétrable.
+- **Restauration en un Clic** : Restaurez n'importe quelle version précédente depuis l'historique UI.
+
+---
+
+## 📜 Historique Récent des Versions
+
+- **v1.8.7** : **"Performance & Precision Zoom"** — Version actuelle avec retouches d'optimisation de zoom et retours tactiles.
+- **v1.8.4** : **"Safe Gesture Placement"** — Isolation anti-drop accidentel lors de l'utilisation du sélecteur d'annotations.
+- **v1.8.3** : **"Dynamic Annotation Editing"** — Modification en direct de la taille, couleur de texte et fond des stickers posés.
+- **v1.8.2** : **"Safe Boundaries & Native Execution"** — Blocage des retours d'écran intempestifs aux extrémités de partition.
+- **v1.8.1** : **"Gesture Tuning & Annotation Clamping"** — Intégration du tiroir à stickers unifié et limitation du panoramique.
+- **v1.8.0** : **"Safe Zooming & Fluid Image Zoom"** — Refonte de la couche tactile MAUI pour le zoom d'images et PDF.
+- **v1.1.0** : **"Super-Detection Edition"** — Scan récursif et tolérant pour détection des doublons d'import.
+- **v1.0.0** : **"Public Library Edition"** — Refonte du stockage et optimisation PDF.js.
 
 ---
 
 ## 🛠️ Stack Technique
 
 - **Framework** : .NET 10 (MAUI)
-- **Base de données** : SQLite (via sqlite-net-pcl)
+- **Base de données** : SQLite (via `sqlite-net-pcl`)
 - **Lecteur PDF** : PDF.js (injecté via WebView)
-- **Compatibilité** : Android 12.0+ (API 31) minimum
-- **Logiciel de compilation** : Visual Studio 2022 (v17.8+)
+- **Lecteur Audio** : `Plugin.Maui.Audio` & `CommunityToolkit.Maui.MediaElement`
+- **Compatibilité** : Android 12.0+ (API 31) minimum (Target SDK 36.0)
+- **Logiciel de compilation** : Visual Studio 2022 / .NET CLI (`dotnet build`)
 
 ---
 
 ## 📂 Structure du Projet
 
-- `/Models` : Entités (Score, Setlist, Tag, BackupFile).
-- `/Services` : Logique métier (DatabaseService, ImportService).
+- `/Models` : Entités (`Score`, `Setlist`, `Tag`, `ScoreTag`, `BackupFile`, etc.).
+- `/Services` : Logique métier (`DatabaseService`, `SettingsService`, etc.).
+- `/Converters` : Convertisseurs XAML pour l'affichage dynamique.
 - `/Resources/Raw/pdfjs` : Moteur de rendu PDF interne.
-- `AppShell.xaml` : Navigation principale par onglets.
+- `ViewerPage.xaml(.cs)` : Lecteur principal de partitions (PDF & Images, annotations, audio & métronome).
 
 ---
 
-## 📥 Installation
+## 📥 Installation & Compilation
 
 1. Clonez le dépôt.
-2. Ouvrez la solution dans Visual Studio 2022.
-3. Ciblez le framework `net10.0-android36.0` (ou supérieur).
-4. Déployez sur votre tablette ou smartphone Android.
+2. Ouvrez la solution dans Visual Studio 2022 ou utilisez la CLI.
+3. Ciblez le framework `net10.0-android36.0` (ou `net10.0-windows10.0.19041.0`).
+4. Lancez ou générez l'application :
+
+```powershell
+# Compilation & Exécution Debug Android
+dotnet build -t:Run -f net10.0-android36.0
+
+# Publication Release APK
+dotnet publish -f net10.0-android36.0 -c Release
+```
 
 ---
 
-**Développé par Audiothor** - *Version 1.0.0 "Public Library Edition"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.14 "Per-Page Rotation & PDF Speedup"*

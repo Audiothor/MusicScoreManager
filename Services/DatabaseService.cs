@@ -27,7 +27,13 @@ namespace MusicScoreManager.Services
                 {
                     var db = new SQLiteAsyncConnection(_databasePath, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
                     
-                    // On évite les PRAGMA complexes qui peuvent geler au démarrage sur certains Android
+                    try
+                    {
+                        await db.ExecuteAsync("PRAGMA journal_mode = WAL;");
+                        await db.ExecuteAsync("PRAGMA synchronous = NORMAL;");
+                    }
+                    catch { }
+
                     await db.CreateTableAsync<Score>();
                     await db.CreateTableAsync<Setlist>();
                     await db.CreateTableAsync<SetlistScore>();
@@ -36,6 +42,7 @@ namespace MusicScoreManager.Services
                     await db.CreateTableAsync<ScoreAudioFile>();
                     await db.CreateTableAsync<Annotation>();
                     await db.CreateTableAsync<FavoriteSticker>();
+                    await db.CreateTableAsync<ScorePageRotation>();
                     
                     _database = db;
                 });
@@ -388,6 +395,46 @@ namespace MusicScoreManager.Services
         {
             await Init();
             return await _database!.DeleteAsync(sticker);
+        }
+
+        #endregion
+
+        #region Page Rotations
+
+        public async Task<List<ScorePageRotation>> GetPageRotationsForScoreAsync(int scoreId)
+        {
+            await Init();
+            return await _database!.Table<ScorePageRotation>()
+                                   .Where(pr => pr.ScoreId == scoreId)
+                                   .ToListAsync();
+        }
+
+        public async Task SavePageRotationAsync(int scoreId, int pageNumber, int rotation)
+        {
+            await Init();
+            var existing = await _database!.Table<ScorePageRotation>()
+                                            .Where(pr => pr.ScoreId == scoreId && pr.PageNumber == pageNumber)
+                                            .FirstOrDefaultAsync();
+            if (existing != null)
+            {
+                existing.Rotation = rotation;
+                await _database.UpdateAsync(existing);
+            }
+            else
+            {
+                await _database.InsertAsync(new ScorePageRotation
+                {
+                    ScoreId = scoreId,
+                    PageNumber = pageNumber,
+                    Rotation = rotation
+                });
+            }
+        }
+
+        public async Task DeletePageRotationsForScoreAsync(int scoreId)
+        {
+            await Init();
+            await _database!.Table<ScorePageRotation>().Where(pr => pr.ScoreId == scoreId).DeleteAsync();
         }
 
         #endregion

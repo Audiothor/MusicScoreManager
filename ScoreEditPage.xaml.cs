@@ -43,7 +43,54 @@ public partial class ScoreEditPage : ContentPage
         }
 
         UpdateExternalIndicators();
+        LoadFileMetadata();
         LoadDataAsync();
+    }
+
+    private void LoadFileMetadata()
+    {
+        try
+        {
+            string fullPath = _settingsService.GetAbsolutePath(_score.FilePath);
+            
+            if (File.Exists(fullPath))
+            {
+                var fileInfo = new FileInfo(fullPath);
+                
+                // Calcul taille de fichier formatée
+                long bytes = fileInfo.Length;
+                string formattedSize = FormatBytes(bytes);
+                FileSizeLabel.Text = formattedSize;
+                
+                // Date de dernière modification
+                DateTime lastWriteTime = fileInfo.LastWriteTime;
+                FileModifiedDateLabel.Text = lastWriteTime.ToString("dd/MM/yyyy HH:mm");
+            }
+            else
+            {
+                FileSizeLabel.Text = "Fichier introuvable";
+                FileModifiedDateLabel.Text = "N/A";
+            }
+
+            // Date d'ajout/création dans l'application
+            DateTime addedDate = _score.DateAdded != default ? _score.DateAdded : DateTime.Now;
+            FileCreatedDateLabel.Text = addedDate.ToString("dd/MM/yyyy HH:mm");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[ScoreEditPage] Erreur lecture métadonnées fichier: {ex.Message}");
+            FileSizeLabel.Text = "N/A";
+            FileModifiedDateLabel.Text = "N/A";
+        }
+    }
+
+    private static string FormatBytes(long bytes)
+    {
+        if (bytes >= 1024 * 1024)
+            return $"{bytes / (1024.0 * 1024.0):F2} Mo";
+        if (bytes >= 1024)
+            return $"{bytes / 1024.0:F1} Ko";
+        return $"{bytes} octets";
     }
 
     private void UpdateExternalIndicators()

@@ -21,6 +21,7 @@ public partial class ViewerPage : ContentPage
     private int _currentPage = 1;
     private int _maxPages = 1;
     private int _currentRotation = 0;
+    private Dictionary<int, int> _pageRotations = new();
 
     private System.Threading.CancellationTokenSource? _metronomeCts;
     private IAudioPlayer? _metronomeAudioPlayer;
@@ -112,8 +113,22 @@ public partial class ViewerPage : ContentPage
             InitializeMetronome();
             InitializeAudio();
             await LoadAnnotationsAsync();
+            await LoadPageRotationsAsync();
             await InitializeAnnotationUI();
         });
+    }
+
+    private async Task LoadPageRotationsAsync()
+    {
+        try
+        {
+            var savedRotations = await _databaseService.GetPageRotationsForScoreAsync(_score.Id);
+            _pageRotations = savedRotations.ToDictionary(r => r.PageNumber, r => r.Rotation);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur chargement rotations de page: {ex.Message}");
+        }
     }
 
     private async Task LoadAnnotationsAsync()
@@ -175,6 +190,14 @@ public partial class ViewerPage : ContentPage
 
     private void UpdateRotateButtonText()
     {
+        if (_pageRotations.TryGetValue(_currentPage, out int pageRot))
+        {
+            _currentRotation = pageRot;
+        }
+        else
+        {
+            _currentRotation = _score.Rotation;
+        }
         RotateBtn.Text = $"Rotation {_currentRotation}°";
     }
 
@@ -273,51 +296,39 @@ public partial class ViewerPage : ContentPage
                 System.Diagnostics.Debug.WriteLine("[Viewer] Mode IMAGE");
                 try
                 {
-                    // Lecture en tâche de fond pour la robustesse (SD Card / SAF)
-                    byte[] imageBytes = await Task.Run(() => File.ReadAllBytes(fullPath));
-                    MainThread.BeginInvokeOnMainThread(() => {
-                        ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(imageBytes));
-                        ScoreImage.Rotation = _currentRotation;
-                        ImageContainer.IsVisible = true;
-                        ImageAnnotationsContainer.IsVisible = true;
-                        AnnotationsContainer.IsVisible = false; // Désactiver l'overlay PDF qui bloque les gestes !
-                        ImageTouchGrid.IsVisible = false; // Ne pas afficher la grille transparente qui bloque les gestes de zoom !
-                        PdfWebView.IsVisible = false;
-                        _currentPage = 1;
-                        _maxPages = 1;
-                        UpdatePageIndicator();
-                        _isScoreReady = true;
-                        RenderAnnotations();
-                        if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
-                    });
+                    ScoreImage.Source = ImageSource.FromFile(fullPath);
+                    ScoreImage.Rotation = _currentRotation;
+                    ImageContainer.IsVisible = true;
+                    ImageAnnotationsContainer.IsVisible = true;
+                    AnnotationsContainer.IsVisible = false; // Désactiver l'overlay PDF qui bloque les gestes !
+                    ImageTouchGrid.IsVisible = false; // Ne pas afficher la grille transparente qui bloque les gestes de zoom !
+                    PdfWebView.IsVisible = false;
+                    _currentPage = 1;
+                    _maxPages = 1;
+                    UpdatePageIndicator();
+                    _isScoreReady = true;
+                    RenderAnnotations();
+                    if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
                 }
                 catch (Exception imgEx)
                 {
                     System.Diagnostics.Debug.WriteLine($"[Viewer] ECHEC chargement Image: {imgEx.Message}");
-                    MainThread.BeginInvokeOnMainThread(async () => {
-                        await DisplayAlertAsync("Erreur Lecture", $"{imgEx.Message}\n\nL'application n'a pas la permission d'accéder à ce dossier.", "OK");
-                    });
+                    await DisplayAlertAsync("Erreur Lecture", $"{imgEx.Message}\n\nL'application n'a pas pu charger l'image.", "OK");
                 }
             }
             else if (_score.Type == ScoreType.PDF)
             {
                 System.Diagnostics.Debug.WriteLine("[Viewer] Mode PDF - Démarrage chargement WebView");
-                MainThread.BeginInvokeOnMainThread(() => {
-                    ImageContainer.IsVisible = false;
-                    ImageAnnotationsContainer.IsVisible = false;
-                    AnnotationsContainer.IsVisible = true; // Activer l'overlay PDF
-                    ImageTouchGrid.IsVisible = false;
-                    PdfWebView.IsVisible = true;
-                    PdfWebView.Source = null; // On vide pour forcer le refresh
-                });
+                ImageContainer.IsVisible = false;
+                ImageAnnotationsContainer.IsVisible = false;
+                AnnotationsContainer.IsVisible = true; // Activer l'overlay PDF
+                ImageTouchGrid.IsVisible = false;
+                PdfWebView.IsVisible = true;
 
                 if (DeviceInfo.Platform == DevicePlatform.Android)
                 {
                     await EnsurePdfJsReadyAsync();
                     
-                    // On attend un court instant que la WebView soit prête dans le layout
-                    await Task.Delay(200);
-
                     string pdfjsDir = Path.Combine(FileSystem.CacheDirectory, "pdfjs");
                     string viewerPath = Path.Combine(pdfjsDir, "viewer.html");
                     
@@ -325,19 +336,28 @@ public partial class ViewerPage : ContentPage
                     string finalViewerPath = viewerPath.StartsWith("/") ? $"file://{viewerPath}" : $"file:///{viewerPath}";
                     string finalFilePath = fullPath.StartsWith("/") ? $"file://{fullPath}" : $"file:///{fullPath}";
                     
-                    string pdfJsUrl = $"{finalViewerPath}?file={Uri.EscapeDataString(finalFilePath)}#page=1";
+                    string pdfJsUrl = $"{finalViewerPath}?file={Uri.EscapeDataString(finalFilePath)}&rot={_score.Rotation}&page=1";
 
                     System.Diagnostics.Debug.WriteLine($"[Viewer] WebView Source finale: {pdfJsUrl}");
                     _pdfFilePath = finalFilePath; 
-                    MainThread.BeginInvokeOnMainThread(() => {
-                        PdfWebView.Source = new UrlWebViewSource { Url = pdfJsUrl };
+                    PdfWebView.Source = new UrlWebViewSource { Url = pdfJsUrl };
+
+                    // Transmettre toutes les rotations spécifiques de pages pré-existantes une fois chargé
+                    _ = Task.Run(async () =>
+                    {
+                        await Task.Delay(800);
+                        foreach (var kvp in _pageRotations)
+                        {
+                            await MainThread.InvokeOnMainThreadAsync(async () =>
+                            {
+                                await PdfWebView.EvaluateJavaScriptAsync($"setPageRotation({kvp.Key}, {kvp.Value})");
+                            });
+                        }
                     });
                 }
                 else
                 {
-                    MainThread.BeginInvokeOnMainThread(() => {
-                        PdfWebView.Source = fullPath;
-                    });
+                    PdfWebView.Source = fullPath;
                 }
             }
 
@@ -350,22 +370,28 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private static bool _isPdfJsReady = false;
+
     private async Task EnsurePdfJsReadyAsync()
     {
+        if (_isPdfJsReady) return;
+
         string cacheDir = FileSystem.CacheDirectory;
         string pdfjsDir = Path.Combine(cacheDir, "pdfjs");
 
         if (!Directory.Exists(pdfjsDir)) Directory.CreateDirectory(pdfjsDir);
 
         string[] files = { "pdf.min.js", "pdf.worker.min.js", "viewer.html" };
+        bool allFilesExist = true;
 
         foreach (var file in files)
         {
             string dest = Path.Combine(pdfjsDir, file);
-
-            // On force la mise à jour pour être sûr que les nouveaux viewer.html sont bien là
-            try
+            if (!File.Exists(dest) || new FileInfo(dest).Length == 0)
             {
+                allFilesExist = false;
+                try
+                {
                     using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
                     using var fileStream = File.Create(dest);
                     await stream.CopyToAsync(fileStream);
@@ -374,28 +400,30 @@ public partial class ViewerPage : ContentPage
                 {
                     System.Diagnostics.Debug.WriteLine($"Error copying {file}: {ex.Message}");
                 }
+            }
+        }
+
+        if (allFilesExist)
+        {
+            _isPdfJsReady = true;
         }
     }
 
-    private async void OnPdfWebViewNavigated(object sender, WebNavigatedEventArgs e)
+    private void OnPdfWebViewNavigated(object sender, WebNavigatedEventArgs e)
     {
         if (_score.Type == ScoreType.PDF && e.Result == WebNavigationResult.Success)
         {
-            System.Diagnostics.Debug.WriteLine("[Viewer] WebView Navigated - Auto-load en cours...");
-            
-            if (_currentRotation != 0)
-            {
-                await Task.Delay(500);
-                await PdfWebView.EvaluateJavaScriptAsync($"setRotation({_currentRotation})");
-            }
-            
+            System.Diagnostics.Debug.WriteLine("[Viewer] WebView Navigated - Prêt.");
             _isScoreReady = true;
             if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
         }
     }
 
-    private double _lastTotalX = 0;
-    private double _lastTotalY = 0;
+    private double _startScale = 1;
+    private double _startTranslationX = 0;
+    private double _startTranslationY = 0;
+    private double _panStartX = 0;
+    private double _panStartY = 0;
     private bool _isPinching = false;
 
     private void OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
@@ -403,17 +431,19 @@ public partial class ViewerPage : ContentPage
         if (e.Status == GestureStatus.Started)
         {
             _isPinching = true;
-            startScale = ZoomLayout.Scale;
+            _startScale = ZoomLayout.Scale;
+            _startTranslationX = ZoomLayout.TranslationX;
+            _startTranslationY = ZoomLayout.TranslationY;
             ZoomLayout.AnchorX = 0.5;
             ZoomLayout.AnchorY = 0.5;
         }
-        if (e.Status == GestureStatus.Running)
+        else if (e.Status == GestureStatus.Running)
         {
             _isPinching = true;
-            // e.Scale est un facteur d'échelle relatif (delta) depuis le dernier événement dans MAUI sur Android
-            double targetScale = ZoomLayout.Scale * e.Scale;
-            targetScale = Math.Max(1, targetScale);
-            targetScale = Math.Min(4, targetScale);
+
+            // Calcul du nouveau facteur d'échelle absolu basé sur startScale
+            double targetScale = _startScale * e.Scale;
+            targetScale = Math.Max(1.0, Math.Min(5.0, targetScale));
             currentScale = targetScale;
             ZoomLayout.Scale = targetScale;
 
@@ -422,14 +452,44 @@ public partial class ViewerPage : ContentPage
                 ZoomLayout.TranslationX = 0;
                 ZoomLayout.TranslationY = 0;
             }
+            else
+            {
+                // Zoom centré sur le point focal du pincement (ScaleOrigin)
+                double ox = e.ScaleOrigin.X;
+                double oy = e.ScaleOrigin.Y;
+                double width = ZoomLayout.Width > 0 ? ZoomLayout.Width : this.Width;
+                double height = ZoomLayout.Height > 0 ? ZoomLayout.Height : this.Height;
+
+                double deltaScale = targetScale - _startScale;
+                double targetTx = _startTranslationX - (deltaScale * (ox - 0.5) * width);
+                double targetTy = _startTranslationY - (deltaScale * (oy - 0.5) * height);
+
+                double maxTx = Math.Max(0, (width * (targetScale - 1)) / 2);
+                double maxTy = Math.Max(0, (height * (targetScale - 1)) / 2);
+
+                ZoomLayout.TranslationX = Math.Max(-maxTx, Math.Min(maxTx, targetTx));
+                ZoomLayout.TranslationY = Math.Max(-maxTy, Math.Min(maxTy, targetTy));
+            }
         }
-        if (e.Status == GestureStatus.Completed || e.Status == GestureStatus.Canceled)
+        else if (e.Status == GestureStatus.Completed || e.Status == GestureStatus.Canceled)
         {
             _isPinching = false;
-            if (ZoomLayout.Scale <= 1.0)
+            if (ZoomLayout.Scale <= 1.05)
             {
+                ZoomLayout.Scale = 1;
                 ZoomLayout.TranslationX = 0;
                 ZoomLayout.TranslationY = 0;
+                currentScale = 1;
+            }
+            else
+            {
+                double width = ZoomLayout.Width > 0 ? ZoomLayout.Width : this.Width;
+                double height = ZoomLayout.Height > 0 ? ZoomLayout.Height : this.Height;
+                double maxTx = Math.Max(0, (width * (ZoomLayout.Scale - 1)) / 2);
+                double maxTy = Math.Max(0, (height * (ZoomLayout.Scale - 1)) / 2);
+
+                ZoomLayout.TranslationX = Math.Max(-maxTx, Math.Min(maxTx, ZoomLayout.TranslationX));
+                ZoomLayout.TranslationY = Math.Max(-maxTy, Math.Min(maxTy, ZoomLayout.TranslationY));
             }
         }
     }
@@ -438,29 +498,25 @@ public partial class ViewerPage : ContentPage
     {
         if (e.StatusType == GestureStatus.Started)
         {
-            _lastTotalX = 0;
-            _lastTotalY = 0;
+            _panStartX = ZoomLayout.TranslationX;
+            _panStartY = ZoomLayout.TranslationY;
             return;
         }
 
         if (e.StatusType == GestureStatus.Running)
         {
-            double deltaX = e.TotalX - _lastTotalX;
-            double deltaY = e.TotalY - _lastTotalY;
-            _lastTotalX = e.TotalX;
-            _lastTotalY = e.TotalY;
+            if (_isPinching) return;
 
-            if (_isPinching)
-                return;
-
-            if (ZoomLayout.Scale > 1)
+            if (ZoomLayout.Scale > 1.0)
             {
-                double targetX = ZoomLayout.TranslationX + deltaX;
-                double targetY = ZoomLayout.TranslationY + deltaY;
+                double targetX = _panStartX + e.TotalX;
+                double targetY = _panStartY + e.TotalY;
 
-                // Calculer les limites pour ne pas sortir des bords de l'image agrandie
-                double maxTx = Math.Max(0, (ZoomLayout.Width * (ZoomLayout.Scale - 1)) / 2);
-                double maxTy = Math.Max(0, (ZoomLayout.Height * (ZoomLayout.Scale - 1)) / 2);
+                double width = ZoomLayout.Width > 0 ? ZoomLayout.Width : this.Width;
+                double height = ZoomLayout.Height > 0 ? ZoomLayout.Height : this.Height;
+
+                double maxTx = Math.Max(0, (width * (ZoomLayout.Scale - 1)) / 2);
+                double maxTy = Math.Max(0, (height * (ZoomLayout.Scale - 1)) / 2);
 
                 ZoomLayout.TranslationX = Math.Max(-maxTx, Math.Min(maxTx, targetX));
                 ZoomLayout.TranslationY = Math.Max(-maxTy, Math.Min(maxTy, targetY));
@@ -468,8 +524,8 @@ public partial class ViewerPage : ContentPage
         }
         else if (e.StatusType == GestureStatus.Completed || e.StatusType == GestureStatus.Canceled)
         {
-            _lastTotalX = 0;
-            _lastTotalY = 0;
+            _panStartX = ZoomLayout.TranslationX;
+            _panStartY = ZoomLayout.TranslationY;
         }
     }
 
@@ -823,10 +879,19 @@ public partial class ViewerPage : ContentPage
     private void ShowMenu()
     {
         MenuTitleLabel.Text = _score.Title;
+        UpdateRotateButtonText();
         CentralMenuOverlay.IsVisible = true;
         ImageContainer.InputTransparent = true; // Empêche l'image de bloquer les clics sur le menu !
         ZoomLayout.InputTransparent = true; // Empêche le layout de zoom de bloquer les clics sur le menu !
         BottomTouchBar.IsVisible = false; // Désactive la zone tactile du bas quand le menu est ouvert
+    }
+
+    private void OnRotateAllPagesToggled(object sender, ToggledEventArgs e)
+    {
+        if (RotationScopeLabel != null)
+        {
+            RotationScopeLabel.Text = e.Value ? "Appliquer à TOUTE la partition" : "Appliquer à cette page uniquement";
+        }
     }
 
     private async void OnRotateClicked(object sender, EventArgs e)
@@ -834,13 +899,25 @@ public partial class ViewerPage : ContentPage
         _currentRotation = (_currentRotation + 90) % 360;
         UpdateRotateButtonText();
 
+        bool applyToAll = RotateAllPagesSwitch != null && RotateAllPagesSwitch.IsToggled;
+
+        if (applyToAll)
+        {
+            _pageRotations.Clear();
+            _score.Rotation = _currentRotation;
+        }
+        else
+        {
+            _pageRotations[_currentPage] = _currentRotation;
+        }
+
         if (_score.Type == ScoreType.Image)
         {
             ScoreImage.Rotation = _currentRotation;
         }
         else
         {
-            await PdfWebView.EvaluateJavaScriptAsync($"setRotation({_currentRotation})");
+            await PdfWebView.EvaluateJavaScriptAsync($"setRotation({_currentRotation}, {applyToAll.ToString().ToLowerInvariant()})");
         }
 
         if (SaveRotationSwitch.IsToggled)
@@ -859,14 +936,29 @@ public partial class ViewerPage : ContentPage
         {
             _score.IsRotationSaved = false;
             await _databaseService.SaveScoreAsync(_score);
+            await _databaseService.DeletePageRotationsForScoreAsync(_score.Id);
+            _pageRotations.Clear();
         }
     }
 
     private async Task SaveRotationToDbAsync()
     {
-        _score.Rotation = _currentRotation;
-        _score.IsRotationSaved = true;
-        await _databaseService.SaveScoreAsync(_score);
+        bool applyToAll = RotateAllPagesSwitch != null && RotateAllPagesSwitch.IsToggled;
+        
+        if (applyToAll)
+        {
+            _score.Rotation = _currentRotation;
+            _score.IsRotationSaved = true;
+            await _databaseService.SaveScoreAsync(_score);
+            await _databaseService.DeletePageRotationsForScoreAsync(_score.Id);
+            _pageRotations.Clear();
+        }
+        else
+        {
+            _score.IsRotationSaved = true;
+            await _databaseService.SaveScoreAsync(_score);
+            await _databaseService.SavePageRotationAsync(_score.Id, _currentPage, _currentRotation);
+        }
     }
 
     private async void OnBackClicked(object sender, EventArgs e)
@@ -985,7 +1077,9 @@ public partial class ViewerPage : ContentPage
         if (position == null) return;
 
         double x = position.Value.X;
-        double width = this.Width;
+        double y = position.Value.Y;
+        double width = this.Width > 0 ? this.Width : 1;
+        double height = this.Height > 0 ? this.Height : 1;
 
         // Double tap au centre (30% - 70%) : Afficher le menu central (fonctionne toujours, même zoomé !)
         if (x >= width * 0.3 && x <= width * 0.7)
@@ -994,13 +1088,32 @@ public partial class ViewerPage : ContentPage
             return;
         }
 
-        // Double tap sur les côtés quand on est zoomé : réinitialise le zoom à sa taille de départ
-        if (ZoomLayout.Scale > 1)
+        // Double tap sur les côtés :
+        // Si déjà zoomé -> réinitialise le zoom à sa taille normale
+        if (ZoomLayout.Scale > 1.05)
         {
             ZoomLayout.Scale = 1;
             ZoomLayout.TranslationX = 0;
             ZoomLayout.TranslationY = 0;
             currentScale = 1;
+        }
+        else
+        {
+            // Zoom rapide x2.5 centré sur le tap
+            double targetScale = 2.5;
+            double ox = x / width;
+            double oy = y / height;
+
+            double targetTx = - (targetScale - 1.0) * (ox - 0.5) * width;
+            double targetTy = - (targetScale - 1.0) * (oy - 0.5) * height;
+
+            double maxTx = Math.Max(0, (width * (targetScale - 1)) / 2);
+            double maxTy = Math.Max(0, (height * (targetScale - 1)) / 2);
+
+            ZoomLayout.Scale = targetScale;
+            ZoomLayout.TranslationX = Math.Max(-maxTx, Math.Min(maxTx, targetTx));
+            ZoomLayout.TranslationY = Math.Max(-maxTy, Math.Min(maxTy, targetTy));
+            currentScale = targetScale;
         }
     }
 
@@ -1156,6 +1269,22 @@ public partial class ViewerPage : ContentPage
         if (StickerPickerOverlay.IsVisible && StickerCategoriesCollection.ItemsSource == null)
         {
             await InitializeAnnotationUI();
+        }
+    }
+
+    private void OnCloseStickerPickerClicked(object sender, EventArgs e)
+    {
+        StickerPickerOverlay.IsVisible = false;
+        StickerPickerOverlay.TranslationY = 0;
+
+        _pendingSticker = null;
+        _isAnnotationMode = false;
+        AnnotationsContainer.InputTransparent = true;
+        ImageAnnotationsContainer.InputTransparent = true;
+
+        if (StickersCollection != null)
+        {
+            StickersCollection.SelectedItem = null;
         }
     }
 
@@ -1355,6 +1484,12 @@ public partial class ViewerPage : ContentPage
 
     private async void OnStickerDrop(object? sender, DropEventArgs e)
     {
+        if (_isAnnotationsLocked)
+        {
+            await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour ajouter des stickers.", "OK");
+            return;
+        }
+
         if (e.Data.Properties.TryGetValue("Sticker", out var stickerObj) && stickerObj is string sticker)
         {
             var position = e.GetPosition(ActiveAnnotationsContainer);
@@ -1367,21 +1502,28 @@ public partial class ViewerPage : ContentPage
 
             if (StickerPickerOverlay.IsVisible)
             {
-                // Le sélecteur fait 240px de haut + 70px de marge du bas, plus sa translation éventuelle si déplacé verticalement
-                double pickerTop = containerHeight - 320 + StickerPickerOverlay.TranslationY;
-                if (absY > pickerTop)
+                // Vérifier si le drop tombe précisément À L'INTÉRIEUR du sélecteur de stickers
+                double pickerHeight = StickerPickerOverlay.Height > 0 ? StickerPickerOverlay.Height : 270;
+                double pickerTop = containerHeight - pickerHeight - 70 + StickerPickerOverlay.TranslationY;
+                double pickerBottom = pickerTop + pickerHeight;
+
+                if (absY >= pickerTop && absY <= pickerBottom)
                 {
-                    System.Diagnostics.Debug.WriteLine("[Viewer] Drop ignoré car situé dans la zone du sélecteur de stickers.");
+                    System.Diagnostics.Debug.WriteLine("[Viewer] Drop ignoré car situé dans la surface du sélecteur de stickers.");
                     return;
                 }
             }
-            else if (AnnotationBar.IsVisible)
+            
+            if (AnnotationBar.IsVisible)
             {
-                // La barre d'annotations fait 45px de haut, plus sa translation
-                double barTop = containerHeight - 60 + AnnotationBar.TranslationY;
-                if (absY > barTop)
+                // Vérifier si le drop tombe précisément À L'INTÉRIEUR de la barre d'annotations (45px de haut)
+                double barHeight = AnnotationBar.Height > 0 ? AnnotationBar.Height : 45;
+                double barTop = containerHeight - barHeight + AnnotationBar.TranslationY;
+                double barBottom = barTop + barHeight;
+
+                if (absY >= barTop && absY <= barBottom)
                 {
-                    System.Diagnostics.Debug.WriteLine("[Viewer] Drop ignoré car situé dans la zone de la barre d'annotations.");
+                    System.Diagnostics.Debug.WriteLine("[Viewer] Drop ignoré car situé dans la surface de la barre d'annotations.");
                     return;
                 }
             }
@@ -1416,10 +1558,17 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private void OnStickerSelected(object? sender, SelectionChangedEventArgs e)
+    private async void OnStickerSelected(object? sender, SelectionChangedEventArgs e)
     {
         if (e.CurrentSelection.FirstOrDefault() is StickerItem sticker)
         {
+            if (_isAnnotationsLocked)
+            {
+                if (StickersCollection != null) StickersCollection.SelectedItem = null;
+                await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Cliquez sur le cadenas (🔓) dans la barre du bas pour pouvoir ajouter des stickers.", "OK");
+                return;
+            }
+
             _pendingSticker = sticker.Text;
             _isAnnotationMode = true;
             
@@ -1442,6 +1591,15 @@ public partial class ViewerPage : ContentPage
     private async void OnPlacementTapped(object? sender, TappedEventArgs e)
     {
         if (!_isAnnotationMode || _pendingSticker == null) return;
+
+        if (_isAnnotationsLocked)
+        {
+            _pendingSticker = null;
+            _isAnnotationMode = false;
+            if (ActiveAnnotationsContainer != null) ActiveAnnotationsContainer.InputTransparent = true;
+            await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir les modifier.", "OK");
+            return;
+        }
 
         var position = e.GetPosition(ActiveAnnotationsContainer);
         if (position == null) return;

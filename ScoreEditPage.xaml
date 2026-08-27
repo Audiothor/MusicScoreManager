@@ -55,6 +55,29 @@
                             Clicked="OnImportScoreToLibraryClicked" />
                 </Grid>
 
+                <!-- Informations non modifiables du fichier -->
+                <Border BackgroundColor="#1A1E24" Stroke="#2A303C" StrokeThickness="1" Padding="12,10" Margin="0,5">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="8" />
+                    </Border.StrokeShape>
+                    <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" RowSpacing="6" ColumnSpacing="10">
+                        <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="6" VerticalOptions="Center">
+                            <Label Text="📏 Taille :" TextColor="#AAAAAA" FontSize="12" />
+                            <Label x:Name="FileSizeLabel" Text="--" TextColor="#4CAF50" FontSize="12" FontAttributes="Bold" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                            <Label Text="📅 Modifié le :" TextColor="#AAAAAA" FontSize="12" />
+                            <Label x:Name="FileModifiedDateLabel" Text="--" TextColor="#007ACC" FontSize="12" FontAttributes="Bold" />
+                        </HorizontalStackLayout>
+                        
+                        <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="6" VerticalOptions="Center">
+                            <Label Text="✨ Ajouté le :" TextColor="#AAAAAA" FontSize="12" />
+                            <Label x:Name="FileCreatedDateLabel" Text="--" TextColor="#E0E0E0" FontSize="12" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Border>
+
                 <Label Text="Étiquettes" TextColor="#AAAAAA" />
                 
                 <FlexLayout x:Name="SelectedTagsFlexLayout" Wrap="Wrap" Direction="Row" AlignItems="Start">

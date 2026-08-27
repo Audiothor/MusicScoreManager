@@ -34,6 +34,15 @@ public partial class TagEditPage : ContentPage
         UpdatePreview();
     }
 
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(100), () =>
+        {
+            NameEntry.Focus();
+        });
+    }
+
     private void InitializeSliders()
     {
         if (!string.IsNullOrEmpty(_tag.ColorHex))

@@ -32,7 +32,7 @@
         .tap-zone {
             position: absolute;
             z-index: 100;
-            background-color: rgba(0, 0, 0, 0.01); /* Forcer la détection tactile */
+            background-color: rgba(0, 0, 0, 0.001); /* Détection tactile fluide */
         }
         #left-zone {
             top: 0;
@@ -74,7 +74,9 @@
         let pdfDoc = null;
         let pageNum = 1;
         let rotation = 0;
-        const scale = 1.5; // Optimisé pour réduire de 44% l'occupation mémoire (évite les crashs OOM)
+        const scale = 1.5;
+        let currentRenderTask = null;
+        const pageCache = new Map();
 
         // Gestion de filtrage intelligent des gestes tactiles
         let touchStartX = 0;
@@ -152,7 +154,7 @@
 
             el.addEventListener('click', function(e) {
                 if (wasTouchHandled) {
-                    wasTouchHandled = false; // reset
+                    wasTouchHandled = false;
                     return;
                 }
                 handleZoneTap(zoneName, e);
@@ -165,22 +167,99 @@
         bindZone('bottom-zone', 'bottom');
 
         const canvas = document.getElementById('pdf-canvas');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { alpha: false });
 
-        function setRotation(deg) {
-            rotation = deg;
+        const renderedBitmapCache = new Map(); // Cache d'images Bitmap pré-rendues pour affichage instantané
+        const pageRotations = new Map(); // Enregistrement de la rotation spécifique par numéro de page
+
+        function getRotationForPage(num) {
+            if (pageRotations.has(num)) {
+                return pageRotations.get(num);
+            }
+            return rotation;
+        }
+
+        function setPageRotation(pNum, deg) {
+            pageRotations.set(pNum, deg);
+            renderedBitmapCache.delete(pNum);
+            if (pNum === pageNum) {
+                renderPage(pageNum);
+            }
+        }
+
+        function setRotation(deg, applyToAll = false) {
+            if (applyToAll) {
+                rotation = deg;
+                pageRotations.clear();
+            } else {
+                pageRotations.set(pageNum, deg);
+            }
+            renderedBitmapCache.clear();
             renderPage(pageNum);
         }
 
-        async function loadPdf(source) {
+        async function getCachedPage(num) {
+            if (pageCache.has(num)) {
+                return pageCache.get(num);
+            }
+            if (!pdfDoc || num < 1 || num > pdfDoc.numPages) return null;
+            const pagePromise = pdfDoc.getPage(num);
+            pageCache.set(num, pagePromise);
+            return pagePromise;
+        }
+
+        async function prerenderPageBitmap(num) {
+            if (!pdfDoc || num < 1 || num > pdfDoc.numPages || renderedBitmapCache.has(num)) return;
             try {
+                const page = await getCachedPage(num);
+                if (!page) return;
+                const pageRot = getRotationForPage(num);
+                const viewport = page.getViewport({ scale: scale, rotation: pageRot });
+                const offscreenCanvas = document.createElement('canvas');
+                offscreenCanvas.width = viewport.width;
+                offscreenCanvas.height = viewport.height;
+                const offCtx = offscreenCanvas.getContext('2d', { alpha: false });
+                
+                const renderTask = page.render({
+                    canvasContext: offCtx,
+                    viewport: viewport,
+                    intent: 'display'
+                });
+                await renderTask.promise;
+                renderedBitmapCache.set(num, offscreenCanvas);
+            } catch (e) {}
+        }
+
+        function preloadAdjacentPages(currentNum) {
+            if (!pdfDoc) return;
+            // Précharger les objets de page et effectuer le rendu hors-écran en arrière-plan
+            setTimeout(() => {
+                if (currentNum + 1 <= pdfDoc.numPages) {
+                    prerenderPageBitmap(currentNum + 1);
+                }
+                if (currentNum - 1 >= 1) {
+                    prerenderPageBitmap(currentNum - 1);
+                }
+            }, 50);
+        }
+
+        async function loadPdf(source, initialRotation = 0, initialPage = 1) {
+            try {
+                if (initialRotation) rotation = parseInt(initialRotation, 10) || 0;
+                if (initialPage) pageNum = parseInt(initialPage, 10) || 1;
+
+                pageCache.clear();
+                renderedBitmapCache.clear();
                 let loadingTask;
                 
-                // Si la source se termine par .pdf, on charge par URL (Direct File Access)
                 if (typeof source === 'string' && source.toLowerCase().endsWith('.pdf')) {
-                    loadingTask = pdfjsLib.getDocument(source);
+                    loadingTask = pdfjsLib.getDocument({
+                        url: source,
+                        cMapUrl: 'cmaps/',
+                        cMapPacked: true,
+                        enableXfa: false
+                    });
                 } else {
-                    // Sinon on traite comme du Base64 (Ancienne méthode / Fallback)
                     const pdfData = atob(source);
                     const uint8Array = new Uint8Array(pdfData.length);
                     for (let i = 0; i < pdfData.length; i++) {
@@ -190,7 +269,7 @@
                 }
 
                 pdfDoc = await loadingTask.promise;
-                pageNum = 1;
+                if (pageNum < 1 || pageNum > pdfDoc.numPages) pageNum = 1;
                 await renderPage(pageNum);
                 return "SUCCESS";
             } catch (error) {
@@ -201,41 +280,80 @@
 
         async function renderPage(num) {
             if (!pdfDoc) return;
+
+            // SI LA PAGE EST DÉJÀ PRÉ-RENDUE DANS LE CACHE BITMAP -> AFFICHAGE INSTANTANÉ !
+            if (renderedBitmapCache.has(num)) {
+                const cachedCanvas = renderedBitmapCache.get(num);
+                canvas.width = cachedCanvas.width;
+                canvas.height = cachedCanvas.height;
+                ctx.drawImage(cachedCanvas, 0, 0);
+                
+                reportPageInfo();
+                preloadAdjacentPages(num);
+
+                if (num === 1) {
+                    window.location.href = 'app://musicscore/ready';
+                }
+                return;
+            }
             
-            // Signaler au C# que le rendu commence (pour masquer les annotations temporairement)
+            // Annuler tout rendu en cours pour éviter les blocages lors du défilement rapide
+            if (currentRenderTask) {
+                try {
+                    currentRenderTask.cancel();
+                } catch (e) {}
+                currentRenderTask = null;
+            }
+
+            // Signaler au C# que le rendu commence
             window.location.href = 'app://musicscore/rendering';
             
-            const page = await pdfDoc.getPage(num);
-            
-            // Calculer le viewport à l'échelle demandée
-            // On ajoute la rotation demandée par l'utilisateur à la rotation native du PDF
-            const viewport = page.getViewport({ scale: scale, rotation: rotation });
+            try {
+                const page = await getCachedPage(num);
+                if (!page) return;
 
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
+                const pageRot = getRotationForPage(num);
+                const viewport = page.getViewport({ scale: scale, rotation: pageRot });
 
-            // Optionnel: On peut ajuster le scale dynamiquement ici si besoin
-            
-            const renderContext = {
-                canvasContext: ctx,
-                viewport: viewport,
-                enableWebGL: true
-            };
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
 
-            // Nettoyage du contexte avant nouveau rendu
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport,
+                    intent: 'display'
+                };
 
-            await page.render(renderContext).promise;
-            reportPageInfo();
+                currentRenderTask = page.render(renderContext);
+                await currentRenderTask.promise;
+                currentRenderTask = null;
 
-            // Signaler que le PDF est prêt (pour le métronome)
-            if (num === 1) {
-                window.location.href = 'app://musicscore/ready';
+                // Mettre en cache la version dessinée
+                const offCanvas = document.createElement('canvas');
+                offCanvas.width = viewport.width;
+                offCanvas.height = viewport.height;
+                offCanvas.getContext('2d').drawImage(canvas, 0, 0);
+                renderedBitmapCache.set(num, offCanvas);
+
+                reportPageInfo();
+
+                // Précharger les pages adjacentes en tâche de fond
+                preloadAdjacentPages(num);
+
+                // Signaler que le PDF est prêt
+                if (num === 1) {
+                    window.location.href = 'app://musicscore/ready';
+                }
+            } catch (err) {
+                if (err && err.name === 'RenderingCancelledException') {
+                    // Normal lors d'un changement rapide de page
+                    return;
+                }
+                console.error("Erreur rendu page: ", err);
             }
         }
 
         function reportPageInfo() {
-            // Notifier le C# du changement de page pour l'indicateur xx/yy
             window.location.href = 'app://musicscore/pageinfo?max=' + (pdfDoc ? pdfDoc.numPages : 1) + '&current=' + pageNum;
         }
 
@@ -279,13 +397,14 @@
             window.location.href = 'app://musicscore/annotations';
         }
 
-        // Auto-chargement au démarrage si un paramètre 'file' est présent
+        // Auto-chargement au démarrage avec support du paramètre rot & page
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const file = urlParams.get('file');
+            const rot = urlParams.get('rot') || 0;
+            const page = urlParams.get('page') || 1;
             if (file) {
-                console.log("Auto-loading PDF from URL param: " + file);
-                loadPdf(file);
+                loadPdf(file, rot, page);
             }
         };
     </script>

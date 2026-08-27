@@ -20,6 +20,8 @@
                  android:supportsRtl="true" 
                  android:usesCleartextTraffic="true" 
                  android:label="MusicScoreManager"
-                 android:requestLegacyExternalStorage="true">
+                 android:requestLegacyExternalStorage="true"
+                 android:hardwareAccelerated="true"
+                 android:largeHeap="true">
     </application>
 </manifest>

@@ -20,6 +20,11 @@ public partial class SetlistsPage : ContentPage
         base.OnAppearing();
         LoadStatusFilters();
         await LoadSetlistsAsync();
+
+        Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(100), () =>
+        {
+            SearchSetlistBar.Focus();
+        });
     }
 
     private void LoadStatusFilters()

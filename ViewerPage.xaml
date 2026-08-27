@@ -165,7 +165,7 @@
                 VerticalOptions="End"
                 HorizontalOptions="Fill"
                 BackgroundColor="#EE000000"
-                HeightRequest="240"
+                HeightRequest="270"
                 Margin="10,0,10,70"
                 Padding="10"
                 StrokeThickness="1"
@@ -177,49 +177,64 @@
             
             <VerticalStackLayout Spacing="8">
                 <!-- Réglages Stickers Fusionnés -->
-                <Grid ColumnDefinitions="Auto, *, Auto, Auto" RowDefinitions="Auto, Auto" RowSpacing="6" ColumnSpacing="10" Margin="0,0,0,5">
-                    <!-- Ligne 1: Couleur Texte & Taille Slider -->
-                    <Label Grid.Row="0" Grid.Column="0" Text="Texte:" TextColor="White" VerticalOptions="Center" FontSize="12" FontAttributes="Bold" />
-                    <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="12" VerticalOptions="Center">
-                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="White" Stroke="Gray" StrokeThickness="1">
-                            <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="White"/></Ellipse.GestureRecognizers>
-                        </Ellipse>
-                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="Black" Stroke="Gray" StrokeThickness="1">
-                            <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Black"/></Ellipse.GestureRecognizers>
-                        </Ellipse>
-                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="Red">
-                            <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Red"/></Ellipse.GestureRecognizers>
-                        </Ellipse>
-                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="#007ACC">
-                            <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Blue"/></Ellipse.GestureRecognizers>
-                        </Ellipse>
-                    </HorizontalStackLayout>
-                    
-                    <Label Grid.Row="0" Grid.Column="2" Text="Taille:" TextColor="White" VerticalOptions="Center" FontSize="12" FontAttributes="Bold" />
-                    <Slider Grid.Row="0" Grid.Column="3" x:Name="StickerSizeSlider" Minimum="0.5" Maximum="4.0" Value="1.2" WidthRequest="110" VerticalOptions="Center" ValueChanged="OnStickerSizeChanged" />
+                <Grid RowDefinitions="Auto, Auto, Auto" RowSpacing="8" Margin="0,0,0,5">
+                    <!-- Header : Titre et Bouton Fermer -->
+                    <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                        <Label Grid.Column="0" Text="Réglages des stickers" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Button Grid.Column="1" Text="✕" TextColor="#FF5555" BackgroundColor="Transparent" FontSize="18" FontAttributes="Bold" Padding="0" WidthRequest="32" HeightRequest="32" VerticalOptions="Center" HorizontalOptions="Center" Clicked="OnCloseStickerPickerClicked" />
+                    </Grid>
 
-                    <!-- Ligne 2: Couleur de Fond -->
-                    <Label Grid.Row="1" Grid.Column="0" Text="Fond:" TextColor="White" VerticalOptions="Center" FontSize="12" FontAttributes="Bold" />
-                    <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Spacing="12" VerticalOptions="Center">
-                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="Transparent" Stroke="Gray" StrokeThickness="1">
-                            <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Transparent"/></Ellipse.GestureRecognizers>
-                        </Ellipse>
-                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="#333333" Stroke="Gray" StrokeThickness="1">
-                            <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="DarkGray"/></Ellipse.GestureRecognizers>
-                        </Ellipse>
-                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="#FFFFE0" Stroke="Gray" StrokeThickness="1">
-                            <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Ivory"/></Ellipse.GestureRecognizers>
-                        </Ellipse>
-                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="Red">
-                            <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Red"/></Ellipse.GestureRecognizers>
-                        </Ellipse>
-                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="Yellow">
-                            <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Yellow"/></Ellipse.GestureRecognizers>
-                        </Ellipse>
-                        <Ellipse WidthRequest="18" HeightRequest="18" Fill="#2ECC71">
-                            <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Green"/></Ellipse.GestureRecognizers>
-                        </Ellipse>
-                    </HorizontalStackLayout>
+                    <!-- Ligne 1: Couleurs Texte et Fond -->
+                    <Grid Grid.Row="1" ColumnDefinitions="Auto, *, Auto, *" ColumnSpacing="8" VerticalOptions="Center">
+                        <Label Grid.Column="0" Text="Texte:" TextColor="White" VerticalOptions="Center" FontSize="12" FontAttributes="Bold" />
+                        <HorizontalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
+                            <Ellipse WidthRequest="22" HeightRequest="22" Fill="White" Stroke="Gray" StrokeThickness="1">
+                                <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="White"/></Ellipse.GestureRecognizers>
+                            </Ellipse>
+                            <Ellipse WidthRequest="22" HeightRequest="22" Fill="Black" Stroke="Gray" StrokeThickness="1">
+                                <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Black"/></Ellipse.GestureRecognizers>
+                            </Ellipse>
+                            <Ellipse WidthRequest="22" HeightRequest="22" Fill="Red">
+                                <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Red"/></Ellipse.GestureRecognizers>
+                            </Ellipse>
+                            <Ellipse WidthRequest="22" HeightRequest="22" Fill="#007ACC">
+                                <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Blue"/></Ellipse.GestureRecognizers>
+                            </Ellipse>
+                        </HorizontalStackLayout>
+
+                        <Label Grid.Column="2" Text="Fond:" TextColor="White" VerticalOptions="Center" FontSize="12" FontAttributes="Bold" />
+                        <HorizontalStackLayout Grid.Column="3" Spacing="8" VerticalOptions="Center">
+                            <Ellipse WidthRequest="22" HeightRequest="22" Fill="Transparent" Stroke="Gray" StrokeThickness="1">
+                                <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Transparent"/></Ellipse.GestureRecognizers>
+                            </Ellipse>
+                            <Ellipse WidthRequest="22" HeightRequest="22" Fill="#333333" Stroke="Gray" StrokeThickness="1">
+                                <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="DarkGray"/></Ellipse.GestureRecognizers>
+                            </Ellipse>
+                            <Ellipse WidthRequest="22" HeightRequest="22" Fill="#FFFFE0" Stroke="Gray" StrokeThickness="1">
+                                <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Ivory"/></Ellipse.GestureRecognizers>
+                            </Ellipse>
+                            <Ellipse WidthRequest="22" HeightRequest="22" Fill="Red">
+                                <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Red"/></Ellipse.GestureRecognizers>
+                            </Ellipse>
+                            <Ellipse WidthRequest="22" HeightRequest="22" Fill="Yellow">
+                                <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Yellow"/></Ellipse.GestureRecognizers>
+                            </Ellipse>
+                            <Ellipse WidthRequest="22" HeightRequest="22" Fill="#2ECC71">
+                                <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Green"/></Ellipse.GestureRecognizers>
+                            </Ellipse>
+                        </HorizontalStackLayout>
+                    </Grid>
+
+                    <!-- Ligne 2: Taille Slider large et tactile -->
+                    <Grid Grid.Row="2" ColumnDefinitions="Auto, *" ColumnSpacing="10" VerticalOptions="Center">
+                        <Label Grid.Column="0" Text="Taille:" TextColor="White" VerticalOptions="Center" FontSize="13" FontAttributes="Bold" />
+                        <Slider Grid.Column="1" x:Name="StickerSizeSlider" 
+                                Minimum="0.5" Maximum="4.0" Value="1.2" 
+                                HeightRequest="36" 
+                                MinimumTrackColor="#007ACC" MaximumTrackColor="#555555" ThumbColor="White" 
+                                VerticalOptions="Center" HorizontalOptions="FillAndExpand" 
+                                ValueChanged="OnStickerSizeChanged" />
+                    </Grid>
                 </Grid>
 
                 <BoxView HeightRequest="1" Color="#444444" />
@@ -322,7 +337,7 @@
             </Grid>
         </Border>
 
-        <!-- Indicateur de page (tout en bas) -->
+        <!-- Indicateur de page (tout en bas, cliquable pour changement de page direct) -->
         <Label x:Name="PageIndicator" 
                IsVisible="False" 
                HorizontalOptions="End" 
@@ -330,7 +345,12 @@
                Margin="0, 0, 10, 5" 
                TextColor="White" 
                BackgroundColor="#80000000" 
-               Padding="10,5" />
+               Padding="10,5"
+               ZIndex="1000">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnGoToPageClicked" />
+            </Label.GestureRecognizers>
+        </Label>
 
         <!-- Menu Central Moderne et Compact -->
         <Border x:Name="CentralMenuOverlay" 
@@ -350,14 +370,20 @@
                 <Label x:Name="MenuTitleLabel" FontSize="16" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Margin="0,0,0,5" />
                 
                 <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
-                    <Button Grid.Column="0" x:Name="RotateBtn" Text="↻ Rotation" 
+                    <Button Grid.Column="0" x:Name="RotateBtn" Text="↻ Rotation (+90°)" 
                             BackgroundColor="#333333" TextColor="White" FontSize="13" CornerRadius="10" HeightRequest="40" Clicked="OnRotateClicked" />
                     <Button Grid.Column="1" Text="📄 Page" 
                             BackgroundColor="#333333" TextColor="White" FontSize="13" CornerRadius="10" HeightRequest="40" Clicked="OnGoToPageClicked" />
                 </Grid>
 
+                <!-- Option de portée de rotation -->
                 <Grid ColumnDefinitions="*, Auto" Margin="5,0">
-                    <Label Text="Mémoriser rotation" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
+                    <Label x:Name="RotationScopeLabel" Text="Appliquer à cette page uniquement" TextColor="#AAAAAA" FontSize="12" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" x:Name="RotateAllPagesSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnRotateAllPagesToggled" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*, Auto" Margin="5,0">
+                    <Label Text="Mémoriser les rotations" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
                     <Switch Grid.Column="1" x:Name="SaveRotationSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnSaveRotationToggled" />
                 </Grid>
 

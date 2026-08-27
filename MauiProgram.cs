@@ -38,7 +38,7 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
-		// Configuration WebView pour Android (autoriser l'accès aux fichiers locaux pour PDF.js et activer le zoom)
+		// Configuration WebView pour Android (autoriser l'accès aux fichiers locaux pour PDF.js, accélération matérielle et zoom)
 		Microsoft.Maui.Handlers.WebViewHandler.Mapper.AppendToMapping("AllowFileAccess", (handler, view) =>
 		{
 #if ANDROID
@@ -48,6 +48,10 @@ public static class MauiProgram
 			handler.PlatformView.Settings.BuiltInZoomControls = true;
 			handler.PlatformView.Settings.DisplayZoomControls = false; // Masque les boutons +/- laids d'Android
 			handler.PlatformView.Settings.SetSupportZoom(true);
+			handler.PlatformView.Settings.DomStorageEnabled = true;
+			handler.PlatformView.Settings.DatabaseEnabled = true;
+			handler.PlatformView.Settings.CacheMode = Android.Webkit.CacheModes.Default;
+			handler.PlatformView.SetLayerType(Android.Views.LayerType.Hardware, null);
 #endif
 		});
 
