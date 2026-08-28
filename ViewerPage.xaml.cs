@@ -101,12 +101,21 @@ public partial class ViewerPage : ContentPage
 
         // Repositionner dynamiquement les annotations lors des changements de taille du conteneur (rotation, layout, etc.)
         AnnotationsContainer.SizeChanged += (s, e) => RenderAnnotations();
+        AnnotationsContainer.HandlerChanged += (s, e) => {
+#if ANDROID
+            SetupNativeTouchHandling();
+#endif
+        };
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
         System.Diagnostics.Debug.WriteLine("[Viewer] OnAppearing appelé.");
+
+#if ANDROID
+        SetupNativeTouchHandling();
+#endif
         
         // On charge les rotations en amont avant de rendre le contenu
         MainThread.BeginInvokeOnMainThread(async () => {
@@ -1425,6 +1434,307 @@ public partial class ViewerPage : ContentPage
     private Microsoft.Maui.Controls.Shapes.Polyline? _activeLivePolyline = null;
     private List<Point> _activeLivePoints = new();
 
+#if ANDROID
+    private float _pinchStartDist = 0;
+    private double _pinchStartScale = 1.0;
+    private float _pinchStartMidX = 0;
+    private float _pinchStartMidY = 0;
+    private double _pinchStartTx = 0;
+    private double _pinchStartTy = 0;
+    private float _panLastX = 0;
+    private float _panLastY = 0;
+    private bool _isNativePinching = false;
+    private bool _isNativePanning = false;
+    private long _touchDownTime = 0;
+    private float _touchDownX = 0;
+    private float _touchDownY = 0;
+    private long _lastTapTime = 0;
+
+    private void SetupNativeTouchHandling()
+    {
+        if (AnnotationsContainer.Handler?.PlatformView is Android.Views.View nativeView)
+        {
+            nativeView.Touch -= OnNativeAnnotationsContainerTouch;
+            nativeView.Touch += OnNativeAnnotationsContainerTouch;
+        }
+    }
+
+    private void OnNativeAnnotationsContainerTouch(object? sender, Android.Views.View.TouchEventArgs args)
+    {
+        var motionEvent = args.Event;
+        if (motionEvent == null)
+        {
+            args.Handled = false;
+            return;
+        }
+
+        float density = Android.App.Application.Context.Resources?.DisplayMetrics?.Density ?? 1.0f;
+        int pointerCount = motionEvent.PointerCount;
+
+        // 1. GESTION DU MODE SURLIGNAGE (1 doigt, mode actif et déverrouillé)
+        if (_isHighlightMode && !_isAnnotationsLocked)
+        {
+            double touchX = motionEvent.GetX() / density;
+            double touchY = motionEvent.GetY() / density;
+
+            switch (motionEvent.ActionMasked)
+            {
+                case Android.Views.MotionEventActions.Down:
+                    StartLiveHighlightStroke(new Point(touchX, touchY));
+                    args.Handled = true;
+                    return;
+
+                case Android.Views.MotionEventActions.Move:
+                    AddLiveHighlightPoint(new Point(touchX, touchY));
+                    args.Handled = true;
+                    return;
+
+                case Android.Views.MotionEventActions.Up:
+                    _ = FinishLiveHighlightStrokeAsync();
+                    args.Handled = true;
+                    return;
+
+                case Android.Views.MotionEventActions.Cancel:
+                    if (_activeLivePolyline != null)
+                    {
+                        ActiveAnnotationsContainer.Children.Remove(_activeLivePolyline);
+                        _activeLivePolyline = null;
+                    }
+                    _activeLivePoints.Clear();
+                    args.Handled = true;
+                    return;
+            }
+        }
+
+        // 2. GESTION DU PINCH / ZOOM À 2 DOIGTS (Multi-touch)
+        if (pointerCount >= 2)
+        {
+            float x0 = motionEvent.GetX(0) / density;
+            float y0 = motionEvent.GetY(0) / density;
+            float x1 = motionEvent.GetX(1) / density;
+            float y1 = motionEvent.GetY(1) / density;
+
+            float dist = (float)Math.Sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
+            float midX = (x0 + x1) / 2.0f;
+            float midY = (y0 + y1) / 2.0f;
+
+            if (motionEvent.ActionMasked == Android.Views.MotionEventActions.PointerDown || !_isNativePinching)
+            {
+                _isNativePinching = true;
+                _pinchStartDist = Math.Max(dist, 10f);
+                _pinchStartScale = ZoomLayout.Scale;
+                _pinchStartTx = ZoomLayout.TranslationX;
+                _pinchStartTy = ZoomLayout.TranslationY;
+                _pinchStartMidX = midX;
+                _pinchStartMidY = midY;
+            }
+            else if (motionEvent.ActionMasked == Android.Views.MotionEventActions.Move && _pinchStartDist > 10f)
+            {
+                float scaleRatio = dist / _pinchStartDist;
+                double newScale = Math.Clamp(_pinchStartScale * scaleRatio, 1.0, 5.0);
+                ZoomLayout.Scale = newScale;
+                currentScale = newScale;
+
+                if (newScale <= 1.05)
+                {
+                    ZoomLayout.TranslationX = 0;
+                    ZoomLayout.TranslationY = 0;
+                }
+                else
+                {
+                    double deltaScale = newScale - _pinchStartScale;
+                    double w = ZoomLayout.Width > 0 ? ZoomLayout.Width : this.Width;
+                    double h = ZoomLayout.Height > 0 ? ZoomLayout.Height : this.Height;
+
+                    double maxTx = Math.Max(0, (w * (newScale - 1)) / 2.0);
+                    double maxTy = Math.Max(0, (h * (newScale - 1)) / 2.0);
+
+                    double tx = _pinchStartTx + (midX - _pinchStartMidX) - (deltaScale * (midX / w - 0.5) * w);
+                    double ty = _pinchStartTy + (midY - _pinchStartMidY) - (deltaScale * (midY / h - 0.5) * h);
+
+                    ZoomLayout.TranslationX = Math.Clamp(tx, -maxTx, maxTx);
+                    ZoomLayout.TranslationY = Math.Clamp(ty, -maxTy, maxTy);
+                }
+            }
+            args.Handled = true;
+            return;
+        }
+
+        // Fin du pincement
+        if (_isNativePinching && pointerCount < 2)
+        {
+            _isNativePinching = false;
+            _pinchStartDist = 0;
+            if (ZoomLayout.Scale <= 1.05)
+            {
+                ZoomLayout.Scale = 1.0;
+                ZoomLayout.TranslationX = 0;
+                ZoomLayout.TranslationY = 0;
+                currentScale = 1.0;
+            }
+        }
+
+        // 3. GESTION DU DÉPLACEMENT (PAN) LORSQU'ON EST ZOOMÉ (1 doigt)
+        if (ZoomLayout.Scale > 1.05 && !_isHighlightMode)
+        {
+            float currentX = motionEvent.GetX() / density;
+            float currentY = motionEvent.GetY() / density;
+
+            switch (motionEvent.ActionMasked)
+            {
+                case Android.Views.MotionEventActions.Down:
+                    _isNativePanning = true;
+                    _panLastX = currentX;
+                    _panLastY = currentY;
+                    args.Handled = true;
+                    return;
+
+                case Android.Views.MotionEventActions.Move:
+                    if (_isNativePanning)
+                    {
+                        float dx = currentX - _panLastX;
+                        float dy = currentY - _panLastY;
+                        _panLastX = currentX;
+                        _panLastY = currentY;
+
+                        double w = ZoomLayout.Width > 0 ? ZoomLayout.Width : this.Width;
+                        double h = ZoomLayout.Height > 0 ? ZoomLayout.Height : this.Height;
+                        double maxTx = Math.Max(0, (w * (ZoomLayout.Scale - 1)) / 2.0);
+                        double maxTy = Math.Max(0, (h * (ZoomLayout.Scale - 1)) / 2.0);
+
+                        ZoomLayout.TranslationX = Math.Clamp(ZoomLayout.TranslationX + dx, -maxTx, maxTx);
+                        ZoomLayout.TranslationY = Math.Clamp(ZoomLayout.TranslationY + dy, -maxTy, maxTy);
+                        args.Handled = true;
+                        return;
+                    }
+                    break;
+
+                case Android.Views.MotionEventActions.Up:
+                case Android.Views.MotionEventActions.Cancel:
+                    _isNativePanning = false;
+                    break;
+            }
+        }
+
+        // 4. GESTION DES TAPS ET SWIPES EN MODE NORMAL (1 doigt, non zoomé)
+        float curX = motionEvent.GetX() / density;
+        float curY = motionEvent.GetY() / density;
+
+        switch (motionEvent.ActionMasked)
+        {
+            case Android.Views.MotionEventActions.Down:
+                _touchDownTime = motionEvent.EventTime;
+                _touchDownX = curX;
+                _touchDownY = curY;
+                args.Handled = true;
+                return;
+
+            case Android.Views.MotionEventActions.Up:
+                long duration = motionEvent.EventTime - _touchDownTime;
+                float diffX = curX - _touchDownX;
+                float diffY = curY - _touchDownY;
+                float dist = (float)Math.Sqrt(diffX * diffX + diffY * diffY);
+
+                double width = AnnotationsContainer.Width > 0 ? AnnotationsContainer.Width : this.Width;
+                double height = AnnotationsContainer.Height > 0 ? AnnotationsContainer.Height : this.Height;
+
+                // Tap détection (< 20px, < 350ms)
+                if (dist < 20 && duration < 350)
+                {
+                    // Zone basse (15%) -> Barre d'annotations
+                    if (_touchDownY > height * 0.85)
+                    {
+                        MainThread.BeginInvokeOnMainThread(() => OnAnnotationToggleTapped(this, EventArgs.Empty));
+                        args.Handled = true;
+                        return;
+                    }
+
+                    // Zone centrale -> Double-tap menu central
+                    if (_touchDownX >= width * 0.3 && _touchDownX <= width * 0.7 && _touchDownY >= height * 0.2 && _touchDownY <= height * 0.8)
+                    {
+                        long now = motionEvent.EventTime;
+                        if (now - _lastTapTime < 350 && now - _lastTapTime > 0)
+                        {
+                            MainThread.BeginInvokeOnMainThread(() => CentralMenuOverlay.IsVisible = true);
+                            _lastTapTime = 0;
+                            args.Handled = true;
+                            return;
+                        }
+                        _lastTapTime = now;
+                    }
+
+                    // Zones gauche / droite pour tap tourne-page
+                    string nextG = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
+                    string prevG = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
+
+                    if (_touchDownX < width * 0.3)
+                    {
+                        if (prevG == "TapLeft")
+                        {
+                            MainThread.BeginInvokeOnMainThread(() => OnPrevTapped(this, EventArgs.Empty));
+                            args.Handled = true;
+                            return;
+                        }
+                        else if (nextG == "TapLeft")
+                        {
+                            MainThread.BeginInvokeOnMainThread(() => OnNextTapped(this, EventArgs.Empty));
+                            args.Handled = true;
+                            return;
+                        }
+                    }
+                    else if (_touchDownX > width * 0.7)
+                    {
+                        if (nextG == "TapRight")
+                        {
+                            MainThread.BeginInvokeOnMainThread(() => OnNextTapped(this, EventArgs.Empty));
+                            args.Handled = true;
+                            return;
+                        }
+                        else if (prevG == "TapRight")
+                        {
+                            MainThread.BeginInvokeOnMainThread(() => OnPrevTapped(this, EventArgs.Empty));
+                            args.Handled = true;
+                            return;
+                        }
+                    }
+                }
+                // Swipe détection (>= 35px, < 800ms)
+                else if (dist >= 35 && duration < 800 && ZoomLayout.Scale <= 1.05)
+                {
+                    string nextG = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
+                    string prevG = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
+
+                    string detectedG = "";
+                    if (Math.Abs(diffX) > Math.Abs(diffY))
+                    {
+                        detectedG = diffX < 0 ? "SwipeLeft" : "SwipeRight";
+                    }
+                    else
+                    {
+                        detectedG = diffY < 0 ? "SwipeUp" : "SwipeDown";
+                    }
+
+                    if (detectedG == nextG)
+                    {
+                        MainThread.BeginInvokeOnMainThread(() => OnNextTapped(this, EventArgs.Empty));
+                        args.Handled = true;
+                        return;
+                    }
+                    else if (detectedG == prevG)
+                    {
+                        MainThread.BeginInvokeOnMainThread(() => OnPrevTapped(this, EventArgs.Empty));
+                        args.Handled = true;
+                        return;
+                    }
+                }
+                args.Handled = true;
+                return;
+        }
+
+        args.Handled = false;
+    }
+#endif
+
     private void OnAnnotationHighlightClicked(object sender, EventArgs e)
     {
         if (_isAnnotationsLocked)
@@ -1441,12 +1751,10 @@ public partial class ViewerPage : ContentPage
             _isAnnotationMode = false;
             _pendingSticker = null;
             StickerPickerOverlay.IsVisible = false;
-            ActiveAnnotationsContainer.InputTransparent = false;
             HighlightBtn.BackgroundColor = Color.FromArgb("#40007ACC");
         }
         else
         {
-            ActiveAnnotationsContainer.InputTransparent = true;
             HighlightBtn.BackgroundColor = Colors.Transparent;
         }
     }
@@ -1496,7 +1804,6 @@ public partial class ViewerPage : ContentPage
         _isHighlightMode = false;
         HighlightOptionsOverlay.IsVisible = false;
         HighlightBtn.BackgroundColor = Colors.Transparent;
-        ActiveAnnotationsContainer.InputTransparent = true;
     }
 
     private void OnHighlightPointerPressed(object? sender, PointerEventArgs e)
@@ -2068,7 +2375,6 @@ public partial class ViewerPage : ContentPage
             _isHighlightMode = false;
             HighlightOptionsOverlay.IsVisible = false;
             HighlightBtn.BackgroundColor = Colors.Transparent;
-            ActiveAnnotationsContainer.InputTransparent = true;
         }
         RenderAnnotations();
     }

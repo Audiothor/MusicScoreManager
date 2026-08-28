@@ -62,15 +62,11 @@
                                 HorizontalOptions="Fill" 
                                 VerticalOptions="Fill" 
                                 ZIndex="10"
-                                InputTransparent="True"
+                                InputTransparent="False"
                                 CascadeInputTransparent="False">
                     <AbsoluteLayout.GestureRecognizers>
                         <DropGestureRecognizer Drop="OnStickerDrop" AllowDrop="True" />
                         <TapGestureRecognizer Tapped="OnPlacementTapped" />
-                        <PointerGestureRecognizer PointerPressed="OnHighlightPointerPressed"
-                                                  PointerMoved="OnHighlightPointerMoved"
-                                                  PointerReleased="OnHighlightPointerReleased" />
-                        <PanGestureRecognizer PanUpdated="OnHighlightPanUpdated" />
                     </AbsoluteLayout.GestureRecognizers>
                 </AbsoluteLayout>
             </Grid>
@@ -344,18 +340,18 @@
             <Border.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
             </Border.GestureRecognizers>
-            <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto, Auto, Auto, Auto" Padding="10,0">
-                <Button Grid.Column="0" x:Name="HighlightBtn" Text="🖍" BackgroundColor="Transparent" TextColor="#FFD700" Clicked="OnAnnotationHighlightClicked" FontSize="20" Padding="8,0" />
-                <Button Grid.Column="1" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="18" FontAttributes="Bold" Padding="8,0" />
-                <Button Grid.Column="2" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="18" Padding="8,0" />
-                <Button Grid.Column="3" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="18" Padding="8,0" />
+            <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto, Auto, Auto, Auto" Padding="8,0">
+                <Button Grid.Column="0" x:Name="HighlightBtn" Text="🖍" BackgroundColor="Transparent" TextColor="#FFD700" Clicked="OnAnnotationHighlightClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="1" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="16" FontAttributes="Bold" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="2" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="3" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
                 
                 <BoxView Grid.Column="4" Color="Transparent" />
                 
-                <Button Grid.Column="5" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="20" Padding="8,0" />
-                <Button Grid.Column="6" x:Name="LockUnlockBtn" Text="🔒" BackgroundColor="#D32F2F" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="18" Padding="0" WidthRequest="44" HeightRequest="36" CornerRadius="6" VerticalOptions="Center" HorizontalOptions="Center" />
-                <Button Grid.Column="7" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="18" Padding="8,0" />
-                <Button Grid.Column="8" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="20" Padding="8,0" FontAttributes="Bold" />
+                <Button Grid.Column="5" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="18" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="6" x:Name="LockUnlockBtn" Text="🔒" BackgroundColor="#D32F2F" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="16" Padding="0" WidthRequest="40" HeightRequest="34" CornerRadius="6" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="7" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="8" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="18" FontAttributes="Bold" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
             </Grid>
         </Border>
 
