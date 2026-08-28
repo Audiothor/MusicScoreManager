@@ -76,23 +76,20 @@
                             <Label Text="Paramètres application" TextColor="White" FontSize="16" VerticalOptions="Center" />
                             <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>
+
+                        <BoxView HeightRequest="1" Color="#333333" />
+
+                        <Grid Padding="15" BackgroundColor="Transparent">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnSettingsAboutTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Text="À propos" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
                     </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>
         </ScrollView>
-
-        <!-- Croix ultra-discrète en bas à droite -->
-        <Label Text="✕"
-               TextColor="#444444"
-               FontSize="20"
-               HorizontalOptions="End"
-               VerticalOptions="End"
-               Margin="0,0,5,5"
-               ZIndex="100">
-            <Label.GestureRecognizers>
-                <TapGestureRecognizer Tapped="OnExitClicked" />
-            </Label.GestureRecognizers>
-        </Label>
     </Grid>
 
 </ContentPage>

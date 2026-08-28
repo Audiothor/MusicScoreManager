@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MusicScoreManager.AboutPage"
+             BackgroundColor="#121212"
+             Title="À propos">
+
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header personnalisé avec bouton Retour -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
+            <Button Grid.Column="0" 
+                    Text="← Retour" 
+                    BackgroundColor="Transparent" 
+                    TextColor="#007ACC" 
+                    FontAttributes="Bold"
+                    Clicked="OnBackClicked" />
+            <Label Grid.Column="1" 
+                   Text="À propos" 
+                   TextColor="White" 
+                   FontSize="18" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center"
+                   Margin="0,0,80,0" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20" Padding="20">
+                <!-- Logo et Titre -->
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
+                    <Image Source="app_splash_padded.png" 
+                           WidthRequest="120" 
+                           HeightRequest="120" 
+                           HorizontalOptions="Center" />
+                    <Label Text="Music Score Manager" 
+                           TextColor="White" 
+                           FontSize="22" 
+                           FontAttributes="Bold" 
+                           HorizontalOptions="Center" />
+                    <Label x:Name="VersionLabel" 
+                           Text="v1.8.29" 
+                           TextColor="#007ACC" 
+                           FontSize="14" 
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center" />
+                    <Label Text="Gestionnaire &amp; visualiseur professionnel de partitions musicales" 
+                           TextColor="#AAAAAA" 
+                           FontSize="13" 
+                           HorizontalTextAlignment="Center" 
+                           Margin="10,0" />
+                </VerticalStackLayout>
+
+                <!-- Section Licence Application -->
+                <Label Text="Licence de l'application" TextColor="#FF3366" FontSize="16" FontAttributes="Bold" Margin="0,10,0,0" />
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="GNU General Public License v3.0 (GPLv3)" TextColor="White" FontAttributes="Bold" FontSize="14" />
+                        <Label Text="Copyright © 2026 Audiothor" TextColor="#888888" FontSize="12" />
+                        <Label Text="L'autorisation est accordée, à toute personne obtenant une copie de ce logiciel, d'utiliser, copier, modifier, fusionner, publier, distribuer et sous-licencier le logiciel sans restriction." 
+                               TextColor="#AAAAAA" FontSize="12" LineBreakMode="WordWrap" Margin="0,5,0,0" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Section Frameworks & Bibliothèques tierces -->
+                <Label Text="Frameworks &amp; Bibliothèques utilisés" TextColor="#007ACC" FontSize="16" FontAttributes="Bold" Margin="0,10,0,0" />
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="12">
+                        <!-- .NET MAUI -->
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="• Microsoft .NET &amp; .NET MAUI" TextColor="White" FontAttributes="Bold" FontSize="13" />
+                            <Label Text="Licence Publique Générale GNU v3.0 (GPLv3) — Microsoft Corporation" TextColor="#888888" FontSize="11" />
+                        </VerticalStackLayout>
+
+                        <BoxView HeightRequest="1" Color="#2A2A2A" />
+
+                        <!-- CommunityToolkit.Maui -->
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="• .NET MAUI Community Toolkit &amp; MediaElement" TextColor="White" FontAttributes="Bold" FontSize="13" />
+                            <Label Text="Licence Publique Générale GNU v3.0 (GPLv3) — .NET Foundation and Contributors" TextColor="#888888" FontSize="11" />
+                        </VerticalStackLayout>
+
+                        <BoxView HeightRequest="1" Color="#2A2A2A" />
+
+                        <!-- SQLite -->
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="• sqlite-net-pcl &amp; SQLitePCLRaw" TextColor="White" FontAttributes="Bold" FontSize="13" />
+                            <Label Text="Licence Apache 2.0 / MIT — Frank A. Krueger, Eric Sink" TextColor="#888888" FontSize="11" />
+                        </VerticalStackLayout>
+
+                        <BoxView HeightRequest="1" Color="#2A2A2A" />
+
+                        <!-- PDF.js -->
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="• Mozilla PDF.js" TextColor="White" FontAttributes="Bold" FontSize="13" />
+                            <Label Text="Licence Apache 2.0 — Mozilla Foundation" TextColor="#888888" FontSize="11" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Section Dépôt GitHub -->
+                <Label Text="Code Source &amp; Mises à jour" TextColor="#FFD700" FontSize="16" FontAttributes="Bold" Margin="0,10,0,0" />
+                <Button Text="🔗 Projet GitHub : github.com/Audiothor/MusicScoreManager"
+                        BackgroundColor="#2C2C2C"
+                        TextColor="#00B0FF"
+                        FontSize="13"
+                        FontAttributes="Bold"
+                        CornerRadius="10"
+                        HeightRequest="50"
+                        Clicked="OnGitHubClicked" />
+
+                <BoxView HeightRequest="20" Color="Transparent" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

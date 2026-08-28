@@ -9,6 +9,8 @@ public partial class SettingsAppPage : ContentPage
 {
     private readonly SettingsService _settingsService;
 
+    private bool _isInitializingLang = true;
+
     public SettingsAppPage()
     {
         InitializeComponent();
@@ -20,6 +22,32 @@ public partial class SettingsAppPage : ContentPage
     {
         ScoresPathLabel.Text = _settingsService.ScoresRootDirectory;
         AudioPathLabel.Text = _settingsService.AudioRootDirectory;
+
+        _isInitializingLang = true;
+        string currentLang = LocalizationService.Instance.CurrentLanguage;
+        LanguagePicker.SelectedIndex = currentLang switch
+        {
+            "en" => 1,
+            "de" => 2,
+            "es" => 3,
+            _ => 0
+        };
+        _isInitializingLang = false;
+    }
+
+    private async void OnLanguagePickerSelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (_isInitializingLang) return;
+
+        string selectedLang = LanguagePicker.SelectedIndex switch
+        {
+            1 => "en",
+            2 => "de",
+            3 => "es",
+            _ => "fr"
+        };
+
+        await LocalizationService.Instance.SetLanguageAsync(selectedLang);
     }
 
     private async void OnBackClicked(object sender, EventArgs e)

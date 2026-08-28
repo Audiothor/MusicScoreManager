@@ -32,8 +32,9 @@ public partial class SettingsPage : ContentPage
     {
         await Navigation.PushAsync(new SettingsAppPage());
     }
-    private void OnExitClicked(object sender, EventArgs e)
+
+    private async void OnSettingsAboutTapped(object sender, TappedEventArgs e)
     {
-        Application.Current?.Quit();
+        await Navigation.PushAsync(new AboutPage());
     }
 }

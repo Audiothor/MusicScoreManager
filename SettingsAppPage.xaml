@@ -26,6 +26,41 @@
 
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Spacing="20" Padding="20">
+                <!-- Section Langue -->
+                <Label Text="Langue" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" Margin="0,5,0,0" />
+                
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Langue de l'application" TextColor="White" FontAttributes="Bold" />
+                        <Border Stroke="#444444" StrokeThickness="1" BackgroundColor="#2C2C2C" Padding="10,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Picker x:Name="LanguagePicker"
+                                    TextColor="White"
+                                    Title="Sélectionner la langue"
+                                    TitleColor="#888888"
+                                    BackgroundColor="Transparent"
+                                    SelectedIndexChanged="OnLanguagePickerSelectedIndexChanged">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>🇫🇷 Français</x:String>
+                                        <x:String>🇬🇧 English</x:String>
+                                        <x:String>🇩🇪 Deutsch</x:String>
+                                        <x:String>🇪🇸 Español</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </Border>
+                        <Label Text="Sélectionnez la langue d'affichage des menus et textes de l'application." TextColor="#888888" FontSize="12" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Section Bibliothèque -->
                 <Label Text="Bibliothèque" TextColor="#FF3366" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0" />
                 
                 <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
