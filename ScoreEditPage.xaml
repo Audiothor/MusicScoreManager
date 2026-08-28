@@ -71,9 +71,14 @@
                             <Label x:Name="FileModifiedDateLabel" Text="--" TextColor="#007ACC" FontSize="12" FontAttributes="Bold" />
                         </HorizontalStackLayout>
                         
-                        <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="6" VerticalOptions="Center">
+                        <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Spacing="6" VerticalOptions="Center">
                             <Label Text="✨ Ajouté le :" TextColor="#AAAAAA" FontSize="12" />
                             <Label x:Name="FileCreatedDateLabel" Text="--" TextColor="#E0E0E0" FontSize="12" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                            <Label Text="📄 Type de fichier :" TextColor="#AAAAAA" FontSize="12" />
+                            <Label x:Name="FileTypeLabel" Text="--" TextColor="#FFA500" FontSize="12" FontAttributes="Bold" />
                         </HorizontalStackLayout>
                     </Grid>
                 </Border>

@@ -17,7 +17,7 @@
 - **Rendu PDF Ultra-Rapide avec Pré-rendu (v1.8.14)** : Pré-rendu hors-écran (*Offscreen Canvas Cache*) des pages adjacentes pour des sauts de page instantanés à 0 ms de latence.
 - **Rotation Hybride par Page (v1.8.14 - v1.8.17)** : Choix flexible de pivoter une page spécifique à 90° ou toute la partition, avec persistance SQLite dédiée et synchronisation temps réel par page.
 - **Indicateur Cadenas Annotations** : Visualisation claire avec fond rouge (verrouillé) et vert (déverrouillé).
-- **Métadonnées de Fichier (v1.8.15)** : Affichage non modifiable de la taille du fichier, de sa date de dernière modification et de son horodatage d'ajout dans la page d'édition.
+- **Métadonnées de Fichier Complètes (v1.8.15 - v1.8.21)** : Affichage de la taille du fichier, de sa date de dernière modification, de son horodatage d'ajout et de son **type précis avec extension** (ex: *PDF (.pdf)*, *Image (.png)*) dans la page d'édition.
 - **Sécurisation des Gestes (Safe Boundaries)** : Gestion intelligente des zones tactiles pour éviter les sorties d'écran et la navigation intempestive aux extrémités de la partition.
 - **Accès Direct au Saut de Page** : Clic direct sur l'indicateur de numérotation de page (`1/5`) pour ouvrir le prompt de changement de page.
 
@@ -111,4 +111,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.20 "Single Score Bluetooth Exchange"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.21 "File Type Metadata in Edit Score"*

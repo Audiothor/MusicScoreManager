@@ -75,12 +75,32 @@ public partial class ScoreEditPage : ContentPage
             // Date d'ajout/création dans l'application
             DateTime addedDate = _score.DateAdded != default ? _score.DateAdded : DateTime.Now;
             FileCreatedDateLabel.Text = addedDate.ToString("dd/MM/yyyy HH:mm");
+
+            // Type de fichier avec son extension
+            string ext = Path.GetExtension(_score.FilePath)?.ToLowerInvariant() ?? "";
+            if (ext == ".pdf")
+            {
+                FileTypeLabel.Text = "PDF (.pdf)";
+            }
+            else if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".gif" || ext == ".webp" || ext == ".bmp")
+            {
+                FileTypeLabel.Text = $"Image ({ext})";
+            }
+            else if (!string.IsNullOrEmpty(ext))
+            {
+                FileTypeLabel.Text = $"{_score.Type} ({ext})";
+            }
+            else
+            {
+                FileTypeLabel.Text = _score.Type.ToString();
+            }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"[ScoreEditPage] Erreur lecture métadonnées fichier: {ex.Message}");
             FileSizeLabel.Text = "N/A";
             FileModifiedDateLabel.Text = "N/A";
+            FileTypeLabel.Text = "N/A";
         }
     }
 
