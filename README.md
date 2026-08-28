@@ -34,7 +34,8 @@
 - **Chargement Direct** : Suppression des copies disques lors de l'ouverture d'un PDF pour une transition instantanée entre morceaux.
 - **Indicateur de Statut** : Visualisation en temps réel de l'état du cache (⏳/⚡) dans l'éditeur de setlist.
 
-### 🎵 Gestion des Partitions & Stockage Intelligents (v1.0.5 - v1.1.0)
+### 🎵 Gestion des Partitions & Échange Bluetooth (v1.0.5 - v1.8.20)
+- **Échange Bluetooth Unitaire & Groupé (v1.8.20)** : Option "Échanger" disponible directement dans le menu contextuel (3 points) de chaque partition ainsi qu'en mode sélection multiple.
 - **Stockage Public Configurable** : Définissez vos propres répertoires pour les partitions et les fichiers audio.
 - **Super-Détection & Scan Récursif** : Scan intelligent tolérant et détection automatique des fichiers déjà présents dans l'arborescence racine/sous-dossiers pour éviter la duplication.
 - **Import Hybride** : Choisissez entre "Copier" (interne) ou "Lier" (externe avec icône 🔗 et option de rapatriement rapide).
@@ -110,4 +111,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.19 "Unified Zoom & Annotation Lockstep"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.20 "Single Score Bluetooth Exchange"*

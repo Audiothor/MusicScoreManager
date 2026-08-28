@@ -253,6 +253,8 @@ public partial class ScoresPage : ContentPage
         }
     }
 
+    private List<Models.Score>? _scoresToSendForExchange = null;
+
     private async void OnBulkExchangeClicked(object sender, EventArgs e)
     {
         if (ScoresCollectionView.ItemsSource is not IEnumerable<Models.Score> scores) return;
@@ -264,6 +266,12 @@ public partial class ScoresPage : ContentPage
             return;
         }
 
+        await StartExchangeFlowAsync(selectedScores);
+    }
+
+    private async Task StartExchangeFlowAsync(List<Models.Score> scoresToSend)
+    {
+        _scoresToSendForExchange = scoresToSend;
         BluetoothOverlayTitle.Text = "Échange de partitions";
         BluetoothOverlay.IsVisible = true;
         ShowBluetoothView("Sending");
@@ -311,6 +319,7 @@ public partial class ScoresPage : ContentPage
     {
         BluetoothOverlay.IsVisible = false;
         BluetoothScanSpinner.IsRunning = false;
+        _scoresToSendForExchange = null;
 
         await _bluetoothService.StopScanningAsync();
         await _bluetoothService.StopListeningAsync();
@@ -388,8 +397,11 @@ public partial class ScoresPage : ContentPage
 
         await _bluetoothService.StopScanningAsync();
 
-        if (ScoresCollectionView.ItemsSource is not IEnumerable<Models.Score> scores) return;
-        var selectedScores = scores.Where(s => s.IsSelected).ToList();
+        List<Models.Score> selectedScores = _scoresToSendForExchange ?? new List<Models.Score>();
+        if (!selectedScores.Any() && ScoresCollectionView.ItemsSource is IEnumerable<Models.Score> scores)
+        {
+            selectedScores = scores.Where(s => s.IsSelected).ToList();
+        }
         if (!selectedScores.Any()) return;
 
         try
@@ -444,6 +456,7 @@ public partial class ScoresPage : ContentPage
         finally
         {
             BluetoothOverlay.IsVisible = false;
+            _scoresToSendForExchange = null;
         }
     }
 
@@ -763,6 +776,15 @@ public partial class ScoresPage : ContentPage
         if (_selectedScoreForMenu != null)
         {
             await Navigation.PushAsync(new ScoreEditPage(_selectedScoreForMenu, _databaseService));
+        }
+    }
+
+    private async void OnMenuExchangeClicked(object sender, EventArgs e)
+    {
+        ScoreMenuOverlay.IsVisible = false;
+        if (_selectedScoreForMenu != null)
+        {
+            await StartExchangeFlowAsync(new List<Models.Score> { _selectedScoreForMenu });
         }
     }
 

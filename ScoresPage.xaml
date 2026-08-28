@@ -224,6 +224,12 @@
                         </Label.GestureRecognizers>
                     </Label>
 
+                    <Label Text="Échanger" TextColor="#444444" FontSize="15">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnMenuExchangeClicked" />
+                        </Label.GestureRecognizers>
+                    </Label>
+
                     <Label Text="Renommer" TextColor="#444444" FontSize="15">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnMenuRenameClicked" />
