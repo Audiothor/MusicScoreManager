@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.8.36</ApplicationDisplayVersion>
-		<ApplicationVersion>18360</ApplicationVersion>
-		<!-- Version actuelle : v1.8.36 "Optimized High-Performance Opening & Smooth Seamless Score Closing" -->
+		<ApplicationDisplayVersion>1.8.37</ApplicationDisplayVersion>
+		<ApplicationVersion>18370</ApplicationVersion>
+		<!-- Version actuelle : v1.8.37 "Score Counts by Type (PDF & Images) in Application Settings & Blue Theme Alignment" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

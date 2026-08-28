@@ -8,6 +8,7 @@ namespace MusicScoreManager;
 public partial class SettingsAppPage : ContentPage
 {
     private readonly SettingsService _settingsService;
+    private readonly DatabaseService _databaseService;
 
     private bool _isInitializingLang = true;
 
@@ -15,7 +16,9 @@ public partial class SettingsAppPage : ContentPage
     {
         InitializeComponent();
         _settingsService = new SettingsService();
+        _databaseService = new DatabaseService();
         RefreshUI();
+        _ = LoadScoreStatsAsync();
     }
 
     private void RefreshUI()
@@ -33,6 +36,24 @@ public partial class SettingsAppPage : ContentPage
             _ => 0
         };
         _isInitializingLang = false;
+    }
+
+    private async Task LoadScoreStatsAsync()
+    {
+        try
+        {
+            var (total, pdfCount, imageCount) = await _databaseService.GetScoreCountsByTypeAsync();
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                PdfCountLabel.Text = $"{pdfCount} partition{(pdfCount > 1 ? "s" : "")}";
+                ImageCountLabel.Text = $"{imageCount} partition{(imageCount > 1 ? "s" : "")}";
+                TotalCountLabel.Text = $"{total} partition{(total > 1 ? "s" : "")}";
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[SettingsAppPage] Erreur calcul stats: {ex.Message}");
+        }
     }
 
     private async void OnLanguagePickerSelectedIndexChanged(object? sender, EventArgs e)

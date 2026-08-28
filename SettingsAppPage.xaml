@@ -61,7 +61,34 @@
                 </Border>
 
                 <!-- Section Bibliothèque -->
-                <Label Text="Bibliothèque" TextColor="#FF3366" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0" />
+                <Label Text="Bibliothèque" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0" />
+
+                <!-- Statistiques de la Bibliothèque -->
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Contenu de la bibliothèque" TextColor="White" FontAttributes="Bold" FontSize="14" />
+                        
+                        <Grid ColumnDefinitions="*, Auto" Margin="0,2">
+                            <Label Text="📄 Partitions PDF :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="1" x:Name="PdfCountLabel" Text="..." TextColor="#007ACC" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+                        </Grid>
+                        
+                        <Grid ColumnDefinitions="*, Auto" Margin="0,2">
+                            <Label Text="🖼️ Partitions Image :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="1" x:Name="ImageCountLabel" Text="..." TextColor="#2ECC71" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+                        </Grid>
+                        
+                        <BoxView HeightRequest="1" Color="#333333" Margin="0,4" />
+                        
+                        <Grid ColumnDefinitions="*, Auto" Margin="0,2">
+                            <Label Text="Total des partitions :" TextColor="White" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="1" x:Name="TotalCountLabel" Text="..." TextColor="White" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
                 
                 <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
                     <Border.StrokeShape>
