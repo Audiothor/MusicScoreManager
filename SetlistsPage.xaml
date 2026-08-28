@@ -138,20 +138,6 @@
                 </StackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
-
-        <!-- Croix ultra-discrète en bas à droite -->
-        <Label Grid.Row="2"
-               Text="✕"
-               TextColor="#444444"
-               FontSize="20"
-               HorizontalOptions="End"
-               VerticalOptions="End"
-               Margin="0,0,5,5"
-               ZIndex="100">
-            <Label.GestureRecognizers>
-                <TapGestureRecognizer Tapped="OnExitClicked" />
-            </Label.GestureRecognizers>
-        </Label>
     </Grid>
 
 </ContentPage>

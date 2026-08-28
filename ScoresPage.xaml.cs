@@ -826,8 +826,4 @@ public partial class ScoresPage : ContentPage
         ScoreMenuOverlay.IsVisible = false;
         _selectedScoreForMenu = null;
     }
-    private void OnExitClicked(object sender, EventArgs e)
-    {
-        Application.Current?.Quit();
-    }
 }

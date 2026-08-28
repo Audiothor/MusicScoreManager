@@ -201,8 +201,4 @@ public partial class SetlistsPage : ContentPage
             await Navigation.PushAsync(new SetlistEditPage(selectedSetlist, _databaseService));
         }
     }
-    private void OnExitClicked(object sender, EventArgs e)
-    {
-        Application.Current?.Quit();
-    }
 }

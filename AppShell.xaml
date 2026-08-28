@@ -14,9 +14,6 @@
         <Tab Title="Setlists" Icon="📋">
             <ShellContent ContentTemplate="{DataTemplate local:SetlistsPage}" Route="SetlistsPage" />
         </Tab>
-        <Tab Title="Étiquettes" Icon="🏷️">
-            <ShellContent ContentTemplate="{DataTemplate local:TagsPage}" Route="TagsPage" />
-        </Tab>
         <Tab Title="Outils" Icon="🛠️">
             <ShellContent ContentTemplate="{DataTemplate local:ToolsPage}" Route="ToolsPage" />
         </Tab>
