@@ -23,6 +23,9 @@
         <Tab Title="Paramètres" Icon="⚙️">
             <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" Route="SettingsPage" />
         </Tab>
+        <Tab Title="Quitter" Icon="🚪">
+            <ShellContent ContentTemplate="{DataTemplate local:QuitPage}" Route="QuitPage" />
+        </Tab>
     </TabBar>
 
 </Shell>

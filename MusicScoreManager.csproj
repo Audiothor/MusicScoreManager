@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.8.27</ApplicationDisplayVersion>
-		<ApplicationVersion>18270</ApplicationVersion>
-		<!-- Version actuelle : v1.8.27 "Interactive Drawing / Pencil Engine with Color & Size Picker" -->
+		<ApplicationDisplayVersion>1.8.28</ApplicationDisplayVersion>
+		<ApplicationVersion>18280</ApplicationVersion>
+		<!-- Version actuelle : v1.8.28 "Quit Tab Item & Clean Scores Loading Status" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

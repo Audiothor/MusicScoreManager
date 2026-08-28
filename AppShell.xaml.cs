@@ -7,8 +7,18 @@ public partial class AppShell : Shell
         InitializeComponent();
     }
 
-    private void OnExitClicked(object sender, EventArgs e)
+    protected override void OnNavigating(ShellNavigatingEventArgs args)
     {
-        Application.Current?.Quit();
+        base.OnNavigating(args);
+
+        if (args.Target?.Location?.OriginalString?.Contains("QuitPage") == true)
+        {
+            args.Cancel();
+#if ANDROID
+            Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
+#else
+            Application.Current?.Quit();
+#endif
+        }
     }
 }

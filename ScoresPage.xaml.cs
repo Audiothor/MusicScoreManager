@@ -171,6 +171,10 @@ public partial class ScoresPage : ContentPage
         }
 
         MainThread.BeginInvokeOnMainThread(() => {
+            if (EmptyScoresLabel != null)
+            {
+                EmptyScoresLabel.Text = "Aucune partition trouvée.";
+            }
             ScoresCollectionView.ItemsSource = scores;
             RecalculateSelectedCount();
         });
