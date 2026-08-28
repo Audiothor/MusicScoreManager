@@ -2925,6 +2925,8 @@ public partial class ViewerPage : ContentPage
             BackgroundColor = Colors.Transparent,
             HorizontalTextAlignment = TextAlignment.Center,
             VerticalTextAlignment = TextAlignment.Center,
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center,
             LineBreakMode = LineBreakMode.NoWrap,
             InputTransparent = true,
             Text = ann.Content,
@@ -2936,7 +2938,7 @@ public partial class ViewerPage : ContentPage
         var border = new Border
         {
             BindingContext = ann,
-            Padding = new Thickness(8 * effectiveScale, 4 * effectiveScale),
+            Padding = new Thickness(6 * effectiveScale, 3 * effectiveScale),
             StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = (float)(6 * effectiveScale) },
             StrokeThickness = (ann == _selectedAnnotation) ? 2 : 0,
             Stroke = (ann == _selectedAnnotation) ? Colors.Red : Colors.Transparent,
@@ -2948,9 +2950,12 @@ public partial class ViewerPage : ContentPage
         AbsoluteLayout.SetLayoutFlags(border, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
 
         var size = border.Measure(double.PositiveInfinity, double.PositiveInfinity);
-        // Marges de confort pour éviter tout découpage / rognage sur Android
-        double w = Math.Max(size.Width + 10, 22 * effectiveScale);
-        double h = Math.Max(size.Height + 4, 18 * effectiveScale);
+        double charCount = string.IsNullOrEmpty(ann.Content) ? 1 : ann.Content.Length;
+        double estimatedTextWidth = charCount * (fontSize * 0.75);
+
+        // Garantir une largeur et hauteur amplement suffisantes pour ne JAMAIS tronquer le mot sur PDF ou Image
+        double w = Math.Max(Math.Max(size.Width + 18, estimatedTextWidth + (22 * effectiveScale)), 28 * effectiveScale);
+        double h = Math.Max(Math.Max(size.Height + 8, (fontSize * 1.5) + (10 * effectiveScale)), 22 * effectiveScale);
         double absX = ann.X * containerW;
         double absY = ann.Y * containerH;
 

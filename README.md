@@ -129,4 +129,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.31 "Harmonized Sticker Fonts, Sizing, Pill Categories & Anti-Clipping Fix"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.32 "Guaranteed Full-Word Display for Dropped Stickers on PDF & Image"*
