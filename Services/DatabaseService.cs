@@ -340,13 +340,19 @@ namespace MusicScoreManager.Services
         public async Task<string> BackupDatabaseAsync()
         {
             string folder = GetBackupsFolder();
-            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            var now = DateTime.Now;
+            string timestamp = now.ToString("yyyyMMdd_HHmmss");
             string backupFileName = $"scores_backup_{timestamp}.db3";
             string backupPath = Path.Combine(folder, backupFileName);
 
-            // On s'assure que la DB est bien fermée ou synchronisée ? 
-            // Avec SQLiteAsyncConnection, une simple copie de fichier suffit si on n'écrit pas.
             File.Copy(_databasePath, backupPath, true);
+
+            try
+            {
+                File.SetCreationTime(backupPath, now);
+                File.SetLastWriteTime(backupPath, now);
+            }
+            catch { }
             
             return backupPath;
         }
@@ -356,14 +362,53 @@ namespace MusicScoreManager.Services
             string folder = GetBackupsFolder();
             var files = Directory.GetFiles(folder, "scores_backup_*.db3");
             
-            return files.Select(f => new BackupFile 
-            { 
-                FileName = Path.GetFileName(f), 
-                FullPath = f, 
-                Date = File.GetCreationTime(f) 
-            })
-            .OrderByDescending(b => b.Date)
-            .ToList();
+            var list = new List<BackupFile>();
+            foreach (var f in files)
+            {
+                string fileName = Path.GetFileName(f);
+                DateTime backupDate = DateTime.MinValue;
+
+                // Extraction précise de l'horodatage depuis le nom : scores_backup_yyyyMMdd_HHmmss.db3
+                string nameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                string prefix = "scores_backup_";
+                if (nameWithoutExt.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    string timePart = nameWithoutExt.Substring(prefix.Length);
+                    if (DateTime.TryParseExact(timePart, "yyyyMMdd_HHmmss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var parsedDate))
+                    {
+                        backupDate = parsedDate;
+                    }
+                }
+
+                if (backupDate == DateTime.MinValue)
+                {
+                    try
+                    {
+                        backupDate = File.GetLastWriteTime(f);
+                    }
+                    catch
+                    {
+                        backupDate = DateTime.Now;
+                    }
+                }
+
+                long size = 0;
+                try
+                {
+                    size = new FileInfo(f).Length;
+                }
+                catch { }
+
+                list.Add(new BackupFile 
+                { 
+                    FileName = fileName, 
+                    FullPath = f, 
+                    Date = backupDate,
+                    SizeInBytes = size
+                });
+            }
+
+            return list.OrderByDescending(b => b.Date).ToList();
         }
 
         public void PurgeBackups(int maxKeep)
@@ -505,7 +550,9 @@ namespace MusicScoreManager.Services
         public string FileName { get; set; } = string.Empty;
         public string FullPath { get; set; } = string.Empty;
         public DateTime Date { get; set; }
+        public long SizeInBytes { get; set; }
         public bool IsExternal { get; set; }
-        public string DisplayDate => Date.ToString("dd/MM/yyyy HH:mm");
+        public string DisplayDate => Date.ToString("dd/MM/yyyy HH:mm:ss");
+        public string DisplaySize => SizeInBytes < 1024 * 1024 ? $"{SizeInBytes / 1024.0:F1} Ko" : $"{SizeInBytes / (1024.0 * 1024.0):F1} Mo";
     }
 }

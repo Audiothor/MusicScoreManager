@@ -129,4 +129,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.37 "Score Counts by Type (PDF & Images) in Application Settings & Blue Theme Alignment"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.38 "Accurate Database Backup Timestamp & File Size Display"*
