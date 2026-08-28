@@ -38,8 +38,7 @@ public partial class ViewerPage : ContentPage
     private bool _isAnnotationMode = false;
     private List<Annotation> _annotations = new();
     private bool _isAnnotationsLocked = true;
-    private AbsoluteLayout ActiveAnnotationsContainer => 
-        (_score != null && _score.Type == ScoreType.Image) ? ImageAnnotationsContainer : AnnotationsContainer;
+    private AbsoluteLayout ActiveAnnotationsContainer => AnnotationsContainer;
 
     public ViewerPage(Score score, List<Score>? setlistScores = null, int currentIndex = -1, bool isContinuous = true)
     {
@@ -92,9 +91,8 @@ public partial class ViewerPage : ContentPage
             _currentRotation = _score.Rotation;
         }
 
-        // Repositionner dynamiquement les annotations lors des changements de taille des conteneurs (rotation, layout, etc.)
+        // Repositionner dynamiquement les annotations lors des changements de taille du conteneur (rotation, layout, etc.)
         AnnotationsContainer.SizeChanged += (s, e) => RenderAnnotations();
-        ImageAnnotationsContainer.SizeChanged += (s, e) => RenderAnnotations();
     }
 
     protected override void OnAppearing()
@@ -303,11 +301,10 @@ public partial class ViewerPage : ContentPage
                 {
                     ScoreImage.Source = ImageSource.FromFile(fullPath);
                     ScoreImage.Rotation = _currentRotation;
-                    ImageContainer.IsVisible = true;
-                    ImageAnnotationsContainer.IsVisible = true;
-                    AnnotationsContainer.IsVisible = false; // Désactiver l'overlay PDF qui bloque les gestes !
-                    ImageTouchGrid.IsVisible = false; // Ne pas afficher la grille transparente qui bloque les gestes de zoom !
+                    ScoreImage.IsVisible = true;
                     PdfWebView.IsVisible = false;
+                    ImageContainer.IsVisible = true;
+                    AnnotationsContainer.IsVisible = true;
                     _currentPage = 1;
                     _maxPages = 1;
                     UpdatePageIndicator();
@@ -324,11 +321,10 @@ public partial class ViewerPage : ContentPage
             else if (_score.Type == ScoreType.PDF)
             {
                 System.Diagnostics.Debug.WriteLine("[Viewer] Mode PDF - Démarrage chargement WebView");
-                ImageContainer.IsVisible = false;
-                ImageAnnotationsContainer.IsVisible = false;
-                AnnotationsContainer.IsVisible = true; // Activer l'overlay PDF
-                ImageTouchGrid.IsVisible = false;
+                ScoreImage.IsVisible = false;
                 PdfWebView.IsVisible = true;
+                ImageContainer.IsVisible = true;
+                AnnotationsContainer.IsVisible = true;
 
                 if (DeviceInfo.Platform == DevicePlatform.Android)
                 {
@@ -1032,7 +1028,6 @@ public partial class ViewerPage : ContentPage
             _pendingSticker = null;
             _isAnnotationMode = false;
             AnnotationsContainer.InputTransparent = true;
-            ImageAnnotationsContainer.InputTransparent = true;
 
             if (StickersCollection != null)
             {
@@ -1064,7 +1059,6 @@ public partial class ViewerPage : ContentPage
             _pendingSticker = null;
             _isAnnotationMode = false;
             AnnotationsContainer.InputTransparent = true;
-            ImageAnnotationsContainer.InputTransparent = true;
 
             if (StickersCollection != null)
             {
@@ -1320,7 +1314,6 @@ public partial class ViewerPage : ContentPage
             _pendingSticker = null;
             _isAnnotationMode = false;
             AnnotationsContainer.InputTransparent = true;
-            ImageAnnotationsContainer.InputTransparent = true;
 
             if (StickersCollection != null)
             {
@@ -1364,7 +1357,6 @@ public partial class ViewerPage : ContentPage
         _pendingSticker = null;
         _isAnnotationMode = false;
         AnnotationsContainer.InputTransparent = true;
-        ImageAnnotationsContainer.InputTransparent = true;
 
         if (StickersCollection != null)
         {
@@ -1386,7 +1378,6 @@ public partial class ViewerPage : ContentPage
         _pendingSticker = null;
         _isAnnotationMode = false;
         AnnotationsContainer.InputTransparent = true;
-        ImageAnnotationsContainer.InputTransparent = true;
 
         if (StickersCollection != null)
         {
@@ -1407,7 +1398,6 @@ public partial class ViewerPage : ContentPage
                 _pendingSticker = null;
                 _isAnnotationMode = false;
                 AnnotationsContainer.InputTransparent = true;
-                ImageAnnotationsContainer.InputTransparent = true;
 
                 MainThread.BeginInvokeOnMainThread(() => {
                     if (StickersCollection != null)
@@ -1790,14 +1780,6 @@ public partial class ViewerPage : ContentPage
     private void RenderAnnotations()
     {
         if (ActiveAnnotationsContainer == null) return;
-
-        // Clear the inactive one to avoid leftover visual artifacts
-        var inactiveContainer = (_score != null && _score.Type == ScoreType.Image) ? AnnotationsContainer : ImageAnnotationsContainer;
-        if (inactiveContainer != null)
-        {
-            inactiveContainer.Children.Clear();
-            inactiveContainer.IsVisible = false;
-        }
 
         ActiveAnnotationsContainer.IsVisible = true;
         ActiveAnnotationsContainer.Opacity = _isScoreReady ? 1 : 0;

@@ -45,9 +45,9 @@ public static class MauiProgram
 			handler.PlatformView.Settings.AllowFileAccess = true;
 			handler.PlatformView.Settings.AllowFileAccessFromFileURLs = true;
 			handler.PlatformView.Settings.AllowUniversalAccessFromFileURLs = true;
-			handler.PlatformView.Settings.BuiltInZoomControls = true;
-			handler.PlatformView.Settings.DisplayZoomControls = false; // Masque les boutons +/- laids d'Android
-			handler.PlatformView.Settings.SetSupportZoom(true);
+			handler.PlatformView.Settings.BuiltInZoomControls = false;
+			handler.PlatformView.Settings.DisplayZoomControls = false;
+			handler.PlatformView.Settings.SetSupportZoom(false);
 			handler.PlatformView.Settings.DomStorageEnabled = true;
 			handler.PlatformView.Settings.DatabaseEnabled = true;
 			handler.PlatformView.Settings.CacheMode = Android.Webkit.CacheModes.Default;

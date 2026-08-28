@@ -10,7 +10,8 @@
 
 ## 🚀 Fonctionnalités Clés
 
-### 🔍 Zoom & Gestes Tactiles Avancés (v1.8.0 - v1.8.18)
+### 🔍 Zoom & Gestes Tactiles Avancés (v1.8.0 - v1.8.19)
+- **Zoom Unifié & Synchronisation Parfaite des Stickers (v1.8.19)** : Zoom et pan unifiés sur `ZoomLayout` pour PDF et Images. Les stickers (annotations) suivent le zoom et le déplacement en temps réel avec une proportion et un alignement millimétrique sur les portées musicales.
 - **Ergonomie & Gestes de Tourne-Page Personnalisables (v1.8.18)** : Configuration sur mesure des gestes pour page suivante (glisser à gauche, taper à droite, glisser vers le haut) et page précédente (glisser à droite, taper à gauche, glisser vers le bas) dans les Paramètres Partitions.
 - **Fluid & Precision Zoom** : Zoom dynamique et pan fluide pour les partitions au format Image et PDF.
 - **Rendu PDF Ultra-Rapide avec Pré-rendu (v1.8.14)** : Pré-rendu hors-écran (*Offscreen Canvas Cache*) des pages adjacentes pour des sauts de page instantanés à 0 ms de latence.
@@ -109,4 +110,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.18 "Navigation Gestures & Ergonomics"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.19 "Unified Zoom & Annotation Lockstep"*

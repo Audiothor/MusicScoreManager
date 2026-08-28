@@ -16,24 +16,14 @@
     </ContentPage.Resources>
 
     <Grid BackgroundColor="Black">
-        <!-- Le PDF -->
-        <WebView x:Name="PdfWebView" 
-                 IsVisible="False" 
-                 BackgroundColor="White"
-                 HorizontalOptions="FillAndExpand"
-                 VerticalOptions="FillAndExpand"
-                 Navigated="OnPdfWebViewNavigated"
-                 Navigating="OnPdfWebViewNavigating" />
-
         <!-- MediaElement pour la lecture audio et les bips -->
         <toolkit:MediaElement x:Name="AudioPlayer" IsVisible="False" />
 
-        <!-- L'image avec zoom (Grid) -->
+        <!-- L'affichage de partition avec zoom unifié (PDF & Image) -->
         <Grid x:Name="ImageContainer" 
-              IsVisible="False" 
               HorizontalOptions="Fill" 
-              VerticalOptions="Fill"
-              BackgroundColor="White">
+              VerticalOptions="Fill" 
+              BackgroundColor="Black">
             <Grid.GestureRecognizers>
                 <PinchGestureRecognizer PinchUpdated="OnPinchUpdated" />
                 <PanGestureRecognizer PanUpdated="OnPanUpdated" />
@@ -49,17 +39,29 @@
                   HorizontalOptions="Fill"
                   VerticalOptions="Fill">
 
+                <!-- Le PDF -->
+                <WebView x:Name="PdfWebView" 
+                         IsVisible="False" 
+                         BackgroundColor="White"
+                         HorizontalOptions="Fill"
+                         VerticalOptions="Fill"
+                         Navigated="OnPdfWebViewNavigated"
+                         Navigating="OnPdfWebViewNavigating" />
+
+                <!-- L'image -->
                 <Image x:Name="ScoreImage" 
+                       IsVisible="False"
                        Aspect="AspectFit" 
                        HorizontalOptions="Fill" 
                        VerticalOptions="Fill"
                        BackgroundColor="White"
                        InputTransparent="True" />
 
-                <!-- Conteneur d'annotations spécifique pour l'image (pour zoomer avec l'image) -->
-                <AbsoluteLayout x:Name="ImageAnnotationsContainer" 
+                <!-- Conteneur d'annotations unifié (qui zoom, dézoome et se déplace parfaitement avec le PDF ou l'Image) -->
+                <AbsoluteLayout x:Name="AnnotationsContainer" 
                                 HorizontalOptions="Fill" 
                                 VerticalOptions="Fill" 
+                                ZIndex="10"
                                 InputTransparent="True"
                                 CascadeInputTransparent="False">
                     <AbsoluteLayout.GestureRecognizers>
@@ -69,40 +71,6 @@
                 </AbsoluteLayout>
             </Grid>
         </Grid>
-
-        <!-- Zones tactiles pour les images (transparentes) -->
-        <Grid x:Name="ImageTouchGrid" IsVisible="False" BackgroundColor="Transparent">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
-                <ColumnDefinition Width="4*" />
-                <ColumnDefinition Width="3*" />
-            </Grid.ColumnDefinitions>
-            <ContentView Grid.Column="0" BackgroundColor="Transparent">
-                <ContentView.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnPrevTapped" />
-                </ContentView.GestureRecognizers>
-            </ContentView>
-            <Grid Grid.Column="1" RowDefinitions="*, Auto">
-                <ContentView Grid.Row="0" BackgroundColor="Transparent">
-                    <ContentView.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnCenterTapped" NumberOfTapsRequired="2" />
-                        <TapGestureRecognizer Tapped="OnCenterSingleTapped" NumberOfTapsRequired="1" />
-                    </ContentView.GestureRecognizers>
-                </ContentView>
-                <ContentView Grid.Row="1" BackgroundColor="Transparent" HeightRequest="100">
-                    <ContentView.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnAnnotationToggleTapped" />
-                    </ContentView.GestureRecognizers>
-                </ContentView>
-            </Grid>
-            <ContentView Grid.Column="2" BackgroundColor="Transparent">
-                <ContentView.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnNextTapped" />
-                </ContentView.GestureRecognizers>
-            </ContentView>
-        </Grid>
-
-
 
         <!-- Overlay MÉTRONOME (Haut-Droite) -->
         <Border x:Name="MetronomeOverlay" 
@@ -149,19 +117,6 @@
                 <Label Grid.Column="5" x:Name="AudioTotalTimeLabel" Text="0:00" TextColor="White" FontSize="12" VerticalOptions="Center" />
             </Grid>
         </Border>
-
-        <!-- Conteneur pour les Annotations (Stickers, etc.) -->
-        <AbsoluteLayout x:Name="AnnotationsContainer" 
-                        HorizontalOptions="Fill" 
-                        VerticalOptions="Fill" 
-                        ZIndex="10"
-                        InputTransparent="True"
-                        CascadeInputTransparent="False">
-            <AbsoluteLayout.GestureRecognizers>
-                <DropGestureRecognizer Drop="OnStickerDrop" AllowDrop="True" />
-                <TapGestureRecognizer Tapped="OnPlacementTapped" />
-            </AbsoluteLayout.GestureRecognizers>
-        </AbsoluteLayout>
 
         <!-- Sélecteur de Stickers et Réglages (Drawer Unique) -->
         <Border x:Name="StickerPickerOverlay"
