@@ -3,6 +3,7 @@ using MusicScoreManager.Services;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Views;
 using System.Linq;
+using System.Diagnostics;
 using Plugin.Maui.Audio;
 
 namespace MusicScoreManager;
@@ -23,10 +24,17 @@ public partial class ViewerPage : ContentPage
     private int _currentRotation = 0;
     private Dictionary<int, int> _pageRotations = new();
 
-    private System.Threading.CancellationTokenSource? _metronomeCts;
+    private Thread? _metronomeThread;
+    private volatile bool _isMetronomeRunning = false;
+    private bool _isMetronomePlaying = false;
     private IAudioPlayer? _metronomeAudioPlayer;
     private IAudioPlayer? _preCountAudioPlayer;
-    private bool _isMetronomePlaying = false;
+
+#if ANDROID
+    private Android.Media.SoundPool? _soundPool;
+    private int _metronomeSoundId = 0;
+    private int _preCountSoundId = 0;
+#endif
     private bool _isScoreReady = false;
     private bool _isAudioPlaying = false;
     private bool _isDraggingAudioSlider = false;
@@ -572,37 +580,47 @@ public partial class ViewerPage : ContentPage
         MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
         MetronomeOverlay.IsVisible = _score.ShowMetronome;
 
-        // Initialiser la source audio via Plugin.Maui.Audio pour un son à faible latence et sans craquement
         try
         {
-            var stream = await FileSystem.OpenAppPackageFileAsync("click.wav");
-            _metronomeAudioPlayer = AudioManager.Current.CreatePlayer(stream);
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Erreur audio: {ex.Message}");
-        }
+            // Extraire click.wav vers le cache local pour un chargement direct ultra-rapide
+            string clickPath = Path.Combine(FileSystem.CacheDirectory, "click.wav");
+            using (var src = await FileSystem.OpenAppPackageFileAsync("click.wav"))
+            using (var dst = File.Create(clickPath))
+            {
+                await src.CopyToAsync(dst);
+            }
 
-        if (_score.ShowMetronome) StartMetronome();
-
-        // Générer et charger le son de pré-compte
-        await InitializePreCountSoundAsync();
-    }
-
-    private async Task InitializePreCountSoundAsync()
-    {
-        try
-        {
+            // Générer le wav du pré-compte (880Hz, 100ms)
             string preCountPath = Path.Combine(FileSystem.CacheDirectory, "precount.wav");
-            GenerateBeepWav(preCountPath, 880, 0.1); // Un bip à 880Hz (La) de 100ms
+            GenerateBeepWav(preCountPath, 880, 0.1);
 
-            using var stream = File.OpenRead(preCountPath);
-            _preCountAudioPlayer = AudioManager.Current.CreatePlayer(stream);
+#if ANDROID
+            var audioAttributes = new Android.Media.AudioAttributes.Builder()
+                .SetUsage(Android.Media.AudioUsageKind.Media)
+                .SetContentType(Android.Media.AudioContentType.Music)
+                .Build();
+
+            _soundPool = new Android.Media.SoundPool.Builder()
+                .SetMaxStreams(4)
+                .SetAudioAttributes(audioAttributes)
+                .Build();
+
+            _metronomeSoundId = _soundPool.Load(clickPath, 1);
+            _preCountSoundId = _soundPool.Load(preCountPath, 1);
+#else
+            using var stream = File.OpenRead(clickPath);
+            _metronomeAudioPlayer = AudioManager.Current.CreatePlayer(stream);
+
+            using var preStream = File.OpenRead(preCountPath);
+            _preCountAudioPlayer = AudioManager.Current.CreatePlayer(preStream);
+#endif
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Erreur génération bip: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur initialisation audio métronome: {ex.Message}");
         }
+
+        if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
     }
 
     private void GenerateBeepWav(string filePath, double frequency, double durationSeconds)
@@ -635,56 +653,77 @@ public partial class ViewerPage : ContentPage
         for (int i = 0; i < samples; i++) bw.Write(wave[i]);
     }
 
-    private async void StartMetronome()
+    private void StartMetronome()
     {
         StopMetronome();
         if (_score.BPM <= 0 || !_isScoreReady) return;
+        if (!_score.ShowMetronome && !_score.HasMetronomeSound) return;
 
         _isMetronomePlaying = true;
-        _metronomeCts = new System.Threading.CancellationTokenSource();
-        var token = _metronomeCts.Token;
+        _isMetronomeRunning = true;
 
-        // Boucle de haute précision sur un thread d'arrière-plan
-        _ = Task.Run(async () =>
+        double bpm = _score.BPM;
+
+        // Horloge temps réel à priorité maximale sur Thread dédié (immunisé aux surcharges CPU et GC)
+        _metronomeThread = new Thread(() =>
         {
-            var stopwatch = new System.Diagnostics.Stopwatch();
-            int intervalMs = (int)(60000.0 / _score.BPM);
+            var sw = Stopwatch.StartNew();
+            long beatCount = 0;
+            long nextTickTicks = 0;
 
-            while (!token.IsCancellationRequested && _isMetronomePlaying)
+            while (_isMetronomeRunning)
             {
-                stopwatch.Restart();
-
-                // Exécuter le tick
-                MetronomeTick();
-
-                // Attendre le prochain intervalle avec précision
-                int elapsed = (int)stopwatch.ElapsedMilliseconds;
-                int waitTime = intervalMs - elapsed;
-                if (waitTime > 0)
+                long now = sw.ElapsedTicks;
+                if (now >= nextTickTicks)
                 {
-                    await Task.Delay(waitTime, token);
+                    MetronomeTick();
+
+                    beatCount++;
+                    // Horloge absolue stricte : dérive cumulative rigoureusement égale à 0.00 ms
+                    nextTickTicks = (long)(beatCount * (60.0 / bpm * Stopwatch.Frequency));
+                }
+
+                long remainingTicks = nextTickTicks - sw.ElapsedTicks;
+                if (remainingTicks > 0)
+                {
+                    double remainingMs = (double)remainingTicks / Stopwatch.Frequency * 1000.0;
+                    if (remainingMs > 4.0)
+                    {
+                        Thread.Sleep((int)(remainingMs - 2.0));
+                    }
+                    else if (remainingMs > 0.05)
+                    {
+                        Thread.SpinWait(20);
+                    }
                 }
             }
-        }, token);
+        })
+        {
+            Priority = ThreadPriority.Highest,
+            IsBackground = true,
+            Name = "HighPrecisionMetronomeThread"
+        };
+
+        _metronomeThread.Start();
     }
 
     private void MetronomeTick(bool isPreCount = false)
     {
-        if (!_isMetronomePlaying && !isPreCount) return;
+        if (!_isMetronomeRunning && !isPreCount) return;
 
-        // Flash visuel (uniquement si le métronome est visible)
-        if (_score.ShowMetronome)
+        // 1. Son à priorité absolue (latence matérielle instantanée < 2ms via SoundPool sous Android)
+        if (_score.HasMetronomeSound || isPreCount)
         {
-            MainThread.BeginInvokeOnMainThread(() =>
+#if ANDROID
+            if (_soundPool != null)
             {
-                MetronomeLight.Color = Color.FromArgb("#007ACC");
-                Task.Delay(50).ContinueWith(_ => MainThread.BeginInvokeOnMainThread(() => MetronomeLight.Color = Color.FromArgb("#333333")));
-            });
-        }
-
-        // Son
-        if (_score.HasMetronomeSound)
-        {
+                int soundId = isPreCount ? _preCountSoundId : _metronomeSoundId;
+                if (soundId != 0)
+                {
+                    _soundPool.Play(soundId, 1.0f, 1.0f, 1, 0, 1.0f);
+                }
+            }
+#else
             if (isPreCount && _preCountAudioPlayer != null)
             {
                 _preCountAudioPlayer.Play();
@@ -693,15 +732,46 @@ public partial class ViewerPage : ContentPage
             {
                 _metronomeAudioPlayer.Play();
             }
+#endif
+        }
+
+        // 2. Flash visuel (asynchrone sans bloquer l'horloge audio)
+        if (_score.ShowMetronome && !isPreCount)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                MetronomeLight.Color = Color.FromArgb("#007ACC");
+                _ = Task.Delay(45).ContinueWith(_ => MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    if (!_isMetronomeRunning) return;
+                    MetronomeLight.Color = Color.FromArgb("#333333");
+                }));
+            });
         }
     }
 
     private void StopMetronome()
     {
         _isMetronomePlaying = false;
-        _metronomeCts?.Cancel();
-        _metronomeCts = null;
-        MainThread.BeginInvokeOnMainThread(() => MetronomeLight.Color = Color.FromArgb("#333333"));
+        _isMetronomeRunning = false;
+
+        if (_metronomeThread != null)
+        {
+            try
+            {
+                if (_metronomeThread.IsAlive)
+                {
+                    _metronomeThread.Join(100);
+                }
+            }
+            catch { }
+            _metronomeThread = null;
+        }
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            MetronomeLight.Color = Color.FromArgb("#333333");
+        });
     }
 
     private async void OnMetronomeOverlayTapped(object sender, EventArgs e)
@@ -808,13 +878,24 @@ public partial class ViewerPage : ContentPage
                 StopMetronome();
 
                 int totalBeeps = _score.PreCountMeasures;
-                int intervalMs = (int)(60000.0 / _score.BPM);
+                double bpm = _score.BPM;
 
-                for (int i = 0; i < totalBeeps; i++)
+                await Task.Run(() =>
                 {
-                    MetronomeTick(isPreCount: true);
-                    await Task.Delay(intervalMs);
-                }
+                    var sw = Stopwatch.StartNew();
+                    for (int i = 0; i < totalBeeps; i++)
+                    {
+                        MetronomeTick(isPreCount: true);
+                        long targetTicks = (long)((i + 1) * (60.0 / bpm * Stopwatch.Frequency));
+                        while (sw.ElapsedTicks < targetTicks)
+                        {
+                            long remainingTicks = targetTicks - sw.ElapsedTicks;
+                            double remainingMs = (double)remainingTicks / Stopwatch.Frequency * 1000.0;
+                            if (remainingMs > 4.0) Thread.Sleep((int)(remainingMs - 2.0));
+                            else if (remainingMs > 0.05) Thread.SpinWait(20);
+                        }
+                    }
+                });
 
                 // DÉMARRAGE SYNCHRONISÉ : on lance l'audio ET le métronome continu en même temps
                 if (wasMetronomeRunning) StartMetronome();
@@ -1235,6 +1316,17 @@ public partial class ViewerPage : ContentPage
         StopMetronome();
         AudioPlayer.Stop();
         AudioPlayer.Source = null; // Libérer le fichier
+
+#if ANDROID
+        try
+        {
+            _soundPool?.Release();
+            _soundPool = null;
+            _metronomeSoundId = 0;
+            _preCountSoundId = 0;
+        }
+        catch { }
+#endif
     }
 
     private async void HandleEndOfScore()

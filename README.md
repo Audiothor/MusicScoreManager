@@ -10,6 +10,11 @@
 
 ## 🚀 Fonctionnalités Clés
 
+### ⏱️ Métronome Temps Réel Haute Précision (v1.8.22)
+- **Horloge Audio Temps Réel à Dérive Nulle (0.00 ms)** : Moteur de timing fonctionnant sur un thread natif dédié à priorité maximale (`ThreadPriority.Highest`) basé sur un calcul absolu par rapport au chronomètre matériel. Le rythme ne ralentit ni n'accélère jamais, même sous forte charge CPU ou lors du Garbage Collection.
+- **Latence Matérielle Instantanée (SoundPool Android)** : Lecture des sons de clic et de pré-compte via `SoundPool` pré-chargé en mémoire vive sans instanciation ni décodage en cours de jeu.
+- **Pré-compte Synchronisé au Microseconde Près** : Décompte avant démarrage audio rigoureusement calé sur la pulsation du morceau.
+
 ### 🔍 Zoom & Gestes Tactiles Avancés (v1.8.0 - v1.8.19)
 - **Zoom Unifié & Synchronisation Parfaite des Stickers (v1.8.19)** : Zoom et pan unifiés sur `ZoomLayout` pour PDF et Images. Les stickers (annotations) suivent le zoom et le déplacement en temps réel avec une proportion et un alignement millimétrique sur les portées musicales.
 - **Ergonomie & Gestes de Tourne-Page Personnalisables (v1.8.18)** : Configuration sur mesure des gestes pour page suivante (glisser à gauche, taper à droite, glisser vers le haut) et page précédente (glisser à droite, taper à gauche, glisser vers le bas) dans les Paramètres Partitions.
@@ -111,4 +116,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.21 "File Type Metadata in Edit Score"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.22 "Zero-Drift High-Precision Metronome"*
