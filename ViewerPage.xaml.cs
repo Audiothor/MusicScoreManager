@@ -2274,6 +2274,19 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private void UpdateStickersPickerPreview()
+    {
+        if (StickersCollection?.ItemsSource is IEnumerable<StickerItem> items)
+        {
+            foreach (var item in items)
+            {
+                item.Color = _currentStickerColor;
+                item.BackgroundColor = _currentStickerBgColor;
+                item.Scale = StickerSizeSlider.Value;
+            }
+        }
+    }
+
     private async void OnStickerColorTapped(object sender, TappedEventArgs e)
     {
         string? colorStr = e.Parameter as string;
@@ -2293,11 +2306,8 @@ public partial class ViewerPage : ContentPage
                 _ => "#FFFFFF"
             };
             
-            // APERÇU : Mettre à jour le sticker sélectionné dans le picker
-            if (StickersCollection?.SelectedItem is StickerItem selectedSticker)
-            {
-                selectedSticker.Color = _currentStickerColor;
-            }
+            // APERÇU TEMPS RÉEL : Mettre à jour TOUS les stickers visibles dans le tiroir
+            UpdateStickersPickerPreview();
 
             // MODIFICATION DE L'ANNOTATION SÉLECTIONNÉE
             if (!_isAnnotationsLocked && _selectedAnnotation != null)
@@ -2330,11 +2340,8 @@ public partial class ViewerPage : ContentPage
                 _ => "Transparent"
             };
             
-            // APERÇU : Mettre à jour le sticker sélectionné dans le picker
-            if (StickersCollection?.SelectedItem is StickerItem selectedSticker)
-            {
-                selectedSticker.BackgroundColor = _currentStickerBgColor;
-            }
+            // APERÇU TEMPS RÉEL : Mettre à jour TOUS les stickers visibles dans le tiroir
+            UpdateStickersPickerPreview();
 
             // MODIFICATION DE L'ANNOTATION SÉLECTIONNÉE
             if (!_isAnnotationsLocked && _selectedAnnotation != null)
@@ -2356,11 +2363,10 @@ public partial class ViewerPage : ContentPage
         try 
         {
             // Debouncing pour éviter de saturer le thread UI pendant que le slider bouge
-            await Task.Delay(30, token); 
-            if (StickersCollection?.SelectedItem is StickerItem selectedSticker)
-            {
-                selectedSticker.Scale = e.NewValue;
-            }
+            await Task.Delay(20, token); 
+            
+            // APERÇU TEMPS RÉEL : Mettre à jour TOUS les stickers visibles dans le tiroir
+            UpdateStickersPickerPreview();
 
             // MODIFICATION DE L'ANNOTATION SÉLECTIONNÉE
             if (!_isAnnotationsLocked && _selectedAnnotation != null)
