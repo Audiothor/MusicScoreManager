@@ -102,8 +102,9 @@ public partial class ViewerPage : ContentPage
         base.OnAppearing();
         System.Diagnostics.Debug.WriteLine("[Viewer] OnAppearing appelé.");
         
-        // On attend que la page soit bien affichée pour charger le contenu lourd
-        MainThread.BeginInvokeOnMainThread(() => {
+        // On charge les rotations en amont avant de rendre le contenu
+        MainThread.BeginInvokeOnMainThread(async () => {
+            await LoadPageRotationsAsync();
             LoadContentAsync();
             SetupMenuUI();
         });
@@ -113,7 +114,6 @@ public partial class ViewerPage : ContentPage
             InitializeMetronome();
             InitializeAudio();
             await LoadAnnotationsAsync();
-            await LoadPageRotationsAsync();
             await InitializeAnnotationUI();
         });
     }
@@ -190,7 +190,12 @@ public partial class ViewerPage : ContentPage
 
     private void UpdateRotateButtonText()
     {
-        if (_pageRotations.TryGetValue(_currentPage, out int pageRot))
+        bool applyToAll = RotateAllPagesSwitch != null && RotateAllPagesSwitch.IsToggled;
+        if (applyToAll)
+        {
+            _currentRotation = _score.Rotation;
+        }
+        else if (_pageRotations.TryGetValue(_currentPage, out int pageRot))
         {
             _currentRotation = pageRot;
         }
@@ -336,24 +341,14 @@ public partial class ViewerPage : ContentPage
                     string finalViewerPath = viewerPath.StartsWith("/") ? $"file://{viewerPath}" : $"file:///{viewerPath}";
                     string finalFilePath = fullPath.StartsWith("/") ? $"file://{fullPath}" : $"file:///{fullPath}";
                     
-                    string pdfJsUrl = $"{finalViewerPath}?file={Uri.EscapeDataString(finalFilePath)}&rot={_score.Rotation}&page=1";
+                    string pageRotsJson = System.Text.Json.JsonSerializer.Serialize(_pageRotations);
+                    string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
+                    string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
+                    string pdfJsUrl = $"{finalViewerPath}?file={Uri.EscapeDataString(finalFilePath)}&rot={_score.Rotation}&page=1&pageRots={Uri.EscapeDataString(pageRotsJson)}&nextGest={nextGesture}&prevGest={prevGesture}";
 
                     System.Diagnostics.Debug.WriteLine($"[Viewer] WebView Source finale: {pdfJsUrl}");
                     _pdfFilePath = finalFilePath; 
                     PdfWebView.Source = new UrlWebViewSource { Url = pdfJsUrl };
-
-                    // Transmettre toutes les rotations spécifiques de pages pré-existantes une fois chargé
-                    _ = Task.Run(async () =>
-                    {
-                        await Task.Delay(800);
-                        foreach (var kvp in _pageRotations)
-                        {
-                            await MainThread.InvokeOnMainThreadAsync(async () =>
-                            {
-                                await PdfWebView.EvaluateJavaScriptAsync($"setPageRotation({kvp.Key}, {kvp.Value})");
-                            });
-                        }
-                    });
                 }
                 else
                 {
@@ -382,39 +377,51 @@ public partial class ViewerPage : ContentPage
         if (!Directory.Exists(pdfjsDir)) Directory.CreateDirectory(pdfjsDir);
 
         string[] files = { "pdf.min.js", "pdf.worker.min.js", "viewer.html" };
-        bool allFilesExist = true;
 
         foreach (var file in files)
         {
             string dest = Path.Combine(pdfjsDir, file);
-            if (!File.Exists(dest) || new FileInfo(dest).Length == 0)
+            try
             {
-                allFilesExist = false;
-                try
-                {
-                    using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
-                    using var fileStream = File.Create(dest);
-                    await stream.CopyToAsync(fileStream);
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Error copying {file}: {ex.Message}");
-                }
+                using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
+                using var fileStream = File.Create(dest);
+                await stream.CopyToAsync(fileStream);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error copying {file}: {ex.Message}");
             }
         }
 
-        if (allFilesExist)
-        {
-            _isPdfJsReady = true;
-        }
+        _isPdfJsReady = true;
     }
 
-    private void OnPdfWebViewNavigated(object sender, WebNavigatedEventArgs e)
+    private async void OnPdfWebViewNavigated(object sender, WebNavigatedEventArgs e)
     {
         if (_score.Type == ScoreType.PDF && e.Result == WebNavigationResult.Success)
         {
             System.Diagnostics.Debug.WriteLine("[Viewer] WebView Navigated - Prêt.");
             _isScoreReady = true;
+
+            // Synchronisation de sécurité des rotations personnalisées
+            if (_pageRotations.Count > 0)
+            {
+                try
+                {
+                    string json = System.Text.Json.JsonSerializer.Serialize(_pageRotations);
+                    await PdfWebView.EvaluateJavaScriptAsync($"setPageRotationsMap({json})");
+                }
+                catch { }
+            }
+
+            try
+            {
+                string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
+                string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
+                await PdfWebView.EvaluateJavaScriptAsync($"setGestures('{nextGesture}', '{prevGesture}')");
+            }
+            catch { }
+
             if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
         }
     }
@@ -892,35 +899,52 @@ public partial class ViewerPage : ContentPage
         {
             RotationScopeLabel.Text = e.Value ? "Appliquer à TOUTE la partition" : "Appliquer à cette page uniquement";
         }
+        UpdateRotateButtonText();
     }
 
     private async void OnRotateClicked(object sender, EventArgs e)
     {
-        _currentRotation = (_currentRotation + 90) % 360;
-        UpdateRotateButtonText();
-
         bool applyToAll = RotateAllPagesSwitch != null && RotateAllPagesSwitch.IsToggled;
+
+        // Récupérer la rotation actuelle en fonction du mode (global ou page spécifique)
+        int currentRot = 0;
+        if (applyToAll)
+        {
+            currentRot = _score.Rotation;
+        }
+        else
+        {
+            if (!_pageRotations.TryGetValue(_currentPage, out currentRot))
+            {
+                currentRot = _score.Rotation;
+            }
+        }
+
+        int nextRot = (currentRot + 90) % 360;
+        _currentRotation = nextRot;
 
         if (applyToAll)
         {
             _pageRotations.Clear();
-            _score.Rotation = _currentRotation;
+            _score.Rotation = nextRot;
         }
         else
         {
-            _pageRotations[_currentPage] = _currentRotation;
+            _pageRotations[_currentPage] = nextRot;
         }
+
+        RotateBtn.Text = $"Rotation {nextRot}°";
 
         if (_score.Type == ScoreType.Image)
         {
-            ScoreImage.Rotation = _currentRotation;
+            ScoreImage.Rotation = nextRot;
         }
         else
         {
-            await PdfWebView.EvaluateJavaScriptAsync($"setRotation({_currentRotation}, {applyToAll.ToString().ToLowerInvariant()})");
+            await PdfWebView.EvaluateJavaScriptAsync($"setRotation({nextRot}, {applyToAll.ToString().ToLowerInvariant()})");
         }
 
-        if (SaveRotationSwitch.IsToggled)
+        if (SaveRotationSwitch != null && SaveRotationSwitch.IsToggled)
         {
             await SaveRotationToDbAsync();
         }
@@ -945,19 +969,22 @@ public partial class ViewerPage : ContentPage
     {
         bool applyToAll = RotateAllPagesSwitch != null && RotateAllPagesSwitch.IsToggled;
         
+        _score.IsRotationSaved = true;
+
         if (applyToAll)
         {
             _score.Rotation = _currentRotation;
-            _score.IsRotationSaved = true;
             await _databaseService.SaveScoreAsync(_score);
             await _databaseService.DeletePageRotationsForScoreAsync(_score.Id);
             _pageRotations.Clear();
         }
         else
         {
-            _score.IsRotationSaved = true;
             await _databaseService.SaveScoreAsync(_score);
-            await _databaseService.SavePageRotationAsync(_score.Id, _currentPage, _currentRotation);
+            foreach (var kvp in _pageRotations)
+            {
+                await _databaseService.SavePageRotationAsync(_score.Id, kvp.Key, kvp.Value);
+            }
         }
     }
 
@@ -1057,18 +1084,75 @@ public partial class ViewerPage : ContentPage
         }
 
         // Si on est zoomé, on bloque le changement de page pour éviter les sauts accidentels en faisant défiler l'image
-        if (ZoomLayout.Scale > 1) return;
+        if (ZoomLayout.Scale > 1.05) return;
 
-        // Zone gauche (30%) : Page précédente
+        string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
+        string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
+
+        // Zone gauche (30%) : vérification du geste configuré
         if (x < width * 0.3)
         {
-            OnPrevTapped(this, EventArgs.Empty);
+            if (prevGesture == "TapLeft")
+            {
+                OnPrevTapped(this, EventArgs.Empty);
+            }
+            else if (nextGesture == "TapLeft")
+            {
+                OnNextTapped(this, EventArgs.Empty);
+            }
         }
-        // Zone droite (30%) : Page suivante
+        // Zone droite (30%) : vérification du geste configuré
         else if (x > width * 0.7)
         {
-            OnNextTapped(this, EventArgs.Empty);
+            if (nextGesture == "TapRight")
+            {
+                OnNextTapped(this, EventArgs.Empty);
+            }
+            else if (prevGesture == "TapRight")
+            {
+                OnPrevTapped(this, EventArgs.Empty);
+            }
         }
+    }
+
+    private void OnImageSwipedLeft(object? sender, SwipedEventArgs e)
+    {
+        if (ZoomLayout.Scale > 1.05) return;
+        string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
+        string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
+
+        if (nextGesture == "SwipeLeft") OnNextTapped(this, EventArgs.Empty);
+        else if (prevGesture == "SwipeLeft") OnPrevTapped(this, EventArgs.Empty);
+    }
+
+    private void OnImageSwipedRight(object? sender, SwipedEventArgs e)
+    {
+        if (ZoomLayout.Scale > 1.05) return;
+        string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
+        string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
+
+        if (nextGesture == "SwipeRight") OnNextTapped(this, EventArgs.Empty);
+        else if (prevGesture == "SwipeRight") OnPrevTapped(this, EventArgs.Empty);
+    }
+
+    private void OnImageSwipedUp(object? sender, SwipedEventArgs e)
+    {
+        if (ZoomLayout.Scale > 1.05) return;
+        string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
+        string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
+
+        if (nextGesture == "SwipeUp") OnNextTapped(this, EventArgs.Empty);
+        else if (prevGesture == "SwipeUp") OnPrevTapped(this, EventArgs.Empty);
+    }
+
+    private void OnImageSwipedDown(object? sender, SwipedEventArgs e)
+    {
+        if (ZoomLayout.Scale > 1.05) return;
+        string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
+        string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
+
+        if (nextGesture == "SwipeDown") OnNextTapped(this, EventArgs.Empty);
+        else if (prevGesture == "SwipeDown") OnPrevTapped(this, EventArgs.Empty);
     }
 
     private void OnImageDoubleTapped(object sender, TappedEventArgs e)
@@ -1692,7 +1776,9 @@ public partial class ViewerPage : ContentPage
     {
         _isAnnotationsLocked = !_isAnnotationsLocked;
         LockUnlockBtn.Text = _isAnnotationsLocked ? "🔒" : "🔓";
-        LockUnlockBtn.BackgroundColor = _isAnnotationsLocked ? Microsoft.Maui.Graphics.Colors.Transparent : Microsoft.Maui.Graphics.Color.FromArgb("#D32F2F");
+        LockUnlockBtn.BackgroundColor = _isAnnotationsLocked 
+            ? Microsoft.Maui.Graphics.Color.FromArgb("#D32F2F") 
+            : Microsoft.Maui.Graphics.Color.FromArgb("#2E7D32");
         
         if (_isAnnotationsLocked)
         {

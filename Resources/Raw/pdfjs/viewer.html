@@ -78,15 +78,22 @@
         let currentRenderTask = null;
         const pageCache = new Map();
 
-        // Gestion de filtrage intelligent des gestes tactiles
+        let nextGesture = 'SwipeLeft';
+        let prevGesture = 'SwipeRight';
+
+        function setGestures(nextG, prevG) {
+            if (nextG) nextGesture = nextG;
+            if (prevG) prevGesture = prevG;
+        }
+
+        // Gestion ergonomique complète des gestes tactiles
         let touchStartX = 0;
         let touchStartY = 0;
         let touchStartTime = 0;
         let isMultiTouch = false;
-        let wasTouchHandled = false;
+        let lastTap = 0;
 
         document.addEventListener('touchstart', function(e) {
-            wasTouchHandled = false;
             if (e.touches.length > 1) {
                 isMultiTouch = true;
             } else {
@@ -104,67 +111,80 @@
             }
         }, { passive: true });
 
-        let lastTap = 0;
-
-        function handleZoneTap(zoneName, e) {
+        document.addEventListener('touchend', function(e) {
             if (isMultiTouch) return;
-            // Si le zoom du viewport est actif, on ignore les zones de navigation gauche/droite pour éviter les sauts involontaires
             const isZoomed = window.visualViewport && window.visualViewport.scale > 1.05;
-            if (isZoomed && (zoneName === 'left' || zoneName === 'right')) {
-                return;
-            }
+            
+            const touch = e.changedTouches ? e.changedTouches[0] : null;
+            if (!touch) return;
 
+            const dx = touch.clientX - touchStartX;
+            const dy = touch.clientY - touchStartY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
             const duration = Date.now() - touchStartTime;
-            if (duration > 300) return; // appui long ignoré
 
-            if (e && e.changedTouches && e.changedTouches.length > 0) {
-                const touch = e.changedTouches[0];
-                const dx = touch.clientX - touchStartX;
-                const dy = touch.clientY - touchStartY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist > 15) {
-                    return; // drag/glissement, ignoré
+            // 1. Détection de glissement (Swipe) si distance >= 35px et durée < 800ms
+            if (!isZoomed && dist >= 35 && duration < 800) {
+                let detectedGesture = '';
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    detectedGesture = dx < 0 ? 'SwipeLeft' : 'SwipeRight';
+                } else {
+                    detectedGesture = dy < 0 ? 'SwipeUp' : 'SwipeDown';
                 }
-            }
 
-            if (zoneName === 'left') {
-                prevPage(e);
-            } else if (zoneName === 'right') {
-                nextPage(e);
-            } else if (zoneName === 'bottom') {
-                onBottomZoneTapped(e);
-            } else if (zoneName === 'center') {
-                const now = new Date().getTime();
-                const timesince = now - lastTap;
-                if ((timesince < 300) && (timesince > 0)) {
-                    openMenu(e);
-                }
-                lastTap = now;
-            }
-        }
-
-        function bindZone(id, zoneName) {
-            const el = document.getElementById(id);
-            if (!el) return;
-
-            el.addEventListener('touchend', function(e) {
-                wasTouchHandled = true;
-                handleZoneTap(zoneName, e);
-            });
-
-            el.addEventListener('click', function(e) {
-                if (wasTouchHandled) {
-                    wasTouchHandled = false;
+                if (detectedGesture === nextGesture) {
+                    nextPage(e);
+                    return;
+                } else if (detectedGesture === prevGesture) {
+                    prevPage(e);
                     return;
                 }
-                handleZoneTap(zoneName, e);
-            });
-        }
+            }
 
-        bindZone('left-zone', 'left');
-        bindZone('center-zone', 'center');
-        bindZone('right-zone', 'right');
-        bindZone('bottom-zone', 'bottom');
+            // 2. Détection de tap si distance < 20px et durée courte < 350ms
+            if (dist < 20 && duration < 350) {
+                const width = window.innerWidth || document.documentElement.clientWidth;
+                const height = window.innerHeight || document.documentElement.clientHeight;
+                const x = touch.clientX;
+                const y = touch.clientY;
+
+                // Zone du bas (20% du bas) -> Annotations
+                if (y > height * 0.8) {
+                    onBottomZoneTapped(e);
+                    return;
+                }
+
+                // Zone centrale (30% - 70%) -> Double tap pour ouvrir le menu central
+                if (x >= width * 0.3 && x <= width * 0.7) {
+                    const now = new Date().getTime();
+                    const timesince = now - lastTap;
+                    if (timesince < 350 && timesince > 0) {
+                        openMenu(e);
+                    }
+                    lastTap = now;
+                    return;
+                }
+
+                if (isZoomed) return;
+
+                // Zone gauche (30% gauche)
+                if (x < width * 0.3) {
+                    if (prevGesture === 'TapLeft') {
+                        prevPage(e);
+                    } else if (nextGesture === 'TapLeft') {
+                        nextPage(e);
+                    }
+                }
+                // Zone droite (30% droite)
+                else if (x > width * 0.7) {
+                    if (nextGesture === 'TapRight') {
+                        nextPage(e);
+                    } else if (prevGesture === 'TapRight') {
+                        prevPage(e);
+                    }
+                }
+            }
+        });
 
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d', { alpha: false });
@@ -183,6 +203,19 @@
             pageRotations.set(pNum, deg);
             renderedBitmapCache.delete(pNum);
             if (pNum === pageNum) {
+                renderPage(pageNum);
+            }
+        }
+
+        function setPageRotationsMap(rotMap) {
+            pageRotations.clear();
+            if (rotMap) {
+                for (const [p, r] of Object.entries(rotMap)) {
+                    pageRotations.set(parseInt(p, 10), parseInt(r, 10));
+                }
+            }
+            renderedBitmapCache.clear();
+            if (pdfDoc) {
                 renderPage(pageNum);
             }
         }
@@ -397,12 +430,29 @@
             window.location.href = 'app://musicscore/annotations';
         }
 
-        // Auto-chargement au démarrage avec support du paramètre rot & page
+        // Auto-chargement au démarrage avec support du paramètre rot, page & pageRots
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const file = urlParams.get('file');
             const rot = urlParams.get('rot') || 0;
             const page = urlParams.get('page') || 1;
+            const pageRotsParam = urlParams.get('pageRots');
+            if (pageRotsParam) {
+                try {
+                    const parsed = JSON.parse(decodeURIComponent(pageRotsParam));
+                    for (const [p, r] of Object.entries(parsed)) {
+                        pageRotations.set(parseInt(p, 10), parseInt(r, 10));
+                    }
+                } catch (e) {
+                    console.error("Erreur parsing pageRots:", e);
+                }
+            }
+
+            const nextG = urlParams.get('nextGest');
+            const prevG = urlParams.get('prevGest');
+            if (nextG) nextGesture = nextG;
+            if (prevG) prevGesture = prevG;
+
             if (file) {
                 loadPdf(file, rot, page);
             }

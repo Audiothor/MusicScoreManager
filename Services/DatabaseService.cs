@@ -146,6 +146,8 @@ namespace MusicScoreManager.Services
         {
             await Init();
             await _database!.Table<ScoreTag>().Where(st => st.ScoreId == score.Id).DeleteAsync();
+            await _database!.Table<ScorePageRotation>().Where(pr => pr.ScoreId == score.Id).DeleteAsync();
+            await _database!.Table<Annotation>().Where(a => a.ScoreId == score.Id).DeleteAsync();
             return await _database!.DeleteAsync(score);
         }
 

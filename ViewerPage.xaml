@@ -39,6 +39,10 @@
                 <PanGestureRecognizer PanUpdated="OnPanUpdated" />
                 <TapGestureRecognizer Tapped="OnImageSingleTapped" NumberOfTapsRequired="1" />
                 <TapGestureRecognizer Tapped="OnImageDoubleTapped" NumberOfTapsRequired="2" />
+                <SwipeGestureRecognizer Direction="Left" Swiped="OnImageSwipedLeft" />
+                <SwipeGestureRecognizer Direction="Right" Swiped="OnImageSwipedRight" />
+                <SwipeGestureRecognizer Direction="Up" Swiped="OnImageSwipedUp" />
+                <SwipeGestureRecognizer Direction="Down" Swiped="OnImageSwipedDown" />
             </Grid.GestureRecognizers>
             
             <Grid x:Name="ZoomLayout"
@@ -331,7 +335,7 @@
                 <BoxView Grid.Column="3" Color="Transparent" />
                 
                 <Button Grid.Column="4" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="20" Padding="10,0" />
-                <Button Grid.Column="5" x:Name="LockUnlockBtn" Text="🔒" BackgroundColor="Transparent" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="18" Padding="0" WidthRequest="44" HeightRequest="36" CornerRadius="6" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="5" x:Name="LockUnlockBtn" Text="🔒" BackgroundColor="#D32F2F" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="18" Padding="0" WidthRequest="44" HeightRequest="36" CornerRadius="6" VerticalOptions="Center" HorizontalOptions="Center" />
                 <Button Grid.Column="6" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="18" Padding="10,0" />
                 <Button Grid.Column="7" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="20" Padding="10,0" FontAttributes="Bold" />
             </Grid>
