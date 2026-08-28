@@ -198,6 +198,7 @@ public partial class ViewerPage : ContentPage
     private void SetupMenuUI()
     {
         MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
+        MenuMetronomeSoundSwitch.IsToggled = _score.HasMetronomeSound;
         MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer;
         SaveRotationSwitch.IsToggled = _score.IsRotationSaved;
         UpdateRotateButtonText();
@@ -266,7 +267,6 @@ public partial class ViewerPage : ContentPage
 
     private async void LoadContentAsync()
     {
-        _score.HasMetronomeSound = false;
         System.Diagnostics.Debug.WriteLine($"[Viewer] --- Début chargement partition: {_score.Title} ---");
 
         try
@@ -584,10 +584,16 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private readonly object _metronomeLock = new();
+    private CancellationTokenSource? _metronomeCts = null;
+
     private async void InitializeMetronome()
     {
-        MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
-        MetronomeOverlay.IsVisible = _score.ShowMetronome;
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+            MetronomeOverlay.IsVisible = _score.ShowMetronome;
+        });
 
         try
         {
@@ -610,7 +616,7 @@ public partial class ViewerPage : ContentPage
                 .Build();
 
             _soundPool = new Android.Media.SoundPool.Builder()
-                .SetMaxStreams(4)
+                .SetMaxStreams(16)
                 .SetAudioAttributes(audioAttributes)
                 .Build();
 
@@ -664,63 +670,70 @@ public partial class ViewerPage : ContentPage
 
     private void StartMetronome()
     {
-        StopMetronome();
-        if (_score.BPM <= 0 || !_isScoreReady) return;
-        if (!_score.ShowMetronome && !_score.HasMetronomeSound) return;
-
-        _isMetronomePlaying = true;
-        _isMetronomeRunning = true;
-
-        double bpm = _score.BPM;
-
-        // Horloge temps réel à priorité maximale sur Thread dédié (immunisé aux surcharges CPU et GC)
-        _metronomeThread = new Thread(() =>
+        lock (_metronomeLock)
         {
-            var sw = Stopwatch.StartNew();
-            long beatCount = 0;
-            long nextTickTicks = 0;
+            StopMetronome();
+            if (_score.BPM <= 0 || !_isScoreReady) return;
+            if (!_score.ShowMetronome && !_score.HasMetronomeSound) return;
 
-            while (_isMetronomeRunning)
+            _isMetronomePlaying = true;
+            _isMetronomeRunning = true;
+            _metronomeCts = new CancellationTokenSource();
+            var token = _metronomeCts.Token;
+
+            double intervalMs = 60000.0 / _score.BPM;
+
+            // Horloge absolue à haute précision et priorité maximale sur Thread dédié
+            _metronomeThread = new Thread(() =>
             {
-                long now = sw.ElapsedTicks;
-                if (now >= nextTickTicks)
+                var sw = Stopwatch.StartNew();
+                double nextTickMs = 0;
+
+                while (!token.IsCancellationRequested && _isMetronomeRunning)
                 {
-                    MetronomeTick();
-
-                    beatCount++;
-                    // Horloge absolue stricte : dérive cumulative rigoureusement égale à 0.00 ms
-                    nextTickTicks = (long)(beatCount * (60.0 / bpm * Stopwatch.Frequency));
-                }
-
-                long remainingTicks = nextTickTicks - sw.ElapsedTicks;
-                if (remainingTicks > 0)
-                {
-                    double remainingMs = (double)remainingTicks / Stopwatch.Frequency * 1000.0;
-                    if (remainingMs > 4.0)
+                    double elapsed = sw.Elapsed.TotalMilliseconds;
+                    if (elapsed >= nextTickMs)
                     {
-                        Thread.Sleep((int)(remainingMs - 2.0));
+                        MetronomeTick();
+
+                        nextTickMs += intervalMs;
+                        // Rattrapage sécurisé en cas de retard exceptionnel
+                        if (elapsed > nextTickMs + intervalMs)
+                        {
+                            nextTickMs = elapsed + intervalMs;
+                        }
                     }
-                    else if (remainingMs > 0.05)
+
+                    double remainingMs = nextTickMs - sw.Elapsed.TotalMilliseconds;
+                    if (remainingMs > 15.0)
                     {
-                        Thread.SpinWait(20);
+                        Thread.Sleep((int)(remainingMs - 10.0));
+                    }
+                    else if (remainingMs > 1.0)
+                    {
+                        Thread.Sleep(1);
+                    }
+                    else if (remainingMs > 0)
+                    {
+                        Thread.SpinWait(40);
                     }
                 }
-            }
-        })
-        {
-            Priority = ThreadPriority.Highest,
-            IsBackground = true,
-            Name = "HighPrecisionMetronomeThread"
-        };
+            })
+            {
+                Priority = ThreadPriority.Highest,
+                IsBackground = true,
+                Name = "HighPrecisionMetronomeThread"
+            };
 
-        _metronomeThread.Start();
+            _metronomeThread.Start();
+        }
     }
 
     private void MetronomeTick(bool isPreCount = false)
     {
         if (!_isMetronomeRunning && !isPreCount) return;
 
-        // 1. Son à priorité absolue (latence matérielle instantanée < 2ms via SoundPool sous Android)
+        // 1. Son à priorité absolue (latence instantanée < 2ms via SoundPool sous Android)
         if (_score.HasMetronomeSound || isPreCount)
         {
 #if ANDROID
@@ -744,43 +757,47 @@ public partial class ViewerPage : ContentPage
 #endif
         }
 
-        // 2. Flash visuel (asynchrone sans bloquer l'horloge audio)
+        // 2. Flash visuel fluide sans bloquer l'horloge
         if (_score.ShowMetronome && !isPreCount)
         {
-            MainThread.BeginInvokeOnMainThread(() =>
+            MainThread.BeginInvokeOnMainThread(async () =>
             {
                 MetronomeLight.Color = Color.FromArgb("#007ACC");
-                _ = Task.Delay(45).ContinueWith(_ => MainThread.BeginInvokeOnMainThread(() =>
+                await Task.Delay(40);
+                if (_isMetronomeRunning)
                 {
-                    if (!_isMetronomeRunning) return;
                     MetronomeLight.Color = Color.FromArgb("#333333");
-                }));
+                }
             });
         }
     }
 
     private void StopMetronome()
     {
-        _isMetronomePlaying = false;
-        _isMetronomeRunning = false;
-
-        if (_metronomeThread != null)
+        lock (_metronomeLock)
         {
-            try
+            _isMetronomePlaying = false;
+            _isMetronomeRunning = false;
+            _metronomeCts?.Cancel();
+
+            if (_metronomeThread != null)
             {
-                if (_metronomeThread.IsAlive)
+                try
                 {
-                    _metronomeThread.Join(100);
+                    if (_metronomeThread.IsAlive)
+                    {
+                        _metronomeThread.Join(50);
+                    }
                 }
+                catch { }
+                _metronomeThread = null;
             }
-            catch { }
-            _metronomeThread = null;
-        }
 
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            MetronomeLight.Color = Color.FromArgb("#333333");
-        });
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                MetronomeLight.Color = Color.FromArgb("#333333");
+            });
+        }
     }
 
     private async void OnMetronomeOverlayTapped(object sender, EventArgs e)
@@ -955,6 +972,22 @@ public partial class ViewerPage : ContentPage
             StartMetronome();
         }
         else if (!_score.HasMetronomeSound)
+        {
+            StopMetronome();
+        }
+
+        await _databaseService.SaveScoreAsync(_score);
+    }
+
+    private async void OnMenuMetronomeSoundToggled(object sender, ToggledEventArgs e)
+    {
+        _score.HasMetronomeSound = e.Value;
+
+        if ((_score.HasMetronomeSound || _score.ShowMetronome) && !_isMetronomePlaying)
+        {
+            StartMetronome();
+        }
+        else if (!_score.HasMetronomeSound && !_score.ShowMetronome)
         {
             StopMetronome();
         }

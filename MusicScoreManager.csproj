@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.8.25</ApplicationDisplayVersion>
-		<ApplicationVersion>18250</ApplicationVersion>
-		<!-- Version actuelle : v1.8.25 "Annotation Undo/Redo System & Flat Chisel Highlighter" -->
+		<ApplicationDisplayVersion>1.8.26</ApplicationDisplayVersion>
+		<ApplicationVersion>18260</ApplicationVersion>
+		<!-- Version actuelle : v1.8.26 "Rock-Solid Metronome Engine & In-Menu Sound Toggle" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

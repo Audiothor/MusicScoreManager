@@ -10,8 +10,9 @@
 
 ## 🚀 Fonctionnalités Clés
 
-### ⏱️ Métronome Temps Réel Haute Précision (v1.8.22)
-- **Horloge Audio Temps Réel à Dérive Nulle (0.00 ms)** : Moteur de timing fonctionnant sur un thread natif dédié à priorité maximale (`ThreadPriority.Highest`) basé sur un calcul absolu par rapport au chronomètre matériel. Le rythme ne ralentit ni n'accélère jamais, même sous forte charge CPU ou lors du Garbage Collection.
+### ⏱️ Métronome Temps Réel Haute Précision & Contrôle du Son (v1.8.22 - v1.8.26)
+- **Régularité Absolue & Moteur Thread-Safe (v1.8.26)** : Verrouillage atomique du thread d'horloge pour empêcher tout conflit de tempo. Cadence rigoureusement métronomique et fluide avec double temporisation fine (`Thread.Sleep` + `SpinWait`) et synchronisation visuelle LED découplée.
+- **Contrôle On/Off du Son dans le Menu Central (v1.8.26)** : Possibilité d'activer ou de couper le son du métronome à la volée directement depuis le menu central de la partition, tout en conservant l'option assignée par défaut à la partition.
 - **Latence Matérielle Instantanée (SoundPool Android)** : Lecture des sons de clic et de pré-compte via `SoundPool` pré-chargé en mémoire vive sans instanciation ni décodage en cours de jeu.
 - **Pré-compte Synchronisé au Microseconde Près** : Décompte avant démarrage audio rigoureusement calé sur la pulsation du morceau.
 
@@ -120,4 +121,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.25 "Annotation Undo/Redo System & Flat Chisel Highlighter"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.26 "Rock-Solid Metronome Engine & In-Menu Sound Toggle"*

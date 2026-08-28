@@ -418,6 +418,11 @@
                 </Grid>
 
                 <Grid ColumnDefinitions="*, Auto" Margin="5,0">
+                    <Label Text="Son du Métronome" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" x:Name="MenuMetronomeSoundSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnMenuMetronomeSoundToggled" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*, Auto" Margin="5,0">
                     <Label Text="Afficher Lecteur Audio" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
                     <Switch Grid.Column="1" x:Name="MenuAudioSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnMenuAudioToggled" />
                 </Grid>
