@@ -129,4 +129,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.34 "Restored Page-turning Swipe & Tap Gestures for PDF & Image Scores"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.35 "Direct Score Edit Button in Central Menu & Cleaned Up Audio Controls"*

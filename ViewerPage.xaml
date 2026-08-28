@@ -495,16 +495,16 @@
                 </Grid>
 
                 <Grid ColumnDefinitions="*, Auto" Margin="5,0">
-                    <Label Text="Son du Métronome" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
-                    <Switch Grid.Column="1" x:Name="MenuMetronomeSoundSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnMenuMetronomeSoundToggled" />
-                </Grid>
-
-                <Grid ColumnDefinitions="*, Auto" Margin="5,0">
                     <Label Text="Afficher Lecteur Audio" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
                     <Switch Grid.Column="1" x:Name="MenuAudioSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnMenuAudioToggled" />
                 </Grid>
 
                 <BoxView HeightRequest="1" Color="#444444" Margin="0,5" />
+
+                <Button Text="✏️ Modifier la partition" 
+                        BackgroundColor="#007ACC" TextColor="White" 
+                        FontAttributes="Bold" CornerRadius="10" HeightRequest="45"
+                        Clicked="OnEditScoreClicked" />
 
                 <Button Text="Retour à l'accueil" 
                         BackgroundColor="#E74C3C" TextColor="White" 

@@ -198,7 +198,6 @@ public partial class ViewerPage : ContentPage
     private void SetupMenuUI()
     {
         MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
-        MenuMetronomeSoundSwitch.IsToggled = _score.HasMetronomeSound;
         MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer;
         SaveRotationSwitch.IsToggled = _score.IsRotationSaved;
         UpdateRotateButtonText();
@@ -981,21 +980,7 @@ public partial class ViewerPage : ContentPage
         await _databaseService.SaveScoreAsync(_score);
     }
 
-    private async void OnMenuMetronomeSoundToggled(object sender, ToggledEventArgs e)
-    {
-        _score.HasMetronomeSound = e.Value;
 
-        if ((_score.HasMetronomeSound || _score.ShowMetronome) && !_isMetronomePlaying)
-        {
-            StartMetronome();
-        }
-        else if (!_score.HasMetronomeSound && !_score.ShowMetronome)
-        {
-            StopMetronome();
-        }
-
-        await _databaseService.SaveScoreAsync(_score);
-    }
 
     private async void OnMenuAudioToggled(object sender, ToggledEventArgs e)
     {
@@ -1112,6 +1097,16 @@ public partial class ViewerPage : ContentPage
     private async void OnBackClicked(object sender, EventArgs e)
     {
         await Navigation.PopAsync();
+    }
+
+    private async void OnEditScoreClicked(object sender, EventArgs e)
+    {
+        CentralMenuOverlay.IsVisible = false;
+        ImageContainer.InputTransparent = false;
+        ZoomLayout.InputTransparent = false;
+        BottomTouchBar.IsVisible = !AnnotationBar.IsVisible;
+
+        await Navigation.PushAsync(new ScoreEditPage(_score, _databaseService));
     }
 
     private void OnCloseMenuClicked(object sender, EventArgs e)
