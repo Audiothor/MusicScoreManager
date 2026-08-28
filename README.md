@@ -27,8 +27,9 @@
 - **Sécurisation des Gestes (Safe Boundaries)** : Gestion intelligente des zones tactiles pour éviter les sorties d'écran et la navigation intempestive aux extrémités de la partition.
 - **Accès Direct au Saut de Page** : Clic direct sur l'indicateur de numérotation de page (`1/5`) pour ouvrir le prompt de changement de page.
 
-### 🎨 Édition & Système d'Annotations Dynamiques (v1.8.1 - v1.8.25)
-- **Historique Dynamique Undo / Redo (v1.8.25)** : Nouveaux boutons `↩` (Annuler) et `↪` (Rétablir) intégrés directement dans la barre d'outils d'annotations (à gauche du bouton de réinitialisation). Permet d'annuler et rétablir instantanément n'importe quel surlignage, ajout ou suppression de sticker.
+### 🎨 Édition & Système d'Annotations Dynamiques (v1.8.1 - v1.8.27)
+- **Mode Dessin & Annotations au Crayon (v1.8.27)** : Nouvel outil `✎` interactif permettant de dessiner librement à main levée au doigt sur la partition. Tracé opaque (100% au premier plan pour masquer les éléments désirés). Palette de 6 couleurs (Noir, Rouge, Bleu, Vert, Jaune, Blanc) et 5 épaisseurs de trait (1mm, 2mm, 3mm, 4mm, 5mm). Support complet de la sélection, suppression au double-tap et de l'historique Undo/Redo.
+- **Historique Dynamique Undo / Redo (v1.8.25 - v1.8.27)** : Nouveaux boutons `↩` (Annuler) et `↪` (Rétablir) intégrés directement dans la barre d'outils d'annotations. Permet d'annuler et rétablir instantanément n'importe quel dessin au crayon, surlignage, ajout ou suppression de sticker.
 - **Surlignage Stabilo à Bords Droits / Biseautés (v1.8.25)** : Extrémités de sélection nettes et droites (`PenLineCap.Flat`) remplaçant l'effet arrondi pour un rendu de surlignage authentique et précis sur les portées et textes.
 - **Pipeline Tactile Natif & Surlignage Stabilo Temps Réel (v1.8.24)** : Capture matérielle directe des événements tactiles Android. Tracé instantané et fluide du surlignage au doigt (`🖍`) sur PDF et Image sans blocage ni latence. Restauration complète du zoom/dézoom multi-touch (Pinch à 2 doigts) et du déplacement (Pan) sur les partitions PDF.
 - **Surlignage Translucide Tactile / Stabilo (v1.8.23 - v1.8.25)** : Outil `🖍` avec rendu translucide naturel (sans masquer les notes et annotations sous-jacentes). Palette ergonomique de 4 couleurs fluo et 3 épaisseurs de trait (5 mm, 10 mm, 18 mm).
@@ -121,4 +122,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.26 "Rock-Solid Metronome Engine & In-Menu Sound Toggle"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.27 "Interactive Drawing / Pencil Engine with Color & Size Picker"*

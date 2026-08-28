@@ -1504,8 +1504,8 @@ public partial class ViewerPage : ContentPage
         float density = Android.App.Application.Context.Resources?.DisplayMetrics?.Density ?? 1.0f;
         int pointerCount = motionEvent.PointerCount;
 
-        // 1. GESTION DU MODE SURLIGNAGE (1 doigt, mode actif et déverrouillé)
-        if (_isHighlightMode && !_isAnnotationsLocked)
+        // 1. GESTION DU MODE SURLIGNAGE ET DU MODE DESSIN (1 doigt, mode actif et déverrouillé)
+        if ((_isHighlightMode || _isDrawMode) && !_isAnnotationsLocked)
         {
             double touchX = motionEvent.GetX() / density;
             double touchY = motionEvent.GetY() / density;
@@ -1513,17 +1513,20 @@ public partial class ViewerPage : ContentPage
             switch (motionEvent.ActionMasked)
             {
                 case Android.Views.MotionEventActions.Down:
-                    StartLiveHighlightStroke(new Point(touchX, touchY));
+                    if (_isHighlightMode) StartLiveHighlightStroke(new Point(touchX, touchY));
+                    else if (_isDrawMode) StartLiveDrawStroke(new Point(touchX, touchY));
                     args.Handled = true;
                     return;
 
                 case Android.Views.MotionEventActions.Move:
-                    AddLiveHighlightPoint(new Point(touchX, touchY));
+                    if (_isHighlightMode) AddLiveHighlightPoint(new Point(touchX, touchY));
+                    else if (_isDrawMode) AddLiveDrawPoint(new Point(touchX, touchY));
                     args.Handled = true;
                     return;
 
                 case Android.Views.MotionEventActions.Up:
-                    _ = FinishLiveHighlightStrokeAsync();
+                    if (_isHighlightMode) _ = FinishLiveHighlightStrokeAsync();
+                    else if (_isDrawMode) _ = FinishLiveDrawStrokeAsync();
                     args.Handled = true;
                     return;
 
@@ -1841,37 +1844,41 @@ public partial class ViewerPage : ContentPage
 
     private void OnHighlightPointerPressed(object? sender, PointerEventArgs e)
     {
-        if (!_isHighlightMode || _isAnnotationsLocked) return;
+        if ((!_isHighlightMode && !_isDrawMode) || _isAnnotationsLocked) return;
         var pos = e.GetPosition(ActiveAnnotationsContainer);
         if (pos == null) return;
 
-        StartLiveHighlightStroke(pos.Value);
+        if (_isHighlightMode) StartLiveHighlightStroke(pos.Value);
+        else if (_isDrawMode) StartLiveDrawStroke(pos.Value);
     }
 
     private void OnHighlightPointerMoved(object? sender, PointerEventArgs e)
     {
-        if (!_isHighlightMode || _isAnnotationsLocked || _activeLivePolyline == null) return;
+        if ((!_isHighlightMode && !_isDrawMode) || _isAnnotationsLocked || _activeLivePolyline == null) return;
         var pos = e.GetPosition(ActiveAnnotationsContainer);
         if (pos == null) return;
 
-        AddLiveHighlightPoint(pos.Value);
+        if (_isHighlightMode) AddLiveHighlightPoint(pos.Value);
+        else if (_isDrawMode) AddLiveDrawPoint(pos.Value);
     }
 
     private async void OnHighlightPointerReleased(object? sender, PointerEventArgs e)
     {
-        if (!_isHighlightMode || _isAnnotationsLocked || _activeLivePolyline == null) return;
-        await FinishLiveHighlightStrokeAsync();
+        if ((!_isHighlightMode && !_isDrawMode) || _isAnnotationsLocked || _activeLivePolyline == null) return;
+        if (_isHighlightMode) await FinishLiveHighlightStrokeAsync();
+        else if (_isDrawMode) await FinishLiveDrawStrokeAsync();
     }
 
     private async void OnHighlightPanUpdated(object? sender, PanUpdatedEventArgs e)
     {
-        if (!_isHighlightMode || _isAnnotationsLocked) return;
+        if ((!_isHighlightMode && !_isDrawMode) || _isAnnotationsLocked) return;
 
         if (e.StatusType == GestureStatus.Completed || e.StatusType == GestureStatus.Canceled)
         {
             if (_activeLivePolyline != null)
             {
-                await FinishLiveHighlightStrokeAsync();
+                if (_isHighlightMode) await FinishLiveHighlightStrokeAsync();
+                else if (_isDrawMode) await FinishLiveDrawStrokeAsync();
             }
         }
     }
@@ -1956,16 +1963,186 @@ public partial class ViewerPage : ContentPage
         RenderAnnotations();
     }
 
+    #region Drawing Mode (Pencil)
+
+    private bool _isDrawMode = false;
+    private string _currentDrawColor = "#000000";
+    private double _currentDrawThickness = 9.0; // 3mm par défaut (3px/mm : 1mm=3, 2mm=6, 3mm=9, 4mm=12, 5mm=15)
+
+    private void OnAnnotationDrawClicked(object sender, EventArgs e)
+    {
+        if (_isAnnotationsLocked)
+        {
+            DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir dessiner.", "OK");
+            return;
+        }
+
+        _isDrawMode = !_isDrawMode;
+        DrawOptionsOverlay.IsVisible = _isDrawMode;
+
+        if (_isDrawMode)
+        {
+            _isHighlightMode = false;
+            HighlightOptionsOverlay.IsVisible = false;
+            HighlightBtn.BackgroundColor = Colors.Transparent;
+
+            _isAnnotationMode = false;
+            _pendingSticker = null;
+            StickerPickerOverlay.IsVisible = false;
+
+            DrawBtn.BackgroundColor = Color.FromArgb("#40007ACC");
+        }
+        else
+        {
+            DrawBtn.BackgroundColor = Colors.Transparent;
+        }
+    }
+
+    private void OnDrawColorSelected(object? sender, EventArgs e)
+    {
+        if (sender is Border border && border.GestureRecognizers.FirstOrDefault() is TapGestureRecognizer tap && tap.CommandParameter is string color)
+        {
+            _currentDrawColor = color;
+            UpdateDrawColorBorders();
+        }
+    }
+
+    private void UpdateDrawColorBorders()
+    {
+        DrawBlackBtn.Stroke = _currentDrawColor == "#000000" ? Colors.White : Colors.Transparent;
+        DrawBlackBtn.StrokeThickness = _currentDrawColor == "#000000" ? 2 : 1;
+
+        DrawRedBtn.Stroke = _currentDrawColor == "#E53935" ? Colors.White : Colors.Transparent;
+        DrawRedBtn.StrokeThickness = _currentDrawColor == "#E53935" ? 2 : 1;
+
+        DrawBlueBtn.Stroke = _currentDrawColor == "#1E88E5" ? Colors.White : Colors.Transparent;
+        DrawBlueBtn.StrokeThickness = _currentDrawColor == "#1E88E5" ? 2 : 1;
+
+        DrawGreenBtn.Stroke = _currentDrawColor == "#43A047" ? Colors.White : Colors.Transparent;
+        DrawGreenBtn.StrokeThickness = _currentDrawColor == "#43A047" ? 2 : 1;
+
+        DrawYellowBtn.Stroke = _currentDrawColor == "#FFD600" ? Colors.White : Colors.Transparent;
+        DrawYellowBtn.StrokeThickness = _currentDrawColor == "#FFD600" ? 2 : 1;
+
+        DrawWhiteBtn.Stroke = _currentDrawColor == "#FFFFFF" ? Colors.Gray : Colors.Transparent;
+        DrawWhiteBtn.StrokeThickness = _currentDrawColor == "#FFFFFF" ? 2 : 1;
+    }
+
+    private void OnDrawSizeSelected(object sender, EventArgs e)
+    {
+        if (sender is Button btn && btn.CommandParameter is string sizeStr && double.TryParse(sizeStr, out double size))
+        {
+            _currentDrawThickness = size;
+            DrawSize1Btn.BackgroundColor = (size == 3) ? Color.FromArgb("#007ACC") : Color.FromArgb("#333333");
+            DrawSize1Btn.FontAttributes = (size == 3) ? FontAttributes.Bold : FontAttributes.None;
+
+            DrawSize2Btn.BackgroundColor = (size == 6) ? Color.FromArgb("#007ACC") : Color.FromArgb("#333333");
+            DrawSize2Btn.FontAttributes = (size == 6) ? FontAttributes.Bold : FontAttributes.None;
+
+            DrawSize3Btn.BackgroundColor = (size == 9) ? Color.FromArgb("#007ACC") : Color.FromArgb("#333333");
+            DrawSize3Btn.FontAttributes = (size == 9) ? FontAttributes.Bold : FontAttributes.None;
+
+            DrawSize4Btn.BackgroundColor = (size == 12) ? Color.FromArgb("#007ACC") : Color.FromArgb("#333333");
+            DrawSize4Btn.FontAttributes = (size == 12) ? FontAttributes.Bold : FontAttributes.None;
+
+            DrawSize5Btn.BackgroundColor = (size == 15) ? Color.FromArgb("#007ACC") : Color.FromArgb("#333333");
+            DrawSize5Btn.FontAttributes = (size == 15) ? FontAttributes.Bold : FontAttributes.None;
+        }
+    }
+
+    private void OnCloseDrawOptionsClicked(object sender, EventArgs e)
+    {
+        _isDrawMode = false;
+        DrawOptionsOverlay.IsVisible = false;
+        DrawBtn.BackgroundColor = Colors.Transparent;
+    }
+
+    private void StartLiveDrawStroke(Point pt)
+    {
+        _activeLivePoints.Clear();
+        _activeLivePoints.Add(pt);
+
+        _activeLivePolyline = new Microsoft.Maui.Controls.Shapes.Polyline
+        {
+            Stroke = ParseColor(_currentDrawColor),
+            StrokeThickness = _currentDrawThickness,
+            StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Round,
+            StrokeLineJoin = Microsoft.Maui.Controls.Shapes.PenLineJoin.Round,
+            Opacity = 1.0, // 100% opaque, se place en premier plan
+            InputTransparent = true,
+            Points = new PointCollection { pt }
+        };
+
+        ActiveAnnotationsContainer.Children.Add(_activeLivePolyline);
+    }
+
+    private void AddLiveDrawPoint(Point pt)
+    {
+        if (_activeLivePoints.Count > 0)
+        {
+            var last = _activeLivePoints[_activeLivePoints.Count - 1];
+            double dist = Math.Sqrt(Math.Pow(pt.X - last.X, 2) + Math.Pow(pt.Y - last.Y, 2));
+            if (dist < 2.0) return;
+        }
+
+        _activeLivePoints.Add(pt);
+        _activeLivePolyline?.Points.Add(pt);
+    }
+
+    private async Task FinishLiveDrawStrokeAsync()
+    {
+        if (_activeLivePoints.Count < 2 || ActiveAnnotationsContainer.Width <= 0 || ActiveAnnotationsContainer.Height <= 0)
+        {
+            if (_activeLivePolyline != null)
+            {
+                ActiveAnnotationsContainer.Children.Remove(_activeLivePolyline);
+                _activeLivePolyline = null;
+            }
+            _activeLivePoints.Clear();
+            return;
+        }
+
+        double containerW = ActiveAnnotationsContainer.Width;
+        double containerH = ActiveAnnotationsContainer.Height;
+
+        string content = string.Join(";", _activeLivePoints.Select(p => 
+            $"{Math.Clamp(p.X / containerW, 0.0, 1.0).ToString("F4", System.Globalization.CultureInfo.InvariantCulture)},{Math.Clamp(p.Y / containerH, 0.0, 1.0).ToString("F4", System.Globalization.CultureInfo.InvariantCulture)}"
+        ));
+
+        var annotation = new Annotation
+        {
+            ScoreId = _score.Id,
+            Type = AnnotationType.Drawing,
+            Category = "Pencil",
+            Content = content,
+            Color = _currentDrawColor,
+            Scale = _currentDrawThickness / 9.0,
+            PageNumber = _currentPage
+        };
+
+        await _databaseService.SaveAnnotationAsync(annotation);
+        _annotations.Add(annotation);
+
+        _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Add, Annotation = annotation });
+        _redoStack.Clear();
+        UpdateUndoRedoButtons();
+
+        if (_activeLivePolyline != null)
+        {
+            ActiveAnnotationsContainer.Children.Remove(_activeLivePolyline);
+            _activeLivePolyline = null;
+        }
+        _activeLivePoints.Clear();
+
+        RenderAnnotations();
+    }
+
+    #endregion
+
     private async void OnAnnotationTextClicked(object sender, EventArgs e)
     {
         StickerPickerOverlay.IsVisible = false;
         await DisplayAlertAsync("Info", "L'annotation de texte arrive bientôt !", "OK");
-    }
-
-    private async void OnAnnotationDrawClicked(object sender, EventArgs e)
-    {
-        StickerPickerOverlay.IsVisible = false;
-        await DisplayAlertAsync("Info", "Le mode dessin arrive bientôt !", "OK");
     }
 
     private async void OnAnnotationStickersClicked(object sender, EventArgs e)
@@ -1973,6 +2150,10 @@ public partial class ViewerPage : ContentPage
         _isHighlightMode = false;
         HighlightOptionsOverlay.IsVisible = false;
         HighlightBtn.BackgroundColor = Colors.Transparent;
+
+        _isDrawMode = false;
+        DrawOptionsOverlay.IsVisible = false;
+        DrawBtn.BackgroundColor = Colors.Transparent;
 
         StickerPickerOverlay.IsVisible = !StickerPickerOverlay.IsVisible;
         
@@ -2003,8 +2184,11 @@ public partial class ViewerPage : ContentPage
         BottomTouchBar.IsVisible = true;
         StickerPickerOverlay.IsVisible = false;
         HighlightOptionsOverlay.IsVisible = false;
+        DrawOptionsOverlay.IsVisible = false;
         _isHighlightMode = false;
+        _isDrawMode = false;
         HighlightBtn.BackgroundColor = Colors.Transparent;
+        DrawBtn.BackgroundColor = Colors.Transparent;
         
         // Réinitialiser la translation pour éviter qu'elle reste décalée lors de la prochaine ouverture
         AnnotationBar.TranslationY = 0;
@@ -2546,8 +2730,11 @@ public partial class ViewerPage : ContentPage
         {
             _selectedAnnotation = null;
             _isHighlightMode = false;
+            _isDrawMode = false;
             HighlightOptionsOverlay.IsVisible = false;
+            DrawOptionsOverlay.IsVisible = false;
             HighlightBtn.BackgroundColor = Colors.Transparent;
+            DrawBtn.BackgroundColor = Colors.Transparent;
         }
         RenderAnnotations();
     }
@@ -2583,8 +2770,16 @@ public partial class ViewerPage : ContentPage
         {
             if (ann.Type == AnnotationType.Drawing)
             {
-                var polyline = CreateHighlightPolyline(ann, containerW, containerH);
-                ActiveAnnotationsContainer.Children.Add(polyline);
+                if (ann.Category == "Pencil")
+                {
+                    var polyline = CreatePencilPolyline(ann, containerW, containerH);
+                    ActiveAnnotationsContainer.Children.Add(polyline);
+                }
+                else
+                {
+                    var polyline = CreateHighlightPolyline(ann, containerW, containerH);
+                    ActiveAnnotationsContainer.Children.Add(polyline);
+                }
             }
             else
             {
@@ -2592,6 +2787,69 @@ public partial class ViewerPage : ContentPage
                 ActiveAnnotationsContainer.Children.Add(border);
             }
         }
+    }
+
+    private Microsoft.Maui.Controls.Shapes.Polyline CreatePencilPolyline(Annotation ann, double containerW, double containerH)
+    {
+        var pointCollection = new PointCollection();
+        if (!string.IsNullOrEmpty(ann.Content))
+        {
+            var pairs = ann.Content.Split(';', StringSplitOptions.RemoveEmptyEntries);
+            foreach (var pair in pairs)
+            {
+                var coords = pair.Split(',');
+                if (coords.Length == 2 && 
+                    double.TryParse(coords[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double rx) && 
+                    double.TryParse(coords[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double ry))
+                {
+                    pointCollection.Add(new Point(rx * containerW, ry * containerH));
+                }
+            }
+        }
+
+        var polyline = new Microsoft.Maui.Controls.Shapes.Polyline
+        {
+            BindingContext = ann,
+            Points = pointCollection,
+            Stroke = ParseColor(ann.Color),
+            StrokeThickness = ann.Scale * 9.0, // 3px par mm (1mm=3, 2mm=6, 3mm=9, 4mm=12, 5mm=15)
+            StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Round,
+            StrokeLineJoin = Microsoft.Maui.Controls.Shapes.PenLineJoin.Round,
+            Opacity = 1.0, // 100% opaque, se met en premier plan et cache ce qui est derrière
+            InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode
+        };
+
+        var tap = new TapGestureRecognizer();
+        tap.Tapped += (s, e) =>
+        {
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (s is Microsoft.Maui.Controls.Shapes.Polyline p && p.BindingContext is Annotation a)
+            {
+                _selectedAnnotation = a;
+                RenderAnnotations();
+            }
+        };
+        polyline.GestureRecognizers.Add(tap);
+
+        var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
+        doubleTap.Tapped += async (s, e) =>
+        {
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (s is Microsoft.Maui.Controls.Shapes.Polyline p && p.BindingContext is Annotation a)
+            {
+                await _databaseService.DeleteAnnotationAsync(a);
+                _annotations.Remove(a);
+                _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Delete, Annotation = a });
+                _redoStack.Clear();
+                UpdateUndoRedoButtons();
+
+                if (_selectedAnnotation == a) _selectedAnnotation = null;
+                RenderAnnotations();
+            }
+        };
+        polyline.GestureRecognizers.Add(doubleTap);
+
+        return polyline;
     }
 
     private Microsoft.Maui.Controls.Shapes.Polyline CreateHighlightPolyline(Annotation ann, double containerW, double containerH)
@@ -2621,13 +2879,13 @@ public partial class ViewerPage : ContentPage
             StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Flat,
             StrokeLineJoin = Microsoft.Maui.Controls.Shapes.PenLineJoin.Round,
             Opacity = (ann == _selectedAnnotation) ? 0.85 : 0.45,
-            InputTransparent = _isAnnotationsLocked || _isHighlightMode
+            InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode
         };
 
         var tap = new TapGestureRecognizer();
         tap.Tapped += (s, e) =>
         {
-            if (_isAnnotationsLocked || _isHighlightMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
             if (s is Microsoft.Maui.Controls.Shapes.Polyline p && p.BindingContext is Annotation a)
             {
                 _selectedAnnotation = a;
@@ -2639,7 +2897,7 @@ public partial class ViewerPage : ContentPage
         var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
         doubleTap.Tapped += async (s, e) =>
         {
-            if (_isAnnotationsLocked || _isHighlightMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
             if (s is Microsoft.Maui.Controls.Shapes.Polyline p && p.BindingContext is Annotation a)
             {
                 await _databaseService.DeleteAnnotationAsync(a);
@@ -2679,7 +2937,7 @@ public partial class ViewerPage : ContentPage
             Stroke = (ann == _selectedAnnotation) ? Colors.Red : Colors.Transparent,
             BackgroundColor = ParseColor(ann.BackgroundColor),
             Content = label,
-            InputTransparent = _isAnnotationsLocked || _isHighlightMode
+            InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode
         };
 
         AbsoluteLayout.SetLayoutFlags(border, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
@@ -2694,7 +2952,7 @@ public partial class ViewerPage : ContentPage
 
         var selectTap = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
         selectTap.Tapped += (s, e) => {
-            if (_isAnnotationsLocked || _isHighlightMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
             if (s is Border b && b.BindingContext is Annotation a)
             {
                 _selectedAnnotation = a;
@@ -2708,7 +2966,7 @@ public partial class ViewerPage : ContentPage
 
         var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
         doubleTap.Tapped += async (s, e) => {
-            if (_isAnnotationsLocked || _isHighlightMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
             if (s is Border b && b.BindingContext is Annotation a)
             {
                 await _databaseService.DeleteAnnotationAsync(a);
@@ -2726,7 +2984,7 @@ public partial class ViewerPage : ContentPage
         var pan = new PanGestureRecognizer();
         double startX = 0, startY = 0;
         pan.PanUpdated += async (s, e) => {
-            if (_isAnnotationsLocked || _isHighlightMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
             if (s is Border b && b.BindingContext is Annotation a)
             {
                 switch (e.StatusType)

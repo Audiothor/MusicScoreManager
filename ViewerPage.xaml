@@ -328,6 +328,72 @@
             </HorizontalStackLayout>
         </Border>
 
+        <!-- Panneau d'options de dessin (Crayon) -->
+        <Border x:Name="DrawOptionsOverlay"
+                IsVisible="False"
+                VerticalOptions="End"
+                HorizontalOptions="Center"
+                Margin="0,0,0,50"
+                BackgroundColor="#EE1E1E24"
+                Stroke="#44FFFFFF"
+                StrokeThickness="1"
+                Padding="12,8"
+                ZIndex="25">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                <!-- Pastilles de couleurs (Noir par défaut, Rouge, Bleu, Vert, Jaune, Blanc) -->
+                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                    <!-- Noir (défaut) -->
+                    <Border x:Name="DrawBlackBtn" BackgroundColor="#000000" WidthRequest="26" HeightRequest="26" Stroke="White" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="13" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnDrawColorSelected" CommandParameter="#000000" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Rouge -->
+                    <Border x:Name="DrawRedBtn" BackgroundColor="#E53935" WidthRequest="26" HeightRequest="26" Stroke="Transparent" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="13" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnDrawColorSelected" CommandParameter="#E53935" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Bleu -->
+                    <Border x:Name="DrawBlueBtn" BackgroundColor="#1E88E5" WidthRequest="26" HeightRequest="26" Stroke="Transparent" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="13" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnDrawColorSelected" CommandParameter="#1E88E5" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Vert -->
+                    <Border x:Name="DrawGreenBtn" BackgroundColor="#43A047" WidthRequest="26" HeightRequest="26" Stroke="Transparent" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="13" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnDrawColorSelected" CommandParameter="#43A047" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Jaune -->
+                    <Border x:Name="DrawYellowBtn" BackgroundColor="#FFD600" WidthRequest="26" HeightRequest="26" Stroke="Transparent" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="13" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnDrawColorSelected" CommandParameter="#FFD600" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Blanc -->
+                    <Border x:Name="DrawWhiteBtn" BackgroundColor="#FFFFFF" WidthRequest="26" HeightRequest="26" Stroke="Transparent" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="13" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnDrawColorSelected" CommandParameter="#FFFFFF" /></Border.GestureRecognizers>
+                    </Border>
+                </HorizontalStackLayout>
+
+                <!-- Séparateur vertical -->
+                <BoxView WidthRequest="1" HeightRequest="22" Color="#44FFFFFF" VerticalOptions="Center" />
+
+                <!-- Choix de largeur de crayon (1mm, 2mm, 3mm, 4mm, 5mm) -->
+                <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                    <Button x:Name="DrawSize1Btn" Text="1mm" BackgroundColor="#333333" TextColor="White" FontSize="11" HeightRequest="28" Padding="5,0" CornerRadius="6" Clicked="OnDrawSizeSelected" CommandParameter="3" />
+                    <Button x:Name="DrawSize2Btn" Text="2mm" BackgroundColor="#333333" TextColor="White" FontSize="11" HeightRequest="28" Padding="5,0" CornerRadius="6" Clicked="OnDrawSizeSelected" CommandParameter="6" />
+                    <Button x:Name="DrawSize3Btn" Text="3mm" BackgroundColor="#007ACC" TextColor="White" FontSize="11" HeightRequest="28" Padding="5,0" CornerRadius="6" FontAttributes="Bold" Clicked="OnDrawSizeSelected" CommandParameter="9" />
+                    <Button x:Name="DrawSize4Btn" Text="4mm" BackgroundColor="#333333" TextColor="White" FontSize="11" HeightRequest="28" Padding="5,0" CornerRadius="6" Clicked="OnDrawSizeSelected" CommandParameter="12" />
+                    <Button x:Name="DrawSize5Btn" Text="5mm" BackgroundColor="#333333" TextColor="White" FontSize="11" HeightRequest="28" Padding="5,0" CornerRadius="6" Clicked="OnDrawSizeSelected" CommandParameter="15" />
+                </HorizontalStackLayout>
+
+                <!-- Bouton fermer le panneau -->
+                <Button Text="✕" BackgroundColor="Transparent" TextColor="#AAAAAA" FontSize="16" HeightRequest="28" WidthRequest="28" Padding="0" Clicked="OnCloseDrawOptionsClicked" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </Border>
+
         <!-- Barre d'Annotations (Bas) -->
         <Border x:Name="AnnotationBar"
                 VerticalOptions="End"
@@ -343,7 +409,7 @@
             <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto, Auto, Auto, Auto, Auto, Auto" Padding="8,0">
                 <Button Grid.Column="0" x:Name="HighlightBtn" Text="🖍" BackgroundColor="Transparent" TextColor="#FFD700" Clicked="OnAnnotationHighlightClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
                 <Button Grid.Column="1" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="16" FontAttributes="Bold" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                <Button Grid.Column="2" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="2" x:Name="DrawBtn" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
                 <Button Grid.Column="3" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
                 
                 <BoxView Grid.Column="4" Color="Transparent" />
