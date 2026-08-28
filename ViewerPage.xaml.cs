@@ -1377,6 +1377,7 @@ public partial class ViewerPage : ContentPage
         StopMetronome();
         AudioPlayer.Stop();
         AudioPlayer.Source = null; // Libérer le fichier
+        PdfWebView.Source = null; // Libérer le moteur WebView pour une transition de sortie fluide et instantanée
 
 #if ANDROID
         try

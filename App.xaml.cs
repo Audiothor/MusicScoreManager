@@ -17,7 +17,31 @@ public partial class App : Application
     protected override async void OnStart()
     {
         base.OnStart();
+        _ = WarmupAssetsAsync();
         await CheckAutoBackupAsync();
+    }
+
+    private static async Task WarmupAssetsAsync()
+    {
+        try
+        {
+            string cacheDir = FileSystem.CacheDirectory;
+            string pdfjsDir = Path.Combine(cacheDir, "pdfjs");
+            if (!Directory.Exists(pdfjsDir)) Directory.CreateDirectory(pdfjsDir);
+
+            string[] files = { "pdf.min.js", "pdf.worker.min.js", "viewer.html" };
+            foreach (var file in files)
+            {
+                string dest = Path.Combine(pdfjsDir, file);
+                if (!File.Exists(dest))
+                {
+                    using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
+                    using var fileStream = File.Create(dest);
+                    await stream.CopyToAsync(fileStream);
+                }
+            }
+        }
+        catch { }
     }
 
     private async Task CheckAutoBackupAsync()
