@@ -1852,7 +1852,7 @@ public partial class ViewerPage : ContentPage
         {
             Stroke = ParseColor(_currentHighlightColor),
             StrokeThickness = _currentHighlightThickness,
-            StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Round,
+            StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Flat,
             StrokeLineJoin = Microsoft.Maui.Controls.Shapes.PenLineJoin.Round,
             Opacity = 0.45,
             InputTransparent = true,
@@ -1908,6 +1908,10 @@ public partial class ViewerPage : ContentPage
 
         await _databaseService.SaveAnnotationAsync(annotation);
         _annotations.Add(annotation);
+
+        _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Add, Annotation = annotation });
+        _redoStack.Clear();
+        UpdateUndoRedoButtons();
 
         if (_activeLivePolyline != null)
         {
@@ -2224,6 +2228,9 @@ public partial class ViewerPage : ContentPage
 
             await _databaseService.SaveAnnotationAsync(annotation);
             _annotations.Add(annotation);
+            _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Add, Annotation = annotation });
+            _redoStack.Clear();
+            UpdateUndoRedoButtons();
             RenderAnnotations();
 
             // Une fois posé, on peut masquer les bandeaux pour libérer de l'espace si besoin
@@ -2302,6 +2309,10 @@ public partial class ViewerPage : ContentPage
         await _databaseService.SaveAnnotationAsync(annotation);
         _annotations.Add(annotation);
 
+        _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Add, Annotation = annotation });
+        _redoStack.Clear();
+        UpdateUndoRedoButtons();
+
         // Sortir du mode placement et désactiver l'interception tactile
         _isAnnotationMode = false;
         ActiveAnnotationsContainer.InputTransparent = true;
@@ -2317,6 +2328,125 @@ public partial class ViewerPage : ContentPage
 
     private Annotation? _selectedAnnotation = null;
 
+    private readonly Stack<AnnotationHistoryEntry> _undoStack = new();
+    private readonly Stack<AnnotationHistoryEntry> _redoStack = new();
+
+    private void UpdateUndoRedoButtons()
+    {
+        if (UndoBtn != null)
+        {
+            UndoBtn.Opacity = _undoStack.Count > 0 ? 1.0 : 0.4;
+        }
+        if (RedoBtn != null)
+        {
+            RedoBtn.Opacity = _redoStack.Count > 0 ? 1.0 : 0.4;
+        }
+    }
+
+    private async void OnUndoAnnotationClicked(object? sender, EventArgs e)
+    {
+        if (_isAnnotationsLocked)
+        {
+            await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir modifier.", "OK");
+            return;
+        }
+
+        if (_undoStack.Count == 0)
+        {
+            return;
+        }
+
+        var entry = _undoStack.Pop();
+
+        switch (entry.ActionType)
+        {
+            case AnnotationActionType.Add:
+                if (entry.Annotation != null)
+                {
+                    await _databaseService.DeleteAnnotationAsync(entry.Annotation);
+                    _annotations.Remove(entry.Annotation);
+                    if (_selectedAnnotation == entry.Annotation) _selectedAnnotation = null;
+                    _redoStack.Push(entry);
+                }
+                break;
+
+            case AnnotationActionType.Delete:
+                if (entry.Annotation != null)
+                {
+                    await _databaseService.SaveAnnotationAsync(entry.Annotation);
+                    _annotations.Add(entry.Annotation);
+                    _redoStack.Push(entry);
+                }
+                break;
+
+            case AnnotationActionType.ClearAll:
+                if (entry.AnnotationList != null)
+                {
+                    foreach (var ann in entry.AnnotationList)
+                    {
+                        await _databaseService.SaveAnnotationAsync(ann);
+                        _annotations.Add(ann);
+                    }
+                    _redoStack.Push(entry);
+                }
+                break;
+        }
+
+        UpdateUndoRedoButtons();
+        RenderAnnotations();
+    }
+
+    private async void OnRedoAnnotationClicked(object? sender, EventArgs e)
+    {
+        if (_isAnnotationsLocked)
+        {
+            await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir modifier.", "OK");
+            return;
+        }
+
+        if (_redoStack.Count == 0)
+        {
+            return;
+        }
+
+        var entry = _redoStack.Pop();
+
+        switch (entry.ActionType)
+        {
+            case AnnotationActionType.Add:
+                if (entry.Annotation != null)
+                {
+                    await _databaseService.SaveAnnotationAsync(entry.Annotation);
+                    _annotations.Add(entry.Annotation);
+                    _undoStack.Push(entry);
+                }
+                break;
+
+            case AnnotationActionType.Delete:
+                if (entry.Annotation != null)
+                {
+                    await _databaseService.DeleteAnnotationAsync(entry.Annotation);
+                    _annotations.Remove(entry.Annotation);
+                    if (_selectedAnnotation == entry.Annotation) _selectedAnnotation = null;
+                    _undoStack.Push(entry);
+                }
+                break;
+
+            case AnnotationActionType.ClearAll:
+                if (entry.AnnotationList != null)
+                {
+                    await _databaseService.DeleteAllAnnotationsForScoreAsync(_score.Id);
+                    _annotations.Clear();
+                    _selectedAnnotation = null;
+                    _undoStack.Push(entry);
+                }
+                break;
+        }
+
+        UpdateUndoRedoButtons();
+        RenderAnnotations();
+    }
+
     private async void OnDeleteSelectedAnnotationClicked(object? sender, EventArgs e)
     {
         if (_isAnnotationsLocked)
@@ -2327,12 +2457,17 @@ public partial class ViewerPage : ContentPage
 
         if (_selectedAnnotation == null)
         {
-            await DisplayAlertAsync("Supprimer", "Veuillez d'abord sélectionner une annotation en touchant un sticker.", "OK");
+            await DisplayAlertAsync("Supprimer", "Veuillez d'abord sélectionner une annotation en touchant un sticker ou un surlignage.", "OK");
             return;
         }
 
-        await _databaseService.DeleteAnnotationAsync(_selectedAnnotation);
-        _annotations.Remove(_selectedAnnotation);
+        var annToDelete = _selectedAnnotation;
+        await _databaseService.DeleteAnnotationAsync(annToDelete);
+        _annotations.Remove(annToDelete);
+        _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Delete, Annotation = annToDelete });
+        _redoStack.Clear();
+        UpdateUndoRedoButtons();
+
         _selectedAnnotation = null;
         RenderAnnotations();
     }
@@ -2354,8 +2489,13 @@ public partial class ViewerPage : ContentPage
         bool confirm = await DisplayAlertAsync("Reset", "Voulez-vous supprimer TOUTES les annotations de cette partition ?", "Oui", "Non");
         if (confirm)
         {
+            var previousList = new List<Annotation>(_annotations);
             await _databaseService.DeleteAllAnnotationsForScoreAsync(_score.Id);
             _annotations.Clear();
+            _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.ClearAll, AnnotationList = previousList });
+            _redoStack.Clear();
+            UpdateUndoRedoButtons();
+
             _selectedAnnotation = null;
             RenderAnnotations();
         }
@@ -2445,7 +2585,7 @@ public partial class ViewerPage : ContentPage
             Points = pointCollection,
             Stroke = ParseColor(ann.Color),
             StrokeThickness = ann.Scale * 30.0,
-            StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Round,
+            StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Flat,
             StrokeLineJoin = Microsoft.Maui.Controls.Shapes.PenLineJoin.Round,
             Opacity = (ann == _selectedAnnotation) ? 0.85 : 0.45,
             InputTransparent = _isAnnotationsLocked || _isHighlightMode
@@ -2471,6 +2611,10 @@ public partial class ViewerPage : ContentPage
             {
                 await _databaseService.DeleteAnnotationAsync(a);
                 _annotations.Remove(a);
+                _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Delete, Annotation = a });
+                _redoStack.Clear();
+                UpdateUndoRedoButtons();
+
                 if (_selectedAnnotation == a) _selectedAnnotation = null;
                 RenderAnnotations();
             }
@@ -2536,6 +2680,10 @@ public partial class ViewerPage : ContentPage
             {
                 await _databaseService.DeleteAnnotationAsync(a);
                 _annotations.Remove(a);
+                _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Delete, Annotation = a });
+                _redoStack.Clear();
+                UpdateUndoRedoButtons();
+
                 if (_selectedAnnotation == a) _selectedAnnotation = null;
                 RenderAnnotations();
             }
@@ -2584,4 +2732,18 @@ public partial class ViewerPage : ContentPage
     }
 
     #endregion
+}
+
+public enum AnnotationActionType
+{
+    Add,
+    Delete,
+    ClearAll
+}
+
+public class AnnotationHistoryEntry
+{
+    public AnnotationActionType ActionType { get; set; }
+    public Annotation? Annotation { get; set; }
+    public List<Annotation>? AnnotationList { get; set; }
 }

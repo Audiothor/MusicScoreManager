@@ -340,7 +340,7 @@
             <Border.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
             </Border.GestureRecognizers>
-            <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto, Auto, Auto, Auto" Padding="8,0">
+            <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto, Auto, Auto, Auto, Auto, Auto" Padding="8,0">
                 <Button Grid.Column="0" x:Name="HighlightBtn" Text="🖍" BackgroundColor="Transparent" TextColor="#FFD700" Clicked="OnAnnotationHighlightClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
                 <Button Grid.Column="1" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="16" FontAttributes="Bold" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
                 <Button Grid.Column="2" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
@@ -348,10 +348,15 @@
                 
                 <BoxView Grid.Column="4" Color="Transparent" />
                 
-                <Button Grid.Column="5" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="18" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                <Button Grid.Column="6" x:Name="LockUnlockBtn" Text="🔒" BackgroundColor="#D32F2F" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="16" Padding="0" WidthRequest="40" HeightRequest="34" CornerRadius="6" VerticalOptions="Center" HorizontalOptions="Center" />
-                <Button Grid.Column="7" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                <Button Grid.Column="8" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="18" FontAttributes="Bold" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                <!-- Boutons Undo et Redo -->
+                <Button Grid.Column="5" x:Name="UndoBtn" Text="↩" BackgroundColor="Transparent" TextColor="White" Clicked="OnUndoAnnotationClicked" FontSize="18" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" />
+                <Button Grid.Column="6" x:Name="RedoBtn" Text="↪" BackgroundColor="Transparent" TextColor="White" Clicked="OnRedoAnnotationClicked" FontSize="18" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" />
+
+                <!-- Bouton Reset Nettoyage complet -->
+                <Button Grid.Column="7" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="18" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="8" x:Name="LockUnlockBtn" Text="🔒" BackgroundColor="#D32F2F" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="16" Padding="0" WidthRequest="40" HeightRequest="34" CornerRadius="6" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="9" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="10" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="18" FontAttributes="Bold" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
             </Grid>
         </Border>
 
