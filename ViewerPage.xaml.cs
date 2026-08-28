@@ -2917,22 +2917,27 @@ public partial class ViewerPage : ContentPage
 
     private Border CreateStickerBorder(Annotation ann, double containerW, double containerH)
     {
+        double effectiveScale = Math.Max(0.5, ann.Scale <= 0 ? 1.0 : ann.Scale);
+        double fontSize = 15.0 * effectiveScale;
+
         var label = new Label
         {
             BackgroundColor = Colors.Transparent,
             HorizontalTextAlignment = TextAlignment.Center,
             VerticalTextAlignment = TextAlignment.Center,
+            LineBreakMode = LineBreakMode.NoWrap,
             InputTransparent = true,
             Text = ann.Content,
             TextColor = ParseColor(ann.Color),
-            FontSize = 24 * ann.Scale
+            FontSize = fontSize,
+            FontAttributes = FontAttributes.Bold
         };
 
         var border = new Border
         {
             BindingContext = ann,
-            Padding = new Thickness(10, 5),
-            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 8 },
+            Padding = new Thickness(8 * effectiveScale, 4 * effectiveScale),
+            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = (float)(6 * effectiveScale) },
             StrokeThickness = (ann == _selectedAnnotation) ? 2 : 0,
             Stroke = (ann == _selectedAnnotation) ? Colors.Red : Colors.Transparent,
             BackgroundColor = ParseColor(ann.BackgroundColor),
@@ -2943,8 +2948,9 @@ public partial class ViewerPage : ContentPage
         AbsoluteLayout.SetLayoutFlags(border, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
 
         var size = border.Measure(double.PositiveInfinity, double.PositiveInfinity);
-        double w = size.Width;
-        double h = size.Height;
+        // Marges de confort pour éviter tout découpage / rognage sur Android
+        double w = Math.Max(size.Width + 10, 22 * effectiveScale);
+        double h = Math.Max(size.Height + 4, 18 * effectiveScale);
         double absX = ann.X * containerW;
         double absY = ann.Y * containerH;
 

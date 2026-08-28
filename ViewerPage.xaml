@@ -188,7 +188,7 @@
                     <Grid Grid.Row="2" ColumnDefinitions="Auto, *" ColumnSpacing="10" VerticalOptions="Center">
                         <Label Grid.Column="0" Text="Taille:" TextColor="White" VerticalOptions="Center" FontSize="13" FontAttributes="Bold" />
                         <Slider Grid.Column="1" x:Name="StickerSizeSlider" 
-                                Minimum="0.5" Maximum="4.0" Value="1.2" 
+                                Minimum="0.5" Maximum="3.0" Value="1.0" 
                                 HeightRequest="36" 
                                 MinimumTrackColor="#007ACC" MaximumTrackColor="#555555" ThumbColor="White" 
                                 VerticalOptions="Center" HorizontalOptions="FillAndExpand" 
@@ -200,21 +200,29 @@
 
                 <!-- Catégories -->
                 <CollectionView x:Name="StickerCategoriesCollection"
-                                HeightRequest="35"
+                                HeightRequest="40"
+                                Margin="4,0"
                                 SelectionMode="Single"
                                 SelectionChanged="OnStickerCategoryChanged">
                     <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Label Text="{Binding Name}" 
-                                   Padding="12,5"
-                                   FontSize="12"
-                                   TextColor="White"
-                                   BackgroundColor="#333333"
-                                   VerticalTextAlignment="Center"
-                                   HorizontalTextAlignment="Center" />
+                            <Border BackgroundColor="#2D2D35" 
+                                    Padding="14,6" 
+                                    Stroke="#444444"
+                                    StrokeThickness="1">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16" />
+                                </Border.StrokeShape>
+                                <Label Text="{Binding Name}" 
+                                       FontSize="13"
+                                       FontAttributes="Bold"
+                                       TextColor="White"
+                                       VerticalTextAlignment="Center"
+                                       HorizontalTextAlignment="Center" />
+                            </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
@@ -223,20 +231,20 @@
 
                 <!-- Stickers de la catégorie -->
                 <CollectionView x:Name="StickersCollection" 
-                                HeightRequest="90"
+                                HeightRequest="65"
+                                Margin="4,0"
                                 SelectionMode="Single"
                                 SelectionChanged="OnStickerSelected"
                                 HorizontalOptions="Fill">
                     <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15" />
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Border x:Name="StickerBorder"
-                                    HeightRequest="55" 
-                                    Margin="3" 
+                                    Margin="2,2" 
                                     BackgroundColor="{Binding BackgroundColor}" 
-                                    Padding="8,0"
+                                    Padding="14,6"
                                     StrokeShape="RoundRectangle 8"
                                     StrokeThickness="2">
                                 <VisualStateManager.VisualStateGroups>
@@ -248,7 +256,7 @@
                                         </VisualState>
                                         <VisualState x:Name="Selected">
                                             <VisualState.Setters>
-                                                <Setter Property="Stroke" Value="Red" />
+                                                <Setter Property="Stroke" Value="#007ACC" />
                                             </VisualState.Setters>
                                         </VisualState>
                                     </VisualStateGroup>
@@ -259,9 +267,12 @@
                                 <Label Text="{Binding Text}" 
                                        TextColor="{Binding Color}" 
                                        FontSize="{Binding Scale, Converter={StaticResource ScaleToFontSizeConverter}}" 
+                                       FontAttributes="Bold"
                                        LineBreakMode="NoWrap"
                                        VerticalOptions="Center"
                                        HorizontalOptions="Center"
+                                       VerticalTextAlignment="Center"
+                                       HorizontalTextAlignment="Center"
                                        InputTransparent="True" />
                             </Border>
                         </DataTemplate>

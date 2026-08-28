@@ -39,6 +39,7 @@
 - **Surlignage Stabilo à Bords Droits / Biseautés (v1.8.25)** : Extrémités de sélection nettes et droites (`PenLineCap.Flat`) remplaçant l'effet arrondi pour un rendu de surlignage authentique et précis sur les portées et textes.
 - **Pipeline Tactile Natif & Surlignage Stabilo Temps Réel (v1.8.24)** : Capture matérielle directe des événements tactiles Android. Tracé instantané et fluide du surlignage au doigt (`🖍`) sur PDF et Image sans blocage ni latence. Restauration complète du zoom/dézoom multi-touch (Pinch à 2 doigts) et du déplacement (Pan) sur les partitions PDF.
 - **Surlignage Translucide Tactile / Stabilo (v1.8.23 - v1.8.25)** : Outil `🖍` avec rendu translucide naturel (sans masquer les notes et annotations sous-jacentes). Palette ergonomique de 4 couleurs fluo et 3 épaisseurs de trait (5 mm, 10 mm, 18 mm).
+- **Harmonisation Typographique & Rendu Anti-Rognage des Stickers (v1.8.31)** : Échelle typographique affinée (taille de base 15px au lieu de 24px) pour des annotations musicales et textuelles nettes et parfaitement proportionnées. Marges dynamiques de sécurité évitant toute troncature/coupure de texte sur Android. Refonte visuelle du tiroir avec boutons de catégories en pilules et pastilles stickers bold parfaitement centrées.
 - **Tiroir à Stickers Unifié & Bouton Fermer ✕** : Sélection rapide avec bouton de fermeture dédié sur l'overlay.
 - **Réglette de Taille Tactile Élargie** : Slider grand format ergonomique sur ligne dédiée pour un ajustement facile aux doigts.
 - **Placement Délimité Précis (v1.8.12)** : Possibilité de déposer des stickers en dessous de la barre d'annotations même si celle-ci a été déplacée au milieu/haut de l'écran.
@@ -128,4 +129,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.30 "Integrated Tags in Tools Page & Clean 5-Tab Bar without More Menu"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.31 "Harmonized Sticker Fonts, Sizing, Pill Categories & Anti-Clipping Fix"*
