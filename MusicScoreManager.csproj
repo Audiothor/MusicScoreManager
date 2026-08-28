@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.8.33</ApplicationDisplayVersion>
-		<ApplicationVersion>18330</ApplicationVersion>
-		<!-- Version actuelle : v1.8.33 "WYSIWYG Real-time Sticker Drawer Synchronization (Colors, Background & Size)" -->
+		<ApplicationDisplayVersion>1.8.34</ApplicationDisplayVersion>
+		<ApplicationVersion>18340</ApplicationVersion>
+		<!-- Version actuelle : v1.8.34 "Restored Page-turning Swipe & Tap Gestures for PDF & Image Scores" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

@@ -409,6 +409,8 @@ public partial class ViewerPage : ContentPage
         _isPdfJsReady = true;
     }
 
+
+
     private async void OnPdfWebViewNavigated(object sender, WebNavigatedEventArgs e)
     {
         if (_score.Type == ScoreType.PDF && e.Result == WebNavigationResult.Success)
@@ -1120,21 +1122,43 @@ public partial class ViewerPage : ContentPage
         BottomTouchBar.IsVisible = !AnnotationBar.IsVisible; // Restaure la zone tactile du bas si la barre n'est pas déjà ouverte
     }
 
-    private void OnPrevTapped(object sender, EventArgs e)
+    private async void OnPrevTapped(object sender, EventArgs e)
     {
-        if (ZoomLayout.Scale > 1) return;
+        if (ZoomLayout.Scale > 1.05) return;
         if (_score.Type == ScoreType.Image)
         {
             HandleStartOfScore();
         }
+        else if (_score.Type == ScoreType.PDF)
+        {
+            if (_currentPage > 1)
+            {
+                await GoToPage(_currentPage - 1);
+            }
+            else
+            {
+                HandleStartOfScore();
+            }
+        }
     }
 
-    private void OnNextTapped(object sender, EventArgs e)
+    private async void OnNextTapped(object sender, EventArgs e)
     {
-        if (ZoomLayout.Scale > 1) return;
+        if (ZoomLayout.Scale > 1.05) return;
         if (_score.Type == ScoreType.Image)
         {
             HandleEndOfScore();
+        }
+        else if (_score.Type == ScoreType.PDF)
+        {
+            if (_currentPage < _maxPages)
+            {
+                await GoToPage(_currentPage + 1);
+            }
+            else
+            {
+                HandleEndOfScore();
+            }
         }
     }
 

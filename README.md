@@ -129,4 +129,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.33 "WYSIWYG Real-time Sticker Drawer Synchronization (Colors, Background & Size)"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.34 "Restored Page-turning Swipe & Tap Gestures for PDF & Image Scores"*
