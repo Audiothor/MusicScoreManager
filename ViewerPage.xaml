@@ -67,6 +67,10 @@
                     <AbsoluteLayout.GestureRecognizers>
                         <DropGestureRecognizer Drop="OnStickerDrop" AllowDrop="True" />
                         <TapGestureRecognizer Tapped="OnPlacementTapped" />
+                        <PointerGestureRecognizer PointerPressed="OnHighlightPointerPressed"
+                                                  PointerMoved="OnHighlightPointerMoved"
+                                                  PointerReleased="OnHighlightPointerReleased" />
+                        <PanGestureRecognizer PanUpdated="OnHighlightPanUpdated" />
                     </AbsoluteLayout.GestureRecognizers>
                 </AbsoluteLayout>
             </Grid>
@@ -270,6 +274,64 @@
             </VerticalStackLayout>
         </Border>
 
+        <!-- Panneau d'options de surlignage (Stabilo) -->
+        <Border x:Name="HighlightOptionsOverlay"
+                IsVisible="False"
+                VerticalOptions="End"
+                HorizontalOptions="Center"
+                Margin="0,0,0,50"
+                BackgroundColor="#EE1E1E24"
+                Stroke="#44FFFFFF"
+                StrokeThickness="1"
+                Padding="12,8"
+                ZIndex="25">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+            <HorizontalStackLayout Spacing="12" VerticalOptions="Center">
+                <!-- Pastilles de couleurs (Jaune par défaut, Vert, Bleu, Rouge/Rose) -->
+                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                    <!-- Jaune (défaut) -->
+                    <Border x:Name="HighlightYellowBtn" BackgroundColor="#FFFF00" WidthRequest="28" HeightRequest="28" Stroke="White" StrokeThickness="3">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnHighlightColorSelected" CommandParameter="#FFFF00" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Vert -->
+                    <Border x:Name="HighlightGreenBtn" BackgroundColor="#00E676" WidthRequest="28" HeightRequest="28" Stroke="Transparent" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnHighlightColorSelected" CommandParameter="#00E676" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Bleu -->
+                    <Border x:Name="HighlightBlueBtn" BackgroundColor="#00B0FF" WidthRequest="28" HeightRequest="28" Stroke="Transparent" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnHighlightColorSelected" CommandParameter="#00B0FF" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Rouge/Rose -->
+                    <Border x:Name="HighlightRedBtn" BackgroundColor="#FF4081" WidthRequest="28" HeightRequest="28" Stroke="Transparent" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnHighlightColorSelected" CommandParameter="#FF4081" /></Border.GestureRecognizers>
+                    </Border>
+                </HorizontalStackLayout>
+
+                <!-- Séparateur vertical -->
+                <BoxView WidthRequest="1" HeightRequest="24" Color="#44FFFFFF" VerticalOptions="Center" />
+
+                <!-- Choix de largeur de stabilo -->
+                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                    <Label Text="Taille :" TextColor="#CCCCCC" FontSize="12" VerticalOptions="Center" />
+                    <!-- Bouton Fin (5mm) -->
+                    <Button x:Name="HighlightSizeSmallBtn" Text="5mm" BackgroundColor="#333333" TextColor="White" FontSize="11" HeightRequest="28" Padding="6,0" CornerRadius="6" Clicked="OnHighlightSizeSelected" CommandParameter="15" />
+                    <!-- Bouton Moyen (10mm - Défaut) -->
+                    <Button x:Name="HighlightSizeMediumBtn" Text="10mm" BackgroundColor="#007ACC" TextColor="White" FontSize="11" HeightRequest="28" Padding="6,0" CornerRadius="6" FontAttributes="Bold" Clicked="OnHighlightSizeSelected" CommandParameter="30" />
+                    <!-- Bouton Large (18mm) -->
+                    <Button x:Name="HighlightSizeLargeBtn" Text="18mm" BackgroundColor="#333333" TextColor="White" FontSize="11" HeightRequest="28" Padding="6,0" CornerRadius="6" Clicked="OnHighlightSizeSelected" CommandParameter="50" />
+                </HorizontalStackLayout>
+
+                <!-- Bouton fermer le panneau -->
+                <Button Text="✕" BackgroundColor="Transparent" TextColor="#AAAAAA" FontSize="16" HeightRequest="28" WidthRequest="28" Padding="0" Clicked="OnCloseHighlightOptionsClicked" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </Border>
+
         <!-- Barre d'Annotations (Bas) -->
         <Border x:Name="AnnotationBar"
                 VerticalOptions="End"
@@ -282,17 +344,18 @@
             <Border.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
             </Border.GestureRecognizers>
-            <Grid ColumnDefinitions="Auto, Auto, Auto, *, Auto, Auto, Auto, Auto" Padding="10,0">
-                <Button Grid.Column="0" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="18" FontAttributes="Bold" Padding="10,0" />
-                <Button Grid.Column="1" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="18" Padding="10,0" />
-                <Button Grid.Column="2" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="18" Padding="10,0" />
+            <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto, Auto, Auto, Auto" Padding="10,0">
+                <Button Grid.Column="0" x:Name="HighlightBtn" Text="🖍" BackgroundColor="Transparent" TextColor="#FFD700" Clicked="OnAnnotationHighlightClicked" FontSize="20" Padding="8,0" />
+                <Button Grid.Column="1" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="18" FontAttributes="Bold" Padding="8,0" />
+                <Button Grid.Column="2" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="18" Padding="8,0" />
+                <Button Grid.Column="3" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="18" Padding="8,0" />
                 
-                <BoxView Grid.Column="3" Color="Transparent" />
+                <BoxView Grid.Column="4" Color="Transparent" />
                 
-                <Button Grid.Column="4" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="20" Padding="10,0" />
-                <Button Grid.Column="5" x:Name="LockUnlockBtn" Text="🔒" BackgroundColor="#D32F2F" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="18" Padding="0" WidthRequest="44" HeightRequest="36" CornerRadius="6" VerticalOptions="Center" HorizontalOptions="Center" />
-                <Button Grid.Column="6" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="18" Padding="10,0" />
-                <Button Grid.Column="7" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="20" Padding="10,0" FontAttributes="Bold" />
+                <Button Grid.Column="5" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="20" Padding="8,0" />
+                <Button Grid.Column="6" x:Name="LockUnlockBtn" Text="🔒" BackgroundColor="#D32F2F" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="18" Padding="0" WidthRequest="44" HeightRequest="36" CornerRadius="6" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="7" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="18" Padding="8,0" />
+                <Button Grid.Column="8" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="20" Padding="8,0" FontAttributes="Bold" />
             </Grid>
         </Border>
 

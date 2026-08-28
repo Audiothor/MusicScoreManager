@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.8.22</ApplicationDisplayVersion>
-		<ApplicationVersion>18220</ApplicationVersion>
-		<!-- Version actuelle : v1.8.22 "Zero-Drift High-Precision Metronome" -->
+		<ApplicationDisplayVersion>1.8.23</ApplicationDisplayVersion>
+		<ApplicationVersion>18230</ApplicationVersion>
+		<!-- Version actuelle : v1.8.23 "Translucent Score Highlighter (Stabilo)" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

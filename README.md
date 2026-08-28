@@ -26,7 +26,8 @@
 - **Sécurisation des Gestes (Safe Boundaries)** : Gestion intelligente des zones tactiles pour éviter les sorties d'écran et la navigation intempestive aux extrémités de la partition.
 - **Accès Direct au Saut de Page** : Clic direct sur l'indicateur de numérotation de page (`1/5`) pour ouvrir le prompt de changement de page.
 
-### 🎨 Édition & Système d'Annotations Dynamiques (v1.8.1 - v1.8.12)
+### 🎨 Édition & Système d'Annotations Dynamiques (v1.8.1 - v1.8.23)
+- **Surlignage Translucide Tactile / Stabilo (v1.8.23)** : Nouvel outil `🖍` placé avant le texte dans la barre d'outils. Permet de surligner les portées ou le texte au doigt avec un rendu translucide naturel (sans masquer les notes et annotations sous-jacentes). Palette ergonomique de couleurs (Jaune fluo par défaut, Vert, Bleu, Rose/Rouge) et sélection rapide de l'épaisseur du trait (5 mm, 10 mm par défaut, 18 mm).
 - **Tiroir à Stickers Unifié & Bouton Fermer ✕** : Sélection rapide avec bouton de fermeture dédié sur l'overlay.
 - **Réglette de Taille Tactile Élargie** : Slider grand format ergonomique sur ligne dédiée pour un ajustement facile aux doigts.
 - **Placement Délimité Précis (v1.8.12)** : Possibilité de déposer des stickers en dessous de la barre d'annotations même si celle-ci a été déplacée au milieu/haut de l'écran.
@@ -116,4 +117,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.22 "Zero-Drift High-Precision Metronome"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.23 "Translucent Score Highlighter (Stabilo)"*
