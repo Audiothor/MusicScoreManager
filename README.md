@@ -129,4 +129,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.38 "Accurate Database Backup Timestamp & File Size Display"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.39 "Full Text Annotations with Color Palette, 8-18px Font Sizing & Dynamic Placement"*

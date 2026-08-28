@@ -1562,6 +1562,35 @@ public partial class ViewerPage : ContentPage
             }
         }
 
+        // 1b. GESTION DU TAP EN MODE TEXTE (1 doigt, mode actif et déverrouillé)
+        if (_isTextMode && !_isAnnotationsLocked)
+        {
+            double touchX = motionEvent.GetX() / density;
+            double touchY = motionEvent.GetY() / density;
+
+            switch (motionEvent.ActionMasked)
+            {
+                case Android.Views.MotionEventActions.Down:
+                    _touchDownTime = motionEvent.EventTime;
+                    _touchDownX = (float)touchX;
+                    _touchDownY = (float)touchY;
+                    args.Handled = true;
+                    return;
+
+                case Android.Views.MotionEventActions.Up:
+                    long duration = motionEvent.EventTime - _touchDownTime;
+                    float diffX = (float)touchX - _touchDownX;
+                    float diffY = (float)touchY - _touchDownY;
+                    float dist = (float)Math.Sqrt(diffX * diffX + diffY * diffY);
+                    if (dist < 25 && duration < 500)
+                    {
+                        MainThread.BeginInvokeOnMainThread(async () => await HandleTextPlacementAsync(touchX, touchY));
+                    }
+                    args.Handled = true;
+                    return;
+            }
+        }
+
         // 2. GESTION DU PINCH / ZOOM À 2 DOIGTS (Multi-touch)
         if (pointerCount >= 2)
         {
@@ -1804,6 +1833,14 @@ public partial class ViewerPage : ContentPage
 
         if (_isHighlightMode)
         {
+            _isDrawMode = false;
+            DrawOptionsOverlay.IsVisible = false;
+            DrawBtn.BackgroundColor = Colors.Transparent;
+
+            _isTextMode = false;
+            TextOptionsOverlay.IsVisible = false;
+            TextAnnotationBtn.BackgroundColor = Colors.Transparent;
+
             _isAnnotationMode = false;
             _pendingSticker = null;
             StickerPickerOverlay.IsVisible = false;
@@ -2006,6 +2043,10 @@ public partial class ViewerPage : ContentPage
             HighlightOptionsOverlay.IsVisible = false;
             HighlightBtn.BackgroundColor = Colors.Transparent;
 
+            _isTextMode = false;
+            TextOptionsOverlay.IsVisible = false;
+            TextAnnotationBtn.BackgroundColor = Colors.Transparent;
+
             _isAnnotationMode = false;
             _pendingSticker = null;
             StickerPickerOverlay.IsVisible = false;
@@ -2159,11 +2200,165 @@ public partial class ViewerPage : ContentPage
 
     #endregion
 
-    private async void OnAnnotationTextClicked(object sender, EventArgs e)
+    #region Text Mode (T)
+
+    private bool _isTextMode = false;
+    private string _currentTextColor = "#000000";
+    private double _currentTextSize = 14.0; // 8, 10, 12, 14, 16, 18 (14 par défaut)
+
+    private void OnAnnotationTextClicked(object sender, EventArgs e)
     {
-        StickerPickerOverlay.IsVisible = false;
-        await DisplayAlertAsync("Info", "L'annotation de texte arrive bientôt !", "OK");
+        if (_isAnnotationsLocked)
+        {
+            DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour ajouter du texte.", "OK");
+            return;
+        }
+
+        _isTextMode = !_isTextMode;
+        TextOptionsOverlay.IsVisible = _isTextMode;
+
+        if (_isTextMode)
+        {
+            _isHighlightMode = false;
+            HighlightOptionsOverlay.IsVisible = false;
+            HighlightBtn.BackgroundColor = Colors.Transparent;
+
+            _isDrawMode = false;
+            DrawOptionsOverlay.IsVisible = false;
+            DrawBtn.BackgroundColor = Colors.Transparent;
+
+            _isAnnotationMode = false;
+            _pendingSticker = null;
+            StickerPickerOverlay.IsVisible = false;
+
+            TextAnnotationBtn.BackgroundColor = Color.FromArgb("#40007ACC");
+            ActiveAnnotationsContainer.InputTransparent = false;
+        }
+        else
+        {
+            TextAnnotationBtn.BackgroundColor = Colors.Transparent;
+        }
     }
+
+    private async void OnTextColorSelected(object? sender, EventArgs e)
+    {
+        if (sender is Border border && border.GestureRecognizers.FirstOrDefault() is TapGestureRecognizer tap && tap.CommandParameter is string color)
+        {
+            _currentTextColor = color;
+            UpdateTextColorBorders();
+
+            // Modification dynamique du texte sélectionné en temps réel
+            if (!_isAnnotationsLocked && _selectedAnnotation != null && _selectedAnnotation.Type == AnnotationType.Text)
+            {
+                _selectedAnnotation.Color = _currentTextColor;
+                await _databaseService.SaveAnnotationAsync(_selectedAnnotation);
+                RenderAnnotations();
+            }
+        }
+    }
+
+    private void UpdateTextColorBorders()
+    {
+        TextBlackBtn.Stroke = _currentTextColor == "#000000" ? Colors.White : Colors.Transparent;
+        TextBlackBtn.StrokeThickness = _currentTextColor == "#000000" ? 2 : 1;
+
+        TextRedBtn.Stroke = _currentTextColor == "#E53935" ? Colors.White : Colors.Transparent;
+        TextRedBtn.StrokeThickness = _currentTextColor == "#E53935" ? 2 : 1;
+
+        TextBlueBtn.Stroke = _currentTextColor == "#1E88E5" ? Colors.White : Colors.Transparent;
+        TextBlueBtn.StrokeThickness = _currentTextColor == "#1E88E5" ? 2 : 1;
+
+        TextGreenBtn.Stroke = _currentTextColor == "#43A047" ? Colors.White : Colors.Transparent;
+        TextGreenBtn.StrokeThickness = _currentTextColor == "#43A047" ? 2 : 1;
+
+        TextYellowBtn.Stroke = _currentTextColor == "#FFD600" ? Colors.White : Colors.Transparent;
+        TextYellowBtn.StrokeThickness = _currentTextColor == "#FFD600" ? 2 : 1;
+
+        TextWhiteBtn.Stroke = _currentTextColor == "#FFFFFF" ? Colors.Gray : Colors.Transparent;
+        TextWhiteBtn.StrokeThickness = _currentTextColor == "#FFFFFF" ? 2 : 1;
+    }
+
+    private async void OnTextSizeSelected(object sender, EventArgs e)
+    {
+        if (sender is Button btn && btn.CommandParameter is string sizeStr && double.TryParse(sizeStr, out double size))
+        {
+            _currentTextSize = size;
+            UpdateTextSizeButtons();
+
+            // Modification dynamique du texte sélectionné en temps réel
+            if (!_isAnnotationsLocked && _selectedAnnotation != null && _selectedAnnotation.Type == AnnotationType.Text)
+            {
+                _selectedAnnotation.Scale = _currentTextSize;
+                await _databaseService.SaveAnnotationAsync(_selectedAnnotation);
+                RenderAnnotations();
+            }
+        }
+    }
+
+    private void UpdateTextSizeButtons()
+    {
+        TextSize8Btn.BackgroundColor = (_currentTextSize == 8) ? Color.FromArgb("#007ACC") : Color.FromArgb("#333333");
+        TextSize8Btn.FontAttributes = (_currentTextSize == 8) ? FontAttributes.Bold : FontAttributes.None;
+
+        TextSize10Btn.BackgroundColor = (_currentTextSize == 10) ? Color.FromArgb("#007ACC") : Color.FromArgb("#333333");
+        TextSize10Btn.FontAttributes = (_currentTextSize == 10) ? FontAttributes.Bold : FontAttributes.None;
+
+        TextSize12Btn.BackgroundColor = (_currentTextSize == 12) ? Color.FromArgb("#007ACC") : Color.FromArgb("#333333");
+        TextSize12Btn.FontAttributes = (_currentTextSize == 12) ? FontAttributes.Bold : FontAttributes.None;
+
+        TextSize14Btn.BackgroundColor = (_currentTextSize == 14) ? Color.FromArgb("#007ACC") : Color.FromArgb("#333333");
+        TextSize14Btn.FontAttributes = (_currentTextSize == 14) ? FontAttributes.Bold : FontAttributes.None;
+
+        TextSize16Btn.BackgroundColor = (_currentTextSize == 16) ? Color.FromArgb("#007ACC") : Color.FromArgb("#333333");
+        TextSize16Btn.FontAttributes = (_currentTextSize == 16) ? FontAttributes.Bold : FontAttributes.None;
+
+        TextSize18Btn.BackgroundColor = (_currentTextSize == 18) ? Color.FromArgb("#007ACC") : Color.FromArgb("#333333");
+        TextSize18Btn.FontAttributes = (_currentTextSize == 18) ? FontAttributes.Bold : FontAttributes.None;
+    }
+
+    private void OnCloseTextOptionsClicked(object sender, EventArgs e)
+    {
+        _isTextMode = false;
+        TextOptionsOverlay.IsVisible = false;
+        TextAnnotationBtn.BackgroundColor = Colors.Transparent;
+    }
+
+    private async Task HandleTextPlacementAsync(double absX, double absY)
+    {
+        if (!_isTextMode || _isAnnotationsLocked || ActiveAnnotationsContainer.Width <= 0 || ActiveAnnotationsContainer.Height <= 0) return;
+
+        double relX = Math.Clamp(absX / ActiveAnnotationsContainer.Width, 0.0, 1.0);
+        double relY = Math.Clamp(absY / ActiveAnnotationsContainer.Height, 0.0, 1.0);
+
+        string text = await DisplayPromptAsync("Ajouter du texte", "Tapez votre mot ou texte :", "OK", "Annuler");
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            var annotation = new Annotation
+            {
+                ScoreId = _score.Id,
+                Type = AnnotationType.Text,
+                Category = "Text",
+                Content = text.Trim(),
+                X = relX,
+                Y = relY,
+                Scale = _currentTextSize, // 8, 10, 12, 14, 16, 18
+                Color = _currentTextColor,
+                BackgroundColor = "Transparent",
+                PageNumber = _currentPage
+            };
+
+            await _databaseService.SaveAnnotationAsync(annotation);
+            _annotations.Add(annotation);
+            _selectedAnnotation = annotation;
+
+            _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Add, Annotation = annotation });
+            _redoStack.Clear();
+            UpdateUndoRedoButtons();
+            RenderAnnotations();
+        }
+    }
+
+    #endregion
 
     private async void OnAnnotationStickersClicked(object sender, EventArgs e)
     {
@@ -2174,6 +2369,10 @@ public partial class ViewerPage : ContentPage
         _isDrawMode = false;
         DrawOptionsOverlay.IsVisible = false;
         DrawBtn.BackgroundColor = Colors.Transparent;
+
+        _isTextMode = false;
+        TextOptionsOverlay.IsVisible = false;
+        TextAnnotationBtn.BackgroundColor = Colors.Transparent;
 
         StickerPickerOverlay.IsVisible = !StickerPickerOverlay.IsVisible;
         
@@ -2205,10 +2404,13 @@ public partial class ViewerPage : ContentPage
         StickerPickerOverlay.IsVisible = false;
         HighlightOptionsOverlay.IsVisible = false;
         DrawOptionsOverlay.IsVisible = false;
+        TextOptionsOverlay.IsVisible = false;
         _isHighlightMode = false;
         _isDrawMode = false;
+        _isTextMode = false;
         HighlightBtn.BackgroundColor = Colors.Transparent;
         DrawBtn.BackgroundColor = Colors.Transparent;
+        TextAnnotationBtn.BackgroundColor = Colors.Transparent;
         
         // Réinitialiser la translation pour éviter qu'elle reste décalée lors de la prochaine ouverture
         AnnotationBar.TranslationY = 0;
@@ -2513,19 +2715,25 @@ public partial class ViewerPage : ContentPage
 
     private async void OnPlacementTapped(object? sender, TappedEventArgs e)
     {
-        if (!_isAnnotationMode || _pendingSticker == null) return;
-
         if (_isAnnotationsLocked)
         {
-            _pendingSticker = null;
-            _isAnnotationMode = false;
-            if (ActiveAnnotationsContainer != null) ActiveAnnotationsContainer.InputTransparent = true;
-            await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir les modifier.", "OK");
+            if (_isTextMode || _isAnnotationMode)
+            {
+                await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir annoter.", "OK");
+            }
             return;
         }
 
         var position = e.GetPosition(ActiveAnnotationsContainer);
-        if (position == null) return;
+        if (position == null || ActiveAnnotationsContainer.Width <= 0 || ActiveAnnotationsContainer.Height <= 0) return;
+
+        if (_isTextMode)
+        {
+            await HandleTextPlacementAsync(position.Value.X, position.Value.Y);
+            return;
+        }
+
+        if (!_isAnnotationMode || _pendingSticker == null) return;
 
         // Calculer les coordonnées relatives (0.0 à 1.0)
         double relX = position.Value.X / ActiveAnnotationsContainer.Width;
@@ -2757,10 +2965,13 @@ public partial class ViewerPage : ContentPage
             _selectedAnnotation = null;
             _isHighlightMode = false;
             _isDrawMode = false;
+            _isTextMode = false;
             HighlightOptionsOverlay.IsVisible = false;
             DrawOptionsOverlay.IsVisible = false;
+            TextOptionsOverlay.IsVisible = false;
             HighlightBtn.BackgroundColor = Colors.Transparent;
             DrawBtn.BackgroundColor = Colors.Transparent;
+            TextAnnotationBtn.BackgroundColor = Colors.Transparent;
         }
         RenderAnnotations();
     }
@@ -2807,12 +3018,140 @@ public partial class ViewerPage : ContentPage
                     ActiveAnnotationsContainer.Children.Add(polyline);
                 }
             }
+            else if (ann.Type == AnnotationType.Text)
+            {
+                var border = CreateTextBorder(ann, containerW, containerH);
+                ActiveAnnotationsContainer.Children.Add(border);
+            }
             else
             {
                 var border = CreateStickerBorder(ann, containerW, containerH);
                 ActiveAnnotationsContainer.Children.Add(border);
             }
         }
+    }
+
+    private Border CreateTextBorder(Annotation ann, double containerW, double containerH)
+    {
+        double fontSize = ann.Scale <= 0 ? 14.0 : ann.Scale;
+
+        var label = new Label
+        {
+            BackgroundColor = Colors.Transparent,
+            HorizontalTextAlignment = TextAlignment.Center,
+            VerticalTextAlignment = TextAlignment.Center,
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center,
+            LineBreakMode = LineBreakMode.NoWrap,
+            InputTransparent = true,
+            Text = ann.Content,
+            TextColor = ParseColor(ann.Color),
+            FontSize = fontSize,
+            FontAttributes = FontAttributes.Bold
+        };
+
+        var border = new Border
+        {
+            BindingContext = ann,
+            Padding = new Thickness(6, 2),
+            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 4 },
+            StrokeThickness = (ann == _selectedAnnotation) ? 1.5 : 0,
+            Stroke = (ann == _selectedAnnotation) ? Color.FromArgb("#007ACC") : Colors.Transparent,
+            BackgroundColor = (ann == _selectedAnnotation) ? Color.FromArgb("#33007ACC") : Colors.Transparent,
+            Content = label,
+            InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode
+        };
+
+        AbsoluteLayout.SetLayoutFlags(border, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
+
+        var size = border.Measure(double.PositiveInfinity, double.PositiveInfinity);
+        double charCount = string.IsNullOrEmpty(ann.Content) ? 1 : ann.Content.Length;
+        double estimatedTextWidth = charCount * (fontSize * 0.75);
+
+        double w = Math.Max(Math.Max(size.Width + 14, estimatedTextWidth + 16), 24);
+        double h = Math.Max(Math.Max(size.Height + 6, (fontSize * 1.5) + 6), 20);
+        double absX = ann.X * containerW;
+        double absY = ann.Y * containerH;
+
+        AbsoluteLayout.SetLayoutBounds(border, new Rect(absX - (w / 2), absY - (h / 2), w, h));
+
+        var selectTap = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+        selectTap.Tapped += (s, e) => {
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (s is Border b && b.BindingContext is Annotation a)
+            {
+                _selectedAnnotation = a;
+                _currentTextColor = a.Color;
+                _currentTextSize = a.Scale <= 0 ? 14 : a.Scale;
+                UpdateTextColorBorders();
+                UpdateTextSizeButtons();
+                RenderAnnotations();
+            }
+        };
+        border.GestureRecognizers.Add(selectTap);
+
+        var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
+        doubleTap.Tapped += async (s, e) => {
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (s is Border b && b.BindingContext is Annotation a)
+            {
+                string newText = await DisplayPromptAsync("Modifier le texte", "Texte :", "OK", "Annuler", initialValue: a.Content);
+                if (newText != null)
+                {
+                    if (string.IsNullOrWhiteSpace(newText))
+                    {
+                        await _databaseService.DeleteAnnotationAsync(a);
+                        _annotations.Remove(a);
+                        _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Delete, Annotation = a });
+                        _redoStack.Clear();
+                        UpdateUndoRedoButtons();
+                        if (_selectedAnnotation == a) _selectedAnnotation = null;
+                    }
+                    else
+                    {
+                        a.Content = newText.Trim();
+                        await _databaseService.SaveAnnotationAsync(a);
+                    }
+                    RenderAnnotations();
+                }
+            }
+        };
+        border.GestureRecognizers.Add(doubleTap);
+
+        var pan = new PanGestureRecognizer();
+        double startX = 0, startY = 0;
+        pan.PanUpdated += async (s, e) => {
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (s is Border b && b.BindingContext is Annotation a)
+            {
+                switch (e.StatusType)
+                {
+                    case GestureStatus.Started:
+                        startX = b.TranslationX;
+                        startY = b.TranslationY;
+                        _selectedAnnotation = a;
+                        RenderAnnotations();
+                        break;
+                    case GestureStatus.Running:
+                        b.TranslationX = startX + e.TotalX;
+                        b.TranslationY = startY + e.TotalY;
+                        break;
+                    case GestureStatus.Completed:
+                        double finalAbsX = (a.X * containerW) + b.TranslationX;
+                        double finalAbsY = (a.Y * containerH) + b.TranslationY;
+                        a.X = Math.Clamp(finalAbsX / containerW, 0.0, 1.0);
+                        a.Y = Math.Clamp(finalAbsY / containerH, 0.0, 1.0);
+                        b.TranslationX = 0;
+                        b.TranslationY = 0;
+                        await _databaseService.SaveAnnotationAsync(a);
+                        RenderAnnotations();
+                        break;
+                }
+            }
+        };
+        border.GestureRecognizers.Add(pan);
+
+        return border;
     }
 
     private Microsoft.Maui.Controls.Shapes.Polyline CreatePencilPolyline(Annotation ann, double containerW, double containerH)
