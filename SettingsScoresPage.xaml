@@ -34,13 +34,18 @@
 
             <!-- Option : Affichage du numéro de page -->
             <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
-                <Label Grid.Column="0" 
-                       Text="Affichage du numéro de la page actuelle" 
-                       TextColor="White" 
-                       VerticalOptions="Center" />
+                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                    <Label Text="Affichage du numéro de la page actuelle" 
+                           TextColor="White" 
+                           FontSize="16" />
+                    <Label Text="Affiche l'indicateur de numéro de page en bas à droite" 
+                           TextColor="#888888" 
+                           FontSize="12" />
+                </VerticalStackLayout>
                 <Switch Grid.Column="1" 
                         x:Name="ShowPageNumberSwitch"
-                        IsToggled="{Binding ShowPageNumber}"
+                        OnColor="#007ACC"
+                        ThumbColor="White"
                         Toggled="OnShowPageNumberToggled" />
             </Grid>
 
@@ -68,14 +73,17 @@
             <!-- Option : Taille d'affichage -->
             <VerticalStackLayout Spacing="10">
                 <Label Text="Taille d'affichage du numéro de page actuelle" 
-                       TextColor="White" />
+                       TextColor="White" 
+                       FontSize="16" />
                 <Grid ColumnDefinitions="Auto, *, Auto">
                     <Label Grid.Column="0" Text="A" FontSize="12" TextColor="#888888" VerticalOptions="Center" />
                     <Slider Grid.Column="1" 
                             x:Name="PageNumberSizeSlider"
                             Minimum="10" 
                             Maximum="40" 
-                            Value="{Binding PageNumberSize}"
+                            MinimumTrackColor="#007ACC"
+                            MaximumTrackColor="#555555"
+                            ThumbColor="#007ACC"
                             Margin="10,0"
                             ValueChanged="OnPageNumberSizeChanged" />
                     <Label Grid.Column="2" Text="A" FontSize="24" TextColor="#888888" VerticalOptions="Center" />
@@ -98,7 +106,7 @@
             <VerticalStackLayout Spacing="8">
                 <Label Text="Aller vers page suivante" 
                        TextColor="White" 
-                       FontSize="15" />
+                       FontSize="16" />
                 <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="10,2">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="8" />
@@ -122,7 +130,7 @@
             <VerticalStackLayout Spacing="8">
                 <Label Text="Aller vers page précédente" 
                        TextColor="White" 
-                       FontSize="15" />
+                       FontSize="16" />
                 <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="10,2">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="8" />
