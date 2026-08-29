@@ -263,17 +263,25 @@
             } catch (e) {}
         }
 
-        function preloadAdjacentPages(currentNum) {
+        async function preloadAdjacentPages(currentNum) {
             if (!pdfDoc) return;
-            // Précharger les objets de page et effectuer le rendu hors-écran en arrière-plan
-            setTimeout(() => {
-                if (currentNum + 1 <= pdfDoc.numPages) {
-                    prerenderPageBitmap(currentNum + 1);
-                }
-                if (currentNum - 1 >= 1) {
-                    prerenderPageBitmap(currentNum - 1);
-                }
-            }, 50);
+            // Préchargement asynchrone non-bloquant des pages adjacentes en RAM
+            // Priorité 1: page suivante (+1)
+            // Priorité 2: page +2 (pour anticipation tourne rapide)
+            // Priorité 3: page précédente (-1)
+            setTimeout(async () => {
+                try {
+                    if (currentNum + 1 <= pdfDoc.numPages) {
+                        await prerenderPageBitmap(currentNum + 1);
+                    }
+                    if (currentNum + 2 <= pdfDoc.numPages) {
+                        await prerenderPageBitmap(currentNum + 2);
+                    }
+                    if (currentNum - 1 >= 1) {
+                        await prerenderPageBitmap(currentNum - 1);
+                    }
+                } catch (e) {}
+            }, 30);
         }
 
         async function loadPdf(source, initialRotation = 0, initialPage = 1) {

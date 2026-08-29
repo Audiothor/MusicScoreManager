@@ -33,12 +33,13 @@ public partial class App : Application
             foreach (var file in files)
             {
                 string dest = Path.Combine(pdfjsDir, file);
-                if (!File.Exists(dest))
+                try
                 {
                     using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
                     using var fileStream = File.Create(dest);
                     await stream.CopyToAsync(fileStream);
                 }
+                catch { }
             }
         }
         catch { }
