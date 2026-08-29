@@ -1418,8 +1418,19 @@ public partial class ViewerPage : ContentPage
             }
             else
             {
-                // Bloquer le retour à l'accueil en fin de partition/setlist
-                System.Diagnostics.Debug.WriteLine("[Viewer] Bloqué : fin de la setlist/partition, retour accueil évité.");
+                // Si la lecture en continu n'est pas activée (ou si on est à la toute fin de la setlist)
+                if (!_isContinuous && Preferences.Default.Get("ReturnToSetlistOnEndOfScore", false))
+                {
+                    MainThread.BeginInvokeOnMainThread(async () =>
+                    {
+                        await Navigation.PopAsync();
+                    });
+                }
+                else
+                {
+                    // Bloquer le retour à l'accueil en fin de partition/setlist
+                    System.Diagnostics.Debug.WriteLine("[Viewer] Bloqué : fin de la partition/setlist, retour accueil évité.");
+                }
             }
         }
     }

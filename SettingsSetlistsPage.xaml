@@ -51,6 +51,25 @@
 
                 <BoxView HeightRequest="1" Color="#333333" />
 
+                <!-- Option : Retour à la setlist en fin de partition (si non continu) -->
+                <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="Retour à la setlist en fin de partition" 
+                               TextColor="White" 
+                               FontSize="16" />
+                        <Label Text="Si la lecture en continu est désactivée, passer à la page suivante sur la dernière page ramène à la setlist" 
+                               TextColor="#888888" 
+                               FontSize="12" />
+                    </VerticalStackLayout>
+                    <Switch Grid.Column="1" 
+                            x:Name="ReturnToSetlistSwitch"
+                            OnColor="#007ACC"
+                            ThumbColor="White"
+                            Toggled="OnReturnToSetlistToggled" />
+                </Grid>
+
+                <BoxView HeightRequest="1" Color="#333333" />
+
             </VerticalStackLayout>
         </ScrollView>
     </Grid>
