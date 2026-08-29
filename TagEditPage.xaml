@@ -42,25 +42,40 @@
                 <Label Text="Aperçu" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" FontAttributes="Bold" />
             </Border>
 
-            <Button Text="Enregistrer" 
-                    BackgroundColor="#007ACC" 
-                    TextColor="White" 
-                    FontAttributes="Bold"
-                    CornerRadius="8"
-                    HeightRequest="50"
-                    Margin="0,20,0,0"
-                    Clicked="OnSaveClicked" />
+            <!-- Barre d'actions compacte (Supprimer, Annuler, Enregistrer) -->
+            <Grid ColumnDefinitions="*, *, *" ColumnSpacing="10" Margin="0,25,0,20">
+                <Button x:Name="DeleteButton"
+                        Grid.Column="0"
+                        Text="Supprimer" 
+                        BackgroundColor="#C0392B" 
+                        TextColor="White" 
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        CornerRadius="8"
+                        HeightRequest="42"
+                        IsVisible="False"
+                        Clicked="OnDeleteClicked" />
 
-            <Button x:Name="DeleteButton"
-                    Text="Supprimer l'étiquette" 
-                    BackgroundColor="#C0392B" 
-                    TextColor="White" 
-                    FontAttributes="Bold"
-                    CornerRadius="8"
-                    HeightRequest="50"
-                    Margin="0,0,0,20"
-                    IsVisible="False"
-                    Clicked="OnDeleteClicked" />
+                <Button Grid.Column="1"
+                        Text="Annuler" 
+                        BackgroundColor="#444444" 
+                        TextColor="White" 
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        CornerRadius="8"
+                        HeightRequest="42"
+                        Clicked="OnCancelClicked" />
+
+                <Button Grid.Column="2"
+                        Text="Enregistrer" 
+                        BackgroundColor="#007ACC" 
+                        TextColor="White" 
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        CornerRadius="8"
+                        HeightRequest="42"
+                        Clicked="OnSaveClicked" />
+            </Grid>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

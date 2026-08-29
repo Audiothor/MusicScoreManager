@@ -28,19 +28,37 @@ namespace MusicScoreManager.Services
 
         public string GetDefaultExportsRoot()
         {
-            string baseDir;
+            string path;
 #if ANDROID
-            var context = Android.App.Application.Context;
-            baseDir = context.GetExternalFilesDir(null)?.AbsolutePath ?? FileSystem.AppDataDirectory;
-#else
-            baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MusicScoreManager");
-#endif
-            var path = Path.Combine(baseDir, "Exports");
-            
-            if (!Directory.Exists(path))
+            try
             {
-                Directory.CreateDirectory(path);
+                var downloadDir = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads)?.AbsolutePath;
+                if (!string.IsNullOrEmpty(downloadDir))
+                {
+                    path = downloadDir;
+                }
+                else
+                {
+                    path = "/storage/emulated/0/Download";
+                }
             }
+            catch
+            {
+                path = "/storage/emulated/0/Download";
+            }
+#else
+            string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string downloads = Path.Combine(userProfile, "Downloads");
+            path = Directory.Exists(downloads) ? downloads : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Downloads");
+#endif
+            try
+            {
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+            }
+            catch { }
             
             return path;
         }

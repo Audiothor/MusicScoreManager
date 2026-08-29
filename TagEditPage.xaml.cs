@@ -138,6 +138,11 @@ public partial class TagEditPage : ContentPage
         await Navigation.PopAsync();
     }
 
+    private async void OnCancelClicked(object sender, EventArgs e)
+    {
+        await Navigation.PopAsync();
+    }
+
     private async void OnDeleteClicked(object sender, EventArgs e)
     {
         bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer l'étiquette '{_tag.Name}' ?\nCela la retirera de toutes les partitions.", "Oui", "Non");
