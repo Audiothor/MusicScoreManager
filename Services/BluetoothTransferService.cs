@@ -42,9 +42,11 @@ namespace MusicScoreManager.Services
 
     public class BluetoothTransferService : IBluetoothTransferService
     {
+#pragma warning disable CS0067
         public event EventHandler<BluetoothDeviceInfo>? DeviceDiscovered;
         public event EventHandler? ScanFinished;
         public event EventHandler<BluetoothTransferProgressEventArgs>? TransferProgressChanged;
+#pragma warning restore CS0067
 
         private const string ServiceName = "MusicScoreManager";
         private static readonly Guid ServiceGuid = Guid.Parse("f3079b76-47b2-4d2d-bebf-5c4a5c0bfcb1");
