@@ -117,11 +117,28 @@ public partial class ViewerPage : ContentPage
         SetupNativeTouchHandling();
 #endif
         
-        // On charge les rotations en amont avant de rendre le contenu
+        // On synchronise et recharge les données du score depuis la base de données
         MainThread.BeginInvokeOnMainThread(async () => {
+            try
+            {
+                var refreshedScore = await _databaseService.GetScoreAsync(_score.Id);
+                if (refreshedScore != null)
+                {
+                    _score = refreshedScore;
+                    Title = _score.Title;
+                    if (MenuTitleLabel != null) MenuTitleLabel.Text = _score.Title;
+                    if (MetronomeBpmLabel != null) MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+                    if (MenuMetronomeSwitch != null) MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
+                    if (MenuAudioSwitch != null) MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur rafraîchissement score: {ex.Message}");
+            }
+
             await LoadPageRotationsAsync();
             LoadContentAsync();
-            SetupMenuUI();
         });
 
         // On lance le reste en arrière-plan
@@ -280,23 +297,6 @@ public partial class ViewerPage : ContentPage
             System.Diagnostics.Debug.WriteLine($"[Viewer] Path stocké: {_score.FilePath}");
             string fullPath = _settingsService.GetAbsolutePath(_score.FilePath);
             System.Diagnostics.Debug.WriteLine($"[Viewer] FullPath calculé: {fullPath}");
-
-            string ext = Path.GetExtension(fullPath)?.ToLowerInvariant() ?? "";
-            string cachePath = Path.Combine(FileSystem.CacheDirectory, "SetlistCache", $"{_score.Id}{ext}");
-            System.Diagnostics.Debug.WriteLine($"[Viewer] CachePath cible: {cachePath}");
-
-            _pdfFilePath = "current.pdf";
-
-            if (File.Exists(cachePath) && new FileInfo(cachePath).Length > 0)
-            {
-                fullPath = cachePath;
-                _pdfFilePath = $"../SetlistCache/{_score.Id}{ext}";
-                System.Diagnostics.Debug.WriteLine($"[Viewer] ✅ UTILISATION DU CACHE");
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine($"[Viewer] ⚠️ Cache absent ou vide. Utilisation de l'original.");
-            }
 
             bool exists = File.Exists(fullPath);
             System.Diagnostics.Debug.WriteLine($"[Viewer] Fichier existe physiquement ? {exists}");
@@ -1951,7 +1951,7 @@ public partial class ViewerPage : ContentPage
             StrokeThickness = _currentHighlightThickness,
             StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Flat,
             StrokeLineJoin = Microsoft.Maui.Controls.Shapes.PenLineJoin.Round,
-            Opacity = 0.45,
+            Opacity = 0.28,
             InputTransparent = true,
             Points = new PointCollection { pt }
         };
@@ -3243,7 +3243,7 @@ public partial class ViewerPage : ContentPage
             StrokeThickness = ann.Scale * 30.0,
             StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Flat,
             StrokeLineJoin = Microsoft.Maui.Controls.Shapes.PenLineJoin.Round,
-            Opacity = (ann == _selectedAnnotation) ? 0.85 : 0.45,
+            Opacity = (ann == _selectedAnnotation) ? 0.55 : 0.28,
             InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode
         };
 

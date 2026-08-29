@@ -157,81 +157,22 @@ public partial class SetlistEditPage : ContentPage
             scores.Select((s, index) => new OrderedScore { Score = s, DisplayOrder = index + 1, IsLocked = _isLocked }));
         ScoresCollectionView.ItemsSource = _orderedScores;
         
-        // Lancement de la mise en cache en arrière-plan
-        _ = PrepareSetlistCacheAsync(scores);
+        // Vérification ultra-rapide des partitions
+        _ = PrepareSetlistStatusAsync(scores);
     }
 
-    private async Task PrepareSetlistCacheAsync(List<Score> scores)
+    private async Task PrepareSetlistStatusAsync(List<Score> scores)
     {
         try
         {
             MainThread.BeginInvokeOnMainThread(() => {
-                CacheStatusIcon.Text = "⏳";
-                CacheStatusText.Text = "Mise en cache...";
-            });
-
-            string cacheDir = Path.Combine(FileSystem.CacheDirectory, "SetlistCache");
-            if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
-
-            foreach (var score in scores)
-            {
-                try 
-                {
-                    if (string.IsNullOrWhiteSpace(score.FilePath)) continue;
-
-                    string originalPath = _settingsService.GetAbsolutePath(score.FilePath);
-                    if (File.Exists(originalPath))
-                    {
-                        string ext = Path.GetExtension(originalPath) ?? ".tmp";
-                        string cachePath = Path.Combine(cacheDir, $"{score.Id}{ext}");
-                        
-                        // On ne copie que si le fichier n'est pas déjà là ou s'il est plus récent
-                        if (!File.Exists(cachePath) || File.GetLastWriteTime(originalPath) > File.GetLastWriteTime(cachePath))
-                        {
-                            using var sourceStream = File.OpenRead(originalPath);
-                            using var destStream = File.Create(cachePath);
-                            await sourceStream.CopyToAsync(destStream);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Fichier individuel en erreur : {score.Title} - {ex.Message}");
-                    // On continue la boucle pour les autres fichiers
-                }
-            }
-
-            // NETTOYAGE : Supprimer du cache les fichiers qui ne sont plus dans cette setlist
-            var validCacheFiles = scores
-                .Where(s => !string.IsNullOrEmpty(s.FilePath))
-                .Select(s => $"{s.Id}{Path.GetExtension(s.FilePath)}")
-                .ToList();
-
-            if (Directory.Exists(cacheDir))
-            {
-                var existingFiles = Directory.GetFiles(cacheDir);
-                foreach (var file in existingFiles)
-                {
-                    string fileName = Path.GetFileName(file);
-                    if (!validCacheFiles.Contains(fileName))
-                    {
-                        try { File.Delete(file); } catch { }
-                    }
-                }
-            }
-
-            MainThread.BeginInvokeOnMainThread(() => {
                 CacheStatusIcon.Text = "⚡";
-                CacheStatusText.Text = "Cache OK";
+                CacheStatusText.Text = "Prêt";
             });
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Cache error: {ex.Message}");
-            MainThread.BeginInvokeOnMainThread(() => {
-                CacheStatusIcon.Text = "❌";
-                CacheStatusText.Text = "Erreur Cache";
-            });
+            System.Diagnostics.Debug.WriteLine($"Setlist status error: {ex.Message}");
         }
     }
 
@@ -241,8 +182,7 @@ public partial class SetlistEditPage : ContentPage
         {
             _orderedScores[i].DisplayOrder = i + 1;
         }
-        // Mise à jour du cache si l'ordre change (optionnel mais propre)
-        _ = PrepareSetlistCacheAsync(_orderedScores.Select(os => os.Score).ToList());
+        _ = PrepareSetlistStatusAsync(_orderedScores.Select(os => os.Score).ToList());
     }
 
     private void OnReorderCompleted(object sender, EventArgs e)
@@ -268,7 +208,7 @@ public partial class SetlistEditPage : ContentPage
 
         if (added)
         {
-            _ = PrepareSetlistCacheAsync(_orderedScores.Select(os => os.Score).ToList());
+            _ = PrepareSetlistStatusAsync(_orderedScores.Select(os => os.Score).ToList());
         }
     }
 
@@ -278,7 +218,7 @@ public partial class SetlistEditPage : ContentPage
         {
             _orderedScores.Remove(orderedScore);
             UpdateOrderNumbers();
-            _ = PrepareSetlistCacheAsync(_orderedScores.Select(os => os.Score).ToList());
+            _ = PrepareSetlistStatusAsync(_orderedScores.Select(os => os.Score).ToList());
         }
     }
 
