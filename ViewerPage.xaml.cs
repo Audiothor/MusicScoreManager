@@ -2330,38 +2330,49 @@ public partial class ViewerPage : ContentPage
         TextAnnotationBtn.BackgroundColor = Colors.Transparent;
     }
 
+    private bool _isPromptingText = false;
     private async Task HandleTextPlacementAsync(double absX, double absY)
     {
-        if (!_isTextMode || _isAnnotationsLocked || ActiveAnnotationsContainer.Width <= 0 || ActiveAnnotationsContainer.Height <= 0) return;
+        if (_isPromptingText || !_isTextMode || _isAnnotationsLocked || ActiveAnnotationsContainer.Width <= 0 || ActiveAnnotationsContainer.Height <= 0) return;
 
-        double relX = Math.Clamp(absX / ActiveAnnotationsContainer.Width, 0.0, 1.0);
-        double relY = Math.Clamp(absY / ActiveAnnotationsContainer.Height, 0.0, 1.0);
-
-        string text = await DisplayPromptAsync("Ajouter du texte", "Tapez votre mot ou texte :", "OK", "Annuler");
-        if (!string.IsNullOrWhiteSpace(text))
+        try
         {
-            var annotation = new Annotation
+            _isPromptingText = true;
+            double relX = Math.Clamp(absX / ActiveAnnotationsContainer.Width, 0.0, 1.0);
+            double relY = Math.Clamp(absY / ActiveAnnotationsContainer.Height, 0.0, 1.0);
+
+            string text = await DisplayPromptAsync("Ajouter du texte", "Tapez votre mot ou texte :", "OK", "Annuler");
+            if (!string.IsNullOrWhiteSpace(text))
             {
-                ScoreId = _score.Id,
-                Type = AnnotationType.Text,
-                Category = "Text",
-                Content = text.Trim(),
-                X = relX,
-                Y = relY,
-                Scale = _currentTextSize, // 8, 10, 12, 14, 16, 18
-                Color = _currentTextColor,
-                BackgroundColor = "Transparent",
-                PageNumber = _currentPage
-            };
+                var annotation = new Annotation
+                {
+                    ScoreId = _score.Id,
+                    Type = AnnotationType.Text,
+                    Category = "Text",
+                    Content = text.Trim(),
+                    X = relX,
+                    Y = relY,
+                    Scale = _currentTextSize, // 8, 10, 12, 14, 16, 18
+                    Color = _currentTextColor,
+                    BackgroundColor = "Transparent",
+                    PageNumber = _currentPage
+                };
 
-            await _databaseService.SaveAnnotationAsync(annotation);
-            _annotations.Add(annotation);
-            _selectedAnnotation = annotation;
+                await _databaseService.SaveAnnotationAsync(annotation);
+                _annotations.Add(annotation);
+                _selectedAnnotation = annotation;
 
-            _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Add, Annotation = annotation });
-            _redoStack.Clear();
-            UpdateUndoRedoButtons();
-            RenderAnnotations();
+                _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Add, Annotation = annotation });
+                _redoStack.Clear();
+                UpdateUndoRedoButtons();
+                RenderAnnotations();
+            }
+        }
+        finally
+        {
+            // Petit délai pour laisser le temps aux événements résiduels de se dissiper
+            await Task.Delay(250);
+            _isPromptingText = false;
         }
     }
 
