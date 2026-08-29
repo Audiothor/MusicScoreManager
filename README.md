@@ -127,6 +127,13 @@ dotnet build -t:Run -f net10.0-android36.0
 dotnet publish -f net10.0-android36.0 -c Release
 ```
 
+## 🔒 Politique de Confidentialité / Privacy Policy
+
+L'application **Music Score Manager** respecte rigoureusement la vie privée de ses utilisateurs :
+- **0 collecte de données personnelles** (pas d'identifiants, pas de tracking, pas de télémétrie).
+- **Stockage 100% local** sur l'appareil.
+- **Conformité Google Play Store** : Consultez le document complet dans [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
+
 ---
 
 **Développé par Audiothor** — *MusicScoreManager v1.8.41 "Rock-Solid Annotation Drag & Pan (Zero Crash on Move/Pan Gestures)"*
