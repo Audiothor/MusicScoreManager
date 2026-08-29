@@ -288,33 +288,59 @@
             }, 30);
         }
 
+        const docCache = new Map(); // Cache d'objets PDF en mémoire (url -> pdfDoc)
+
+        async function preloadPdf(source) {
+            if (!source || docCache.has(source)) return;
+            try {
+                const loadingTask = pdfjsLib.getDocument({
+                    url: source,
+                    cMapUrl: 'cmaps/',
+                    cMapPacked: true,
+                    enableXfa: false
+                });
+                const doc = await loadingTask.promise;
+                docCache.set(source, doc);
+            } catch (e) {}
+        }
+
         async function loadPdf(source, initialRotation = 0, initialPage = 1) {
             try {
-                if (initialRotation) rotation = parseInt(initialRotation, 10) || 0;
-                if (initialPage) pageNum = parseInt(initialPage, 10) || 1;
+                if (initialRotation !== undefined) rotation = parseInt(initialRotation, 10) || 0;
 
                 pageCache.clear();
                 renderedBitmapCache.clear();
-                let loadingTask;
                 
-                if (typeof source === 'string' && source.toLowerCase().endsWith('.pdf')) {
-                    loadingTask = pdfjsLib.getDocument({
-                        url: source,
-                        cMapUrl: 'cmaps/',
-                        cMapPacked: true,
-                        enableXfa: false
-                    });
+                if (docCache.has(source)) {
+                    pdfDoc = docCache.get(source);
                 } else {
-                    const pdfData = atob(source);
-                    const uint8Array = new Uint8Array(pdfData.length);
-                    for (let i = 0; i < pdfData.length; i++) {
-                        uint8Array[i] = pdfData.charCodeAt(i);
+                    let loadingTask;
+                    if (typeof source === 'string' && source.toLowerCase().endsWith('.pdf')) {
+                        loadingTask = pdfjsLib.getDocument({
+                            url: source,
+                            cMapUrl: 'cmaps/',
+                            cMapPacked: true,
+                            enableXfa: false
+                        });
+                    } else {
+                        const pdfData = atob(source);
+                        const uint8Array = new Uint8Array(pdfData.length);
+                        for (let i = 0; i < pdfData.length; i++) {
+                            uint8Array[i] = pdfData.charCodeAt(i);
+                        }
+                        loadingTask = pdfjsLib.getDocument({ data: uint8Array });
                     }
-                    loadingTask = pdfjsLib.getDocument({ data: uint8Array });
+                    pdfDoc = await loadingTask.promise;
+                    if (typeof source === 'string') docCache.set(source, pdfDoc);
                 }
 
-                pdfDoc = await loadingTask.promise;
-                if (pageNum < 1 || pageNum > pdfDoc.numPages) pageNum = 1;
+                if (initialPage === 'last' || initialPage === -1 || initialPage === 'end') {
+                    pageNum = pdfDoc.numPages;
+                } else {
+                    pageNum = parseInt(initialPage, 10) || 1;
+                    if (pageNum < 1 || pageNum > pdfDoc.numPages) pageNum = 1;
+                }
+
                 await renderPage(pageNum);
                 return "SUCCESS";
             } catch (error) {

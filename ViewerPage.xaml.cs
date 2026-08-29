@@ -382,8 +382,6 @@ public partial class ViewerPage : ContentPage
 
     private async Task EnsurePdfJsReadyAsync()
     {
-        if (_isPdfJsReady) return;
-
         string cacheDir = FileSystem.CacheDirectory;
         string pdfjsDir = Path.Combine(cacheDir, "pdfjs");
 
@@ -1398,16 +1396,25 @@ public partial class ViewerPage : ContentPage
 #endif
     }
 
+    private bool _isSwitchingScore = false;
+
     private async void HandleEndOfScore()
     {
-        if (_setlistScores != null && _currentIndex != -1)
+        if (_setlistScores != null && _currentIndex != -1 && !_isSwitchingScore)
         {
             if (_isContinuous && _currentIndex < _setlistScores.Count - 1)
             {
-                _currentIndex++;
-                var nextScore = _setlistScores[_currentIndex];
-                await Navigation.PushAsync(new ViewerPage(nextScore, _setlistScores, _currentIndex, _isContinuous));
-                Navigation.RemovePage(this);
+                _isSwitchingScore = true;
+                try
+                {
+                    int nextIndex = _currentIndex + 1;
+                    var nextScore = _setlistScores[nextIndex];
+                    await SwitchToScoreAsync(nextScore, nextIndex, toLastPage: false);
+                }
+                finally
+                {
+                    _isSwitchingScore = false;
+                }
             }
             else
             {
@@ -1419,18 +1426,186 @@ public partial class ViewerPage : ContentPage
 
     private async void HandleStartOfScore()
     {
-        if (_setlistScores != null && _currentIndex > 0 && _isContinuous)
+        if (_setlistScores != null && _currentIndex > 0 && _isContinuous && !_isSwitchingScore)
         {
-            _currentIndex--;
-            var prevScore = _setlistScores[_currentIndex];
-            await Navigation.PushAsync(new ViewerPage(prevScore, _setlistScores, _currentIndex, _isContinuous));
-            Navigation.RemovePage(this);
+            _isSwitchingScore = true;
+            try
+            {
+                int prevIndex = _currentIndex - 1;
+                var prevScore = _setlistScores[prevIndex];
+                await SwitchToScoreAsync(prevScore, prevIndex, toLastPage: true);
+            }
+            finally
+            {
+                _isSwitchingScore = false;
+            }
         }
         else
         {
             // Bloquer le retour à l'accueil au début de la partition/setlist
             System.Diagnostics.Debug.WriteLine("[Viewer] Bloqué : début de la setlist/partition, retour accueil évité.");
         }
+    }
+
+    private async Task SwitchToScoreAsync(Score targetScore, int targetIndex, bool toLastPage)
+    {
+        if (targetScore == null) return;
+
+        System.Diagnostics.Debug.WriteLine($"[Viewer] SwitchToScoreAsync: Passage fluide à la partition '{targetScore.Title}' (Index {targetIndex}, toLastPage: {toLastPage})");
+
+        StopMetronome();
+        try
+        {
+            AudioPlayer.Stop();
+            AudioPlayer.Source = null;
+        }
+        catch { }
+
+        _score = targetScore;
+        _currentIndex = targetIndex;
+        Title = _score.Title;
+
+        // Réinitialiser le zoom et les translations
+        ZoomLayout.Scale = 1;
+        ZoomLayout.TranslationX = 0;
+        ZoomLayout.TranslationY = 0;
+        currentScale = 1;
+
+        // Réinitialiser historique des annotations
+        _undoStack.Clear();
+        _redoStack.Clear();
+        UpdateUndoRedoButtons();
+        _selectedAnnotation = null;
+        _pendingSticker = null;
+
+        // Correction automatique du type si nécessaire
+        if (!string.IsNullOrEmpty(_score.FilePath))
+        {
+            string ext = Path.GetExtension(_score.FilePath)?.ToLowerInvariant() ?? "";
+            if (ext == ".pdf") _score.Type = ScoreType.PDF;
+            else if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".gif" || ext == ".webp" || ext == ".bmp") _score.Type = ScoreType.Image;
+        }
+
+        // Rafraîchir depuis la base de données
+        try
+        {
+            var refreshed = await _databaseService.GetScoreAsync(_score.Id);
+            if (refreshed != null) _score = refreshed;
+        }
+        catch { }
+
+        Title = _score.Title;
+        if (MenuTitleLabel != null) MenuTitleLabel.Text = _score.Title;
+        if (MetronomeBpmLabel != null) MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+        if (MenuMetronomeSwitch != null) MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
+        if (MenuAudioSwitch != null) MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer;
+
+        _currentRotation = _score.IsRotationSaved ? _score.Rotation : 0;
+
+        await LoadPageRotationsAsync();
+        await LoadAnnotationsAsync();
+        InitializeAudio();
+        InitializeMetronome();
+
+        string fullPath = _settingsService.GetAbsolutePath(_score.FilePath);
+        if (!File.Exists(fullPath))
+        {
+            await DisplayAlertAsync("Fichier introuvable", $"Le fichier est introuvable :\n{fullPath}", "OK");
+            return;
+        }
+
+        if (_score.Type == ScoreType.PDF && PdfWebView.IsVisible)
+        {
+            // Transition fluide ultra-rapide dans le canvas existant sans rechargement de WebView
+            string finalFilePath = fullPath.StartsWith("/") ? $"file://{fullPath}" : $"file:///{fullPath}";
+            string pageRotsJson = System.Text.Json.JsonSerializer.Serialize(_pageRotations);
+            string targetPageStr = toLastPage ? "'last'" : "1";
+
+            try
+            {
+                await PdfWebView.EvaluateJavaScriptAsync($"setPageRotationsMap({pageRotsJson});");
+                await PdfWebView.EvaluateJavaScriptAsync($"loadPdf('{finalFilePath}', {_score.Rotation}, {targetPageStr});");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur EvaluateJavaScriptAsync loadPdf: {ex.Message}");
+                LoadContentAsync();
+            }
+        }
+        else
+        {
+            LoadContentAsync();
+        }
+
+        // Préchargement asynchrone en tâche de fond des partitions adjacentes (précédente et suivante)
+        _ = Task.Run(async () => await PreloadAdjacentScoresAsync());
+    }
+
+    private async Task PreloadAdjacentScoresAsync()
+    {
+        if (_setlistScores == null || !_isContinuous) return;
+
+        try
+        {
+            await Task.Delay(200); // Petit répit pour laisser le rendu actuel 100% prioritaire
+
+            // 1. Partition suivante (+1)
+            if (_currentIndex + 1 < _setlistScores.Count)
+            {
+                var next = _setlistScores[_currentIndex + 1];
+                if (next != null)
+                {
+                    _ = _databaseService.GetAnnotationsForScoreAsync(next.Id);
+                    _ = _databaseService.GetPageRotationsForScoreAsync(next.Id);
+                    
+                    if (next.Type == ScoreType.PDF && DeviceInfo.Platform == DevicePlatform.Android)
+                    {
+                        string nextPath = _settingsService.GetAbsolutePath(next.FilePath);
+                        if (File.Exists(nextPath))
+                        {
+                            string finalNextPath = nextPath.StartsWith("/") ? $"file://{nextPath}" : $"file:///{nextPath}";
+                            MainThread.BeginInvokeOnMainThread(async () =>
+                            {
+                                try
+                                {
+                                    await PdfWebView.EvaluateJavaScriptAsync($"preloadPdf('{finalNextPath}');");
+                                }
+                                catch { }
+                            });
+                        }
+                    }
+                }
+            }
+
+            // 2. Partition précédente (-1)
+            if (_currentIndex - 1 >= 0)
+            {
+                var prev = _setlistScores[_currentIndex - 1];
+                if (prev != null)
+                {
+                    _ = _databaseService.GetAnnotationsForScoreAsync(prev.Id);
+                    _ = _databaseService.GetPageRotationsForScoreAsync(prev.Id);
+
+                    if (prev.Type == ScoreType.PDF && DeviceInfo.Platform == DevicePlatform.Android)
+                    {
+                        string prevPath = _settingsService.GetAbsolutePath(prev.FilePath);
+                        if (File.Exists(prevPath))
+                        {
+                            string finalPrevPath = prevPath.StartsWith("/") ? $"file://{prevPath}" : $"file:///{prevPath}";
+                            MainThread.BeginInvokeOnMainThread(async () =>
+                            {
+                                try
+                                {
+                                    await PdfWebView.EvaluateJavaScriptAsync($"preloadPdf('{finalPrevPath}');");
+                                }
+                                catch { }
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        catch { }
     }
 
     #region Annotations
