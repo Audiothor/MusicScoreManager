@@ -50,3 +50,13 @@ Thumbs.db
 
 # Internal Context
 MSM_CONTEXT.md
+
+# Android Keystore & Private Signing Credentials (STRICTEMENT CONFIDENTIEL)
+*.keystore
+*.jks
+keystore/
+signing/
+keystore_credentials.txt
+keystore_credentials.json
+*.p12
+*.pfx
