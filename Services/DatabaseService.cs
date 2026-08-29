@@ -316,6 +316,16 @@ namespace MusicScoreManager.Services
             });
         }
 
+        public async Task<List<string>> GetSetlistNamesForScoreAsync(int scoreId)
+        {
+            await Init();
+            var setlistScores = await _database!.Table<SetlistScore>().Where(ss => ss.ScoreId == scoreId).ToListAsync();
+            if (!setlistScores.Any()) return new List<string>();
+            var setlistIds = setlistScores.Select(ss => ss.SetlistId).Distinct().ToList();
+            var setlists = await _database.Table<Setlist>().Where(s => setlistIds.Contains(s.Id)).ToListAsync();
+            return setlists.Select(s => s.Name).ToList();
+        }
+
         // --- Tags ---
         public async Task<List<Tag>> GetTagsAsync()
         {

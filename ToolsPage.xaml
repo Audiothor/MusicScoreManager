@@ -139,7 +139,55 @@
                 </VerticalStackLayout>
             </Border>
 
-            <!-- Accordéon 3 : Gestion des sauvegardes -->
+            <!-- Accordéon 3 : Gestion des doublons -->
+            <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="14">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12">
+                    <!-- En-tête Accordéon Doublons -->
+                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnToggleDuplicatesSectionTapped" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="🔍" FontSize="18" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Gestion des doublons" TextColor="#007ACC" FontSize="17" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Label Grid.Column="2" x:Name="DuplicatesChevronLabel" Text="▶" TextColor="#888888" FontSize="14" VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- Contenu Accordéon Doublons -->
+                    <VerticalStackLayout x:Name="DuplicatesContentSection" Spacing="12" IsVisible="False">
+                        <Label Text="Détection des partitions en doublon" 
+                               TextColor="White" 
+                               FontAttributes="Bold" />
+                        <Label Text="Scannez votre bibliothèque pour identifier les fichiers de partitions identiques (analyse par empreinte numérique exacte SHA-256) et supprimez les copies inutiles en vérifiant leur présence dans vos setlists." 
+                               TextColor="#888888" 
+                               FontSize="12" />
+
+                        <Button Text="🔍 Analyser les doublons"
+                                BackgroundColor="#E67E22"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                HeightRequest="46"
+                                CornerRadius="8"
+                                Clicked="OnAnalyzeDuplicatesClicked" />
+
+                        <!-- Barre de progression pendant l'analyse -->
+                        <VerticalStackLayout x:Name="DuplicatesProgressSection" Spacing="6" IsVisible="False" Margin="0,5">
+                            <Label x:Name="DuplicatesProgressLabel" Text="Analyse en cours... (0/0)" TextColor="#007ACC" FontSize="12" HorizontalOptions="Center" />
+                            <ProgressBar x:Name="DuplicatesProgressBar" Progress="0" ProgressColor="#E67E22" HeightRequest="6" />
+                        </VerticalStackLayout>
+
+                        <!-- Résultat de l'analyse -->
+                        <Label x:Name="DuplicatesResultSummaryLabel" TextColor="#AAAAAA" FontSize="13" FontAttributes="Bold" IsVisible="False" />
+
+                        <!-- Conteneur des groupes de doublons -->
+                        <VerticalStackLayout x:Name="DuplicatesListContainer" Spacing="12" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Accordéon 4 : Gestion des sauvegardes -->
             <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="14">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />

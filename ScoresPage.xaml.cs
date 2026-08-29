@@ -271,6 +271,137 @@ public partial class ScoresPage : ContentPage
         }
     }
 
+    private readonly List<int> _bulkSelectedTagIds = new();
+    private string _bulkTagSearchQuery = string.Empty;
+
+    private void OnBulkTagsClicked(object sender, EventArgs e)
+    {
+        if (ScoresCollectionView.ItemsSource is not IEnumerable<Models.Score> scores) return;
+
+        var selectedScores = scores.Where(s => s.IsSelected).ToList();
+        if (!selectedScores.Any())
+        {
+            DisplayAlertAsync("Aucune sélection", "Veuillez sélectionner au moins une partition à étiqueter.", "OK");
+            return;
+        }
+
+        BulkTagsHeaderLabel.Text = $"🏷️ Étiqueter {selectedScores.Count} partition(s)";
+        _bulkSelectedTagIds.Clear();
+        _bulkTagSearchQuery = string.Empty;
+        BulkTagSearchEntry.Text = string.Empty;
+        RenderBulkTags();
+        BulkTagsOverlay.IsVisible = true;
+    }
+
+    private void OnBulkTagsCloseClicked(object sender, EventArgs e)
+    {
+        BulkTagsOverlay.IsVisible = false;
+    }
+
+    private void OnBulkTagSearchEntryTextChanged(object sender, TextChangedEventArgs e)
+    {
+        _bulkTagSearchQuery = e.NewTextValue?.Trim() ?? string.Empty;
+        RenderBulkTags();
+    }
+
+    private void RenderBulkTags()
+    {
+        BulkTagsContainer.Children.Clear();
+
+        var filteredTags = _allTags.AsEnumerable();
+        if (!string.IsNullOrWhiteSpace(_bulkTagSearchQuery))
+        {
+            filteredTags = filteredTags.Where(t => t.Name.Contains(_bulkTagSearchQuery, StringComparison.OrdinalIgnoreCase));
+        }
+
+        var list = filteredTags.OrderBy(t => t.Name).ToList();
+
+        foreach (var tag in list)
+        {
+            bool isSelected = _bulkSelectedTagIds.Contains(tag.Id);
+
+            var border = new Border
+            {
+                BackgroundColor = isSelected ? Color.FromArgb(tag.ColorHex) : Color.FromArgb("#2A2A2A"),
+                Stroke = isSelected ? Colors.White : Color.FromArgb(tag.ColorHex),
+                StrokeThickness = isSelected ? 2 : 1,
+                Padding = new Thickness(12, 6, 8, 6),
+                Margin = new Thickness(0, 0, 8, 8),
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 12 },
+                Opacity = isSelected ? 1.0 : 0.75
+            };
+
+            var label = new Label
+            {
+                Text = isSelected ? $"✓ {tag.Name}  " : tag.Name + "  ",
+                TextColor = isSelected ? Colors.White : Color.FromArgb("#E0E0E0"),
+                FontAttributes = FontAttributes.Bold,
+                FontSize = 12,
+                VerticalOptions = LayoutOptions.Center,
+                LineBreakMode = LineBreakMode.NoWrap
+            };
+
+            border.Content = label;
+
+            var tap = new TapGestureRecognizer();
+            tap.Tapped += (s, e) =>
+            {
+                if (_bulkSelectedTagIds.Contains(tag.Id))
+                {
+                    _bulkSelectedTagIds.Remove(tag.Id);
+                }
+                else
+                {
+                    _bulkSelectedTagIds.Add(tag.Id);
+                }
+                RenderBulkTags();
+            };
+            border.GestureRecognizers.Add(tap);
+
+            BulkTagsContainer.Children.Add(border);
+        }
+
+        if (!list.Any())
+        {
+            var noTags = new Label
+            {
+                Text = "Aucune étiquette disponible. Créez-en dans le menu Outils.",
+                TextColor = Color.FromArgb("#888888"),
+                FontSize = 12,
+                Margin = new Thickness(0, 10, 0, 0),
+                HorizontalOptions = LayoutOptions.Center
+            };
+            BulkTagsContainer.Children.Add(noTags);
+        }
+    }
+
+    private async void OnApplyBulkTagsClicked(object sender, EventArgs e)
+    {
+        if (!_bulkSelectedTagIds.Any())
+        {
+            await DisplayAlertAsync("Aucune étiquette", "Veuillez sélectionner au moins une étiquette à appliquer.", "OK");
+            return;
+        }
+
+        if (ScoresCollectionView.ItemsSource is not IEnumerable<Models.Score> scores) return;
+
+        var selectedScores = scores.Where(s => s.IsSelected).ToList();
+        if (!selectedScores.Any()) return;
+
+        foreach (var score in selectedScores)
+        {
+            foreach (var tagId in _bulkSelectedTagIds)
+            {
+                await _databaseService.AddTagToScoreAsync(score.Id, tagId);
+            }
+        }
+
+        BulkTagsOverlay.IsVisible = false;
+        IsMultiSelectActive = false; // Quitter le mode multi-sélection
+        await LoadScoresAsync(SearchScoreBar.Text);
+        await DisplayAlertAsync("Étiquettes appliquées", $"{_bulkSelectedTagIds.Count} étiquette(s) attribuée(s) avec succès à {selectedScores.Count} partition(s).", "OK");
+    }
+
     private List<Models.Score>? _scoresToSendForExchange = null;
 
     private async void OnBulkExportClicked(object sender, EventArgs e)
