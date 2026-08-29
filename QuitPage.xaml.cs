@@ -6,15 +6,4 @@ public partial class QuitPage : ContentPage
     {
         InitializeComponent();
     }
-
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
-
-#if ANDROID
-        Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
-#else
-        Application.Current?.Quit();
-#endif
-    }
 }

@@ -38,6 +38,10 @@ public partial class SetlistsPage : ContentPage
     {
     }
 
+    public SetlistsPage() : this(new DatabaseService())
+    {
+    }
+
     protected override async void OnAppearing()
     {
         base.OnAppearing();

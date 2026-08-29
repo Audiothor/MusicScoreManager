@@ -380,6 +380,10 @@ namespace MusicScoreManager.Services
 
         public async Task<string> BackupDatabaseAsync()
         {
+            await Init();
+            if (!File.Exists(_databasePath))
+                return string.Empty;
+
             string folder = GetBackupsFolder();
             var now = DateTime.Now;
             string timestamp = now.ToString("yyyyMMdd_HHmmss");

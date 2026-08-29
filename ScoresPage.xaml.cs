@@ -51,6 +51,14 @@ public partial class ScoresPage : ContentPage
         BluetoothDevicesListView.ItemsSource = _discoveredDevices;
     }
 
+    public ScoresPage() : this(
+        new DatabaseService(), 
+        new ImportService(new DatabaseService()), 
+        new BluetoothTransferService(), 
+        new ExportImportService(new DatabaseService(), new SettingsService()))
+    {
+    }
+
     private bool _isInitialLoaded = false;
 
     protected override void OnAppearing()
