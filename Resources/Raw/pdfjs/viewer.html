@@ -265,20 +265,24 @@
 
         async function preloadAdjacentPages(currentNum) {
             if (!pdfDoc) return;
-            // Préchargement asynchrone non-bloquant des pages adjacentes en RAM
-            // Priorité 1: page suivante (+1)
-            // Priorité 2: page +2 (pour anticipation tourne rapide)
-            // Priorité 3: page précédente (-1)
+            // Préchargement asynchrone non-bloquant des pages adjacentes en RAM dans les deux directions (avance et recul)
+            // Priorité 1 : Page suivante immédiate (+1)
+            // Priorité 2 : Page précédente immédiate (-1)
+            // Priorité 3 : Page suivante d'anticipation (+2)
+            // Priorité 4 : Page précédente d'anticipation (-2)
             setTimeout(async () => {
                 try {
                     if (currentNum + 1 <= pdfDoc.numPages) {
                         await prerenderPageBitmap(currentNum + 1);
                     }
+                    if (currentNum - 1 >= 1) {
+                        await prerenderPageBitmap(currentNum - 1);
+                    }
                     if (currentNum + 2 <= pdfDoc.numPages) {
                         await prerenderPageBitmap(currentNum + 2);
                     }
-                    if (currentNum - 1 >= 1) {
-                        await prerenderPageBitmap(currentNum - 1);
+                    if (currentNum - 2 >= 1) {
+                        await prerenderPageBitmap(currentNum - 2);
                     }
                 } catch (e) {}
             }, 30);
