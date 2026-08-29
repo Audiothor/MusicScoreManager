@@ -89,7 +89,7 @@
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
-                        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="Auto, *, Auto, Auto">
+                        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="Auto, *, Auto">
                             <CheckBox Grid.Column="0" Grid.RowSpan="3"
                                       IsChecked="{Binding IsSelected}"
                                       IsVisible="{Binding Source={x:Reference ScoresPageRoot}, Path=IsMultiSelectActive}"
@@ -124,15 +124,8 @@
                                     </Label.Triggers>
                                 </Label>
                             </HorizontalStackLayout>
-                                   
-                            <Label Grid.Row="0" Grid.Column="2"
-                                   Text="{Binding Type}" 
-                                   FontSize="12" 
-                                   TextColor="#AAAAAA" 
-                                   VerticalOptions="Center"
-                                   Margin="0,0,10,0" />
 
-                            <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2"
+                            <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2"
                                     Text="⋮"
                                     FontSize="24"
                                     FontAttributes="Bold"
@@ -144,13 +137,13 @@
                                     CommandParameter="{Binding .}"
                                     Clicked="OnScoreOptionsClicked" />
                                    
-                            <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                            <Label Grid.Row="1" Grid.Column="1"
                                    Text="{Binding DateAdded, StringFormat='{0:dd/MM/yyyy}'}" 
                                    FontSize="12" 
                                    TextColor="#888888" 
                                    Margin="0,0,0,10"/>
                                    
-                            <FlexLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3"
+                            <FlexLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
                                         BindableLayout.ItemsSource="{Binding AppliedTags}"
                                         Wrap="Wrap"
                                         Direction="Row">
