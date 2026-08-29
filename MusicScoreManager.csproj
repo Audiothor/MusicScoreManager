@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.8.40</ApplicationDisplayVersion>
-		<ApplicationVersion>18400</ApplicationVersion>
-		<!-- Version actuelle : v1.8.40 "Flat-Tip Highlighter Icon, Soft Opacity, In-Viewer Score Edit Sync & Instant Setlist Loading" -->
+		<ApplicationDisplayVersion>1.8.41</ApplicationDisplayVersion>
+		<ApplicationVersion>18410</ApplicationVersion>
+		<!-- Version actuelle : v1.8.41 "Rock-Solid Annotation Drag & Pan (Zero Crash on Move/Pan Gestures)" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

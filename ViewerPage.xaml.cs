@@ -3137,20 +3137,34 @@ public partial class ViewerPage : ContentPage
                         startX = b.TranslationX;
                         startY = b.TranslationY;
                         _selectedAnnotation = a;
-                        RenderAnnotations();
+                        _currentTextColor = a.Color;
+                        _currentTextSize = a.Scale <= 0 ? 14 : a.Scale;
+                        UpdateTextColorBorders();
+                        UpdateTextSizeButtons();
+                        b.Stroke = Color.FromArgb("#007ACC");
+                        b.StrokeThickness = 1.5;
+                        b.BackgroundColor = Color.FromArgb("#33007ACC");
                         break;
                     case GestureStatus.Running:
                         b.TranslationX = startX + e.TotalX;
                         b.TranslationY = startY + e.TotalY;
                         break;
                     case GestureStatus.Completed:
-                        double finalAbsX = (a.X * containerW) + b.TranslationX;
-                        double finalAbsY = (a.Y * containerH) + b.TranslationY;
-                        a.X = Math.Clamp(finalAbsX / containerW, 0.0, 1.0);
-                        a.Y = Math.Clamp(finalAbsY / containerH, 0.0, 1.0);
+                        if (containerW > 0 && containerH > 0)
+                        {
+                            double finalAbsX = (a.X * containerW) + b.TranslationX;
+                            double finalAbsY = (a.Y * containerH) + b.TranslationY;
+                            a.X = Math.Clamp(finalAbsX / containerW, 0.0, 1.0);
+                            a.Y = Math.Clamp(finalAbsY / containerH, 0.0, 1.0);
+                        }
                         b.TranslationX = 0;
                         b.TranslationY = 0;
+                        RenderAnnotations();
                         await _databaseService.SaveAnnotationAsync(a);
+                        break;
+                    case GestureStatus.Canceled:
+                        b.TranslationX = 0;
+                        b.TranslationY = 0;
                         RenderAnnotations();
                         break;
                 }
@@ -3376,17 +3390,24 @@ public partial class ViewerPage : ContentPage
                         startX = b.TranslationX;
                         startY = b.TranslationY;
                         _selectedAnnotation = a;
-                        RenderAnnotations();
+                        _currentStickerColor = a.Color;
+                        _currentStickerBgColor = a.BackgroundColor;
+                        StickerSizeSlider.Value = a.Scale;
+                        b.Stroke = Colors.Red;
+                        b.StrokeThickness = 2;
                         break;
                     case GestureStatus.Running:
                         b.TranslationX = startX + e.TotalX;
                         b.TranslationY = startY + e.TotalY;
                         break;
                     case GestureStatus.Completed:
-                        double finalAbsX = (a.X * containerW) + b.TranslationX;
-                        double finalAbsY = (a.Y * containerH) + b.TranslationY;
-                        a.X = finalAbsX / containerW;
-                        a.Y = finalAbsY / containerH;
+                        if (containerW > 0 && containerH > 0)
+                        {
+                            double finalAbsX = (a.X * containerW) + b.TranslationX;
+                            double finalAbsY = (a.Y * containerH) + b.TranslationY;
+                            a.X = Math.Clamp(finalAbsX / containerW, 0.0, 1.0);
+                            a.Y = Math.Clamp(finalAbsY / containerH, 0.0, 1.0);
+                        }
                         b.TranslationX = 0;
                         b.TranslationY = 0;
                         RenderAnnotations();

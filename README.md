@@ -129,4 +129,4 @@ dotnet publish -f net10.0-android36.0 -c Release
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.40 "Flat-Tip Highlighter Icon, Soft Opacity, In-Viewer Score Edit Sync & Instant Setlist Loading"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.41 "Rock-Solid Annotation Drag & Pan (Zero Crash on Move/Pan Gestures)"*
