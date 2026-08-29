@@ -21,8 +21,10 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
+		builder.Services.AddSingleton<SettingsService>();
 		builder.Services.AddSingleton<DatabaseService>();
 		builder.Services.AddSingleton<ImportService>();
+		builder.Services.AddSingleton<ExportImportService>();
 		builder.Services.AddSingleton<IBluetoothTransferService, BluetoothTransferService>();
 		builder.Services.AddSingleton<ScoresPage>();
 		builder.Services.AddSingleton<SetlistsPage>();

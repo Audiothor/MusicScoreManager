@@ -305,11 +305,52 @@ namespace MusicScoreManager.Services
             await _database!.InsertAllAsync(newAssociations);
         }
 
+        public async Task AddScoreToSetlistAsync(int setlistId, int scoreId, int order)
+        {
+            await Init();
+            await _database!.InsertAsync(new SetlistScore
+            {
+                SetlistId = setlistId,
+                ScoreId = scoreId,
+                Order = order
+            });
+        }
+
         // --- Tags ---
         public async Task<List<Tag>> GetTagsAsync()
         {
             await Init();
             return await _database!.Table<Tag>().ToListAsync();
+        }
+
+        public async Task<List<Tag>> GetTagsForScoreAsync(int scoreId)
+        {
+            await Init();
+            var scoreTags = await _database!.Table<ScoreTag>().Where(st => st.ScoreId == scoreId).ToListAsync();
+            var tagIds = scoreTags.Select(st => st.TagId).ToList();
+            if (!tagIds.Any()) return new List<Tag>();
+            return await _database!.Table<Tag>().Where(t => tagIds.Contains(t.Id)).ToListAsync();
+        }
+
+        public async Task<Tag> GetOrCreateTagAsync(string name, string colorHex)
+        {
+            await Init();
+            var existing = await _database!.Table<Tag>().Where(t => t.Name == name).FirstOrDefaultAsync();
+            if (existing != null) return existing;
+
+            var newTag = new Tag { Name = name, ColorHex = colorHex };
+            await _database.InsertAsync(newTag);
+            return newTag;
+        }
+
+        public async Task AddTagToScoreAsync(int scoreId, int tagId)
+        {
+            await Init();
+            var existing = await _database!.Table<ScoreTag>().Where(st => st.ScoreId == scoreId && st.TagId == tagId).FirstOrDefaultAsync();
+            if (existing == null)
+            {
+                await _database.InsertAsync(new ScoreTag { ScoreId = scoreId, TagId = tagId });
+            }
         }
 
         public async Task<int> SaveTagAsync(Tag tag)

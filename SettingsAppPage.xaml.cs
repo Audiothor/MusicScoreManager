@@ -25,6 +25,7 @@ public partial class SettingsAppPage : ContentPage
     {
         ScoresPathLabel.Text = _settingsService.ScoresRootDirectory;
         AudioPathLabel.Text = _settingsService.AudioRootDirectory;
+        ExportsPathLabel.Text = _settingsService.ExportsRootDirectory;
 
         _isInitializingLang = true;
         string currentLang = LocalizationService.Instance.CurrentLanguage;
@@ -109,6 +110,21 @@ public partial class SettingsAppPage : ContentPage
             if (await ValidateAndSetPath(newPath, false))
             {
                 _settingsService.AudioRootDirectory = newPath;
+                RefreshUI();
+            }
+        }
+    }
+
+    private async void OnChangeExportsPathClicked(object sender, EventArgs e)
+    {
+        var result = await FolderPicker.Default.PickAsync(_settingsService.ExportsRootDirectory, default);
+
+        if (result != null && result.IsSuccessful && result.Folder != null)
+        {
+            string newPath = result.Folder.Path;
+            if (await ValidateAndSetPath(newPath, false))
+            {
+                _settingsService.ExportsRootDirectory = newPath;
                 RefreshUI();
             }
         }

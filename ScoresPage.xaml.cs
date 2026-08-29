@@ -12,6 +12,7 @@ public partial class ScoresPage : ContentPage
     private readonly DatabaseService _databaseService;
     private readonly ImportService _importService;
     private readonly IBluetoothTransferService _bluetoothService;
+    private readonly ExportImportService _exportImportService;
     private readonly SettingsService _settingsService = new();
     private string _currentSort = "TitleAsc";
     private readonly List<int> _selectedTagIds = new();
@@ -39,12 +40,13 @@ public partial class ScoresPage : ContentPage
         }
     }
 
-    public ScoresPage(DatabaseService databaseService, ImportService importService, IBluetoothTransferService bluetoothService)
+    public ScoresPage(DatabaseService databaseService, ImportService importService, IBluetoothTransferService bluetoothService, ExportImportService exportImportService)
     {
         InitializeComponent();
         _databaseService = databaseService;
         _importService = importService;
         _bluetoothService = bluetoothService;
+        _exportImportService = exportImportService;
 
         BluetoothDevicesListView.ItemsSource = _discoveredDevices;
     }
@@ -263,6 +265,30 @@ public partial class ScoresPage : ContentPage
 
     private List<Models.Score>? _scoresToSendForExchange = null;
 
+    private async void OnBulkExportClicked(object sender, EventArgs e)
+    {
+        if (ScoresCollectionView.ItemsSource is not IEnumerable<Models.Score> scores) return;
+
+        var selectedScores = scores.Where(s => s.IsSelected).ToList();
+        if (!selectedScores.Any())
+        {
+            await DisplayAlertAsync("Aucune sélection", "Veuillez sélectionner au moins une partition à exporter.", "OK");
+            return;
+        }
+
+        try
+        {
+            var options = new ExportOptions { IncludeAnnotations = true, IncludeAudio = true };
+            string path = await _exportImportService.ExportScoresToFileAsync(selectedScores, options);
+            await DisplayAlertAsync("Export réussi", $"{selectedScores.Count} partition(s) exportée(s) avec succès dans :\n\n{path}", "OK");
+            IsMultiSelectActive = false;
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Erreur d'export", $"Impossible d'exporter les partitions : {ex.Message}", "OK");
+        }
+    }
+
     private async void OnBulkExchangeClicked(object sender, EventArgs e)
     {
         if (ScoresCollectionView.ItemsSource is not IEnumerable<Models.Score> scores) return;
@@ -270,7 +296,7 @@ public partial class ScoresPage : ContentPage
         var selectedScores = scores.Where(s => s.IsSelected).ToList();
         if (!selectedScores.Any())
         {
-            await DisplayAlertAsync("Aucune sélection", "Veuillez sélectionner au moins une partition à échanger.", "OK");
+            await DisplayAlertAsync("Aucune sélection", "Veuillez sélectionner au moins une partition à envoyer.", "OK");
             return;
         }
 
@@ -280,7 +306,7 @@ public partial class ScoresPage : ContentPage
     private async Task StartExchangeFlowAsync(List<Models.Score> scoresToSend)
     {
         _scoresToSendForExchange = scoresToSend;
-        BluetoothOverlayTitle.Text = "Échange de partitions";
+        BluetoothOverlayTitle.Text = "Envoi de partitions";
         BluetoothOverlay.IsVisible = true;
         ShowBluetoothView("Sending");
 
@@ -415,23 +441,11 @@ public partial class ScoresPage : ContentPage
         try
         {
             ShowBluetoothView("Progress");
-            BluetoothTransferStatusLabel.Text = "Préparation des données...";
+            BluetoothTransferStatusLabel.Text = "Préparation du package...";
             BluetoothTransferProgressBar.Progress = 0.05;
 
-            var filesToSend = new List<BluetoothFilePayload>();
-            foreach (var score in selectedScores)
-            {
-                string absolutePath = _settingsService.GetAbsolutePath(score.FilePath);
-                if (File.Exists(absolutePath))
-                {
-                    byte[] fileBytes = await File.ReadAllBytesAsync(absolutePath);
-                    filesToSend.Add(new BluetoothFilePayload
-                    {
-                        FileName = Path.GetFileName(absolutePath),
-                        Data = fileBytes
-                    });
-                }
-            }
+            var options = new ExportOptions { IncludeAnnotations = true, IncludeAudio = true };
+            var filesToSend = await _exportImportService.BuildBluetoothPayloadForScoresAsync(selectedScores, options);
 
             if (!filesToSend.Any())
             {
@@ -449,7 +463,7 @@ public partial class ScoresPage : ContentPage
 
             if (success)
             {
-                await DisplayAlertAsync("Succès", $"{filesToSend.Count} partition(s) envoyées avec succès et reçues par le destinataire !", "OK");
+                await DisplayAlertAsync("Succès", $"{selectedScores.Count} partition(s) envoyée(s) avec succès et reçue(s) par le destinataire !", "OK");
                 IsMultiSelectActive = false;
             }
             else
@@ -473,8 +487,8 @@ public partial class ScoresPage : ContentPage
         return await MainThread.InvokeOnMainThreadAsync(async () =>
         {
             bool accept = await DisplayAlertAsync(
-                "Demande d'échange", 
-                $"L'appareil '{senderDeviceName}' souhaite vous envoyer {scoreCount} partition(s).\n\nAcceptez-vous la réception ?", 
+                "Demande d'envoi", 
+                $"L'appareil '{senderDeviceName}' souhaite vous envoyer {scoreCount} partition(s) / élément(s).\n\nAcceptez-vous la réception ?", 
                 "Oui, accepter", 
                 "Non, refuser");
 
@@ -495,57 +509,24 @@ public partial class ScoresPage : ContentPage
         {
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
-                BluetoothTransferStatusLabel.Text = "Enregistrement...";
+                BluetoothTransferStatusLabel.Text = "Intégration des données...";
                 BluetoothTransferProgressBar.Progress = 0.9;
             });
 
-            var scoresRootDir = _settingsService.ScoresRootDirectory;
-            if (!Directory.Exists(scoresRootDir)) Directory.CreateDirectory(scoresRootDir);
-
-            foreach (var filePayload in receivedFiles)
-            {
-                string originalFileName = filePayload.FileName;
-                string extension = Path.GetExtension(originalFileName);
-                string fileNameWithoutExt = Path.GetFileNameWithoutExtension(originalFileName);
-
-                string scoreTitle = fileNameWithoutExt.Replace("_", " ");
-
-                string targetFileName = originalFileName;
-                string targetFilePath = Path.Combine(scoresRootDir, targetFileName);
-
-                int counter = 1;
-                while (File.Exists(targetFilePath))
-                {
-                    targetFileName = $"{fileNameWithoutExt}_{counter}{extension}";
-                    targetFilePath = Path.Combine(scoresRootDir, targetFileName);
-                    counter++;
-                }
-
-                await File.WriteAllBytesAsync(targetFilePath, filePayload.Data);
-
-                var score = new Score
-                {
-                    Title = scoreTitle,
-                    FilePath = _settingsService.GetRelativePath(targetFilePath),
-                    Type = extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase) ? ScoreType.PDF : ScoreType.Image,
-                    Rotation = 0,
-                    IsRotationSaved = false,
-                    ShowMetronome = false,
-                    BPM = 120,
-                    HasMetronomeSound = false,
-                    ShowAudioPlayer = false,
-                    PreCountMeasures = 0,
-                    DateAdded = DateTime.Now
-                };
-
-                await _databaseService.SaveScoreAsync(score);
-            }
+            bool success = await _exportImportService.ImportPackageFromPayloadsAsync(receivedFiles);
 
             await MainThread.InvokeOnMainThreadAsync(async () =>
             {
                 BluetoothOverlay.IsVisible = false;
                 await LoadScoresAsync(SearchScoreBar.Text);
-                await DisplayAlertAsync("Échange réussi", $"Réception réussie de {receivedFiles.Count} partition(s) depuis l'appareil {senderName} !", "OK");
+                if (success)
+                {
+                    await DisplayAlertAsync("Réception réussie", $"Les partitions ont été reçues et intégrées avec succès depuis {senderName} !", "OK");
+                }
+                else
+                {
+                    await DisplayAlertAsync("Avertissement", "Les données ont été reçues mais une erreur s'est produite lors de l'intégration.", "OK");
+                }
             });
         }
         catch (Exception ex)
@@ -794,6 +775,26 @@ public partial class ScoresPage : ContentPage
         if (_selectedScoreForMenu != null)
         {
             await StartExchangeFlowAsync(new List<Models.Score> { _selectedScoreForMenu });
+        }
+    }
+
+    private async void OnMenuExportClicked(object sender, EventArgs e)
+    {
+        ScoreMenuOverlay.IsVisible = false;
+        if (_selectedScoreForMenu != null)
+        {
+            var score = _selectedScoreForMenu;
+            _selectedScoreForMenu = null;
+            try
+            {
+                var options = new ExportOptions { IncludeAnnotations = true, IncludeAudio = true };
+                string path = await _exportImportService.ExportScoresToFileAsync(new List<Models.Score> { score }, options);
+                await DisplayAlertAsync("Export réussi", $"La partition '{score.Title}' a été exportée avec succès dans :\n\n{path}", "OK");
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlertAsync("Erreur d'export", $"Impossible d'exporter la partition : {ex.Message}", "OK");
+            }
         }
     }
 

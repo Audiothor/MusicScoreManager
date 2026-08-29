@@ -127,6 +127,23 @@
                                 Margin="0,10,0,0" />
                     </VerticalStackLayout>
                 </Border>
+
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Répertoire des fichiers d'export (Setlists, Partitions)" TextColor="White" FontAttributes="Bold" />
+                        <Label x:Name="ExportsPathLabel" Text="Chemin actuel" TextColor="#888888" FontSize="12" LineBreakMode="CharacterWrap" />
+                        
+                        <Button Text="Changer le répertoire" 
+                                Clicked="OnChangeExportsPathClicked"
+                                BackgroundColor="#2C2C2C" 
+                                TextColor="White"
+                                Margin="0,10,0,0" />
+                    </VerticalStackLayout>
+                </Border>
     
                 <Label Text="Note: Sur Android, l'utilisation d'un dossier public permet d'accéder aux fichiers depuis un PC (USB). Si vous changez le répertoire, assurez-vous d'y déplacer manuellement vos fichiers." 
                        TextColor="#888888" FontSize="12" />

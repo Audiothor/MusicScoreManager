@@ -6,6 +6,7 @@ namespace MusicScoreManager.Services
     {
         private const string ScoresRootKey = "ScoresRootDirectory";
         private const string AudioRootKey = "AudioRootDirectory";
+        private const string ExportsRootKey = "ExportsRootDirectory";
 
         public string ScoresRootDirectory
         {
@@ -17,6 +18,31 @@ namespace MusicScoreManager.Services
         {
             get => Preferences.Get(AudioRootKey, GetDefaultAudioRoot());
             set => Preferences.Set(AudioRootKey, value);
+        }
+
+        public string ExportsRootDirectory
+        {
+            get => Preferences.Get(ExportsRootKey, GetDefaultExportsRoot());
+            set => Preferences.Set(ExportsRootKey, value);
+        }
+
+        public string GetDefaultExportsRoot()
+        {
+            string baseDir;
+#if ANDROID
+            var context = Android.App.Application.Context;
+            baseDir = context.GetExternalFilesDir(null)?.AbsolutePath ?? FileSystem.AppDataDirectory;
+#else
+            baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MusicScoreManager");
+#endif
+            var path = Path.Combine(baseDir, "Exports");
+            
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            
+            return path;
         }
 
         public string GetDefaultScoresRoot()

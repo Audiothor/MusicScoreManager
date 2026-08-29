@@ -1,3 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Controls;
 using MusicScoreManager.Models;
 using MusicScoreManager.Services;
 
@@ -6,13 +13,29 @@ namespace MusicScoreManager;
 public partial class SetlistsPage : ContentPage
 {
     private readonly DatabaseService _databaseService;
+    private readonly IBluetoothTransferService _bluetoothService;
+    private readonly ExportImportService _exportImportService;
+
     private string _currentSort = "NameAsc";
     private SetlistStatus? _selectedStatusFilter = null;
+    private Setlist? _selectedSetlistForAction = null;
+    private readonly ObservableCollection<BluetoothDeviceInfo> _discoveredDevices = new();
 
-    public SetlistsPage(DatabaseService databaseService)
+    public SetlistsPage(DatabaseService databaseService, IBluetoothTransferService bluetoothService, ExportImportService exportImportService)
     {
         InitializeComponent();
         _databaseService = databaseService;
+        _bluetoothService = bluetoothService;
+        _exportImportService = exportImportService;
+
+        _bluetoothService.DeviceDiscovered += OnBluetoothDeviceDiscovered;
+        _bluetoothService.ScanFinished += OnBluetoothScanFinished;
+        _bluetoothService.TransferProgressChanged += OnBluetoothTransferProgressChanged;
+    }
+
+    public SetlistsPage(DatabaseService databaseService) 
+        : this(databaseService, new BluetoothTransferService(), new ExportImportService(databaseService, new SettingsService()))
+    {
     }
 
     protected override async void OnAppearing()
@@ -27,11 +50,15 @@ public partial class SetlistsPage : ContentPage
         });
     }
 
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        _ = _bluetoothService.StopScanningAsync();
+    }
+
     private void LoadStatusFilters()
     {
         StatusFiltersStack.Children.Clear();
-
-        // Chip "Tous"
         StatusFiltersStack.Children.Add(CreateStatusFilterChip("Tous", null));
 
         foreach (SetlistStatus status in Enum.GetValues(typeof(SetlistStatus)))
@@ -130,8 +157,6 @@ public partial class SetlistsPage : ContentPage
         {
             var newSetlist = new Setlist { Name = result.Trim(), DateCreated = DateTime.Now };
             await _databaseService.SaveSetlistAsync(newSetlist);
-            
-            // Redirection immédiate vers l'édition
             await Navigation.PushAsync(new SetlistEditPage(newSetlist, _databaseService));
         }
     }
@@ -140,11 +165,24 @@ public partial class SetlistsPage : ContentPage
     {
         if (sender is Button button && button.CommandParameter is Setlist setlist)
         {
-            string action = await DisplayActionSheetAsync(setlist.Name, "Annuler", null, "Éditer", "Renommer", "Supprimer");
+            string action = await DisplayActionSheetAsync(setlist.Name, "Annuler", null, 
+                "Éditer", "📤 Envoyer (Bluetooth)", "📦 Exporter (.msmsetlist)", "Renommer", "Supprimer");
 
             if (action == "Éditer")
             {
                 await Navigation.PushAsync(new SetlistEditPage(setlist, _databaseService));
+            }
+            else if (action == "📤 Envoyer (Bluetooth)")
+            {
+                _selectedSetlistForAction = setlist;
+                SetlistOptionsTitle.Text = $"Envoyer '{setlist.Name}'";
+                SetlistOptionsOverlay.IsVisible = true;
+            }
+            else if (action == "📦 Exporter (.msmsetlist)")
+            {
+                _selectedSetlistForAction = setlist;
+                SetlistOptionsTitle.Text = $"Exporter '{setlist.Name}'";
+                SetlistOptionsOverlay.IsVisible = true;
             }
             else if (action == "Renommer")
             {
@@ -155,6 +193,161 @@ public partial class SetlistsPage : ContentPage
                 await DeleteSetlistAsync(setlist);
             }
         }
+    }
+
+    private void OnOptionsCancelClicked(object sender, EventArgs e)
+    {
+        SetlistOptionsOverlay.IsVisible = false;
+        _selectedSetlistForAction = null;
+    }
+
+    private async void OnOptionsExportFileClicked(object sender, EventArgs e)
+    {
+        if (_selectedSetlistForAction == null) return;
+        var setlist = _selectedSetlistForAction;
+        SetlistOptionsOverlay.IsVisible = false;
+
+        try
+        {
+            var options = new ExportOptions
+            {
+                IncludeAnnotations = OptAnnotationsCheckBox.IsChecked,
+                IncludeAudio = OptAudioCheckBox.IsChecked
+            };
+
+            string exportedPath = await _exportImportService.ExportSetlistToFileAsync(setlist, options);
+            await DisplayAlertAsync("Export réussi", $"La Setlist '{setlist.Name}' a été exportée avec succès dans :\n\n{exportedPath}", "OK");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Erreur d'export", $"Impossible d'exporter la setlist : {ex.Message}", "OK");
+        }
+        finally
+        {
+            _selectedSetlistForAction = null;
+        }
+    }
+
+    private async void OnOptionsSendBluetoothClicked(object sender, EventArgs e)
+    {
+        if (_selectedSetlistForAction == null) return;
+        SetlistOptionsOverlay.IsVisible = false;
+
+        bool initialized = await _bluetoothService.InitializeAsync();
+        if (!initialized)
+        {
+            await DisplayAlertAsync("Bluetooth", "Veuillez activer le Bluetooth et autoriser les permissions de proximité pour envoyer.", "OK");
+            _selectedSetlistForAction = null;
+            return;
+        }
+
+        _discoveredDevices.Clear();
+        BluetoothDevicesListView.ItemsSource = null;
+        BluetoothDevicesListView.ItemsSource = _discoveredDevices;
+
+        BluetoothSendingView.IsVisible = true;
+        BluetoothTransferProgressView.IsVisible = false;
+        BluetoothScanSpinner.IsRunning = true;
+        BluetoothOverlay.IsVisible = true;
+
+        await _bluetoothService.StartScanningAsync();
+    }
+
+    private void OnBluetoothDeviceDiscovered(object? sender, BluetoothDeviceInfo device)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            if (!_discoveredDevices.Any(d => d.Address == device.Address))
+            {
+                _discoveredDevices.Add(device);
+            }
+        });
+    }
+
+    private void OnBluetoothScanFinished(object? sender, EventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            BluetoothScanSpinner.IsRunning = false;
+            BluetoothScanSpinner.IsVisible = false;
+        });
+    }
+
+    private void OnBluetoothTransferProgressChanged(object? sender, BluetoothTransferProgressEventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            BluetoothSendingView.IsVisible = false;
+            BluetoothTransferProgressView.IsVisible = true;
+            BluetoothTransferStatusLabel.Text = $"{e.Status} ({Math.Round(e.Progress * 100)}%)";
+            BluetoothTransferProgressBar.Progress = e.Progress;
+        });
+    }
+
+    private async void OnBluetoothDeviceSelected(object sender, SelectedItemChangedEventArgs e)
+    {
+        if (e.SelectedItem is not BluetoothDeviceInfo selectedDevice) return;
+        BluetoothDevicesListView.SelectedItem = null;
+
+        await _bluetoothService.StopScanningAsync();
+
+        if (_selectedSetlistForAction == null) return;
+        var setlist = _selectedSetlistForAction;
+
+        try
+        {
+            BluetoothSendingView.IsVisible = false;
+            BluetoothTransferProgressView.IsVisible = true;
+            BluetoothTransferStatusLabel.Text = "Préparation du package Setlist...";
+            BluetoothTransferProgressBar.Progress = 0.05;
+
+            var options = new ExportOptions
+            {
+                IncludeAnnotations = OptAnnotationsCheckBox.IsChecked,
+                IncludeAudio = OptAudioCheckBox.IsChecked
+            };
+
+            var payloads = await _exportImportService.BuildBluetoothPayloadForSetlistAsync(setlist, options);
+
+            BluetoothTransferStatusLabel.Text = "Connexion et envoi...";
+            BluetoothTransferProgressBar.Progress = 0.15;
+
+            string senderName = DeviceInfo.Name ?? "Appareil Mobile";
+            bool success = await _bluetoothService.SendDataAsync(selectedDevice, payloads, senderName);
+
+            if (success)
+            {
+                await DisplayAlertAsync("Succès", $"La Setlist '{setlist.Name}' ({payloads.Count - 1} partition(s)/fichiers) a été envoyée et reçue avec succès !", "OK");
+            }
+            else
+            {
+                await DisplayAlertAsync("Échec", "Le transfert de la Setlist a échoué ou a été refusé par le destinataire.", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Erreur", $"Erreur lors du transfert : {ex.Message}", "OK");
+        }
+        finally
+        {
+            BluetoothOverlay.IsVisible = false;
+            _selectedSetlistForAction = null;
+        }
+    }
+
+    private async void OnBluetoothRescanClicked(object sender, EventArgs e)
+    {
+        _discoveredDevices.Clear();
+        BluetoothScanSpinner.IsRunning = true;
+        BluetoothScanSpinner.IsVisible = true;
+        await _bluetoothService.StartScanningAsync();
+    }
+
+    private async void OnBluetoothCloseOverlayClicked(object sender, EventArgs e)
+    {
+        await _bluetoothService.StopScanningAsync();
+        BluetoothOverlay.IsVisible = false;
+        _selectedSetlistForAction = null;
     }
 
     private async Task RenameSetlistAsync(Setlist setlist)

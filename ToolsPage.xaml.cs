@@ -7,18 +7,24 @@ public partial class ToolsPage : ContentPage
 {
     private readonly DatabaseService _databaseService;
     private readonly SettingsService _settingsService;
+    private readonly ExportImportService _exportImportService;
 
-    public ToolsPage(DatabaseService databaseService)
+    public ToolsPage(DatabaseService databaseService, ExportImportService exportImportService)
     {
         InitializeComponent();
         _databaseService = databaseService;
         _settingsService = new SettingsService();
+        _exportImportService = exportImportService;
         FolderPathLabel.Text = $"Chemin : {_databaseService.GetBackupsFolder()}";
         LoadSettings();
         LoadBackupsList();
     }
 
-    public ToolsPage() : this(new DatabaseService())
+    public ToolsPage(DatabaseService databaseService) : this(databaseService, new ExportImportService(databaseService, new SettingsService()))
+    {
+    }
+
+    public ToolsPage() : this(new DatabaseService(), new ExportImportService(new DatabaseService(), new SettingsService()))
     {
     }
 
@@ -172,6 +178,47 @@ public partial class ToolsPage : ContentPage
             }
         }
     }
+
+    #region Import de Packages
+
+    private async void OnImportPackageClicked(object? sender, EventArgs e)
+    {
+        try
+        {
+            var customFileType = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
+            {
+                { DevicePlatform.Android, new[] { "application/zip", "application/octet-stream", "*/*" } },
+                { DevicePlatform.WinUI, new[] { ".msmsetlist", ".msmscore", ".msmscores", ".zip" } },
+                { DevicePlatform.iOS, new[] { "public.archive", "public.zip-archive" } },
+                { DevicePlatform.MacCatalyst, new[] { "msmsetlist", "msmscore", "msmscores", "zip" } }
+            });
+
+            var result = await FilePicker.Default.PickAsync(new PickOptions
+            {
+                PickerTitle = "Sélectionner un paquet (.msmsetlist, .msmscore)",
+                FileTypes = customFileType
+            });
+
+            if (result != null)
+            {
+                bool success = await _exportImportService.ImportPackageFromFileAsync(result.FullPath);
+                if (success)
+                {
+                    await DisplayAlertAsync("Import réussi", $"Le paquet '{result.FileName}' a été importé avec succès !", "OK");
+                }
+                else
+                {
+                    await DisplayAlertAsync("Erreur", "Impossible de lire ou d'importer le paquet sélectionné.", "OK");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Erreur", $"Erreur lors de l'import : {ex.Message}", "OK");
+        }
+    }
+
+    #endregion
 
     #endregion
 }

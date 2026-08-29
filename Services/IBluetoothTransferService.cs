@@ -69,4 +69,16 @@ namespace MusicScoreManager.Services
         public string BackgroundColor { get; set; } = "Transparent";
         public int PageNumber { get; set; }
     }
+
+    public class SetlistTransferMetadata
+    {
+        public string Name { get; set; } = string.Empty;
+        public DateTime DateCreated { get; set; }
+        public DateTime? ConcertDate { get; set; }
+        public TimeSpan? ConcertTime { get; set; }
+        public Models.SetlistStatus Status { get; set; }
+        public bool IsLocked { get; set; }
+        public bool IsContinuousReading { get; set; }
+        public List<ScoreTransferMetadata> Scores { get; set; } = new();
+    }
 }

@@ -2,13 +2,20 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.8.16
+# Music Score Manager v1.9.0
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF et Images) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### 📦 Envoi & Export Complet de Setlists et Packages (v1.9.0)
+- **Envoi Sans Fil de Setlists Complètes (Bluetooth P2P)** : Transmettez une setlist entière avec son ordonnancement exact et toutes ses partitions rattachées directement d'un appareil à l'autre sans Internet.
+- **Boîte de Dialogue avec Options d'Envoi** : Choisissez précisément avant l'envoi d'inclure ou non vos annotations (doigtés, surlignages, textes) et les pistes audio (MP3/WAV) rattachées.
+- **Export & Import de Packages Autonomes (`.msmsetlist`, `.msmscore`, `.msmscores`)** : Générez des archives complètes réimportables en 1 clic sur n'importe quel autre appareil dans l'onglet **Outils**.
+- **Répertoire d'Export Configurable** : Définissez librement dans les *Paramètres Application* le dossier où vos fichiers d'exports sont déposés et accédez-y facilement par USB ou explorateur de fichiers.
+- **Harmonisation UI "Envoyer"** : Remplacement unifié du terme "Échanger" par "Envoyer" dans les 8 langues prises en charge.
 
 ### ⏱️ Métronome Temps Réel Haute Précision & Contrôle du Son (v1.8.22 - v1.8.26)
 - **Régularité Absolue & Moteur Thread-Safe (v1.8.26)** : Verrouillage atomique du thread d'horloge pour empêcher tout conflit de tempo. Cadence rigoureusement métronomique et fluide avec double temporisation fine (`Thread.Sleep` + `SpinWait`) et synchronisation visuelle LED découplée.
@@ -136,4 +143,4 @@ L'application **Music Score Manager** respecte rigoureusement la vie privée de 
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.43 "8 Languages Support (FR, EN, DE, ES, IT, PL, NL, PT) in App & User Guide"*
+**Développé par Audiothor** — *MusicScoreManager v1.9.0 "Setlist Send & Package Export/Import System, Configurable Export Directory"*
