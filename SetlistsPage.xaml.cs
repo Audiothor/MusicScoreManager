@@ -48,9 +48,9 @@ public partial class SetlistsPage : ContentPage
         LoadStatusFilters();
         await LoadSetlistsAsync();
 
-        Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(100), () =>
+        Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(50), () =>
         {
-            SearchSetlistBar.Focus();
+            SearchSetlistBar?.Unfocus();
         });
     }
 
