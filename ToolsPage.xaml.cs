@@ -179,6 +179,8 @@ public partial class ToolsPage : ContentPage
         }
     }
 
+    #endregion
+
     #region Import de Packages
 
     private async void OnImportPackageClicked(object? sender, EventArgs e)
@@ -219,6 +221,26 @@ public partial class ToolsPage : ContentPage
     }
 
     #endregion
+
+    #region Accordéons (Dépliage / Repliage)
+
+    private void OnToggleTagsSectionTapped(object? sender, EventArgs e)
+    {
+        TagsContentSection.IsVisible = !TagsContentSection.IsVisible;
+        TagsChevronLabel.Text = TagsContentSection.IsVisible ? "▼" : "▶";
+    }
+
+    private void OnToggleImportSectionTapped(object? sender, EventArgs e)
+    {
+        ImportContentSection.IsVisible = !ImportContentSection.IsVisible;
+        ImportChevronLabel.Text = ImportContentSection.IsVisible ? "▼" : "▶";
+    }
+
+    private void OnToggleBackupSectionTapped(object? sender, EventArgs e)
+    {
+        BackupContentSection.IsVisible = !BackupContentSection.IsVisible;
+        BackupChevronLabel.Text = BackupContentSection.IsVisible ? "▼" : "▶";
+    }
 
     #endregion
 }
