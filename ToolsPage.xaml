@@ -117,11 +117,11 @@
                         </Grid.GestureRecognizers>
                         <Label Grid.Column="0" Text="📦" FontSize="18" VerticalOptions="Center" />
                         <Label Grid.Column="1" Text="Imports de Setlist ou de Partitions" TextColor="#007ACC" FontSize="17" FontAttributes="Bold" VerticalOptions="Center" />
-                        <Label Grid.Column="2" x:Name="ImportChevronLabel" Text="▼" TextColor="#888888" FontSize="14" VerticalOptions="Center" />
+                        <Label Grid.Column="2" x:Name="ImportChevronLabel" Text="▶" TextColor="#888888" FontSize="14" VerticalOptions="Center" />
                     </Grid>
 
                     <!-- Contenu Accordéon Import -->
-                    <VerticalStackLayout x:Name="ImportContentSection" Spacing="10" IsVisible="True">
+                    <VerticalStackLayout x:Name="ImportContentSection" Spacing="10" IsVisible="False">
                         <Label Text="Importer une archive ou setlist partagée" 
                                TextColor="White" 
                                FontAttributes="Bold" />
@@ -152,11 +152,11 @@
                         </Grid.GestureRecognizers>
                         <Label Grid.Column="0" Text="💾" FontSize="18" VerticalOptions="Center" />
                         <Label Grid.Column="1" Text="Gestion des sauvegardes" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" />
-                        <Label Grid.Column="2" x:Name="BackupChevronLabel" Text="▼" TextColor="#888888" FontSize="14" VerticalOptions="Center" />
+                        <Label Grid.Column="2" x:Name="BackupChevronLabel" Text="▶" TextColor="#888888" FontSize="14" VerticalOptions="Center" />
                     </Grid>
 
                     <!-- Contenu Accordéon Sauvegardes -->
-                    <VerticalStackLayout x:Name="BackupContentSection" Spacing="14" IsVisible="True">
+                    <VerticalStackLayout x:Name="BackupContentSection" Spacing="14" IsVisible="False">
                         <Border BackgroundColor="#262626" Padding="12" StrokeThickness="0">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
