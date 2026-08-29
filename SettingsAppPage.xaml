@@ -52,6 +52,10 @@
                                         <x:String>🇬🇧 English</x:String>
                                         <x:String>🇩🇪 Deutsch</x:String>
                                         <x:String>🇪🇸 Español</x:String>
+                                        <x:String>🇮🇹 Italiano</x:String>
+                                        <x:String>🇵🇱 Polski</x:String>
+                                        <x:String>🇳🇱 Nederlands</x:String>
+                                        <x:String>🇵🇹 Português</x:String>
                                     </x:Array>
                                 </Picker.ItemsSource>
                             </Picker>

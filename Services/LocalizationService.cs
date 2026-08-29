@@ -28,7 +28,7 @@ public class LocalizationService : INotifyPropertyChanged
     {
         // Récupérer la langue enregistrée ou détecter la langue du système
         string defaultSysLang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLowerInvariant();
-        if (defaultSysLang != "fr" && defaultSysLang != "en" && defaultSysLang != "de" && defaultSysLang != "es")
+        if (defaultSysLang != "fr" && defaultSysLang != "en" && defaultSysLang != "de" && defaultSysLang != "es" && defaultSysLang != "it" && defaultSysLang != "pl" && defaultSysLang != "nl" && defaultSysLang != "pt")
         {
             defaultSysLang = "fr";
         }
@@ -39,7 +39,7 @@ public class LocalizationService : INotifyPropertyChanged
 
     public async Task SetLanguageAsync(string langCode)
     {
-        if (langCode != "fr" && langCode != "en" && langCode != "de" && langCode != "es")
+        if (langCode != "fr" && langCode != "en" && langCode != "de" && langCode != "es" && langCode != "it" && langCode != "pl" && langCode != "nl" && langCode != "pt")
         {
             langCode = "fr";
         }

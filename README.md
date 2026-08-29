@@ -136,4 +136,4 @@ L'application **Music Score Manager** respecte rigoureusement la vie privée de 
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.42 "Comprehensive Multilingual In-App User Guide & Practical Walkthroughs"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.43 "8 Languages Support (FR, EN, DE, ES, IT, PL, NL, PT) in App & User Guide"*

@@ -33,6 +33,10 @@ public partial class SettingsAppPage : ContentPage
             "en" => 1,
             "de" => 2,
             "es" => 3,
+            "it" => 4,
+            "pl" => 5,
+            "nl" => 6,
+            "pt" => 7,
             _ => 0
         };
         _isInitializingLang = false;
@@ -65,6 +69,10 @@ public partial class SettingsAppPage : ContentPage
             1 => "en",
             2 => "de",
             3 => "es",
+            4 => "it",
+            5 => "pl",
+            6 => "nl",
+            7 => "pt",
             _ => "fr"
         };
 

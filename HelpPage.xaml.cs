@@ -15,7 +15,7 @@ public partial class HelpPage : ContentPage
         try
         {
             string lang = LocalizationService.Instance.CurrentLanguage;
-            if (lang != "fr" && lang != "en" && lang != "es" && lang != "de")
+            if (lang != "fr" && lang != "en" && lang != "es" && lang != "de" && lang != "it" && lang != "pl" && lang != "nl" && lang != "pt")
             {
                 lang = "fr";
             }
