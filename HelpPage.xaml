@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
+             x:Class="MusicScoreManager.HelpPage"
+             BackgroundColor="#121212"
+             Title="{Binding [Settings_Help], Source={x:Static services:LocalizationService.Instance}}">
+
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header avec bouton Retour -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
+            <Button Grid.Column="0" 
+                    Text="{Binding [Common_Back], Source={x:Static services:LocalizationService.Instance}}" 
+                    BackgroundColor="Transparent" 
+                    TextColor="#007ACC" 
+                    FontAttributes="Bold"
+                    Clicked="OnBackClicked" />
+            <Label Grid.Column="1" 
+                   Text="{Binding [Settings_Help], Source={x:Static services:LocalizationService.Instance}}" 
+                   TextColor="White" 
+                   FontSize="18" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center"
+                   Margin="0,0,80,0" />
+        </Grid>
+
+        <!-- WebView affichant le guide HTML local -->
+        <WebView Grid.Row="1" x:Name="HelpWebView" BackgroundColor="#121212" />
+    </Grid>
+
+</ContentPage>

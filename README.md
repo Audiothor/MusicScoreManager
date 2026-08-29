@@ -136,4 +136,4 @@ L'application **Music Score Manager** respecte rigoureusement la vie privée de 
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.8.41 "Rock-Solid Annotation Drag & Pan (Zero Crash on Move/Pan Gestures)"*
+**Développé par Audiothor** — *MusicScoreManager v1.8.42 "Comprehensive Multilingual In-App User Guide & Practical Walkthroughs"*

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Complete User Guide - Music Score Manager</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1E1E1E;
+            --card-border: #333333;
+            --primary: #007ACC;
+            --primary-light: #3399FF;
+            --accent: #2ECC71;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --text-main: #EEEEEE;
+            --text-muted: #AAAAAA;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            font-size: 15px;
+            line-height: 1.6;
+            padding: 16px;
+            padding-bottom: 60px;
+        }
+
+        h1 {
+            color: #FFFFFF;
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--primary-light);
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .toc {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .toc h3 {
+            color: #FFFFFF;
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toc ul {
+            list-style: none;
+        }
+
+        .toc li {
+            margin-bottom: 8px;
+        }
+
+        .toc a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            display: block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .toc a:active {
+            background: var(--primary);
+            color: #FFFFFF;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #2A2A2A;
+            padding-bottom: 12px;
+        }
+
+        .section-icon {
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 122, 204, 0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .section-title {
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        h3 {
+            color: var(--primary-light);
+            font-size: 16px;
+            margin-top: 18px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+            color: #DDDDDD;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 14px;
+            color: #CCCCCC;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        .callout {
+            border-radius: 10px;
+            padding: 14px;
+            margin: 14px 0;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .callout-tip {
+            background: rgba(46, 204, 113, 0.1);
+            border-left: 4px solid var(--accent);
+        }
+
+        .callout-example {
+            background: rgba(0, 122, 204, 0.1);
+            border-left: 4px solid var(--primary);
+        }
+
+        .callout-icon {
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .callout-content {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .callout-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #FFFFFF;
+        }
+
+        .step-box {
+            background: #181818;
+            border: 1px solid #2A2A2A;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+
+        .step-desc {
+            margin-top: 4px;
+            margin-left: 30px;
+            font-size: 13px;
+            color: #AAAAAA;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        @media (max-width: 480px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: #161616;
+            border: 1px solid #282828;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .feature-card strong {
+            color: #FFFFFF;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .feature-card span {
+            color: #AAAAAA;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📖 User Guide</h1>
+    <div class="subtitle">Music Score Manager — Complete Manual &amp; Practical Tips</div>
+
+    <!-- Table of contents -->
+    <div class="toc">
+        <h3>📋 Quick Summary</h3>
+        <ul>
+            <li><a href="#section-scores">1. 🎼 Scores Library &amp; Import</a></li>
+            <li><a href="#section-tags">2. 🏷️ Organizing with Tags</a></li>
+            <li><a href="#section-viewer">3. 📄 Score Viewer, Navigation &amp; Gestures</a></li>
+            <li><a href="#section-annotations">4. 🎨 Complete Annotation System</a></li>
+            <li><a href="#section-setlists">5. 📋 Setlists &amp; Live Concert Preparation</a></li>
+            <li><a href="#section-bluetooth">6. 📶 Wireless Bluetooth Sharing (P2P)</a></li>
+            <li><a href="#section-tools">7. ⏱️ Metronome, Audio &amp; Backups</a></li>
+            <li><a href="#section-settings">8. ⚙️ Settings &amp; Customization</a></li>
+        </ul>
+    </div>
+
+    <!-- Section 1 : Scores -->
+    <div id="section-scores" class="section">
+        <div class="section-header">
+            <div class="section-icon">🎼</div>
+            <div class="section-title">1. Scores Library &amp; Import</div>
+        </div>
+
+        <p>The <strong>Scores</strong> screen is your central sheet music library, storing and managing both <strong>PDF</strong> documents and <strong>Image</strong> scores (PNG, JPG, JPEG, WEBP).</p>
+
+        <h3>Adding New Scores</h3>
+        <div class="step-box">
+            <span class="step-number">1</span><span class="step-title">Tap the green ➕ button</span>
+            <div class="step-desc">Located at the top right of the Scores screen.</div>
+        </div>
+        <div class="step-box">
+            <span class="step-number">2</span><span class="step-title">Pick your files</span>
+            <div class="step-desc">Your device's file picker opens. Select one or multiple PDF or image score files.</div>
+        </div>
+        <div class="step-box">
+            <span class="step-number">3</span><span class="step-title">Import Mode (Copy or Link)</span>
+            <div class="step-desc"><strong>Copy:</strong> Copies the file to the app's internal sandbox.<br><strong>Link (🔗):</strong> References the external file without using extra storage space.</div>
+        </div>
+
+        <div class="callout callout-example">
+            <div class="callout-icon">⚡</div>
+            <div class="callout-content">
+                <div class="callout-title">Practical Example: Searching and Filtering</div>
+                <p>Type keywords in the search bar (e.g. <em>"Chopin"</em> or <em>"Nocturne"</em>) for instant filtering across titles, composers, and assigned tags. Use the filter chips <strong>[All] [PDF] [Images]</strong> to filter by file format.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2 : Tags -->
+    <div id="section-tags" class="section">
+        <div class="section-header">
+            <div class="section-icon">🏷️</div>
+            <div class="section-title">2. Organizing with Tags</div>
+        </div>
+
+        <p><strong>Tags</strong> let you categorize your music collection by genre, instrument, key, band lineup, or difficulty level.</p>
+
+        <h3>Managing Tags (Tools Menu)</h3>
+        <p>Manage all your tags in <strong>Tools › Tags</strong>:</p>
+        <ul>
+            <li><strong>Creation:</strong> Enter a name and pick a vibrant color from the palette or fine-tune with RGB sliders.</li>
+            <li><strong>Editing &amp; Deletion:</strong> Tap any tag to change its label, adjust its color, or remove it.</li>
+        </ul>
+
+        <div class="callout callout-tip">
+            <div class="callout-icon">💡</div>
+            <div class="callout-content">
+                <div class="callout-title">Musician Tip: 1-Tap Carousel Filter</div>
+                <p>On the main Scores screen, a horizontal tag carousel displays your colorful tags. Tapping a tag like <em>"Jazz Trio"</em> instantly filters your entire library for that rehearsal!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3 : Viewer & Ergonomics -->
+    <div id="section-viewer" class="section">
+        <div class="section-header">
+            <div class="section-icon">📄</div>
+            <div class="section-title">3. Score Viewer, Navigation &amp; Gestures</div>
+        </div>
+
+        <p>The <strong>Viewer</strong> features a bidirectional RAM pre-rendering pipeline guaranteeing <strong>0 ms latency</strong> on forward and backward page turns.</p>
+
+        <h3>Touch Zones &amp; Configurable Gestures</h3>
+        <div class="grid-2">
+            <div class="feature-card">
+                <strong>👉 Next Page</strong>
+                <span>Swipe left or tap on the right side (30% of the screen).</span>
+            </div>
+            <div class="feature-card">
+                <strong>👈 Previous Page</strong>
+                <span>Swipe right or tap on the left side (30% of the screen).</span>
+            </div>
+            <div class="feature-card">
+                <strong>🔍 Unified Zoom &amp; Pan</strong>
+                <span>Pinch with 2 fingers to zoom (1x to 5x), pan with 1 finger to move across the score.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🎯 Quick Central Menu</strong>
+                <span>Double-tap in the center of the score to open options, metronome, and audio controls.</span>
+            </div>
+        </div>
+
+        <h3>Hybrid Page Rotation</h3>
+        <p>Rotate either the <strong>current page only</strong> (+90°) or the <strong>entire score</strong> from the central menu.</p>
+    </div>
+
+    <!-- Section 4 : Annotations -->
+    <div id="section-annotations" class="section">
+        <div class="section-header">
+            <div class="section-icon">🎨</div>
+            <div class="section-title">4. Complete Annotation System</div>
+        </div>
+
+        <p>To open the annotation toolbar, <strong>tap in the bottom 15% of the screen</strong>:</p>
+
+        <div class="grid-2">
+            <div class="feature-card">
+                <strong>✎ Freehand Pencil</strong>
+                <span>100% opaque drawing. 6 colors, 5 line widths (1 to 5 mm). Perfect for striking out or correcting notes.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🖌 Flat-Tip Highlighter</strong>
+                <span>Translucent highlight with flat line caps. 4 fluorescent colors, 3 widths. Never obscures stave lines.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🔤 Interactive Text</strong>
+                <span>Tap on the score and type notes/lyrics. 6 colors, 6 sizes (8 to 18 px) with real-time scaling.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🏷 Musical Stickers</strong>
+                <span>Dynamics (<em>ff, mp, p</em>), Fingerings (1-5), Breaths, Segno, Coda, Accidentals ready to drag &amp; drop.</span>
+            </div>
+        </div>
+
+        <h3>Annotation Controls &amp; Safety</h3>
+        <ul>
+            <li><strong>🔒 Lock Safety:</strong> When locked (red button), annotations cannot be accidentally moved while playing. Unlock (🔓) to edit.</li>
+            <li><strong>↩ Undo / ↪ Redo:</strong> Instantly revert or restore any drawing, highlighting, or sticker placement.</li>
+            <li><strong>Smooth Drag &amp; Move:</strong> When unlocked, freely drag any annotation into position without lag or crashes.</li>
+            <li><strong>Quick Delete:</strong> Double-tap any drawing, highlight, text, or sticker to remove it.</li>
+        </ul>
+    </div>
+
+    <!-- Section 5 : Setlists -->
+    <div id="section-setlists" class="section">
+        <div class="section-header">
+            <div class="section-icon">📋</div>
+            <div class="section-title">5. Setlists &amp; Live Concert Preparation</div>
+        </div>
+
+        <p>The <strong>Setlists</strong> section lets you structure your gig order and seamlessly transition between songs on stage.</p>
+
+        <ul>
+            <li><strong>Creation:</strong> Tap ➕, enter a title, concert date, and time.</li>
+            <li><strong>Add Scores:</strong> Check scores directly from your library to add them to the setlist.</li>
+            <li><strong>Drag &amp; Drop Reordering:</strong> Easily rearrange the performance order.</li>
+            <li><strong>Continuous Mode:</strong> Turning the last page of a score automatically opens the next song in the setlist!</li>
+            <li><strong>🔒 Order Lock:</strong> Lock the setlist during live performance to prevent accidental edits.</li>
+        </ul>
+    </div>
+
+    <!-- Section 6 : Bluetooth -->
+    <div id="section-bluetooth" class="section">
+        <div class="section-header">
+            <div class="section-icon">📶</div>
+            <div class="section-title">6. Wireless Bluetooth Sharing (P2P)</div>
+        </div>
+
+        <p>Share scores and annotations directly between band members <strong>without Wi-Fi or Internet access</strong>:</p>
+
+        <div class="step-box">
+            <span class="step-number">1</span><span class="step-title">Sender Device</span>
+            <div class="step-desc">Tap the 3 dots on any score › <strong>Exchange</strong> (or select multiple scores and tap <em>"Exchange"</em>).</div>
+        </div>
+        <div class="step-box">
+            <span class="step-number">2</span><span class="step-title">Receiver Device</span>
+            <div class="step-desc">Navigate to <strong>Tools › Bluetooth Transfer › Receive Mode</strong>.</div>
+        </div>
+        <div class="step-box">
+            <span class="step-number">3</span><span class="step-title">Transfer &amp; Import</span>
+            <div class="step-desc">The sender taps the target device and transmits the files. Scores and annotations import automatically!</div>
+        </div>
+    </div>
+
+    <!-- Section 7 : Tools & Backups -->
+    <div id="section-tools" class="section">
+        <div class="section-header">
+            <div class="section-icon">⏱️</div>
+            <div class="section-title">7. Metronome, Audio &amp; Backups</div>
+        </div>
+
+        <h3>High-Precision Metronome</h3>
+        <ul>
+            <li><strong>Thread-Safe Regularity:</strong> Driven by high-precision hardware <code>Stopwatch</code> timers.</li>
+            <li><strong>Visual LED Beat:</strong> Flashing tempo indicator at the top of the score.</li>
+            <li><strong>880 Hz Pre-Count Beep:</strong> Start songs perfectly synchronized with the band.</li>
+            <li><strong>Quick Sound On/Off:</strong> Toggle sound in the central menu on the fly.</li>
+        </ul>
+
+        <h3>Automatic &amp; Manual Backups</h3>
+        <p>In <strong>Tools › Backup Management</strong>, create full SQLite database backups and restore any previous version with a single tap.</p>
+    </div>
+
+    <!-- Section 8 : Settings -->
+    <div id="section-settings" class="section">
+        <div class="section-header">
+            <div class="section-icon">⚙️</div>
+            <div class="section-title">8. Settings &amp; Customization</div>
+        </div>
+
+        <ul>
+            <li><strong>Score Settings:</strong> Page turn gestures (Swipe/Tap), page number indicator size.</li>
+            <li><strong>Setlist Settings:</strong> Default continuous mode and deletion confirmation.</li>
+            <li><strong>Application Settings:</strong> Interface language selection (FR, EN, ES, DE) and custom storage directories.</li>
+            <li><strong>Privacy Policy:</strong> 100% offline, zero data collection. Accessible under <em>Settings › About</em>.</li>
+        </ul>
+    </div>
+
+</body>
+</html>

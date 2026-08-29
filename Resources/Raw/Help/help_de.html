@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Benutzerhandbuch - Music Score Manager</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1E1E1E;
+            --card-border: #333333;
+            --primary: #007ACC;
+            --primary-light: #3399FF;
+            --accent: #2ECC71;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --text-main: #EEEEEE;
+            --text-muted: #AAAAAA;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-family); font-size: 15px; line-height: 1.6; padding: 16px; padding-bottom: 60px; }
+        h1 { color: #FFFFFF; font-size: 24px; font-weight: 800; margin-bottom: 8px; text-align: center; }
+        .subtitle { text-align: center; color: var(--primary-light); font-size: 14px; font-weight: 600; margin-bottom: 24px; }
+        .toc { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; margin-bottom: 24px; }
+        .toc h3 { color: #FFFFFF; font-size: 16px; margin-bottom: 12px; }
+        .toc ul { list-style: none; }
+        .toc li { margin-bottom: 8px; }
+        .toc a { color: var(--primary-light); text-decoration: none; font-weight: 500; font-size: 14px; display: block; padding: 4px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.03); }
+        .section { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 20px; margin-bottom: 20px; }
+        .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid #2A2A2A; padding-bottom: 12px; }
+        .section-icon { font-size: 24px; width: 40px; height: 40px; background: rgba(0, 122, 204, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .section-title { color: #FFFFFF; font-size: 18px; font-weight: 700; }
+        h3 { color: var(--primary-light); font-size: 16px; margin-top: 18px; margin-bottom: 8px; }
+        p { margin-bottom: 12px; color: #DDDDDD; }
+        ul { margin-left: 20px; margin-bottom: 14px; color: #CCCCCC; }
+        li { margin-bottom: 6px; }
+        .callout { border-radius: 10px; padding: 14px; margin: 14px 0; display: flex; gap: 12px; align-items: flex-start; }
+        .callout-tip { background: rgba(46, 204, 113, 0.1); border-left: 4px solid var(--accent); }
+        .callout-example { background: rgba(0, 122, 204, 0.1); border-left: 4px solid var(--primary); }
+        .callout-icon { font-size: 20px; line-height: 1; }
+        .callout-content { flex: 1; font-size: 14px; }
+        .callout-title { font-weight: bold; margin-bottom: 4px; color: #FFFFFF; }
+        .step-box { background: #181818; border: 1px solid #2A2A2A; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; }
+        .step-number { display: inline-block; width: 22px; height: 22px; background: var(--primary); color: white; border-radius: 50%; text-align: center; line-height: 22px; font-size: 12px; font-weight: bold; margin-right: 8px; }
+        .step-title { font-weight: bold; color: #FFFFFF; }
+        .step-desc { margin-top: 4px; margin-left: 30px; font-size: 13px; color: #AAAAAA; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+        @media (max-width: 480px) { .grid-2 { grid-template-columns: 1fr; } }
+        .feature-card { background: #161616; border: 1px solid #282828; border-radius: 8px; padding: 12px; }
+        .feature-card strong { color: #FFFFFF; display: block; margin-bottom: 4px; font-size: 14px; }
+        .feature-card span { color: #AAAAAA; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <h1>📖 Benutzerhandbuch</h1>
+    <div class="subtitle">Music Score Manager — Vollständiges Handbuch &amp; Praxistipps</div>
+
+    <div class="toc">
+        <h3>📋 Schnellübersicht</h3>
+        <ul>
+            <li><a href="#section-scores">1. 🎼 Notenverwaltung &amp; Import</a></li>
+            <li><a href="#section-tags">2. 🏷️ Organisation mit Etiketten</a></li>
+            <li><a href="#section-viewer">3. 📄 Noten-Betrachter, Navigation &amp; Gesten</a></li>
+            <li><a href="#section-annotations">4. 🎨 Vollständiges Anmerkungssystem</a></li>
+            <li><a href="#section-setlists">5. 📋 Setlisten &amp; Konzertvorbereitung</a></li>
+            <li><a href="#section-bluetooth">6. 📶 Drahtlose Bluetooth-Übertragung (P2P)</a></li>
+            <li><a href="#section-tools">7. ⏱️ Metronom, Audio &amp; Backups</a></li>
+            <li><a href="#section-settings">8. ⚙️ Einstellungen &amp; Anpassung</a></li>
+        </ul>
+    </div>
+
+    <div id="section-scores" class="section">
+        <div class="section-header">
+            <div class="section-icon">🎼</div>
+            <div class="section-title">1. Notenverwaltung &amp; Import</div>
+        </div>
+        <p>Der Bildschirm <strong>Noten</strong> verwaltet Ihre <strong>PDF</strong>- und <strong>Bild</strong>-Noten.</p>
+        <div class="step-box">
+            <span class="step-number">1</span><span class="step-title">Grüne ➕-Schaltfläche tippen</span>
+            <div class="step-desc">Oben rechts auf dem Noten-Bildschirm.</div>
+        </div>
+        <div class="step-box">
+            <span class="step-number">2</span><span class="step-title">Dateien auswählen</span>
+            <div class="step-desc">Wählen Sie eine oder mehrere PDF- oder Bild-Notendateien aus.</div>
+        </div>
+        <div class="step-box">
+            <span class="step-number">3</span><span class="step-title">Importmodus (Kopieren oder Verknüpfen)</span>
+            <div class="step-desc"><strong>Kopieren:</strong> Speichert die Datei intern in der App.<br><strong>Verknüpfen (🔗):</strong> Verweist auf die Originaldatei ohne zusätzlichen Speicherbedarf.</div>
+        </div>
+    </div>
+
+    <div id="section-tags" class="section">
+        <div class="section-header">
+            <div class="section-icon">🏷️</div>
+            <div class="section-title">2. Organisation mit Etiketten</div>
+        </div>
+        <p>Kategorisieren Sie Noten nach Genre, Instrument, Tonart oder Besetzung in <strong>Werkzeuge › Etiketten</strong>.</p>
+    </div>
+
+    <div id="section-viewer" class="section">
+        <div class="section-header">
+            <div class="section-icon">📄</div>
+            <div class="section-title">3. Noten-Betrachter, Navigation &amp; Gesten</div>
+        </div>
+        <p>Der Betrachter bietet ein RAM-Pre-Rendering für <strong>0 ms Latenz</strong> beim Umblättern.</p>
+        <div class="grid-2">
+            <div class="feature-card">
+                <strong>👉 Nächste Seite</strong>
+                <span>Nach links wischen oder auf die rechte Bildschirmseite tippen.</span>
+            </div>
+            <div class="feature-card">
+                <strong>👈 Vorherige Seite</strong>
+                <span>Nach rechts wischen oder auf die linke Bildschirmseite tippen.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🔍 Zoom &amp; Pan</strong>
+                <span>Mit 2 Fingern aufziehen (1x bis 5x), mit 1 Finger verschieben.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🎯 Zentrales Menü</strong>
+                <span>Doppeltippen in die Mitte, um Optionen und Metronom zu öffnen.</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-annotations" class="section">
+        <div class="section-header">
+            <div class="section-icon">🎨</div>
+            <div class="section-title">4. Vollständiges Anmerkungssystem</div>
+        </div>
+        <p>Tippen Sie auf die <strong>unteren 15% des Bildschirms</strong>, um die Werkzeugleiste zu öffnen:</p>
+        <div class="grid-2">
+            <div class="feature-card">
+                <strong>✎ Bleistift</strong>
+                <span>Deckende Zeichnung. 6 Farben, 5 Strichstärken (1 bis 5 mm).</span>
+            </div>
+            <div class="feature-card">
+                <strong>🖌 Textmarker</strong>
+                <span>Flacher transparenter Strich. 4 Neonfarben, 3 Breiten.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🔤 Interaktiver Text</strong>
+                <span>Auf die Noten tippen und Text eingeben. 6 Farben und 6 Schriftgrößen.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🏷 Musik-Aufkleber</strong>
+                <span>Dynamik, Fingersätze, Atemzeichen, Coda und Vorzeichen.</span>
+            </div>
+        </div>
+        <ul>
+            <li><strong>🔒 Schlosssperre:</strong> Sperrt Anmerkungen während des Konzerts. Entsperren (🔓) zum Bearbeiten.</li>
+            <li><strong>↩ Rückgängig / ↪ Wiederholen:</strong> Jede Aktion sofort rückgängig machen.</li>
+        </ul>
+    </div>
+
+    <div id="section-setlists" class="section">
+        <div class="section-header">
+            <div class="section-icon">📋</div>
+            <div class="section-title">5. Setlisten &amp; Konzertvorbereitung</div>
+        </div>
+        <ul>
+            <li><strong>Reihenfolge per Drag &amp; Drop:</strong> Verschieben Sie Noten für die perfekte Konzertabfolge.</li>
+            <li><strong>Fortlaufender Modus:</strong> Nach der letzten Seite eines Stücks öffnet sich automatisch das nächste Stück.</li>
+            <li><strong>🔒 Reihenfolge sperren:</strong> Verhindert versehentliche Änderungen auf der Bühne.</li>
+        </ul>
+    </div>
+
+    <div id="section-bluetooth" class="section">
+        <div class="section-header">
+            <div class="section-icon">📶</div>
+            <div class="section-title">6. Drahtlose Bluetooth-Übertragung (P2P)</div>
+        </div>
+        <p>Noten und Anmerkungen <strong>ohne Internet oder WLAN</strong> direkt von Gerät zu Gerät teilen (3 Punkte › <em>Tauschen</em>).</p>
+    </div>
+
+    <div id="section-tools" class="section">
+        <div class="section-header">
+            <div class="section-icon">⏱️</div>
+            <div class="section-title">7. Metronom, Audio &amp; Backups</div>
+        </div>
+        <p>Präzises Metronom (LED + 880-Hz-Vorzähler) und vollständige Datenbanksicherungen mit 1-Klick-Wiederherstellung.</p>
+    </div>
+
+    <div id="section-settings" class="section">
+        <div class="section-header">
+            <div class="section-icon">⚙️</div>
+            <div class="section-title">8. Einstellungen &amp; Anpassung</div>
+        </div>
+        <p>Gesten zum Umblättern, Anzeigesprache (FR, EN, ES, DE) und Speicherordner anpassen.</p>
+    </div>
+
+</body>
+</html>

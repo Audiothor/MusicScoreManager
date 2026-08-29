@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Guía del Usuario - Music Score Manager</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1E1E1E;
+            --card-border: #333333;
+            --primary: #007ACC;
+            --primary-light: #3399FF;
+            --accent: #2ECC71;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --text-main: #EEEEEE;
+            --text-muted: #AAAAAA;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-family); font-size: 15px; line-height: 1.6; padding: 16px; padding-bottom: 60px; }
+        h1 { color: #FFFFFF; font-size: 24px; font-weight: 800; margin-bottom: 8px; text-align: center; }
+        .subtitle { text-align: center; color: var(--primary-light); font-size: 14px; font-weight: 600; margin-bottom: 24px; }
+        .toc { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; margin-bottom: 24px; }
+        .toc h3 { color: #FFFFFF; font-size: 16px; margin-bottom: 12px; }
+        .toc ul { list-style: none; }
+        .toc li { margin-bottom: 8px; }
+        .toc a { color: var(--primary-light); text-decoration: none; font-weight: 500; font-size: 14px; display: block; padding: 4px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.03); }
+        .section { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 20px; margin-bottom: 20px; }
+        .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid #2A2A2A; padding-bottom: 12px; }
+        .section-icon { font-size: 24px; width: 40px; height: 40px; background: rgba(0, 122, 204, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .section-title { color: #FFFFFF; font-size: 18px; font-weight: 700; }
+        h3 { color: var(--primary-light); font-size: 16px; margin-top: 18px; margin-bottom: 8px; }
+        p { margin-bottom: 12px; color: #DDDDDD; }
+        ul { margin-left: 20px; margin-bottom: 14px; color: #CCCCCC; }
+        li { margin-bottom: 6px; }
+        .callout { border-radius: 10px; padding: 14px; margin: 14px 0; display: flex; gap: 12px; align-items: flex-start; }
+        .callout-tip { background: rgba(46, 204, 113, 0.1); border-left: 4px solid var(--accent); }
+        .callout-example { background: rgba(0, 122, 204, 0.1); border-left: 4px solid var(--primary); }
+        .callout-icon { font-size: 20px; line-height: 1; }
+        .callout-content { flex: 1; font-size: 14px; }
+        .callout-title { font-weight: bold; margin-bottom: 4px; color: #FFFFFF; }
+        .step-box { background: #181818; border: 1px solid #2A2A2A; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; }
+        .step-number { display: inline-block; width: 22px; height: 22px; background: var(--primary); color: white; border-radius: 50%; text-align: center; line-height: 22px; font-size: 12px; font-weight: bold; margin-right: 8px; }
+        .step-title { font-weight: bold; color: #FFFFFF; }
+        .step-desc { margin-top: 4px; margin-left: 30px; font-size: 13px; color: #AAAAAA; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+        @media (max-width: 480px) { .grid-2 { grid-template-columns: 1fr; } }
+        .feature-card { background: #161616; border: 1px solid #282828; border-radius: 8px; padding: 12px; }
+        .feature-card strong { color: #FFFFFF; display: block; margin-bottom: 4px; font-size: 14px; }
+        .feature-card span { color: #AAAAAA; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <h1>📖 Guía del Usuario</h1>
+    <div class="subtitle">Music Score Manager — Manual Completo y Consejos Prácticos</div>
+
+    <div class="toc">
+        <h3>📋 Índice Rápido</h3>
+        <ul>
+            <li><a href="#section-scores">1. 🎼 Gestión e Importación de Partituras</a></li>
+            <li><a href="#section-tags">2. 🏷️ Organización con Etiquetas</a></li>
+            <li><a href="#section-viewer">3. 📄 Visualizador, Navegación y Gestos</a></li>
+            <li><a href="#section-annotations">4. 🎨 Sistema Completo de Anotaciones</a></li>
+            <li><a href="#section-setlists">5. 📋 Setlists y Preparación de Conciertos</a></li>
+            <li><a href="#section-bluetooth">6. 📶 Intercambio Inalámbrico Bluetooth</a></li>
+            <li><a href="#section-tools">7. ⏱️ Metrónomo, Audio y Copias de Seguridad</a></li>
+            <li><a href="#section-settings">8. ⚙️ Ajustes y Personalización</a></li>
+        </ul>
+    </div>
+
+    <div id="section-scores" class="section">
+        <div class="section-header">
+            <div class="section-icon">🎼</div>
+            <div class="section-title">1. Gestión e Importación de Partituras</div>
+        </div>
+        <p>La pantalla <strong>Partituras</strong> administra sus archivos <strong>PDF</strong> e <strong>Imágenes</strong>.</p>
+        <div class="step-box">
+            <span class="step-number">1</span><span class="step-title">Pulse el botón verde ➕</span>
+            <div class="step-desc">Ubicado en la parte superior derecha de la pantalla Partituras.</div>
+        </div>
+        <div class="step-box">
+            <span class="step-number">2</span><span class="step-title">Seleccione sus archivos</span>
+            <div class="step-desc">Seleccione uno o varios archivos PDF o imágenes.</div>
+        </div>
+        <div class="step-box">
+            <span class="step-number">3</span><span class="step-title">Modo de importación (Copiar o Enlazar)</span>
+            <div class="step-desc"><strong>Copiar:</strong> Copia el archivo en el almacenamiento interno de la app.<br><strong>Enlazar (🔗):</strong> Hace referencia al archivo sin duplicar espacio.</div>
+        </div>
+    </div>
+
+    <div id="section-tags" class="section">
+        <div class="section-header">
+            <div class="section-icon">🏷️</div>
+            <div class="section-title">2. Organización con Etiquetas</div>
+        </div>
+        <p>Organice sus partituras por estilo, instrumento, tono o dificultad en <strong>Herramientas › Etiquetas</strong>.</p>
+        <div class="callout callout-tip">
+            <div class="callout-icon">💡</div>
+            <div class="callout-content">
+                <div class="callout-title">Filtro Rápido en Carrusel</div>
+                <p>En la pantalla de partituras, toque cualquier etiqueta del carrusel para filtrar al instante toda la biblioteca.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-viewer" class="section">
+        <div class="section-header">
+            <div class="section-icon">📄</div>
+            <div class="section-title">3. Visualizador, Navegación y Gestos</div>
+        </div>
+        <p>El lector cuenta con un sistema de renderizado en memoria RAM que garantiza <strong>0 ms de latencia</strong> al pasar de página.</p>
+        <div class="grid-2">
+            <div class="feature-card">
+                <strong>👉 Página siguiente</strong>
+                <span>Deslizar a la izquierda o tocar en el lado derecho (30% de la pantalla).</span>
+            </div>
+            <div class="feature-card">
+                <strong>👈 Página anterior</strong>
+                <span>Deslizar a la derecha o tocar en el lado izquierdo (30% de la pantalla).</span>
+            </div>
+            <div class="feature-card">
+                <strong>🔍 Zoom y Desplazamiento</strong>
+                <span>Pellizcar con 2 dedos para zoom (1x a 5x), arrastrar con 1 dedo para explorar.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🎯 Menú Central</strong>
+                <span>Doble toque en el centro para abrir opciones y control de metrónomo/audio.</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-annotations" class="section">
+        <div class="section-header">
+            <div class="section-icon">🎨</div>
+            <div class="section-title">4. Sistema Completo de Anotaciones</div>
+        </div>
+        <p>Para abrir la barra de herramientas, <strong>toque en el 15% inferior de la pantalla</strong>:</p>
+        <div class="grid-2">
+            <div class="feature-card">
+                <strong>✎ Lápiz</strong>
+                <span>Trazo opaco. 6 colores, 5 grosores (1 a 5 mm).</span>
+            </div>
+            <div class="feature-card">
+                <strong>🖌 Subrayador</strong>
+                <span>Trazo translúcido plano. 4 colores fluorescentes, 3 anchos.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🔤 Texto Interactivo</strong>
+                <span>Toque la partitura y escriba. 6 colores y 6 tamaños de texto.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🏷 Pegatinas Musicales</strong>
+                <span>Matices, Digitaciones, Respiraciones, Coda y Alteraciones.</span>
+            </div>
+        </div>
+        <ul>
+            <li><strong>🔒 Candado de seguridad:</strong> Bloquea las anotaciones durante el concierto. Desbloquee (🔓) para editar.</li>
+            <li><strong>↩ Deshacer / ↪ Rehacer:</strong> Deshaga o restaure cualquier acción al instante.</li>
+        </ul>
+    </div>
+
+    <div id="section-setlists" class="section">
+        <div class="section-header">
+            <div class="section-icon">📋</div>
+            <div class="section-title">5. Setlists y Preparación de Conciertos</div>
+        </div>
+        <ul>
+            <li><strong>Reordenar por arrastre:</strong> Arrastre y suelte las partituras para fijar el orden.</li>
+            <li><strong>Modo Continuo:</strong> Al pasar la última página de una obra, se abre automáticamente la siguiente pieza de la lista.</li>
+            <li><strong>🔒 Bloquear Orden:</strong> Bloquee la setlist en directo para evitar modificaciones accidentales.</li>
+        </ul>
+    </div>
+
+    <div id="section-bluetooth" class="section">
+        <div class="section-header">
+            <div class="section-icon">📶</div>
+            <div class="section-title">6. Intercambio Inalámbrico Bluetooth</div>
+        </div>
+        <p>Comparta partituras directamente entre músicos <strong>sin conexión a Internet ni Wi-Fi</strong> desde el menú contextual (3 puntos › <em>Intercambiar</em>) y el modo recepción en Herramientas.</p>
+    </div>
+
+    <div id="section-tools" class="section">
+        <div class="section-header">
+            <div class="section-icon">⏱️</div>
+            <div class="section-title">7. Metrónomo, Audio y Copias de Seguridad</div>
+        </div>
+        <p>Metrónomo de alta precisión (LED + sonido de pre-cuenta a 880 Hz) y copias de seguridad de la base de datos con restauración en un clic.</p>
+    </div>
+
+    <div id="section-settings" class="section">
+        <div class="section-header">
+            <div class="section-icon">⚙️</div>
+            <div class="section-title">8. Ajustes y Personalización</div>
+        </div>
+        <p>Personalice los gestos de paso de página, el idioma de la aplicación (FR, EN, ES, DE) y las carpetas de almacenamiento.</p>
+    </div>
+
+</body>
+</html>

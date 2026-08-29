@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Guide Complet de l'Utilisateur - Music Score Manager</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1E1E1E;
+            --card-border: #333333;
+            --primary: #007ACC;
+            --primary-light: #3399FF;
+            --accent: #2ECC71;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --text-main: #EEEEEE;
+            --text-muted: #AAAAAA;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            font-size: 15px;
+            line-height: 1.6;
+            padding: 16px;
+            padding-bottom: 60px;
+        }
+
+        h1 {
+            color: #FFFFFF;
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--primary-light);
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .toc {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .toc h3 {
+            color: #FFFFFF;
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toc ul {
+            list-style: none;
+        }
+
+        .toc li {
+            margin-bottom: 8px;
+        }
+
+        .toc a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            display: block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .toc a:active {
+            background: var(--primary);
+            color: #FFFFFF;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #2A2A2A;
+            padding-bottom: 12px;
+        }
+
+        .section-icon {
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 122, 204, 0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .section-title {
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        h3 {
+            color: var(--primary-light);
+            font-size: 16px;
+            margin-top: 18px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin-bottom: 12px;
+            color: #DDDDDD;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 14px;
+            color: #CCCCCC;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .badge-blue { background: rgba(0, 122, 204, 0.25); color: #3399FF; border: 1px solid #007ACC; }
+        .badge-green { background: rgba(46, 204, 113, 0.25); color: #2ECC71; border: 1px solid #27AE60; }
+        .badge-gold { background: rgba(241, 196, 15, 0.25); color: #F1C40F; border: 1px solid #F39C12; }
+        .badge-red { background: rgba(231, 76, 60, 0.25); color: #E74C3C; border: 1px solid #C0392B; }
+
+        .callout {
+            border-radius: 10px;
+            padding: 14px;
+            margin: 14px 0;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .callout-tip {
+            background: rgba(46, 204, 113, 0.1);
+            border-left: 4px solid var(--accent);
+        }
+
+        .callout-example {
+            background: rgba(0, 122, 204, 0.1);
+            border-left: 4px solid var(--primary);
+        }
+
+        .callout-warning {
+            background: rgba(243, 156, 18, 0.1);
+            border-left: 4px solid var(--warning);
+        }
+
+        .callout-icon {
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .callout-content {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .callout-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #FFFFFF;
+        }
+
+        .step-box {
+            background: #181818;
+            border: 1px solid #2A2A2A;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+
+        .step-desc {
+            margin-top: 4px;
+            margin-left: 30px;
+            font-size: 13px;
+            color: #AAAAAA;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        @media (max-width: 480px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: #161616;
+            border: 1px solid #282828;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .feature-card strong {
+            color: #FFFFFF;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .feature-card span {
+            color: #AAAAAA;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📖 Guide de l'Utilisateur</h1>
+    <div class="subtitle">Music Score Manager — Manuel Complet d'Utilisation &amp; Astuces Pratiques</div>
+
+    <!-- Table des matières -->
+    <div class="toc">
+        <h3>📋 Sommaire Rapide</h3>
+        <ul>
+            <li><a href="#section-scores">1. 🎼 Gestion &amp; Ajout des Partitions</a></li>
+            <li><a href="#section-tags">2. 🏷️ Organisation avec les Étiquettes (Labels)</a></li>
+            <li><a href="#section-viewer">3. 📄 Visualiseur, Navigation &amp; Gestes</a></li>
+            <li><a href="#section-annotations">4. 🎨 Système Complet d'Annotations</a></li>
+            <li><a href="#section-setlists">5. 📋 Setlists &amp; Préparation de Concerts</a></li>
+            <li><a href="#section-bluetooth">6. 📶 Échange Sans Fil Bluetooth (P2P)</a></li>
+            <li><a href="#section-tools">7. ⏱️ Métronome, Audio &amp; Sauvegardes</a></li>
+            <li><a href="#section-settings">8. ⚙️ Paramètres &amp; Personnalisation</a></li>
+        </ul>
+    </div>
+
+    <!-- Section 1 : Partitions -->
+    <div id="section-scores" class="section">
+        <div class="section-header">
+            <div class="section-icon">🎼</div>
+            <div class="section-title">1. Gestion &amp; Ajout des Partitions</div>
+        </div>
+
+        <p>L'écran <strong>Partitions</strong> est votre bibliothèque musicale centrale. Il rassemble toutes vos partitions aux formats <strong>PDF</strong> et <strong>Images</strong> (PNG, JPG, JPEG, WEBP).</p>
+
+        <h3>Ajouter une nouvelle partition</h3>
+        <p>Pour intégrer de nouvelles partitions dans l'application :</p>
+        <div class="step-box">
+            <span class="step-number">1</span><span class="step-title">Appuyez sur le bouton vert ➕</span>
+            <div class="step-desc">Situé en haut à droite de l'écran Partitions.</div>
+        </div>
+        <div class="step-box">
+            <span class="step-number">2</span><span class="step-title">Sélectionnez vos fichiers</span>
+            <div class="step-desc">L'explorateur de fichiers de votre appareil s'ouvre. Vous pouvez sélectionner un ou plusieurs fichiers PDF/Images.</div>
+        </div>
+        <div class="step-box">
+            <span class="step-number">3</span><span class="step-title">Mode d'importation (Copier ou Lier)</span>
+            <div class="step-desc"><strong>Copier :</strong> Duplique le fichier dans le stockage interne de l'application (autonome).<br><strong>Lier (🔗) :</strong> Référence le fichier dans son dossier d'origine sans duplication d'espace.</div>
+        </div>
+
+        <div class="callout callout-example">
+            <div class="callout-icon">⚡</div>
+            <div class="callout-content">
+                <div class="callout-title">Exemple concret : Rechercher et trier son répertoire</div>
+                <p>Tapez simplement quelques lettres dans la barre de recherche (ex: <em>"Bach"</em> ou <em>"Jazz"</em>). Le filtrage est instantané sur le titre, le compositeur et les étiquettes associées. Utilisez les pastilles <strong>[Tous] [PDF] [Images]</strong> pour isoler un format particulier.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2 : Étiquettes -->
+    <div id="section-tags" class="section">
+        <div class="section-header">
+            <div class="section-icon">🏷️</div>
+            <div class="section-title">2. Organisation avec les Étiquettes (Labels)</div>
+        </div>
+
+        <p>Les <strong>Étiquettes (Tags)</strong> permettent de catégoriser vos partitions selon vos propres critères musicaux (style, instrument, tonalité, formation, niveau de difficulté).</p>
+
+        <h3>Gestion des Étiquettes (Menu Outils)</h3>
+        <p>Toutes vos étiquettes se gèrent dans l'onglet <strong>Outils › Étiquettes</strong> :</p>
+        <ul>
+            <li><strong>Création :</strong> Saisissez un nom et choisissez une couleur parmi la palette ou personnalisez-la avec les curseurs RVB.</li>
+            <li><strong>Modification / Suppression :</strong> Cliquez sur une étiquette existante pour changer son nom, sa couleur ou la retirer.</li>
+        </ul>
+
+        <div class="callout callout-tip">
+            <div class="callout-icon">💡</div>
+            <div class="callout-content">
+                <div class="callout-title">Astuce de musicien : Le carrousel à 1-tap</div>
+                <p>Sur l'écran principal des Partitions, un carrousel horizontal affiche toutes vos étiquettes colorées. Un simple tap sur l'étiquette <em>"Big Band"</em> ou <em>"Piano Solo"</em> filtre instantanément toute votre bibliothèque pour cette répétition !</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3 : Visualiseur & Ergonomie -->
+    <div id="section-viewer" class="section">
+        <div class="section-header">
+            <div class="section-icon">📄</div>
+            <div class="section-title">3. Visualiseur, Navigation &amp; Gestes</div>
+        </div>
+
+        <p>Le <strong>Visualiseur</strong> a été optimisé pour une lecture haute performance en concert, avec un pré-rendu en mémoire vive garantissant <strong>0 ms de latence</strong> lors des tournes de pages.</p>
+
+        <h3>Zones tactiles &amp; Gestes configurables</h3>
+        <div class="grid-2">
+            <div class="feature-card">
+                <strong>👉 Tourne de page suivante</strong>
+                <span>Glisser vers la gauche (Swipe) ou Taper dans la zone droite (30% de l'écran).</span>
+            </div>
+            <div class="feature-card">
+                <strong>👈 Tourne de page précédente</strong>
+                <span>Glisser vers la droite (Swipe) ou Taper dans la zone gauche (30% de l'écran).</span>
+            </div>
+            <div class="feature-card">
+                <strong>🔍 Zoom &amp; Pan unifiés</strong>
+                <span>Pincer à 2 doigts pour zoomer (x1 à x5), déplacer au doigt pour parcourir les détails.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🎯 Menu Central Rapide</strong>
+                <span>Double-taper au centre de la partition (entre 30% et 70%) pour afficher le menu d'options.</span>
+            </div>
+        </div>
+
+        <h3>Rotation Hybride (Page ou Partition complète)</h3>
+        <p>Depuis le menu central de la partition, vous pouvez pivoter à 90° soit <strong>uniquement la page courante</strong> (idéal pour les doubles pages à l'italienne), soit <strong>toute la partition</strong>.</p>
+    </div>
+
+    <!-- Section 4 : Annotations -->
+    <div id="section-annotations" class="section">
+        <div class="section-header">
+            <div class="section-icon">🎨</div>
+            <div class="section-title">4. Système Complet d'Annotations</div>
+        </div>
+
+        <p>Pour ouvrir la barre d'outils d'annotations, <strong>tapez dans le bas de l'écran</strong> (les 15 derniers pourcents). La barre surgit avec tous ses outils :</p>
+
+        <div class="grid-2">
+            <div class="feature-card">
+                <strong>✎ Dessin au Crayon</strong>
+                <span>Tracé opaque à main levée. 6 couleurs, 5 épaisseurs (1 à 5 mm). Idéal pour biffer ou corriger des notes.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🖌 Surligneur Stabilo</strong>
+                <span>Tracé translucide à bords plats (Flat Cap). 4 couleurs fluo, 3 largeurs. Ne masque jamais les portées.</span>
+            </div>
+            <div class="feature-card">
+                <strong>🔤 Texte Interactif</strong>
+                <span>Pointez du doigt sur la partition et saisissez vos mots. Palette de couleurs et 6 tailles (8 à 18 px).</span>
+            </div>
+            <div class="feature-card">
+                <strong>🏷 Stickers Musicaux</strong>
+                <span>Nuances (<em>ff, mp, p</em>), Doigtés (1-5), Respirations, Segno, Coda, Altérations prêtes à glisser.</span>
+            </div>
+        </div>
+
+        <h3>Contrôle &amp; Sécurité des Annotations</h3>
+        <ul>
+            <li><strong>🔒 Cadenas de verrouillage :</strong> En mode verrouillé (fond rouge), aucun déplacement intempestif ne peut survenir en cours de jeu. Déverrouillez (🔓) pour modifier.</li>
+            <li><strong>↩ Annuler / ↪ Rétablir (Undo/Redo) :</strong> Annulez ou rétablissez n'importe quelle action (dessin, surlignage, ajout ou suppression).</li>
+            <li><strong>Glisser / Déplacer fluide :</strong> En mode déverrouillé, glissez n'importe quel sticker ou texte pour l'ajuster au millimètre sur la portée.</li>
+            <li><strong>Suppression rapide :</strong> Double-tapez sur un dessin, un surlignage, un sticker ou un texte pour le supprimer.</li>
+        </ul>
+
+        <div class="callout callout-example">
+            <div class="callout-icon">⚡</div>
+            <div class="callout-content">
+                <div class="callout-title">Exemple concret : Annoter un solo complexe</div>
+                <p>1. Déverrouillez le cadenas (🔓).<br>
+                2. Sélectionnez le Crayon ✎ en rouge 2mm pour entourer une modulation critique.<br>
+                3. Cliquez sur le Surligneur 🖌 en jaune 10mm pour mettre en évidence la reprise.<br>
+                4. Ouvrez le tiroir à stickers, glissez le doigté <em>"3"</em> sur la note aiguë.<br>
+                5. Refermez la barre : vos annotations sont automatiquement enregistrées et actives !</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5 : Setlists & Concerts -->
+    <div id="section-setlists" class="section">
+        <div class="section-header">
+            <div class="section-icon">📋</div>
+            <div class="section-title">5. Setlists &amp; Préparation de Concerts</div>
+        </div>
+
+        <p>L'onglet <strong>Setlists</strong> est conçu pour structurer l'ordre exact de vos morceaux lors de vos prestations scéniques ou répétitions générales.</p>
+
+        <h3>Créer et Organiser une Setlist</h3>
+        <ul>
+            <li><strong>Création :</strong> Cliquez sur ➕, donnez un titre (ex: <em>"Concert Festival 2026"</em>), une date et une heure.</li>
+            <li><strong>Ajout de morceaux :</strong> Cliquez sur <em>"Ajouter des partitions"</em> et cochez les titres dans votre bibliothèque.</li>
+            <li><strong>Réordonnancement fluide :</strong> Dans l'éditeur de setlist, réorganisez l'ordre par simple <strong>glisser-déposer</strong>.</li>
+            <li><strong>Mode Continu :</strong> À la fin de la dernière page d'un morceau, tourner la page ouvre immédiatement le morceau suivant de la setlist.</li>
+            <li><strong>🔒 Verrouiller l'ordre :</strong> Activez le cadenas de la setlist sur scène pour bloquer toute modification accidentelle.</li>
+        </ul>
+
+        <div class="callout callout-tip">
+            <div class="callout-icon">💡</div>
+            <div class="callout-content">
+                <div class="callout-title">Astuce pour les musiciens en concert</div>
+                <p>Définissez le statut de votre setlist sur <strong>"En cours"</strong> avant de monter sur scène. L'enchaînement des morceaux se fait de manière instantanée sans temps mort entre deux morceaux grâce au cache mémoire optimisé !</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 6 : Échange Bluetooth -->
+    <div id="section-bluetooth" class="section">
+        <div class="section-header">
+            <div class="section-icon">📶</div>
+            <div class="section-title">6. Échange Sans Fil Bluetooth (P2P)</div>
+        </div>
+
+        <p>L'application permet d'échanger des partitions directement entre deux musiciens équipés de Music Score Manager, <strong>sans avoir besoin de connexion Internet ni de Wi-Fi</strong>.</p>
+
+        <h3>Comment partager une partition ?</h3>
+        <div class="step-box">
+            <span class="step-number">1</span><span class="step-title">Sur l'appareil émetteur</span>
+            <div class="step-desc">Cliquez sur les 3 points d'une partition › <strong>Échanger</strong> (ou sélectionnez plusieurs partitions et choisissez <em>"Échanger"</em>).</div>
+        </div>
+        <div class="step-box">
+            <span class="step-number">2</span><span class="step-title">Sur l'appareil récepteur</span>
+            <div class="step-desc">Rendez-vous dans <strong>Outils › Échange Bluetooth › Mode Réception</strong>.</div>
+        </div>
+        <div class="step-box">
+            <span class="step-number">3</span><span class="step-title">Connexion &amp; Transfert</span>
+            <div class="step-desc">L'émetteur détecte l'appareil récepteur, clique dessus et valide l'envoi. La partition et ses métadonnées sont transmises et intégrées automatiquement !</div>
+        </div>
+    </div>
+
+    <!-- Section 7 : Métronome & Sauvegardes -->
+    <div id="section-tools" class="section">
+        <div class="section-header">
+            <div class="section-icon">⏱️</div>
+            <div class="section-title">7. Métronome, Audio &amp; Sauvegardes</div>
+        </div>
+
+        <h3>Métronome Haute Précision</h3>
+        <p>Chaque partition peut posséder son propre tempo (BPM). Dans le lecteur, le métronome propose :</p>
+        <ul>
+            <li><strong>Précision rigoureuse :</strong> Horloge thread-safe cadencée par <code>Stopwatch</code> sans dérive matérielle.</li>
+            <li><strong>Témoin visuel LED :</strong> Clignotement synchronisé sur le tempo en haut de la partition.</li>
+            <li><strong>Bip de pré-compte (880 Hz) :</strong> Pour lancer le groupe parfaitement ensemble.</li>
+            <li><strong>Interrupteur Son On/Off :</strong> Activez ou coupez le son du métronome à la volée dans le menu central sans quitter la partition.</li>
+        </ul>
+
+        <h3>Piste Audio d'Accompagnement (Playback)</h3>
+        <p>Associez un fichier audio (MP3, WAV, AIF) à votre partition dans la page d'édition. Le lecteur audio intégré permet de lancer l'accompagnement et de répéter en conditions réelles.</p>
+
+        <h3>Gestion des Sauvegardes de Sécurité</h3>
+        <p>Dans <strong>Outils › Gestion des sauvegardes</strong> :</p>
+        <ul>
+            <li><strong>Sauvegarde automatique :</strong> Exécution quotidienne en arrière-plan avec rétention paramétrable (ex: 30 jours).</li>
+            <li><strong>Sauvegarde manuelle immédiate :</strong> Créez une archive complète de votre base SQLite en un clic.</li>
+            <li><strong>Restauration instantanée :</strong> Choisissez une archive dans l'historique pour restaurer l'intégralité de vos partitions, annotations et setlists.</li>
+        </ul>
+    </div>
+
+    <!-- Section 8 : Paramètres -->
+    <div id="section-settings" class="section">
+        <div class="section-header">
+            <div class="section-icon">⚙️</div>
+            <div class="section-title">8. Paramètres &amp; Personnalisation</div>
+        </div>
+
+        <p>Le menu <strong>Paramètres</strong> vous permet de configurer l'application selon vos préférences :</p>
+
+        <ul>
+            <li><strong>Paramètres Partitions :</strong> Configuration des gestes de tourne-page (Swipe gauche/droite, Tap côtés, Swipe haut/bas), affichage et taille du numéro de page.</li>
+            <li><strong>Paramètres Setlists :</strong> Mode continu par défaut, confirmation de suppression.</li>
+            <li><strong>Paramètres Étiquettes :</strong> Gestion globale et tri.</li>
+            <li><strong>Paramètres Annotations :</strong> Gestion de vos stickers favoris.</li>
+            <li><strong>Paramètres Application :</strong>
+                <ul>
+                    <li><em>Langue :</em> Choix de la langue de l'interface (Français, English, Español, Deutsch).</li>
+                    <li><em>Bibliothèque :</em> Répertoires personnalisés de stockage pour les partitions et les fichiers audio.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <div class="callout callout-tip">
+            <div class="callout-icon">🔒</div>
+            <div class="callout-content">
+                <div class="callout-title">Confidentialité &amp; Sécurité des Données</div>
+                <p>Music Score Manager fonctionne à 100% en local sur votre appareil. Aucune donnée n'est envoyée sur des serveurs distants. Consultez la politique de confidentialité complète dans <em>Paramètres › À propos</em>.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

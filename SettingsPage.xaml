@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.SettingsPage"
              BackgroundColor="#121212"
-             Title="Paramètres">
+             Title="{Binding [Settings_Title], Source={x:Static services:LocalizationService.Instance}}">
 
     <Grid>
         <ScrollView>
@@ -81,9 +82,19 @@
 
                         <Grid Padding="15" BackgroundColor="Transparent">
                             <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnSettingsHelpTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Text="{Binding [Settings_Help], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="#333333" />
+
+                        <Grid Padding="15" BackgroundColor="Transparent">
+                            <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnSettingsAboutTapped" />
                             </Grid.GestureRecognizers>
-                            <Label Text="À propos" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="{Binding [Settings_About], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" VerticalOptions="Center" />
                             <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>
                     </VerticalStackLayout>

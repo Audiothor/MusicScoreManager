@@ -33,6 +33,11 @@ public partial class SettingsPage : ContentPage
         await Navigation.PushAsync(new SettingsAppPage());
     }
 
+    private async void OnSettingsHelpTapped(object sender, TappedEventArgs e)
+    {
+        await Navigation.PushAsync(new HelpPage());
+    }
+
     private async void OnSettingsAboutTapped(object sender, TappedEventArgs e)
     {
         await Navigation.PushAsync(new AboutPage());
