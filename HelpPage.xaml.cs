@@ -17,7 +17,7 @@ public partial class HelpPage : ContentPage
             string lang = LocalizationService.Instance.CurrentLanguage;
             if (lang != "fr" && lang != "en" && lang != "es" && lang != "de" && lang != "it" && lang != "pl" && lang != "nl" && lang != "pt")
             {
-                lang = "fr";
+                lang = "en";
             }
 
             string filename = $"Help/help_{lang}.html";

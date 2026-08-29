@@ -26,22 +26,47 @@ public class LocalizationService : INotifyPropertyChanged
 
     private void InitializeLanguage()
     {
-        // Récupérer la langue enregistrée ou détecter la langue du système
-        string defaultSysLang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLowerInvariant();
-        if (defaultSysLang != "fr" && defaultSysLang != "en" && defaultSysLang != "de" && defaultSysLang != "es" && defaultSysLang != "it" && defaultSysLang != "pl" && defaultSysLang != "nl" && defaultSysLang != "pt")
+        // Détecter la langue du système d'exploitation
+        string sysLang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLowerInvariant();
+        if (string.IsNullOrWhiteSpace(sysLang))
         {
-            defaultSysLang = "fr";
+            sysLang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLowerInvariant();
         }
 
+        // Si la langue de l'OS figure parmi nos 8 langues supportées, on la retient par défaut, sinon anglais ("en")
+        string defaultSysLang = sysLang switch
+        {
+            "fr" => "fr",
+            "en" => "en",
+            "de" => "de",
+            "es" => "es",
+            "it" => "it",
+            "pl" => "pl",
+            "nl" => "nl",
+            "pt" => "pt",
+            _ => "en"
+        };
+
+        // Si l'utilisateur a déjà configuré une langue dans ses préférences, on la charge
         _currentLanguage = Preferences.Default.Get("AppLanguage", defaultSysLang);
+
+        // Sécurité supplémentaire : vérifier que la langue issue des préférences est bien supportée
+        if (_currentLanguage != "fr" && _currentLanguage != "en" && _currentLanguage != "de" &&
+            _currentLanguage != "es" && _currentLanguage != "it" && _currentLanguage != "pl" &&
+            _currentLanguage != "nl" && _currentLanguage != "pt")
+        {
+            _currentLanguage = defaultSysLang;
+        }
+
         LoadLanguageStrings(_currentLanguage);
     }
 
     public async Task SetLanguageAsync(string langCode)
     {
-        if (langCode != "fr" && langCode != "en" && langCode != "de" && langCode != "es" && langCode != "it" && langCode != "pl" && langCode != "nl" && langCode != "pt")
+        if (langCode != "fr" && langCode != "en" && langCode != "de" && langCode != "es" &&
+            langCode != "it" && langCode != "pl" && langCode != "nl" && langCode != "pt")
         {
-            langCode = "fr";
+            langCode = "en";
         }
 
         _currentLanguage = langCode;
