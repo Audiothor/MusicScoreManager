@@ -8,6 +8,7 @@ public partial class SettingsScoresPage : ContentPage
         
         // Charger les préférences
         ShowPageNumberSwitch.IsToggled = Preferences.Default.Get("ShowPageNumber", true);
+        TwoPagesLandscapeSwitch.IsToggled = Preferences.Default.Get("TwoPagesLandscape", true);
         PageNumberSizeSlider.Value = Preferences.Default.Get("PageNumberSize", 20.0);
 
         string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
@@ -32,6 +33,11 @@ public partial class SettingsScoresPage : ContentPage
     private void OnShowPageNumberToggled(object sender, ToggledEventArgs e)
     {
         Preferences.Default.Set("ShowPageNumber", e.Value);
+    }
+
+    private void OnTwoPagesLandscapeToggled(object sender, ToggledEventArgs e)
+    {
+        Preferences.Default.Set("TwoPagesLandscape", e.Value);
     }
 
     private void OnPageNumberSizeChanged(object sender, ValueChangedEventArgs e)

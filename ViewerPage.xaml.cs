@@ -19,6 +19,7 @@ public partial class ViewerPage : ContentPage
 
     private double currentScale = 1;
     private int _currentPage = 1;
+    private string _currentPageDisplay = "1";
     private int _maxPages = 1;
     private int _currentRotation = 0;
     private Dictionary<int, int> _pageRotations = new();
@@ -357,7 +358,8 @@ public partial class ViewerPage : ContentPage
                     string pageRotsJson = System.Text.Json.JsonSerializer.Serialize(_pageRotations);
                     string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
                     string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
-                    string pdfJsUrl = $"{finalViewerPath}?file={Uri.EscapeDataString(finalFilePath)}&rot={_score.Rotation}&page=1&pageRots={Uri.EscapeDataString(pageRotsJson)}&nextGest={nextGesture}&prevGest={prevGesture}";
+                    bool twoPages = Preferences.Default.Get("TwoPagesLandscape", true);
+                    string pdfJsUrl = $"{finalViewerPath}?file={Uri.EscapeDataString(finalFilePath)}&rot={_score.Rotation}&page=1&twoPages={twoPages.ToString().ToLowerInvariant()}&pageRots={Uri.EscapeDataString(pageRotsJson)}&nextGest={nextGesture}&prevGest={prevGesture}";
 
                     System.Diagnostics.Debug.WriteLine($"[Viewer] WebView Source finale: {pdfJsUrl}");
                     _pdfFilePath = finalFilePath; 
@@ -558,6 +560,8 @@ public partial class ViewerPage : ContentPage
 
             if (int.TryParse(query["max"], out int max)) _maxPages = max;
             if (int.TryParse(query["current"], out int current)) _currentPage = current;
+            string? display = query["displayCurrent"];
+            _currentPageDisplay = !string.IsNullOrEmpty(display) ? display : _currentPage.ToString();
 
             _isScoreReady = true;
             UpdatePageIndicator();
@@ -574,7 +578,8 @@ public partial class ViewerPage : ContentPage
         {
             PageIndicator.IsVisible = true;
             PageIndicator.FontSize = fontSize;
-            PageIndicator.Text = $"{_currentPage} / {_maxPages}";
+            string displayNum = !string.IsNullOrEmpty(_currentPageDisplay) ? _currentPageDisplay : _currentPage.ToString();
+            PageIndicator.Text = $"{displayNum} / {_maxPages}";
             PageIndicator.IsVisible = true;
             RenderAnnotations();
         }
@@ -1131,13 +1136,20 @@ public partial class ViewerPage : ContentPage
         }
         else if (_score.Type == ScoreType.PDF)
         {
-            if (_currentPage > 1)
+            if (DeviceInfo.Platform == DevicePlatform.Android && PdfWebView.IsVisible)
             {
-                await GoToPage(_currentPage - 1);
+                await PdfWebView.EvaluateJavaScriptAsync("prevPage();");
             }
             else
             {
-                HandleStartOfScore();
+                if (_currentPage > 1)
+                {
+                    await GoToPage(_currentPage - 1);
+                }
+                else
+                {
+                    HandleStartOfScore();
+                }
             }
         }
     }
@@ -1151,13 +1163,20 @@ public partial class ViewerPage : ContentPage
         }
         else if (_score.Type == ScoreType.PDF)
         {
-            if (_currentPage < _maxPages)
+            if (DeviceInfo.Platform == DevicePlatform.Android && PdfWebView.IsVisible)
             {
-                await GoToPage(_currentPage + 1);
+                await PdfWebView.EvaluateJavaScriptAsync("nextPage();");
             }
             else
             {
-                HandleEndOfScore();
+                if (_currentPage < _maxPages)
+                {
+                    await GoToPage(_currentPage + 1);
+                }
+                else
+                {
+                    HandleEndOfScore();
+                }
             }
         }
     }

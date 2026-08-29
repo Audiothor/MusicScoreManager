@@ -46,6 +46,25 @@
 
             <BoxView HeightRequest="1" Color="#333333" />
 
+            <!-- Option : Affichage 2 pages en mode paysage -->
+            <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                    <Label Text="Affichage 2 pages en mode paysage" 
+                           TextColor="White" 
+                           FontSize="16" />
+                    <Label Text="Affiche deux pages côte à côte lorsque l'écran est orienté en mode paysage" 
+                           TextColor="#888888" 
+                           FontSize="12" />
+                </VerticalStackLayout>
+                <Switch Grid.Column="1" 
+                        x:Name="TwoPagesLandscapeSwitch"
+                        OnColor="#007ACC"
+                        ThumbColor="White"
+                        Toggled="OnTwoPagesLandscapeToggled" />
+            </Grid>
+
+            <BoxView HeightRequest="1" Color="#333333" />
+
             <!-- Option : Taille d'affichage -->
             <VerticalStackLayout Spacing="10">
                 <Label Text="Taille d'affichage du numéro de page actuelle" 

@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.2.8
+# Music Score Manager v1.9.2.9
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF et Images) de manière efficace, particulièrement en situation de concert.
 
@@ -143,4 +143,4 @@ L'application **Music Score Manager** respecte rigoureusement la vie privée de 
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.9.2.8 "Clean scores list UI without redundant PDF/Image type tag"*
+**Développé par Audiothor** — *MusicScoreManager v1.9.2.9 "Two-page side-by-side display mode in landscape"*

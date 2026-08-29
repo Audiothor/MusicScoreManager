@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.9.2.8</ApplicationDisplayVersion>
-		<ApplicationVersion>19280</ApplicationVersion>
-		<!-- Version actuelle : v1.9.2.8 "Clean scores list UI without redundant PDF/Image type tag" -->
+		<ApplicationDisplayVersion>1.9.2.9</ApplicationDisplayVersion>
+		<ApplicationVersion>19290</ApplicationVersion>
+		<!-- Version actuelle : v1.9.2.9 "Two-page side-by-side display mode in landscape" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

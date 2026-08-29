@@ -80,10 +80,22 @@
 
         let nextGesture = 'SwipeLeft';
         let prevGesture = 'SwipeRight';
+        let twoPagesLandscape = true;
+        let lastIsTwoPages = false;
 
         function setGestures(nextG, prevG) {
             if (nextG) nextGesture = nextG;
             if (prevG) prevGesture = prevG;
+        }
+
+        function isTwoPagesMode() {
+            return twoPagesLandscape && (window.innerWidth > window.innerHeight);
+        }
+
+        function setTwoPagesLandscape(enabled) {
+            twoPagesLandscape = enabled;
+            renderedBitmapCache.clear();
+            if (pdfDoc) renderPage(pageNum);
         }
 
         // Gestion ergonomique complète des gestes tactiles
@@ -158,39 +170,42 @@
                 if (x >= width * 0.3 && x <= width * 0.7) {
                     const now = new Date().getTime();
                     const timesince = now - lastTap;
-                    if (timesince < 350 && timesince > 0) {
+                    if (timesince < 300 && timesince > 0) {
                         openMenu(e);
+                        lastTap = 0;
+                    } else {
+                        lastTap = now;
                     }
-                    lastTap = now;
                     return;
                 }
 
-                if (isZoomed) return;
-
-                // Zone gauche (30% gauche)
+                // Taper à gauche (0% - 30%)
                 if (x < width * 0.3) {
-                    if (prevGesture === 'TapLeft') {
-                        prevPage(e);
-                    } else if (nextGesture === 'TapLeft') {
+                    if (nextGesture === 'TapLeft') {
                         nextPage(e);
+                    } else if (prevGesture === 'TapLeft') {
+                        prevPage(e);
                     }
+                    return;
                 }
-                // Zone droite (30% droite)
-                else if (x > width * 0.7) {
+
+                // Taper à droite (70% - 100%)
+                if (x > width * 0.7) {
                     if (nextGesture === 'TapRight') {
                         nextPage(e);
                     } else if (prevGesture === 'TapRight') {
                         prevPage(e);
                     }
+                    return;
                 }
             }
-        });
+        }, { passive: false });
 
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d', { alpha: false });
 
         let currentDocId = 0; // Identifiant de document incrémental pour invalider strictement les tâches de fond
-        const renderedBitmapCache = new Map(); // Cache d'images Bitmap pré-rendues : clé `${docId}_${pageNum}`
+        const renderedBitmapCache = new Map(); // Cache d'images Bitmap pré-rendues : clé `${docId}_${pageNum}` ou `${docId}_spread_${leftNum}`
         const pageRotations = new Map(); // Enregistrement de la rotation spécifique par numéro de page
 
         function getRotationForPage(num) {
@@ -202,8 +217,8 @@
 
         function setPageRotation(pNum, deg) {
             pageRotations.set(pNum, deg);
-            renderedBitmapCache.delete(`${currentDocId}_${pNum}`);
-            if (pNum === pageNum) {
+            renderedBitmapCache.clear();
+            if (pdfDoc) {
                 renderPage(pageNum);
             }
         }
@@ -229,7 +244,7 @@
                 pageRotations.set(pageNum, deg);
             }
             renderedBitmapCache.clear();
-            renderPage(pageNum);
+            if (pdfDoc) renderPage(pageNum);
         }
 
         async function getCachedPage(num, docId) {
@@ -246,30 +261,106 @@
 
         async function prerenderPageBitmap(num, docId) {
             if (docId !== currentDocId || !pdfDoc || num < 1 || num > pdfDoc.numPages) return;
-            const cacheKey = `${docId}_${num}`;
-            if (renderedBitmapCache.has(cacheKey)) return;
 
-            try {
-                const page = await getCachedPage(num, docId);
-                if (!page || docId !== currentDocId) return;
+            if (isTwoPagesMode()) {
+                const leftNum = (num % 2 === 0) ? (num - 1) : num;
+                const rightNum = leftNum + 1;
+                const cacheKey = `${docId}_spread_${leftNum}`;
+                if (renderedBitmapCache.has(cacheKey)) return;
 
-                const pageRot = getRotationForPage(num);
-                const viewport = page.getViewport({ scale: scale, rotation: pageRot });
-                const offscreenCanvas = document.createElement('canvas');
-                offscreenCanvas.width = viewport.width;
-                offscreenCanvas.height = viewport.height;
-                const offCtx = offscreenCanvas.getContext('2d', { alpha: false });
-                
-                const renderTask = page.render({
-                    canvasContext: offCtx,
-                    viewport: viewport,
-                    intent: 'display'
-                });
-                await renderTask.promise;
-                if (docId === currentDocId) {
-                    renderedBitmapCache.set(cacheKey, offscreenCanvas);
-                }
-            } catch (e) {}
+                try {
+                    const leftPage = await getCachedPage(leftNum, docId);
+                    if (!leftPage || docId !== currentDocId) return;
+                    const leftRot = getRotationForPage(leftNum);
+                    const leftVp = leftPage.getViewport({ scale: scale, rotation: leftRot });
+
+                    let rightPage = null;
+                    let rightVp = null;
+                    if (rightNum <= pdfDoc.numPages) {
+                        rightPage = await getCachedPage(rightNum, docId);
+                        if (rightPage) {
+                            const rightRot = getRotationForPage(rightNum);
+                            rightVp = rightPage.getViewport({ scale: scale, rotation: rightRot });
+                        }
+                    }
+
+                    const totalWidth = leftVp.width + (rightVp ? rightVp.width : leftVp.width);
+                    const totalHeight = Math.max(leftVp.height, rightVp ? rightVp.height : leftVp.height);
+
+                    const spreadCanvas = document.createElement('canvas');
+                    spreadCanvas.width = totalWidth;
+                    spreadCanvas.height = totalHeight;
+                    const spreadCtx = spreadCanvas.getContext('2d');
+
+                    spreadCtx.fillStyle = '#FFFFFF';
+                    spreadCtx.fillRect(0, 0, totalWidth, totalHeight);
+
+                    // Left page
+                    const leftCanvas = document.createElement('canvas');
+                    leftCanvas.width = leftVp.width;
+                    leftCanvas.height = leftVp.height;
+                    const leftTask = leftPage.render({
+                        canvasContext: leftCanvas.getContext('2d'),
+                        viewport: leftVp,
+                        intent: 'display'
+                    });
+                    await leftTask.promise;
+                    if (docId !== currentDocId) return;
+                    spreadCtx.drawImage(leftCanvas, 0, 0);
+
+                    // Right page
+                    if (rightPage && rightVp) {
+                        const rightCanvas = document.createElement('canvas');
+                        rightCanvas.width = rightVp.width;
+                        rightCanvas.height = rightVp.height;
+                        const rightTask = rightPage.render({
+                            canvasContext: rightCanvas.getContext('2d'),
+                            viewport: rightVp,
+                            intent: 'display'
+                        });
+                        await rightTask.promise;
+                        if (docId !== currentDocId) return;
+                        spreadCtx.drawImage(rightCanvas, leftVp.width, 0);
+                    }
+
+                    // Separator line
+                    spreadCtx.strokeStyle = '#333333';
+                    spreadCtx.lineWidth = 2;
+                    spreadCtx.beginPath();
+                    spreadCtx.moveTo(leftVp.width, 0);
+                    spreadCtx.lineTo(leftVp.width, totalHeight);
+                    spreadCtx.stroke();
+
+                    if (docId === currentDocId) {
+                        renderedBitmapCache.set(cacheKey, spreadCanvas);
+                    }
+                } catch (e) {}
+            } else {
+                const cacheKey = `${docId}_${num}`;
+                if (renderedBitmapCache.has(cacheKey)) return;
+
+                try {
+                    const page = await getCachedPage(num, docId);
+                    if (!page || docId !== currentDocId) return;
+
+                    const pageRot = getRotationForPage(num);
+                    const viewport = page.getViewport({ scale: scale, rotation: pageRot });
+                    const offscreenCanvas = document.createElement('canvas');
+                    offscreenCanvas.width = viewport.width;
+                    offscreenCanvas.height = viewport.height;
+                    const offCtx = offscreenCanvas.getContext('2d', { alpha: false });
+                    
+                    const renderTask = page.render({
+                        canvasContext: offCtx,
+                        viewport: viewport,
+                        intent: 'display'
+                    });
+                    await renderTask.promise;
+                    if (docId === currentDocId) {
+                        renderedBitmapCache.set(cacheKey, offscreenCanvas);
+                    }
+                } catch (e) {}
+            }
         }
 
         async function preloadAdjacentPages(currentNum, docId) {
@@ -278,17 +369,27 @@
             setTimeout(async () => {
                 try {
                     if (docId !== currentDocId || !pdfDoc) return;
-                    if (currentNum + 1 <= pdfDoc.numPages) {
-                        await prerenderPageBitmap(currentNum + 1, docId);
-                    }
-                    if (currentNum - 1 >= 1) {
-                        await prerenderPageBitmap(currentNum - 1, docId);
-                    }
-                    if (currentNum + 2 <= pdfDoc.numPages) {
-                        await prerenderPageBitmap(currentNum + 2, docId);
-                    }
-                    if (currentNum - 2 >= 1) {
-                        await prerenderPageBitmap(currentNum - 2, docId);
+                    if (isTwoPagesMode()) {
+                        const leftNum = (currentNum % 2 === 0) ? (currentNum - 1) : currentNum;
+                        if (leftNum + 2 <= pdfDoc.numPages) {
+                            await prerenderPageBitmap(leftNum + 2, docId);
+                        }
+                        if (leftNum - 2 >= 1) {
+                            await prerenderPageBitmap(leftNum - 2, docId);
+                        }
+                    } else {
+                        if (currentNum + 1 <= pdfDoc.numPages) {
+                            await prerenderPageBitmap(currentNum + 1, docId);
+                        }
+                        if (currentNum - 1 >= 1) {
+                            await prerenderPageBitmap(currentNum - 1, docId);
+                        }
+                        if (currentNum + 2 <= pdfDoc.numPages) {
+                            await prerenderPageBitmap(currentNum + 2, docId);
+                        }
+                        if (currentNum - 2 >= 1) {
+                            await prerenderPageBitmap(currentNum - 2, docId);
+                        }
                     }
                 } catch (e) {}
             }, 30);
@@ -324,6 +425,7 @@
 
                 pageCache.clear();
                 renderedBitmapCache.clear();
+                lastIsTwoPages = isTwoPagesMode();
                 
                 if (docCache.has(source)) {
                     pdfDoc = docCache.get(source);
@@ -351,10 +453,18 @@
                 if (activeDocId !== currentDocId) return; // Annulé par un autre chargement plus récent
 
                 if (initialPage === 'last' || initialPage === -1 || initialPage === 'end') {
-                    pageNum = pdfDoc.numPages;
+                    if (isTwoPagesMode()) {
+                        pageNum = (pdfDoc.numPages % 2 === 0) ? (pdfDoc.numPages - 1) : pdfDoc.numPages;
+                        if (pageNum < 1) pageNum = 1;
+                    } else {
+                        pageNum = pdfDoc.numPages;
+                    }
                 } else {
                     pageNum = parseInt(initialPage, 10) || 1;
                     if (pageNum < 1 || pageNum > pdfDoc.numPages) pageNum = 1;
+                    if (isTwoPagesMode()) {
+                        pageNum = (pageNum % 2 === 0) ? (pageNum - 1) : pageNum;
+                    }
                 }
 
                 await renderPage(pageNum);
@@ -368,112 +478,251 @@
         async function renderPage(num) {
             if (!pdfDoc) return;
             const activeDocId = currentDocId;
-            const cacheKey = `${activeDocId}_${num}`;
 
-            // SI LA PAGE EST DÉJÀ PRÉ-RENDUE DANS LE CACHE BITMAP DU DOCUMENT ACTIF -> AFFICHAGE INSTANTANÉ !
-            if (renderedBitmapCache.has(cacheKey)) {
-                const cachedCanvas = renderedBitmapCache.get(cacheKey);
-                canvas.width = cachedCanvas.width;
-                canvas.height = cachedCanvas.height;
-                ctx.drawImage(cachedCanvas, 0, 0);
-                
-                reportPageInfo();
-                preloadAdjacentPages(num, activeDocId);
+            if (isTwoPagesMode()) {
+                const leftNum = (num % 2 === 0) ? (num - 1) : num;
+                const rightNum = leftNum + 1;
+                pageNum = leftNum;
+                const cacheKey = `${activeDocId}_spread_${leftNum}`;
 
-                if (num === 1) {
-                    window.location.href = 'app://musicscore/ready';
-                }
-                return;
-            }
-            
-            // Annuler tout rendu en cours pour éviter les blocages lors du défilement rapide
-            if (currentRenderTask) {
-                try {
-                    currentRenderTask.cancel();
-                } catch (e) {}
-                currentRenderTask = null;
-            }
+                if (renderedBitmapCache.has(cacheKey)) {
+                    const cachedCanvas = renderedBitmapCache.get(cacheKey);
+                    canvas.width = cachedCanvas.width;
+                    canvas.height = cachedCanvas.height;
+                    ctx.drawImage(cachedCanvas, 0, 0);
+                    
+                    reportPageInfo();
+                    preloadAdjacentPages(leftNum, activeDocId);
 
-            // Signaler au C# que le rendu commence
-            window.location.href = 'app://musicscore/rendering';
-            
-            try {
-                const page = await getCachedPage(num, activeDocId);
-                if (!page || activeDocId !== currentDocId) return;
-
-                const pageRot = getRotationForPage(num);
-                const viewport = page.getViewport({ scale: scale, rotation: pageRot });
-
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                const renderContext = {
-                    canvasContext: ctx,
-                    viewport: viewport,
-                    intent: 'display'
-                };
-
-                currentRenderTask = page.render(renderContext);
-                await currentRenderTask.promise;
-                currentRenderTask = null;
-
-                if (activeDocId !== currentDocId) return;
-
-                // Mettre en cache la version dessinée
-                const offCanvas = document.createElement('canvas');
-                offCanvas.width = viewport.width;
-                offCanvas.height = viewport.height;
-                offCanvas.getContext('2d').drawImage(canvas, 0, 0);
-                renderedBitmapCache.set(cacheKey, offCanvas);
-
-                reportPageInfo();
-
-                // Précharger les pages adjacentes en tâche de fond
-                preloadAdjacentPages(num, activeDocId);
-
-                // Signaler que le PDF est prêt
-                if (num === 1) {
-                    window.location.href = 'app://musicscore/ready';
-                }
-            } catch (err) {
-                if (err && err.name === 'RenderingCancelledException') {
-                    // Normal lors d'un changement rapide de page
+                    if (leftNum === 1) {
+                        window.location.href = 'app://musicscore/ready';
+                    }
                     return;
                 }
-                console.error("Erreur rendu page: ", err);
+
+                if (currentRenderTask) {
+                    try { currentRenderTask.cancel(); } catch (e) {}
+                    currentRenderTask = null;
+                }
+
+                window.location.href = 'app://musicscore/rendering';
+
+                try {
+                    const leftPage = await getCachedPage(leftNum, activeDocId);
+                    if (!leftPage || activeDocId !== currentDocId) return;
+                    const leftRot = getRotationForPage(leftNum);
+                    const leftVp = leftPage.getViewport({ scale: scale, rotation: leftRot });
+
+                    let rightPage = null;
+                    let rightVp = null;
+                    if (rightNum <= pdfDoc.numPages) {
+                        rightPage = await getCachedPage(rightNum, activeDocId);
+                        if (rightPage) {
+                            const rightRot = getRotationForPage(rightNum);
+                            rightVp = rightPage.getViewport({ scale: scale, rotation: rightRot });
+                        }
+                    }
+
+                    const totalWidth = leftVp.width + (rightVp ? rightVp.width : leftVp.width);
+                    const totalHeight = Math.max(leftVp.height, rightVp ? rightVp.height : leftVp.height);
+
+                    canvas.width = totalWidth;
+                    canvas.height = totalHeight;
+
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, totalWidth, totalHeight);
+
+                    // Rendu page gauche
+                    const leftCanvas = document.createElement('canvas');
+                    leftCanvas.width = leftVp.width;
+                    leftCanvas.height = leftVp.height;
+                    currentRenderTask = leftPage.render({
+                        canvasContext: leftCanvas.getContext('2d'),
+                        viewport: leftVp,
+                        intent: 'display'
+                    });
+                    await currentRenderTask.promise;
+                    currentRenderTask = null;
+                    if (activeDocId !== currentDocId) return;
+                    ctx.drawImage(leftCanvas, 0, 0);
+
+                    // Rendu page droite (si elle existe)
+                    if (rightPage && rightVp) {
+                        const rightCanvas = document.createElement('canvas');
+                        rightCanvas.width = rightVp.width;
+                        rightCanvas.height = rightVp.height;
+                        currentRenderTask = rightPage.render({
+                            canvasContext: rightCanvas.getContext('2d'),
+                            viewport: rightVp,
+                            intent: 'display'
+                        });
+                        await currentRenderTask.promise;
+                        currentRenderTask = null;
+                        if (activeDocId !== currentDocId) return;
+                        ctx.drawImage(rightCanvas, leftVp.width, 0);
+                    } else {
+                        // Page blanche à droite
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(leftVp.width, 0, leftVp.width, totalHeight);
+                    }
+
+                    // Séparateur vertical entre les deux pages
+                    ctx.strokeStyle = '#333333';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(leftVp.width, 0);
+                    ctx.lineTo(leftVp.width, totalHeight);
+                    ctx.stroke();
+
+                    // Mise en cache
+                    const offCanvas = document.createElement('canvas');
+                    offCanvas.width = totalWidth;
+                    offCanvas.height = totalHeight;
+                    offCanvas.getContext('2d').drawImage(canvas, 0, 0);
+                    renderedBitmapCache.set(cacheKey, offCanvas);
+
+                    reportPageInfo();
+                    preloadAdjacentPages(leftNum, activeDocId);
+
+                    if (leftNum === 1) {
+                        window.location.href = 'app://musicscore/ready';
+                    }
+                } catch (err) {
+                    if (err && err.name === 'RenderingCancelledException') return;
+                    console.error("Erreur rendu 2 pages: ", err);
+                }
+            } else {
+                pageNum = num;
+                const cacheKey = `${activeDocId}_${num}`;
+
+                if (renderedBitmapCache.has(cacheKey)) {
+                    const cachedCanvas = renderedBitmapCache.get(cacheKey);
+                    canvas.width = cachedCanvas.width;
+                    canvas.height = cachedCanvas.height;
+                    ctx.drawImage(cachedCanvas, 0, 0);
+                    
+                    reportPageInfo();
+                    preloadAdjacentPages(num, activeDocId);
+
+                    if (num === 1) {
+                        window.location.href = 'app://musicscore/ready';
+                    }
+                    return;
+                }
+                
+                if (currentRenderTask) {
+                    try { currentRenderTask.cancel(); } catch (e) {}
+                    currentRenderTask = null;
+                }
+
+                window.location.href = 'app://musicscore/rendering';
+                
+                try {
+                    const page = await getCachedPage(num, activeDocId);
+                    if (!page || activeDocId !== currentDocId) return;
+
+                    const pageRot = getRotationForPage(num);
+                    const viewport = page.getViewport({ scale: scale, rotation: pageRot });
+
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    const renderContext = {
+                        canvasContext: ctx,
+                        viewport: viewport,
+                        intent: 'display'
+                    };
+
+                    currentRenderTask = page.render(renderContext);
+                    await currentRenderTask.promise;
+                    currentRenderTask = null;
+
+                    if (activeDocId !== currentDocId) return;
+
+                    const offCanvas = document.createElement('canvas');
+                    offCanvas.width = viewport.width;
+                    offCanvas.height = viewport.height;
+                    offCanvas.getContext('2d').drawImage(canvas, 0, 0);
+                    renderedBitmapCache.set(cacheKey, offCanvas);
+
+                    reportPageInfo();
+                    preloadAdjacentPages(num, activeDocId);
+
+                    if (num === 1) {
+                        window.location.href = 'app://musicscore/ready';
+                    }
+                } catch (err) {
+                    if (err && err.name === 'RenderingCancelledException') return;
+                    console.error("Erreur rendu page: ", err);
+                }
             }
         }
 
         function reportPageInfo() {
-            window.location.href = 'app://musicscore/pageinfo?max=' + (pdfDoc ? pdfDoc.numPages : 1) + '&current=' + pageNum;
+            if (!pdfDoc) return;
+            if (isTwoPagesMode()) {
+                const leftNum = (pageNum % 2 === 0) ? (pageNum - 1) : pageNum;
+                const rightNum = leftNum + 1;
+                const display = (rightNum <= pdfDoc.numPages) ? `${leftNum}-${rightNum}` : `${leftNum}`;
+                window.location.href = `app://musicscore/pageinfo?max=${pdfDoc.numPages}&current=${leftNum}&displayCurrent=${display}`;
+            } else {
+                window.location.href = `app://musicscore/pageinfo?max=${pdfDoc.numPages}&current=${pageNum}&displayCurrent=${pageNum}`;
+            }
         }
 
         function prevPage(e) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
             if (!pdfDoc) return;
-            if (pageNum <= 1) {
-                window.location.href = 'app://musicscore/start';
-                return;
+
+            if (isTwoPagesMode()) {
+                const leftNum = (pageNum % 2 === 0) ? (pageNum - 1) : pageNum;
+                if (leftNum <= 1) {
+                    window.location.href = 'app://musicscore/start';
+                    return;
+                }
+                pageNum = leftNum - 2;
+                if (pageNum < 1) pageNum = 1;
+                renderPage(pageNum);
+            } else {
+                if (pageNum <= 1) {
+                    window.location.href = 'app://musicscore/start';
+                    return;
+                }
+                pageNum--;
+                renderPage(pageNum);
             }
-            pageNum--;
-            renderPage(pageNum);
         }
 
         function nextPage(e) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
             if (!pdfDoc) return;
-            if (pageNum >= pdfDoc.numPages) {
-                window.location.href = 'app://musicscore/end';
-                return;
+
+            if (isTwoPagesMode()) {
+                const leftNum = (pageNum % 2 === 0) ? (pageNum - 1) : pageNum;
+                if (leftNum + 2 > pdfDoc.numPages) {
+                    window.location.href = 'app://musicscore/end';
+                    return;
+                }
+                pageNum = leftNum + 2;
+                renderPage(pageNum);
+            } else {
+                if (pageNum >= pdfDoc.numPages) {
+                    window.location.href = 'app://musicscore/end';
+                    return;
+                }
+                pageNum++;
+                renderPage(pageNum);
             }
-            pageNum++;
-            renderPage(pageNum);
         }
 
         function goToPage(num) {
             if (!pdfDoc) return;
             if (num >= 1 && num <= pdfDoc.numPages) {
-                pageNum = num;
+                if (isTwoPagesMode()) {
+                    pageNum = (num % 2 === 0) ? (num - 1) : num;
+                } else {
+                    pageNum = num;
+                }
                 renderPage(pageNum);
             }
         }
@@ -488,12 +737,29 @@
             window.location.href = 'app://musicscore/annotations';
         }
 
+        window.addEventListener('resize', function() {
+            const currentMode = isTwoPagesMode();
+            if (currentMode !== lastIsTwoPages) {
+                lastIsTwoPages = currentMode;
+                renderedBitmapCache.clear();
+                if (pdfDoc) {
+                    renderPage(pageNum);
+                }
+            }
+        });
+
         // Auto-chargement au démarrage avec support du paramètre rot, page & pageRots
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const file = urlParams.get('file');
             const rot = urlParams.get('rot') || 0;
             const page = urlParams.get('page') || 1;
+            const twoPagesParam = urlParams.get('twoPages');
+            if (twoPagesParam !== null) {
+                twoPagesLandscape = twoPagesParam !== 'false';
+            }
+            lastIsTwoPages = isTwoPagesMode();
+
             const pageRotsParam = urlParams.get('pageRots');
             if (pageRotsParam) {
                 try {
