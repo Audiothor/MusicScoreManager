@@ -50,7 +50,7 @@ namespace MusicScoreManager.Services
         private static readonly Guid ServiceGuid = Guid.Parse("f3079b76-47b2-4d2d-bebf-5c4a5c0bfcb1");
 
 #if ANDROID
-        private static readonly Java.Util.UUID RfcommUuid = Java.Util.UUID.FromString(ServiceGuid.ToString());
+        private static readonly Java.Util.UUID RfcommUuid = Java.Util.UUID.FromString(ServiceGuid.ToString())!;
         private BluetoothAdapter? _bluetoothAdapter;
         private BluetoothDiscoveryReceiver? _receiver;
         private BluetoothServerSocket? _serverSocket;
@@ -337,6 +337,7 @@ namespace MusicScoreManager.Services
             try
             {
                 socket = device.CreateRfcommSocketToServiceRecord(RfcommUuid);
+                if (socket == null) return false;
                 await socket.ConnectAsync();
 
                 var inputStream = socket.InputStream;

@@ -18,7 +18,6 @@ public partial class ViewerPage : ContentPage
     private readonly SettingsService _settingsService;
 
     private double currentScale = 1;
-    private double startScale = 1;
     private int _currentPage = 1;
     private int _maxPages = 1;
     private int _currentRotation = 0;
@@ -27,8 +26,10 @@ public partial class ViewerPage : ContentPage
     private Thread? _metronomeThread;
     private volatile bool _isMetronomeRunning = false;
     private bool _isMetronomePlaying = false;
+#if !ANDROID
     private IAudioPlayer? _metronomeAudioPlayer;
     private IAudioPlayer? _preCountAudioPlayer;
+#endif
 
 #if ANDROID
     private Android.Media.SoundPool? _soundPool;
@@ -611,18 +612,24 @@ public partial class ViewerPage : ContentPage
             GenerateBeepWav(preCountPath, 880, 0.1);
 
 #if ANDROID
-            var audioAttributes = new Android.Media.AudioAttributes.Builder()
-                .SetUsage(Android.Media.AudioUsageKind.Media)
-                .SetContentType(Android.Media.AudioContentType.Music)
+            var audioAttributes = new Android.Media.AudioAttributes.Builder()!
+                .SetUsage(Android.Media.AudioUsageKind.Media)!
+                .SetContentType(Android.Media.AudioContentType.Music)!
                 .Build();
 
-            _soundPool = new Android.Media.SoundPool.Builder()
-                .SetMaxStreams(16)
-                .SetAudioAttributes(audioAttributes)
-                .Build();
+            if (audioAttributes != null)
+            {
+                _soundPool = new Android.Media.SoundPool.Builder()!
+                    .SetMaxStreams(16)!
+                    .SetAudioAttributes(audioAttributes)!
+                    .Build();
 
-            _metronomeSoundId = _soundPool.Load(clickPath, 1);
-            _preCountSoundId = _soundPool.Load(preCountPath, 1);
+                if (_soundPool != null)
+                {
+                    _metronomeSoundId = _soundPool.Load(clickPath, 1);
+                    _preCountSoundId = _soundPool.Load(preCountPath, 1);
+                }
+            }
 #else
             using var stream = File.OpenRead(clickPath);
             _metronomeAudioPlayer = AudioManager.Current.CreatePlayer(stream);
