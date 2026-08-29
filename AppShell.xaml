@@ -7,20 +7,20 @@
     Title="MusicScoreManager"
     Shell.NavBarIsVisible="False">
 
-    <TabBar>
-        <Tab Title="Partitions" Icon="🎵">
+    <TabBar x:Name="MainTabBar">
+        <Tab x:Name="TabScores" Title="Partitions" Icon="🎵">
             <ShellContent ContentTemplate="{DataTemplate local:ScoresPage}" Route="ScoresPage" />
         </Tab>
-        <Tab Title="Setlists" Icon="📋">
+        <Tab x:Name="TabSetlists" Title="Setlists" Icon="📋">
             <ShellContent ContentTemplate="{DataTemplate local:SetlistsPage}" Route="SetlistsPage" />
         </Tab>
-        <Tab Title="Outils" Icon="🛠️">
+        <Tab x:Name="TabTools" Title="Outils" Icon="🛠️">
             <ShellContent ContentTemplate="{DataTemplate local:ToolsPage}" Route="ToolsPage" />
         </Tab>
-        <Tab Title="Paramètres" Icon="⚙️">
+        <Tab x:Name="TabSettings" Title="Paramètres" Icon="⚙️">
             <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" Route="SettingsPage" />
         </Tab>
-        <Tab Title="Quitter" Icon="🚪">
+        <Tab x:Name="TabQuit" Title="Quitter" Icon="🚪">
             <ShellContent ContentTemplate="{DataTemplate local:QuitPage}" Route="QuitPage" />
         </Tab>
     </TabBar>

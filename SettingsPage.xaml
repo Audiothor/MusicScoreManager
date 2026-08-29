@@ -34,7 +34,7 @@
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnSettingsScoresTapped" />
                             </Grid.GestureRecognizers>
-                            <Label Text="Paramètres Partitions" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="{Binding [Settings_Scores], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" VerticalOptions="Center" />
                             <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>
                         
@@ -44,7 +44,7 @@
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnSettingsSetlistsTapped" />
                             </Grid.GestureRecognizers>
-                            <Label Text="Paramètres Setlists" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="{Binding [Settings_Setlists], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" VerticalOptions="Center" />
                             <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>
 
@@ -54,7 +54,7 @@
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnSettingsTagsTapped" />
                             </Grid.GestureRecognizers>
-                            <Label Text="Paramètres Etiquettes" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="{Binding [Settings_Tags], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" VerticalOptions="Center" />
                             <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>
 
@@ -64,7 +64,7 @@
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnSettingsAnnotationsTapped" />
                             </Grid.GestureRecognizers>
-                            <Label Text="Paramètres Annotations (Favoris)" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="{Binding [Settings_Annotations], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" VerticalOptions="Center" />
                             <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>
 
@@ -74,7 +74,7 @@
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnSettingsAppTapped" />
                             </Grid.GestureRecognizers>
-                            <Label Text="Paramètres application" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="{Binding [Settings_App], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" VerticalOptions="Center" />
                             <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>
 

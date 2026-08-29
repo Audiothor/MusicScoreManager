@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.SettingsAppPage"
              BackgroundColor="#121212"
-             Title="Paramètres Application">
+             Title="{Binding [Settings_App], Source={x:Static services:LocalizationService.Instance}}">
 
     <Grid RowDefinitions="Auto, *">
         <!-- Header personnalisé avec bouton Retour -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
             <Button Grid.Column="0" 
-                    Text="← Retour" 
+                    Text="{Binding [Common_Back], Source={x:Static services:LocalizationService.Instance}}" 
                     BackgroundColor="Transparent" 
                     TextColor="#007ACC" 
                     FontAttributes="Bold"
                     Clicked="OnBackClicked" />
             <Label Grid.Column="1" 
-                   Text="Paramètres Application" 
+                   Text="{Binding [Settings_App], Source={x:Static services:LocalizationService.Instance}}" 
                    TextColor="White" 
                    FontSize="18" 
                    FontAttributes="Bold" 
@@ -27,7 +28,7 @@
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Spacing="20" Padding="20">
                 <!-- Section Langue -->
-                <Label Text="Langue" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" Margin="0,5,0,0" />
+                <Label Text="{Binding [Settings_Language], Source={x:Static services:LocalizationService.Instance}}" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" Margin="0,5,0,0" />
                 
                 <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
                     <Border.StrokeShape>
@@ -35,37 +36,34 @@
                     </Border.StrokeShape>
                     
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="Langue de l'application" TextColor="White" FontAttributes="Bold" />
-                        <Border Stroke="#444444" StrokeThickness="1" BackgroundColor="#2C2C2C" Padding="10,0">
+                        <Label Text="{Binding [Settings_Language], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontAttributes="Bold" />
+                        <Border Stroke="#444444" StrokeThickness="1" BackgroundColor="#2C2C2C" Padding="12,10">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
-                            <Picker x:Name="LanguagePicker"
-                                    TextColor="White"
-                                    Title="Sélectionner la langue"
-                                    TitleColor="#888888"
-                                    BackgroundColor="Transparent"
-                                    SelectedIndexChanged="OnLanguagePickerSelectedIndexChanged">
-                                <Picker.ItemsSource>
-                                    <x:Array Type="{x:Type x:String}">
-                                        <x:String>🇫🇷 Français</x:String>
-                                        <x:String>🇬🇧 English</x:String>
-                                        <x:String>🇩🇪 Deutsch</x:String>
-                                        <x:String>🇪🇸 Español</x:String>
-                                        <x:String>🇮🇹 Italiano</x:String>
-                                        <x:String>🇵🇱 Polski</x:String>
-                                        <x:String>🇳🇱 Nederlands</x:String>
-                                        <x:String>🇵🇹 Português</x:String>
-                                    </x:Array>
-                                </Picker.ItemsSource>
-                            </Picker>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnOpenLanguageModalTapped" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label x:Name="SelectedLanguageLabel" 
+                                       Text="🇫🇷 Français" 
+                                       TextColor="White" 
+                                       FontSize="15" 
+                                       VerticalOptions="Center" />
+                                <Label Grid.Column="1" 
+                                       Text="✎ Modifier" 
+                                       TextColor="#007ACC" 
+                                       FontSize="14" 
+                                       FontAttributes="Bold" 
+                                       VerticalOptions="Center" />
+                            </Grid>
                         </Border>
-                        <Label Text="Sélectionnez la langue d'affichage des menus et textes de l'application." TextColor="#888888" FontSize="12" />
+                        <Label Text="{Binding [Settings_Language_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
                     </VerticalStackLayout>
                 </Border>
 
                 <!-- Section Bibliothèque -->
-                <Label Text="Bibliothèque" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0" />
+                <Label Text="{Binding [Settings_Library], Source={x:Static services:LocalizationService.Instance}}" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0" />
 
                 <!-- Statistiques de la Bibliothèque -->
                 <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
@@ -73,22 +71,22 @@
                         <RoundRectangle CornerRadius="10" />
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="8">
-                        <Label Text="Contenu de la bibliothèque" TextColor="White" FontAttributes="Bold" FontSize="14" />
+                        <Label Text="{Binding [Scores_Total], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontAttributes="Bold" FontSize="14" />
                         
                         <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                            <Label Text="📄 Partitions PDF :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Text="📄 PDF :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
                             <Label Grid.Column="1" x:Name="PdfCountLabel" Text="..." TextColor="#007ACC" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
                         </Grid>
                         
                         <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                            <Label Text="🖼️ Partitions Image :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Text="🖼️ Image :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
                             <Label Grid.Column="1" x:Name="ImageCountLabel" Text="..." TextColor="#2ECC71" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
                         </Grid>
                         
                         <BoxView HeightRequest="1" Color="#333333" Margin="0,4" />
                         
                         <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                            <Label Text="Total des partitions :" TextColor="White" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+                            <Label Text="{Binding [Scores_Total], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
                             <Label Grid.Column="1" x:Name="TotalCountLabel" Text="..." TextColor="White" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
                         </Grid>
                     </VerticalStackLayout>
@@ -100,10 +98,10 @@
                     </Border.StrokeShape>
                     
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="Répertoire des partitions (PDF, Images)" TextColor="White" FontAttributes="Bold" />
+                        <Label Text="{Binding [Settings_ScoresPath], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontAttributes="Bold" />
                         <Label x:Name="ScoresPathLabel" Text="Chemin actuel" TextColor="#888888" FontSize="12" LineBreakMode="CharacterWrap" />
                         
-                        <Button Text="Changer le répertoire" 
+                        <Button Text="{Binding [Settings_ChangePath], Source={x:Static services:LocalizationService.Instance}}" 
                                 Clicked="OnChangeScoresPathClicked"
                                 BackgroundColor="#2C2C2C" 
                                 TextColor="White"
@@ -117,10 +115,10 @@
                     </Border.StrokeShape>
                     
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="Répertoire des fichiers audio (MP3, WAV, AIF)" TextColor="White" FontAttributes="Bold" />
+                        <Label Text="{Binding [Settings_AudioPath], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontAttributes="Bold" />
                         <Label x:Name="AudioPathLabel" Text="Chemin actuel" TextColor="#888888" FontSize="12" LineBreakMode="CharacterWrap" />
                         
-                        <Button Text="Changer le répertoire" 
+                        <Button Text="{Binding [Settings_ChangePath], Source={x:Static services:LocalizationService.Instance}}" 
                                 Clicked="OnChangeAudioPathClicked"
                                 BackgroundColor="#2C2C2C" 
                                 TextColor="White"
@@ -134,10 +132,10 @@
                     </Border.StrokeShape>
                     
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="Répertoire des fichiers d'export (Setlists, Partitions)" TextColor="White" FontAttributes="Bold" />
+                        <Label Text="{Binding [Settings_ExportsPath], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontAttributes="Bold" />
                         <Label x:Name="ExportsPathLabel" Text="Chemin actuel" TextColor="#888888" FontSize="12" LineBreakMode="CharacterWrap" />
                         
-                        <Button Text="Changer le répertoire" 
+                        <Button Text="{Binding [Settings_ChangePath], Source={x:Static services:LocalizationService.Instance}}" 
                                 Clicked="OnChangeExportsPathClicked"
                                 BackgroundColor="#2C2C2C" 
                                 TextColor="White"
@@ -150,5 +148,116 @@
     
             </VerticalStackLayout>
         </ScrollView>
+
+        <!-- Modal Popup Choix de Langue -->
+        <Grid x:Name="LanguageModalOverlay" 
+              Grid.RowSpan="2" 
+              BackgroundColor="#CC000000" 
+              IsVisible="False"
+              InputTransparent="False">
+            <Border BackgroundColor="#1E1E1E" 
+                    Stroke="#333333" 
+                    StrokeThickness="1" 
+                    WidthRequest="340" 
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" 
+                    Padding="18">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="🌐 Choisir la langue" 
+                           TextColor="White" 
+                           FontSize="18" 
+                           FontAttributes="Bold" 
+                           HorizontalOptions="Center" />
+
+                    <!-- Liste des 8 langues sélectionnables -->
+                    <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#262626" Padding="4">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="2">
+                            <Grid ColumnDefinitions="*, Auto" Padding="12,10" BackgroundColor="#2C2C2C">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSelectLangItemTapped" CommandParameter="fr" />
+                                </Grid.GestureRecognizers>
+                                <Label Text="🇫🇷 Français" TextColor="White" FontSize="15" VerticalOptions="Center" />
+                                <Label Grid.Column="1" x:Name="CheckLangFr" Text="✓" TextColor="#007ACC" FontAttributes="Bold" FontSize="16" IsVisible="True" />
+                            </Grid>
+                            <Grid ColumnDefinitions="*, Auto" Padding="12,10" BackgroundColor="#2C2C2C">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSelectLangItemTapped" CommandParameter="en" />
+                                </Grid.GestureRecognizers>
+                                <Label Text="🇬🇧 English" TextColor="White" FontSize="15" VerticalOptions="Center" />
+                                <Label Grid.Column="1" x:Name="CheckLangEn" Text="✓" TextColor="#007ACC" FontAttributes="Bold" FontSize="16" IsVisible="False" />
+                            </Grid>
+                            <Grid ColumnDefinitions="*, Auto" Padding="12,10" BackgroundColor="#2C2C2C">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSelectLangItemTapped" CommandParameter="de" />
+                                </Grid.GestureRecognizers>
+                                <Label Text="🇩🇪 Deutsch" TextColor="White" FontSize="15" VerticalOptions="Center" />
+                                <Label Grid.Column="1" x:Name="CheckLangDe" Text="✓" TextColor="#007ACC" FontAttributes="Bold" FontSize="16" IsVisible="False" />
+                            </Grid>
+                            <Grid ColumnDefinitions="*, Auto" Padding="12,10" BackgroundColor="#2C2C2C">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSelectLangItemTapped" CommandParameter="es" />
+                                </Grid.GestureRecognizers>
+                                <Label Text="🇪🇸 Español" TextColor="White" FontSize="15" VerticalOptions="Center" />
+                                <Label Grid.Column="1" x:Name="CheckLangEs" Text="✓" TextColor="#007ACC" FontAttributes="Bold" FontSize="16" IsVisible="False" />
+                            </Grid>
+                            <Grid ColumnDefinitions="*, Auto" Padding="12,10" BackgroundColor="#2C2C2C">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSelectLangItemTapped" CommandParameter="it" />
+                                </Grid.GestureRecognizers>
+                                <Label Text="🇮🇹 Italiano" TextColor="White" FontSize="15" VerticalOptions="Center" />
+                                <Label Grid.Column="1" x:Name="CheckLangIt" Text="✓" TextColor="#007ACC" FontAttributes="Bold" FontSize="16" IsVisible="False" />
+                            </Grid>
+                            <Grid ColumnDefinitions="*, Auto" Padding="12,10" BackgroundColor="#2C2C2C">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSelectLangItemTapped" CommandParameter="pl" />
+                                </Grid.GestureRecognizers>
+                                <Label Text="🇵🇱 Polski" TextColor="White" FontSize="15" VerticalOptions="Center" />
+                                <Label Grid.Column="1" x:Name="CheckLangPl" Text="✓" TextColor="#007ACC" FontAttributes="Bold" FontSize="16" IsVisible="False" />
+                            </Grid>
+                            <Grid ColumnDefinitions="*, Auto" Padding="12,10" BackgroundColor="#2C2C2C">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSelectLangItemTapped" CommandParameter="nl" />
+                                </Grid.GestureRecognizers>
+                                <Label Text="🇳🇱 Nederlands" TextColor="White" FontSize="15" VerticalOptions="Center" />
+                                <Label Grid.Column="1" x:Name="CheckLangNl" Text="✓" TextColor="#007ACC" FontAttributes="Bold" FontSize="16" IsVisible="False" />
+                            </Grid>
+                            <Grid ColumnDefinitions="*, Auto" Padding="12,10" BackgroundColor="#2C2C2C">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSelectLangItemTapped" CommandParameter="pt" />
+                                </Grid.GestureRecognizers>
+                                <Label Text="🇵🇹 Português" TextColor="White" FontSize="15" VerticalOptions="Center" />
+                                <Label Grid.Column="1" x:Name="CheckLangPt" Text="✓" TextColor="#007ACC" FontAttributes="Bold" FontSize="16" IsVisible="False" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Boutons Annuler / Appliquer -->
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="12" Margin="0,5,0,0">
+                        <Button Grid.Column="0" 
+                                Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}" 
+                                BackgroundColor="#444444" 
+                                TextColor="White" 
+                                FontAttributes="Bold" 
+                                HeightRequest="44" 
+                                CornerRadius="8" 
+                                Clicked="OnCancelLangClicked" />
+                        <Button Grid.Column="1" 
+                                Text="Appliquer" 
+                                BackgroundColor="#007ACC" 
+                                TextColor="White" 
+                                FontAttributes="Bold" 
+                                HeightRequest="44" 
+                                CornerRadius="8" 
+                                Clicked="OnApplyLangClicked" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
     </Grid>
 </ContentPage>

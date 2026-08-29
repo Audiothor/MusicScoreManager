@@ -10,13 +10,14 @@ public partial class SettingsAppPage : ContentPage
     private readonly SettingsService _settingsService;
     private readonly DatabaseService _databaseService;
 
-    private bool _isInitializingLang = true;
+    private string _pendingLang = "fr";
 
     public SettingsAppPage()
     {
         InitializeComponent();
         _settingsService = new SettingsService();
         _databaseService = new DatabaseService();
+        _pendingLang = LocalizationService.Instance.CurrentLanguage;
         RefreshUI();
         _ = LoadScoreStatsAsync();
     }
@@ -27,20 +28,37 @@ public partial class SettingsAppPage : ContentPage
         AudioPathLabel.Text = _settingsService.AudioRootDirectory;
         ExportsPathLabel.Text = _settingsService.ExportsRootDirectory;
 
-        _isInitializingLang = true;
         string currentLang = LocalizationService.Instance.CurrentLanguage;
-        LanguagePicker.SelectedIndex = currentLang switch
+        _pendingLang = currentLang;
+        UpdateSelectedLanguageLabel(currentLang);
+        UpdateCheckmarks(currentLang);
+    }
+
+    private void UpdateSelectedLanguageLabel(string lang)
+    {
+        SelectedLanguageLabel.Text = lang switch
         {
-            "en" => 1,
-            "de" => 2,
-            "es" => 3,
-            "it" => 4,
-            "pl" => 5,
-            "nl" => 6,
-            "pt" => 7,
-            _ => 0
+            "en" => "🇬🇧 English",
+            "de" => "🇩🇪 Deutsch",
+            "es" => "🇪🇸 Español",
+            "it" => "🇮🇹 Italiano",
+            "pl" => "🇵🇱 Polski",
+            "nl" => "🇳🇱 Nederlands",
+            "pt" => "🇵🇹 Português",
+            _ => "🇫🇷 Français"
         };
-        _isInitializingLang = false;
+    }
+
+    private void UpdateCheckmarks(string lang)
+    {
+        if (CheckLangFr != null) CheckLangFr.IsVisible = (lang == "fr");
+        if (CheckLangEn != null) CheckLangEn.IsVisible = (lang == "en");
+        if (CheckLangDe != null) CheckLangDe.IsVisible = (lang == "de");
+        if (CheckLangEs != null) CheckLangEs.IsVisible = (lang == "es");
+        if (CheckLangIt != null) CheckLangIt.IsVisible = (lang == "it");
+        if (CheckLangPl != null) CheckLangPl.IsVisible = (lang == "pl");
+        if (CheckLangNl != null) CheckLangNl.IsVisible = (lang == "nl");
+        if (CheckLangPt != null) CheckLangPt.IsVisible = (lang == "pt");
     }
 
     private async Task LoadScoreStatsAsync()
@@ -61,23 +79,41 @@ public partial class SettingsAppPage : ContentPage
         }
     }
 
-    private async void OnLanguagePickerSelectedIndexChanged(object? sender, EventArgs e)
+    private void OnOpenLanguageModalTapped(object? sender, EventArgs e)
     {
-        if (_isInitializingLang) return;
+        _pendingLang = LocalizationService.Instance.CurrentLanguage;
+        UpdateCheckmarks(_pendingLang);
+        LanguageModalOverlay.IsVisible = true;
+    }
 
-        string selectedLang = LanguagePicker.SelectedIndex switch
+    private void OnSelectLangItemTapped(object? sender, TappedEventArgs e)
+    {
+        if (e.Parameter is string langCode)
         {
-            1 => "en",
-            2 => "de",
-            3 => "es",
-            4 => "it",
-            5 => "pl",
-            6 => "nl",
-            7 => "pt",
-            _ => "fr"
-        };
+            _pendingLang = langCode;
+            UpdateCheckmarks(_pendingLang);
+        }
+    }
 
-        await LocalizationService.Instance.SetLanguageAsync(selectedLang);
+    private void OnCancelLangClicked(object? sender, EventArgs e)
+    {
+        LanguageModalOverlay.IsVisible = false;
+    }
+
+    private async void OnApplyLangClicked(object? sender, EventArgs e)
+    {
+        LanguageModalOverlay.IsVisible = false;
+        if (!string.IsNullOrEmpty(_pendingLang))
+        {
+            await LocalizationService.Instance.SetLanguageAsync(_pendingLang);
+            UpdateSelectedLanguageLabel(_pendingLang);
+
+            // Recharger l'AppShell pour rafraîchir instantanément toutes les vues, textes et onglets
+            if (Application.Current != null)
+            {
+                Application.Current.MainPage = new AppShell();
+            }
+        }
     }
 
     private async void OnBackClicked(object sender, EventArgs e)
