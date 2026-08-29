@@ -189,7 +189,8 @@
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d', { alpha: false });
 
-        const renderedBitmapCache = new Map(); // Cache d'images Bitmap pré-rendues pour affichage instantané
+        let currentDocId = 0; // Identifiant de document incrémental pour invalider strictement les tâches de fond
+        const renderedBitmapCache = new Map(); // Cache d'images Bitmap pré-rendues : clé `${docId}_${pageNum}`
         const pageRotations = new Map(); // Enregistrement de la rotation spécifique par numéro de page
 
         function getRotationForPage(num) {
@@ -201,7 +202,7 @@
 
         function setPageRotation(pNum, deg) {
             pageRotations.set(pNum, deg);
-            renderedBitmapCache.delete(pNum);
+            renderedBitmapCache.delete(`${currentDocId}_${pNum}`);
             if (pNum === pageNum) {
                 renderPage(pageNum);
             }
@@ -231,21 +232,27 @@
             renderPage(pageNum);
         }
 
-        async function getCachedPage(num) {
-            if (pageCache.has(num)) {
-                return pageCache.get(num);
+        async function getCachedPage(num, docId) {
+            if (docId !== currentDocId || !pdfDoc) return null;
+            const cacheKey = `${docId}_${num}`;
+            if (pageCache.has(cacheKey)) {
+                return pageCache.get(cacheKey);
             }
-            if (!pdfDoc || num < 1 || num > pdfDoc.numPages) return null;
+            if (num < 1 || num > pdfDoc.numPages) return null;
             const pagePromise = pdfDoc.getPage(num);
-            pageCache.set(num, pagePromise);
+            pageCache.set(cacheKey, pagePromise);
             return pagePromise;
         }
 
-        async function prerenderPageBitmap(num) {
-            if (!pdfDoc || num < 1 || num > pdfDoc.numPages || renderedBitmapCache.has(num)) return;
+        async function prerenderPageBitmap(num, docId) {
+            if (docId !== currentDocId || !pdfDoc || num < 1 || num > pdfDoc.numPages) return;
+            const cacheKey = `${docId}_${num}`;
+            if (renderedBitmapCache.has(cacheKey)) return;
+
             try {
-                const page = await getCachedPage(num);
-                if (!page) return;
+                const page = await getCachedPage(num, docId);
+                if (!page || docId !== currentDocId) return;
+
                 const pageRot = getRotationForPage(num);
                 const viewport = page.getViewport({ scale: scale, rotation: pageRot });
                 const offscreenCanvas = document.createElement('canvas');
@@ -259,30 +266,29 @@
                     intent: 'display'
                 });
                 await renderTask.promise;
-                renderedBitmapCache.set(num, offscreenCanvas);
+                if (docId === currentDocId) {
+                    renderedBitmapCache.set(cacheKey, offscreenCanvas);
+                }
             } catch (e) {}
         }
 
-        async function preloadAdjacentPages(currentNum) {
-            if (!pdfDoc) return;
-            // Préchargement asynchrone non-bloquant des pages adjacentes en RAM dans les deux directions (avance et recul)
-            // Priorité 1 : Page suivante immédiate (+1)
-            // Priorité 2 : Page précédente immédiate (-1)
-            // Priorité 3 : Page suivante d'anticipation (+2)
-            // Priorité 4 : Page précédente d'anticipation (-2)
+        async function preloadAdjacentPages(currentNum, docId) {
+            if (docId !== currentDocId || !pdfDoc) return;
+            // Préchargement asynchrone non-bloquant des pages adjacentes en RAM
             setTimeout(async () => {
                 try {
+                    if (docId !== currentDocId || !pdfDoc) return;
                     if (currentNum + 1 <= pdfDoc.numPages) {
-                        await prerenderPageBitmap(currentNum + 1);
+                        await prerenderPageBitmap(currentNum + 1, docId);
                     }
                     if (currentNum - 1 >= 1) {
-                        await prerenderPageBitmap(currentNum - 1);
+                        await prerenderPageBitmap(currentNum - 1, docId);
                     }
                     if (currentNum + 2 <= pdfDoc.numPages) {
-                        await prerenderPageBitmap(currentNum + 2);
+                        await prerenderPageBitmap(currentNum + 2, docId);
                     }
                     if (currentNum - 2 >= 1) {
-                        await prerenderPageBitmap(currentNum - 2);
+                        await prerenderPageBitmap(currentNum - 2, docId);
                     }
                 } catch (e) {}
             }, 30);
@@ -306,6 +312,14 @@
 
         async function loadPdf(source, initialRotation = 0, initialPage = 1) {
             try {
+                currentDocId++; // Nouveau document : invalide toutes les opérations asynchrones précédentes
+                const activeDocId = currentDocId;
+
+                if (currentRenderTask) {
+                    try { currentRenderTask.cancel(); } catch (e) {}
+                    currentRenderTask = null;
+                }
+
                 if (initialRotation !== undefined) rotation = parseInt(initialRotation, 10) || 0;
 
                 pageCache.clear();
@@ -334,6 +348,8 @@
                     if (typeof source === 'string') docCache.set(source, pdfDoc);
                 }
 
+                if (activeDocId !== currentDocId) return; // Annulé par un autre chargement plus récent
+
                 if (initialPage === 'last' || initialPage === -1 || initialPage === 'end') {
                     pageNum = pdfDoc.numPages;
                 } else {
@@ -351,16 +367,18 @@
 
         async function renderPage(num) {
             if (!pdfDoc) return;
+            const activeDocId = currentDocId;
+            const cacheKey = `${activeDocId}_${num}`;
 
-            // SI LA PAGE EST DÉJÀ PRÉ-RENDUE DANS LE CACHE BITMAP -> AFFICHAGE INSTANTANÉ !
-            if (renderedBitmapCache.has(num)) {
-                const cachedCanvas = renderedBitmapCache.get(num);
+            // SI LA PAGE EST DÉJÀ PRÉ-RENDUE DANS LE CACHE BITMAP DU DOCUMENT ACTIF -> AFFICHAGE INSTANTANÉ !
+            if (renderedBitmapCache.has(cacheKey)) {
+                const cachedCanvas = renderedBitmapCache.get(cacheKey);
                 canvas.width = cachedCanvas.width;
                 canvas.height = cachedCanvas.height;
                 ctx.drawImage(cachedCanvas, 0, 0);
                 
                 reportPageInfo();
-                preloadAdjacentPages(num);
+                preloadAdjacentPages(num, activeDocId);
 
                 if (num === 1) {
                     window.location.href = 'app://musicscore/ready';
@@ -380,8 +398,8 @@
             window.location.href = 'app://musicscore/rendering';
             
             try {
-                const page = await getCachedPage(num);
-                if (!page) return;
+                const page = await getCachedPage(num, activeDocId);
+                if (!page || activeDocId !== currentDocId) return;
 
                 const pageRot = getRotationForPage(num);
                 const viewport = page.getViewport({ scale: scale, rotation: pageRot });
@@ -399,17 +417,19 @@
                 await currentRenderTask.promise;
                 currentRenderTask = null;
 
+                if (activeDocId !== currentDocId) return;
+
                 // Mettre en cache la version dessinée
                 const offCanvas = document.createElement('canvas');
                 offCanvas.width = viewport.width;
                 offCanvas.height = viewport.height;
                 offCanvas.getContext('2d').drawImage(canvas, 0, 0);
-                renderedBitmapCache.set(num, offCanvas);
+                renderedBitmapCache.set(cacheKey, offCanvas);
 
                 reportPageInfo();
 
                 // Précharger les pages adjacentes en tâche de fond
-                preloadAdjacentPages(num);
+                preloadAdjacentPages(num, activeDocId);
 
                 // Signaler que le PDF est prêt
                 if (num === 1) {
