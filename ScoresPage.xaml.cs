@@ -14,7 +14,8 @@ public partial class ScoresPage : ContentPage
     private readonly IBluetoothTransferService _bluetoothService;
     private readonly ExportImportService _exportImportService;
     private readonly SettingsService _settingsService = new();
-    private string _currentSort = "TitleAsc";
+    private string _currentSort = "DateDesc";
+    private bool _hasUserCustomSort = false;
     private readonly List<int> _selectedTagIds = new();
     private List<Models.Tag> _allTags = new();
     private string _tagSearchQuery = string.Empty;
@@ -48,6 +49,8 @@ public partial class ScoresPage : ContentPage
         _bluetoothService = bluetoothService;
         _exportImportService = exportImportService;
 
+        _currentSort = Preferences.Default.Get("DefaultScoreSort", "DateDesc");
+
         BluetoothDevicesListView.ItemsSource = _discoveredDevices;
     }
 
@@ -68,16 +71,40 @@ public partial class ScoresPage : ContentPage
         _bluetoothService.ScanFinished += OnBluetoothScanFinished;
         _bluetoothService.TransferProgressChanged += OnBluetoothTransferProgressChanged;
 
+        if (!_hasUserCustomSort)
+        {
+            _currentSort = Preferences.Default.Get("DefaultScoreSort", "DateDesc");
+        }
+
         _ = Task.Run(async () =>
         {
             try 
             {
                 _allTags = await _databaseService.GetTagsAsync();
                 
-                await MainThread.InvokeOnMainThreadAsync(async () =>
+                string query = string.Empty;
+                MainThread.BeginInvokeOnMainThread(() =>
                 {
                     UpdateActiveTagsChips();
-                    await LoadScoresAsync(SearchScoreBar.Text);
+                });
+
+                var scores = await _databaseService.SearchScoresAsync(query, _selectedTagIds);
+                scores = SortScores(scores, _currentSort);
+
+                foreach (var score in scores)
+                {
+                    score.PropertyChanged -= OnScorePropertyChanged;
+                    score.PropertyChanged += OnScorePropertyChanged;
+                }
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    if (EmptyScoresLabel != null)
+                    {
+                        EmptyScoresLabel.Text = "Aucune partition trouvée.";
+                    }
+                    ScoresCollectionView.ItemsSource = scores;
+                    RecalculateSelectedCount();
                 });
             }
             catch (Exception ex)
@@ -163,14 +190,25 @@ public partial class ScoresPage : ContentPage
         }
     }
 
+    private List<Models.Score> SortScores(IEnumerable<Models.Score> scores, string sortType)
+    {
+        return sortType switch
+        {
+            "TitleAsc" => scores.OrderBy(s => s.Title).ToList(),
+            "TitleDesc" => scores.OrderByDescending(s => s.Title).ToList(),
+            "DateAsc" => scores.OrderBy(s => s.DateAdded).ToList(),
+            "DateDesc" => scores.OrderByDescending(s => s.DateAdded).ToList(),
+            "ModifiedDesc" => scores.OrderByDescending(s => s.DateModified).ToList(),
+            "RatingDesc" => scores.OrderByDescending(s => s.Rating).ThenBy(s => s.Title).ToList(),
+            "ComposerAsc" => scores.OrderBy(s => s.Composer).ThenBy(s => s.Title).ToList(),
+            _ => scores.OrderByDescending(s => s.DateAdded).ToList()
+        };
+    }
+
     private async Task LoadScoresAsync(string query = "")
     {
         var scores = await _databaseService.SearchScoresAsync(query ?? string.Empty, _selectedTagIds);
-
-        if (_currentSort == "TitleAsc") scores = scores.OrderBy(s => s.Title).ToList();
-        else if (_currentSort == "TitleDesc") scores = scores.OrderByDescending(s => s.Title).ToList();
-        else if (_currentSort == "DateAsc") scores = scores.OrderBy(s => s.DateAdded).ToList();
-        else if (_currentSort == "DateDesc") scores = scores.OrderByDescending(s => s.DateAdded).ToList();
+        scores = SortScores(scores, _currentSort);
 
         foreach (var score in scores)
         {
@@ -871,12 +909,15 @@ public partial class ScoresPage : ContentPage
     private async void OnSortClicked(object sender, EventArgs e)
     {
         string action = await DisplayActionSheetAsync("Trier par", "Annuler", null, 
-            "Titre (A-Z)", "Titre (Z-A)", "Date d'ajout (Récent)", "Date d'ajout (Ancien)");
+            "Date d'ajout (Récent)", "Date d'ajout (Ancien)", "Titre (A-Z)", "Titre (Z-A)", "Date de modification", "Évaluation (Note)", "Compositeur (A-Z)");
 
-        if (action == "Titre (A-Z)") _currentSort = "TitleAsc";
-        else if (action == "Titre (Z-A)") _currentSort = "TitleDesc";
-        else if (action == "Date d'ajout (Récent)") _currentSort = "DateDesc";
-        else if (action == "Date d'ajout (Ancien)") _currentSort = "DateAsc";
+        if (action == "Date d'ajout (Récent)") { _currentSort = "DateDesc"; _hasUserCustomSort = true; }
+        else if (action == "Date d'ajout (Ancien)") { _currentSort = "DateAsc"; _hasUserCustomSort = true; }
+        else if (action == "Titre (A-Z)") { _currentSort = "TitleAsc"; _hasUserCustomSort = true; }
+        else if (action == "Titre (Z-A)") { _currentSort = "TitleDesc"; _hasUserCustomSort = true; }
+        else if (action == "Date de modification") { _currentSort = "ModifiedDesc"; _hasUserCustomSort = true; }
+        else if (action == "Évaluation (Note)") { _currentSort = "RatingDesc"; _hasUserCustomSort = true; }
+        else if (action == "Compositeur (A-Z)") { _currentSort = "ComposerAsc"; _hasUserCustomSort = true; }
 
         if (action != "Annuler")
             await LoadScoresAsync(SearchScoreBar.Text);

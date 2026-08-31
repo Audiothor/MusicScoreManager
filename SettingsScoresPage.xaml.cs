@@ -7,6 +7,19 @@ public partial class SettingsScoresPage : ContentPage
         InitializeComponent();
         
         // Charger les préférences
+        string defaultSort = Preferences.Default.Get("DefaultScoreSort", "DateDesc");
+        DefaultSortPicker.SelectedIndex = defaultSort switch
+        {
+            "DateDesc" => 0,
+            "DateAsc" => 1,
+            "TitleAsc" => 2,
+            "TitleDesc" => 3,
+            "ModifiedDesc" => 4,
+            "RatingDesc" => 5,
+            "ComposerAsc" => 6,
+            _ => 0
+        };
+
         ShowPageNumberSwitch.IsToggled = Preferences.Default.Get("ShowPageNumber", true);
         TwoPagesLandscapeSwitch.IsToggled = Preferences.Default.Get("TwoPagesLandscape", true);
         PageNumberSizeSlider.Value = Preferences.Default.Get("PageNumberSize", 20.0);
@@ -28,6 +41,22 @@ public partial class SettingsScoresPage : ContentPage
             "SwipeDown" => 2,
             _ => 0
         };
+    }
+
+    private void OnDefaultSortChanged(object sender, EventArgs e)
+    {
+        string value = DefaultSortPicker.SelectedIndex switch
+        {
+            0 => "DateDesc",
+            1 => "DateAsc",
+            2 => "TitleAsc",
+            3 => "TitleDesc",
+            4 => "ModifiedDesc",
+            5 => "RatingDesc",
+            6 => "ComposerAsc",
+            _ => "DateDesc"
+        };
+        Preferences.Default.Set("DefaultScoreSort", value);
     }
 
     private void OnShowPageNumberToggled(object sender, ToggledEventArgs e)

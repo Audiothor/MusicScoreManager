@@ -24,11 +24,11 @@ public partial class ScoreEditPage : ContentPage
         TitleEntry.Text = _score.Title;
         ComposerEntry.Text = _score.Composer;
         PathEntry.Text = _score.FilePath;
-        FilePathTitleLabel.Text = $"Chemin du fichier ({_score.FilePath})";
+        UpdateFilePathLabel(_score.FilePath);
 
         PathEntry.TextChanged += (s, e) =>
         {
-            FilePathTitleLabel.Text = $"Chemin du fichier ({e.NewTextValue})";
+            UpdateFilePathLabel(e.NewTextValue);
             UpdateExternalIndicators();
         };
         
@@ -192,6 +192,31 @@ public partial class ScoreEditPage : ContentPage
         ExternalScoreIcon.IsVisible = isExternal;
         ExternalScoreLabel.IsVisible = isExternal;
         ImportScoreButton.IsVisible = isExternal;
+    }
+
+    private void UpdateFilePathLabel(string? filePath)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            FilePathTitleLabel.Text = "Chemin du fichier";
+            return;
+        }
+
+        try
+        {
+            string fullPath = _settingsService.GetAbsolutePath(filePath);
+            string? dir = Path.GetDirectoryName(fullPath);
+            if (string.IsNullOrWhiteSpace(dir))
+            {
+                dir = Path.GetDirectoryName(filePath);
+            }
+            
+            FilePathTitleLabel.Text = !string.IsNullOrWhiteSpace(dir) ? $"Chemin du fichier ({dir})" : "Chemin du fichier";
+        }
+        catch
+        {
+            FilePathTitleLabel.Text = "Chemin du fichier";
+        }
     }
 
     private async void LoadDataAsync()

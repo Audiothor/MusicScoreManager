@@ -1418,21 +1418,36 @@ public partial class ViewerPage : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-        StopMetronome();
-        AudioPlayer.Stop();
-        AudioPlayer.Source = null; // Libérer le fichier
-        PdfWebView.Source = null; // Libérer le moteur WebView pour une transition de sortie fluide et instantanée
+
+        // Nettoyage asynchrone non-bloquant pour une fermeture de page instantanée (< 50ms)
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                StopMetronome();
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        AudioPlayer.Stop();
+                        AudioPlayer.Source = null;
+                    }
+                    catch { }
+                });
 
 #if ANDROID
-        try
-        {
-            _soundPool?.Release();
-            _soundPool = null;
-            _metronomeSoundId = 0;
-            _preCountSoundId = 0;
-        }
-        catch { }
+                try
+                {
+                    _soundPool?.Release();
+                    _soundPool = null;
+                    _metronomeSoundId = 0;
+                    _preCountSoundId = 0;
+                }
+                catch { }
 #endif
+            }
+            catch { }
+        });
     }
 
     private bool _isSwitchingScore = false;

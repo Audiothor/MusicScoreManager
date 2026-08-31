@@ -28,6 +28,7 @@ namespace MusicScoreManager.Models
         public ScoreType Type { get; set; }
 
         public DateTime DateAdded { get; set; }
+        public DateTime DateModified { get; set; } = DateTime.Now;
 
         public int Rotation { get; set; }
         public bool IsRotationSaved { get; set; } = true;
