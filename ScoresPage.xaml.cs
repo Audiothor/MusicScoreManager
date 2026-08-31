@@ -59,8 +59,6 @@ public partial class ScoresPage : ContentPage
     {
     }
 
-    private bool _isInitialLoaded = false;
-
     protected override void OnAppearing()
     {
         base.OnAppearing();
@@ -70,27 +68,23 @@ public partial class ScoresPage : ContentPage
         _bluetoothService.ScanFinished += OnBluetoothScanFinished;
         _bluetoothService.TransferProgressChanged += OnBluetoothTransferProgressChanged;
 
-        if (!_isInitialLoaded)
+        _ = Task.Run(async () =>
         {
-            _isInitialLoaded = true;
-            _ = Task.Run(async () =>
+            try 
             {
-                try 
+                _allTags = await _databaseService.GetTagsAsync();
+                
+                await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    _allTags = await _databaseService.GetTagsAsync();
-                    
-                    await MainThread.InvokeOnMainThreadAsync(async () =>
-                    {
-                        UpdateActiveTagsChips();
-                        await LoadScoresAsync(SearchScoreBar.Text);
-                    });
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Error in ScoresPage.OnAppearing: {ex.Message}");
-                }
-            });
-        }
+                    UpdateActiveTagsChips();
+                    await LoadScoresAsync(SearchScoreBar.Text);
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in ScoresPage.OnAppearing: {ex.Message}");
+            }
+        });
     }
 
     protected override void OnDisappearing()
@@ -903,7 +897,6 @@ public partial class ScoresPage : ContentPage
         ScoreMenuOverlay.IsVisible = false;
         if (_selectedScoreForMenu != null)
         {
-            _isInitialLoaded = false;
             await Navigation.PushAsync(new ScoreEditPage(_selectedScoreForMenu, _databaseService));
         }
     }
