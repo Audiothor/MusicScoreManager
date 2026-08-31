@@ -10,6 +10,8 @@ public partial class ScoreEditPage : ContentPage
     private readonly SettingsService _settingsService;
     private List<int> _selectedTagIds = new List<int>();
     private List<Tag> _allTags = new List<Tag>();
+    private readonly List<MusicalKey> _musicalKeyValues = new();
+    private int _currentRating = 0;
 
     public ScoreEditPage(Score score, DatabaseService databaseService)
     {
@@ -18,25 +20,41 @@ public partial class ScoreEditPage : ContentPage
         _databaseService = databaseService;
         _settingsService = new SettingsService();
 
+        // 1. Titre & Compositeur
         TitleEntry.Text = _score.Title;
+        ComposerEntry.Text = _score.Composer;
         PathEntry.Text = _score.FilePath;
         
-        MetronomeSwitch.IsToggled = _score.ShowMetronome;
-        BpmEntry.Text = _score.BPM.ToString();
-        BpmStepper.Value = _score.BPM;
-        PreCountEntry.Text = _score.PreCountMeasures.ToString();
-        PreCountStepper.Value = _score.PreCountMeasures;
+        // 2. Tempo
+        int bpm = _score.BPM > 0 ? _score.BPM : 120;
+        BpmEntry.Text = bpm.ToString();
+        BpmStepper.Value = Math.Clamp(bpm, 40, 250);
 
         BpmStepper.ValueChanged += (s, e) => BpmEntry.Text = ((int)e.NewValue).ToString();
         BpmEntry.TextChanged += (s, e) => { 
             if (int.TryParse(e.NewTextValue, out int val)) {
-                if (val >= 60 && val <= 200) BpmStepper.Value = val; 
+                if (val >= 40 && val <= 250) BpmStepper.Value = val; 
             }
         };
 
+        // 3. Tonalité (Picker Enum avec notations Do-Ré-Mi et A-B-C)
+        PopulateMusicalKeyPicker();
+
+        // 4. Évaluation (Étoiles)
+        _currentRating = Math.Clamp(_score.Rating, 0, 5);
+        UpdateRatingStarsUI();
+
+        // 5. Métronome
+        MetronomeSwitch.IsToggled = _score.ShowMetronome;
+        MetronomeSoundSwitch.IsToggled = _score.HasMetronomeSound;
+
+        // 6. Audio
+        PreCountEntry.Text = _score.PreCountMeasures.ToString();
+        PreCountStepper.Value = Math.Clamp(_score.PreCountMeasures, 0, 8);
         PreCountStepper.ValueChanged += (s, e) => PreCountEntry.Text = ((int)e.NewValue).ToString();
         PreCountEntry.TextChanged += (s, e) => { if (int.TryParse(e.NewTextValue, out int val)) PreCountStepper.Value = val; };
 
+        // 7. Tags
         if (_score.AppliedTags != null)
         {
             _selectedTagIds = _score.AppliedTags.Select(t => t.Id).ToList();
@@ -45,6 +63,77 @@ public partial class ScoreEditPage : ContentPage
         UpdateExternalIndicators();
         LoadFileMetadata();
         LoadDataAsync();
+    }
+
+    private void PopulateMusicalKeyPicker()
+    {
+        KeyPicker.Items.Clear();
+        _musicalKeyValues.Clear();
+
+        foreach (MusicalKey key in Enum.GetValues(typeof(MusicalKey)))
+        {
+            _musicalKeyValues.Add(key);
+            KeyPicker.Items.Add(key.ToDisplayName());
+        }
+
+        int selectedIndex = _musicalKeyValues.IndexOf(_score.Key);
+        KeyPicker.SelectedIndex = selectedIndex >= 0 ? selectedIndex : 0;
+    }
+
+    private void OnStarClicked(object? sender, EventArgs e)
+    {
+        if (sender is Button btn && btn.CommandParameter is string param && int.TryParse(param, out int rating))
+        {
+            _currentRating = rating;
+            UpdateRatingStarsUI();
+        }
+    }
+
+    private void OnClearRatingClicked(object? sender, EventArgs e)
+    {
+        _currentRating = 0;
+        UpdateRatingStarsUI();
+    }
+
+    private void UpdateRatingStarsUI()
+    {
+        var buttons = new[] { Star1Btn, Star2Btn, Star3Btn, Star4Btn, Star5Btn };
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            if (i < _currentRating)
+            {
+                buttons[i].TextColor = Color.FromArgb("#FFD700"); // Or brillant
+            }
+            else
+            {
+                buttons[i].TextColor = Color.FromArgb("#444444"); // Éteint
+            }
+        }
+
+        if (_currentRating == 0)
+        {
+            RatingTextLabel.Text = "Non notée";
+            RatingTextLabel.TextColor = Color.FromArgb("#888888");
+        }
+        else
+        {
+            RatingTextLabel.Text = $"{_currentRating} / 5";
+            RatingTextLabel.TextColor = Color.FromArgb("#FFD700");
+        }
+    }
+
+    private void OnToggleMetronomeAccordionTapped(object? sender, EventArgs e)
+    {
+        bool isCurrentlyVisible = MetronomeAccordionBody.IsVisible;
+        MetronomeAccordionBody.IsVisible = !isCurrentlyVisible;
+        MetronomeAccordionArrow.Text = !isCurrentlyVisible ? "▼" : "▶";
+    }
+
+    private void OnToggleAudioAccordionTapped(object? sender, EventArgs e)
+    {
+        bool isCurrentlyVisible = AudioAccordionBody.IsVisible;
+        AudioAccordionBody.IsVisible = !isCurrentlyVisible;
+        AudioAccordionArrow.Text = !isCurrentlyVisible ? "▼" : "▶";
     }
 
     private void LoadFileMetadata()
@@ -57,12 +146,10 @@ public partial class ScoreEditPage : ContentPage
             {
                 var fileInfo = new FileInfo(fullPath);
                 
-                // Calcul taille de fichier formatée
                 long bytes = fileInfo.Length;
                 string formattedSize = FormatBytes(bytes);
                 FileSizeLabel.Text = formattedSize;
                 
-                // Date de dernière modification
                 DateTime lastWriteTime = fileInfo.LastWriteTime;
                 FileModifiedDateLabel.Text = lastWriteTime.ToString("dd/MM/yyyy HH:mm");
             }
@@ -72,11 +159,9 @@ public partial class ScoreEditPage : ContentPage
                 FileModifiedDateLabel.Text = "N/A";
             }
 
-            // Date d'ajout/création dans l'application
             DateTime addedDate = _score.DateAdded != default ? _score.DateAdded : DateTime.Now;
             FileCreatedDateLabel.Text = addedDate.ToString("dd/MM/yyyy HH:mm");
 
-            // Type de fichier avec son extension
             string ext = Path.GetExtension(_score.FilePath)?.ToLowerInvariant() ?? "";
             if (ext == ".pdf")
             {
@@ -131,7 +216,6 @@ public partial class ScoreEditPage : ContentPage
 
     private void RefreshSelectedTagsUI()
     {
-        // On garde le bouton + qui est le dernier enfant
         var plusButton = SelectedTagsFlexLayout.Children.LastOrDefault();
         SelectedTagsFlexLayout.Children.Clear();
 
@@ -214,6 +298,9 @@ public partial class ScoreEditPage : ContentPage
     private void RefreshAudioFilesUI()
     {
         AudioFilesList.Children.Clear();
+        int count = _score.AudioFiles.Count;
+        AudioAccordionTitleLabel.Text = count > 0 ? $"Fichiers Audio ({count})" : "Fichiers Audio";
+
         foreach (var af in _score.AudioFiles)
         {
             var grid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { 
@@ -224,7 +311,6 @@ public partial class ScoreEditPage : ContentPage
             }, ColumnSpacing = 10 };
             
             var checkbox = new CheckBox { IsChecked = af.IsSelected, Color = Color.FromArgb("#007ACC"), VerticalOptions = LayoutOptions.Center };
-            // ... (CheckedChanged logic stays same)
             checkbox.CheckedChanged += (s, e) => {
                 if (e.Value) {
                     foreach (var other in _score.AudioFiles.Where(x => x != af)) other.IsSelected = false;
@@ -291,9 +377,6 @@ public partial class ScoreEditPage : ContentPage
                 if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
 
                 string finalStoredPath;
-                
-                // Vérification intelligente : soit le chemin commence par le root (Windows), 
-                // soit un fichier de même nom et même taille existe déjà dans le root (Android workaround)
                 bool isAlreadyInRoot = result.FullPath.StartsWith(rootDir, StringComparison.OrdinalIgnoreCase);
 
                 if (!isAlreadyInRoot)
@@ -304,7 +387,6 @@ public partial class ScoreEditPage : ContentPage
                         long sourceLength = fileInfoSource.Length;
                         string targetFileName = result.FileName;
 
-                        // 1. Test direct dans la racine audio
                         string directPath = Path.Combine(rootDir, targetFileName);
                         if (File.Exists(directPath) && new FileInfo(directPath).Length == sourceLength)
                         {
@@ -312,7 +394,6 @@ public partial class ScoreEditPage : ContentPage
                             result = new FileResult(directPath);
                         }
                         
-                        // 2. Scan récursif si non trouvé
                         if (!isAlreadyInRoot)
                         {
                             string? foundPath = FindFileRecursively(rootDir, targetFileName, sourceLength);
@@ -455,32 +536,43 @@ public partial class ScoreEditPage : ContentPage
         }
 
         _score.Title = TitleEntry.Text.Trim();
+        _score.Composer = ComposerEntry.Text?.Trim() ?? string.Empty;
         _score.FilePath = PathEntry.Text?.Trim() ?? string.Empty;
         
-        _score.ShowMetronome = MetronomeSwitch.IsToggled;
-        
+        // Tempo
         if (int.TryParse(BpmEntry.Text, out int bpm))
         {
-            if (bpm < 60 || bpm > 200)
+            if (bpm < 40 || bpm > 250)
             {
-                await this.DisplayAlertAsync("BPM Invalide", "Le tempo doit être compris entre 60 et 200 BPM.", "OK");
+                await this.DisplayAlertAsync("BPM Invalide", "Le tempo doit être compris entre 40 et 250 BPM.", "OK");
                 return;
             }
             _score.BPM = bpm;
         }
+
+        // Tonalité
+        if (KeyPicker.SelectedIndex >= 0 && KeyPicker.SelectedIndex < _musicalKeyValues.Count)
+        {
+            _score.Key = _musicalKeyValues[KeyPicker.SelectedIndex];
+        }
+
+        // Évaluation
+        _score.Rating = _currentRating;
         
+        // Métronome
+        _score.ShowMetronome = MetronomeSwitch.IsToggled;
+        _score.HasMetronomeSound = MetronomeSoundSwitch.IsToggled;
+        
+        // Audio
         if (int.TryParse(PreCountEntry.Text, out int preCount)) _score.PreCountMeasures = preCount;
 
-        // On sauvegarde d'abord le score pour être sûr qu'il ait un Id (si nouveau)
+        // Sauvegarde de la partition
         await _databaseService.SaveScoreAsync(_score);
         
-        // Puis on met à jour les tags
+        // Mise à jour des tags
         await _databaseService.UpdateScoreTagsAsync(_score.Id, _selectedTagIds);
 
         // Sauvegarde des fichiers audio associés
-        // On commence par supprimer les anciens liens en base
-        // Note: Dans une version plus propre, on comparerait pour ne pas tout supprimer/réinsérer
-        // Mais ici on va faire simple :
         var existingAudio = await _databaseService.GetScoreAsync(_score.Id);
         if (existingAudio != null)
         {
@@ -500,28 +592,28 @@ public partial class ScoreEditPage : ContentPage
     }
 
     private string? FindFileRecursively(string dir, string fileName, long size)
+    {
+        try
         {
-            try
+            foreach (var file in Directory.EnumerateFiles(dir))
             {
-                foreach (var file in Directory.EnumerateFiles(dir))
+                if (Path.GetFileName(file).Equals(fileName, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (Path.GetFileName(file).Equals(fileName, StringComparison.OrdinalIgnoreCase))
+                    try
                     {
-                        try
-                        {
-                            if (new FileInfo(file).Length == size) return file;
-                        }
-                        catch { }
+                        if (new FileInfo(file).Length == size) return file;
                     }
-                }
-
-                foreach (var subDir in Directory.EnumerateDirectories(dir))
-                {
-                    var found = FindFileRecursively(subDir, fileName, size);
-                    if (found != null) return found;
+                    catch { }
                 }
             }
-            catch { }
-            return null;
+
+            foreach (var subDir in Directory.EnumerateDirectories(dir))
+            {
+                var found = FindFileRecursively(subDir, fileName, size);
+                if (found != null) return found;
+            }
+        }
+        catch { }
+        return null;
     }
 }

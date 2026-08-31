@@ -17,6 +17,12 @@ namespace MusicScoreManager.Models
 
         public string Title { get; set; } = string.Empty;
         
+        public string Composer { get; set; } = string.Empty;
+
+        public MusicalKey Key { get; set; } = MusicalKey.None;
+
+        public int Rating { get; set; } = 0; // 0 to 5
+
         public string FilePath { get; set; } = string.Empty;
 
         public ScoreType Type { get; set; }

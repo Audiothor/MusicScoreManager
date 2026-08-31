@@ -6,57 +6,156 @@
              Title="Éditer la partition">
 
     <Grid RowDefinitions="Auto, *">
-        <!-- Header personnalisé -->
-        <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
+        <!-- Header personnalisé avec titre grand et lisible -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="12,14" BackgroundColor="#1E1E1E">
             <Button Grid.Column="0" 
                     Text="← Retour" 
                     BackgroundColor="Transparent" 
                     TextColor="#007ACC" 
+                    FontSize="16"
                     FontAttributes="Bold"
                     Clicked="OnCancelClicked" />
             <Label Grid.Column="1" 
                    Text="Éditer la partition" 
                    TextColor="White" 
-                   FontSize="18" 
+                   FontSize="22" 
                    FontAttributes="Bold" 
                    VerticalOptions="Center" 
                    HorizontalOptions="Center"
-                   Margin="0,0,80,0" />
+                   Margin="0,0,70,0" />
         </Grid>
 
         <ScrollView Grid.Row="1">
-            <VerticalStackLayout Spacing="20" Margin="20">
+            <VerticalStackLayout Spacing="18" Margin="20">
                 
-                <Label Text="Titre" TextColor="#AAAAAA" />
-                <Entry x:Name="TitleEntry" 
-                       TextColor="White" 
-                       BackgroundColor="#1E1E1E" 
-                       ClearButtonVisibility="WhileEditing" />
-
-                <HorizontalStackLayout Spacing="5">
-                    <Label Text="Chemin du fichier" TextColor="#AAAAAA" VerticalOptions="Center" />
-                    <Label x:Name="ExternalScoreIcon" Text="🔗" TextColor="#007ACC" FontSize="18" VerticalOptions="Center" IsVisible="False" />
-                    <Label x:Name="ExternalScoreLabel" Text="(Externe)" TextColor="#007ACC" FontSize="10" VerticalOptions="Center" IsVisible="False" />
-                </HorizontalStackLayout>
-                
-                <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
-                    <Entry x:Name="PathEntry" 
+                <!-- 1. TITRE -->
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Titre" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
+                    <Entry x:Name="TitleEntry" 
                            TextColor="White" 
                            BackgroundColor="#1E1E1E" 
+                           FontSize="16"
+                           HeightRequest="48"
+                           Placeholder="Titre de la partition"
+                           PlaceholderColor="#555555"
                            ClearButtonVisibility="WhileEditing" />
-                    <Button Grid.Column="1" 
-                            x:Name="ImportScoreButton"
-                            Text="Rapatrier" 
-                            IsVisible="False"
-                            BackgroundColor="#007ACC" 
-                            TextColor="White" 
-                            HeightRequest="35"
-                            Padding="10,0"
-                            Clicked="OnImportScoreToLibraryClicked" />
+                </VerticalStackLayout>
+
+                <!-- 2. COMPOSITEUR -->
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Compositeur" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
+                    <Entry x:Name="ComposerEntry" 
+                           TextColor="White" 
+                           BackgroundColor="#1E1E1E" 
+                           FontSize="15"
+                           HeightRequest="48"
+                           Placeholder="Nom du compositeur / arrangeur"
+                           PlaceholderColor="#555555"
+                           ClearButtonVisibility="WhileEditing" />
+                </VerticalStackLayout>
+
+                <!-- 3. TEMPO & TONALITÉ (2 colonnes) -->
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
+                    <!-- Tempo -->
+                    <VerticalStackLayout Grid.Column="0" Spacing="6">
+                        <Label Text="Tempo (BPM)" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
+                        <Grid ColumnDefinitions="*, Auto" ColumnSpacing="6">
+                            <Entry x:Name="BpmEntry" 
+                                   Text="120" 
+                                   Keyboard="Numeric" 
+                                   TextColor="White" 
+                                   BackgroundColor="#1E1E1E" 
+                                   HorizontalTextAlignment="Center" 
+                                   HeightRequest="48" 
+                                   FontSize="15" />
+                            <Stepper Grid.Column="1" 
+                                     x:Name="BpmStepper" 
+                                     Minimum="40" 
+                                     Maximum="250" 
+                                     Increment="1" 
+                                     Value="120"
+                                     VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Tonalité -->
+                    <VerticalStackLayout Grid.Column="1" Spacing="6">
+                        <Label Text="Tonalité" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
+                        <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" HeightRequest="48" Padding="10,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Picker x:Name="KeyPicker" 
+                                    TextColor="White" 
+                                    BackgroundColor="Transparent" 
+                                    Title="Sélectionner..." 
+                                    TitleColor="#777777" 
+                                    FontSize="14"
+                                    VerticalOptions="Center" />
+                        </Border>
+                    </VerticalStackLayout>
                 </Grid>
 
+                <!-- 4. ÉVALUATION (Étoiles) -->
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Évaluation" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
+                    <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="12,8">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Grid ColumnDefinitions="Auto, *, Auto">
+                            <HorizontalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+                                <Button x:Name="Star1Btn" Text="★" TextColor="#555555" BackgroundColor="Transparent" FontSize="26" WidthRequest="40" HeightRequest="40" Padding="0" Clicked="OnStarClicked" CommandParameter="1" />
+                                <Button x:Name="Star2Btn" Text="★" TextColor="#555555" BackgroundColor="Transparent" FontSize="26" WidthRequest="40" HeightRequest="40" Padding="0" Clicked="OnStarClicked" CommandParameter="2" />
+                                <Button x:Name="Star3Btn" Text="★" TextColor="#555555" BackgroundColor="Transparent" FontSize="26" WidthRequest="40" HeightRequest="40" Padding="0" Clicked="OnStarClicked" CommandParameter="3" />
+                                <Button x:Name="Star4Btn" Text="★" TextColor="#555555" BackgroundColor="Transparent" FontSize="26" WidthRequest="40" HeightRequest="40" Padding="0" Clicked="OnStarClicked" CommandParameter="4" />
+                                <Button x:Name="Star5Btn" Text="★" TextColor="#555555" BackgroundColor="Transparent" FontSize="26" WidthRequest="40" HeightRequest="40" Padding="0" Clicked="OnStarClicked" CommandParameter="5" />
+                            </HorizontalStackLayout>
+                            
+                            <Label Grid.Column="1" x:Name="RatingTextLabel" Text="Non notée" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" Margin="10,0,0,0" />
+
+                            <Button Grid.Column="2" 
+                                    x:Name="ClearRatingBtn"
+                                    Text="Effacer" 
+                                    TextColor="#888888" 
+                                    BackgroundColor="Transparent" 
+                                    FontSize="12" 
+                                    Padding="8,0"
+                                    HeightRequest="36" 
+                                    Clicked="OnClearRatingClicked" />
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- 5. CHEMIN DU FICHIER (chemin du fichier) -->
+                <VerticalStackLayout Spacing="6">
+                    <HorizontalStackLayout Spacing="6">
+                        <Label Text="Chemin du fichier (chemin du fichier)" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Label x:Name="ExternalScoreIcon" Text="🔗" TextColor="#007ACC" FontSize="16" VerticalOptions="Center" IsVisible="False" />
+                        <Label x:Name="ExternalScoreLabel" Text="(Externe)" TextColor="#007ACC" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" IsVisible="False" />
+                    </HorizontalStackLayout>
+                    
+                    <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                        <Entry x:Name="PathEntry" 
+                               TextColor="White" 
+                               BackgroundColor="#1E1E1E" 
+                               FontSize="13"
+                               HeightRequest="48"
+                               ClearButtonVisibility="WhileEditing" />
+                        <Button Grid.Column="1" 
+                                x:Name="ImportScoreButton"
+                                Text="Rapatrier" 
+                                IsVisible="False"
+                                BackgroundColor="#007ACC" 
+                                TextColor="White" 
+                                HeightRequest="48"
+                                Padding="12,0"
+                                Clicked="OnImportScoreToLibraryClicked" />
+                    </Grid>
+                </VerticalStackLayout>
+
                 <!-- Informations non modifiables du fichier -->
-                <Border BackgroundColor="#1A1E24" Stroke="#2A303C" StrokeThickness="1" Padding="12,10" Margin="0,5">
+                <Border BackgroundColor="#1A1E24" Stroke="#2A303C" StrokeThickness="1" Padding="12,10">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="8" />
                     </Border.StrokeShape>
@@ -77,74 +176,104 @@
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Spacing="6" VerticalOptions="Center">
-                            <Label Text="📄 Type de fichier :" TextColor="#AAAAAA" FontSize="12" />
+                            <Label Text="📄 Type :" TextColor="#AAAAAA" FontSize="12" />
                             <Label x:Name="FileTypeLabel" Text="--" TextColor="#FFA500" FontSize="12" FontAttributes="Bold" />
                         </HorizontalStackLayout>
                     </Grid>
                 </Border>
 
-                <Label Text="Étiquettes" TextColor="#AAAAAA" />
-                
-                <FlexLayout x:Name="SelectedTagsFlexLayout" Wrap="Wrap" Direction="Row" AlignItems="Start">
-                    <!-- Tags sélectionnés ici -->
-                    <Button Text="+" 
-                            BackgroundColor="#333333" 
-                            TextColor="White" 
-                            FontSize="20"
-                            FontAttributes="Bold"
-                            WidthRequest="40" 
-                            HeightRequest="40" 
-                            CornerRadius="20"
-                            Margin="0,0,0,10"
-                            Clicked="OnAddTagClicked" />
-                </FlexLayout>
-
-                <BoxView HeightRequest="1" Color="#333333" Margin="0,10" />
-
-                <!-- SECTION MÉTRONOME -->
-                <Label Text="Métronome" TextColor="White" FontSize="18" FontAttributes="Bold" />
-                
-                <Grid ColumnDefinitions="*, Auto">
-                    <Label Text="Activer par défaut sur cette partition" TextColor="#AAAAAA" VerticalOptions="Center" />
-                    <Switch Grid.Column="1" x:Name="MetronomeSwitch" OnColor="#007ACC" ThumbColor="White" />
-                </Grid>
-
-                <Grid ColumnDefinitions="*, Auto">
-                    <Label Text="Tempo (BPM)" TextColor="#AAAAAA" VerticalOptions="Center" />
-                    <HorizontalStackLayout Grid.Column="1" Spacing="10">
-                        <Entry x:Name="BpmEntry" Text="120" Keyboard="Numeric" WidthRequest="80" TextColor="White" BackgroundColor="#1E1E1E" HorizontalTextAlignment="Center" />
-                        <Stepper x:Name="BpmStepper" Minimum="60" Maximum="200" Increment="1" Value="120" />
-                    </HorizontalStackLayout>
-                </Grid>
-
-                <BoxView HeightRequest="1" Color="#333333" Margin="0,10" />
-
-                <!-- SECTION AUDIO -->
-                <Label Text="Fichiers Audio" TextColor="White" FontSize="18" FontAttributes="Bold" />
-                
-                <Label Text="Pré-compte (Mesures)" TextColor="#AAAAAA" />
-                <HorizontalStackLayout Spacing="10">
-                    <Entry x:Name="PreCountEntry" Text="4" Keyboard="Numeric" WidthRequest="60" TextColor="White" BackgroundColor="#1E1E1E" HorizontalTextAlignment="Center" />
-                    <Stepper x:Name="PreCountStepper" Minimum="0" Maximum="8" Increment="1" Value="4" />
-                </HorizontalStackLayout>
-
-                <VerticalStackLayout x:Name="AudioFilesList" Spacing="10">
-                    <!-- Liste des fichiers audio générée dynamiquement -->
+                <!-- 6. ÉTIQUETTES / TAGS -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Étiquettes" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
+                    
+                    <FlexLayout x:Name="SelectedTagsFlexLayout" Wrap="Wrap" Direction="Row" AlignItems="Start">
+                        <Button Text="+" 
+                                BackgroundColor="#333333" 
+                                TextColor="White" 
+                                FontSize="20"
+                                FontAttributes="Bold"
+                                WidthRequest="40" 
+                                HeightRequest="40" 
+                                CornerRadius="20"
+                                Margin="0,0,0,10"
+                                Clicked="OnAddTagClicked" />
+                    </FlexLayout>
                 </VerticalStackLayout>
 
-                <Button Text="Ajouter un fichier audio (.mp3, .wav, .aiff)" 
-                        BackgroundColor="#333333" 
-                        TextColor="White" 
-                        HorizontalOptions="Start"
-                        Clicked="OnAddAudioClicked" />
+                <!-- ACCORDÉON 1 : MÉTRONOME (Fermé par défaut) -->
+                <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="14,12">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="Auto, *, Auto">
+                            <Label Grid.Column="0" Text="⏱️" FontSize="18" VerticalOptions="Center" Margin="0,0,8,0" />
+                            <Label Grid.Column="1" Text="Métronome" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Label Grid.Column="2" x:Name="MetronomeAccordionArrow" Text="▶" TextColor="#007ACC" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnToggleMetronomeAccordionTapped" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
+                        
+                        <VerticalStackLayout x:Name="MetronomeAccordionBody" IsVisible="False" Spacing="12" Margin="0,8,0,0">
+                            <BoxView HeightRequest="1" Color="#333333" />
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="Activer automatiquement sur cette partition" TextColor="#AAAAAA" VerticalOptions="Center" />
+                                <Switch Grid.Column="1" x:Name="MetronomeSwitch" OnColor="#007ACC" ThumbColor="White" />
+                            </Grid>
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="Son du métronome activé" TextColor="#AAAAAA" VerticalOptions="Center" />
+                                <Switch Grid.Column="1" x:Name="MetronomeSoundSwitch" OnColor="#007ACC" ThumbColor="White" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
 
-                <Grid ColumnDefinitions="*, *" ColumnSpacing="15" Margin="0,20,0,0">
+                <!-- ACCORDÉON 2 : FICHIERS AUDIO (Fermé par défaut) -->
+                <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="14,12">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="Auto, *, Auto">
+                            <Label Grid.Column="0" Text="🎵" FontSize="18" VerticalOptions="Center" Margin="0,0,8,0" />
+                            <Label Grid.Column="1" x:Name="AudioAccordionTitleLabel" Text="Fichiers Audio" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Label Grid.Column="2" x:Name="AudioAccordionArrow" Text="▶" TextColor="#007ACC" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnToggleAudioAccordionTapped" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
+                        
+                        <VerticalStackLayout x:Name="AudioAccordionBody" IsVisible="False" Spacing="12" Margin="0,8,0,0">
+                            <BoxView HeightRequest="1" Color="#333333" />
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="Pré-compte (Mesures)" TextColor="#AAAAAA" VerticalOptions="Center" />
+                                <HorizontalStackLayout Grid.Column="1" Spacing="10">
+                                    <Entry x:Name="PreCountEntry" Text="4" Keyboard="Numeric" WidthRequest="60" TextColor="White" BackgroundColor="#121212" HorizontalTextAlignment="Center" />
+                                    <Stepper x:Name="PreCountStepper" Minimum="0" Maximum="8" Increment="1" Value="4" />
+                                </HorizontalStackLayout>
+                            </Grid>
+
+                            <VerticalStackLayout x:Name="AudioFilesList" Spacing="10" />
+
+                            <Button Text="➕ Ajouter un fichier audio (.mp3, .wav, .aiff)" 
+                                    BackgroundColor="#333333" 
+                                    TextColor="White" 
+                                    HorizontalOptions="Start"
+                                    Clicked="OnAddAudioClicked" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- BOUTONS D'ACTION -->
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="15" Margin="0,15,0,20">
                     <Button Grid.Column="0"
                             Text="Annuler" 
                             BackgroundColor="#333333" 
                             TextColor="White" 
                             CornerRadius="8"
                             HeightRequest="50"
+                            FontSize="16"
                             Clicked="OnCancelClicked" />
                     <Button Grid.Column="1"
                             Text="Enregistrer" 
@@ -153,6 +282,7 @@
                             FontAttributes="Bold"
                             CornerRadius="8"
                             HeightRequest="50"
+                            FontSize="16"
                             Clicked="OnSaveClicked" />
                 </Grid>
             </VerticalStackLayout>

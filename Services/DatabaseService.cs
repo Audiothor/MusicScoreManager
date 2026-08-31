@@ -190,7 +190,7 @@ namespace MusicScoreManager.Services
             var queryable = _database!.Table<Score>();
             
             if (!string.IsNullOrWhiteSpace(query))
-                queryable = queryable.Where(s => s.Title.Contains(query));
+                queryable = queryable.Where(s => s.Title.Contains(query) || s.Composer.Contains(query));
 
             var scores = await queryable.ToListAsync();
             await LoadDetailsForScoresAsync(scores);
