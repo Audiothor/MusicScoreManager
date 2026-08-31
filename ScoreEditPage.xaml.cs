@@ -20,10 +20,17 @@ public partial class ScoreEditPage : ContentPage
         _databaseService = databaseService;
         _settingsService = new SettingsService();
 
-        // 1. Titre & Compositeur
+        // 1. Titre, Compositeur & Chemin
         TitleEntry.Text = _score.Title;
         ComposerEntry.Text = _score.Composer;
         PathEntry.Text = _score.FilePath;
+        FilePathTitleLabel.Text = $"Chemin du fichier ({_score.FilePath})";
+
+        PathEntry.TextChanged += (s, e) =>
+        {
+            FilePathTitleLabel.Text = $"Chemin du fichier ({e.NewTextValue})";
+            UpdateExternalIndicators();
+        };
         
         // 2. Tempo
         int bpm = _score.BPM > 0 ? _score.BPM : 120;
@@ -161,31 +168,12 @@ public partial class ScoreEditPage : ContentPage
 
             DateTime addedDate = _score.DateAdded != default ? _score.DateAdded : DateTime.Now;
             FileCreatedDateLabel.Text = addedDate.ToString("dd/MM/yyyy HH:mm");
-
-            string ext = Path.GetExtension(_score.FilePath)?.ToLowerInvariant() ?? "";
-            if (ext == ".pdf")
-            {
-                FileTypeLabel.Text = "PDF (.pdf)";
-            }
-            else if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".gif" || ext == ".webp" || ext == ".bmp")
-            {
-                FileTypeLabel.Text = $"Image ({ext})";
-            }
-            else if (!string.IsNullOrEmpty(ext))
-            {
-                FileTypeLabel.Text = $"{_score.Type} ({ext})";
-            }
-            else
-            {
-                FileTypeLabel.Text = _score.Type.ToString();
-            }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"[ScoreEditPage] Erreur lecture métadonnées fichier: {ex.Message}");
             FileSizeLabel.Text = "N/A";
             FileModifiedDateLabel.Text = "N/A";
-            FileTypeLabel.Text = "N/A";
         }
     }
 
@@ -212,6 +200,28 @@ public partial class ScoreEditPage : ContentPage
         RefreshSelectedTagsUI();
         RefreshAllTagsPickerUI();
         RefreshAudioFilesUI();
+
+        // Chargement du statut des annotations
+        try
+        {
+            var annotations = await _databaseService.GetAnnotationsForScoreAsync(_score.Id);
+            int count = annotations?.Count ?? 0;
+            if (count > 0)
+            {
+                AnnotationsLabel.Text = $"Oui ({count})";
+                AnnotationsLabel.TextColor = Color.FromArgb("#4CAF50");
+            }
+            else
+            {
+                AnnotationsLabel.Text = "Aucune";
+                AnnotationsLabel.TextColor = Color.FromArgb("#888888");
+            }
+        }
+        catch
+        {
+            AnnotationsLabel.Text = "Aucune";
+            AnnotationsLabel.TextColor = Color.FromArgb("#888888");
+        }
     }
 
     private void RefreshSelectedTagsUI()

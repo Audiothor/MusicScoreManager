@@ -54,6 +54,34 @@
                            ClearButtonVisibility="WhileEditing" />
                 </VerticalStackLayout>
 
+                <!-- Informations non modifiables du fichier (Taille, Modifié le, Ajouté le, Annotations) -->
+                <Border BackgroundColor="#1A1E24" Stroke="#2A303C" StrokeThickness="1" Padding="12,10">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="8" />
+                    </Border.StrokeShape>
+                    <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" RowSpacing="6" ColumnSpacing="10">
+                        <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="6" VerticalOptions="Center">
+                            <Label Text="📏 Taille :" TextColor="#AAAAAA" FontSize="12" />
+                            <Label x:Name="FileSizeLabel" Text="--" TextColor="#4CAF50" FontSize="12" FontAttributes="Bold" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                            <Label Text="📅 Modifié le :" TextColor="#AAAAAA" FontSize="12" />
+                            <Label x:Name="FileModifiedDateLabel" Text="--" TextColor="#007ACC" FontSize="12" FontAttributes="Bold" />
+                        </HorizontalStackLayout>
+                        
+                        <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Spacing="6" VerticalOptions="Center">
+                            <Label Text="✨ Ajouté le :" TextColor="#AAAAAA" FontSize="12" />
+                            <Label x:Name="FileCreatedDateLabel" Text="--" TextColor="#E0E0E0" FontSize="12" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                            <Label Text="✏️ Annotations :" TextColor="#AAAAAA" FontSize="12" />
+                            <Label x:Name="AnnotationsLabel" Text="--" TextColor="#FFA500" FontSize="12" FontAttributes="Bold" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Border>
+
                 <!-- 3. TEMPO & TONALITÉ (2 colonnes) -->
                 <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
                     <!-- Tempo -->
@@ -127,10 +155,10 @@
                     </Border>
                 </VerticalStackLayout>
 
-                <!-- 5. CHEMIN DU FICHIER (chemin du fichier) -->
+                <!-- 5. CHEMIN DU FICHIER -->
                 <VerticalStackLayout Spacing="6">
                     <HorizontalStackLayout Spacing="6">
-                        <Label Text="Chemin du fichier (chemin du fichier)" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Label x:Name="FilePathTitleLabel" Text="Chemin du fichier" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" LineBreakMode="TailTruncation" />
                         <Label x:Name="ExternalScoreIcon" Text="🔗" TextColor="#007ACC" FontSize="16" VerticalOptions="Center" IsVisible="False" />
                         <Label x:Name="ExternalScoreLabel" Text="(Externe)" TextColor="#007ACC" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" IsVisible="False" />
                     </HorizontalStackLayout>
@@ -153,34 +181,6 @@
                                 Clicked="OnImportScoreToLibraryClicked" />
                     </Grid>
                 </VerticalStackLayout>
-
-                <!-- Informations non modifiables du fichier -->
-                <Border BackgroundColor="#1A1E24" Stroke="#2A303C" StrokeThickness="1" Padding="12,10">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="8" />
-                    </Border.StrokeShape>
-                    <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" RowSpacing="6" ColumnSpacing="10">
-                        <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="6" VerticalOptions="Center">
-                            <Label Text="📏 Taille :" TextColor="#AAAAAA" FontSize="12" />
-                            <Label x:Name="FileSizeLabel" Text="--" TextColor="#4CAF50" FontSize="12" FontAttributes="Bold" />
-                        </HorizontalStackLayout>
-
-                        <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="6" VerticalOptions="Center">
-                            <Label Text="📅 Modifié le :" TextColor="#AAAAAA" FontSize="12" />
-                            <Label x:Name="FileModifiedDateLabel" Text="--" TextColor="#007ACC" FontSize="12" FontAttributes="Bold" />
-                        </HorizontalStackLayout>
-                        
-                        <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Spacing="6" VerticalOptions="Center">
-                            <Label Text="✨ Ajouté le :" TextColor="#AAAAAA" FontSize="12" />
-                            <Label x:Name="FileCreatedDateLabel" Text="--" TextColor="#E0E0E0" FontSize="12" />
-                        </HorizontalStackLayout>
-
-                        <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Spacing="6" VerticalOptions="Center">
-                            <Label Text="📄 Type :" TextColor="#AAAAAA" FontSize="12" />
-                            <Label x:Name="FileTypeLabel" Text="--" TextColor="#FFA500" FontSize="12" FontAttributes="Bold" />
-                        </HorizontalStackLayout>
-                    </Grid>
-                </Border>
 
                 <!-- 6. ÉTIQUETTES / TAGS -->
                 <VerticalStackLayout Spacing="8">
