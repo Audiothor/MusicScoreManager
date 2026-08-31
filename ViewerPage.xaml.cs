@@ -1363,8 +1363,8 @@ public partial class ViewerPage : ContentPage
         double width = this.Width > 0 ? this.Width : 1;
         double height = this.Height > 0 ? this.Height : 1;
 
-        // Double tap au centre (30% - 70%) : Afficher le menu central (fonctionne toujours, même zoomé !)
-        if (x >= width * 0.3 && x <= width * 0.7)
+        // Double tap au centre (25% - 75%) : Afficher le menu central (fonctionne toujours, même zoomé !)
+        if (x >= width * 0.25 && x <= width * 0.75)
         {
             ShowMenu();
             return;
@@ -1924,49 +1924,7 @@ public partial class ViewerPage : ContentPage
             }
         }
 
-        // 3. GESTION DU DÉPLACEMENT (PAN) LORSQU'ON EST ZOOMÉ (1 doigt)
-        if (ZoomLayout.Scale > 1.05 && !_isHighlightMode)
-        {
-            float currentX = motionEvent.GetX() / density;
-            float currentY = motionEvent.GetY() / density;
-
-            switch (motionEvent.ActionMasked)
-            {
-                case Android.Views.MotionEventActions.Down:
-                    _isNativePanning = true;
-                    _panLastX = currentX;
-                    _panLastY = currentY;
-                    args.Handled = true;
-                    return;
-
-                case Android.Views.MotionEventActions.Move:
-                    if (_isNativePanning)
-                    {
-                        float dx = currentX - _panLastX;
-                        float dy = currentY - _panLastY;
-                        _panLastX = currentX;
-                        _panLastY = currentY;
-
-                        double w = ZoomLayout.Width > 0 ? ZoomLayout.Width : this.Width;
-                        double h = ZoomLayout.Height > 0 ? ZoomLayout.Height : this.Height;
-                        double maxTx = Math.Max(0, (w * (ZoomLayout.Scale - 1)) / 2.0);
-                        double maxTy = Math.Max(0, (h * (ZoomLayout.Scale - 1)) / 2.0);
-
-                        ZoomLayout.TranslationX = Math.Clamp(ZoomLayout.TranslationX + dx, -maxTx, maxTx);
-                        ZoomLayout.TranslationY = Math.Clamp(ZoomLayout.TranslationY + dy, -maxTy, maxTy);
-                        args.Handled = true;
-                        return;
-                    }
-                    break;
-
-                case Android.Views.MotionEventActions.Up:
-                case Android.Views.MotionEventActions.Cancel:
-                    _isNativePanning = false;
-                    break;
-            }
-        }
-
-        // 4. GESTION DES TAPS ET SWIPES EN MODE NORMAL (1 doigt, non zoomé)
+        // 3. GESTION DES GESTES À 1 DOIGT (Pan, Taps, Double-Tap, Swipes)
         float curX = motionEvent.GetX() / density;
         float curY = motionEvent.GetY() / density;
 
@@ -1976,10 +1934,34 @@ public partial class ViewerPage : ContentPage
                 _touchDownTime = motionEvent.EventTime;
                 _touchDownX = curX;
                 _touchDownY = curY;
+                _panLastX = curX;
+                _panLastY = curY;
+                _isNativePanning = ZoomLayout.Scale > 1.05 && !_isHighlightMode;
                 args.Handled = true;
                 return;
 
+            case Android.Views.MotionEventActions.Move:
+                if (_isNativePanning && ZoomLayout.Scale > 1.05 && !_isHighlightMode)
+                {
+                    float dx = curX - _panLastX;
+                    float dy = curY - _panLastY;
+                    _panLastX = curX;
+                    _panLastY = curY;
+
+                    double w = ZoomLayout.Width > 0 ? ZoomLayout.Width : this.Width;
+                    double h = ZoomLayout.Height > 0 ? ZoomLayout.Height : this.Height;
+                    double maxTx = Math.Max(0, (w * (ZoomLayout.Scale - 1)) / 2.0);
+                    double maxTy = Math.Max(0, (h * (ZoomLayout.Scale - 1)) / 2.0);
+
+                    ZoomLayout.TranslationX = Math.Clamp(ZoomLayout.TranslationX + dx, -maxTx, maxTx);
+                    ZoomLayout.TranslationY = Math.Clamp(ZoomLayout.TranslationY + dy, -maxTy, maxTy);
+                    args.Handled = true;
+                    return;
+                }
+                break;
+
             case Android.Views.MotionEventActions.Up:
+                _isNativePanning = false;
                 long duration = motionEvent.EventTime - _touchDownTime;
                 float diffX = curX - _touchDownX;
                 float diffY = curY - _touchDownY;
@@ -1988,8 +1970,8 @@ public partial class ViewerPage : ContentPage
                 double width = AnnotationsContainer.Width > 0 ? AnnotationsContainer.Width : this.Width;
                 double height = AnnotationsContainer.Height > 0 ? AnnotationsContainer.Height : this.Height;
 
-                // Tap détection (< 20px, < 350ms)
-                if (dist < 20 && duration < 350)
+                // Tap détection (< 30px, < 400ms)
+                if (dist < 30 && duration < 400)
                 {
                     // Zone basse (15%) -> Barre d'annotations
                     if (_touchDownY > height * 0.85)
@@ -1999,56 +1981,61 @@ public partial class ViewerPage : ContentPage
                         return;
                     }
 
-                    // Zone centrale -> Double-tap menu central
-                    if (_touchDownX >= width * 0.3 && _touchDownX <= width * 0.7 && _touchDownY >= height * 0.2 && _touchDownY <= height * 0.8)
+                    // Zone centrale -> Double-tap menu central (FONCTIONNE TOUJOURS, QUEL QUE SOIT LE ZOOM !)
+                    if (_touchDownX >= width * 0.25 && _touchDownX <= width * 0.75 && _touchDownY >= height * 0.2 && _touchDownY <= height * 0.8)
                     {
                         long now = motionEvent.EventTime;
-                        if (now - _lastTapTime < 350 && now - _lastTapTime > 0)
+                        if (now - _lastTapTime < 400 && now - _lastTapTime > 0)
                         {
-                            MainThread.BeginInvokeOnMainThread(() => CentralMenuOverlay.IsVisible = true);
+                            MainThread.BeginInvokeOnMainThread(() => ShowMenu());
                             _lastTapTime = 0;
                             args.Handled = true;
                             return;
                         }
                         _lastTapTime = now;
+                        args.Handled = true;
+                        return;
                     }
 
-                    // Zones gauche / droite pour tap tourne-page
-                    string nextG = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
-                    string prevG = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
+                    // Zones gauche / droite pour tap tourne-page (uniquement si non zoomé)
+                    if (ZoomLayout.Scale <= 1.05)
+                    {
+                        string nextG = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
+                        string prevG = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
 
-                    if (_touchDownX < width * 0.3)
-                    {
-                        if (prevG == "TapLeft")
+                        if (_touchDownX < width * 0.3)
                         {
-                            MainThread.BeginInvokeOnMainThread(() => OnPrevTapped(this, EventArgs.Empty));
-                            args.Handled = true;
-                            return;
+                            if (prevG == "TapLeft")
+                            {
+                                MainThread.BeginInvokeOnMainThread(() => OnPrevTapped(this, EventArgs.Empty));
+                                args.Handled = true;
+                                return;
+                            }
+                            else if (nextG == "TapLeft")
+                            {
+                                MainThread.BeginInvokeOnMainThread(() => OnNextTapped(this, EventArgs.Empty));
+                                args.Handled = true;
+                                return;
+                            }
                         }
-                        else if (nextG == "TapLeft")
+                        else if (_touchDownX > width * 0.7)
                         {
-                            MainThread.BeginInvokeOnMainThread(() => OnNextTapped(this, EventArgs.Empty));
-                            args.Handled = true;
-                            return;
-                        }
-                    }
-                    else if (_touchDownX > width * 0.7)
-                    {
-                        if (nextG == "TapRight")
-                        {
-                            MainThread.BeginInvokeOnMainThread(() => OnNextTapped(this, EventArgs.Empty));
-                            args.Handled = true;
-                            return;
-                        }
-                        else if (prevG == "TapRight")
-                        {
-                            MainThread.BeginInvokeOnMainThread(() => OnPrevTapped(this, EventArgs.Empty));
-                            args.Handled = true;
-                            return;
+                            if (nextG == "TapRight")
+                            {
+                                MainThread.BeginInvokeOnMainThread(() => OnNextTapped(this, EventArgs.Empty));
+                                args.Handled = true;
+                                return;
+                            }
+                            else if (prevG == "TapRight")
+                            {
+                                MainThread.BeginInvokeOnMainThread(() => OnPrevTapped(this, EventArgs.Empty));
+                                args.Handled = true;
+                                return;
+                            }
                         }
                     }
                 }
-                // Swipe détection (>= 35px, < 800ms)
+                // Swipe détection (>= 35px, < 800ms) - uniquement si non zoomé
                 else if (dist >= 35 && duration < 800 && ZoomLayout.Scale <= 1.05)
                 {
                     string nextG = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
@@ -2079,6 +2066,10 @@ public partial class ViewerPage : ContentPage
                 }
                 args.Handled = true;
                 return;
+
+            case Android.Views.MotionEventActions.Cancel:
+                _isNativePanning = false;
+                break;
         }
 
         args.Handled = false;
