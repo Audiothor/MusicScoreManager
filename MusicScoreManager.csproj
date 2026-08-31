@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.9.2.10</ApplicationDisplayVersion>
-		<ApplicationVersion>19295</ApplicationVersion>
-		<!-- Version actuelle : v1.9.2.10 "Fix settings score switch colors and harmonize font sizes" -->
+		<ApplicationDisplayVersion>1.9.3.0</ApplicationDisplayVersion>
+		<ApplicationVersion>19300</ApplicationVersion>
+		<!-- Version actuelle : v1.9.3.0 "Smart Image-to-PDF conversion, multi-image merging & Tools PDF Assembler" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		
@@ -33,8 +33,8 @@
 	</ItemGroup>
 
 	<PropertyGroup>
-		<!-- Désactiver les avertissements d'audit NU1903 pour les paquets SQLite internes transitifs -->
-		<NoWarn>$(NoWarn);NU1903;CS0618</NoWarn>
+		<!-- Désactiver les avertissements d'audit pour les paquets transitifs -->
+		<NoWarn>$(NoWarn);NU1902;NU1903;CS0618</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -42,6 +42,7 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.41" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
 		<PackageReference Include="Plugin.Maui.Audio" Version="4.0.0" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="2.1.9" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="SQLitePCLRaw.core" Version="2.1.10" />
 		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
