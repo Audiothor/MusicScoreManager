@@ -69,6 +69,7 @@ public partial class ScoreEditPage : ContentPage
 
         UpdateExternalIndicators();
         LoadFileMetadata();
+        ModifyAssemblyBorder.IsVisible = (_score.Type == ScoreType.PDF && !_score.IsFileMissing);
         LoadDataAsync();
     }
 
@@ -624,6 +625,19 @@ public partial class ScoreEditPage : ContentPage
         }
 
         await Navigation.PopAsync();
+    }
+
+    private async void OnModifyAssemblyClicked(object? sender, EventArgs e)
+    {
+        var score = _score;
+        await Navigation.PopToRootAsync();
+        await Shell.Current.GoToAsync("//ToolsPage");
+        var toolsPage = Shell.Current.CurrentPage as ToolsPage 
+            ?? Handler?.MauiContext?.Services.GetService<ToolsPage>();
+        if (toolsPage != null)
+        {
+            await toolsPage.OpenScoreInAssemblerAsync(score);
+        }
     }
 
     private string? FindFileRecursively(string dir, string fileName, long size)

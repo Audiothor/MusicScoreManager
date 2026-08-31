@@ -82,6 +82,30 @@
                     </Grid>
                 </Border>
 
+                <!-- Raccourci vers l'Atelier d'Assemblage PDF -->
+                <Border x:Name="ModifyAssemblyBorder"
+                        BackgroundColor="#1A2F4C" Stroke="#007ACC" StrokeThickness="1" Padding="12,10"
+                        IsVisible="False">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="8" />
+                    </Border.StrokeShape>
+                    <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                        <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                            <Label Text="📑 Atelier d'Assemblage PDF" TextColor="#64B5F6" FontSize="13" FontAttributes="Bold" />
+                            <Label Text="Réorganiser l'ordre des pages, pivoter, dupliquer ou supprimer des pages." TextColor="#AAAAAA" FontSize="11" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1"
+                                Text="Modifier les pages"
+                                BackgroundColor="#007ACC"
+                                TextColor="White"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                HeightRequest="36"
+                                CornerRadius="6"
+                                Clicked="OnModifyAssemblyClicked" />
+                    </Grid>
+                </Border>
+
                 <!-- 3. ÉTIQUETTES / TAGS (Au dessus de Tempo & Tonalité) -->
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Étiquettes" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />

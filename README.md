@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.4.0
+# Music Score Manager v1.9.5.0
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
@@ -20,10 +20,21 @@
 - **Tri des Partitions par Défaut (Récent)** : Tri automatique des partitions avec les plus récemment ajoutées en premier (`Date d'ajout (Récent)`), entièrement personnalisable dans les paramètres.
 - **Ouverture & Fermeture Ultra-Fluides (< 50ms)** : Double-buffering off-screen canvas éliminant le balayage visuel, fond natif Android noir `#000000` sans flash blanc, et nettoyage asynchrone évitant tout gel UI lors de la fermeture du viewer.
 
-### 📑 Conversion Intelligente d'Images en PDF & Atelier d'Assemblage (v1.9.3.0)
+### 📑 Atelier d'Assemblage & Nouvelle Ergonomie de l'Onglet Outils (v1.9.5.0)
+- **Ergonomie Unifiée (Modèle Paramètres)** : Remplacement complet des anciens accordéons par un hub épuré sous forme de liste de cartes avec chevrons `›`. Chaque outil s'ouvre désormais dans sa propre sous-page dédiée avec en-tête `← Retour` assurant un confort visuel maximal, sans défilement surchargé.
+- **Modification Complète de Partitions Existantes** : Chargez n'importe quelle partition PDF de votre bibliothèque ou fichier externe pour en modifier l'assemblage complet : réorganisation de l'ordre des pages (▲ / ▼), rotation individuelle (⟳ 90°), rotation globale de tout le document, inversion complète de l'ordre des pages, duplication (📑) et suppression de pages (🗑️).
+- **Insertion de Pages Blanches & Fusion Multi-PDF** : Insérez à volonté des pages blanches (idéal pour synchroniser vos tournes de pages) ou fusionnez des pages provenant d'autres fichiers PDF / photos.
+- **Visualisation / Zoom Haute Définition par Page** : Prévisualisez chaque page en plein écran (bouton `🔍` ou tap sur miniature) avec navigation précédent/suivant et rotation interactive pour vérifier la netteté et la mise en page.
+- **Remplacement direct ou Nouvelle copie** : Choisissez d'écraser la partition existante en conservant vos réglages ou de l'enregistrer comme nouvelle copie autonome.
+- **Raccourcis Directs dans l'Application** : Accédez à l'atelier d'assemblage en un clic depuis le menu contextuel (⋮) de la bibliothèque de partitions, la page d'édition des métadonnées ou directement depuis le menu central du lecteur de partitions.
+- **Sous-pages Dédiées** :
+  - `📑 Créateur & Assemblage PDF` (`PdfAssemblerPage`)
+  - `🏷️ Gestion des étiquettes` (`TagsPage`)
+  - `📦 Imports de paquets & setlists` (`ImportPackagePage`)
+  - `🔍 Gestion des doublons` (`DuplicatesPage`)
+  - `💾 Gestion des sauvegardes` (`BackupsPage`)
 - **Détection & Fusion Intelligente à l'Import** : Lors de l'import (`+` dans Partitions), si plusieurs photos/images sont sélectionnées, l'application propose automatiquement de les fusionner en 1 seule partition PDF multi-pages (tri naturel des pages) ou de les convertir individuellement.
 - **Conversion Automatique en PDF** : Toute image importée est proprement convertie au format PDF standardisé pour unifier l'expérience de lecture, de zoom et d'annotations.
-- **Atelier Créateur & Assemblage de Pages PDF (Onglet Outils)** : Accordéon dédié permettant de charger des photos/scans, de prévisualiser les miniatures, de réordonner les pages (▲ / ▼), d'ajuster l'orientation par rotation individuelle (⟳ 90°), de supprimer des pages indésirables et de générer la partition PDF directement dans votre bibliothèque.
 
 ### 📦 Envoi & Export Complet de Setlists et Packages (v1.9.0)
 - **Envoi Sans Fil de Setlists Complètes (Bluetooth P2P)** : Transmettez une setlist entière avec son ordonnancement exact et toutes ses partitions rattachées directement d'un appareil à l'autre sans Internet.
@@ -49,7 +60,7 @@
 - **Sécurisation des Gestes (Safe Boundaries)** : Gestion intelligente des zones tactiles pour éviter les sorties d'écran et la navigation intempestive aux extrémités de la partition.
 - **Intégration des Étiquettes dans l'onglet Outils (v1.8.30)** : Fusion complète de la gestion des étiquettes (création, recherche, modification, suppression) sous forme de chapitre dédié dans **Outils** aux côtés de la **Gestion des sauvegardes**.
 - **Menu Principal Optimisé à 5 Onglets Stricts (v1.8.30)** : Barre de navigation épurée (`[Partitions] [Setlists] [Outils] [Paramètres] [Quitter]`) éliminant définitivement l'apparition du menu « More / Plus » sur les interfaces mobiles et tablettes.
-- **Page « À propos » Dédiée (v1.8.29)** : Présentation officielle de l'application avec logo, version dynamique, détails de la licence MIT, liste exhaustive des licences des frameworks utilisés (.NET MAUI, CommunityToolkit, SQLite, PDF.js) et lien direct vers le projet Open Source sur GitHub.
+- **Page « À propos » Dédiée (v1.8.29)** : Présentation officielle de l'application avec logo, version dynamique, détails de la licence GNU GPLv3, liste exhaustive des licences des frameworks utilisés (.NET MAUI, CommunityToolkit, SQLite, PDF.js) et lien direct vers le projet Open Source sur GitHub.
 - **Moteur de Localisation Multilingue (v1.8.29)** : Chapitre *Langue* ajouté dans les *Paramètres Application* (avant Bibliothèque) avec sélecteur intuitif. Prise en charge initiale de 4 langues (🇫🇷 Français, 🇬🇧 Anglais, 🇩🇪 Allemand, 🇪🇸 Espagnol). Architecture structurée avec fichiers de traduction JSON indépendants (`Resources/Raw/Languages/*.json`) pour une maintenance et un ajout de nouvelles langues facilités.
 - **Menu Quitter Intégré & Suppression de la Croix (v1.8.28)** : Ajout de l'onglet `Quitter` (`🚪`) directement dans la barre de navigation principale à droite de Paramètres pour une fermeture propre et immédiate de l'application. Suppression de l'ancienne croix discrète sur la page Partitions.
 - **Message d'État de Chargement Évolué (v1.8.28)** : Affichage explicite de *"Chargement des partitions en cours..."* lors de l'initialisation de l'application ou d'une recherche, et *"Aucune partition trouvée."* uniquement lorsqu'aucune partition n'est présente dans la base.
@@ -147,6 +158,23 @@ dotnet build -t:Run -f net10.0-android36.0
 dotnet publish -f net10.0-android36.0 -c Release
 ```
 
+## 📄 Licence
+
+Ce projet est sous licence libre **GNU General Public License v3.0 (GPLv3)**.  
+Consultez le fichier [LICENSE](LICENSE) pour prendre connaissance de l'intégralité des termes et conditions.
+
+```
+Music Score Manager
+Copyright (C) 2026 Audiothor
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+```
+
+---
+
 ## 🔒 Politique de Confidentialité / Privacy Policy
 
 L'application **Music Score Manager** respecte rigoureusement la vie privée de ses utilisateurs :
@@ -156,4 +184,5 @@ L'application **Music Score Manager** respecte rigoureusement la vie privée de 
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.9.2.10 "Fix settings score switch colors and harmonize font sizes"*
+**Développé par Audiothor** — *MusicScoreManager v1.9.5 "PDF Assembly & Reordering Studio, Multi-page Tools & Direct Shortcuts"*
+

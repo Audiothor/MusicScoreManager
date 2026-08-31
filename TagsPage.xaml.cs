@@ -7,16 +7,21 @@ public partial class TagsPage : ContentPage
 {
     private readonly DatabaseService _databaseService;
 
-    public TagsPage(DatabaseService databaseService)
+    public TagsPage(DatabaseService? databaseService = null)
     {
         InitializeComponent();
-        _databaseService = databaseService;
+        _databaseService = databaseService ?? new DatabaseService();
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await LoadTagsAsync();
+        await LoadTagsAsync(SearchTagBar?.Text ?? string.Empty);
+    }
+
+    private async void OnBackClicked(object? sender, EventArgs e)
+    {
+        await Navigation.PopAsync();
     }
 
     private async Task LoadTagsAsync(string query = "")
@@ -31,29 +36,27 @@ public partial class TagsPage : ContentPage
         TagsCollectionView.ItemsSource = tags.OrderBy(t => t.Name).ToList();
     }
 
-    private async void OnSearchBarTextChanged(object sender, TextChangedEventArgs e)
+    private async void OnSearchBarTextChanged(object? sender, TextChangedEventArgs e)
     {
-        await LoadTagsAsync(e.NewTextValue);
+        await LoadTagsAsync(e.NewTextValue ?? string.Empty);
     }
 
-    private async void OnAddTagClicked(object sender, EventArgs e)
+    private async void OnAddTagClicked(object? sender, EventArgs e)
     {
         var newTag = new Tag { Name = "" };
         await Navigation.PushAsync(new TagEditPage(newTag, _databaseService));
     }
 
-    private async void OnTagSelected(object sender, SelectionChangedEventArgs e)
+    private async void OnTagSelected(object? sender, SelectionChangedEventArgs e)
     {
         if (e.CurrentSelection.FirstOrDefault() is Tag tag)
         {
             await Navigation.PushAsync(new TagEditPage(tag, _databaseService));
-            
-            // Désélectionner
             TagsCollectionView.SelectedItem = null;
         }
     }
 
-    private async void OnRenameTagInvoked(object sender, EventArgs e)
+    private async void OnRenameTagInvoked(object? sender, EventArgs e)
     {
         if (sender is SwipeItem item && item.CommandParameter is Tag tag)
         {
@@ -61,7 +64,7 @@ public partial class TagsPage : ContentPage
         }
     }
 
-    private async void OnDeleteTagInvoked(object sender, EventArgs e)
+    private async void OnDeleteTagInvoked(object? sender, EventArgs e)
     {
         if (sender is SwipeItem item && item.CommandParameter is Tag tag)
         {
@@ -69,7 +72,7 @@ public partial class TagsPage : ContentPage
             if (answer)
             {
                 await _databaseService.DeleteTagAsync(tag);
-                await LoadTagsAsync(SearchTagBar.Text);
+                await LoadTagsAsync(SearchTagBar?.Text ?? string.Empty);
             }
         }
     }

@@ -3,26 +3,35 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:MusicScoreManager.Models"
              x:Class="MusicScoreManager.TagsPage"
-             BackgroundColor="#121212">
+             BackgroundColor="#121212"
+             Title="Gestion des Étiquettes">
 
     <Grid RowDefinitions="Auto, Auto, *">
-        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="15,15,15,5" ColumnSpacing="10">
-            <Label Grid.Column="0"
-                   Text="Gérer les Étiquettes"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   TextColor="#FFFFFF"
-                   VerticalOptions="Center" />
-
-            <Button Grid.Column="1"
-                    Text="+"
-                    FontSize="24"
+        <!-- Header personnalisé avec bouton Retour et Bouton Ajouter (+) -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Padding="10" BackgroundColor="#1E1E1E">
+            <Button Grid.Column="0" 
+                    Text="← Retour" 
+                    BackgroundColor="Transparent" 
+                    TextColor="#007ACC" 
                     FontAttributes="Bold"
-                    WidthRequest="50"
-                    HeightRequest="50"
-                    CornerRadius="25"
+                    Clicked="OnBackClicked" />
+            <Label Grid.Column="1" 
+                   Text="Gestion des Étiquettes" 
+                   TextColor="White" 
+                   FontSize="18" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center" />
+            <Button Grid.Column="2"
+                    Text="+"
+                    FontSize="22"
+                    FontAttributes="Bold"
+                    WidthRequest="38"
+                    HeightRequest="38"
+                    CornerRadius="19"
                     BackgroundColor="#007ACC"
                     TextColor="White"
+                    Padding="0"
                     Clicked="OnAddTagClicked" />
         </Grid>
 
@@ -30,14 +39,14 @@
                    x:Name="SearchTagBar"
                    Placeholder="Rechercher une étiquette..."
                    PlaceholderColor="#888888"
-                       TextColor="#FFFFFF"
-                       BackgroundColor="#1E1E1E"
-                   Margin="15,0,15,15"
+                   TextColor="#FFFFFF"
+                   BackgroundColor="#1E1E1E"
+                   Margin="16,12,16,12"
                    TextChanged="OnSearchBarTextChanged" />
 
         <CollectionView Grid.Row="2"
                         x:Name="TagsCollectionView"
-                        Margin="15,0"
+                        Margin="16,0"
                         SelectionMode="Single"
                         SelectionChanged="OnTagSelected">
             <CollectionView.ItemsLayout>
@@ -84,7 +93,7 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
             <CollectionView.EmptyView>
-                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="20">
                     <Label Text="Aucune étiquette n'a été créée."
                            TextColor="#888888"
                            HorizontalOptions="Center" />

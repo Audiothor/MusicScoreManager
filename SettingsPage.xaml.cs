@@ -20,7 +20,7 @@ public partial class SettingsPage : ContentPage
 
     private async void OnSettingsTagsTapped(object sender, TappedEventArgs e)
     {
-        await DisplayAlertAsync("En construction", "Ces paramètres seront disponibles prochainement.", "OK");
+        await Navigation.PushAsync(new TagsPage());
     }
 
     private async void OnSettingsAnnotationsTapped(object sender, TappedEventArgs e)

@@ -1,509 +1,109 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:models="clr-namespace:MusicScoreManager.Models"
-             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.ToolsPage"
              BackgroundColor="#121212"
              Title="Outils">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="16" Margin="16">
-            
-            <!-- Accordéon 1 : Étiquettes -->
-            <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="14">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <VerticalStackLayout Spacing="12">
-                    <!-- En-tête Accordéon Étiquettes -->
-                    <Grid ColumnDefinitions="Auto, *, Auto, Auto" ColumnSpacing="10">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnToggleTagsSectionTapped" />
-                        </Grid.GestureRecognizers>
-                        <Label Grid.Column="0" Text="🏷️" FontSize="18" VerticalOptions="Center" />
-                        <Label Grid.Column="1" Text="Étiquettes" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" />
-                        <Button Grid.Column="2"
-                                Text="+"
-                                FontSize="20"
-                                FontAttributes="Bold"
-                                WidthRequest="36"
-                                HeightRequest="36"
-                                CornerRadius="18"
-                                BackgroundColor="#007ACC"
-                                TextColor="White"
-                                Padding="0"
-                                Clicked="OnAddTagClicked" />
-                        <Label Grid.Column="3" x:Name="TagsChevronLabel" Text="▼" TextColor="#888888" FontSize="14" VerticalOptions="Center" Margin="5,0,0,0" />
-                    </Grid>
-
-                    <!-- Contenu Accordéon Étiquettes -->
-                    <VerticalStackLayout x:Name="TagsContentSection" Spacing="10" IsVisible="True">
-                        <SearchBar x:Name="SearchTagBar"
-                                   Placeholder="Rechercher une étiquette..."
-                                   PlaceholderColor="#888888"
-                                   TextColor="#FFFFFF"
-                                   BackgroundColor="#2A2A2A"
-                                   TextChanged="OnSearchTagBarTextChanged" />
-
-                        <CollectionView x:Name="TagsCollectionView"
-                                        HeightRequest="220"
-                                        SelectionMode="Single"
-                                        SelectionChanged="OnTagSelected">
-                            <CollectionView.ItemsLayout>
-                                <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="8" />
-                            </CollectionView.ItemsLayout>
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="models:Tag">
-                                    <SwipeView>
-                                        <SwipeView.RightItems>
-                                            <SwipeItems>
-                                                <SwipeItem Text="Renommer" 
-                                                           BackgroundColor="#1E88E5" 
-                                                           Invoked="OnRenameTagInvoked" 
-                                                           CommandParameter="{Binding .}" />
-                                                <SwipeItem Text="Supprimer" 
-                                                           BackgroundColor="#E53935" 
-                                                           Invoked="OnDeleteTagInvoked" 
-                                                           CommandParameter="{Binding .}" />
-                                            </SwipeItems>
-                                        </SwipeView.RightItems>
-                                        <Border Stroke="#333333" 
-                                                StrokeThickness="1" 
-                                                BackgroundColor="#262626" 
-                                                Padding="12,10">
-                                            <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="8" />
-                                            </Border.StrokeShape>
-                                            <Grid ColumnDefinitions="Auto, *">
-                                                <BoxView Grid.Column="0"
-                                                         Color="{Binding ColorHex}"
-                                                         WidthRequest="14"
-                                                         HeightRequest="14"
-                                                         CornerRadius="7"
-                                                         VerticalOptions="Center"
-                                                         Margin="0,0,12,0" />
-                                                <Label Grid.Column="1"
-                                                       Text="{Binding Name}" 
-                                                       FontSize="15" 
-                                                       TextColor="White" 
-                                                       VerticalOptions="Center" />
-                                            </Grid>
-                                        </Border>
-                                    </SwipeView>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                            <CollectionView.EmptyView>
-                                <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="20">
-                                    <Label Text="Aucune étiquette n'a été créée."
-                                           TextColor="#888888"
-                                           HorizontalOptions="Center" />
-                                </StackLayout>
-                            </CollectionView.EmptyView>
-                        </CollectionView>
-                    </VerticalStackLayout>
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Spacing="20" Margin="20">
+                <!-- En-tête -->
+                <VerticalStackLayout HorizontalOptions="Center" Margin="0,5,0,10" Spacing="4">
+                    <Label Text="Outils &amp; Utilitaires" 
+                           TextColor="White" 
+                           FontSize="22" 
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center" />
+                    <Label Text="Boîte à outils pour assembler, organiser et sécuriser vos partitions" 
+                           TextColor="#888888" 
+                           FontSize="13" 
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
                 </VerticalStackLayout>
-            </Border>
 
-            <!-- Accordéon 2 : Créateur & Assemblage de partitions PDF -->
-            <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="14">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <VerticalStackLayout Spacing="12">
-                    <!-- En-tête Accordéon Assemblage PDF -->
-                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnTogglePdfAssemblerSectionTapped" />
-                        </Grid.GestureRecognizers>
-                        <Label Grid.Column="0" Text="📑" FontSize="18" VerticalOptions="Center" />
-                        <Label Grid.Column="1" Text="Créateur &amp; Assemblage de partitions PDF" TextColor="#007ACC" FontSize="17" FontAttributes="Bold" VerticalOptions="Center" />
-                        <Label Grid.Column="2" x:Name="PdfAssemblerChevronLabel" Text="▶" TextColor="#888888" FontSize="14" VerticalOptions="Center" />
-                    </Grid>
-
-                    <!-- Contenu Accordéon Assemblage PDF -->
-                    <VerticalStackLayout x:Name="PdfAssemblerContentSection" Spacing="12" IsVisible="False">
-                        <Label Text="Assembler des photos et images en une partition PDF" 
-                               TextColor="White" 
-                               FontAttributes="Bold" />
-                        <Label Text="Sélectionnez des photos ou scans de vos partitions, réordonnez les pages, ajustez leur orientation et générez un document PDF haute qualité prêt pour votre bibliothèque." 
-                               TextColor="#888888" 
-                               FontSize="12" />
-
-                        <!-- Boutons d'action supérieurs -->
-                        <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="8">
-                            <Button Grid.Column="0"
-                                    x:Name="PdfAssemblerPickButton"
-                                    Text="📸 Choisir des images / photos"
-                                    BackgroundColor="#007ACC"
-                                    TextColor="White"
-                                    FontAttributes="Bold"
-                                    HeightRequest="44"
-                                    CornerRadius="8"
-                                    Clicked="OnPdfAssemblerPickImagesClicked" />
-
-                            <Button Grid.Column="1"
-                                    x:Name="PdfAssemblerAddButton"
-                                    Text="➕ Ajouter"
-                                    BackgroundColor="#2A2A2A"
-                                    TextColor="#007ACC"
-                                    FontAttributes="Bold"
-                                    HeightRequest="44"
-                                    CornerRadius="8"
-                                    IsVisible="False"
-                                    Clicked="OnPdfAssemblerAddImagesClicked" />
-
-                            <Button Grid.Column="2"
-                                    x:Name="PdfAssemblerClearButton"
-                                    Text="🧹 Effacer"
-                                    BackgroundColor="#2A2A2A"
-                                    TextColor="#E74C3C"
-                                    HeightRequest="44"
-                                    CornerRadius="8"
-                                    IsVisible="False"
-                                    Clicked="OnPdfAssemblerClearClicked" />
+                <!-- Liste des outils (même ergonomie que Paramètres) -->
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    
+                    <VerticalStackLayout>
+                        <!-- 1. Créateur & Assemblage de partitions PDF -->
+                        <Grid Padding="15" BackgroundColor="Transparent" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnToolsPdfAssemblerTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="📑" FontSize="24" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="Créateur &amp; Assemblage PDF" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label Text="Assembler photos, modifier l'ordre des pages, pivoter, page blanche" TextColor="#888888" FontSize="12" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
+                        
+                        <BoxView HeightRequest="1" Color="#333333" />
+                        
+                        <!-- 2. Gestion des étiquettes -->
+                        <Grid Padding="15" BackgroundColor="Transparent" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnToolsTagsTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="🏷️" FontSize="24" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="Gestion des étiquettes" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label Text="Créer, attribuer des couleurs, renommer et organiser vos tags" TextColor="#888888" FontSize="12" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>
 
-                        <!-- Formulaire titre (visible quand des pages sont chargées) -->
-                        <VerticalStackLayout x:Name="PdfAssemblerFormSection" Spacing="8" IsVisible="False">
-                            <Label Text="Titre de la nouvelle partition :" TextColor="#AAAAAA" FontSize="12" FontAttributes="Bold" />
-                            <Entry x:Name="PdfAssemblerTitleEntry"
-                                   Placeholder="Ex: Sonate au Clair de Lune"
-                                   PlaceholderColor="#666666"
-                                   TextColor="White"
-                                   BackgroundColor="#2A2A2A"
-                                   HeightRequest="42" />
+                        <BoxView HeightRequest="1" Color="#333333" />
 
-                            <!-- En-tête de liste des pages -->
-                            <Grid ColumnDefinitions="*, Auto" Margin="0,6,0,0">
-                                <Label Grid.Column="0" x:Name="PdfAssemblerPagesCountLabel" Text="Pages (0) :" TextColor="#AAAAAA" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
-                                <Label Grid.Column="1" Text="▲ / ▼ ordonner  •  ⟳ pivoter" TextColor="#666666" FontSize="11" VerticalOptions="Center" />
-                            </Grid>
-
-                            <!-- Liste des pages -->
-                            <CollectionView x:Name="PdfAssemblerPagesCollectionView" HeightRequest="280" SelectionMode="None">
-                                <CollectionView.ItemsLayout>
-                                    <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="8" />
-                                </CollectionView.ItemsLayout>
-                                <CollectionView.ItemTemplate>
-                                    <DataTemplate x:DataType="services:PdfPageItem">
-                                        <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#262626" Padding="10">
-                                            <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="8" />
-                                            </Border.StrokeShape>
-                                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
-                                                <!-- Miniature de l'image -->
-                                                <Border Grid.Column="0" WidthRequest="50" HeightRequest="65" BackgroundColor="#1E1E1E" Stroke="#444444" StrokeThickness="1">
-                                                    <Border.StrokeShape>
-                                                        <RoundRectangle CornerRadius="4" />
-                                                    </Border.StrokeShape>
-                                                    <Image Source="{Binding ThumbnailSource}" Aspect="AspectFit" Rotation="{Binding Rotation}" />
-                                                </Border>
-
-                                                <!-- Infos de la page -->
-                                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
-                                                    <Label Text="{Binding PageDisplay}" TextColor="White" FontAttributes="Bold" FontSize="14" />
-                                                    <Label Text="{Binding DisplayName}" TextColor="#888888" FontSize="11" LineBreakMode="TailTruncation" />
-                                                    <Label Text="{Binding RotationDisplay}" TextColor="#007ACC" FontSize="11" FontAttributes="Bold" />
-                                                </VerticalStackLayout>
-
-                                                <!-- Boutons d'action individuels -->
-                                                <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="4">
-                                                    <Button Text="▲" 
-                                                            FontSize="12" 
-                                                            FontAttributes="Bold"
-                                                            BackgroundColor="#333333" 
-                                                            TextColor="White" 
-                                                            WidthRequest="36" 
-                                                            HeightRequest="36" 
-                                                            Padding="0" 
-                                                            CornerRadius="6"
-                                                            Clicked="OnPdfAssemblerMoveUpClicked" 
-                                                            CommandParameter="{Binding .}" />
-                                                    <Button Text="▼" 
-                                                            FontSize="12" 
-                                                            FontAttributes="Bold"
-                                                            BackgroundColor="#333333" 
-                                                            TextColor="White" 
-                                                            WidthRequest="36" 
-                                                            HeightRequest="36" 
-                                                            Padding="0" 
-                                                            CornerRadius="6"
-                                                            Clicked="OnPdfAssemblerMoveDownClicked" 
-                                                            CommandParameter="{Binding .}" />
-                                                    <Button Text="⟳" 
-                                                            FontSize="14" 
-                                                            FontAttributes="Bold"
-                                                            BackgroundColor="#333333" 
-                                                            TextColor="#007ACC" 
-                                                            WidthRequest="36" 
-                                                            HeightRequest="36" 
-                                                            Padding="0" 
-                                                            CornerRadius="6"
-                                                            Clicked="OnPdfAssemblerRotateClicked" 
-                                                            CommandParameter="{Binding .}" />
-                                                    <Button Text="🗑️" 
-                                                            FontSize="12" 
-                                                            BackgroundColor="#333333" 
-                                                            TextColor="#E74C3C" 
-                                                            WidthRequest="36" 
-                                                            HeightRequest="36" 
-                                                            Padding="0" 
-                                                            CornerRadius="6"
-                                                            Clicked="OnPdfAssemblerDeletePageClicked" 
-                                                            CommandParameter="{Binding .}" />
-                                                </HorizontalStackLayout>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </CollectionView.ItemTemplate>
-                            </CollectionView>
-
-                            <!-- Bouton final Générer -->
-                            <Button x:Name="PdfAssemblerGenerateButton"
-                                    Text="✅ Générer la partition PDF et l'ajouter"
-                                    BackgroundColor="#2ECC71"
-                                    TextColor="White"
-                                    FontAttributes="Bold"
-                                    HeightRequest="48"
-                                    CornerRadius="8"
-                                    Margin="0,6,0,0"
-                                    Clicked="OnPdfAssemblerGenerateClicked" />
-                        </VerticalStackLayout>
-                    </VerticalStackLayout>
-                </VerticalStackLayout>
-            </Border>
-
-            <!-- Accordéon 3 : Imports de Setlist ou de Partitions -->
-            <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="14">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <VerticalStackLayout Spacing="12">
-                    <!-- En-tête Accordéon Import -->
-                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnToggleImportSectionTapped" />
-                        </Grid.GestureRecognizers>
-                        <Label Grid.Column="0" Text="📦" FontSize="18" VerticalOptions="Center" />
-                        <Label Grid.Column="1" Text="Imports de Setlist ou de Partitions" TextColor="#007ACC" FontSize="17" FontAttributes="Bold" VerticalOptions="Center" />
-                        <Label Grid.Column="2" x:Name="ImportChevronLabel" Text="▶" TextColor="#888888" FontSize="14" VerticalOptions="Center" />
-                    </Grid>
-
-                    <!-- Contenu Accordéon Import -->
-                    <VerticalStackLayout x:Name="ImportContentSection" Spacing="10" IsVisible="False">
-                        <Label Text="Importer une archive ou setlist partagée" 
-                               TextColor="White" 
-                               FontAttributes="Bold" />
-                        <Label Text="Importez un fichier '.msmsetlist', '.msmscore' ou '.msmscores' exporté depuis un autre appareil pour intégrer automatiquement les partitions, métadonnées, annotations et setlists." 
-                               TextColor="#888888" 
-                               FontSize="12" />
-                        <Button Text="📥 Importer un paquet (.msmsetlist / .msmscore)"
-                                BackgroundColor="#2ECC71"
-                                TextColor="White"
-                                FontAttributes="Bold"
-                                HeightRequest="46"
-                                CornerRadius="8"
-                                Clicked="OnImportPackageClicked" />
-                    </VerticalStackLayout>
-                </VerticalStackLayout>
-            </Border>
-
-            <!-- Accordéon 3 : Gestion des doublons -->
-            <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="14">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <VerticalStackLayout Spacing="12">
-                    <!-- En-tête Accordéon Doublons -->
-                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnToggleDuplicatesSectionTapped" />
-                        </Grid.GestureRecognizers>
-                        <Label Grid.Column="0" Text="🔍" FontSize="18" VerticalOptions="Center" />
-                        <Label Grid.Column="1" Text="Gestion des doublons" TextColor="#007ACC" FontSize="17" FontAttributes="Bold" VerticalOptions="Center" />
-                        <Label Grid.Column="2" x:Name="DuplicatesChevronLabel" Text="▶" TextColor="#888888" FontSize="14" VerticalOptions="Center" />
-                    </Grid>
-
-                    <!-- Contenu Accordéon Doublons -->
-                    <VerticalStackLayout x:Name="DuplicatesContentSection" Spacing="12" IsVisible="False">
-                        <Label Text="Détection des partitions en doublon" 
-                               TextColor="White" 
-                               FontAttributes="Bold" />
-                        <Label Text="Scannez votre bibliothèque pour identifier les fichiers de partitions identiques (analyse par empreinte numérique exacte SHA-256) et supprimez les copies inutiles en vérifiant leur présence dans vos setlists." 
-                               TextColor="#888888" 
-                               FontSize="12" />
-
-                        <Button Text="🔍 Analyser les doublons"
-                                BackgroundColor="#E67E22"
-                                TextColor="White"
-                                FontAttributes="Bold"
-                                HeightRequest="46"
-                                CornerRadius="8"
-                                Clicked="OnAnalyzeDuplicatesClicked" />
-
-                        <!-- Barre de progression pendant l'analyse -->
-                        <VerticalStackLayout x:Name="DuplicatesProgressSection" Spacing="6" IsVisible="False" Margin="0,5">
-                            <Label x:Name="DuplicatesProgressLabel" Text="Analyse en cours... (0/0)" TextColor="#007ACC" FontSize="12" HorizontalOptions="Center" />
-                            <ProgressBar x:Name="DuplicatesProgressBar" Progress="0" ProgressColor="#E67E22" HeightRequest="6" />
-                        </VerticalStackLayout>
-
-                        <!-- Résultat de l'analyse -->
-                        <Label x:Name="DuplicatesResultSummaryLabel" TextColor="#AAAAAA" FontSize="13" FontAttributes="Bold" IsVisible="False" />
-
-                        <!-- Conteneur des groupes de doublons -->
-                        <VerticalStackLayout x:Name="DuplicatesListContainer" Spacing="12" />
-                    </VerticalStackLayout>
-                </VerticalStackLayout>
-            </Border>
-
-            <!-- Accordéon 4 : Gestion des sauvegardes -->
-            <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="14">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <VerticalStackLayout Spacing="14">
-                    <!-- En-tête Accordéon Sauvegardes -->
-                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnToggleBackupSectionTapped" />
-                        </Grid.GestureRecognizers>
-                        <Label Grid.Column="0" Text="💾" FontSize="18" VerticalOptions="Center" />
-                        <Label Grid.Column="1" Text="Gestion des sauvegardes" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" />
-                        <Label Grid.Column="2" x:Name="BackupChevronLabel" Text="▶" TextColor="#888888" FontSize="14" VerticalOptions="Center" />
-                    </Grid>
-
-                    <!-- Contenu Accordéon Sauvegardes -->
-                    <VerticalStackLayout x:Name="BackupContentSection" Spacing="14" IsVisible="False">
-                        <Border BackgroundColor="#262626" Padding="12" StrokeThickness="0">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
-                            <VerticalStackLayout Spacing="12">
-                                <Label Text="Paramètres de sauvegarde automatique" 
-                                       TextColor="#AAAAAA" 
-                                       FontAttributes="Bold" />
-                                
-                                <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto" ColumnSpacing="10" RowSpacing="10">
-                                    <Label Grid.Row="0" Grid.Column="0" 
-                                           Text="Intervalle (jours)" 
-                                           TextColor="White" 
-                                           VerticalOptions="Center" />
-                                    <Entry Grid.Row="0" Grid.Column="1" 
-                                           x:Name="IntervalEntry" 
-                                           Text="30"
-                                           WidthRequest="80" 
-                                           Keyboard="Numeric" 
-                                           TextColor="White"
-                                           HorizontalTextAlignment="Center"
-                                           BackgroundColor="#333333" />
-                                    
-                                    <Label Grid.Row="1" Grid.Column="0" 
-                                           Text="Nombre de copies à garder" 
-                                           TextColor="White" 
-                                           VerticalOptions="Center" />
-                                    <Entry Grid.Row="1" Grid.Column="1" 
-                                           x:Name="MaxKeepEntry" 
-                                           Text="6"
-                                           WidthRequest="80" 
-                                           Keyboard="Numeric" 
-                                           TextColor="White"
-                                           HorizontalTextAlignment="Center"
-                                           BackgroundColor="#333333" />
-                                </Grid>
-
-                                <Grid ColumnDefinitions="*, *" ColumnSpacing="12" Margin="0,5,0,0">
-                                    <Button Grid.Column="0" 
-                                            Text="Annuler" 
-                                            BackgroundColor="#444444" 
-                                            TextColor="White" 
-                                            HeightRequest="40"
-                                            CornerRadius="6"
-                                            Clicked="OnCancelSettingsClicked" />
-                                    <Button Grid.Column="1" 
-                                            Text="Enregistrer" 
-                                            BackgroundColor="#28A745" 
-                                            TextColor="White" 
-                                            HeightRequest="40"
-                                            CornerRadius="6"
-                                            Clicked="OnSaveSettingsClicked" />
-                                </Grid>
+                        <!-- 3. Imports de Setlists ou Partitions -->
+                        <Grid Padding="15" BackgroundColor="Transparent" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnToolsImportPackageTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="📦" FontSize="24" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="Imports de paquets &amp; setlists" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label Text="Importer des archives partagées (.msmsetlist, .msmscore)" TextColor="#888888" FontSize="12" />
                             </VerticalStackLayout>
-                        </Border>
+                            <Label Grid.Column="2" Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
 
-                        <Button Text="Sauvegarder la base de données maintenant"
-                                BackgroundColor="#007ACC"
-                                TextColor="White"
-                                CornerRadius="8"
-                                HeightRequest="46"
-                                Clicked="OnBackupClicked" />
+                        <BoxView HeightRequest="1" Color="#333333" />
 
-                        <Border Stroke="#D35400" StrokeThickness="1" BackgroundColor="#2D1A05" Padding="12">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
-                            <VerticalStackLayout Spacing="5">
-                                <Label Text="⚠️ Avertissement" TextColor="#D35400" FontAttributes="Bold" />
-                                <Label x:Name="BackupWarningLabel" 
-                                       TextColor="#E67E22" 
-                                       FontSize="12" 
-                                       LineBreakMode="WordWrap"
-                                       Text="La sauvegarde ne concerne que la base de données. Vos fichiers ne sont pas inclus." />
+                        <!-- 4. Gestion des doublons -->
+                        <Grid Padding="15" BackgroundColor="Transparent" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnToolsDuplicatesTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="🔍" FontSize="24" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="Gestion des doublons" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label Text="Détecter les fichiers identiques par SHA-256 et nettoyer" TextColor="#888888" FontSize="12" />
                             </VerticalStackLayout>
-                        </Border>
+                            <Label Grid.Column="2" Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
 
-                        <Label Text="Historique des sauvegardes" 
-                               TextColor="#AAAAAA" 
-                               FontAttributes="Bold"
-                               Margin="0,5,0,0" />
-                        
-                        <Label x:Name="FolderPathLabel" 
-                               TextColor="#666666" 
-                               FontSize="10" 
-                               LineBreakMode="CharacterWrap" />
+                        <BoxView HeightRequest="1" Color="#333333" />
 
-                        <CollectionView x:Name="BackupsCollectionView" HeightRequest="220" Margin="0,5">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="12" Padding="0,8">
-                                        <Label Grid.Column="0" 
-                                               Text="📦" 
-                                               FontSize="22" 
-                                               VerticalOptions="Center" />
-                                        
-                                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                                            <Label Text="{Binding DisplayDate}" 
-                                                   TextColor="White" 
-                                                   FontAttributes="Bold" 
-                                                   FontSize="13" />
-                                            <Label Text="{Binding DisplaySize}" 
-                                                   TextColor="#888888" 
-                                                   FontSize="11" />
-                                        </VerticalStackLayout>
-
-                                        <Button Grid.Column="2" 
-                                                Text="Restaurer" 
-                                                BackgroundColor="#333333" 
-                                                TextColor="#007ACC" 
-                                                FontSize="12"
-                                                HeightRequest="34"
-                                                CornerRadius="6"
-                                                Clicked="OnItemRestoreClicked" 
-                                                CommandParameter="{Binding .}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                            <CollectionView.EmptyView>
-                                <Label Text="Aucune sauvegarde disponible." 
-                                       TextColor="#666666" 
-                                       HorizontalOptions="Center" 
-                                       Margin="0,15" />
-                            </CollectionView.EmptyView>
-                        </CollectionView>
+                        <!-- 5. Gestion des sauvegardes -->
+                        <Grid Padding="15" BackgroundColor="Transparent" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnToolsBackupsTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="💾" FontSize="24" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="Gestion des sauvegardes" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label Text="Sauvegarde automatique, manuelle et restauration de la base" TextColor="#888888" FontSize="12" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
                     </VerticalStackLayout>
-                </VerticalStackLayout>
-            </Border>
-
-        </VerticalStackLayout>
-    </ScrollView>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

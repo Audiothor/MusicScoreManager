@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MusicScoreManager.Models"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
+             x:Class="MusicScoreManager.PdfAssemblerPage"
+             BackgroundColor="#121212"
+             Title="Créateur &amp; Assemblage PDF">
+
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header personnalisé avec bouton Retour -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
+            <Button Grid.Column="0" 
+                    Text="← Retour" 
+                    BackgroundColor="Transparent" 
+                    TextColor="#007ACC" 
+                    FontAttributes="Bold"
+                    Clicked="OnBackClicked" />
+            <Label Grid.Column="1" 
+                   Text="Créateur &amp; Assemblage PDF" 
+                   TextColor="White" 
+                   FontSize="18" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center"
+                   Margin="0,0,80,0" />
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <ScrollView>
+                <VerticalStackLayout Spacing="14" Margin="16">
+                    <Label Text="Créer ou modifier l'assemblage de vos partitions PDF" 
+                           TextColor="White" 
+                           FontAttributes="Bold" 
+                           FontSize="15" />
+                    <Label Text="Assemblez des photos/images en une partition PDF, ou chargez une partition existante de votre bibliothèque pour réorganiser ses pages, ajuster les rotations, insérer des pages blanches, dupliquer ou supprimer des pages." 
+                           TextColor="#888888" 
+                           FontSize="12" />
+
+                    <!-- Boutons d'action principaux : Créer ou Modifier -->
+                    <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, *" RowSpacing="8" ColumnSpacing="10" Margin="0,5">
+                        <Button Grid.Row="0" Grid.Column="0"
+                                x:Name="PdfAssemblerPickButton"
+                                Text="📸 Créer depuis photos"
+                                BackgroundColor="#007ACC"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                HeightRequest="44"
+                                CornerRadius="8"
+                                Clicked="OnPdfAssemblerPickImagesClicked" />
+
+                        <Button Grid.Row="0" Grid.Column="1"
+                                x:Name="PdfAssemblerPickScoreButton"
+                                Text="📖 Modifier une partition"
+                                BackgroundColor="#2E7D32"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                HeightRequest="44"
+                                CornerRadius="8"
+                                Clicked="OnPdfAssemblerPickScoreClicked" />
+
+                        <Button Grid.Row="1" Grid.ColumnSpan="2"
+                                x:Name="PdfAssemblerPickExternalPdfButton"
+                                Text="📁 Ouvrir un fichier PDF externe..."
+                                BackgroundColor="#3A3A3A"
+                                TextColor="#64B5F6"
+                                FontAttributes="Bold"
+                                HeightRequest="40"
+                                CornerRadius="8"
+                                Clicked="OnPdfAssemblerPickExternalPdfClicked" />
+                    </Grid>
+
+                    <!-- Formulaire et liste des pages (visible quand des pages sont chargées) -->
+                    <VerticalStackLayout x:Name="PdfAssemblerFormSection" Spacing="10" IsVisible="False">
+                        
+                        <!-- Bandeau d'information si modification d'une partition existante -->
+                        <Border x:Name="PdfAssemblerEditScoreBanner"
+                                BackgroundColor="#1A2F4C" 
+                                Stroke="#007ACC" 
+                                StrokeThickness="1" 
+                                Padding="12,10" 
+                                IsVisible="False">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="8">
+                                <Label Grid.Column="0" Text="✏️" FontSize="18" VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                    <Label x:Name="PdfAssemblerEditingScoreLabel" Text="Modification de la partition : [Titre]" TextColor="#64B5F6" FontSize="13" FontAttributes="Bold" />
+                                    <Label Text="Toutes les modifications mettront à jour votre partition." TextColor="#AAAAAA" FontSize="11" />
+                                </VerticalStackLayout>
+                                <Button Grid.Column="2" Text="Changer" TextColor="#64B5F6" BackgroundColor="#243C5E" CornerRadius="6" FontSize="11" HeightRequest="32" Padding="10,0" Clicked="OnPdfAssemblerPickScoreClicked" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Barre d'outils d'actions et ajouts de pages -->
+                        <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                            <HorizontalStackLayout Spacing="6">
+                                <Button Text="➕ Photos"
+                                        BackgroundColor="#2A2A2A"
+                                        TextColor="#007ACC"
+                                        FontSize="12"
+                                        FontAttributes="Bold"
+                                        HeightRequest="36"
+                                        CornerRadius="6"
+                                        Clicked="OnPdfAssemblerAddImagesClicked" />
+
+                                <Button Text="📄 Ajouter PDF"
+                                        BackgroundColor="#2A2A2A"
+                                        TextColor="#2ECC71"
+                                        FontSize="12"
+                                        FontAttributes="Bold"
+                                        HeightRequest="36"
+                                        CornerRadius="6"
+                                        Clicked="OnPdfAssemblerAddPdfClicked" />
+
+                                <Button Text="📄+ Page blanche"
+                                        BackgroundColor="#2A2A2A"
+                                        TextColor="#F39C12"
+                                        FontSize="12"
+                                        FontAttributes="Bold"
+                                        HeightRequest="36"
+                                        CornerRadius="6"
+                                        Clicked="OnPdfAssemblerAddBlankPageClicked" />
+
+                                <Button Text="🔄 Inverser ordre"
+                                        BackgroundColor="#2A2A2A"
+                                        TextColor="#E67E22"
+                                        FontSize="12"
+                                        HeightRequest="36"
+                                        CornerRadius="6"
+                                        Clicked="OnPdfAssemblerReverseOrderClicked" />
+
+                                <Button Text="⟳ Tout pivoter (+90°)"
+                                        BackgroundColor="#2A2A2A"
+                                        TextColor="#9B59B6"
+                                        FontSize="12"
+                                        HeightRequest="36"
+                                        CornerRadius="6"
+                                        Clicked="OnPdfAssemblerRotateAllClicked" />
+
+                                <Button Text="🧹 Réinitialiser"
+                                        BackgroundColor="#2A2A2A"
+                                        TextColor="#E74C3C"
+                                        FontSize="12"
+                                        HeightRequest="36"
+                                        CornerRadius="6"
+                                        Clicked="OnPdfAssemblerClearClicked" />
+                            </HorizontalStackLayout>
+                        </ScrollView>
+
+                        <!-- Titre de la partition -->
+                        <Label Text="Titre de la partition :" TextColor="#AAAAAA" FontSize="12" FontAttributes="Bold" Margin="0,4,0,0" />
+                        <Entry x:Name="PdfAssemblerTitleEntry"
+                               Placeholder="Ex: Sonate au Clair de Lune"
+                               PlaceholderColor="#666666"
+                               TextColor="White"
+                               BackgroundColor="#2A2A2A"
+                               HeightRequest="42" />
+
+                        <!-- En-tête de liste des pages -->
+                        <Grid ColumnDefinitions="*, Auto" Margin="0,6,0,0">
+                            <Label Grid.Column="0" x:Name="PdfAssemblerPagesCountLabel" Text="Pages (0) :" TextColor="#AAAAAA" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="▲/▼ ordonner  •  ⟳ pivoter  •  🔍 zoom  •  📑 dupliquer" TextColor="#666666" FontSize="11" VerticalOptions="Center" />
+                        </Grid>
+
+                        <!-- Liste des pages -->
+                        <CollectionView x:Name="PdfAssemblerPagesCollectionView" HeightRequest="350" SelectionMode="None">
+                            <CollectionView.ItemsLayout>
+                                <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="8" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="services:PdfPageItem">
+                                    <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#262626" Padding="10">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+                                        <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
+                                            <!-- Miniature de l'image (cliquable pour zoomer) -->
+                                            <Border Grid.Column="0" WidthRequest="55" HeightRequest="72" BackgroundColor="#1E1E1E" Stroke="#444444" StrokeThickness="1">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="6" />
+                                                </Border.StrokeShape>
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnPdfAssemblerPreviewThumbnailTapped" CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
+                                                <Image Source="{Binding ThumbnailSource}" Aspect="AspectFit" Rotation="{Binding Rotation}" />
+                                            </Border>
+
+                                            <!-- Infos de la page -->
+                                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                                                <Label Text="{Binding PageDisplay}" TextColor="White" FontAttributes="Bold" FontSize="14" />
+                                                <Label Text="{Binding DisplayName}" TextColor="#888888" FontSize="11" LineBreakMode="TailTruncation" />
+                                                <Border BackgroundColor="#1E2A38" Stroke="#007ACC" StrokeThickness="0.5" Padding="6,2" HorizontalOptions="Start">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="4" />
+                                                    </Border.StrokeShape>
+                                                    <Label Text="{Binding RotationDisplay}" TextColor="#64B5F6" FontSize="10" FontAttributes="Bold" />
+                                                </Border>
+                                            </VerticalStackLayout>
+
+                                            <!-- Boutons d'action individuels -->
+                                            <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="4">
+                                                <Button Text="🔍" 
+                                                        FontSize="12" 
+                                                        BackgroundColor="#333333" 
+                                                        TextColor="#64B5F6" 
+                                                        WidthRequest="34" 
+                                                        HeightRequest="36" 
+                                                        Padding="0" 
+                                                        CornerRadius="6" 
+                                                        Clicked="OnPdfAssemblerPreviewPageClicked" 
+                                                        CommandParameter="{Binding .}" />
+                                                <Button Text="▲" 
+                                                        FontSize="12" 
+                                                        FontAttributes="Bold" 
+                                                        BackgroundColor="#333333" 
+                                                        TextColor="White" 
+                                                        WidthRequest="34" 
+                                                        HeightRequest="36" 
+                                                        Padding="0" 
+                                                        CornerRadius="6" 
+                                                        Clicked="OnPdfAssemblerMoveUpClicked" 
+                                                        CommandParameter="{Binding .}" />
+                                                <Button Text="▼" 
+                                                        FontSize="12" 
+                                                        FontAttributes="Bold" 
+                                                        BackgroundColor="#333333" 
+                                                        TextColor="White" 
+                                                        WidthRequest="34" 
+                                                        HeightRequest="36" 
+                                                        Padding="0" 
+                                                        CornerRadius="6" 
+                                                        Clicked="OnPdfAssemblerMoveDownClicked" 
+                                                        CommandParameter="{Binding .}" />
+                                                <Button Text="⟳" 
+                                                        FontSize="14" 
+                                                        FontAttributes="Bold" 
+                                                        BackgroundColor="#333333" 
+                                                        TextColor="#007ACC" 
+                                                        WidthRequest="34" 
+                                                        HeightRequest="36" 
+                                                        Padding="0" 
+                                                        CornerRadius="6" 
+                                                        Clicked="OnPdfAssemblerRotateClicked" 
+                                                        CommandParameter="{Binding .}" />
+                                                <Button Text="📑" 
+                                                        FontSize="12" 
+                                                        BackgroundColor="#333333" 
+                                                        TextColor="#2ECC71" 
+                                                        WidthRequest="34" 
+                                                        HeightRequest="36" 
+                                                        Padding="0" 
+                                                        CornerRadius="6" 
+                                                        Clicked="OnPdfAssemblerDuplicatePageClicked" 
+                                                        CommandParameter="{Binding .}" />
+                                                <Button Text="🗑️" 
+                                                        FontSize="12" 
+                                                        BackgroundColor="#333333" 
+                                                        TextColor="#E74C3C" 
+                                                        WidthRequest="34" 
+                                                        HeightRequest="36" 
+                                                        Padding="0" 
+                                                        CornerRadius="6" 
+                                                        Clicked="OnPdfAssemblerDeletePageClicked" 
+                                                        CommandParameter="{Binding .}" />
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <!-- Mode Édition Partition Existante -->
+                        <VerticalStackLayout x:Name="PdfAssemblerEditButtonsSection" Spacing="8" Margin="0,6,0,0" IsVisible="False">
+                            <Button x:Name="PdfAssemblerOverwriteButton"
+                                    Text="💾 Enregistrer et remplacer la partition existante"
+                                    BackgroundColor="#2ECC71"
+                                    TextColor="White"
+                                    FontAttributes="Bold"
+                                    HeightRequest="46"
+                                    CornerRadius="8"
+                                    Clicked="OnPdfAssemblerSaveOverwriteClicked" />
+
+                            <Grid ColumnDefinitions="*, *" ColumnSpacing="8">
+                                <Button Grid.Column="0"
+                                        x:Name="PdfAssemblerSaveNewButton"
+                                        Text="📑 Enregistrer comme nouvelle copie"
+                                        BackgroundColor="#007ACC"
+                                        TextColor="White"
+                                        FontAttributes="Bold"
+                                        HeightRequest="42"
+                                        CornerRadius="8"
+                                        Clicked="OnPdfAssemblerSaveNewClicked" />
+
+                                <Button Grid.Column="1"
+                                        Text="❌ Annuler"
+                                        BackgroundColor="#333333"
+                                        TextColor="#AAAAAA"
+                                        HeightRequest="42"
+                                        CornerRadius="8"
+                                        Clicked="OnPdfAssemblerCancelClicked" />
+                            </Grid>
+                        </VerticalStackLayout>
+
+                        <!-- Mode Création Depuis Zéro -->
+                        <VerticalStackLayout x:Name="PdfAssemblerCreateButtonsSection" Spacing="8" Margin="0,6,0,0" IsVisible="True">
+                            <Button x:Name="PdfAssemblerGenerateButton"
+                                    Text="✅ Générer la partition PDF et l'ajouter"
+                                    BackgroundColor="#2ECC71"
+                                    TextColor="White"
+                                    FontAttributes="Bold"
+                                    HeightRequest="46"
+                                    CornerRadius="8"
+                                    Clicked="OnPdfAssemblerGenerateClicked" />
+
+                            <Button Text="❌ Annuler"
+                                    BackgroundColor="#333333"
+                                    TextColor="#AAAAAA"
+                                    HeightRequest="40"
+                                    CornerRadius="8"
+                                    Clicked="OnPdfAssemblerCancelClicked" />
+                        </VerticalStackLayout>
+
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <!-- Overlay : Sélection d'une partition existante pour modification d'assemblage -->
+            <Grid x:Name="ScorePickerOverlay"
+                  BackgroundColor="#B3000000"
+                  IsVisible="False"
+                  Padding="16"
+                  HorizontalOptions="Fill"
+                  VerticalOptions="Fill">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnScorePickerCloseClicked" />
+                </Grid.GestureRecognizers>
+
+                <Border BackgroundColor="#1E1E1E"
+                        Stroke="#444444"
+                        StrokeThickness="1"
+                        WidthRequest="500"
+                        MaximumWidthRequest="550"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        Padding="20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16" />
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,6" Radius="20" Opacity="0.8" />
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer />
+                    </Border.GestureRecognizers>
+
+                    <VerticalStackLayout Spacing="14">
+                        <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
+                            <Label Grid.Column="0" Text="📖" FontSize="20" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="Choisir une partition à modifier" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Button Grid.Column="2" Text="✕" FontSize="14" TextColor="#888888" BackgroundColor="Transparent" WidthRequest="32" HeightRequest="32" Padding="0" Clicked="OnScorePickerCloseClicked" />
+                        </Grid>
+
+                        <SearchBar x:Name="ScorePickerSearchBar"
+                                   Placeholder="Rechercher une partition (titre, compositeur)..."
+                                   PlaceholderColor="#666666"
+                                   TextColor="White"
+                                   BackgroundColor="#2A2A2A"
+                                   HeightRequest="42"
+                                   TextChanged="OnScorePickerSearchTextChanged" />
+
+                        <CollectionView x:Name="ScorePickerCollectionView"
+                                        HeightRequest="320"
+                                        SelectionMode="None">
+                            <CollectionView.ItemsLayout>
+                                <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="8" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:Score">
+                                    <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#262626" Padding="12,10">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+                                        <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
+                                            <Label Grid.Column="0" Text="🎵" FontSize="18" VerticalOptions="Center" />
+                                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                                <Label Text="{Binding Title}" TextColor="White" FontAttributes="Bold" FontSize="14" LineBreakMode="TailTruncation" />
+                                                <Label Text="{Binding DisplaySubtitle}" TextColor="#888888" FontSize="11" LineBreakMode="TailTruncation" />
+                                            </VerticalStackLayout>
+                                            <Button Grid.Column="2" 
+                                                    Text="Sélectionner" 
+                                                    BackgroundColor="#007ACC" 
+                                                    TextColor="White" 
+                                                    FontSize="12" 
+                                                    FontAttributes="Bold"
+                                                    HeightRequest="34" 
+                                                    CornerRadius="6" 
+                                                    Clicked="OnScorePickerScoreSelected" 
+                                                    CommandParameter="{Binding .}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            <CollectionView.EmptyView>
+                                <Label Text="Aucune partition trouvée." TextColor="#666666" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,30" />
+                            </CollectionView.EmptyView>
+                        </CollectionView>
+
+                        <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
+                            <Button Grid.Column="0"
+                                    Text="📁 Parcourir un fichier PDF externe..."
+                                    BackgroundColor="#333333"
+                                    TextColor="#64B5F6"
+                                    FontSize="12"
+                                    HeightRequest="40"
+                                    CornerRadius="8"
+                                    Clicked="OnScorePickerBrowseFileClicked" />
+
+                            <Button Grid.Column="1"
+                                    Text="Annuler"
+                                    BackgroundColor="#2A2A2A"
+                                    TextColor="#AAAAAA"
+                                    FontSize="12"
+                                    HeightRequest="40"
+                                    CornerRadius="8"
+                                    Clicked="OnScorePickerCloseClicked" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Overlay : Visualisation / Zoom plein écran d'une page -->
+            <Grid x:Name="PagePreviewOverlay"
+                  BackgroundColor="#CC000000"
+                  IsVisible="False"
+                  Padding="20"
+                  HorizontalOptions="Fill"
+                  VerticalOptions="Fill">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnPreviewCloseClicked" />
+                </Grid.GestureRecognizers>
+
+                <Border BackgroundColor="#1E1E1E"
+                        Stroke="#444444"
+                        StrokeThickness="1"
+                        WidthRequest="600"
+                        MaximumWidthRequest="700"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16" />
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,8" Radius="25" Opacity="0.8" />
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer />
+                    </Border.GestureRecognizers>
+
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
+                            <Label Grid.Column="0" Text="🔍" FontSize="20" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label x:Name="PagePreviewTitleLabel" Text="Aperçu Page" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label x:Name="PagePreviewInfoLabel" Text="Détails" TextColor="#888888" FontSize="11" />
+                            </VerticalStackLayout>
+                            <Button Grid.Column="2" Text="✕" FontSize="14" TextColor="#888888" BackgroundColor="Transparent" WidthRequest="32" HeightRequest="32" Padding="0" Clicked="OnPreviewCloseClicked" />
+                        </Grid>
+
+                        <Border BackgroundColor="#141414" Stroke="#333333" StrokeThickness="1" HeightRequest="420">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Image x:Name="PagePreviewImage" Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+
+                        <Grid ColumnDefinitions="*, Auto, *" ColumnSpacing="8">
+                            <Button Grid.Column="0"
+                                    x:Name="PreviewPrevButton"
+                                    Text="◀ Précédente"
+                                    BackgroundColor="#2A2A2A"
+                                    TextColor="White"
+                                    FontSize="12"
+                                    HeightRequest="38"
+                                    CornerRadius="8"
+                                    Clicked="OnPreviewPrevPageClicked" />
+
+                            <Button Grid.Column="1"
+                                    Text="⟳ Pivoter (+90°)"
+                                    BackgroundColor="#007ACC"
+                                    TextColor="White"
+                                    FontSize="12"
+                                    FontAttributes="Bold"
+                                    HeightRequest="38"
+                                    Padding="12,0"
+                                    CornerRadius="8"
+                                    Clicked="OnPreviewRotatePageClicked" />
+
+                            <Button Grid.Column="2"
+                                    x:Name="PreviewNextButton"
+                                    Text="Suivante ▶"
+                                    BackgroundColor="#2A2A2A"
+                                    TextColor="White"
+                                    FontSize="12"
+                                    HeightRequest="38"
+                                    CornerRadius="8"
+                                    Clicked="OnPreviewNextPageClicked" />
+                        </Grid>
+
+                        <Button Text="Fermer"
+                                BackgroundColor="#333333"
+                                TextColor="#AAAAAA"
+                                FontSize="12"
+                                HeightRequest="36"
+                                CornerRadius="8"
+                                Clicked="OnPreviewCloseClicked" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Overlay : Indicateur de chargement / extraction PDF -->
+            <Grid x:Name="PdfLoadingOverlay"
+                  BackgroundColor="#B3000000"
+                  IsVisible="False"
+                  HorizontalOptions="Fill"
+                  VerticalOptions="Fill">
+                <Border BackgroundColor="#1E1E1E"
+                        Stroke="#444444"
+                        StrokeThickness="1"
+                        Padding="24"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="14" HorizontalOptions="Center">
+                        <ActivityIndicator IsRunning="True" Color="#007ACC" WidthRequest="44" HeightRequest="44" />
+                        <Label x:Name="PdfLoadingLabel" Text="⏳ Extraction des pages de la partition..." TextColor="White" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</ContentPage>

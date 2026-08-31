@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MusicScoreManager.DuplicatesPage"
+             BackgroundColor="#121212"
+             Title="Gestion des doublons">
+
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header personnalisé avec bouton Retour -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
+            <Button Grid.Column="0" 
+                    Text="← Retour" 
+                    BackgroundColor="Transparent" 
+                    TextColor="#007ACC" 
+                    FontAttributes="Bold"
+                    Clicked="OnBackClicked" />
+            <Label Grid.Column="1" 
+                   Text="Gestion des doublons" 
+                   TextColor="White" 
+                   FontSize="18" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center"
+                   Margin="0,0,80,0" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="16" Margin="16">
+                <Label Text="Détection des partitions en doublon" 
+                       TextColor="White" 
+                       FontSize="16"
+                       FontAttributes="Bold" />
+                <Label Text="Scannez votre bibliothèque pour identifier les fichiers de partitions identiques (analyse par empreinte numérique exacte SHA-256) et supprimez les copies inutiles en vérifiant leur présence dans vos setlists." 
+                       TextColor="#AAAAAA" 
+                       FontSize="13" />
+
+                <Button Text="🔍 Analyser les doublons"
+                        BackgroundColor="#E67E22"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="15"
+                        HeightRequest="48"
+                        CornerRadius="8"
+                        Clicked="OnAnalyzeDuplicatesClicked" />
+
+                <!-- Barre de progression pendant l'analyse -->
+                <VerticalStackLayout x:Name="DuplicatesProgressSection" Spacing="8" IsVisible="False" Margin="0,5">
+                    <Label x:Name="DuplicatesProgressLabel" Text="Analyse en cours... (0/0)" TextColor="#007ACC" FontSize="13" HorizontalOptions="Center" />
+                    <ProgressBar x:Name="DuplicatesProgressBar" Progress="0" ProgressColor="#E67E22" HeightRequest="6" />
+                </VerticalStackLayout>
+
+                <!-- Résultat de l'analyse -->
+                <Label x:Name="DuplicatesResultSummaryLabel" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" IsVisible="False" />
+
+                <!-- Conteneur des groupes de doublons -->
+                <VerticalStackLayout x:Name="DuplicatesListContainer" Spacing="14" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -1022,6 +1022,7 @@ public partial class ViewerPage : ContentPage
     private void ShowMenu()
     {
         MenuTitleLabel.Text = _score.Title;
+        MenuModifyAssemblyButton.IsVisible = (_score.Type == ScoreType.PDF);
         UpdateRotateButtonText();
         CentralMenuOverlay.IsVisible = true;
         ImageContainer.InputTransparent = true; // Empêche l'image de bloquer les clics sur le menu !
@@ -1127,6 +1128,24 @@ public partial class ViewerPage : ContentPage
     private async void OnBackClicked(object sender, EventArgs e)
     {
         await Navigation.PopAsync();
+    }
+
+    private async void OnMenuModifyAssemblyClicked(object sender, EventArgs e)
+    {
+        CentralMenuOverlay.IsVisible = false;
+        ImageContainer.InputTransparent = false;
+        ZoomLayout.InputTransparent = false;
+        BottomTouchBar.IsVisible = !AnnotationBar.IsVisible;
+
+        var score = _score;
+        await Navigation.PopToRootAsync();
+        await Shell.Current.GoToAsync("//ToolsPage");
+        var toolsPage = Shell.Current.CurrentPage as ToolsPage 
+            ?? Handler?.MauiContext?.Services.GetService<ToolsPage>();
+        if (toolsPage != null)
+        {
+            await toolsPage.OpenScoreInAssemblerAsync(score);
+        }
     }
 
     private async void OnEditScoreClicked(object sender, EventArgs e)

@@ -936,6 +936,7 @@ public partial class ScoresPage : ContentPage
             string comp = !string.IsNullOrWhiteSpace(score.Composer) ? score.Composer : "Compositeur non renseigné";
             string date = score.DateAdded != default ? score.DateAdded.ToString("dd/MM/yyyy") : "";
             ScoreMenuSubtitleLabel.Text = $"{comp} • {date}";
+            ScoreMenuModifyAssemblyButton.IsVisible = (score.Type == ScoreType.PDF && !score.IsFileMissing);
             ScoreMenuOverlay.IsVisible = true;
         }
     }
@@ -951,6 +952,24 @@ public partial class ScoresPage : ContentPage
                 return;
             }
             await Navigation.PushAsync(new ViewerPage(_selectedScoreForMenu));
+        }
+    }
+
+    private async void OnMenuModifyAssemblyClicked(object sender, EventArgs e)
+    {
+        ScoreMenuOverlay.IsVisible = false;
+        if (_selectedScoreForMenu != null)
+        {
+            var score = _selectedScoreForMenu;
+            _selectedScoreForMenu = null;
+
+            await Shell.Current.GoToAsync("//ToolsPage");
+            var toolsPage = Shell.Current.CurrentPage as ToolsPage 
+                ?? Handler?.MauiContext?.Services.GetService<ToolsPage>();
+            if (toolsPage != null)
+            {
+                await toolsPage.OpenScoreInAssemblerAsync(score);
+            }
         }
     }
 

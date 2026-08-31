@@ -546,7 +546,7 @@ public class LocalizationService : INotifyPropertyChanged
                 ["About_Description"] = "Aplicación profesional para la gestión, anotación y visualización de partituras musicales para músicos en ensayos y conciertos.",
                 ["About_Version"] = "Versión",
                 ["About_License"] = "Licencia & Derechos de autor",
-                ["About_AppLicense"] = "Music Score Manager se publica bajo la Licencia MIT. Copyright © 2026 Audiothor.",
+                ["About_AppLicense"] = "Music Score Manager se publica bajo la Licencia Pública General de GNU v3.0 (GPLv3). Copyright © 2026 Audiothor.",
                 ["About_Frameworks"] = "Frameworks y bibliotecas de terceros",
                 ["About_GitHub"] = "Proyecto de código abierto en GitHub",
                 ["Common_Back"] = "← Volver",

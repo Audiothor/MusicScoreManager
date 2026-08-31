@@ -59,7 +59,7 @@
                     <VerticalStackLayout Spacing="6">
                         <Label Text="GNU General Public License v3.0 (GPLv3)" TextColor="White" FontAttributes="Bold" FontSize="14" />
                         <Label Text="Copyright © 2026 Audiothor" TextColor="#888888" FontSize="12" />
-                        <Label Text="L'autorisation est accordée, à toute personne obtenant une copie de ce logiciel, d'utiliser, copier, modifier, fusionner, publier, distribuer et sous-licencier le logiciel sans restriction." 
+                        <Label Text="Ce programme est un logiciel libre : vous pouvez le redistribuer et/ou le modifier selon les termes de la Licence Publique Générale GNU (GPLv3) publiée par la Free Software Foundation." 
                                TextColor="#AAAAAA" FontSize="12" LineBreakMode="WordWrap" Margin="0,5,0,0" />
                     </VerticalStackLayout>
                 </Border>

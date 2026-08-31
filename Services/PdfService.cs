@@ -5,6 +5,23 @@ using System.Text.RegularExpressions;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
+using Path = System.IO.Path;
+#if ANDROID
+using Android.Graphics;
+using Android.Graphics.Pdf;
+using Android.OS;
+#endif
+#if WINDOWS
+using Windows.Data.Pdf;
+using Windows.Storage;
+using Windows.Storage.Streams;
+#endif
+#if IOS || MACCATALYST
+using Foundation;
+using UIKit;
+using PdfKit;
+using CoreGraphics;
+#endif
 
 namespace MusicScoreManager.Services
 {
@@ -121,6 +138,181 @@ namespace MusicScoreManager.Services
             return await Task.Run(() =>
             {
                 return BuildPdfFromItemsInternal(items, outputPdfPath);
+            });
+        }
+
+        /// <summary>
+        /// Extrait les pages d'un document PDF existant sous forme d'images haute netteté pour réassemblage.
+        /// </summary>
+        public async Task<List<PdfPageItem>> ExtractPdfPagesAsync(string pdfPath, string cacheDir)
+        {
+            return await Task.Run(() =>
+            {
+                var list = new List<PdfPageItem>();
+                if (string.IsNullOrWhiteSpace(pdfPath) || !File.Exists(pdfPath)) return list;
+
+                if (!Directory.Exists(cacheDir))
+                {
+                    Directory.CreateDirectory(cacheDir);
+                }
+
+#if ANDROID
+                try
+                {
+                    var file = new Java.IO.File(pdfPath);
+                    using var fileDescriptor = ParcelFileDescriptor.Open(file, ParcelFileMode.ReadOnly);
+                    if (fileDescriptor != null)
+                    {
+                        using var renderer = new PdfRenderer(fileDescriptor);
+                        int pageCount = renderer.PageCount;
+
+                        for (int i = 0; i < pageCount; i++)
+                        {
+                            using var page = renderer.OpenPage(i);
+                            float scale = 2.0f; // 144 DPI pour un rendu haute netteté
+                            int renderWidth = Math.Max(1, (int)(page.Width * scale));
+                            int renderHeight = Math.Max(1, (int)(page.Height * scale));
+
+                            using var bitmap = Bitmap.CreateBitmap(renderWidth, renderHeight, Bitmap.Config.Argb8888!);
+                            bitmap.EraseColor(Android.Graphics.Color.White);
+
+                            page.Render(bitmap, null, null, PdfRenderMode.ForDisplay);
+
+                            string pageImagePath = Path.Combine(cacheDir, $"pdf_extracted_{Guid.NewGuid()}_{i + 1}.jpg");
+                            using (var stream = File.Create(pageImagePath))
+                            {
+                                bitmap.Compress(Bitmap.CompressFormat.Jpeg!, 90, stream);
+                            }
+
+                            list.Add(new PdfPageItem
+                            {
+                                ImagePath = pageImagePath,
+                                DisplayName = $"Page {i + 1}",
+                                ThumbnailSource = ImageSource.FromFile(pageImagePath),
+                                PageNumber = i + 1,
+                                Rotation = 0
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[PdfService] Android ExtractPdfPagesAsync error: {ex.Message}");
+                }
+#endif
+#if WINDOWS
+                try
+                {
+                    var storageFile = StorageFile.GetFileFromPathAsync(pdfPath).AsTask().GetAwaiter().GetResult();
+                    var pdfDoc = PdfDocument.LoadFromFileAsync(storageFile).AsTask().GetAwaiter().GetResult();
+                    uint pageCount = pdfDoc.PageCount;
+
+                    for (uint i = 0; i < pageCount; i++)
+                    {
+                        using var page = pdfDoc.GetPage(i);
+                        string pageImagePath = Path.Combine(cacheDir, $"pdf_extracted_{Guid.NewGuid()}_{i + 1}.jpg");
+
+                        using var memStream = new InMemoryRandomAccessStream();
+                        var renderOptions = new PdfPageRenderOptions
+                        {
+                            DestinationWidth = (uint)Math.Max(1, (int)(page.Size.Width * 2)),
+                            DestinationHeight = (uint)Math.Max(1, (int)(page.Size.Height * 2))
+                        };
+
+                        page.RenderToStreamAsync(memStream, renderOptions).AsTask().GetAwaiter().GetResult();
+
+                        using var readStream = memStream.AsStreamForRead();
+                        using var fileStream = File.Create(pageImagePath);
+                        readStream.CopyTo(fileStream);
+
+                        list.Add(new PdfPageItem
+                        {
+                            ImagePath = pageImagePath,
+                            DisplayName = $"Page {i + 1}",
+                            ThumbnailSource = ImageSource.FromFile(pageImagePath),
+                            PageNumber = (int)(i + 1),
+                            Rotation = 0
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[PdfService] Windows ExtractPdfPagesAsync error: {ex.Message}");
+                }
+#endif
+#if IOS || MACCATALYST
+                try
+                {
+                    using var url = Foundation.NSUrl.FromFilename(pdfPath);
+                    using var pdfDoc = new PdfKit.PdfDocument(url);
+                    if (pdfDoc != null)
+                    {
+                        nint pageCount = pdfDoc.PageCount;
+                        for (nint i = 0; i < pageCount; i++)
+                        {
+                            using var page = pdfDoc.GetPage(i);
+                            if (page != null)
+                            {
+                                var rect = page.GetBoundsForBox(PdfKit.PdfDisplayBox.Media);
+                                var size = new CoreGraphics.CGSize(rect.Width * 2, rect.Height * 2);
+                                using var img = page.GetThumbnail(size, PdfKit.PdfDisplayBox.Media);
+                                if (img != null)
+                                {
+                                    string pageImagePath = Path.Combine(cacheDir, $"pdf_extracted_{Guid.NewGuid()}_{i + 1}.jpg");
+                                    using var jpegData = img.AsJPEG(0.9f);
+                                    if (jpegData != null)
+                                    {
+                                        jpegData.Save(pageImagePath, true);
+                                        list.Add(new PdfPageItem
+                                        {
+                                            ImagePath = pageImagePath,
+                                            DisplayName = $"Page {i + 1}",
+                                            ThumbnailSource = ImageSource.FromFile(pageImagePath),
+                                            PageNumber = (int)(i + 1),
+                                            Rotation = 0
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[PdfService] iOS ExtractPdfPagesAsync error: {ex.Message}");
+                }
+#endif
+                return list;
+            });
+        }
+
+        /// <summary>
+        /// Génère une image de page blanche (format standard A4) pour insertion dans une partition.
+        /// </summary>
+        public async Task<PdfPageItem> CreateBlankPageItemAsync(string cacheDir, int pageNumber, int width = 1240, int height = 1754)
+        {
+            return await Task.Run(() =>
+            {
+                if (!Directory.Exists(cacheDir))
+                {
+                    Directory.CreateDirectory(cacheDir);
+                }
+
+                string pageImagePath = Path.Combine(cacheDir, $"pdf_blank_{Guid.NewGuid()}_{pageNumber}.jpg");
+                using (var blank = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgb24>(width, height))
+                {
+                    blank.Mutate(ctx => ctx.BackgroundColor(SixLabors.ImageSharp.Color.White));
+                    blank.SaveAsJpeg(pageImagePath, new JpegEncoder { Quality = 90 });
+                }
+
+                return new PdfPageItem
+                {
+                    ImagePath = pageImagePath,
+                    DisplayName = $"Page Blanche {pageNumber}",
+                    ThumbnailSource = ImageSource.FromFile(pageImagePath),
+                    PageNumber = pageNumber,
+                    Rotation = 0
+                };
             });
         }
 
