@@ -702,6 +702,12 @@
                             </Border>
                             <Label x:Name="QrGroupInfoLabel" Text="En attente de musiciens..." TextColor="#2ECC71" FontSize="12" FontAttributes="Bold" HorizontalOptions="Center" />
                             <Label x:Name="QrGroupUrlLabel" Text="http://..." TextColor="#888888" FontSize="11" HorizontalOptions="Center" />
+                            <Label Text="💡 Les tablettes doivent être sur le même Wi-Fi ou connectées au point d'accès de cette tablette" 
+                                   TextColor="#AAAAAA" 
+                                   FontSize="11" 
+                                   HorizontalOptions="Center" 
+                                   HorizontalTextAlignment="Center" 
+                                   Margin="10,0" />
                             <Button Text="Fermer le partage de groupe"
                                     BackgroundColor="#CC2929"
                                     TextColor="White"

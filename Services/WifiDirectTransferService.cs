@@ -27,7 +27,6 @@ namespace MusicScoreManager.Services
         private UdpClient? _udpDiscoveryClient;
         private UdpClient? _udpBeaconListener;
         private TcpListener? _tcpDataListener;
-        private HttpListener? _httpGroupServer;
         private CancellationTokenSource? _scanCts;
         private CancellationTokenSource? _listenCts;
         private CancellationTokenSource? _groupBroadcastCts;
@@ -395,6 +394,8 @@ namespace MusicScoreManager.Services
             }
         }
 
+        private TcpListener? _groupTcpServer;
+
         public Task<WifiGroupShareInfo?> StartGroupBroadcastAsync(List<WifiFilePayload> files, string title, Action<int>? onClientCountChanged = null)
         {
             StopGroupBroadcastAsync();
@@ -406,11 +407,11 @@ namespace MusicScoreManager.Services
             _groupClientsServed = 0;
 
             // Création d'une archive zip / paquet binaire en mémoire
-            using var ms = new MemoryStream();
+            var ms = new MemoryStream();
             using (var bw = new BinaryWriter(ms, Encoding.UTF8, leaveOpen: true))
             {
                 bw.Write(HeaderMagic);
-                bw.Write(DeviceInfo.Name ?? "Leader");
+                bw.Write(DeviceInfo.Name ?? "Tablette Émettrice");
                 bw.Write(files.Count);
                 long totalBytes = files.Sum(f => (long)f.Data.Length);
                 bw.Write(totalBytes);
@@ -429,32 +430,52 @@ namespace MusicScoreManager.Services
 
             try
             {
-                _httpGroupServer = new HttpListener();
-                _httpGroupServer.Prefixes.Add($"http://*:{port}/msm_package/");
-                _httpGroupServer.Start();
+                _groupTcpServer = new TcpListener(IPAddress.Any, port);
+                _groupTcpServer.Start();
+
+                var token = _groupBroadcastCts.Token;
 
                 _ = Task.Run(async () =>
                 {
-                    while (!_groupBroadcastCts.Token.IsCancellationRequested)
+                    while (!token.IsCancellationRequested && _groupTcpServer != null)
                     {
                         try
                         {
-                            var ctx = await _httpGroupServer.GetContextAsync();
+                            var client = await _groupTcpServer.AcceptTcpClientAsync(token);
                             _ = Task.Run(async () =>
                             {
-                                try
+                                using (client)
                                 {
-                                    ctx.Response.ContentType = "application/octet-stream";
-                                    ctx.Response.ContentLength64 = _groupBroadcastData.Length;
-                                    await ctx.Response.OutputStream.WriteAsync(_groupBroadcastData);
-                                    ctx.Response.OutputStream.Close();
+                                    try
+                                    {
+                                        var stream = client.GetStream();
+                                        using var reader = new StreamReader(stream, Encoding.ASCII, leaveOpen: true);
+                                        
+                                        // Lire la requête HTTP GET
+                                        string? requestLine = await reader.ReadLineAsync();
+                                        if (string.IsNullOrEmpty(requestLine)) return;
 
-                                    Interlocked.Increment(ref _groupClientsServed);
-                                    MainThread.BeginInvokeOnMainThread(() => onClientCountChanged?.Invoke(_groupClientsServed));
+                                        // Consommer les en-têtes HTTP restants
+                                        string? header;
+                                        while (!string.IsNullOrEmpty(header = await reader.ReadLineAsync())) { }
+
+                                        if (_groupBroadcastData != null)
+                                        {
+                                            string httpHeader = $"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {_groupBroadcastData.Length}\r\nConnection: close\r\nAccess-Control-Allow-Origin: *\r\n\r\n";
+                                            byte[] headerBytes = Encoding.ASCII.GetBytes(httpHeader);
+                                            await stream.WriteAsync(headerBytes, 0, headerBytes.Length, token);
+                                            await stream.WriteAsync(_groupBroadcastData, 0, _groupBroadcastData.Length, token);
+                                            await stream.FlushAsync(token);
+
+                                            Interlocked.Increment(ref _groupClientsServed);
+                                            MainThread.BeginInvokeOnMainThread(() => onClientCountChanged?.Invoke(_groupClientsServed));
+                                        }
+                                    }
+                                    catch { }
                                 }
-                                catch { }
                             });
                         }
+                        catch (OperationCanceledException) { break; }
                         catch { break; }
                     }
                 });
@@ -483,13 +504,12 @@ namespace MusicScoreManager.Services
             try
             {
                 _groupBroadcastCts?.Cancel();
-                _httpGroupServer?.Stop();
-                _httpGroupServer?.Close();
+                _groupTcpServer?.Stop();
             }
             catch { }
             finally
             {
-                _httpGroupServer = null;
+                _groupTcpServer = null;
                 _groupBroadcastCts = null;
                 _groupBroadcastData = null;
             }
@@ -586,6 +606,41 @@ namespace MusicScoreManager.Services
         {
             try
             {
+                var interfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+                
+                // 1. Chercher d'abord sur les interfaces Wi-Fi / Hotspot / P2P
+                foreach (var iface in interfaces.Where(i => i.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up))
+                {
+                    string name = iface.Name.ToLowerInvariant();
+                    string desc = iface.Description.ToLowerInvariant();
+                    if (name.Contains("wlan") || name.Contains("ap") || name.Contains("p2p") || name.Contains("wi-fi") || 
+                        desc.Contains("wlan") || desc.Contains("wireless") || desc.Contains("wi-fi"))
+                    {
+                        var props = iface.GetIPProperties();
+                        foreach (var addr in props.UnicastAddresses)
+                        {
+                            if (addr.Address.AddressFamily == AddressFamily.InterNetwork && !IPAddress.IsLoopback(addr.Address))
+                            {
+                                return addr.Address.ToString();
+                            }
+                        }
+                    }
+                }
+
+                // 2. Chercher sur toute autre interface active non-loopback
+                foreach (var iface in interfaces.Where(i => i.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up))
+                {
+                    var props = iface.GetIPProperties();
+                    foreach (var addr in props.UnicastAddresses)
+                    {
+                        if (addr.Address.AddressFamily == AddressFamily.InterNetwork && !IPAddress.IsLoopback(addr.Address))
+                        {
+                            return addr.Address.ToString();
+                        }
+                    }
+                }
+
+                // 3. Repli DNS
                 var host = Dns.GetHostEntry(Dns.GetHostName());
                 foreach (var ip in host.AddressList)
                 {
@@ -603,8 +658,20 @@ namespace MusicScoreManager.Services
         {
             try
             {
+                if (IPAddress.IsLoopback(address)) return true;
+
+                var interfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+                foreach (var iface in interfaces)
+                {
+                    var props = iface.GetIPProperties();
+                    foreach (var addr in props.UnicastAddresses)
+                    {
+                        if (addr.Address.Equals(address)) return true;
+                    }
+                }
+
                 var host = Dns.GetHostEntry(Dns.GetHostName());
-                return host.AddressList.Contains(address) || IPAddress.IsLoopback(address);
+                return host.AddressList.Contains(address);
             }
             catch
             {
