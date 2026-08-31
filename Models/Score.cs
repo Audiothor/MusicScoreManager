@@ -48,6 +48,36 @@ namespace MusicScoreManager.Models
         [Ignore]
         public bool IsExternal { get; set; }
 
+        private string _displaySubtitle = string.Empty;
+        [Ignore]
+        public string DisplaySubtitle
+        {
+            get => _displaySubtitle;
+            set
+            {
+                if (_displaySubtitle != value)
+                {
+                    _displaySubtitle = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string GetSubtitle(string displayOption)
+        {
+            string dateStr = DateAdded != default ? DateAdded.ToString("dd/MM/yyyy") : "";
+            string composerStr = !string.IsNullOrWhiteSpace(Composer) ? Composer.Trim() : "";
+
+            return displayOption switch
+            {
+                "Composer" => !string.IsNullOrEmpty(composerStr) ? composerStr : "Compositeur non renseigné",
+                "ComposerAndDate" => !string.IsNullOrEmpty(composerStr) 
+                    ? $"{composerStr} • {dateStr}" 
+                    : dateStr,
+                _ => dateStr // "DateAdded"
+            };
+        }
+
         private bool _isSelected;
         [Ignore]
         public bool IsSelected

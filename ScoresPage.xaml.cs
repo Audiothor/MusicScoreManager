@@ -91,8 +91,10 @@ public partial class ScoresPage : ContentPage
                 var scores = await _databaseService.SearchScoresAsync(query, _selectedTagIds);
                 scores = SortScores(scores, _currentSort);
 
+                string subtitlePref = Preferences.Default.Get("ScoreSubtitleDisplay", "DateAdded");
                 foreach (var score in scores)
                 {
+                    score.DisplaySubtitle = score.GetSubtitle(subtitlePref);
                     score.PropertyChanged -= OnScorePropertyChanged;
                     score.PropertyChanged += OnScorePropertyChanged;
                 }
@@ -210,8 +212,10 @@ public partial class ScoresPage : ContentPage
         var scores = await _databaseService.SearchScoresAsync(query ?? string.Empty, _selectedTagIds);
         scores = SortScores(scores, _currentSort);
 
+        string subtitlePref = Preferences.Default.Get("ScoreSubtitleDisplay", "DateAdded");
         foreach (var score in scores)
         {
+            score.DisplaySubtitle = score.GetSubtitle(subtitlePref);
             score.PropertyChanged -= OnScorePropertyChanged;
             score.PropertyChanged += OnScorePropertyChanged;
         }
@@ -929,7 +933,24 @@ public partial class ScoresPage : ContentPage
         {
             _selectedScoreForMenu = score;
             ScoreMenuTitleLabel.Text = score.Title;
+            string comp = !string.IsNullOrWhiteSpace(score.Composer) ? score.Composer : "Compositeur non renseigné";
+            string date = score.DateAdded != default ? score.DateAdded.ToString("dd/MM/yyyy") : "";
+            ScoreMenuSubtitleLabel.Text = $"{comp} • {date}";
             ScoreMenuOverlay.IsVisible = true;
+        }
+    }
+
+    private async void OnMenuOpenClicked(object sender, EventArgs e)
+    {
+        ScoreMenuOverlay.IsVisible = false;
+        if (_selectedScoreForMenu != null)
+        {
+            if (_selectedScoreForMenu.IsFileMissing)
+            {
+                await DisplayAlertAsync("Fichier manquant", "Le fichier de cette partition est introuvable. Veuillez vérifier votre répertoire de partitions dans les paramètres.", "OK");
+                return;
+            }
+            await Navigation.PushAsync(new ViewerPage(_selectedScoreForMenu));
         }
     }
 

@@ -1139,6 +1139,24 @@ public partial class ViewerPage : ContentPage
         await Navigation.PushAsync(new ScoreEditPage(_score, _databaseService));
     }
 
+    private async void OnResetZoomClicked(object sender, EventArgs e)
+    {
+        CentralMenuOverlay.IsVisible = false;
+        ImageContainer.InputTransparent = false;
+        ZoomLayout.InputTransparent = false;
+        BottomTouchBar.IsVisible = !AnnotationBar.IsVisible;
+
+        // Réinitialiser le zoom MAUI avec animation fluide
+        _ = ZoomLayout.TranslateTo(0, 0, 250, Easing.CubicOut);
+        await ZoomLayout.ScaleTo(1.0, 250, Easing.CubicOut);
+
+        // Réinitialiser le scroll / zoom du visual viewport WebView
+        if (_score.Type == ScoreType.PDF && PdfWebView.IsVisible)
+        {
+            _ = PdfWebView.EvaluateJavaScriptAsync("if (window.visualViewport) { window.scrollTo(0, 0); }");
+        }
+    }
+
     private void OnCloseMenuClicked(object sender, EventArgs e)
     {
         CentralMenuOverlay.IsVisible = false;

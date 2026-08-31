@@ -20,6 +20,15 @@ public partial class SettingsScoresPage : ContentPage
             _ => 0
         };
 
+        string subtitleMode = Preferences.Default.Get("ScoreSubtitleDisplay", "DateAdded");
+        ScoreSubtitlePicker.SelectedIndex = subtitleMode switch
+        {
+            "DateAdded" => 0,
+            "Composer" => 1,
+            "ComposerAndDate" => 2,
+            _ => 0
+        };
+
         ShowPageNumberSwitch.IsToggled = Preferences.Default.Get("ShowPageNumber", true);
         TwoPagesLandscapeSwitch.IsToggled = Preferences.Default.Get("TwoPagesLandscape", true);
         PageNumberSizeSlider.Value = Preferences.Default.Get("PageNumberSize", 20.0);
@@ -41,6 +50,18 @@ public partial class SettingsScoresPage : ContentPage
             "SwipeDown" => 2,
             _ => 0
         };
+    }
+
+    private void OnScoreSubtitleChanged(object sender, EventArgs e)
+    {
+        string value = ScoreSubtitlePicker.SelectedIndex switch
+        {
+            0 => "DateAdded",
+            1 => "Composer",
+            2 => "ComposerAndDate",
+            _ => "DateAdded"
+        };
+        Preferences.Default.Set("ScoreSubtitleDisplay", value);
     }
 
     private void OnDefaultSortChanged(object sender, EventArgs e)

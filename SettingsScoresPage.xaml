@@ -70,6 +70,35 @@
                    FontSize="18" 
                    FontAttributes="Bold" />
 
+            <!-- Option : Informations sous le titre de la partition -->
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Informations sous le titre de la partition" 
+                       TextColor="White" 
+                       FontSize="16" />
+                <Label Text="Définit les détails affichés sous le titre dans la liste des partitions" 
+                       TextColor="#888888" 
+                       FontSize="12" />
+                <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="10,2">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="8" />
+                    </Border.StrokeShape>
+                    <Picker x:Name="ScoreSubtitlePicker"
+                            TextColor="White"
+                            TitleColor="#888888"
+                            SelectedIndexChanged="OnScoreSubtitleChanged">
+                        <Picker.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Date d'ajout dans l'application</x:String>
+                                <x:String>Compositeur</x:String>
+                                <x:String>Compositeur et date d'ajout</x:String>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+                </Border>
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="1" Color="#333333" />
+
             <!-- Option : Affichage du numéro de page -->
             <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
                 <VerticalStackLayout Grid.Column="0" Spacing="2">

@@ -543,6 +543,15 @@
                             BackgroundColor="#333333" TextColor="White" FontSize="13" CornerRadius="10" HeightRequest="40" Clicked="OnGoToPageClicked" />
                 </Grid>
 
+                <!-- Rétablir la taille d'origine (Zoom Reset) -->
+                <Button Text="🔍 Rétablir la taille d'origine (100%)" 
+                        BackgroundColor="#2C3E50" 
+                        TextColor="White" 
+                        FontSize="13" 
+                        CornerRadius="10" 
+                        HeightRequest="40" 
+                        Clicked="OnResetZoomClicked" />
+
                 <!-- Option de portée de rotation -->
                 <Grid ColumnDefinitions="*, Auto" Margin="5,0">
                     <Label x:Name="RotationScopeLabel" Text="Appliquer à cette page uniquement" TextColor="#AAAAAA" FontSize="12" VerticalOptions="Center" />
