@@ -17,7 +17,7 @@ L'application **Music Score Manager**, développée par **Audiothor**, est conç
 ### 3. Autorisations Requises et Justification
 L'application peut demander les autorisations suivantes uniquement pour son fonctionnement technique :
 - **Stockage / Fichiers & Médias (`READ_EXTERNAL_STORAGE`, `MANAGE_EXTERNAL_STORAGE`)** : Utilisé exclusivement pour vous permettre d'importer, lire et afficher vos partitions (PDF, images) et associer vos fichiers audio locaux.
-- **Bluetooth & Périphériques à proximité (`BLUETOOTH_CONNECT`, `BLUETOOTH_SCAN`, `BLUETOOTH_ADVERTISE`)** : Utilisé exclusivement pour la fonctionnalité optionnelle d'échange et de partage direct de partitions de pair à pair (P2P) entre musiciens à proximité. Aucune donnée n'est transmise via Internet ou à des serveurs tiers.
+- **Wi-Fi Direct & Réseau Local P2P (`NEARBY_WIFI_DEVICES`, `ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`)** : Utilisé exclusivement pour la fonctionnalité d'échange direct de partitions de pair à pair (Wi-Fi Direct P2P) et de diffusion par QR Code entre musiciens à proximité. Aucune donnée n'est transmise via Internet ou à des serveurs tiers.
 - **Audio / Service en avant-plan** : Utilisé exclusivement pour la restitution sonore du métronome et du lecteur audio intégré lors de vos répétitions et concerts.
 
 ### 4. Services Tiers et Publicités
@@ -49,7 +49,7 @@ Pour toute question concernant cette politique de confidentialité ou l'applicat
 ### 3. Device Permissions & Usage
 The application may request the following permissions solely for its core features:
 - **Storage / Files & Media (`READ_EXTERNAL_STORAGE`, `MANAGE_EXTERNAL_STORAGE`)**: Used strictly to allow you to select, open, render, and manage your sheet music files (PDF/Images) and local audio tracks.
-- **Bluetooth & Nearby Devices (`BLUETOOTH_CONNECT`, `BLUETOOTH_SCAN`, `BLUETOOTH_ADVERTISE`)**: Used exclusively for the optional peer-to-peer (P2P) wireless sharing feature between nearby devices running the app. No data is sent over the internet or to any remote servers.
+- **Wi-Fi Direct & Local P2P Network (`NEARBY_WIFI_DEVICES`, `ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`)**: Used exclusively for the optional peer-to-peer (P2P) Wi-Fi Direct and QR Code wireless sharing feature between nearby devices running the app. No data is sent over the internet or to any remote servers.
 - **Audio Playback**: Used exclusively to play local audio accompaniment and metronome click/pre-count audio during practice and live performances.
 
 ### 4. Third-Party Services & Advertising

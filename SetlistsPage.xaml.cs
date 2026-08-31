@@ -166,37 +166,84 @@ public partial class SetlistsPage : ContentPage
         }
     }
 
-    private async void OnSetlistMenuTapped(object sender, EventArgs e)
+    private void OnSetlistMenuTapped(object sender, EventArgs e)
     {
         if (sender is Button button && button.CommandParameter is Setlist setlist)
         {
-            string action = await DisplayActionSheetAsync(setlist.Name, "Annuler", null, 
-                "Éditer", "📤 Envoyer (Bluetooth)", "📦 Exporter (.msmsetlist)", "Renommer", "Supprimer");
+            _selectedSetlistForAction = setlist;
+            SetlistMenuTitleLabel.Text = setlist.Name;
+            string statusStr = setlist.StatusText;
+            string date = setlist.DateCreated != default ? setlist.DateCreated.ToString("dd/MM/yyyy") : "";
+            SetlistMenuSubtitleLabel.Text = $"{statusStr} • Créée le {date}";
+            SetlistMenuOverlay.IsVisible = true;
+        }
+    }
 
-            if (action == "Éditer")
-            {
-                await Navigation.PushAsync(new SetlistEditPage(setlist, _databaseService));
-            }
-            else if (action == "📤 Envoyer (Bluetooth)")
-            {
-                _selectedSetlistForAction = setlist;
-                SetlistOptionsTitle.Text = $"Envoyer '{setlist.Name}'";
-                SetlistOptionsOverlay.IsVisible = true;
-            }
-            else if (action == "📦 Exporter (.msmsetlist)")
-            {
-                _selectedSetlistForAction = setlist;
-                SetlistOptionsTitle.Text = $"Exporter '{setlist.Name}'";
-                SetlistOptionsOverlay.IsVisible = true;
-            }
-            else if (action == "Renommer")
-            {
-                await RenameSetlistAsync(setlist);
-            }
-            else if (action == "Supprimer")
-            {
-                await DeleteSetlistAsync(setlist);
-            }
+    private void OnMenuCancelClicked(object sender, EventArgs e)
+    {
+        SetlistMenuOverlay.IsVisible = false;
+        _selectedSetlistForAction = null;
+    }
+
+    private async void OnMenuOpenSetlistClicked(object sender, EventArgs e)
+    {
+        SetlistMenuOverlay.IsVisible = false;
+        if (_selectedSetlistForAction != null)
+        {
+            await Navigation.PushAsync(new SetlistEditPage(_selectedSetlistForAction, _databaseService));
+        }
+    }
+
+    private async void OnMenuEditSetlistClicked(object sender, EventArgs e)
+    {
+        SetlistMenuOverlay.IsVisible = false;
+        if (_selectedSetlistForAction != null)
+        {
+            await Navigation.PushAsync(new SetlistEditPage(_selectedSetlistForAction, _databaseService));
+        }
+    }
+
+    private void OnMenuSendWifiTriggerClicked(object sender, EventArgs e)
+    {
+        SetlistMenuOverlay.IsVisible = false;
+        if (_selectedSetlistForAction != null)
+        {
+            SetlistOptionsTitle.Text = $"Envoyer '{_selectedSetlistForAction.Name}'";
+            OptSendWifiActionButton.IsVisible = true;
+            OptExportFileActionButton.IsVisible = false;
+            SetlistOptionsOverlay.IsVisible = true;
+        }
+    }
+
+    private void OnMenuExportSetlistTriggerClicked(object sender, EventArgs e)
+    {
+        SetlistMenuOverlay.IsVisible = false;
+        if (_selectedSetlistForAction != null)
+        {
+            SetlistOptionsTitle.Text = $"Exporter '{_selectedSetlistForAction.Name}'";
+            OptSendWifiActionButton.IsVisible = false;
+            OptExportFileActionButton.IsVisible = true;
+            SetlistOptionsOverlay.IsVisible = true;
+        }
+    }
+
+    private async void OnMenuRenameSetlistClicked(object sender, EventArgs e)
+    {
+        SetlistMenuOverlay.IsVisible = false;
+        if (_selectedSetlistForAction != null)
+        {
+            var setlist = _selectedSetlistForAction;
+            await RenameSetlistAsync(setlist);
+        }
+    }
+
+    private async void OnMenuDeleteSetlistClicked(object sender, EventArgs e)
+    {
+        SetlistMenuOverlay.IsVisible = false;
+        if (_selectedSetlistForAction != null)
+        {
+            var setlist = _selectedSetlistForAction;
+            await DeleteSetlistAsync(setlist);
         }
     }
 

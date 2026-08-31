@@ -13,7 +13,7 @@
 ### 🌟 Ergonomie, Métadonnées & Expérience Partition (v1.9.4.0)
 - **Menu Central & Rétablissement du Zoom (100%)** : Ajout d'un bouton « 🔍 Rétablir la taille d'origine (100%) » dans le menu central au double-tap. Détection du double-tap optimisée et fonctionnelle en toutes circonstances (même en plein zoom ou dézoom).
 - **Sous-titres de Partition Configurables** : Nouveau paramètre dans *Paramètres > Partitions* permettant de choisir les informations affichées sous le titre de chaque partition dans la bibliothèque (*Date d'ajout*, *Compositeur*, ou *Compositeur et date d'ajout*).
-- **Popup Moderne & Ergonomique (3 points ⋮)** : Carte sombre moderne avec coins arrondis, ombre portée, en-tête complet (icône 🎵, titre, sous-titre compositeur/date, bouton fermeture ✕) et boutons larges bien espacés évitant les erreurs de manipulation (*Ouvrir la partition*, *Éditer les informations*, *Envoyer en Bluetooth*, *Exporter*, *Renommer*, *Supprimer*).
+- **Popup Moderne & Ergonomique (3 points ⋮)** : Carte sombre moderne avec coins arrondis, ombre portée, en-tête complet (icône 🎵 ou 📋, titre, sous-titre, bouton fermeture ✕) et boutons larges bien espacés évitant les erreurs de manipulation (*Ouvrir*, *Éditer les informations*, *Envoyer en Wi-Fi Direct*, *Exporter*, *Renommer*, *Supprimer*).
 - **Page d'Édition Métadonnées Enrichie** : Nouveaux champs pour *Compositeur*, *Tempo (BPM)*, *Tonalité* (supportant la notation classique *Do, Ré, Mi...* et anglo-saxonne *A, B, C...*), et *Évaluation (étoiles)*. Section *Étiquettes* réordonnée au-dessus du tempo.
 - **Affichage Épuré du Chemin de Fichier** : Affichage précis du dossier parent (`dirname`) entre parenthèses à côté du libellé pour une clarté optimale.
 - **Accordéons Ergonomiques** : Sections *Métronome* et *Fichiers audio* fermées par défaut pour alléger l'interface d'édition.
@@ -109,8 +109,8 @@
 - **Chargement Direct** : Suppression des copies disques lors de l'ouverture d'un PDF pour une transition instantanée entre morceaux.
 - **Indicateur de Statut** : Visualisation en temps réel de l'état du cache (⏳/⚡) dans l'éditeur de setlist.
 
-### 🎵 Gestion des Partitions & Échange Bluetooth (v1.0.5 - v1.8.20)
-- **Échange Bluetooth Unitaire & Groupé (v1.8.20)** : Option "Échanger" disponible directement dans le menu contextuel (3 points) de chaque partition ainsi qu'en mode sélection multiple.
+### 🎵 Gestion des Partitions & Échange Wi-Fi Direct (v1.0.5 - v1.9.5)
+- **Échange Wi-Fi Direct Unitaire & Groupé (v1.9.5)** : Option d'envoi disponible directement dans le menu contextuel (3 points) de chaque partition ainsi qu'en mode sélection multiple.
 - **Stockage Public Configurable** : Définissez vos propres répertoires pour les partitions et les fichiers audio.
 - **Super-Détection & Scan Récursif** : Scan intelligent tolérant et détection automatique des fichiers déjà présents dans l'arborescence racine/sous-dossiers pour éviter la duplication.
 - **Import Hybride** : Choisissez entre "Copier" (interne) ou "Lier" (externe avec icône 🔗 et option de rapatriement rapide).
@@ -137,9 +137,10 @@
 
 ## 📜 Historique Récent des Versions
 
+- **v1.9.5.0** : **"Wi-Fi Direct P2P, QR Group Broadcast & PDF Studio Edition"** — Intégration du transfert sans fil Wi-Fi Direct ultra-rapide (streaming binaire TCP) et de la diffusion simultanée de groupe par QR Code (serveur local HTTP), nouveau popup moderne unifié pour les setlists et partitions avec mise en avant de l'édition d'informations, atelier d'assemblage PDF et migration complète sous licence GNU GPLv3.
 - **v1.9.4.0** : **"Ergonomic UI & Performance Edition"** — Rétablissement du zoom 100% dans le menu central, détection double-tap unifiée même zoomé, sous-titres de partitions personnalisables en paramètres, popup moderne et ergonomique pour les options de partition, nouveaux champs d'édition (compositeur, tempo, tonalité, rating), tri par défaut automatique (récent), et moteur d'ouverture/fermeture PDF ultra-rapide (< 50ms).
 - **v1.9.3.0** : **"Smart Image-to-PDF & Assembler Edition"** — Fusion multi-images automatique en PDF à l'import, atelier créateur et assembleur de pages PDF dans l'onglet Outils, uniformisation de la bibliothèque exclusivement au format PDF standardisé.
-- **v1.9.0.0** : **"Full Setlist & Package Transfer Edition"** — Envoi Bluetooth P2P de setlists complètes avec options d'annotations/audio, export/import d'archives autonomes `.msmsetlist`, `.msmscore`, `.msmscores`.
+- **v1.9.0.0** : **"Full Setlist & Package Transfer Edition"** — Envoi P2P de setlists complètes avec options d'annotations/audio, export/import d'archives autonomes `.msmsetlist`, `.msmscore`, `.msmscores`.
 - **v1.8.31** : **"Harmonized Typography & Sticker Rendering"** — Pastilles stickers centrées, marges anti-rognage et échelle typographique fine.
 - **v1.8.30** : **"Unified Tools & 5-Tabs Layout"** — Intégration des étiquettes dans Outils et barre de navigation épurée à 5 onglets.
 - **v1.8.27** : **"Pencil Drawing & Undo/Redo Engine"** — Outil dessin à main levée, surlignage stabilo biseauté et historique complet Annuler/Rétablir.

@@ -50,7 +50,7 @@
   "Tools_Title": "Herramientas",
   "Tools_Tags_Section": "Etiquetas",
   "Tools_Backup_Section": "Gestión de copias de seguridad",
-  "Tools_Bluetooth_Transfer": "Transferencia Bluetooth (Enviar / Recibir)",
+  "Tools_Wifi_Transfer": "Transferencia Wi-Fi Direct (P2P)",
   "Tools_Backup_Create": "Crear copia inmediata",
   "Tools_Backup_Restore": "Restaurar copia",
   "Tools_Backup_Auto": "Copia automática diaria",

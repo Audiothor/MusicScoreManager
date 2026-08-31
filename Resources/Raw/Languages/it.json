@@ -50,7 +50,7 @@
   "Tools_Title": "Strumenti",
   "Tools_Tags_Section": "Etichette",
   "Tools_Backup_Section": "Gestione backup",
-  "Tools_Bluetooth_Transfer": "Trasferimento Bluetooth (Invia / Ricevi)",
+  "Tools_Wifi_Transfer": "Trasferimento Wi-Fi Direct (P2P)",
   "Tools_Backup_Create": "Crea backup immediato",
   "Tools_Backup_Restore": "Ripristina backup",
   "Tools_Backup_Auto": "Backup automatico giornaliero",

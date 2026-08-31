@@ -50,7 +50,7 @@
   "Tools_Title": "Werkzeuge",
   "Tools_Tags_Section": "Tags",
   "Tools_Backup_Section": "Backup-Verwaltung",
-  "Tools_Bluetooth_Transfer": "Bluetooth-Übertragung (Senden / Empfangen)",
+  "Tools_Wifi_Transfer": "Wi-Fi Direct Übertragung (P2P)",
   "Tools_Backup_Create": "Sofortiges Backup erstellen",
   "Tools_Backup_Restore": "Backup wiederherstellen",
   "Tools_Backup_Auto": "Tägliches automatisches Backup",
