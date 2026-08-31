@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:MusicScoreManager.Models"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.ToolsPage"
              BackgroundColor="#121212"
              Title="Outils">
@@ -104,7 +105,176 @@
                 </VerticalStackLayout>
             </Border>
 
-            <!-- Accordéon 2 : Imports de Setlist ou de Partitions -->
+            <!-- Accordéon 2 : Créateur & Assemblage de partitions PDF -->
+            <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="14">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12">
+                    <!-- En-tête Accordéon Assemblage PDF -->
+                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnTogglePdfAssemblerSectionTapped" />
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="📑" FontSize="18" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Créateur &amp; Assemblage de partitions PDF" TextColor="#007ACC" FontSize="17" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Label Grid.Column="2" x:Name="PdfAssemblerChevronLabel" Text="▶" TextColor="#888888" FontSize="14" VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- Contenu Accordéon Assemblage PDF -->
+                    <VerticalStackLayout x:Name="PdfAssemblerContentSection" Spacing="12" IsVisible="False">
+                        <Label Text="Assembler des photos et images en une partition PDF" 
+                               TextColor="White" 
+                               FontAttributes="Bold" />
+                        <Label Text="Sélectionnez des photos ou scans de vos partitions, réordonnez les pages, ajustez leur orientation et générez un document PDF haute qualité prêt pour votre bibliothèque." 
+                               TextColor="#888888" 
+                               FontSize="12" />
+
+                        <!-- Boutons d'action supérieurs -->
+                        <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="8">
+                            <Button Grid.Column="0"
+                                    x:Name="PdfAssemblerPickButton"
+                                    Text="📸 Choisir des images / photos"
+                                    BackgroundColor="#007ACC"
+                                    TextColor="White"
+                                    FontAttributes="Bold"
+                                    HeightRequest="44"
+                                    CornerRadius="8"
+                                    Clicked="OnPdfAssemblerPickImagesClicked" />
+
+                            <Button Grid.Column="1"
+                                    x:Name="PdfAssemblerAddButton"
+                                    Text="➕ Ajouter"
+                                    BackgroundColor="#2A2A2A"
+                                    TextColor="#007ACC"
+                                    FontAttributes="Bold"
+                                    HeightRequest="44"
+                                    CornerRadius="8"
+                                    IsVisible="False"
+                                    Clicked="OnPdfAssemblerAddImagesClicked" />
+
+                            <Button Grid.Column="2"
+                                    x:Name="PdfAssemblerClearButton"
+                                    Text="🧹 Effacer"
+                                    BackgroundColor="#2A2A2A"
+                                    TextColor="#E74C3C"
+                                    HeightRequest="44"
+                                    CornerRadius="8"
+                                    IsVisible="False"
+                                    Clicked="OnPdfAssemblerClearClicked" />
+                        </Grid>
+
+                        <!-- Formulaire titre (visible quand des pages sont chargées) -->
+                        <VerticalStackLayout x:Name="PdfAssemblerFormSection" Spacing="8" IsVisible="False">
+                            <Label Text="Titre de la nouvelle partition :" TextColor="#AAAAAA" FontSize="12" FontAttributes="Bold" />
+                            <Entry x:Name="PdfAssemblerTitleEntry"
+                                   Placeholder="Ex: Sonate au Clair de Lune"
+                                   PlaceholderColor="#666666"
+                                   TextColor="White"
+                                   BackgroundColor="#2A2A2A"
+                                   HeightRequest="42" />
+
+                            <!-- En-tête de liste des pages -->
+                            <Grid ColumnDefinitions="*, Auto" Margin="0,6,0,0">
+                                <Label Grid.Column="0" x:Name="PdfAssemblerPagesCountLabel" Text="Pages (0) :" TextColor="#AAAAAA" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="▲ / ▼ ordonner  •  ⟳ pivoter" TextColor="#666666" FontSize="11" VerticalOptions="Center" />
+                            </Grid>
+
+                            <!-- Liste des pages -->
+                            <CollectionView x:Name="PdfAssemblerPagesCollectionView" HeightRequest="280" SelectionMode="None">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="8" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="services:PdfPageItem">
+                                        <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#262626" Padding="10">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="8" />
+                                            </Border.StrokeShape>
+                                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
+                                                <!-- Miniature de l'image -->
+                                                <Border Grid.Column="0" WidthRequest="50" HeightRequest="65" BackgroundColor="#1E1E1E" Stroke="#444444" StrokeThickness="1">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="4" />
+                                                    </Border.StrokeShape>
+                                                    <Image Source="{Binding ThumbnailSource}" Aspect="AspectFit" Rotation="{Binding Rotation}" />
+                                                </Border>
+
+                                                <!-- Infos de la page -->
+                                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
+                                                    <Label Text="{Binding PageDisplay}" TextColor="White" FontAttributes="Bold" FontSize="14" />
+                                                    <Label Text="{Binding DisplayName}" TextColor="#888888" FontSize="11" LineBreakMode="TailTruncation" />
+                                                    <Label Text="{Binding RotationDisplay}" TextColor="#007ACC" FontSize="11" FontAttributes="Bold" />
+                                                </VerticalStackLayout>
+
+                                                <!-- Boutons d'action individuels -->
+                                                <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="4">
+                                                    <Button Text="▲" 
+                                                            FontSize="12" 
+                                                            FontAttributes="Bold"
+                                                            BackgroundColor="#333333" 
+                                                            TextColor="White" 
+                                                            WidthRequest="36" 
+                                                            HeightRequest="36" 
+                                                            Padding="0" 
+                                                            CornerRadius="6"
+                                                            Clicked="OnPdfAssemblerMoveUpClicked" 
+                                                            CommandParameter="{Binding .}" />
+                                                    <Button Text="▼" 
+                                                            FontSize="12" 
+                                                            FontAttributes="Bold"
+                                                            BackgroundColor="#333333" 
+                                                            TextColor="White" 
+                                                            WidthRequest="36" 
+                                                            HeightRequest="36" 
+                                                            Padding="0" 
+                                                            CornerRadius="6"
+                                                            Clicked="OnPdfAssemblerMoveDownClicked" 
+                                                            CommandParameter="{Binding .}" />
+                                                    <Button Text="⟳" 
+                                                            FontSize="14" 
+                                                            FontAttributes="Bold"
+                                                            BackgroundColor="#333333" 
+                                                            TextColor="#007ACC" 
+                                                            WidthRequest="36" 
+                                                            HeightRequest="36" 
+                                                            Padding="0" 
+                                                            CornerRadius="6"
+                                                            Clicked="OnPdfAssemblerRotateClicked" 
+                                                            CommandParameter="{Binding .}" />
+                                                    <Button Text="🗑️" 
+                                                            FontSize="12" 
+                                                            BackgroundColor="#333333" 
+                                                            TextColor="#E74C3C" 
+                                                            WidthRequest="36" 
+                                                            HeightRequest="36" 
+                                                            Padding="0" 
+                                                            CornerRadius="6"
+                                                            Clicked="OnPdfAssemblerDeletePageClicked" 
+                                                            CommandParameter="{Binding .}" />
+                                                </HorizontalStackLayout>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+
+                            <!-- Bouton final Générer -->
+                            <Button x:Name="PdfAssemblerGenerateButton"
+                                    Text="✅ Générer la partition PDF et l'ajouter"
+                                    BackgroundColor="#2ECC71"
+                                    TextColor="White"
+                                    FontAttributes="Bold"
+                                    HeightRequest="48"
+                                    CornerRadius="8"
+                                    Margin="0,6,0,0"
+                                    Clicked="OnPdfAssemblerGenerateClicked" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Accordéon 3 : Imports de Setlist ou de Partitions -->
             <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="14">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />

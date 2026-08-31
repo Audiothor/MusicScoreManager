@@ -2,13 +2,28 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.2.10
+# Music Score Manager v1.9.4.0
 
-**Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF et Images) de manière efficace, particulièrement en situation de concert.
+**Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### 🌟 Ergonomie, Métadonnées & Expérience Partition (v1.9.4.0)
+- **Menu Central & Rétablissement du Zoom (100%)** : Ajout d'un bouton « 🔍 Rétablir la taille d'origine (100%) » dans le menu central au double-tap. Détection du double-tap optimisée et fonctionnelle en toutes circonstances (même en plein zoom ou dézoom).
+- **Sous-titres de Partition Configurables** : Nouveau paramètre dans *Paramètres > Partitions* permettant de choisir les informations affichées sous le titre de chaque partition dans la bibliothèque (*Date d'ajout*, *Compositeur*, ou *Compositeur et date d'ajout*).
+- **Popup Moderne & Ergonomique (3 points ⋮)** : Carte sombre moderne avec coins arrondis, ombre portée, en-tête complet (icône 🎵, titre, sous-titre compositeur/date, bouton fermeture ✕) et boutons larges bien espacés évitant les erreurs de manipulation (*Ouvrir la partition*, *Éditer les informations*, *Envoyer en Bluetooth*, *Exporter*, *Renommer*, *Supprimer*).
+- **Page d'Édition Métadonnées Enrichie** : Nouveaux champs pour *Compositeur*, *Tempo (BPM)*, *Tonalité* (supportant la notation classique *Do, Ré, Mi...* et anglo-saxonne *A, B, C...*), et *Évaluation (étoiles)*. Section *Étiquettes* réordonnée au-dessus du tempo.
+- **Affichage Épuré du Chemin de Fichier** : Affichage précis du dossier parent (`dirname`) entre parenthèses à côté du libellé pour une clarté optimale.
+- **Accordéons Ergonomiques** : Sections *Métronome* et *Fichiers audio* fermées par défaut pour alléger l'interface d'édition.
+- **Tri des Partitions par Défaut (Récent)** : Tri automatique des partitions avec les plus récemment ajoutées en premier (`Date d'ajout (Récent)`), entièrement personnalisable dans les paramètres.
+- **Ouverture & Fermeture Ultra-Fluides (< 50ms)** : Double-buffering off-screen canvas éliminant le balayage visuel, fond natif Android noir `#000000` sans flash blanc, et nettoyage asynchrone évitant tout gel UI lors de la fermeture du viewer.
+
+### 📑 Conversion Intelligente d'Images en PDF & Atelier d'Assemblage (v1.9.3.0)
+- **Détection & Fusion Intelligente à l'Import** : Lors de l'import (`+` dans Partitions), si plusieurs photos/images sont sélectionnées, l'application propose automatiquement de les fusionner en 1 seule partition PDF multi-pages (tri naturel des pages) ou de les convertir individuellement.
+- **Conversion Automatique en PDF** : Toute image importée est proprement convertie au format PDF standardisé pour unifier l'expérience de lecture, de zoom et d'annotations.
+- **Atelier Créateur & Assemblage de Pages PDF (Onglet Outils)** : Accordéon dédié permettant de charger des photos/scans, de prévisualiser les miniatures, de réordonner les pages (▲ / ▼), d'ajuster l'orientation par rotation individuelle (⟳ 90°), de supprimer des pages indésirables et de générer la partition PDF directement dans votre bibliothèque.
 
 ### 📦 Envoi & Export Complet de Setlists et Packages (v1.9.0)
 - **Envoi Sans Fil de Setlists Complètes (Bluetooth P2P)** : Transmettez une setlist entière avec son ordonnancement exact et toutes ses partitions rattachées directement d'un appareil à l'autre sans Internet.
@@ -87,14 +102,12 @@
 
 ## 📜 Historique Récent des Versions
 
-- **v1.8.7** : **"Performance & Precision Zoom"** — Version actuelle avec retouches d'optimisation de zoom et retours tactiles.
-- **v1.8.4** : **"Safe Gesture Placement"** — Isolation anti-drop accidentel lors de l'utilisation du sélecteur d'annotations.
-- **v1.8.3** : **"Dynamic Annotation Editing"** — Modification en direct de la taille, couleur de texte et fond des stickers posés.
-- **v1.8.2** : **"Safe Boundaries & Native Execution"** — Blocage des retours d'écran intempestifs aux extrémités de partition.
-- **v1.8.1** : **"Gesture Tuning & Annotation Clamping"** — Intégration du tiroir à stickers unifié et limitation du panoramique.
-- **v1.8.0** : **"Safe Zooming & Fluid Image Zoom"** — Refonte de la couche tactile MAUI pour le zoom d'images et PDF.
-- **v1.1.0** : **"Super-Detection Edition"** — Scan récursif et tolérant pour détection des doublons d'import.
-- **v1.0.0** : **"Public Library Edition"** — Refonte du stockage et optimisation PDF.js.
+- **v1.9.4.0** : **"Ergonomic UI & Performance Edition"** — Rétablissement du zoom 100% dans le menu central, détection double-tap unifiée même zoomé, sous-titres de partitions personnalisables en paramètres, popup moderne et ergonomique pour les options de partition, nouveaux champs d'édition (compositeur, tempo, tonalité, rating), tri par défaut automatique (récent), et moteur d'ouverture/fermeture PDF ultra-rapide (< 50ms).
+- **v1.9.3.0** : **"Smart Image-to-PDF & Assembler Edition"** — Fusion multi-images automatique en PDF à l'import, atelier créateur et assembleur de pages PDF dans l'onglet Outils, uniformisation de la bibliothèque exclusivement au format PDF standardisé.
+- **v1.9.0.0** : **"Full Setlist & Package Transfer Edition"** — Envoi Bluetooth P2P de setlists complètes avec options d'annotations/audio, export/import d'archives autonomes `.msmsetlist`, `.msmscore`, `.msmscores`.
+- **v1.8.31** : **"Harmonized Typography & Sticker Rendering"** — Pastilles stickers centrées, marges anti-rognage et échelle typographique fine.
+- **v1.8.30** : **"Unified Tools & 5-Tabs Layout"** — Intégration des étiquettes dans Outils et barre de navigation épurée à 5 onglets.
+- **v1.8.27** : **"Pencil Drawing & Undo/Redo Engine"** — Outil dessin à main levée, surlignage stabilo biseauté et historique complet Annuler/Rétablir.
 
 ---
 

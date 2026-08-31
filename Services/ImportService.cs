@@ -1,4 +1,5 @@
 using MusicScoreManager.Models;
+using System.Text.RegularExpressions;
 
 namespace MusicScoreManager.Services
 {
@@ -6,11 +7,13 @@ namespace MusicScoreManager.Services
     {
         private readonly DatabaseService _databaseService;
         private readonly SettingsService _settingsService;
+        private readonly PdfService _pdfService;
 
-        public ImportService(DatabaseService databaseService)
+        public ImportService(DatabaseService databaseService, PdfService? pdfService = null)
         {
             _databaseService = databaseService;
             _settingsService = new SettingsService();
+            _pdfService = pdfService ?? new PdfService();
         }
 
         public async Task<Score?> ImportScoreAsync()
@@ -35,7 +38,7 @@ namespace MusicScoreManager.Services
                     {
                         { DevicePlatform.iOS, new[] { "public.image", "com.adobe.pdf" } },
                         { DevicePlatform.Android, new[] { "image/*", "application/pdf" } },
-                        { DevicePlatform.WinUI, new[] { ".jpg", ".jpeg", ".png", ".pdf" } },
+                        { DevicePlatform.WinUI, new[] { ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".pdf" } },
                         { DevicePlatform.MacCatalyst, new[] { "public.image", "com.adobe.pdf" } },
                     });
 
@@ -46,160 +49,352 @@ namespace MusicScoreManager.Services
                 };
 
                 var results = await FilePicker.Default.PickMultipleAsync(options);
-                if (results != null && results.Any())
+                if (results == null || !results.Any())
                 {
-                    var rootDir = _settingsService.ScoresRootDirectory;
-                    if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
+                    return importedScores;
+                }
 
-                    // Séparer les fichiers déjà dans la racine de ceux qui nécessitent une décision d'importation
-                    var filesToProcess = new List<(FileResult File, bool AlreadyInRoot)>();
-                    foreach (var result in results)
+                var rootDir = _settingsService.ScoresRootDirectory;
+                if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
+
+                var validResults = results.Where(r => r != null && !string.IsNullOrEmpty(r.FullPath)).Cast<FileResult>().ToList();
+                if (!validResults.Any()) return importedScores;
+
+                var imageFiles = validResults.Where(r => IsImageFile(r.FileName ?? r.FullPath)).ToList();
+                var pdfFiles = validResults.Where(r => IsPdfFile(r.FileName ?? r.FullPath)).ToList();
+
+                // Cas 1 : Plusieurs images sélectionnées -> Proposer de fusionner en un unique PDF
+                if (imageFiles.Count > 1)
+                {
+                    string action = await Shell.Current.DisplayActionSheetAsync(
+                        $"Sélection de {imageFiles.Count} images",
+                        "Annuler",
+                        null,
+                        "📑 Fusionner en 1 seule partition PDF multi-pages (Conseillé)",
+                        "📄 Convertir en partitions individuelles (PDF)");
+
+                    if (action == "Annuler" || string.IsNullOrEmpty(action))
                     {
-                        if (result == null) continue;
-                        var fullPath = result.FullPath;
-                        if (string.IsNullOrEmpty(fullPath)) continue;
-                        
-                        bool isAlreadyInRoot = !string.IsNullOrEmpty(rootDir) && fullPath.StartsWith(rootDir, StringComparison.OrdinalIgnoreCase);
-                        
-                        if (!isAlreadyInRoot)
-                        {
-                            try 
-                            {
-                                var fileInfoSource = new FileInfo(fullPath);
-                                long sourceLength = fileInfoSource.Length;
-                                string targetFileName = result.FileName ?? Path.GetFileName(fullPath);
-
-                                // 1. Test direct dans la racine (très rapide et évite le scan)
-                                string directPath = Path.Combine(rootDir, targetFileName);
-                                if (File.Exists(directPath) && new FileInfo(directPath).Length == sourceLength)
-                                {
-                                    isAlreadyInRoot = true;
-                                    filesToProcess.Add((new FileResult(directPath), true));
-                                    continue;
-                                }
-                                
-                                // 2. Si pas trouvé en direct, scan récursif robuste
-                                string? foundPath = FindFileRecursively(rootDir, targetFileName, sourceLength);
-                                if (foundPath != null)
-                                {
-                                    isAlreadyInRoot = true;
-                                    filesToProcess.Add((new FileResult(foundPath), true));
-                                    continue;
-                                }
-                            }
-                            catch { /* Ignore */ }
-                        }
-                        
-                        filesToProcess.Add((result, isAlreadyInRoot));
+                        // Si l'utilisateur annule et qu'il n'y a pas d'autres fichiers PDF, on quitte
+                        if (!pdfFiles.Any()) return importedScores;
                     }
-
-                    // Déterminer s'il y a des fichiers externes
-                    var externalFiles = filesToProcess.Where(f => !f.AlreadyInRoot).ToList();
-                    string? globalAction = null;
-
-                    if (externalFiles.Count > 0)
+                    else if (action.StartsWith("📑"))
                     {
-                        if (externalFiles.Count == 1)
-                        {
-                            globalAction = await Shell.Current.DisplayActionSheetAsync(
-                                "Organisation de la bibliothèque", 
-                                "Annuler", 
-                                null, 
-                                "Copier vers la bibliothèque (Conseillé)", 
-                                "Lier le fichier original (Externe)");
-                        }
-                        else
-                        {
-                            globalAction = await Shell.Current.DisplayActionSheetAsync(
-                                $"Organisation de la bibliothèque ({externalFiles.Count} fichiers)", 
-                                "Annuler", 
-                                null, 
-                                "Copier tous les fichiers vers la bibliothèque (Conseillé)", 
-                                "Lier tous les fichiers originaux (Externe)",
-                                "Choisir au cas par cas");
-                        }
+                        // Fusionner en un unique PDF
+                        var firstFileName = Path.GetFileNameWithoutExtension(imageFiles[0].FileName ?? imageFiles[0].FullPath);
+                        // Nettoyer les numéros de page éventuels à la fin (ex: "Partition_1" -> "Partition")
+                        var suggestedTitle = Regex.Replace(firstFileName, @"[_-]?\d+$", "").Trim();
+                        if (string.IsNullOrEmpty(suggestedTitle)) suggestedTitle = firstFileName;
 
-                        if (globalAction == "Annuler" || globalAction == null)
-                        {
-                            return importedScores;
-                        }
-                    }
+                        string? inputTitle = await Shell.Current.DisplayPromptAsync(
+                            "Titre de la partition",
+                            "Entrez le titre de la nouvelle partition PDF :",
+                            initialValue: suggestedTitle,
+                            accept: "Créer",
+                            cancel: "Annuler");
 
-                    for (int i = 0; i < filesToProcess.Count; i++)
-                    {
-                        var (fileResult, isAlreadyInRoot) = filesToProcess[i];
-                        string finalStoredPath;
-
-                        if (isAlreadyInRoot)
+                        if (inputTitle != null) // non annulé
                         {
-                            finalStoredPath = _settingsService.GetRelativePath(fileResult.FullPath);
-                        }
-                        else
-                        {
-                            string? fileAction = globalAction;
+                            var finalTitle = string.IsNullOrWhiteSpace(inputTitle) ? suggestedTitle : inputTitle.Trim();
                             
-                            if (globalAction == "Choisir au cas par cas")
-                            {
-                                fileAction = await Shell.Current.DisplayActionSheetAsync(
-                                    $"Fichier : {fileResult.FileName}", 
-                                    "Passer ce fichier", 
-                                    null, 
-                                    "Copier vers la bibliothèque (Conseillé)", 
-                                    "Lier le fichier original (Externe)");
-                            }
+                            // Tri naturel des images par nom de fichier (ex: page1, page2, page10...)
+                            var sortedImages = imageFiles.OrderBy(f => f.FileName ?? f.FullPath, new NaturalComparer()).ToList();
+                            var tempPaths = new List<string>();
 
-                            if (fileAction == "Copier vers la bibliothèque (Conseillé)" || fileAction == "Copier tous les fichiers vers la bibliothèque (Conseillé)")
+                            try
                             {
-                                var sanitizedFileName = fileResult.FileName.Replace(" ", "_");
-                                var localFilePath = Path.Combine(rootDir, sanitizedFileName);
-                                
-                                int counter = 1;
-                                while (File.Exists(localFilePath))
+                                foreach (var img in sortedImages)
                                 {
-                                    var fileNameOnly = Path.GetFileNameWithoutExtension(sanitizedFileName);
-                                    var extension = Path.GetExtension(sanitizedFileName);
-                                    localFilePath = Path.Combine(rootDir, $"{fileNameOnly}_{counter}{extension}");
-                                    counter++;
+                                    var tempPath = Path.Combine(FileSystem.CacheDirectory, $"{Guid.NewGuid()}_{img.FileName}");
+                                    using var srcStream = await img.OpenReadAsync();
+                                    using var dstStream = File.Create(tempPath);
+                                    await srcStream.CopyToAsync(dstStream);
+                                    tempPaths.Add(tempPath);
                                 }
 
-                                using var stream = await fileResult.OpenReadAsync();
-                                using var fileStream = File.Create(localFilePath);
-                                await stream.CopyToAsync(fileStream);
-                                
-                                finalStoredPath = _settingsService.GetRelativePath(localFilePath);
+                                var sanitizedTitle = SanitizeFileName(finalTitle);
+                                var localPdfPath = GetUniqueFilePath(rootDir, sanitizedTitle, ".pdf");
+
+                                await _pdfService.ConvertImagesToPdfAsync(tempPaths, localPdfPath);
+
+                                var score = new Score
+                                {
+                                    Title = finalTitle,
+                                    FilePath = _settingsService.GetRelativePath(localPdfPath),
+                                    Type = ScoreType.PDF,
+                                    DateAdded = DateTime.Now
+                                };
+
+                                await _databaseService.SaveScoreAsync(score);
+                                importedScores.Add(score);
                             }
-                            else if (fileAction == "Lier le fichier original (Externe)" || fileAction == "Lier tous les fichiers originaux (Externe)")
+                            finally
                             {
-                                finalStoredPath = fileResult.FullPath;
-                            }
-                            else
-                            {
-                                continue; // Passer ce fichier
+                                foreach (var t in tempPaths)
+                                {
+                                    try { if (File.Exists(t)) File.Delete(t); } catch { }
+                                }
                             }
                         }
 
-                        var ext = Path.GetExtension(fileResult.FullPath)?.ToLowerInvariant() ?? "";
-                        var type = ext == ".pdf" ? ScoreType.PDF : ScoreType.Image;
-
-                        var score = new Score
+                        // Traiter les éventuels PDFs restants
+                        if (pdfFiles.Any())
                         {
-                            Title = Path.GetFileNameWithoutExtension(fileResult.FileName ?? fileResult.FullPath),
-                            FilePath = finalStoredPath,
-                            Type = type,
-                            DateAdded = DateTime.Now
-                        };
+                            var pdfImported = await ProcessPdfFilesAsync(pdfFiles, rootDir);
+                            importedScores.AddRange(pdfImported);
+                        }
 
-                        await _databaseService.SaveScoreAsync(score);
-                        importedScores.Add(score);
+                        return importedScores;
+                    }
+                    else
+                    {
+                        // Convertir individuellement chaque image en un PDF
+                        var converted = await ConvertAndImportIndividualImagesAsync(imageFiles, rootDir);
+                        importedScores.AddRange(converted);
+
+                        if (pdfFiles.Any())
+                        {
+                            var pdfImported = await ProcessPdfFilesAsync(pdfFiles, rootDir);
+                            importedScores.AddRange(pdfImported);
+                        }
+
+                        return importedScores;
                     }
                 }
+                else if (imageFiles.Count == 1)
+                {
+                    // 1 seule image -> conversion automatique en PDF dans la bibliothèque
+                    var converted = await ConvertAndImportIndividualImagesAsync(imageFiles, rootDir);
+                    importedScores.AddRange(converted);
+
+                    if (pdfFiles.Any())
+                    {
+                        var pdfImported = await ProcessPdfFilesAsync(pdfFiles, rootDir);
+                        importedScores.AddRange(pdfImported);
+                    }
+
+                    return importedScores;
+                }
+
+                // Cas 2 : Uniquement des fichiers PDF
+                if (pdfFiles.Any())
+                {
+                    var pdfImported = await ProcessPdfFilesAsync(pdfFiles, rootDir);
+                    importedScores.AddRange(pdfImported);
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Erreur système ou annulation
+                System.Diagnostics.Debug.WriteLine($"[ImportService] Erreur lors de l'import : {ex.Message}");
             }
 
             return importedScores;
+        }
+
+        private async Task<List<Score>> ConvertAndImportIndividualImagesAsync(List<FileResult> imageFiles, string rootDir)
+        {
+            var results = new List<Score>();
+
+            foreach (var img in imageFiles)
+            {
+                var tempPath = Path.Combine(FileSystem.CacheDirectory, $"{Guid.NewGuid()}_{img.FileName}");
+                try
+                {
+                    using (var src = await img.OpenReadAsync())
+                    using (var dst = File.Create(tempPath))
+                    {
+                        await src.CopyToAsync(dst);
+                    }
+
+                    var rawName = Path.GetFileNameWithoutExtension(img.FileName ?? img.FullPath);
+                    var sanitized = SanitizeFileName(rawName);
+                    var localPdfPath = GetUniqueFilePath(rootDir, sanitized, ".pdf");
+
+                    await _pdfService.ConvertImagesToPdfAsync(new[] { tempPath }, localPdfPath);
+
+                    var score = new Score
+                    {
+                        Title = rawName,
+                        FilePath = _settingsService.GetRelativePath(localPdfPath),
+                        Type = ScoreType.PDF,
+                        DateAdded = DateTime.Now
+                    };
+
+                    await _databaseService.SaveScoreAsync(score);
+                    results.Add(score);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[ImportService] Erreur conversion image {img.FileName} : {ex.Message}");
+                }
+                finally
+                {
+                    try { if (File.Exists(tempPath)) File.Delete(tempPath); } catch { }
+                }
+            }
+
+            return results;
+        }
+
+        private async Task<List<Score>> ProcessPdfFilesAsync(List<FileResult> pdfFiles, string rootDir)
+        {
+            var imported = new List<Score>();
+            var filesToProcess = new List<(FileResult File, bool AlreadyInRoot)>();
+
+            foreach (var result in pdfFiles)
+            {
+                var fullPath = result.FullPath;
+                bool isAlreadyInRoot = !string.IsNullOrEmpty(rootDir) && fullPath.StartsWith(rootDir, StringComparison.OrdinalIgnoreCase);
+
+                if (!isAlreadyInRoot)
+                {
+                    try
+                    {
+                        var fileInfoSource = new FileInfo(fullPath);
+                        long sourceLength = fileInfoSource.Length;
+                        string targetFileName = result.FileName ?? Path.GetFileName(fullPath);
+
+                        string directPath = Path.Combine(rootDir, targetFileName);
+                        if (File.Exists(directPath) && new FileInfo(directPath).Length == sourceLength)
+                        {
+                            isAlreadyInRoot = true;
+                            filesToProcess.Add((new FileResult(directPath), true));
+                            continue;
+                        }
+
+                        string? foundPath = FindFileRecursively(rootDir, targetFileName, sourceLength);
+                        if (foundPath != null)
+                        {
+                            isAlreadyInRoot = true;
+                            filesToProcess.Add((new FileResult(foundPath), true));
+                            continue;
+                        }
+                    }
+                    catch { /* Ignore */ }
+                }
+
+                filesToProcess.Add((result, isAlreadyInRoot));
+            }
+
+            var externalFiles = filesToProcess.Where(f => !f.AlreadyInRoot).ToList();
+            string? globalAction = null;
+
+            if (externalFiles.Count > 0)
+            {
+                if (externalFiles.Count == 1)
+                {
+                    globalAction = await Shell.Current.DisplayActionSheetAsync(
+                        "Organisation de la bibliothèque",
+                        "Annuler",
+                        null,
+                        "Copier vers la bibliothèque (Conseillé)",
+                        "Lier le fichier original (Externe)");
+                }
+                else
+                {
+                    globalAction = await Shell.Current.DisplayActionSheetAsync(
+                        $"Organisation de la bibliothèque ({externalFiles.Count} fichiers)",
+                        "Annuler",
+                        null,
+                        "Copier tous les fichiers vers la bibliothèque (Conseillé)",
+                        "Lier tous les fichiers originaux (Externe)",
+                        "Choisir au cas par cas");
+                }
+
+                if (globalAction == "Annuler" || globalAction == null)
+                {
+                    return imported;
+                }
+            }
+
+            for (int i = 0; i < filesToProcess.Count; i++)
+            {
+                var (fileResult, isAlreadyInRoot) = filesToProcess[i];
+                string finalStoredPath;
+
+                if (isAlreadyInRoot)
+                {
+                    finalStoredPath = _settingsService.GetRelativePath(fileResult.FullPath);
+                }
+                else
+                {
+                    string? fileAction = globalAction;
+
+                    if (globalAction == "Choisir au cas par cas")
+                    {
+                        fileAction = await Shell.Current.DisplayActionSheetAsync(
+                            $"Fichier : {fileResult.FileName}",
+                            "Passer ce fichier",
+                            null,
+                            "Copier vers la bibliothèque (Conseillé)",
+                            "Lier le fichier original (Externe)");
+                    }
+
+                    if (fileAction == "Copier vers la bibliothèque (Conseillé)" || fileAction == "Copier tous les fichiers vers la bibliothèque (Conseillé)")
+                    {
+                        var sanitizedFileName = SanitizeFileName(Path.GetFileNameWithoutExtension(fileResult.FileName)) + Path.GetExtension(fileResult.FileName);
+                        var localFilePath = GetUniqueFilePath(rootDir, Path.GetFileNameWithoutExtension(sanitizedFileName), Path.GetExtension(sanitizedFileName));
+
+                        using var stream = await fileResult.OpenReadAsync();
+                        using var fileStream = File.Create(localFilePath);
+                        await stream.CopyToAsync(fileStream);
+
+                        finalStoredPath = _settingsService.GetRelativePath(localFilePath);
+                    }
+                    else if (fileAction == "Lier le fichier original (Externe)" || fileAction == "Lier tous les fichiers originaux (Externe)")
+                    {
+                        finalStoredPath = fileResult.FullPath;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                var score = new Score
+                {
+                    Title = Path.GetFileNameWithoutExtension(fileResult.FileName ?? fileResult.FullPath),
+                    FilePath = finalStoredPath,
+                    Type = ScoreType.PDF,
+                    DateAdded = DateTime.Now
+                };
+
+                await _databaseService.SaveScoreAsync(score);
+                imported.Add(score);
+            }
+
+            return imported;
+        }
+
+        private static bool IsImageFile(string path)
+        {
+            var ext = Path.GetExtension(path)?.ToLowerInvariant() ?? "";
+            return ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".webp" || ext == ".bmp" || ext == ".gif";
+        }
+
+        private static bool IsPdfFile(string path)
+        {
+            var ext = Path.GetExtension(path)?.ToLowerInvariant() ?? "";
+            return ext == ".pdf";
+        }
+
+        private static string SanitizeFileName(string name)
+        {
+            var invalidChars = Path.GetInvalidFileNameChars();
+            var clean = new string(name.Select(ch => invalidChars.Contains(ch) ? '_' : ch).ToArray());
+            return clean.Replace(" ", "_");
+        }
+
+        private static string GetUniqueFilePath(string directory, string baseName, string extension)
+        {
+            var localPath = Path.Combine(directory, $"{baseName}{extension}");
+            int counter = 1;
+            while (File.Exists(localPath))
+            {
+                localPath = Path.Combine(directory, $"{baseName}_{counter}{extension}");
+                counter++;
+            }
+            return localPath;
         }
 
         private async Task<PermissionStatus> CheckAndRequestStoragePermissionAsync()
@@ -227,7 +422,6 @@ namespace MusicScoreManager.Services
         {
             try
             {
-                // Vérifier les fichiers du dossier actuel
                 foreach (var file in Directory.EnumerateFiles(dir))
                 {
                     if (Path.GetFileName(file).Equals(fileName, StringComparison.OrdinalIgnoreCase))
@@ -240,15 +434,19 @@ namespace MusicScoreManager.Services
                     }
                 }
 
-                // Explorer les sous-dossiers
                 foreach (var subDir in Directory.EnumerateDirectories(dir))
                 {
                     var found = FindFileRecursively(subDir, fileName, size);
                     if (found != null) return found;
                 }
             }
-            catch { /* Dossier inaccessible, on passe au suivant */ }
+            catch { }
             return null;
+        }
+
+        private class NaturalComparer : IComparer<string>
+        {
+            public int Compare(string? x, string? y) => NaturalStringComparer.Compare(x, y);
         }
     }
 }
