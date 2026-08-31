@@ -42,7 +42,7 @@
                 <!-- Le PDF -->
                 <WebView x:Name="PdfWebView" 
                          IsVisible="False" 
-                         BackgroundColor="White"
+                         BackgroundColor="Black"
                          HorizontalOptions="Fill"
                          VerticalOptions="Fill"
                          Navigated="OnPdfWebViewNavigated"

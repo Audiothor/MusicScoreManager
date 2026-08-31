@@ -23,6 +23,7 @@ public static class MauiProgram
 
 		builder.Services.AddSingleton<SettingsService>();
 		builder.Services.AddSingleton<DatabaseService>();
+		builder.Services.AddSingleton<PdfService>();
 		builder.Services.AddSingleton<ImportService>();
 		builder.Services.AddSingleton<ExportImportService>();
 		builder.Services.AddSingleton<IBluetoothTransferService, BluetoothTransferService>();
@@ -46,6 +47,7 @@ public static class MauiProgram
 		Microsoft.Maui.Handlers.WebViewHandler.Mapper.AppendToMapping("AllowFileAccess", (handler, view) =>
 		{
 #if ANDROID
+			handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Black);
 			handler.PlatformView.Settings.AllowFileAccess = true;
 			handler.PlatformView.Settings.AllowFileAccessFromFileURLs = true;
 			handler.PlatformView.Settings.AllowUniversalAccessFromFileURLs = true;

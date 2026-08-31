@@ -6,7 +6,10 @@
     <title>PDF Viewer</title>
     <script src="pdf.min.js"></script>
     <style>
-        body {
+        * {
+            box-sizing: border-box;
+        }
+        html, body {
             background-color: #000;
             color: #fff;
             margin: 0;
@@ -26,6 +29,7 @@
             max-height: 100%;
             object-fit: contain;
             image-rendering: high-quality;
+            background-color: #000;
         }
         
         /* Zones de clics transparentes */
@@ -205,7 +209,7 @@
         const ctx = canvas.getContext('2d', { alpha: false });
 
         let currentDocId = 0; // Identifiant de document incrémental pour invalider strictement les tâches de fond
-        const renderedBitmapCache = new Map(); // Cache d'images Bitmap pré-rendues : clé `${docId}_${pageNum}` ou `${docId}_spread_${leftNum}`
+        const renderedBitmapCache = new Map(); // Cache d'images Bitmap pré-rendues
         const pageRotations = new Map(); // Enregistrement de la rotation spécifique par numéro de page
 
         function getRotationForPage(num) {
@@ -404,7 +408,9 @@
                     url: source,
                     cMapUrl: 'cmaps/',
                     cMapPacked: true,
-                    enableXfa: false
+                    enableXfa: false,
+                    disableAutoFetch: true,
+                    disableStream: true
                 });
                 const doc = await loadingTask.promise;
                 docCache.set(source, doc);
@@ -436,7 +442,9 @@
                             url: source,
                             cMapUrl: 'cmaps/',
                             cMapPacked: true,
-                            enableXfa: false
+                            enableXfa: false,
+                            disableAutoFetch: true,
+                            disableStream: true
                         });
                     } else {
                         const pdfData = atob(source);
@@ -526,11 +534,14 @@
                     const totalWidth = leftVp.width + (rightVp ? rightVp.width : leftVp.width);
                     const totalHeight = Math.max(leftVp.height, rightVp ? rightVp.height : leftVp.height);
 
-                    canvas.width = totalWidth;
-                    canvas.height = totalHeight;
+                    // Double-buffering offscreen
+                    const spreadCanvas = document.createElement('canvas');
+                    spreadCanvas.width = totalWidth;
+                    spreadCanvas.height = totalHeight;
+                    const spreadCtx = spreadCanvas.getContext('2d');
 
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(0, 0, totalWidth, totalHeight);
+                    spreadCtx.fillStyle = '#FFFFFF';
+                    spreadCtx.fillRect(0, 0, totalWidth, totalHeight);
 
                     // Rendu page gauche
                     const leftCanvas = document.createElement('canvas');
@@ -544,7 +555,7 @@
                     await currentRenderTask.promise;
                     currentRenderTask = null;
                     if (activeDocId !== currentDocId) return;
-                    ctx.drawImage(leftCanvas, 0, 0);
+                    spreadCtx.drawImage(leftCanvas, 0, 0);
 
                     // Rendu page droite (si elle existe)
                     if (rightPage && rightVp) {
@@ -559,27 +570,26 @@
                         await currentRenderTask.promise;
                         currentRenderTask = null;
                         if (activeDocId !== currentDocId) return;
-                        ctx.drawImage(rightCanvas, leftVp.width, 0);
+                        spreadCtx.drawImage(rightCanvas, leftVp.width, 0);
                     } else {
-                        // Page blanche à droite
-                        ctx.fillStyle = '#FFFFFF';
-                        ctx.fillRect(leftVp.width, 0, leftVp.width, totalHeight);
+                        spreadCtx.fillStyle = '#FFFFFF';
+                        spreadCtx.fillRect(leftVp.width, 0, leftVp.width, totalHeight);
                     }
 
-                    // Séparateur vertical entre les deux pages
-                    ctx.strokeStyle = '#333333';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(leftVp.width, 0);
-                    ctx.lineTo(leftVp.width, totalHeight);
-                    ctx.stroke();
+                    // Séparateur vertical
+                    spreadCtx.strokeStyle = '#333333';
+                    spreadCtx.lineWidth = 2;
+                    spreadCtx.beginPath();
+                    spreadCtx.moveTo(leftVp.width, 0);
+                    spreadCtx.lineTo(leftVp.width, totalHeight);
+                    spreadCtx.stroke();
 
-                    // Mise en cache
-                    const offCanvas = document.createElement('canvas');
-                    offCanvas.width = totalWidth;
-                    offCanvas.height = totalHeight;
-                    offCanvas.getContext('2d').drawImage(canvas, 0, 0);
-                    renderedBitmapCache.set(cacheKey, offCanvas);
+                    // Blit instantané sur le canvas visible
+                    canvas.width = totalWidth;
+                    canvas.height = totalHeight;
+                    ctx.drawImage(spreadCanvas, 0, 0);
+
+                    renderedBitmapCache.set(cacheKey, spreadCanvas);
 
                     reportPageInfo();
                     preloadAdjacentPages(leftNum, activeDocId);
@@ -624,25 +634,27 @@
                     const pageRot = getRotationForPage(num);
                     const viewport = page.getViewport({ scale: scale, rotation: pageRot });
 
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
+                    // Double-buffering offscreen : élimine complètement le balayage progressif à l'écran
+                    const offCanvas = document.createElement('canvas');
+                    offCanvas.width = viewport.width;
+                    offCanvas.height = viewport.height;
+                    const offCtx = offCanvas.getContext('2d', { alpha: false });
 
-                    const renderContext = {
-                        canvasContext: ctx,
+                    currentRenderTask = page.render({
+                        canvasContext: offCtx,
                         viewport: viewport,
                         intent: 'display'
-                    };
-
-                    currentRenderTask = page.render(renderContext);
+                    });
                     await currentRenderTask.promise;
                     currentRenderTask = null;
 
                     if (activeDocId !== currentDocId) return;
 
-                    const offCanvas = document.createElement('canvas');
-                    offCanvas.width = viewport.width;
-                    offCanvas.height = viewport.height;
-                    offCanvas.getContext('2d').drawImage(canvas, 0, 0);
+                    // Affichage atomique en 1 frame
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    ctx.drawImage(offCanvas, 0, 0);
+
                     renderedBitmapCache.set(cacheKey, offCanvas);
 
                     reportPageInfo();

@@ -119,37 +119,48 @@ public partial class ViewerPage : ContentPage
         SetupNativeTouchHandling();
 #endif
         
-        // On synchronise et recharge les données du score depuis la base de données
-        MainThread.BeginInvokeOnMainThread(async () => {
+        // 1. Démarrer immédiatement le chargement de la partition et des rotations sans délai
+        _ = LoadPageAndContentImmediatelyAsync();
+
+        // 2. Initialiser le métronome, l'audio et les annotations en tâche de fond
+        _ = Task.Run(async () => {
+            InitializeMetronome();
+            InitializeAudio();
+            await LoadAnnotationsAsync();
+            await InitializeAnnotationUI();
+
             try
             {
                 var refreshedScore = await _databaseService.GetScoreAsync(_score.Id);
                 if (refreshedScore != null)
                 {
                     _score = refreshedScore;
-                    Title = _score.Title;
-                    if (MenuTitleLabel != null) MenuTitleLabel.Text = _score.Title;
-                    if (MetronomeBpmLabel != null) MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
-                    if (MenuMetronomeSwitch != null) MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
-                    if (MenuAudioSwitch != null) MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer;
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        Title = _score.Title;
+                        if (MenuTitleLabel != null) MenuTitleLabel.Text = _score.Title;
+                        if (MetronomeBpmLabel != null) MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+                        if (MenuMetronomeSwitch != null) MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
+                        if (MenuAudioSwitch != null) MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer;
+                    });
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur rafraîchissement score: {ex.Message}");
             }
-
-            await LoadPageRotationsAsync();
-            LoadContentAsync();
         });
+    }
 
-        // On lance le reste en arrière-plan
-        _ = Task.Run(async () => {
-            InitializeMetronome();
-            InitializeAudio();
-            await LoadAnnotationsAsync();
-            await InitializeAnnotationUI();
-        });
+    private async Task LoadPageAndContentImmediatelyAsync()
+    {
+        var rotationsTask = LoadPageRotationsAsync();
+        if (DeviceInfo.Platform == DevicePlatform.Android)
+        {
+            await EnsurePdfJsReadyAsync();
+        }
+        await rotationsTask;
+        LoadContentAsync();
     }
 
     private async Task LoadPageRotationsAsync()
@@ -382,27 +393,36 @@ public partial class ViewerPage : ContentPage
 
     private static bool _isPdfJsReady = false;
 
-    private async Task EnsurePdfJsReadyAsync()
+    private static async Task EnsurePdfJsReadyAsync()
     {
+        if (_isPdfJsReady) return;
+
         string cacheDir = FileSystem.CacheDirectory;
         string pdfjsDir = Path.Combine(cacheDir, "pdfjs");
 
         if (!Directory.Exists(pdfjsDir)) Directory.CreateDirectory(pdfjsDir);
 
         string[] files = { "pdf.min.js", "pdf.worker.min.js", "viewer.html" };
+        bool allExist = files.All(f => {
+            string path = Path.Combine(pdfjsDir, f);
+            return File.Exists(path) && new FileInfo(path).Length > 0;
+        });
 
-        foreach (var file in files)
+        if (!allExist)
         {
-            string dest = Path.Combine(pdfjsDir, file);
-            try
+            foreach (var file in files)
             {
-                using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
-                using var fileStream = File.Create(dest);
-                await stream.CopyToAsync(fileStream);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error copying {file}: {ex.Message}");
+                string dest = Path.Combine(pdfjsDir, file);
+                try
+                {
+                    using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
+                    using var fileStream = File.Create(dest);
+                    await stream.CopyToAsync(fileStream);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error copying {file}: {ex.Message}");
+                }
             }
         }
 
