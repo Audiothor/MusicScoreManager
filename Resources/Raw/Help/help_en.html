@@ -264,7 +264,7 @@
             <li><a href="#section-viewer">3. 📄 Score Viewer, Navigation &amp; Gestures</a></li>
             <li><a href="#section-annotations">4. 🎨 Complete Annotation System</a></li>
             <li><a href="#section-setlists">5. 📋 Setlists &amp; Live Concert Preparation</a></li>
-            <li><a href="#section-bluetooth">6. 📶 Wireless Bluetooth Sharing (P2P)</a></li>
+            <li><a href="#section-wifi">6. 📡 Wireless Wi-Fi Direct Transfer &amp; Group QR Sharing</a></li>
             <li><a href="#section-tools">7. ⏱️ Metronome, Audio &amp; Backups</a></li>
             <li><a href="#section-settings">8. ⚙️ Settings &amp; Customization</a></li>
         </ul>
@@ -415,27 +415,41 @@
         </ul>
     </div>
 
-    <!-- Section 6 : Bluetooth -->
-    <div id="section-bluetooth" class="section">
+    <!-- Section 6 : Wi-Fi Direct & QR Group Sharing -->
+    <div id="section-wifi" class="section">
         <div class="section-header">
-            <div class="section-icon">📶</div>
-            <div class="section-title">6. Wireless Bluetooth Sharing (P2P)</div>
+            <div class="section-icon">📡</div>
+            <div class="section-title">6. Wireless Wi-Fi Direct Transfer &amp; Group QR Sharing</div>
         </div>
 
-        <p>Share scores and annotations directly between band members <strong>without Wi-Fi or Internet access</strong>:</p>
+        <p>Transfer scores or complete setlists directly between tablets at ultra-high speeds <strong>without requiring any Wi-Fi router or Internet access</strong>, powered by peer-to-peer Wi-Fi Direct and local QR Code broadcasting.</p>
 
+        <h3>Option 1: Direct 1-to-1 Transfer</h3>
         <div class="step-box">
-            <span class="step-number">1</span><span class="step-title">Sender Device</span>
-            <div class="step-desc">Tap the 3 dots on any score › <strong>Exchange</strong> (or select multiple scores and tap <em>"Exchange"</em>).</div>
+            <span class="step-number">1</span><span class="step-title">On the Sender Device</span>
+            <div class="step-desc">Tap the 3 dots (⋮) on a score or setlist › <strong>Send via Wi-Fi Direct</strong> (or select multiple scores and tap <em>"Send"</em>). Select your options (include annotations/audio). The device will automatically discover nearby tablets.</div>
         </div>
         <div class="step-box">
-            <span class="step-number">2</span><span class="step-title">Receiver Device</span>
-            <div class="step-desc">Navigate to <strong>Tools › Bluetooth Transfer › Receive Mode</strong>.</div>
+            <span class="step-number">2</span><span class="step-title">On the Receiver Device</span>
+            <div class="step-desc">Navigate to <strong>Tools › Wi-Fi Direct Transfer (P2P)</strong> › tap the green button <strong>« 🟢 Receive Mode (Make Visible) »</strong>.</div>
         </div>
         <div class="step-box">
-            <span class="step-number">3</span><span class="step-title">Transfer &amp; Import</span>
-            <div class="step-desc">The sender taps the target device and transmits the files. Scores and annotations import automatically!</div>
+            <span class="step-number">3</span><span class="step-title">High-Speed Streaming</span>
+            <div class="step-desc">The sender taps the target receiver device in the list and clicks <strong>« Send »</strong>. The receiver confirms the prompt. Files, annotations, and setlists are transferred instantly and integrated into the library!</div>
         </div>
+
+        <h3>Option 2: Parallel Group Broadcast (1-to-Many via QR Code)</h3>
+        <div class="step-box">
+            <span class="step-number">1</span><span class="step-title">On the Band Leader's Device</span>
+            <div class="step-desc">Select the score or setlist to share › tap <em>Send</em> › click the pink button <strong>« 📲 Group Share Mode (QR Code) »</strong>. A large QR Code appears with the local package address and live connected musicians counter.</div>
+        </div>
+        <div class="step-box">
+            <span class="step-number">2</span><span class="step-title">On all Band Members' Devices</span>
+            <div class="step-desc">Each musician goes to <strong>Tools › Wi-Fi Direct Transfer (P2P)</strong> and scans the QR Code from the leader's screen. All devices download and import the programme simultaneously in parallel with zero router setup!</div>
+        </div>
+
+        <h3>📦 Physical Archive Files (.msmsetlist, .msmscore)</h3>
+        <p>Under <strong>Tools › Import Packages &amp; Setlists</strong>, you can import any standalone archive received via USB, email, or cloud storage. Physical export files are saved to your configured export directory.</p>
     </div>
 
     <!-- Section 7 : Tools & Backups -->

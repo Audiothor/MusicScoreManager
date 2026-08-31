@@ -29,6 +29,7 @@
 - **Raccourcis Directs dans l'Application** : Accédez à l'atelier d'assemblage en un clic depuis le menu contextuel (⋮) de la bibliothèque de partitions, la page d'édition des métadonnées ou directement depuis le menu central du lecteur de partitions.
 - **Sous-pages Dédiées** :
   - `📑 Créateur & Assemblage PDF` (`PdfAssemblerPage`)
+  - `📡 Transfert Wi-Fi Direct (P2P)` (`WifiTransferPage`)
   - `🏷️ Gestion des étiquettes` (`TagsPage`)
   - `📦 Imports de paquets & setlists` (`ImportPackagePage`)
   - `🔍 Gestion des doublons` (`DuplicatesPage`)
@@ -36,12 +37,35 @@
 - **Détection & Fusion Intelligente à l'Import** : Lors de l'import (`+` dans Partitions), si plusieurs photos/images sont sélectionnées, l'application propose automatiquement de les fusionner en 1 seule partition PDF multi-pages (tri naturel des pages) ou de les convertir individuellement.
 - **Conversion Automatique en PDF** : Toute image importée est proprement convertie au format PDF standardisé pour unifier l'expérience de lecture, de zoom et d'annotations.
 
-### 📦 Envoi & Export Complet de Setlists et Packages (v1.9.0)
-- **Envoi Sans Fil de Setlists Complètes (Bluetooth P2P)** : Transmettez une setlist entière avec son ordonnancement exact et toutes ses partitions rattachées directement d'un appareil à l'autre sans Internet.
+### 📡 Envoi & Diffusion Sans Fil Wi-Fi Direct & QR Code (v1.9.5.0)
+- **Transfert Wi-Fi Direct Ultra-Rapide (P2P)** : Échangez instantanément des partitions ou des setlists entières d'une tablette à une autre en streaming TCP binaire direct sans aucune connexion Internet ni box requise.
+- **Diffusion de Groupe par QR Code (1-à-plusieurs)** : Le chef de pupitre ou leader génère un point d'accès/serveur local temporaire et affiche un QR Code à l'écran : tous les musiciens du groupe le scannent simultanément pour télécharger le programme en parallèle.
+- **Zéro Configuration Manuelle** : L'application gère de façon transparente la découverte UDP balise, l'ouverture et la fermeture des sockets sans nécessiter de manipulations techniques dans les paramètres Android.
+- **Export & Import de Packages Autonomes (`.msmsetlist`, `.msmscore`, `.msmscores`)** : Les exports et imports de fichiers physiques restent 100% opérationnels pour l'archivage ou le partage USB.
 - **Boîte de Dialogue avec Options d'Envoi** : Choisissez précisément avant l'envoi d'inclure ou non vos annotations (doigtés, surlignages, textes) et les pistes audio (MP3/WAV) rattachées.
-- **Export & Import de Packages Autonomes (`.msmsetlist`, `.msmscore`, `.msmscores`)** : Générez des archives complètes réimportables en 1 clic sur n'importe quel autre appareil dans l'onglet **Outils**.
-- **Répertoire d'Export Configurable** : Définissez librement dans les *Paramètres Application* le dossier où vos fichiers d'exports sont déposés et accédez-y facilement par USB ou explorateur de fichiers.
-- **Harmonisation UI "Envoyer"** : Remplacement unifié du terme "Échanger" par "Envoyer" dans les 8 langues prises en charge.
+
+#### 📖 Guide pas à pas : Envoi direct à une personne (1-à-1)
+1. **Sur la tablette émettrice** :
+   - Sélectionnez la partition (menu `⋮` › *Envoyer en Wi-Fi Direct*) ou cochez plusieurs partitions via le mode multi-sélection (bouton `☑`), ou ouvrez une Setlist (`⋮` › *Envoyer en Wi-Fi Direct*).
+   - Cochez les options souhaitées (*Inclure les annotations*, *Inclure les pistes audio*).
+   - L'écran affiche la recherche automatique des tablettes à proximité.
+2. **Sur la tablette réceptrice** :
+   - Ouvrez l'onglet **Outils** › **Transfert Wi-Fi Direct (P2P)** › cliquez sur **« 🟢 Mode Réception (Se rendre visible) »** (ou depuis le bouton de transfert de la page Partitions).
+3. **Transmission instantanée** :
+   - L'émetteur voit apparaître le nom de la tablette réceptrice et clique sur **« Envoyer »**.
+   - Un message de confirmation s'affiche sur la tablette réceptrice : cliquez sur **« Accepter »**.
+   - Le transfert s'effectue à haute vitesse (Mo/s) et les partitions, annotations et audios sont intégrés directement dans la bibliothèque !
+
+#### 📖 Guide pas à pas : Diffusion à tout un groupe en parallèle (1-à-Plusieurs)
+1. **Sur la tablette du chef de pupitre / leader (Émetteur)** :
+   - Sélectionnez les partitions ou la setlist à diffuser › cliquez sur *Envoyer*.
+   - Cliquez sur le bouton rose **« 📲 Mode Diffusion Groupe (QR Code) »**.
+   - Un grand QR Code s'affiche à l'écran avec l'adresse locale du serveur de partage et un compteur de musiciens connectés en direct.
+2. **Sur les tablettes de tous les musiciens (Récepteurs)** :
+   - Chaque musicien ouvre **Outils** › **Transfert Wi-Fi Direct (P2P)**.
+   - Il scanne le QR Code affiché sur la tablette du leader (ou saisit l'adresse `http://...`).
+   - Le téléchargement et l'intégration s'exécutent simultanément en parallèle pour tous les musiciens du groupe, sans nécessiter de box Internet !
+
 
 ### ⏱️ Métronome Temps Réel Haute Précision & Contrôle du Son (v1.8.22 - v1.8.26)
 - **Régularité Absolue & Moteur Thread-Safe (v1.8.26)** : Verrouillage atomique du thread d'horloge pour empêcher tout conflit de tempo. Cadence rigoureusement métronomique et fluide avec double temporisation fine (`Thread.Sleep` + `SpinWait`) et synchronisation visuelle LED découplée.

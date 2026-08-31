@@ -15,7 +15,7 @@
                            FontSize="22" 
                            FontAttributes="Bold"
                            HorizontalOptions="Center" />
-                    <Label Text="Boîte à outils pour assembler, organiser et sécuriser vos partitions" 
+                    <Label Text="Boîte à outils pour assembler, transférer, organiser et sécuriser vos partitions" 
                            TextColor="#888888" 
                            FontSize="13" 
                            HorizontalOptions="Center"
@@ -44,7 +44,22 @@
                         
                         <BoxView HeightRequest="1" Color="#333333" />
                         
-                        <!-- 2. Gestion des étiquettes -->
+                        <!-- 2. Transfert Wi-Fi Direct (P2P) -->
+                        <Grid Padding="15" BackgroundColor="Transparent" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnToolsWifiTransferTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="📡" FontSize="24" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="Transfert Wi-Fi Direct (P2P)" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label Text="Recevoir des partitions ou scanner un partage de groupe sans box" TextColor="#888888" FontSize="12" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="#333333" />
+
+                        <!-- 3. Gestion des étiquettes -->
                         <Grid Padding="15" BackgroundColor="Transparent" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14">
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnToolsTagsTapped" />
@@ -59,7 +74,7 @@
 
                         <BoxView HeightRequest="1" Color="#333333" />
 
-                        <!-- 3. Imports de Setlists ou Partitions -->
+                        <!-- 4. Imports de Setlists ou Partitions -->
                         <Grid Padding="15" BackgroundColor="Transparent" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14">
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnToolsImportPackageTapped" />
@@ -74,7 +89,7 @@
 
                         <BoxView HeightRequest="1" Color="#333333" />
 
-                        <!-- 4. Gestion des doublons -->
+                        <!-- 5. Gestion des doublons -->
                         <Grid Padding="15" BackgroundColor="Transparent" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14">
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnToolsDuplicatesTapped" />
@@ -89,7 +104,7 @@
 
                         <BoxView HeightRequest="1" Color="#333333" />
 
-                        <!-- 5. Gestion des sauvegardes -->
+                        <!-- 6. Gestion des sauvegardes -->
                         <Grid Padding="15" BackgroundColor="Transparent" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14">
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnToolsBackupsTapped" />

@@ -11,7 +11,7 @@ public partial class ScoresPage : ContentPage
 {
     private readonly DatabaseService _databaseService;
     private readonly ImportService _importService;
-    private readonly IBluetoothTransferService _bluetoothService;
+    private readonly IWifiDirectTransferService _wifiService;
     private readonly ExportImportService _exportImportService;
     private readonly SettingsService _settingsService = new();
     private string _currentSort = "DateDesc";
@@ -22,7 +22,7 @@ public partial class ScoresPage : ContentPage
     private string _tagSortType = "NameAsc"; // "NameAsc", "NameDesc", "SelectedFirst", "Color"
     private Models.Score? _selectedScoreForMenu;
 
-    private readonly ObservableCollection<BluetoothDeviceInfo> _discoveredDevices = new();
+    private readonly ObservableCollection<WifiDeviceInfo> _discoveredDevices = new();
 
     public static readonly BindableProperty IsMultiSelectActiveProperty =
         BindableProperty.Create(nameof(IsMultiSelectActive), typeof(bool), typeof(ScoresPage), false, propertyChanged: OnIsMultiSelectActiveChanged);
@@ -41,23 +41,23 @@ public partial class ScoresPage : ContentPage
         }
     }
 
-    public ScoresPage(DatabaseService databaseService, ImportService importService, IBluetoothTransferService bluetoothService, ExportImportService exportImportService)
+    public ScoresPage(DatabaseService databaseService, ImportService importService, IWifiDirectTransferService wifiService, ExportImportService exportImportService)
     {
         InitializeComponent();
         _databaseService = databaseService;
         _importService = importService;
-        _bluetoothService = bluetoothService;
+        _wifiService = wifiService;
         _exportImportService = exportImportService;
 
         _currentSort = Preferences.Default.Get("DefaultScoreSort", "DateDesc");
 
-        BluetoothDevicesListView.ItemsSource = _discoveredDevices;
+        WifiDevicesListView.ItemsSource = _discoveredDevices;
     }
 
     public ScoresPage() : this(
         new DatabaseService(), 
         new ImportService(new DatabaseService()), 
-        new BluetoothTransferService(), 
+        new WifiDirectTransferService(), 
         new ExportImportService(new DatabaseService(), new SettingsService()))
     {
     }
@@ -66,10 +66,10 @@ public partial class ScoresPage : ContentPage
     {
         base.OnAppearing();
 
-        // S'abonner aux événements Bluetooth
-        _bluetoothService.DeviceDiscovered += OnBluetoothDeviceDiscovered;
-        _bluetoothService.ScanFinished += OnBluetoothScanFinished;
-        _bluetoothService.TransferProgressChanged += OnBluetoothTransferProgressChanged;
+        // S'abonner aux événements Wi-Fi Direct
+        _wifiService.DeviceDiscovered += OnWifiDeviceDiscovered;
+        _wifiService.ScanFinished += OnWifiScanFinished;
+        _wifiService.TransferProgressChanged += OnWifiTransferProgressChanged;
 
         if (!_hasUserCustomSort)
         {
@@ -120,14 +120,15 @@ public partial class ScoresPage : ContentPage
     {
         base.OnDisappearing();
 
-        // Désabonner des événements Bluetooth pour éviter les fuites de mémoire
-        _bluetoothService.DeviceDiscovered -= OnBluetoothDeviceDiscovered;
-        _bluetoothService.ScanFinished -= OnBluetoothScanFinished;
-        _bluetoothService.TransferProgressChanged -= OnBluetoothTransferProgressChanged;
+        // Désabonner des événements Wi-Fi Direct pour éviter les fuites de mémoire
+        _wifiService.DeviceDiscovered -= OnWifiDeviceDiscovered;
+        _wifiService.ScanFinished -= OnWifiScanFinished;
+        _wifiService.TransferProgressChanged -= OnWifiTransferProgressChanged;
 
-        // Arrêter l'écoute ou le scan si actif
-        _ = _bluetoothService.StopScanningAsync();
-        _ = _bluetoothService.StopListeningAsync();
+        // Arrêter l'écoute, le scan ou la diffusion de groupe
+        _ = _wifiService.StopScanningAsync();
+        _ = _wifiService.StopListeningAsync();
+        _ = _wifiService.StopGroupBroadcastAsync();
     }
 
     private void UpdateActiveTagsChips()
@@ -481,94 +482,95 @@ public partial class ScoresPage : ContentPage
     private async Task StartExchangeFlowAsync(List<Models.Score> scoresToSend)
     {
         _scoresToSendForExchange = scoresToSend;
-        BluetoothOverlayTitle.Text = "Envoi de partitions";
-        BluetoothOverlay.IsVisible = true;
-        ShowBluetoothView("Sending");
+        WifiOverlayTitle.Text = "📡 Envoi Wi-Fi Direct";
+        WifiOverlay.IsVisible = true;
+        ShowWifiView("Sending");
 
         _discoveredDevices.Clear();
-        BluetoothScanSpinner.IsRunning = true;
-        BluetoothScanSpinner.IsVisible = true;
+        WifiScanSpinner.IsRunning = true;
+        WifiScanSpinner.IsVisible = true;
 
-        bool initialized = await _bluetoothService.InitializeAsync();
+        bool initialized = await _wifiService.InitializeAsync();
         if (!initialized)
         {
-            await DisplayAlertAsync("Bluetooth indisponible", "Impossible d'initialiser le Bluetooth. Veuillez vérifier que le Bluetooth est activé et que les permissions sont accordées.", "OK");
-            BluetoothOverlay.IsVisible = false;
+            await DisplayAlertAsync("Wi-Fi indisponible", "Veuillez activer le Wi-Fi sur votre appareil et accorder les permissions.", "OK");
+            WifiOverlay.IsVisible = false;
             return;
         }
 
         try
         {
-            await _bluetoothService.StartScanningAsync();
+            await _wifiService.StartScanningAsync();
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Erreur lors du démarrage du scan: {ex.Message}", "OK");
-            BluetoothOverlay.IsVisible = false;
+            await DisplayAlertAsync("Erreur", $"Erreur lors du démarrage de la recherche : {ex.Message}", "OK");
+            WifiOverlay.IsVisible = false;
         }
     }
 
-    private async void OnBluetoothRescanClicked(object sender, EventArgs e)
+    private async void OnWifiRescanClicked(object sender, EventArgs e)
     {
         _discoveredDevices.Clear();
-        BluetoothScanSpinner.IsRunning = true;
-        BluetoothScanSpinner.IsVisible = true;
+        WifiScanSpinner.IsRunning = true;
+        WifiScanSpinner.IsVisible = true;
 
         try
         {
-            await _bluetoothService.StartScanningAsync();
+            await _wifiService.StartScanningAsync();
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Erreur lors du démarrage du scan: {ex.Message}", "OK");
+            await DisplayAlertAsync("Erreur", $"Erreur lors de la recherche : {ex.Message}", "OK");
         }
     }
 
-    private async void OnBluetoothCloseClicked(object sender, EventArgs e)
+    private async void OnWifiCloseClicked(object sender, EventArgs e)
     {
-        BluetoothOverlay.IsVisible = false;
-        BluetoothScanSpinner.IsRunning = false;
+        WifiOverlay.IsVisible = false;
+        WifiScanSpinner.IsRunning = false;
         _scoresToSendForExchange = null;
 
-        await _bluetoothService.StopScanningAsync();
-        await _bluetoothService.StopListeningAsync();
+        await _wifiService.StopScanningAsync();
+        await _wifiService.StopListeningAsync();
+        await _wifiService.StopGroupBroadcastAsync();
     }
 
-    private async void OnBluetoothStartListeningClicked(object sender, EventArgs e)
+    private async void OnWifiStartListeningClicked(object sender, EventArgs e)
     {
-        BluetoothOverlayTitle.Text = "Mode Écoute";
-        ShowBluetoothView("Listening");
-        BluetoothListeningStatusLabel.Text = "En attente d'un émetteur...";
+        WifiOverlayTitle.Text = "Mode Réception Wi-Fi";
+        ShowWifiView("Listening");
+        WifiListeningStatusLabel.Text = "En attente d'un émetteur...";
 
-        bool initialized = await _bluetoothService.InitializeAsync();
+        bool initialized = await _wifiService.InitializeAsync();
         if (!initialized)
         {
-            await DisplayAlertAsync("Bluetooth indisponible", "Impossible d'initialiser le Bluetooth. Veuillez activer le Bluetooth et accorder les permissions.", "OK");
-            ShowBluetoothView("Choice");
+            await DisplayAlertAsync("Wi-Fi indisponible", "Veuillez vérifier que le Wi-Fi est activé et que les permissions sont accordées.", "OK");
+            ShowWifiView("Choice");
             return;
         }
 
         try
         {
-            await _bluetoothService.StartListeningAsync(
-                confirmCallback: OnBluetoothReceiveRequestAsync,
-                onReceiveComplete: OnBluetoothDataReceivedAsync
+            await _wifiService.StartListeningAsync(
+                confirmCallback: OnWifiReceiveRequestAsync,
+                onReceiveComplete: OnWifiDataReceivedAsync
             );
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Erreur lors du démarrage de l'écoute: {ex.Message}", "OK");
-            ShowBluetoothView("Choice");
+            await DisplayAlertAsync("Erreur", $"Erreur lors de l'écoute : {ex.Message}", "OK");
+            ShowWifiView("Choice");
         }
     }
 
-    private async void OnBluetoothStopListeningClicked(object sender, EventArgs e)
+    private async void OnWifiStopListeningClicked(object sender, EventArgs e)
     {
-        await _bluetoothService.StopListeningAsync();
-        ShowBluetoothView("Choice");
+        await _wifiService.StopListeningAsync();
+        ShowWifiView("Choice");
     }
 
-    private void OnBluetoothDeviceDiscovered(object? sender, BluetoothDeviceInfo device)
+    private void OnWifiDeviceDiscovered(object? sender, WifiDeviceInfo device)
     {
         MainThread.BeginInvokeOnMainThread(() =>
         {
@@ -579,32 +581,47 @@ public partial class ScoresPage : ContentPage
         });
     }
 
-    private void OnBluetoothScanFinished(object? sender, EventArgs e)
+    private void OnWifiScanFinished(object? sender, EventArgs e)
     {
         MainThread.BeginInvokeOnMainThread(() =>
         {
-            BluetoothScanSpinner.IsRunning = false;
-            BluetoothScanSpinner.IsVisible = false;
+            WifiScanSpinner.IsRunning = false;
+            WifiScanSpinner.IsVisible = false;
         });
     }
 
-    private void OnBluetoothTransferProgressChanged(object? sender, BluetoothTransferProgressEventArgs e)
+    private void OnWifiTransferProgressChanged(object? sender, WifiTransferProgressEventArgs e)
     {
         MainThread.BeginInvokeOnMainThread(() =>
         {
-            ShowBluetoothView("Progress");
-            BluetoothTransferStatusLabel.Text = $"{e.Status} ({Math.Round(e.Progress * 100)}%)";
-            BluetoothTransferProgressBar.Progress = e.Progress;
+            ShowWifiView("Progress");
+            WifiTransferStatusLabel.Text = $"{e.Status} ({Math.Round(e.Progress * 100)}%)";
+            WifiTransferProgressBar.Progress = e.Progress;
+            if (e.SpeedMBps > 0)
+            {
+                WifiTransferSpeedLabel.Text = $"{e.SpeedMBps:F1} Mo/s";
+            }
         });
     }
 
-    private async void OnBluetoothDeviceSelected(object sender, SelectedItemChangedEventArgs e)
+    private async void OnSendToDeviceButtonClicked(object sender, EventArgs e)
     {
-        if (e.SelectedItem is not BluetoothDeviceInfo selectedDevice) return;
+        if (sender is Button button && button.CommandParameter is WifiDeviceInfo device)
+        {
+            await SendScoresToDeviceAsync(device);
+        }
+    }
 
-        BluetoothDevicesListView.SelectedItem = null;
+    private async void OnWifiDeviceSelected(object sender, SelectedItemChangedEventArgs e)
+    {
+        if (e.SelectedItem is not WifiDeviceInfo selectedDevice) return;
+        WifiDevicesListView.SelectedItem = null;
+        await SendScoresToDeviceAsync(selectedDevice);
+    }
 
-        await _bluetoothService.StopScanningAsync();
+    private async Task SendScoresToDeviceAsync(WifiDeviceInfo targetDevice)
+    {
+        await _wifiService.StopScanningAsync();
 
         List<Models.Score> selectedScores = _scoresToSendForExchange ?? new List<Models.Score>();
         if (!selectedScores.Any() && ScoresCollectionView.ItemsSource is IEnumerable<Models.Score> scores)
@@ -615,30 +632,29 @@ public partial class ScoresPage : ContentPage
 
         try
         {
-            ShowBluetoothView("Progress");
-            BluetoothTransferStatusLabel.Text = "Préparation du package...";
-            BluetoothTransferProgressBar.Progress = 0.05;
+            ShowWifiView("Progress");
+            WifiTransferStatusLabel.Text = "Préparation du paquet...";
+            WifiTransferProgressBar.Progress = 0.05;
 
             var options = new ExportOptions { IncludeAnnotations = true, IncludeAudio = true };
-            var filesToSend = await _exportImportService.BuildBluetoothPayloadForScoresAsync(selectedScores, options);
+            var filesToSend = await _exportImportService.CreateWifiPayloadsForScoresAsync(selectedScores, options);
 
             if (!filesToSend.Any())
             {
                 await DisplayAlertAsync("Erreur", "Aucun fichier valide n'a pu être trouvé pour l'envoi.", "OK");
-                BluetoothOverlay.IsVisible = false;
+                WifiOverlay.IsVisible = false;
                 return;
             }
 
-            BluetoothTransferStatusLabel.Text = "Connexion et envoi...";
-            BluetoothTransferProgressBar.Progress = 0.15;
+            WifiTransferStatusLabel.Text = $"Connexion à {targetDevice.Name}...";
+            WifiTransferProgressBar.Progress = 0.15;
 
-            string senderName = DeviceInfo.Name ?? "Appareil Mobile";
-
-            bool success = await _bluetoothService.SendDataAsync(selectedDevice, filesToSend, senderName);
+            string senderName = DeviceInfo.Name ?? "Tablette Musique";
+            bool success = await _wifiService.SendDataAsync(targetDevice, filesToSend, senderName);
 
             if (success)
             {
-                await DisplayAlertAsync("Succès", $"{selectedScores.Count} partition(s) envoyée(s) avec succès et reçue(s) par le destinataire !", "OK");
+                await DisplayAlertAsync("Succès", $"{selectedScores.Count} partition(s) envoyée(s) avec succès via Wi-Fi Direct !", "OK");
                 IsMultiSelectActive = false;
             }
             else
@@ -652,47 +668,84 @@ public partial class ScoresPage : ContentPage
         }
         finally
         {
-            BluetoothOverlay.IsVisible = false;
+            WifiOverlay.IsVisible = false;
             _scoresToSendForExchange = null;
         }
     }
 
-    private async Task<bool> OnBluetoothReceiveRequestAsync(string senderDeviceName, int scoreCount)
+    private async void OnToggleGroupShareClicked(object sender, EventArgs e)
+    {
+        List<Models.Score> selectedScores = _scoresToSendForExchange ?? new List<Models.Score>();
+        if (!selectedScores.Any() && ScoresCollectionView.ItemsSource is IEnumerable<Models.Score> scores)
+        {
+            selectedScores = scores.Where(s => s.IsSelected).ToList();
+        }
+        if (!selectedScores.Any()) return;
+
+        var options = new ExportOptions { IncludeAnnotations = true, IncludeAudio = true };
+        var filesToSend = await _exportImportService.CreateWifiPayloadsForScoresAsync(selectedScores, options);
+
+        string title = $"{selectedScores.Count} partition(s)";
+        var shareInfo = await _wifiService.StartGroupBroadcastAsync(filesToSend, title, (clientsCount) =>
+        {
+            QrGroupInfoLabel.Text = $"🟢 {clientsCount} musicien(s) ont téléchargé la sélection !";
+        });
+
+        if (shareInfo != null)
+        {
+            QrCodeImageView.Source = QrCodeGenerator.GenerateQrCodeImageSource(shareInfo.QrCodeContent, 220);
+            QrGroupUrlLabel.Text = shareInfo.QrCodeContent;
+            QrGroupInfoLabel.Text = "🟢 En attente de musiciens (0 connecté)...";
+            ShowWifiView("GroupQr");
+        }
+        else
+        {
+            await DisplayAlertAsync("Erreur", "Impossible de démarrer le partage de groupe local.", "OK");
+        }
+    }
+
+    private async void OnStopGroupShareClicked(object sender, EventArgs e)
+    {
+        await _wifiService.StopGroupBroadcastAsync();
+        ShowWifiView("Sending");
+    }
+
+    private async Task<bool> OnWifiReceiveRequestAsync(string senderDeviceName, int scoreCount)
     {
         return await MainThread.InvokeOnMainThreadAsync(async () =>
         {
             bool accept = await DisplayAlertAsync(
-                "Demande d'envoi", 
+                "📥 Réception Wi-Fi Direct", 
                 $"L'appareil '{senderDeviceName}' souhaite vous envoyer {scoreCount} partition(s) / élément(s).\n\nAcceptez-vous la réception ?", 
                 "Oui, accepter", 
                 "Non, refuser");
 
             if (accept)
             {
-                ShowBluetoothView("Progress");
-                BluetoothTransferStatusLabel.Text = "Connexion acceptée. Réception...";
-                BluetoothTransferProgressBar.Progress = 0;
+                ShowWifiView("Progress");
+                WifiTransferStatusLabel.Text = "Connexion acceptée. Réception haute vitesse...";
+                WifiTransferProgressBar.Progress = 0;
             }
 
             return accept;
         });
     }
 
-    private async Task OnBluetoothDataReceivedAsync(List<BluetoothFilePayload> receivedFiles, string senderName)
+    private async Task OnWifiDataReceivedAsync(List<WifiFilePayload> receivedFiles, string senderName)
     {
         try
         {
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
-                BluetoothTransferStatusLabel.Text = "Intégration des données...";
-                BluetoothTransferProgressBar.Progress = 0.9;
+                WifiTransferStatusLabel.Text = "Intégration des données...";
+                WifiTransferProgressBar.Progress = 0.95;
             });
 
-            bool success = await _exportImportService.ImportPackageFromPayloadsAsync(receivedFiles);
+            bool success = await _exportImportService.ImportPackageFromWifiPayloadsAsync(receivedFiles);
 
             await MainThread.InvokeOnMainThreadAsync(async () =>
             {
-                BluetoothOverlay.IsVisible = false;
+                WifiOverlay.IsVisible = false;
                 await LoadScoresAsync(SearchScoreBar.Text);
                 if (success)
                 {
@@ -709,18 +762,19 @@ public partial class ScoresPage : ContentPage
             System.Diagnostics.Debug.WriteLine($"Error processing received files: {ex.Message}");
             await MainThread.InvokeOnMainThreadAsync(async () =>
             {
-                BluetoothOverlay.IsVisible = false;
-                await DisplayAlertAsync("Échec de l'intégration", $"Une erreur est survenue lors de l'intégration des partitions : {ex.Message}", "OK");
+                WifiOverlay.IsVisible = false;
+                await DisplayAlertAsync("Échec de l'intégration", $"Une erreur est survenue lors de l'intégration : {ex.Message}", "OK");
             });
         }
     }
 
-    private void ShowBluetoothView(string viewName)
+    private void ShowWifiView(string viewName)
     {
-        BluetoothChoiceView.IsVisible = (viewName == "Choice");
-        BluetoothListeningView.IsVisible = (viewName == "Listening");
-        BluetoothSendingView.IsVisible = (viewName == "Sending");
-        BluetoothTransferProgressView.IsVisible = (viewName == "Progress");
+        WifiChoiceView.IsVisible = (viewName == "Choice");
+        WifiListeningView.IsVisible = (viewName == "Listening");
+        WifiSendingView.IsVisible = (viewName == "Sending");
+        WifiGroupQrView.IsVisible = (viewName == "GroupQr");
+        WifiTransferProgressView.IsVisible = (viewName == "Progress");
     }
 
     private void OnTagsFilterButtonClicked(object sender, EventArgs e)

@@ -551,18 +551,19 @@
             </Border>
         </ContentView>
 
-        <!-- Overlay Échange Bluetooth -->
-        <ContentView x:Name="BluetoothOverlay" 
-                      Grid.RowSpan="3"
-                      IsVisible="False" 
-                      BackgroundColor="#A0000000" 
-                      ZIndex="1005">
-            <Border BackgroundColor="#1E1E1E" 
-                    Stroke="#007ACC"
-                    StrokeThickness="1.5"
-                    VerticalOptions="Center" 
-                    HorizontalOptions="Center" 
-                    WidthRequest="370"
+        <!-- Overlay Transfert Wi-Fi Direct & Diffusion Groupe (P2P) -->
+        <ContentView x:Name="WifiOverlay"
+                     IsVisible="False"
+                     BackgroundColor="#AA000000"
+                     HorizontalOptions="Fill"
+                     VerticalOptions="Fill"
+                     ZIndex="1005">
+            <Border BackgroundColor="#1E1E1E"
+                    Stroke="#333333"
+                    StrokeThickness="1"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    WidthRequest="380"
                     HeightRequest="650"
                     Padding="20">
                 <Border.StrokeShape>
@@ -571,8 +572,8 @@
                 <Grid RowDefinitions="Auto, *, Auto" RowSpacing="15">
                     <!-- Header -->
                     <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
-                        <Label x:Name="BluetoothOverlayTitle"
-                               Text="Transfert Bluetooth" 
+                        <Label x:Name="WifiOverlayTitle"
+                               Text="📡 Transfert Wi-Fi Direct" 
                                TextColor="White" 
                                FontAttributes="Bold"
                                FontSize="18" 
@@ -586,37 +587,37 @@
                                VerticalOptions="Center"
                                Margin="5">
                             <Label.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnBluetoothCloseClicked" />
+                                <TapGestureRecognizer Tapped="OnWifiCloseClicked" />
                             </Label.GestureRecognizers>
                         </Label>
                     </Grid>
 
                     <!-- Content Area -->
-                    <Grid Grid.Row="1" x:Name="BluetoothContentGrid">
+                    <Grid Grid.Row="1" x:Name="WifiContentGrid">
                         <!-- Mode Choix Initial (Si ouvert hors d'une sélection de scores) -->
-                        <VerticalStackLayout x:Name="BluetoothChoiceView" Spacing="15" IsVisible="True" VerticalOptions="Center">
+                        <VerticalStackLayout x:Name="WifiChoiceView" Spacing="15" IsVisible="True" VerticalOptions="Center">
                             <Label Text="Que souhaitez-vous faire ?" TextColor="#AAAAAA" HorizontalOptions="Center" Margin="0,0,0,10" />
-                            <Button Text="📥 Se mettre en mode Écoute (Recevoir)"
+                            <Button Text="🟢 Se mettre en mode Écoute (Recevoir)"
                                     BackgroundColor="#2A2A2A"
                                     TextColor="White"
-                                    BorderColor="#007ACC"
+                                    BorderColor="#2ECC71"
                                     BorderWidth="1"
                                     CornerRadius="8"
                                     HeightRequest="50"
-                                    Clicked="OnBluetoothStartListeningClicked" />
+                                    Clicked="OnWifiStartListeningClicked" />
                             <Label Text="Pour envoyer des partitions, sélectionnez-les d'abord avec le mode Multi-Sélection (bouton ☑)." 
                                    TextColor="#888888" 
                                    FontSize="12" 
-                                   HorizontalOptions="Center"
+                                   HorizontalOptions="Center" 
                                    HorizontalTextAlignment="Center" />
                         </VerticalStackLayout>
 
                         <!-- Mode Écoute (Receveur) -->
-                        <VerticalStackLayout x:Name="BluetoothListeningView" Spacing="20" IsVisible="False" VerticalOptions="Center">
-                            <ActivityIndicator IsRunning="True" Color="#007ACC" HeightRequest="50" WidthRequest="50" HorizontalOptions="Center" />
+                        <VerticalStackLayout x:Name="WifiListeningView" Spacing="20" IsVisible="False" VerticalOptions="Center">
+                            <ActivityIndicator IsRunning="True" Color="#2ECC71" HeightRequest="50" WidthRequest="50" HorizontalOptions="Center" />
                             <Label Text="En attente de connexion..." TextColor="White" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center" />
-                            <Label x:Name="BluetoothListeningStatusLabel" 
-                                   Text="Prêt à recevoir des partitions d'un émetteur." 
+                            <Label x:Name="WifiListeningStatusLabel" 
+                                   Text="Prêt à recevoir des partitions d'un émetteur en Wi-Fi Direct." 
                                    TextColor="#AAAAAA" 
                                    HorizontalOptions="Center" 
                                    HorizontalTextAlignment="Center" />
@@ -625,70 +626,110 @@
                                     TextColor="White"
                                     CornerRadius="8"
                                     HeightRequest="40"
-                                    Clicked="OnBluetoothStopListeningClicked" />
+                                    Clicked="OnWifiStopListeningClicked" />
                         </VerticalStackLayout>
 
-                        <!-- Mode Envoi (Émetteur : Recherche et Liste d'appareils) -->
-                        <Grid x:Name="BluetoothSendingView" RowDefinitions="Auto, *, Auto" RowSpacing="10" IsVisible="False">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <VerticalStackLayout Grid.Row="0" Spacing="5" Margin="0,0,0,5">
-                                <Label Text="Recherche d'appareils à proximité..." TextColor="White" FontAttributes="Bold" FontSize="14" />
-                                <Label Text="Assurez-vous que le destinataire est en 'Mode Écoute' sur son appareil." TextColor="#888888" FontSize="11" />
-                                <ActivityIndicator x:Name="BluetoothScanSpinner" IsRunning="True" Color="#007ACC" HeightRequest="20" WidthRequest="20" HorizontalOptions="Start" />
+                        <!-- Mode Envoi (Émetteur : Liste 1-à-1 ET Bouton Mode Groupe QR) -->
+                        <Grid x:Name="WifiSendingView" RowDefinitions="Auto, *, Auto, Auto" RowSpacing="10" IsVisible="False">
+                            <VerticalStackLayout Grid.Row="0" Spacing="4">
+                                <Label Text="Appareils Wi-Fi Direct détectés :" TextColor="White" FontAttributes="Bold" FontSize="14" />
+                                <Label Text="Cliquez sur un destinataire pour lui envoyer directement." TextColor="#888888" FontSize="11" />
+                                <ActivityIndicator x:Name="WifiScanSpinner" IsRunning="True" Color="#007ACC" HeightRequest="18" WidthRequest="18" HorizontalOptions="Start" />
                             </VerticalStackLayout>
                             
                             <!-- Liste d'appareils -->
                             <ListView Grid.Row="1" 
-                                      x:Name="BluetoothDevicesListView" 
+                                      x:Name="WifiDevicesListView" 
                                       BackgroundColor="Transparent"
                                       SeparatorColor="#333333"
                                       HasUnevenRows="True"
-                                      ItemSelected="OnBluetoothDeviceSelected">
+                                      ItemSelected="OnWifiDeviceSelected">
                                 <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="services:BluetoothDeviceInfo">
+                                    <DataTemplate x:DataType="services:WifiDeviceInfo">
                                         <ViewCell>
-                                            <Grid ColumnDefinitions="*, Auto" Padding="10,5">
-                                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                                            <Grid ColumnDefinitions="Auto, *, Auto" Padding="10,6" ColumnSpacing="10">
+                                                <Label Grid.Column="0" Text="📱" FontSize="20" VerticalOptions="Center" />
+                                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
                                                     <Label Text="{Binding Name}" TextColor="White" FontAttributes="Bold" FontSize="14" />
-                                                    <Label Text="{Binding Address}" TextColor="#888888" FontSize="11" />
+                                                    <Label Text="{Binding IpAddress}" TextColor="#888888" FontSize="11" />
                                                 </VerticalStackLayout>
-                                                <Label Grid.Column="1" Text="🔗" TextColor="#007ACC" VerticalOptions="Center" />
+                                                <Button Grid.Column="2" 
+                                                        Text="Envoyer" 
+                                                        BackgroundColor="#007ACC" 
+                                                        TextColor="White" 
+                                                        FontSize="12" 
+                                                        FontAttributes="Bold" 
+                                                        HeightRequest="34" 
+                                                        CornerRadius="6" 
+                                                        Clicked="OnSendToDeviceButtonClicked" 
+                                                        CommandParameter="{Binding .}" />
                                             </Grid>
                                         </ViewCell>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
                             
+                            <!-- Bouton Diffusion Groupe QR Code -->
                             <Button Grid.Row="2" 
-                                    Text="Relancer la recherche"
-                                    BackgroundColor="#2A2A2A"
-                                    TextColor="White"
+                                    x:Name="ToggleGroupShareButton"
+                                    Text="📲 Mode Diffusion Groupe (QR Code)"
+                                    BackgroundColor="#2C2C2C"
+                                    BorderColor="#FF3366"
+                                    BorderWidth="1"
+                                    TextColor="#FF3366"
+                                    FontAttributes="Bold"
                                     CornerRadius="8"
-                                    HeightRequest="40"
-                                    Clicked="OnBluetoothRescanClicked" />
+                                    HeightRequest="42"
+                                    Clicked="OnToggleGroupShareClicked" />
+
+                            <Button Grid.Row="3" 
+                                    Text="🔄 Relancer la recherche"
+                                    BackgroundColor="#1A1A1A"
+                                    TextColor="#AAAAAA"
+                                    CornerRadius="8"
+                                    HeightRequest="36"
+                                    Clicked="OnWifiRescanClicked" />
                         </Grid>
 
+                        <!-- Vue Partage de Groupe QR Code (Leader) -->
+                        <VerticalStackLayout x:Name="WifiGroupQrView" Spacing="12" IsVisible="False" VerticalOptions="Center">
+                            <Label Text="Scannez pour télécharger la sélection" TextColor="White" FontAttributes="Bold" FontSize="14" HorizontalOptions="Center" />
+                            <Border Stroke="#007ACC" StrokeThickness="2" BackgroundColor="White" Padding="8" WidthRequest="220" HeightRequest="220" HorizontalOptions="Center">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10" />
+                                </Border.StrokeShape>
+                                <Image x:Name="QrCodeImageView" WidthRequest="200" HeightRequest="200" Aspect="AspectFit" />
+                            </Border>
+                            <Label x:Name="QrGroupInfoLabel" Text="En attente de musiciens..." TextColor="#2ECC71" FontSize="12" FontAttributes="Bold" HorizontalOptions="Center" />
+                            <Label x:Name="QrGroupUrlLabel" Text="http://..." TextColor="#888888" FontSize="11" HorizontalOptions="Center" />
+                            <Button Text="Fermer le partage de groupe"
+                                    BackgroundColor="#CC2929"
+                                    TextColor="White"
+                                    FontAttributes="Bold"
+                                    CornerRadius="8"
+                                    HeightRequest="40"
+                                    Clicked="OnStopGroupShareClicked" />
+                        </VerticalStackLayout>
+
                         <!-- Mode Transfert en cours -->
-                        <VerticalStackLayout x:Name="BluetoothTransferProgressView" Spacing="20" IsVisible="False" VerticalOptions="Center">
+                        <VerticalStackLayout x:Name="WifiTransferProgressView" Spacing="16" IsVisible="False" VerticalOptions="Center">
                             <ActivityIndicator IsRunning="True" Color="#007ACC" HeightRequest="50" WidthRequest="50" HorizontalOptions="Center" />
-                            <Label x:Name="BluetoothTransferStatusLabel" 
+                            <Label x:Name="WifiTransferStatusLabel" 
                                    Text="Transfert en cours... 0%" 
                                    TextColor="White" 
                                    FontAttributes="Bold" 
-                                   FontSize="16" 
-                                   HorizontalOptions="Center" />
-                            <ProgressBar x:Name="BluetoothTransferProgressBar" Progress="0" ProgressColor="#007ACC" HeightRequest="8" HorizontalOptions="Fill" />
+                                   FontSize="15" 
+                                   HorizontalOptions="Center" 
+                                   HorizontalTextAlignment="Center" />
+                            <ProgressBar x:Name="WifiTransferProgressBar" Progress="0" ProgressColor="#007ACC" HeightRequest="8" HorizontalOptions="Fill" />
+                            <Label x:Name="WifiTransferSpeedLabel" Text="0.0 Mo/s" TextColor="#00B0FF" FontSize="13" FontAttributes="Bold" HorizontalOptions="Center" />
                         </VerticalStackLayout>
                     </Grid>
 
                     <!-- Status Bar / Footer -->
                     <Label Grid.Row="2"
-                           x:Name="BluetoothOverlayFooter"
-                           Text="Bluetooth Classic RFCOMM"
+                           x:Name="WifiOverlayFooter"
+                           Text="Wi-Fi Direct P2P &amp; Local Hotspot (Haute Vitesse)"
                            TextColor="#555555"
                            FontSize="10"
                            HorizontalOptions="Center" />

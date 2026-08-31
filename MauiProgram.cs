@@ -26,12 +26,13 @@ public static class MauiProgram
 		builder.Services.AddSingleton<PdfService>();
 		builder.Services.AddSingleton<ImportService>();
 		builder.Services.AddSingleton<ExportImportService>();
-		builder.Services.AddSingleton<IBluetoothTransferService, BluetoothTransferService>();
+		builder.Services.AddSingleton<IWifiDirectTransferService, WifiDirectTransferService>();
 		builder.Services.AddSingleton<ScoresPage>();
 		builder.Services.AddSingleton<SetlistsPage>();
 		builder.Services.AddSingleton<TagsPage>();
 		builder.Services.AddSingleton<ToolsPage>();
 		builder.Services.AddSingleton<SettingsPage>();
+		builder.Services.AddTransient<WifiTransferPage>();
 		builder.Services.AddTransient<QuitPage>();
 		builder.Services.AddTransient<AboutPage>();
 		builder.Services.AddTransient<SettingsScoresPage>();

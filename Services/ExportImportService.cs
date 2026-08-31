@@ -119,16 +119,16 @@ namespace MusicScoreManager.Services
 
         #endregion
 
-        #region Génération de paquets Bluetooth
+        #region Génération de paquets Wi-Fi Direct
 
-        public async Task<List<BluetoothFilePayload>> BuildBluetoothPayloadForSetlistAsync(Setlist setlist, ExportOptions options)
+        public async Task<List<WifiFilePayload>> CreateWifiPayloadsForSetlistAsync(Setlist setlist, ExportOptions options)
         {
-            var payloads = new List<BluetoothFilePayload>();
+            var payloads = new List<WifiFilePayload>();
             var setlistMeta = await BuildSetlistMetadataAsync(setlist, options);
 
             // Manifest JSON
             string json = JsonSerializer.Serialize(setlistMeta, new JsonSerializerOptions { WriteIndented = true });
-            payloads.Add(new BluetoothFilePayload
+            payloads.Add(new WifiFilePayload
             {
                 FileName = "setlist_manifest.json",
                 Data = System.Text.Encoding.UTF8.GetBytes(json)
@@ -145,7 +145,7 @@ namespace MusicScoreManager.Services
                     if (!payloads.Any(p => p.FileName == fname))
                     {
                         byte[] scoreBytes = await File.ReadAllBytesAsync(scorePath);
-                        payloads.Add(new BluetoothFilePayload
+                        payloads.Add(new WifiFilePayload
                         {
                             FileName = fname,
                             Data = scoreBytes
@@ -164,7 +164,7 @@ namespace MusicScoreManager.Services
                             if (!payloads.Any(p => p.FileName == fname))
                             {
                                 byte[] audioBytes = await File.ReadAllBytesAsync(audioPath);
-                                payloads.Add(new BluetoothFilePayload
+                                payloads.Add(new WifiFilePayload
                                 {
                                     FileName = fname,
                                     Data = audioBytes
@@ -178,9 +178,9 @@ namespace MusicScoreManager.Services
             return payloads;
         }
 
-        public async Task<List<BluetoothFilePayload>> BuildBluetoothPayloadForScoresAsync(List<Score> scores, ExportOptions options)
+        public async Task<List<WifiFilePayload>> CreateWifiPayloadsForScoresAsync(List<Score> scores, ExportOptions options)
         {
-            var payloads = new List<BluetoothFilePayload>();
+            var payloads = new List<WifiFilePayload>();
             var scoresMeta = new List<ScoreTransferMetadata>();
 
             foreach (var score in scores)
@@ -195,7 +195,7 @@ namespace MusicScoreManager.Services
                     if (!payloads.Any(p => p.FileName == fname))
                     {
                         byte[] scoreBytes = await File.ReadAllBytesAsync(scorePath);
-                        payloads.Add(new BluetoothFilePayload
+                        payloads.Add(new WifiFilePayload
                         {
                             FileName = fname,
                             Data = scoreBytes
@@ -214,7 +214,7 @@ namespace MusicScoreManager.Services
                             if (!payloads.Any(p => p.FileName == fname))
                             {
                                 byte[] audioBytes = await File.ReadAllBytesAsync(audioPath);
-                                payloads.Add(new BluetoothFilePayload
+                                payloads.Add(new WifiFilePayload
                                 {
                                     FileName = fname,
                                     Data = audioBytes
@@ -226,7 +226,7 @@ namespace MusicScoreManager.Services
             }
 
             string json = JsonSerializer.Serialize(scoresMeta, new JsonSerializerOptions { WriteIndented = true });
-            payloads.Insert(0, new BluetoothFilePayload
+            payloads.Insert(0, new WifiFilePayload
             {
                 FileName = "scores_manifest.json",
                 Data = System.Text.Encoding.UTF8.GetBytes(json)
@@ -248,7 +248,7 @@ namespace MusicScoreManager.Services
             string fileName = $"Setlist_{safeName}_{DateTime.Now:yyyyMMdd_HHmmss}.msmsetlist";
             string zipPath = Path.Combine(exportsDir, fileName);
 
-            var payloads = await BuildBluetoothPayloadForSetlistAsync(setlist, options);
+            var payloads = await CreateWifiPayloadsForSetlistAsync(setlist, options);
 
             using (var zipStream = new FileStream(zipPath, FileMode.Create))
             using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Create))
@@ -274,7 +274,7 @@ namespace MusicScoreManager.Services
                 : $"Scores_Bundle_{scores.Count}_Items_{DateTime.Now:yyyyMMdd_HHmmss}.msmscores";
 
             string zipPath = Path.Combine(exportsDir, fileName);
-            var payloads = await BuildBluetoothPayloadForScoresAsync(scores, options);
+            var payloads = await CreateWifiPayloadsForScoresAsync(scores, options);
 
             using (var zipStream = new FileStream(zipPath, FileMode.Create))
             using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Create))
@@ -294,7 +294,7 @@ namespace MusicScoreManager.Services
 
         #region Import depuis Payload ou Archive
 
-        public async Task<bool> ImportPackageFromPayloadsAsync(List<BluetoothFilePayload> payloads)
+        public async Task<bool> ImportPackageFromWifiPayloadsAsync(List<WifiFilePayload> payloads)
         {
             try
             {
@@ -334,7 +334,7 @@ namespace MusicScoreManager.Services
         {
             try
             {
-                var payloads = new List<BluetoothFilePayload>();
+                var payloads = new List<WifiFilePayload>();
                 using (var zipStream = File.OpenRead(filePath))
                 using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Read))
                 {
@@ -343,7 +343,7 @@ namespace MusicScoreManager.Services
                         using var entryStream = entry.Open();
                         using var ms = new MemoryStream();
                         await entryStream.CopyToAsync(ms);
-                        payloads.Add(new BluetoothFilePayload
+                        payloads.Add(new WifiFilePayload
                         {
                             FileName = entry.Name,
                             Data = ms.ToArray()
@@ -351,7 +351,7 @@ namespace MusicScoreManager.Services
                     }
                 }
 
-                return await ImportPackageFromPayloadsAsync(payloads);
+                return await ImportPackageFromWifiPayloadsAsync(payloads);
             }
             catch (Exception ex)
             {
@@ -360,7 +360,7 @@ namespace MusicScoreManager.Services
             }
         }
 
-        private async Task<bool> ImportSetlistWithScoresAsync(SetlistTransferMetadata setlistMeta, List<BluetoothFilePayload> payloads)
+        private async Task<bool> ImportSetlistWithScoresAsync(SetlistTransferMetadata setlistMeta, List<WifiFilePayload> payloads)
         {
             var savedScores = new List<Score>();
             string scoresRootDir = _settingsService.ScoresRootDirectory;
@@ -495,7 +495,7 @@ namespace MusicScoreManager.Services
             return true;
         }
 
-        private async Task<bool> ImportScoresAsync(List<ScoreTransferMetadata> scoresMetaList, List<BluetoothFilePayload> payloads)
+        private async Task<bool> ImportScoresAsync(List<ScoreTransferMetadata> scoresMetaList, List<WifiFilePayload> payloads)
         {
             string scoresRootDir = _settingsService.ScoresRootDirectory;
             string audioRootDir = _settingsService.AudioRootDirectory;
@@ -587,7 +587,7 @@ namespace MusicScoreManager.Services
             return true;
         }
 
-        private async Task<bool> ImportRawFilesAsync(List<BluetoothFilePayload> payloads)
+        private async Task<bool> ImportRawFilesAsync(List<WifiFilePayload> payloads)
         {
             string scoresRootDir = _settingsService.ScoresRootDirectory;
             if (!Directory.Exists(scoresRootDir)) Directory.CreateDirectory(scoresRootDir);

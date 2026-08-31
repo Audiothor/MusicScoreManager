@@ -8,20 +8,22 @@ public partial class ToolsPage : ContentPage
     private readonly DatabaseService _databaseService;
     private readonly ExportImportService _exportImportService;
     private readonly PdfService _pdfService;
+    private readonly IWifiDirectTransferService _wifiService;
 
-    public ToolsPage(DatabaseService databaseService, ExportImportService exportImportService, PdfService? pdfService = null)
+    public ToolsPage(DatabaseService databaseService, ExportImportService exportImportService, PdfService? pdfService = null, IWifiDirectTransferService? wifiService = null)
     {
         InitializeComponent();
         _databaseService = databaseService;
         _exportImportService = exportImportService;
         _pdfService = pdfService ?? new PdfService();
+        _wifiService = wifiService ?? new WifiDirectTransferService();
     }
 
-    public ToolsPage(DatabaseService databaseService) : this(databaseService, new ExportImportService(databaseService, new SettingsService()), new PdfService())
+    public ToolsPage(DatabaseService databaseService) : this(databaseService, new ExportImportService(databaseService, new SettingsService()), new PdfService(), new WifiDirectTransferService())
     {
     }
 
-    public ToolsPage() : this(new DatabaseService(), new ExportImportService(new DatabaseService(), new SettingsService()), new PdfService())
+    public ToolsPage() : this(new DatabaseService(), new ExportImportService(new DatabaseService(), new SettingsService()), new PdfService(), new WifiDirectTransferService())
     {
     }
 
@@ -37,6 +39,11 @@ public partial class ToolsPage : ContentPage
     private async void OnToolsPdfAssemblerTapped(object? sender, TappedEventArgs e)
     {
         await Navigation.PushAsync(new PdfAssemblerPage(_databaseService, _pdfService));
+    }
+
+    private async void OnToolsWifiTransferTapped(object? sender, TappedEventArgs e)
+    {
+        await Navigation.PushAsync(new WifiTransferPage(_wifiService, _exportImportService, _databaseService));
     }
 
     private async void OnToolsTagsTapped(object? sender, TappedEventArgs e)
