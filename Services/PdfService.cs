@@ -143,33 +143,42 @@ namespace MusicScoreManager.Services
 
             foreach (var item in itemList)
             {
-                using var image = SixLabors.ImageSharp.Image.Load(item.ImagePath!);
+                using var sourceImage = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(item.ImagePath!);
                 
                 // Correction automatique de l'orientation Exif de l'appareil photo
-                image.Mutate(x => x.AutoOrient());
+                sourceImage.Mutate(x => x.AutoOrient());
 
                 // Appliquer la rotation demandée par l'utilisateur
                 int normalizedRotation = (item.Rotation % 360 + 360) % 360;
                 if (normalizedRotation == 90)
                 {
-                    image.Mutate(x => x.Rotate(RotateMode.Rotate90));
+                    sourceImage.Mutate(x => x.Rotate(RotateMode.Rotate90));
                 }
                 else if (normalizedRotation == 180)
                 {
-                    image.Mutate(x => x.Rotate(RotateMode.Rotate180));
+                    sourceImage.Mutate(x => x.Rotate(RotateMode.Rotate180));
                 }
                 else if (normalizedRotation == 270)
                 {
-                    image.Mutate(x => x.Rotate(RotateMode.Rotate270));
+                    sourceImage.Mutate(x => x.Rotate(RotateMode.Rotate270));
                 }
 
-                using var ms = new MemoryStream();
-                image.SaveAsJpeg(ms, new JpegEncoder
+                // Aplatir sur un fond blanc pur en RGB24 (3 canaux garantis : évite le bug des 3 miniatures sur images 1-canal N&B/niveaux de gris)
+                using var rgbImage = new Image<SixLabors.ImageSharp.PixelFormats.Rgb24>(sourceImage.Width, sourceImage.Height);
+                rgbImage.Mutate(ctx =>
                 {
-                    Quality = 92 // Qualité maximale pour partitions musicales sans artefacts
+                    ctx.BackgroundColor(SixLabors.ImageSharp.Color.White);
+                    ctx.DrawImage(sourceImage, new SixLabors.ImageSharp.Point(0, 0), 1f);
                 });
 
-                encodedPages.Add((ms.ToArray(), image.Width, image.Height));
+                using var ms = new MemoryStream();
+                rgbImage.SaveAsJpeg(ms, new JpegEncoder
+                {
+                    Quality = 92,
+                    ColorType = JpegColorType.Rgb
+                });
+
+                encodedPages.Add((ms.ToArray(), rgbImage.Width, rgbImage.Height));
             }
 
             // Écriture du document PDF standard conforme ISO 32000-1 (PDF 1.4)
