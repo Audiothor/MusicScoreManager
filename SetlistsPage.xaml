@@ -193,8 +193,8 @@
 
                     <BoxView HeightRequest="1" Color="#333333" Margin="0,0,0,4" />
                     
-                    <!-- Action Principale : Ouvrir -->
-                    <Button Text="📖  Ouvrir la setlist" 
+                    <!-- Action Principale : Démarrer -->
+                    <Button Text="▶️  Démarrer la setlist" 
                             BackgroundColor="#007ACC" 
                             TextColor="White" 
                             FontSize="14" 

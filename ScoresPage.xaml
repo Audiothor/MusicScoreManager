@@ -263,8 +263,8 @@
                             HeightRequest="46" 
                             Clicked="OnMenuOpenClicked" />
 
-                    <!-- Action : Modifier les informations (En vert) -->
-                    <Button Text="✏️  Éditer les informations" 
+                    <!-- Action : Modifier la partition (En vert) -->
+                    <Button Text="✏️  Éditer la partition" 
                             BackgroundColor="#1B3828" 
                             TextColor="#2ECC71" 
                             FontSize="14" 

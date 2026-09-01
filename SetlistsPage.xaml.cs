@@ -190,8 +190,27 @@ public partial class SetlistsPage : ContentPage
         SetlistMenuOverlay.IsVisible = false;
         if (_selectedSetlistForAction != null)
         {
-            await Navigation.PushAsync(new SetlistEditPage(_selectedSetlistForAction, _databaseService));
+            await StartSetlistAsync(_selectedSetlistForAction);
         }
+    }
+
+    private async Task StartSetlistAsync(Setlist setlist)
+    {
+        var scores = await _databaseService.GetScoresForSetlistAsync(setlist.Id);
+        if (scores == null || !scores.Any())
+        {
+            await DisplayAlertAsync("Setlist vide", $"Aucune partition n'est actuellement assignée à la setlist '{setlist.Name}'.", "OK");
+            return;
+        }
+
+        var firstScore = scores[0];
+        if (firstScore.IsFileMissing)
+        {
+            await DisplayAlertAsync("Fichier manquant", $"Le fichier de la première partition '{firstScore.Title}' est introuvable. Veuillez vérifier son emplacement.", "OK");
+            return;
+        }
+
+        await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading));
     }
 
     private async void OnMenuEditSetlistClicked(object sender, EventArgs e)
@@ -523,7 +542,7 @@ public partial class SetlistsPage : ContentPage
     {
         if (sender is Border border && border.GestureRecognizers[0] is TapGestureRecognizer tap && tap.CommandParameter is Setlist selectedSetlist)
         {
-            await Navigation.PushAsync(new SetlistEditPage(selectedSetlist, _databaseService));
+            await StartSetlistAsync(selectedSetlist);
         }
     }
 }
