@@ -578,9 +578,12 @@
                 <BoxView HeightRequest="1" Color="#444444" Margin="0,5" />
 
                 <Button x:Name="MenuModifyAssemblyButton"
-                        Text="📑 Modifier l'assemblage (pages / rotation)" 
-                        BackgroundColor="#1B3828" TextColor="#2ECC71" 
-                        FontAttributes="Bold" CornerRadius="10" HeightRequest="45"
+                        Text="📑 Modifier l'assemblage PDF" 
+                        BackgroundColor="#2C3E50" 
+                        TextColor="White" 
+                        FontSize="13" 
+                        CornerRadius="10" 
+                        HeightRequest="40"
                         Clicked="OnMenuModifyAssemblyClicked" />
 
                 <Button Text="✏️ Modifier la partition" 
