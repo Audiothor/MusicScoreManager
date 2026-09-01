@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.9.5.2</ApplicationDisplayVersion>
-		<ApplicationVersion>19520</ApplicationVersion>
-		<!-- Version actuelle : v1.9.5.2 "Missing File Visual Indicators & Warning Banners" -->
+		<ApplicationDisplayVersion>1.9.5.3</ApplicationDisplayVersion>
+		<ApplicationVersion>19530</ApplicationVersion>
+		<!-- Version actuelle : v1.9.5.3 "Strict PDF Binary Header & Structure Validation" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

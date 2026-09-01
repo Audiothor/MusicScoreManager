@@ -312,6 +312,26 @@ namespace MusicScoreManager.Services
                 var (fileResult, isAlreadyInRoot) = filesToProcess[i];
                 string finalStoredPath;
 
+                // Validation de sécurité : vérification que le fichier est un véritable PDF valide
+                bool isValidPdf = false;
+                try
+                {
+                    using (var checkStream = await fileResult.OpenReadAsync())
+                    {
+                        isValidPdf = PdfService.IsValidPdfStream(checkStream);
+                    }
+                }
+                catch { }
+
+                if (!isValidPdf)
+                {
+                    await Shell.Current.DisplayAlertAsync(
+                        "Fichier PDF non valide", 
+                        $"Le fichier '{fileResult.FileName}' n'est pas un document PDF valide ou est corrompu. L'import a été ignoré pour ce fichier.", 
+                        "OK");
+                    continue;
+                }
+
                 if (isAlreadyInRoot)
                 {
                     finalStoredPath = _settingsService.GetRelativePath(fileResult.FullPath);
@@ -338,6 +358,17 @@ namespace MusicScoreManager.Services
                         using var stream = await fileResult.OpenReadAsync();
                         using var fileStream = File.Create(localFilePath);
                         await stream.CopyToAsync(fileStream);
+
+                        // Double vérification après copie
+                        if (!PdfService.IsValidPdfFile(localFilePath))
+                        {
+                            try { if (File.Exists(localFilePath)) File.Delete(localFilePath); } catch { }
+                            await Shell.Current.DisplayAlertAsync(
+                                "Fichier PDF corrompu", 
+                                $"La copie du fichier '{fileResult.FileName}' a échoué car le contenu n'est pas un PDF valide.", 
+                                "OK");
+                            continue;
+                        }
 
                         finalStoredPath = _settingsService.GetRelativePath(localFilePath);
                     }

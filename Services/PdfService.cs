@@ -105,6 +105,98 @@ namespace MusicScoreManager.Services
     public class PdfService
     {
         /// <summary>
+        /// Vérifie rigoureusement qu'un fichier est un véritable document PDF valide et intègre.
+        /// Analyse l'en-tête (%PDF-), la taille minimale et la structure globale.
+        /// </summary>
+        public static bool IsValidPdfFile(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+                return false;
+
+            try
+            {
+                var fileInfo = new FileInfo(filePath);
+                if (fileInfo.Length < 32) // Un PDF valide fait au minimum 32 octets
+                    return false;
+
+                using var stream = File.OpenRead(filePath);
+                if (!IsValidPdfStream(stream))
+                    return false;
+
+#if ANDROID
+                try
+                {
+                    using var pfd = ParcelFileDescriptor.Open(new Java.IO.File(filePath), ParcelFileMode.ReadOnly);
+                    if (pfd != null)
+                    {
+                        using var renderer = new PdfRenderer(pfd);
+                        if (renderer.PageCount <= 0) return false;
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+#endif
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Vérifie le flux d'un fichier PDF (magic header %PDF- et terminaison).
+        /// </summary>
+        public static bool IsValidPdfStream(Stream stream)
+        {
+            if (stream == null || stream.Length < 32)
+                return false;
+
+            try
+            {
+                long originalPosition = stream.CanSeek ? stream.Position : 0;
+                if (stream.CanSeek)
+                    stream.Position = 0;
+
+                // 1. Vérification de l'en-tête magique (%PDF-) dans les premiers 1024 octets
+                byte[] headerBuffer = new byte[Math.Min(1024, stream.Length)];
+                int bytesRead = stream.Read(headerBuffer, 0, headerBuffer.Length);
+                if (bytesRead < 5) return false;
+
+                string headerText = Encoding.ASCII.GetString(headerBuffer, 0, bytesRead);
+                if (!headerText.Contains("%PDF-"))
+                    return false;
+
+                // 2. Vérification de la structure dans les derniers 1024 octets
+                if (stream.CanSeek && stream.Length >= 32)
+                {
+                    int footerSize = (int)Math.Min(1024, stream.Length);
+                    stream.Position = stream.Length - footerSize;
+                    byte[] footerBuffer = new byte[footerSize];
+                    int footerBytesRead = stream.Read(footerBuffer, 0, footerSize);
+                    string footerText = Encoding.ASCII.GetString(footerBuffer, 0, footerBytesRead);
+
+                    // Un PDF valide se termine par %%EOF ou contient des marqueurs de structure
+                    if (!footerText.Contains("%%EOF") && !footerText.Contains("startxref") && !footerText.Contains("trailer") && !footerText.Contains("/Root"))
+                    {
+                        if (!headerText.Contains("obj") && !footerText.Contains("endobj"))
+                            return false;
+                    }
+
+                    stream.Position = originalPosition;
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Convertit une liste de fichiers image en un unique fichier PDF multi-pages haute fidélité.
         /// Chaque image occupe 100% de la page avec ses proportions réelles.
         /// </summary>

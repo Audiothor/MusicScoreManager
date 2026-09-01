@@ -2,13 +2,17 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.5.2
+# Music Score Manager v1.9.5.3
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### 🛡️ Contrôle Strict & Intégrité des Fichiers PDF (v1.9.5.3)
+- **Validation Binaire de l'En-tête & Structure PDF** : Vérification systématique lors de tout import ou assemblage que le fichier est un véritable document PDF intègre (magic header `%PDF-`, terminaison, descripteurs natifs de rendu) même s'il porte l'extension `.pdf`.
+- **Protection Anti-Crash** : Rejet automatique des fichiers corrompus, incomplets ou renommés artificiellement avec avertissement explicite à l'utilisateur, empêchant toute instabilité du visualiseur de partitions.
 
 ### ⚠️ Indicateurs Visuels de Fichier Manquant (v1.9.5.2)
 - **Badge d'Erreur Rouge (!)** : Pastille rouge vive avec point d'exclamation positionnée à gauche du bouton 3 points (⋮) dans la bibliothèque de partitions dès qu'un fichier PDF est introuvable ou déplacé.
@@ -147,6 +151,7 @@
 
 ## 📜 Historique Récent des Versions
 
+- **v1.9.5.3** : **"Strict PDF Binary Header & Structure Validation"** — Contrôle d'intégrité binaire et structurel à l'import de PDF (détection magic header, validation anti-fichiers corrompus ou frauduleux) empêchant tout crash lors de la lecture.
 - **v1.9.5.2** : **"Missing File Visual Indicators & Warning Banners"** — Ajout d'une pastille d'alerte rouge avec point d'exclamation (!) à gauche des 3 points dans la bibliothèque, bannière d'avertissement dans l'édition de partition et badge d'erreur dans les setlists si un PDF est manquant.
 - **v1.9.5.1** : **"Setlist Duplication, Smart Composer & Untagged Sort"** — Ajout de la duplication instantanée de setlists avec conservation de l'ordre des morceaux, tri intelligent par compositeur avec paramètre personnalisable (sans compositeur au début/fin), et nouveau tri direct des partitions sans étiquette.
 - **v1.9.5.0** : **"Wi-Fi Direct P2P, QR Group Broadcast & PDF Studio Edition"** — Intégration du transfert sans fil Wi-Fi Direct ultra-rapide (streaming binaire TCP) et de la diffusion simultanée de groupe par QR Code (serveur local HTTP), nouveau popup moderne unifié pour les setlists et partitions avec mise en avant de l'édition d'informations, atelier d'assemblage PDF et migration complète sous licence GNU GPLv3.
@@ -221,5 +226,5 @@ L'application **Music Score Manager** respecte rigoureusement la vie privée de 
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.9.5.2 "Missing File Visual Indicators & Warning Banners"*
+**Développé par Audiothor** — *MusicScoreManager v1.9.5.3 "Strict PDF Binary Header & Structure Validation"*
 

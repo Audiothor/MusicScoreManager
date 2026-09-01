@@ -163,6 +163,13 @@ public partial class PdfAssemblerPage : ContentPage
                 await src.CopyToAsync(dst);
             }
 
+            if (!PdfService.IsValidPdfFile(tempPdfPath))
+            {
+                try { if (File.Exists(tempPdfPath)) File.Delete(tempPdfPath); } catch { }
+                await DisplayAlertAsync("Fichier non valide", $"Le fichier '{result.FileName}' n'est pas un document PDF valide ou est corrompu.", "OK");
+                return;
+            }
+
             var extracted = await _pdfService.ExtractPdfPagesAsync(tempPdfPath, FileSystem.CacheDirectory);
             try { if (File.Exists(tempPdfPath)) File.Delete(tempPdfPath); } catch { }
 
