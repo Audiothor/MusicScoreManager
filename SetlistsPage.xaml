@@ -231,6 +231,15 @@
                             HeightRequest="44" 
                             Clicked="OnMenuExportSetlistTriggerClicked" />
 
+                    <!-- Action : Dupliquer -->
+                    <Button Text="📑  Dupliquer la setlist" 
+                            BackgroundColor="#2A2A2A" 
+                            TextColor="White" 
+                            FontSize="14" 
+                            CornerRadius="10" 
+                            HeightRequest="44" 
+                            Clicked="OnMenuDuplicateSetlistClicked" />
+
                     <!-- Action : Renommer -->
                     <Button Text="🏷️  Renommer" 
                             BackgroundColor="#2A2A2A" 

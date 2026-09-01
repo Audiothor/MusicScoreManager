@@ -57,11 +57,30 @@
                                 <x:String>Date de modification (Récent)</x:String>
                                 <x:String>Évaluation (Meilleures notes)</x:String>
                                 <x:String>Compositeur (A-Z)</x:String>
+                                <x:String>Sans étiquette d'abord</x:String>
                             </x:Array>
                         </Picker.ItemsSource>
                     </Picker>
                 </Border>
             </VerticalStackLayout>
+
+            <!-- Option : Sans compositeur en premier lors du tri par compositeur -->
+            <Grid ColumnDefinitions="*, Auto" Margin="0,5,0,0">
+                <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+                    <Label Text="Partitions sans compositeur en premier" 
+                           TextColor="White" 
+                           FontSize="15" />
+                    <Label Text="Lors du tri par compositeur, place les partitions sans compositeur au début (désactivé : affichées à la fin)" 
+                           TextColor="#888888" 
+                           FontSize="12" />
+                </VerticalStackLayout>
+                <Switch Grid.Column="1" 
+                        x:Name="ComposerEmptyFirstSwitch" 
+                        OnColor="#007ACC" 
+                        ThumbColor="White" 
+                        VerticalOptions="Center" 
+                        Toggled="OnComposerEmptyFirstToggled" />
+            </Grid>
 
             <BoxView HeightRequest="1" Color="#333333" />
 

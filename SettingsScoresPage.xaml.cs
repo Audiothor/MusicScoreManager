@@ -17,8 +17,11 @@ public partial class SettingsScoresPage : ContentPage
             "ModifiedDesc" => 4,
             "RatingDesc" => 5,
             "ComposerAsc" => 6,
+            "NoTagsFirst" => 7,
             _ => 0
         };
+
+        ComposerEmptyFirstSwitch.IsToggled = Preferences.Default.Get("ComposerSortEmptyFirst", false);
 
         string subtitleMode = Preferences.Default.Get("ScoreSubtitleDisplay", "DateAdded");
         ScoreSubtitlePicker.SelectedIndex = subtitleMode switch
@@ -75,9 +78,15 @@ public partial class SettingsScoresPage : ContentPage
             4 => "ModifiedDesc",
             5 => "RatingDesc",
             6 => "ComposerAsc",
+            7 => "NoTagsFirst",
             _ => "DateDesc"
         };
         Preferences.Default.Set("DefaultScoreSort", value);
+    }
+
+    private void OnComposerEmptyFirstToggled(object sender, ToggledEventArgs e)
+    {
+        Preferences.Default.Set("ComposerSortEmptyFirst", e.Value);
     }
 
     private void OnShowPageNumberToggled(object sender, ToggledEventArgs e)

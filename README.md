@@ -2,13 +2,18 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.5.0
+# Music Score Manager v1.9.5.1
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### 📋 Duplication de Setlists & Tris Intelligents (v1.9.5.1)
+- **Duplication de Setlist en un Clic** : Dupliquez instantanément n'importe quelle setlist avec l'intégralité de ses morceaux et de leur ordre depuis le menu d'options (3 points ⋮).
+- **Tri Compositeur Intelligent avec Option On/Off** : Tri alphabétique des compositeurs avec affichage automatique des partitions sans compositeur à la fin (par défaut), ou au début via le nouveau paramètre *Partitions sans compositeur en premier*.
+- **Tri Sans Étiquette** : Option de tri direct *Sans étiquette d'abord* pour identifier immédiatement les partitions non classées et leur attribuer des étiquettes.
 
 ### 🌟 Ergonomie, Métadonnées & Expérience Partition (v1.9.4.0)
 - **Menu Central & Rétablissement du Zoom (100%)** : Ajout d'un bouton « 🔍 Rétablir la taille d'origine (100%) » dans le menu central au double-tap. Détection du double-tap optimisée et fonctionnelle en toutes circonstances (même en plein zoom ou dézoom).
@@ -137,6 +142,7 @@
 
 ## 📜 Historique Récent des Versions
 
+- **v1.9.5.1** : **"Setlist Duplication, Smart Composer & Untagged Sort"** — Ajout de la duplication instantanée de setlists avec conservation de l'ordre des morceaux, tri intelligent par compositeur avec paramètre personnalisable (sans compositeur au début/fin), et nouveau tri direct des partitions sans étiquette.
 - **v1.9.5.0** : **"Wi-Fi Direct P2P, QR Group Broadcast & PDF Studio Edition"** — Intégration du transfert sans fil Wi-Fi Direct ultra-rapide (streaming binaire TCP) et de la diffusion simultanée de groupe par QR Code (serveur local HTTP), nouveau popup moderne unifié pour les setlists et partitions avec mise en avant de l'édition d'informations, atelier d'assemblage PDF et migration complète sous licence GNU GPLv3.
 - **v1.9.4.0** : **"Ergonomic UI & Performance Edition"** — Rétablissement du zoom 100% dans le menu central, détection double-tap unifiée même zoomé, sous-titres de partitions personnalisables en paramètres, popup moderne et ergonomique pour les options de partition, nouveaux champs d'édition (compositeur, tempo, tonalité, rating), tri par défaut automatique (récent), et moteur d'ouverture/fermeture PDF ultra-rapide (< 50ms).
 - **v1.9.3.0** : **"Smart Image-to-PDF & Assembler Edition"** — Fusion multi-images automatique en PDF à l'import, atelier créateur et assembleur de pages PDF dans l'onglet Outils, uniformisation de la bibliothèque exclusivement au format PDF standardisé.
@@ -209,5 +215,5 @@ L'application **Music Score Manager** respecte rigoureusement la vie privée de 
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.9.5 "PDF Assembly & Reordering Studio, Multi-page Tools & Direct Shortcuts"*
+**Développé par Audiothor** — *MusicScoreManager v1.9.5.1 "Setlist Duplication, Smart Composer & Untagged Sort"*
 

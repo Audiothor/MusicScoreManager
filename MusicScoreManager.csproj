@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.9.5</ApplicationDisplayVersion>
-		<ApplicationVersion>19500</ApplicationVersion>
-		<!-- Version actuelle : v1.9.5 "PDF Assembly & Reordering Studio, Multi-page Tools & Direct Shortcuts" -->
+		<ApplicationDisplayVersion>1.9.5.1</ApplicationDisplayVersion>
+		<ApplicationVersion>19510</ApplicationVersion>
+		<!-- Version actuelle : v1.9.5.1 "Setlist Duplication, Smart Composer & Untagged Sort" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

@@ -265,6 +265,44 @@ namespace MusicScoreManager.Services
             return await _database!.DeleteAsync(setlist);
         }
 
+        public async Task<Setlist?> DuplicateSetlistAsync(int setlistId, string newName)
+        {
+            await Init();
+            var original = await _database!.Table<Setlist>().FirstOrDefaultAsync(s => s.Id == setlistId);
+            if (original == null) return null;
+
+            var newSetlist = new Setlist
+            {
+                Name = newName,
+                DateCreated = DateTime.Now,
+                ConcertDate = original.ConcertDate,
+                ConcertTime = original.ConcertTime,
+                Status = original.Status,
+                IsLocked = original.IsLocked,
+                IsContinuousReading = original.IsContinuousReading
+            };
+            await _database!.InsertAsync(newSetlist);
+
+            var associations = await _database!.Table<SetlistScore>()
+                                              .Where(ss => ss.SetlistId == setlistId)
+                                              .OrderBy(ss => ss.Order)
+                                              .ToListAsync();
+
+            var newAssociations = associations.Select(a => new SetlistScore
+            {
+                SetlistId = newSetlist.Id,
+                ScoreId = a.ScoreId,
+                Order = a.Order
+            }).ToList();
+
+            if (newAssociations.Any())
+            {
+                await _database!.InsertAllAsync(newAssociations);
+            }
+
+            return newSetlist;
+        }
+
         public async Task<List<Score>> GetScoresForSetlistAsync(int setlistId)
         {
             await Init();

@@ -227,6 +227,26 @@ public partial class SetlistsPage : ContentPage
         }
     }
 
+    private async void OnMenuDuplicateSetlistClicked(object sender, EventArgs e)
+    {
+        SetlistMenuOverlay.IsVisible = false;
+        if (_selectedSetlistForAction != null)
+        {
+            var setlist = _selectedSetlistForAction;
+            string defaultName = $"{setlist.Name} (Copie)";
+            string result = await DisplayPromptAsync("Dupliquer", "Entrez le nom de la nouvelle setlist :", initialValue: defaultName);
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                var duplicated = await _databaseService.DuplicateSetlistAsync(setlist.Id, result.Trim());
+                await LoadSetlistsAsync(SearchSetlistBar.Text);
+                if (duplicated != null)
+                {
+                    await DisplayAlertAsync("Setlist dupliquée", $"La setlist '{duplicated.Name}' a été créée avec succès.", "OK");
+                }
+            }
+        }
+    }
+
     private async void OnMenuRenameSetlistClicked(object sender, EventArgs e)
     {
         SetlistMenuOverlay.IsVisible = false;

@@ -195,6 +195,8 @@ public partial class ScoresPage : ContentPage
 
     private List<Models.Score> SortScores(IEnumerable<Models.Score> scores, string sortType)
     {
+        bool emptyComposerFirst = Preferences.Default.Get("ComposerSortEmptyFirst", false);
+
         return sortType switch
         {
             "TitleAsc" => scores.OrderBy(s => s.Title).ToList(),
@@ -203,7 +205,10 @@ public partial class ScoresPage : ContentPage
             "DateDesc" => scores.OrderByDescending(s => s.DateAdded).ToList(),
             "ModifiedDesc" => scores.OrderByDescending(s => s.DateModified).ToList(),
             "RatingDesc" => scores.OrderByDescending(s => s.Rating).ThenBy(s => s.Title).ToList(),
-            "ComposerAsc" => scores.OrderBy(s => s.Composer).ThenBy(s => s.Title).ToList(),
+            "ComposerAsc" => emptyComposerFirst
+                ? scores.OrderBy(s => string.IsNullOrWhiteSpace(s.Composer) ? 0 : 1).ThenBy(s => s.Composer).ThenBy(s => s.Title).ToList()
+                : scores.OrderBy(s => string.IsNullOrWhiteSpace(s.Composer) ? 1 : 0).ThenBy(s => s.Composer).ThenBy(s => s.Title).ToList(),
+            "NoTagsFirst" => scores.OrderBy(s => (s.AppliedTags != null && s.AppliedTags.Any()) ? 1 : 0).ThenBy(s => s.Title).ToList(),
             _ => scores.OrderByDescending(s => s.DateAdded).ToList()
         };
     }
@@ -967,7 +972,7 @@ public partial class ScoresPage : ContentPage
     private async void OnSortClicked(object sender, EventArgs e)
     {
         string action = await DisplayActionSheetAsync("Trier par", "Annuler", null, 
-            "Date d'ajout (Récent)", "Date d'ajout (Ancien)", "Titre (A-Z)", "Titre (Z-A)", "Date de modification", "Évaluation (Note)", "Compositeur (A-Z)");
+            "Date d'ajout (Récent)", "Date d'ajout (Ancien)", "Titre (A-Z)", "Titre (Z-A)", "Date de modification", "Évaluation (Note)", "Compositeur (A-Z)", "Sans étiquette d'abord");
 
         if (action == "Date d'ajout (Récent)") { _currentSort = "DateDesc"; _hasUserCustomSort = true; }
         else if (action == "Date d'ajout (Ancien)") { _currentSort = "DateAsc"; _hasUserCustomSort = true; }
@@ -976,6 +981,7 @@ public partial class ScoresPage : ContentPage
         else if (action == "Date de modification") { _currentSort = "ModifiedDesc"; _hasUserCustomSort = true; }
         else if (action == "Évaluation (Note)") { _currentSort = "RatingDesc"; _hasUserCustomSort = true; }
         else if (action == "Compositeur (A-Z)") { _currentSort = "ComposerAsc"; _hasUserCustomSort = true; }
+        else if (action == "Sans étiquette d'abord") { _currentSort = "NoTagsFirst"; _hasUserCustomSort = true; }
 
         if (action != "Annuler")
             await LoadScoresAsync(SearchScoreBar.Text);
