@@ -370,10 +370,28 @@
                     <Grid Grid.Row="1">
                         <!-- Mode Envoi (Recherche et Liste d'appareils) -->
                         <Grid x:Name="WifiSendingView" RowDefinitions="Auto, *, Auto, Auto" RowSpacing="10" IsVisible="True">
-                            <VerticalStackLayout Grid.Row="0" Spacing="4">
+                            <VerticalStackLayout Grid.Row="0" Spacing="6">
                                 <Label Text="Appareils Wi-Fi Direct détectés :" TextColor="White" FontAttributes="Bold" FontSize="14" />
-                                <Label Text="Cliquez sur un destinataire pour lui envoyer la setlist." TextColor="#888888" FontSize="11" />
-                                <ActivityIndicator x:Name="WifiScanSpinner" IsRunning="True" Color="#007ACC" HeightRequest="18" WidthRequest="18" HorizontalOptions="Start" />
+                                
+                                <!-- Info bulle explicative pour le destinataire -->
+                                <Border BackgroundColor="#1A2736" Stroke="#007ACC" StrokeThickness="1" Padding="10,8" Margin="0,2,0,2">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8">
+                                        <Label Grid.Column="0" Text="💡" FontSize="14" VerticalOptions="Start" />
+                                        <Label Grid.Column="1" 
+                                               Text="Pour un envoi direct (1 à 1), le destinataire doit activer le Wi-Fi et ouvrir le menu 'Outils > Réception Wi-Fi Direct' dans son application pour être visible." 
+                                               TextColor="#B0C4DE" 
+                                               FontSize="11" 
+                                               LineBreakMode="WordWrap" />
+                                    </Grid>
+                                </Border>
+
+                                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                    <ActivityIndicator x:Name="WifiScanSpinner" IsRunning="True" Color="#007ACC" HeightRequest="16" WidthRequest="16" VerticalOptions="Center" />
+                                    <Label Text="Recherche d'appareils en cours..." TextColor="#888888" FontSize="11" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
                             </VerticalStackLayout>
                             
                             <ListView Grid.Row="1" 
