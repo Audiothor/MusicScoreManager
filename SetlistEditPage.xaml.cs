@@ -129,6 +129,12 @@ public partial class SetlistEditPage : ContentPage
     {
         if (e.Parameter is OrderedScore orderedScore)
         {
+            if (orderedScore.Score.IsFileMissing)
+            {
+                await DisplayAlertAsync("Fichier manquant", $"Le fichier de la partition '{orderedScore.Score.Title}' est introuvable. Veuillez vérifier son emplacement dans les paramètres.", "OK");
+                return;
+            }
+
             var allScores = _orderedScores.Select(os => os.Score).ToList();
             int index = allScores.IndexOf(orderedScore.Score);
             

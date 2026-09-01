@@ -126,10 +126,40 @@
                             
                             <!-- Titre -->
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
-                                <Label Text="{Binding Score.Title}" TextColor="White" FontSize="15" FontAttributes="Bold" MaxLines="1" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding Score.Title}" FontSize="15" FontAttributes="Bold" MaxLines="1" LineBreakMode="TailTruncation">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Score.IsFileMissing}" Value="True">
+                                            <Setter Property="TextColor" Value="#FF6B6B" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Score.IsFileMissing}" Value="False">
+                                            <Setter Property="TextColor" Value="White" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
                                 <Label Text="{Binding Score.Type}" TextColor="#888888" FontSize="11" />
                             </VerticalStackLayout>
                         </Grid>
+
+                        <!-- Icône d'erreur rouge (!) si le PDF est introuvable -->
+                        <Border Grid.Column="2"
+                                IsVisible="{Binding Score.IsFileMissing}"
+                                BackgroundColor="#FF3B30"
+                                StrokeThickness="0"
+                                WidthRequest="22"
+                                HeightRequest="22"
+                                VerticalOptions="Center"
+                                Margin="0,0,4,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="11" />
+                            </Border.StrokeShape>
+                            <Label Text="!" 
+                                   TextColor="White" 
+                                   FontAttributes="Bold" 
+                                   FontSize="14" 
+                                   HorizontalOptions="Center" 
+                                   VerticalOptions="Center"
+                                   Margin="0,-1,0,0" />
+                        </Border>
 
                         <!-- Bouton Supprimer (Reste à droite) -->
                         <Button Grid.Column="3" 

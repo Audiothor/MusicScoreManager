@@ -69,6 +69,7 @@ public partial class ScoreEditPage : ContentPage
 
         UpdateExternalIndicators();
         LoadFileMetadata();
+        MissingFileWarningBorder.IsVisible = _score.IsFileMissing;
         ModifyAssemblyBorder.IsVisible = (_score.Type == ScoreType.PDF && !_score.IsFileMissing);
         LoadDataAsync();
     }

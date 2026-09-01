@@ -125,18 +125,40 @@
                                 </Label>
                             </HorizontalStackLayout>
 
-                            <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2"
-                                    Text="⋮"
-                                    FontSize="24"
-                                    FontAttributes="Bold"
-                                    TextColor="White"
-                                    BackgroundColor="Transparent"
-                                    VerticalOptions="Center"
-                                    WidthRequest="40"
-                                    HeightRequest="40"
-                                    CommandParameter="{Binding .}"
-                                    Clicked="OnScoreOptionsClicked" />
-                                               <Label Grid.Row="1" Grid.Column="1"
+                            <HorizontalStackLayout Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" VerticalOptions="Center" Spacing="0">
+                                <!-- Icône d'erreur rouge (!) à gauche des trois points si le PDF est introuvable -->
+                                <Border IsVisible="{Binding IsFileMissing}"
+                                        BackgroundColor="#FF3B30"
+                                        StrokeThickness="0"
+                                        WidthRequest="22"
+                                        HeightRequest="22"
+                                        VerticalOptions="Center"
+                                        Margin="0,0,4,0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="11" />
+                                    </Border.StrokeShape>
+                                    <Label Text="!" 
+                                           TextColor="White" 
+                                           FontAttributes="Bold" 
+                                           FontSize="14" 
+                                           HorizontalOptions="Center" 
+                                           VerticalOptions="Center"
+                                           Margin="0,-1,0,0" />
+                                </Border>
+
+                                <Button Text="⋮"
+                                        FontSize="24"
+                                        FontAttributes="Bold"
+                                        TextColor="White"
+                                        BackgroundColor="Transparent"
+                                        VerticalOptions="Center"
+                                        WidthRequest="40"
+                                        HeightRequest="40"
+                                        CommandParameter="{Binding .}"
+                                        Clicked="OnScoreOptionsClicked" />
+                            </HorizontalStackLayout>
+
+                            <Label Grid.Row="1" Grid.Column="1"
                                    Text="{Binding DisplaySubtitle}" 
                                    FontSize="12" 
                                    TextColor="#888888" 

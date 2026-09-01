@@ -119,27 +119,15 @@ namespace MusicScoreManager.Services
 
                 score.AudioFiles = audioFilesGrouped.TryGetValue(score.Id, out var afs) ? afs : new();
                 
-                // Optimisation : On ne vérifie l'existence physique QUE si on a peu de scores (ex: ouverture partition)
-                // ou si on est en train de rendre un item spécifique (mais ici on le fait pour tous)
-                // Pour la liste principale, on accepte un léger décalage ou on le fera en tâche de fond.
-                if (scores.Count <= 5)
+                foreach (var af in score.AudioFiles)
                 {
-                    foreach (var af in score.AudioFiles)
-                    {
-                        var afPath = _settingsService.GetAbsolutePath(af.FilePath, isAudio: true);
-                        af.IsFileMissing = !File.Exists(afPath);
-                        af.IsExternal = Path.IsPathRooted(af.FilePath);
-                    }
-                    var sPath = _settingsService.GetAbsolutePath(score.FilePath);
-                    score.IsFileMissing = !File.Exists(sPath);
-                    score.IsExternal = Path.IsPathRooted(score.FilePath);
+                    var afPath = _settingsService.GetAbsolutePath(af.FilePath, isAudio: true);
+                    af.IsFileMissing = string.IsNullOrWhiteSpace(af.FilePath) || !File.Exists(afPath);
+                    af.IsExternal = Path.IsPathRooted(af.FilePath);
                 }
-                else
-                {
-                    // Valeurs par défaut rapides pour la liste
-                    score.IsExternal = Path.IsPathRooted(score.FilePath);
-                    // On ne check pas File.Exists ici pour la grosse liste
-                }
+                var sPath = _settingsService.GetAbsolutePath(score.FilePath);
+                score.IsFileMissing = string.IsNullOrWhiteSpace(score.FilePath) || !File.Exists(sPath);
+                score.IsExternal = Path.IsPathRooted(score.FilePath);
             }
         }
 
