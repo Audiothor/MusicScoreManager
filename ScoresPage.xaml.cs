@@ -445,6 +445,7 @@ public partial class ScoresPage : ContentPage
     }
 
     private List<Models.Score>? _scoresToSendForExchange = null;
+    private ExportOptions _currentExportOptions = new() { IncludeAnnotations = true, IncludeAudio = true };
 
     private async void OnBulkExportClicked(object sender, EventArgs e)
     {
@@ -457,17 +458,11 @@ public partial class ScoresPage : ContentPage
             return;
         }
 
-        try
-        {
-            var options = new ExportOptions { IncludeAnnotations = true, IncludeAudio = true };
-            string path = await _exportImportService.ExportScoresToFileAsync(selectedScores, options);
-            await DisplayAlertAsync("Export réussi", $"{selectedScores.Count} partition(s) exportée(s) avec succès dans :\n\n{path}", "OK");
-            IsMultiSelectActive = false;
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlertAsync("Erreur d'export", $"Impossible d'exporter les partitions : {ex.Message}", "OK");
-        }
+        _scoresToSendForExchange = selectedScores;
+        ScoreOptionsTitle.Text = $"Exporter {selectedScores.Count} partition(s)";
+        ScoreOptSendWifiActionButton.IsVisible = false;
+        ScoreOptExportFileActionButton.IsVisible = true;
+        ScoreOptionsOverlay.IsVisible = true;
     }
 
     private async void OnBulkExchangeClicked(object sender, EventArgs e)
@@ -481,7 +476,11 @@ public partial class ScoresPage : ContentPage
             return;
         }
 
-        await StartExchangeFlowAsync(selectedScores);
+        _scoresToSendForExchange = selectedScores;
+        ScoreOptionsTitle.Text = $"Partager {selectedScores.Count} partition(s)";
+        ScoreOptSendWifiActionButton.IsVisible = true;
+        ScoreOptExportFileActionButton.IsVisible = false;
+        ScoreOptionsOverlay.IsVisible = true;
     }
 
     private async Task StartExchangeFlowAsync(List<Models.Score> scoresToSend)
@@ -641,8 +640,7 @@ public partial class ScoresPage : ContentPage
             WifiTransferStatusLabel.Text = "Préparation du paquet...";
             WifiTransferProgressBar.Progress = 0.05;
 
-            var options = new ExportOptions { IncludeAnnotations = true, IncludeAudio = true };
-            var filesToSend = await _exportImportService.CreateWifiPayloadsForScoresAsync(selectedScores, options);
+            var filesToSend = await _exportImportService.CreateWifiPayloadsForScoresAsync(selectedScores, _currentExportOptions);
 
             if (!filesToSend.Any())
             {
@@ -687,8 +685,7 @@ public partial class ScoresPage : ContentPage
         }
         if (!selectedScores.Any()) return;
 
-        var options = new ExportOptions { IncludeAnnotations = true, IncludeAudio = true };
-        var filesToSend = await _exportImportService.CreateWifiPayloadsForScoresAsync(selectedScores, options);
+        var filesToSend = await _exportImportService.CreateWifiPayloadsForScoresAsync(selectedScores, _currentExportOptions);
 
         string title = $"{selectedScores.Count} partition(s)";
         var shareInfo = await _wifiService.StartGroupBroadcastAsync(filesToSend, title, (clientsCount) =>
@@ -1042,33 +1039,83 @@ public partial class ScoresPage : ContentPage
         }
     }
 
-    private async void OnMenuExchangeClicked(object sender, EventArgs e)
+    private void OnMenuExchangeClicked(object sender, EventArgs e)
     {
         ScoreMenuOverlay.IsVisible = false;
         if (_selectedScoreForMenu != null)
         {
-            await StartExchangeFlowAsync(new List<Models.Score> { _selectedScoreForMenu });
+            _scoresToSendForExchange = new List<Models.Score> { _selectedScoreForMenu };
+            ScoreOptionsTitle.Text = $"Partager '{_selectedScoreForMenu.Title}'";
+            ScoreOptSendWifiActionButton.IsVisible = true;
+            ScoreOptExportFileActionButton.IsVisible = false;
+            ScoreOptionsOverlay.IsVisible = true;
         }
     }
 
-    private async void OnMenuExportClicked(object sender, EventArgs e)
+    private void OnMenuExportClicked(object sender, EventArgs e)
     {
         ScoreMenuOverlay.IsVisible = false;
         if (_selectedScoreForMenu != null)
         {
-            var score = _selectedScoreForMenu;
+            _scoresToSendForExchange = new List<Models.Score> { _selectedScoreForMenu };
+            ScoreOptionsTitle.Text = $"Exporter '{_selectedScoreForMenu.Title}'";
+            ScoreOptSendWifiActionButton.IsVisible = false;
+            ScoreOptExportFileActionButton.IsVisible = true;
+            ScoreOptionsOverlay.IsVisible = true;
+        }
+    }
+
+    private async void OnScoreOptionsSendWifiClicked(object sender, EventArgs e)
+    {
+        ScoreOptionsOverlay.IsVisible = false;
+        _currentExportOptions = new ExportOptions
+        {
+            IncludeAnnotations = ScoreOptAnnotationsCheckBox.IsChecked,
+            IncludeAudio = ScoreOptAudioCheckBox.IsChecked
+        };
+
+        if (_scoresToSendForExchange != null && _scoresToSendForExchange.Any())
+        {
+            await StartExchangeFlowAsync(_scoresToSendForExchange);
+        }
+    }
+
+    private async void OnScoreOptionsExportFileClicked(object sender, EventArgs e)
+    {
+        ScoreOptionsOverlay.IsVisible = false;
+        _currentExportOptions = new ExportOptions
+        {
+            IncludeAnnotations = ScoreOptAnnotationsCheckBox.IsChecked,
+            IncludeAudio = ScoreOptAudioCheckBox.IsChecked
+        };
+
+        if (_scoresToSendForExchange != null && _scoresToSendForExchange.Any())
+        {
+            var scores = _scoresToSendForExchange;
+            _scoresToSendForExchange = null;
             _selectedScoreForMenu = null;
+
             try
             {
-                var options = new ExportOptions { IncludeAnnotations = true, IncludeAudio = true };
-                string path = await _exportImportService.ExportScoresToFileAsync(new List<Models.Score> { score }, options);
-                await DisplayAlertAsync("Export réussi", $"La partition '{score.Title}' a été exportée avec succès dans :\n\n{path}", "OK");
+                string path = await _exportImportService.ExportScoresToFileAsync(scores, _currentExportOptions);
+                string message = scores.Count == 1
+                    ? $"La partition '{scores[0].Title}' a été exportée avec succès dans :\n\n{path}"
+                    : $"{scores.Count} partitions ont été exportées avec succès dans :\n\n{path}";
+
+                await DisplayAlertAsync("Export réussi", message, "OK");
+                IsMultiSelectActive = false;
             }
             catch (Exception ex)
             {
-                await DisplayAlertAsync("Erreur d'export", $"Impossible d'exporter la partition : {ex.Message}", "OK");
+                await DisplayAlertAsync("Erreur d'export", $"Impossible d'exporter la sélection : {ex.Message}", "OK");
             }
         }
+    }
+
+    private void OnScoreOptionsCancelClicked(object sender, EventArgs e)
+    {
+        ScoreOptionsOverlay.IsVisible = false;
+        _scoresToSendForExchange = null;
     }
 
     private async void OnMenuRenameClicked(object sender, EventArgs e)

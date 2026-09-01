@@ -2,13 +2,17 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.5.3
+# Music Score Manager v1.9.5.4
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### 🎛️ Options de Partage & Export de Partition (v1.9.5.4)
+- **Menu d'Options Détaillé (Annotations & Audio)** : Comme pour les setlists, l'envoi Wi-Fi Direct ou l'export de partition propose désormais un menu d'options permettant de cocher/décocher l'inclusion des annotations manuscrites et des pistes audio rattachées.
+- **Harmonisation Complète** : Fonctionne aussi bien pour le partage d'une partition individuelle que pour l'envoi/export groupé en multi-sélection.
 
 ### 🛡️ Contrôle Strict & Intégrité des Fichiers PDF (v1.9.5.3)
 - **Validation Binaire de l'En-tête & Structure PDF** : Vérification systématique lors de tout import ou assemblage que le fichier est un véritable document PDF intègre (magic header `%PDF-`, terminaison, descripteurs natifs de rendu) même s'il porte l'extension `.pdf`.
@@ -151,6 +155,7 @@
 
 ## 📜 Historique Récent des Versions
 
+- **v1.9.5.4** : **"Score Transfer & Export Options Modal (Annotations & Audio)"** — Ajout du menu modal d'options (annotations, pistes audio) lors de l'envoi Wi-Fi Direct ou de l'export d'une ou plusieurs partitions, calqué sur le comportement des setlists.
 - **v1.9.5.3** : **"Strict PDF Binary Header & Structure Validation"** — Contrôle d'intégrité binaire et structurel à l'import de PDF (détection magic header, validation anti-fichiers corrompus ou frauduleux) empêchant tout crash lors de la lecture.
 - **v1.9.5.2** : **"Missing File Visual Indicators & Warning Banners"** — Ajout d'une pastille d'alerte rouge avec point d'exclamation (!) à gauche des 3 points dans la bibliothèque, bannière d'avertissement dans l'édition de partition et badge d'erreur dans les setlists si un PDF est manquant.
 - **v1.9.5.1** : **"Setlist Duplication, Smart Composer & Untagged Sort"** — Ajout de la duplication instantanée de setlists avec conservation de l'ordre des morceaux, tri intelligent par compositeur avec paramètre personnalisable (sans compositeur au début/fin), et nouveau tri direct des partitions sans étiquette.
@@ -226,5 +231,5 @@ L'application **Music Score Manager** respecte rigoureusement la vie privée de 
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.9.5.3 "Strict PDF Binary Header & Structure Validation"*
+**Développé par Audiothor** — *MusicScoreManager v1.9.5.4 "Score Transfer & Export Options Modal (Annotations & Audio)"*
 

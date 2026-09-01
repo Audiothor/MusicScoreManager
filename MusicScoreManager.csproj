@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.9.5.3</ApplicationDisplayVersion>
-		<ApplicationVersion>19530</ApplicationVersion>
-		<!-- Version actuelle : v1.9.5.3 "Strict PDF Binary Header & Structure Validation" -->
+		<ApplicationDisplayVersion>1.9.5.4</ApplicationDisplayVersion>
+		<ApplicationVersion>19540</ApplicationVersion>
+		<!-- Version actuelle : v1.9.5.4 "Score Transfer & Export Options Modal (Annotations & Audio)" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		
