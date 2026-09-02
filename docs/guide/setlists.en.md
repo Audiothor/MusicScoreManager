@@ -1,36 +1,66 @@
-# Setlist Management
+# 📋 Setlists Menu
 
-**Setlists** allow you to prepare, organize, and perform complete concert programs, rehearsal orders, or service music without interruptions.
-
----
-
-## ➕ Creating a Setlist
-
-1. Navigate to the **Setlists** tab.
-2. Tap the **➕** button at the top right.
-3. Enter your setlist name (e.g., *Spring Concert 2026*).
-4. Add songs from your library and arrange their sequence using the up and down arrows.
+The **Setlists** menu is engineered specifically for planning, organizing, and performing live concert sets, auditions, church services, and band rehearsals without downtime.
 
 ---
 
-## ▶️ Instant Stage Performance
+## 📋 Setlist Catalog Overview
 
-- **Tap any setlist card**: Directly starts the performance mode on the first score of the program.
-- In setlist mode, turning pages at the end of a score seamlessly transitions to the next song in the setlist.
-
----
-
-## 📑 Duplicate Setlists
-
-Need to create a variation of a concert without starting from scratch?
-- Open the **⋮** menu on any setlist card.
-- Tap **📑 Duplicate setlist**.
-- A new setlist is instantly created with all the songs in the exact same sequence.
+The Setlists view lists all your performance programs:
+- **Setlist Title** (e.g., *Summer Festival 2026*, *Full Band Rehearsal*).
+- **Number of Pieces Included**.
+- **Last Modified Timestamp**.
+- **Missing File Visual Badge**: If any score inside the setlist has a missing or unreadable PDF file, a visual warning badge highlights the issue immediately.
 
 ---
 
-## 📡 Share & Export Setlists
+## ➕ Creating & Editing a Setlist
 
-- **Wi-Fi Direct Transfer**: Send the full setlist and all associated score files to fellow musicians.
-- **Detailed Options Modal**: Choose whether to bundle personal annotations and attached audio tracks.
-- **Export to File (`.msmsetlist`)**: Create a self-contained archive file for backup or cross-device exchange.
+1. **Create a New Setlist**:
+   - Tap the **➕** button in the top-right corner.
+   - Enter a descriptive name for your program.
+2. **Add Pieces**:
+   - Pick pieces from your entire sheet music library using multi-selection checkmarks.
+3. **Sequence Your Performance**:
+   - Use the **Move Up (▲)** and **Move Down (▼)** controls to set the precise performance order.
+   - Remove songs from the setlist with a single tap (pieces remain safe in your main library).
+   - Save your program.
+
+---
+
+## ▶️ Instant Stage Start (Card Tap)
+
+During live performances, going on stage must be instant:
+- **Tapping directly on a setlist card** immediately opens the **first piece in fullscreen concert mode**.
+- If the setlist is empty, a friendly notification prompts you to assign pieces first.
+- While performing, setlists activate **continuous playback mode**: turning the page on the final page of a piece automatically transitions to the first page of the subsequent song in the setlist!
+
+---
+
+## ⋮ Setlist Context Menu (3 dots)
+
+Tapping the **⋮** button on any setlist card opens the action menu:
+
+1. **▶️ Start setlist**:
+   - Launches stage performance mode directly from the first piece (same as tapping the card).
+
+2. **✏️ Edit setlist**:
+   - Opens the editor window to rename the setlist, reorder pieces, or add/remove songs.
+
+3. **📑 Duplicate setlist**:
+   - **Time-saving feature**: Instantly clones the entire setlist with all songs in identical sequence (auto-named *"[Name] - Copy"*). Perfect for preparing short and long concert variants.
+
+4. **📡 Send via Wi-Fi Direct**:
+   - Wirelessly sends the complete program and all attached score PDFs directly to other musicians' tablets.
+   - Shows the **Transfer Options modal**:
+     * ☑️ *Include handwritten annotations & drawings*.
+     * ☑️ *Include attached audio backing tracks*.
+
+5. **📦 Export setlist (.msmsetlist)**:
+   - Produces a self-contained archive package holding the setlist structure, PDFs, annotations, and audio tracks.
+
+6. **🏷️ Rename**:
+   - Quick title modification.
+
+7. **🗑️ Delete**:
+   - Deletes the setlist (all individual scores remain untouched in your library).
