@@ -47,8 +47,21 @@ public partial class ViewerPage : ContentPage
     private string? _pendingSticker = null;
     private bool _isAnnotationMode = false;
     private List<Annotation> _annotations = new();
-    private bool _isAnnotationsLocked = true;
+    private bool _isAnnotationsLocked = false;
     private AbsoluteLayout ActiveAnnotationsContainer => AnnotationsContainer;
+
+    private void UnlockAnnotations()
+    {
+        if (_isAnnotationsLocked)
+        {
+            _isAnnotationsLocked = false;
+            if (LockUnlockBtn != null)
+            {
+                LockUnlockBtn.Text = "🔓";
+                LockUnlockBtn.BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#2E7D32");
+            }
+        }
+    }
 
     public ViewerPage(Score score, List<Score>? setlistScores = null, int currentIndex = -1, bool isContinuous = true)
     {
@@ -1244,6 +1257,8 @@ public partial class ViewerPage : ContentPage
     {
         if (AnnotationBar.IsVisible)
         {
+            if (_isAnnotationMode || _isTextMode || _isHighlightMode || _isDrawMode) return;
+
             AnnotationBar.IsVisible = false;
             BottomTouchBar.IsVisible = true; // Réactive la zone tactile du bas !
             StickerPickerOverlay.IsVisible = false;
@@ -1272,9 +1287,26 @@ public partial class ViewerPage : ContentPage
         double width = this.Width;
         double height = this.Height;
 
-        // Si la barre d'annotation est visible et qu'on tape dans le vide, on la ferme
+        // Si la barre d'annotation est visible
         if (AnnotationBar.IsVisible)
         {
+            if (_isAnnotationMode && !string.IsNullOrEmpty(_pendingSticker))
+            {
+                _ = PlaceStickerAtAsync(x, y);
+                return;
+            }
+            if (_isTextMode)
+            {
+                _ = HandleTextPlacementAsync(x, y);
+                return;
+            }
+            if (_isHighlightMode || _isDrawMode)
+            {
+                // En mode dessin ou surlignage, ne jamais fermer la barre sur un tap
+                return;
+            }
+
+            // Si aucun mode d'annotation n'est actif et qu'on tape dans le vide, fermer la barre
             AnnotationBar.IsVisible = false;
             BottomTouchBar.IsVisible = true; // Réactive la zone tactile du bas !
             StickerPickerOverlay.IsVisible = false;
@@ -1746,6 +1778,15 @@ public partial class ViewerPage : ContentPage
         if (!AnnotationBar.IsVisible)
         {
             StickerPickerOverlay.IsVisible = false;
+            HighlightOptionsOverlay.IsVisible = false;
+            DrawOptionsOverlay.IsVisible = false;
+            TextOptionsOverlay.IsVisible = false;
+            _isHighlightMode = false;
+            _isDrawMode = false;
+            _isTextMode = false;
+            HighlightBtn.BackgroundColor = Colors.Transparent;
+            DrawBtn.BackgroundColor = Colors.Transparent;
+            TextAnnotationBtn.BackgroundColor = Colors.Transparent;
             AnnotationBar.TranslationY = 0;
             StickerPickerOverlay.TranslationY = 0;
             _selectedAnnotation = null;
@@ -1759,6 +1800,14 @@ public partial class ViewerPage : ContentPage
             }
 
             RenderAnnotations();
+        }
+        else
+        {
+            AnnotationsContainer.InputTransparent = false;
+            UnlockAnnotations();
+#if ANDROID
+            SetupNativeTouchHandling();
+#endif
         }
 
         // Ajuster la position de l'indicateur de page
@@ -1869,6 +1918,55 @@ public partial class ViewerPage : ContentPage
                     if (dist < 25 && duration < 500)
                     {
                         MainThread.BeginInvokeOnMainThread(async () => await HandleTextPlacementAsync(touchX, touchY));
+                    }
+                    args.Handled = true;
+                    return;
+            }
+        }
+
+        // 1c. GESTION DU TAP EN MODE STICKER (1 doigt, sticker sélectionné et déverrouillé)
+        if (_isAnnotationMode && !string.IsNullOrEmpty(_pendingSticker) && !_isAnnotationsLocked)
+        {
+            double touchX = motionEvent.GetX() / density;
+            double touchY = motionEvent.GetY() / density;
+
+            switch (motionEvent.ActionMasked)
+            {
+                case Android.Views.MotionEventActions.Down:
+                    _touchDownTime = motionEvent.EventTime;
+                    _touchDownX = (float)touchX;
+                    _touchDownY = (float)touchY;
+                    args.Handled = true;
+                    return;
+
+                case Android.Views.MotionEventActions.Up:
+                    long duration = motionEvent.EventTime - _touchDownTime;
+                    float diffX = (float)touchX - _touchDownX;
+                    float diffY = (float)touchY - _touchDownY;
+                    float dist = (float)Math.Sqrt(diffX * diffX + diffY * diffY);
+                    if (dist < 30 && duration < 500)
+                    {
+                        double containerHeight = ActiveAnnotationsContainer.Height;
+                        bool insideOverlay = false;
+                        if (StickerPickerOverlay.IsVisible)
+                        {
+                            double pickerHeight = StickerPickerOverlay.Height > 0 ? StickerPickerOverlay.Height : 270;
+                            double pickerTop = containerHeight - pickerHeight - 70 + StickerPickerOverlay.TranslationY;
+                            if (touchY >= pickerTop && touchY <= pickerTop + pickerHeight)
+                                insideOverlay = true;
+                        }
+                        if (AnnotationBar.IsVisible)
+                        {
+                            double barHeight = AnnotationBar.Height > 0 ? AnnotationBar.Height : 45;
+                            double barTop = containerHeight - barHeight + AnnotationBar.TranslationY;
+                            if (touchY >= barTop && touchY <= barTop + barHeight)
+                                insideOverlay = true;
+                        }
+
+                        if (!insideOverlay)
+                        {
+                            MainThread.BeginInvokeOnMainThread(async () => await PlaceStickerAtAsync(touchX, touchY));
+                        }
                     }
                     args.Handled = true;
                     return;
@@ -1992,7 +2090,51 @@ public partial class ViewerPage : ContentPage
                 // Tap détection (< 30px, < 400ms)
                 if (dist < 30 && duration < 400)
                 {
-                    // Zone basse (15%) -> Barre d'annotations
+                    // Si la barre d'annotations est visible
+                    if (AnnotationBar.IsVisible)
+                    {
+                        // 1. Zone basse (15%) -> Laisser le tap sur la barre d'annotations elle-même
+                        if (_touchDownY > height * 0.85)
+                        {
+                            args.Handled = false;
+                            return;
+                        }
+
+                        // 2. Sélection ou désélection d'annotation sur la partition
+                        if (!_isAnnotationsLocked)
+                        {
+                            var hit = FindAnnotationAtPoint(curX, curY, width, height);
+                            MainThread.BeginInvokeOnMainThread(() =>
+                            {
+                                if (hit != null)
+                                {
+                                    _selectedAnnotation = hit;
+                                    if (hit.Type == AnnotationType.Text)
+                                    {
+                                        _currentTextColor = hit.Color;
+                                        _currentTextSize = hit.Scale <= 0 ? 14 : hit.Scale;
+                                        UpdateTextColorBorders();
+                                        UpdateTextSizeButtons();
+                                    }
+                                    else if (hit.Type == AnnotationType.Sticker)
+                                    {
+                                        _currentStickerColor = hit.Color;
+                                        _currentStickerBgColor = hit.BackgroundColor;
+                                        StickerSizeSlider.Value = hit.Scale;
+                                    }
+                                }
+                                else
+                                {
+                                    _selectedAnnotation = null;
+                                }
+                                RenderAnnotations();
+                            });
+                        }
+                        args.Handled = true;
+                        return;
+                    }
+
+                    // Zone basse (15%) -> Barre d'annotations (quand la barre est fermée)
                     if (_touchDownY > height * 0.85)
                     {
                         MainThread.BeginInvokeOnMainThread(() => OnAnnotationToggleTapped(this, EventArgs.Empty));
@@ -2016,8 +2158,8 @@ public partial class ViewerPage : ContentPage
                         return;
                     }
 
-                    // Zones gauche / droite pour tap tourne-page (uniquement si non zoomé)
-                    if (ZoomLayout.Scale <= 1.05)
+                    // Zones gauche / droite pour tap tourne-page (uniquement si non zoomé et barre fermée)
+                    if (ZoomLayout.Scale <= 1.05 && !AnnotationBar.IsVisible)
                     {
                         string nextG = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
                         string prevG = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
@@ -2054,8 +2196,8 @@ public partial class ViewerPage : ContentPage
                         }
                     }
                 }
-                // Swipe détection (>= 35px, < 800ms) - uniquement si non zoomé
-                else if (dist >= 35 && duration < 800 && ZoomLayout.Scale <= 1.05)
+                // Swipe détection (>= 35px, < 800ms) - uniquement si non zoomé et barre fermée
+                else if (dist >= 35 && duration < 800 && ZoomLayout.Scale <= 1.05 && !AnnotationBar.IsVisible)
                 {
                     string nextG = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
                     string prevG = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
@@ -2097,11 +2239,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnAnnotationHighlightClicked(object sender, EventArgs e)
     {
-        if (_isAnnotationsLocked)
-        {
-            DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir surligner.", "OK");
-            return;
-        }
+        UnlockAnnotations();
 
         _isHighlightMode = !_isHighlightMode;
         HighlightOptionsOverlay.IsVisible = _isHighlightMode;
@@ -2119,6 +2257,8 @@ public partial class ViewerPage : ContentPage
             _isAnnotationMode = false;
             _pendingSticker = null;
             StickerPickerOverlay.IsVisible = false;
+
+            ActiveAnnotationsContainer.InputTransparent = false;
             HighlightBtn.BackgroundColor = Color.FromArgb("#40007ACC");
         }
         else
@@ -2303,11 +2443,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnAnnotationDrawClicked(object sender, EventArgs e)
     {
-        if (_isAnnotationsLocked)
-        {
-            DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir dessiner.", "OK");
-            return;
-        }
+        UnlockAnnotations();
 
         _isDrawMode = !_isDrawMode;
         DrawOptionsOverlay.IsVisible = _isDrawMode;
@@ -2326,6 +2462,7 @@ public partial class ViewerPage : ContentPage
             _pendingSticker = null;
             StickerPickerOverlay.IsVisible = false;
 
+            ActiveAnnotationsContainer.InputTransparent = false;
             DrawBtn.BackgroundColor = Color.FromArgb("#40007ACC");
         }
         else
@@ -2483,11 +2620,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnAnnotationTextClicked(object sender, EventArgs e)
     {
-        if (_isAnnotationsLocked)
-        {
-            DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour ajouter du texte.", "OK");
-            return;
-        }
+        UnlockAnnotations();
 
         _isTextMode = !_isTextMode;
         TextOptionsOverlay.IsVisible = _isTextMode;
@@ -2648,6 +2781,8 @@ public partial class ViewerPage : ContentPage
 
     private async void OnAnnotationStickersClicked(object sender, EventArgs e)
     {
+        UnlockAnnotations();
+
         _isHighlightMode = false;
         HighlightOptionsOverlay.IsVisible = false;
         HighlightBtn.BackgroundColor = Colors.Transparent;
@@ -2660,6 +2795,7 @@ public partial class ViewerPage : ContentPage
         TextOptionsOverlay.IsVisible = false;
         TextAnnotationBtn.BackgroundColor = Colors.Transparent;
 
+        ActiveAnnotationsContainer.InputTransparent = false;
         StickerPickerOverlay.IsVisible = !StickerPickerOverlay.IsVisible;
         
         if (StickerPickerOverlay.IsVisible && StickerCategoriesCollection.ItemsSource == null)
@@ -2675,7 +2811,6 @@ public partial class ViewerPage : ContentPage
 
         _pendingSticker = null;
         _isAnnotationMode = false;
-        AnnotationsContainer.InputTransparent = true;
 
         if (StickersCollection != null)
         {
@@ -2963,22 +3098,14 @@ public partial class ViewerPage : ContentPage
             _redoStack.Clear();
             UpdateUndoRedoButtons();
             RenderAnnotations();
-
-            // Une fois posé, on peut masquer les bandeaux pour libérer de l'espace si besoin
-            // mais l'utilisateur a demandé qu'ils ne partent pas. On les laisse donc.
         }
     }
 
-    private async void OnStickerSelected(object? sender, SelectionChangedEventArgs e)
+    private void OnStickerSelected(object? sender, SelectionChangedEventArgs e)
     {
         if (e.CurrentSelection.FirstOrDefault() is StickerItem sticker)
         {
-            if (_isAnnotationsLocked)
-            {
-                if (StickersCollection != null) StickersCollection.SelectedItem = null;
-                await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Cliquez sur le cadenas (🔓) dans la barre du bas pour pouvoir ajouter des stickers.", "OK");
-                return;
-            }
+            UnlockAnnotations();
 
             _pendingSticker = sticker.Text;
             _isAnnotationMode = true;
@@ -2999,36 +3126,21 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private async void OnPlacementTapped(object? sender, TappedEventArgs e)
+    private async Task PlaceStickerAtAsync(double absX, double absY)
     {
-        if (_isAnnotationsLocked)
-        {
-            if (_isTextMode || _isAnnotationMode)
-            {
-                await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir annoter.", "OK");
-            }
-            return;
-        }
+        if (ActiveAnnotationsContainer == null || ActiveAnnotationsContainer.Width <= 0 || ActiveAnnotationsContainer.Height <= 0) return;
+        if (string.IsNullOrEmpty(_pendingSticker)) return;
 
-        var position = e.GetPosition(ActiveAnnotationsContainer);
-        if (position == null || ActiveAnnotationsContainer.Width <= 0 || ActiveAnnotationsContainer.Height <= 0) return;
-
-        if (_isTextMode)
-        {
-            await HandleTextPlacementAsync(position.Value.X, position.Value.Y);
-            return;
-        }
-
-        if (!_isAnnotationMode || _pendingSticker == null) return;
+        UnlockAnnotations();
 
         // Calculer les coordonnées relatives (0.0 à 1.0)
-        double relX = position.Value.X / ActiveAnnotationsContainer.Width;
-        double relY = position.Value.Y / ActiveAnnotationsContainer.Height;
+        double relX = Math.Clamp(absX / ActiveAnnotationsContainer.Width, 0.0, 1.0);
+        double relY = Math.Clamp(absY / ActiveAnnotationsContainer.Height, 0.0, 1.0);
 
         // Récupérer les styles actuellement configurés dans le bandeau
         string color = _currentStickerColor;
         string bgColor = _currentStickerBgColor;
-        double scale = StickerSizeSlider.Value;
+        double scale = StickerSizeSlider?.Value ?? 1.0;
 
         var annotation = new Annotation
         {
@@ -3045,14 +3157,14 @@ public partial class ViewerPage : ContentPage
 
         await _databaseService.SaveAnnotationAsync(annotation);
         _annotations.Add(annotation);
+        _selectedAnnotation = annotation;
 
         _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Add, Annotation = annotation });
         _redoStack.Clear();
         UpdateUndoRedoButtons();
 
-        // Sortir du mode placement et désactiver l'interception tactile
+        // Sortir du mode placement et désélectionner l'item dans la collection
         _isAnnotationMode = false;
-        ActiveAnnotationsContainer.InputTransparent = true;
         _pendingSticker = null;
 
         if (StickersCollection != null)
@@ -3061,6 +3173,25 @@ public partial class ViewerPage : ContentPage
         }
 
         RenderAnnotations();
+    }
+
+    private async void OnPlacementTapped(object? sender, TappedEventArgs e)
+    {
+        UnlockAnnotations();
+
+        var position = e.GetPosition(ActiveAnnotationsContainer);
+        if (position == null || ActiveAnnotationsContainer.Width <= 0 || ActiveAnnotationsContainer.Height <= 0) return;
+
+        if (_isTextMode)
+        {
+            await HandleTextPlacementAsync(position.Value.X, position.Value.Y);
+            return;
+        }
+
+        if (_isAnnotationMode && !string.IsNullOrEmpty(_pendingSticker))
+        {
+            await PlaceStickerAtAsync(position.Value.X, position.Value.Y);
+        }
     }
 
     private Annotation? _selectedAnnotation = null;
@@ -3260,6 +3391,49 @@ public partial class ViewerPage : ContentPage
             TextAnnotationBtn.BackgroundColor = Colors.Transparent;
         }
         RenderAnnotations();
+    }
+
+    private Annotation? FindAnnotationAtPoint(double x, double y, double containerW, double containerH)
+    {
+        if (containerW <= 0 || containerH <= 0) return null;
+
+        var pageAnns = _annotations.Where(a => a.PageNumber == _currentPage).Reverse().ToList();
+        foreach (var ann in pageAnns)
+        {
+            if (ann.Type == AnnotationType.Sticker || ann.Type == AnnotationType.Text)
+            {
+                double ax = ann.X * containerW;
+                double ay = ann.Y * containerH;
+                double radius = Math.Max(30.0, 30.0 * Math.Max(0.8, ann.Scale));
+                if (Math.Abs(x - ax) <= radius && Math.Abs(y - ay) <= radius)
+                {
+                    return ann;
+                }
+            }
+            else if (ann.Type == AnnotationType.Drawing)
+            {
+                if (!string.IsNullOrEmpty(ann.Content))
+                {
+                    var pairs = ann.Content.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var pair in pairs)
+                    {
+                        var coords = pair.Split(',');
+                        if (coords.Length == 2 &&
+                            double.TryParse(coords[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double rx) &&
+                            double.TryParse(coords[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double ry))
+                        {
+                            double px = rx * containerW;
+                            double py = ry * containerH;
+                            if (Math.Abs(x - px) <= 25.0 && Math.Abs(y - py) <= 25.0)
+                            {
+                                return ann;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private void RenderAnnotations()
