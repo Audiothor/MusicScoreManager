@@ -2,13 +2,18 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.6.0
+# Music Score Manager v1.9.6.1
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### 🔒 Verrouillage Automatique Sécurisé des Annotations (v1.9.6.1)
+- **Verrouillage Systématique par Défaut à l'Ouverture** : À l'ouverture de toute partition ou lors du passage au morceau suivant d'une setlist, les annotations sont verrouillées (`🔒` rouge) et le conteneur tactile d'annotations devient transparent aux clics (`InputTransparent = true`). Cela garantit que les interactions de lecture (tourner la page à gauche/droite, ouvrir le menu au centre) restent 100% prioritaires et fluides sans aucun risque de déplacer accidentellement un sticker ou un texte.
+- **Verrouillage Automatique à la Fermeture de la Barre d'Outils (Bouton ✕)** : Fermer la barre d'annotations (avec la croix ✕ ou le bouton bas) réactive instantanément le verrouillage des annotations (`🔒`), protégeant la partition contre tout geste involontaire pendant le jeu ou les répétitions.
+- **Déverrouillage Intuitif à la Sélection d'un Outil** : Dès que l'utilisateur clique sur un outil d'édition (Crayon ✎, Surligneur 🖌, Texte T, Stickers ❏ ou le bouton Cadenas), la surface se déverrouille automatiquement (`🔓` vert) pour permettre la pose et l'édition immédiates.
 
 ### 📖 Projection Géométrique & Synchronisation des Annotations en Mode 2 Pages Paysage (v1.9.6.0)
 - **Alignement Rigoureux Page Gauche / Page Droite** : Lorsque le mode *Affichage 2 pages en mode paysage* est actif, les annotations créées en mode portrait (ou sur une page simple) sont projetées avec une précision absolue sur leur page respective (page de gauche `leftPage` ou page de droite `rightPage`).

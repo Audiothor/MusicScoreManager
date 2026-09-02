@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>1.9.6.0</ApplicationDisplayVersion>
-		<ApplicationVersion>19600</ApplicationVersion>
-		<!-- Version actuelle : v1.9.6.0 "2-Page Landscape Annotations Mapping & Zoom Sync" -->
+		<ApplicationDisplayVersion>1.9.6.1</ApplicationDisplayVersion>
+		<ApplicationVersion>19610</ApplicationVersion>
+		<!-- Version actuelle : v1.9.6.1 "Automatic Annotation Lock on Toolbar Close & Default Open" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		
