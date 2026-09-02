@@ -105,60 +105,6 @@ namespace MusicScoreManager.Services
     public class PdfService
     {
         /// <summary>
-        /// Vérifie qu'un fichier est un document PDF valide en contrôlant son en-tête magique (%PDF).
-        /// </summary>
-        public static bool IsValidPdfFile(string filePath)
-        {
-            if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
-                return false;
-
-            try
-            {
-                var fileInfo = new FileInfo(filePath);
-                if (fileInfo.Length < 10)
-                    return false;
-
-                using var stream = File.OpenRead(filePath);
-                return IsValidPdfStream(stream);
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Vérifie le flux d'un fichier PDF (magic header %PDF dans les premiers octets).
-        /// Compatible avec les flux forward-only / non-seekables (comme les ContentResolver Streams Android).
-        /// </summary>
-        public static bool IsValidPdfStream(Stream stream)
-        {
-            if (stream == null)
-                return false;
-
-            try
-            {
-                // Lecture sécurisée des premiers 1024 octets sans supposer que CanSeek ou Length soit supporté
-                byte[] buffer = new byte[1024];
-                int totalRead = 0;
-                int read;
-                while (totalRead < buffer.Length && (read = stream.Read(buffer, totalRead, buffer.Length - totalRead)) > 0)
-                {
-                    totalRead += read;
-                }
-
-                if (totalRead < 4) return false;
-
-                string headerText = Encoding.ASCII.GetString(buffer, 0, totalRead);
-                return headerText.Contains("%PDF");
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
         /// Convertit une liste de fichiers image en un unique fichier PDF multi-pages haute fidélité.
         /// Chaque image occupe 100% de la page avec ses proportions réelles.
         /// </summary>
