@@ -1,34 +1,41 @@
-# Music Score Manager
+# User Manual - Music Score Manager
 
-Welcome to the official documentation for **Music Score Manager**, the cross-platform mobile application designed for musicians to effortlessly organize, annotate, and perform with their digital sheet music, especially during live concerts and rehearsals.
-
----
-
-## 🌟 Key Highlights
-
-- **📖 High-Performance Viewer**: Ultra-fast vector rendering of PDF sheet music with zoom, persistent page rotations, and instant navigation.
-- **🎼 Full Library Management**: Sort by title, composer, recently added, multi-tag filters, and instant real-time search.
-- **📋 Setlists & Stage Mode**: Build your concert setlists, organize pieces, duplicate programs, and start continuous playback with a single tap.
-- **📡 Instant Wireless Sharing**: Send scores and complete setlists tablet-to-tablet via **Wi-Fi Direct P2P**, or broadcast to an entire ensemble using a local **QR Code**.
-- **📑 Integrated PDF Assembler**: Reorganize, delete, merge images, or rotate pages directly inside the app without needing any external tools.
-- **🔒 100% Offline & Privacy-Focused**: All your sheet music, audio tracks, and personal data stay securely stored on your local device.
+Welcome to the comprehensive, in-depth documentation for **Music Score Manager**, the cross-platform application (Android / Windows / iOS / macOS) tailor-made for solo musicians, ensembles, choirs, and orchestras.
 
 ---
 
-## 🚀 Quick Start
+## 🎯 Application Overview
 
-1. **Add a score**: Go to the **Scores** tab, tap **➕ Add**, and choose your PDF files.
-2. **Create a setlist**: In the **Setlists** tab, tap **➕**, name your setlist, then add and reorder your pieces.
-3. **Start playing**: Simply tap the setlist card to immediately open the first piece in full-screen concert mode.
+The app is structured around **5 primary tabs** in the bottom navigation bar, complemented by the dedicated **Fullscreen Stage Mode Viewer**:
+
+```mermaid
+graph TD
+    A[Music Score Manager] --> B[🎵 1. Scores Menu]
+    A --> C[📋 2. Setlists Menu]
+    A --> D[🛠️ 3. Tools Menu]
+    A --> E[⚙️ 4. Settings Menu]
+    A --> F[🚪 5. Quit Menu]
+    B --> G[📖 Fullscreen Viewer]
+    C --> G
+```
+
+1. **🎵 Scores Menu**: Your complete digital music library. Import PDFs, categorize with multi-tags, sort by composers or dates, and customize score metadata.
+2. **📋 Setlists Menu**: Rehearsal and concert performance planner. Arrange songs in order, start stage performance with a single tap, and duplicate setlists in seconds.
+3. **📖 Sheet Music Viewer**: The stage companion. Seamless page turns, pinch-to-zoom, central quick menu, persistent rotations, annotation suite, precision metronome, and audio accompaniment.
+4. **🛠️ Tools Menu**: The powerhouse utility box. PDF Assembler Studio, Wi-Fi Direct P2P & QR Code group broadcasts without internet, tag management, duplicate finder, package imports, and database backups.
+5. **⚙️ Settings Menu**: In-depth app customization. Default sort behaviors, card display subtitles, turn page gestures, favorite stickers, directory paths, and 8 selectable languages.
+6. **🚪 Quit Menu**: Graceful application exit with automatic session persistence.
 
 ---
 
-## 📚 Documentation Chapters
+## 🧭 Detailed Guide Contents
 
-- [Score Management](guide/scores.md): Import, metadata, rotation, and custom filters.
-- [Setlist Management](guide/setlists.md): Concert programs, ordering, and quick duplication.
-- [Viewer & Stage Mode](guide/viewer.md): Annotations, precision metronome, and audio backing tracks.
-- [Wireless Sharing & Transfer](guide/transfer.md): Wi-Fi Direct and group QR code broadcast.
-- [PDF Assembler Studio](guide/pdf-assembler.md): Image merge and page reorganization.
-- [Backups & Restoration](guide/backups.md): Automated backups and one-click recovery.
-- [Privacy Policy](confidentialite.md): Our commitment to zero personal data collection.
+Explore every feature and menu thoroughly:
+
+- [🎵 Scores Menu Guide](guide/scores.md)
+- [📋 Setlists Menu Guide](guide/setlists.md)
+- [📖 Viewer & Stage Mode Guide](guide/viewer.md)
+- [🛠️ Tools Menu Guide](guide/tools.md)
+- [⚙️ Settings Menu Guide](guide/settings.md)
+- [🚪 Quit Menu Guide](guide/quit.md)
+- [🔒 Privacy Policy](confidentialite.md)

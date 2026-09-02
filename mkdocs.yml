@@ -1,5 +1,5 @@
 site_name: Music Score Manager
-site_description: Documentation officielle de Music Score Manager - Application moderne de gestion de partitions et setlists pour musiciens.
+site_description: Documentation officielle et exhaustive de Music Score Manager - Guide complet de tous les menus et fonctionnalités.
 site_author: Audiothor
 site_url: https://audiothor.github.io/MusicScoreManager/
 repo_name: Audiothor/MusicScoreManager
@@ -59,16 +59,16 @@ plugins:
           name: English
           build: true
           site_name: Music Score Manager
-          site_description: Official documentation for Music Score Manager - Cross-platform music sheet & setlist management app for musicians.
+          site_description: Comprehensive user guide and documentation for all menus and features in Music Score Manager.
           nav_translations:
             Accueil: Home
-            Guide d'utilisation: User Guide
-            Gestion des Partitions: Score Management
-            Gestion des Setlists: Setlist Management
-            Visualiseur & Concert: Viewer & Stage Mode
-            Partage & Transfert sans fil: Wireless Sharing & Transfer
-            Atelier d'assemblage PDF: PDF Assembler Studio
-            Sauvegardes & Restauration: Backups & Restoration
+            Guide des Menus: Menu Guide
+            Menu Partitions: Scores Menu
+            Menu Setlists: Setlists Menu
+            Visualiseur & Scène: Viewer & Stage Mode
+            Menu Outils: Tools Menu
+            Menu Paramètres: Settings Menu
+            Menu Quitter: Quit Menu
             À propos & Confidentialité: About & Privacy
             Politique de confidentialité: Privacy Policy
 
@@ -89,12 +89,12 @@ markdown_extensions:
 
 nav:
   - Accueil: index.md
-  - Guide d'utilisation:
-      - Gestion des Partitions: guide/scores.md
-      - Gestion des Setlists: guide/setlists.md
-      - Visualiseur & Concert: guide/viewer.md
-      - Partage & Transfert sans fil: guide/transfer.md
-      - Atelier d'assemblage PDF: guide/pdf-assembler.md
-      - Sauvegardes & Restauration: guide/backups.md
+  - Guide des Menus:
+      - Menu Partitions: guide/scores.md
+      - Menu Setlists: guide/setlists.md
+      - Visualiseur & Scène: guide/viewer.md
+      - Menu Outils: guide/tools.md
+      - Menu Paramètres: guide/settings.md
+      - Menu Quitter: guide/quit.md
   - À propos & Confidentialité:
       - Politique de confidentialité: confidentialite.md

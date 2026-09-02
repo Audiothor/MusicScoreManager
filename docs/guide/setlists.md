@@ -1,36 +1,66 @@
-# Gestion des Setlists
+# 📋 Menu Setlists
 
-Les **Setlists** permettent de préparer et structurer vos représentations musicales (concerts, répétitions, offices, auditions).
-
----
-
-## ➕ Créer une Setlist
-
-1. Rendez-vous dans l'onglet **Setlists**.
-2. Appuyez sur le bouton **➕** en haut à droite.
-3. Saisissez le nom de la setlist (ex : *Concert Printemps 2026*).
-4. Ajoutez vos morceaux depuis votre bibliothèque et organisez leur ordre de passage à l'aide des flèches monter/descendre.
+Le menu **Setlists** est spécialement conçu pour planifier, structurer et exécuter vos programmes de concert, auditions, offices liturgiques et répétitions générales sans temps mort.
 
 ---
 
-## ▶️ Démarrage Direct en Concert
+## 📋 Présentation & Organisation de la Liste
 
-- **Toucher une carte de setlist** : lance instantanément la lecture de la première partition en mode concert.
-- Lors de la lecture d'une setlist, tourner les pages à la fin d'un morceau bascule automatiquement sur le morceau suivant du programme.
-
----
-
-## 📑 Duplication de Setlist
-
-Besoin de préparer une variante d'un concert sans tout recommencer ?
-- Ouvrez le menu **⋮** de la setlist.
-- Cliquez sur **📑 Dupliquer la setlist**.
-- La nouvelle setlist est créée instantanément avec tous les morceaux dans le même ordre.
+L'onglet Setlists affiche la liste de tous vos programmes créés :
+- **Titre du programme** (ex : *Festival d'Automne 2026*, *Répétition Générale*).
+- **Nombre de partitions incluses** dans le programme.
+- **Date de dernière modification**.
+- **Indicateur d'erreur visuel** : Si une des partitions contenues dans la setlist a son fichier PDF manquant ou corrompu, une alerte visuelle s'affiche immédiatement.
 
 ---
 
-## 📡 Partager ou Exporter une Setlist
+## ➕ Création & Édition d'une Setlist
 
-- **Envoi Wi-Fi Direct** : transférez la setlist complète et toutes ses partitions aux autres membres du groupe.
-- **Menu d'options** : choisissez si vous incluez les annotations personnelles et les pistes audio associées.
-- **Export en fichier (`.msmsetlist`)** : archive portable autonome contenant l'intégralité du programme.
+1. **Créer une nouvelle setlist** :
+   - Cliquez sur le bouton **➕** en haut à droite.
+   - Donnez un nom explicite à votre programme.
+2. **Ajouter des morceaux** :
+   - Sélectionnez des partitions parmi l'ensemble de votre bibliothèque grâce à la sélection multiple.
+3. **Ordonner le programme** :
+   - Utilisez les flèches **Monter (▲)** et **Descendre (▼)** pour définir précisément l'ordre d'exécution de vos morceaux.
+   - Retirez un morceau du programme en un clic (sans le supprimer de votre bibliothèque générale).
+   - Enregistrez vos modifications.
+
+---
+
+## ▶️ Démarrage Direct en Concert (Clic sur la Carte)
+
+Dans Music Score Manager, le passage sur scène doit être immédiat :
+- **Un simple toucher sur la carte d'une setlist** lance **directement la lecture de la première partition** dans le visualiseur plein écran.
+- Si la setlist est vide (aucun morceau associé), un message d'information vous avertit gentiment et vous invite à lui assigner des partitions.
+- Pendant la lecture, la setlist active le **mode enchaînement continu** : lorsque vous tournez la dernière page d'un morceau, l'application bascule automatiquement sur la première page du morceau suivant du programme !
+
+---
+
+## ⋮ Menu Contextuel d'une Setlist (3 petits points)
+
+Chaque setlist dispose de son propre menu d'options via le bouton **⋮** :
+
+1. **▶️ Démarrer la setlist** :
+   - Lance le concert directement sur le premier morceau en mode plein écran (équivalent au toucher direct sur la carte).
+
+2. **✏️ Éditer la setlist** :
+   - Ouvre la fenêtre d'édition ([`SetlistEditPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SetlistEditPage.xaml)) pour modifier le titre, ajouter ou supprimer des morceaux et changer l'ordre de passage.
+
+3. **📑 Dupliquer la setlist** :
+   - **Fonctionnalité gain de temps** : crée instantanément une copie complète de la setlist avec l'ensemble des morceaux conservés dans le même ordre (nommée automatiquement *« Nom - Copie »*). Idéal pour préparer deux versions d'un concert (ex : version courte et version longue).
+
+4. **📡 Envoyer en Wi-Fi Direct** :
+   - Permet de transmettre la setlist entière ainsi que tous ses fichiers de partitions associés vers les tablettes des autres musiciens.
+   - Ouvre le **menu d'options** :
+     * ☑️ *Inclure les annotations manuscrites*.
+     * ☑️ *Inclure les pistes audio rattachées*.
+
+5. **📦 Exporter (.msmsetlist)** :
+   - Génère un paquet autonome `.msmsetlist` contenant le programme complet, les métadonnées de l'ordre de passage, les PDF et (en option) les annotations et pistes audio.
+
+6. **🏷️ Renommer** :
+   - Modifie rapidement l'intitulé de la setlist.
+
+7. **🗑️ Supprimer** :
+   - Supprime la setlist (vos partitions restent intactes dans votre bibliothèque).
