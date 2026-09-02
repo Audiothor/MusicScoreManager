@@ -47,7 +47,7 @@ public partial class ViewerPage : ContentPage
     private string? _pendingSticker = null;
     private bool _isAnnotationMode = false;
     private List<Annotation> _annotations = new();
-    private bool _isAnnotationsLocked = false;
+    private bool _isAnnotationsLocked = true;
     private AbsoluteLayout ActiveAnnotationsContainer => AnnotationsContainer;
 
     private bool _isTwoPagesMode = false;
@@ -125,14 +125,29 @@ public partial class ViewerPage : ContentPage
 
     private void UnlockAnnotations()
     {
-        if (_isAnnotationsLocked)
+        _isAnnotationsLocked = false;
+        if (LockUnlockBtn != null)
         {
-            _isAnnotationsLocked = false;
-            if (LockUnlockBtn != null)
-            {
-                LockUnlockBtn.Text = "🔓";
-                LockUnlockBtn.BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#2E7D32");
-            }
+            LockUnlockBtn.Text = "🔓";
+            LockUnlockBtn.BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#2E7D32");
+        }
+        if (ActiveAnnotationsContainer != null)
+        {
+            ActiveAnnotationsContainer.InputTransparent = false;
+        }
+    }
+
+    private void LockAnnotations()
+    {
+        _isAnnotationsLocked = true;
+        if (LockUnlockBtn != null)
+        {
+            LockUnlockBtn.Text = "🔒";
+            LockUnlockBtn.BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#D32F2F");
+        }
+        if (ActiveAnnotationsContainer != null)
+        {
+            ActiveAnnotationsContainer.InputTransparent = true;
         }
     }
 
@@ -187,6 +202,9 @@ public partial class ViewerPage : ContentPage
             _currentRotation = _score.Rotation;
         }
 
+        // Verrouillage systématique par défaut pour ne pas bloquer les interactions et le changement de page
+        LockAnnotations();
+
         // Repositionner dynamiquement les annotations lors des changements de taille du conteneur (rotation, layout, etc.)
         AnnotationsContainer.SizeChanged += (s, e) => RenderAnnotations();
         AnnotationsContainer.HandlerChanged += (s, e) => {
@@ -200,6 +218,8 @@ public partial class ViewerPage : ContentPage
     {
         base.OnAppearing();
         System.Diagnostics.Debug.WriteLine("[Viewer] OnAppearing appelé.");
+
+        LockAnnotations();
 
 #if ANDROID
         SetupNativeTouchHandling();
@@ -1914,7 +1934,7 @@ public partial class ViewerPage : ContentPage
             _selectedAnnotation = null;
             _pendingSticker = null;
             _isAnnotationMode = false;
-            AnnotationsContainer.InputTransparent = true;
+            LockAnnotations();
 
             if (StickersCollection != null)
             {
@@ -1926,7 +1946,6 @@ public partial class ViewerPage : ContentPage
         else
         {
             AnnotationsContainer.InputTransparent = false;
-            UnlockAnnotations();
 #if ANDROID
             SetupNativeTouchHandling();
 #endif
@@ -2971,7 +2990,7 @@ public partial class ViewerPage : ContentPage
         _selectedAnnotation = null;
         _pendingSticker = null;
         _isAnnotationMode = false;
-        AnnotationsContainer.InputTransparent = true;
+        LockAnnotations();
 
         if (StickersCollection != null)
         {
@@ -3503,14 +3522,13 @@ public partial class ViewerPage : ContentPage
 
     private void OnLockUnlockClicked(object? sender, EventArgs e)
     {
-        _isAnnotationsLocked = !_isAnnotationsLocked;
-        LockUnlockBtn.Text = _isAnnotationsLocked ? "🔒" : "🔓";
-        LockUnlockBtn.BackgroundColor = _isAnnotationsLocked 
-            ? Microsoft.Maui.Graphics.Color.FromArgb("#D32F2F") 
-            : Microsoft.Maui.Graphics.Color.FromArgb("#2E7D32");
-        
         if (_isAnnotationsLocked)
         {
+            UnlockAnnotations();
+        }
+        else
+        {
+            LockAnnotations();
             _selectedAnnotation = null;
             _isHighlightMode = false;
             _isDrawMode = false;
