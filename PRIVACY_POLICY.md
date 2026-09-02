@@ -1,6 +1,6 @@
 # Politique de Confidentialité / Privacy Policy
 
-*Dernière mise à jour : 29 août 2026 / Last updated: August 29, 2026*
+*Dernière mise à jour : 2 septembre 2026 / Last updated: September 2, 2026*
 
 ---
 
@@ -17,7 +17,9 @@ L'application **Music Score Manager**, développée par **Audiothor**, est conç
 ### 3. Autorisations Requises et Justification
 L'application peut demander les autorisations suivantes uniquement pour son fonctionnement technique :
 - **Stockage / Fichiers & Médias (`READ_EXTERNAL_STORAGE`, `MANAGE_EXTERNAL_STORAGE`)** : Utilisé exclusivement pour vous permettre d'importer, lire et afficher vos partitions (PDF, images) et associer vos fichiers audio locaux.
-- **Wi-Fi Direct & Réseau Local P2P (`NEARBY_WIFI_DEVICES`, `ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`)** : Utilisé exclusivement pour la fonctionnalité d'échange direct de partitions de pair à pair (Wi-Fi Direct P2P) et de diffusion par QR Code entre musiciens à proximité. Aucune donnée n'est transmise via Internet ou à des serveurs tiers.
+- **Wi-Fi Direct & Réseau Local P2P (`NEARBY_WIFI_DEVICES`, `ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`, `INTERNET`)** : Utilisé exclusivement pour la fonctionnalité d'échange direct de partitions de pair à pair (Wi-Fi Direct P2P) et de diffusion par QR Code entre musiciens à proximité. Aucune donnée n'est transmise via Internet ou à des serveurs tiers distants.
+- **Position & Appareils à proximité (`ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`, `NEARBY_WIFI_DEVICES`)** : Requis par le système d'exploitation Android pour la découverte d'appareils Wi-Fi Direct locaux. Votre position géographique réelle n'est jamais collectée, enregistrée ni suivie.
+- **Appareil photo (`CAMERA`)** : Utilisé exclusivement et optionnellement pour scanner les QR Codes lors de la connexion à un groupe de diffusion local. Aucune photo ni vidéo n'est enregistrée, analysée à d'autres fins ou transmise.
 - **Audio / Service en avant-plan** : Utilisé exclusivement pour la restitution sonore du métronome et du lecteur audio intégré lors de vos répétitions et concerts.
 
 ### 4. Services Tiers et Publicités
@@ -49,7 +51,9 @@ Pour toute question concernant cette politique de confidentialité ou l'applicat
 ### 3. Device Permissions & Usage
 The application may request the following permissions solely for its core features:
 - **Storage / Files & Media (`READ_EXTERNAL_STORAGE`, `MANAGE_EXTERNAL_STORAGE`)**: Used strictly to allow you to select, open, render, and manage your sheet music files (PDF/Images) and local audio tracks.
-- **Wi-Fi Direct & Local P2P Network (`NEARBY_WIFI_DEVICES`, `ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`)**: Used exclusively for the optional peer-to-peer (P2P) Wi-Fi Direct and QR Code wireless sharing feature between nearby devices running the app. No data is sent over the internet or to any remote servers.
+- **Wi-Fi Direct & Local P2P Network (`NEARBY_WIFI_DEVICES`, `ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`, `INTERNET`)**: Used exclusively for the optional peer-to-peer (P2P) Wi-Fi Direct and QR Code wireless sharing feature between nearby devices running the app. No data is sent over the internet or to any remote servers.
+- **Location & Nearby Devices (`ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`, `NEARBY_WIFI_DEVICES`)**: Required by Android system APIs solely for discovering local Wi-Fi Direct peers. The application never accesses, stores, or tracks actual GPS coordinates or location history.
+- **Camera (`CAMERA`)**: Used strictly and optionally to scan QR codes when joining a local group broadcast. No photos or videos are stored, analyzed, or transmitted.
 - **Audio Playback**: Used exclusively to play local audio accompaniment and metronome click/pre-count audio during practice and live performances.
 
 ### 4. Third-Party Services & Advertising
