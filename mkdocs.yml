@@ -1,0 +1,62 @@
+site_name: Music Score Manager
+site_description: Documentation officielle de Music Score Manager - Application moderne de gestion de partitions et setlists pour musiciens.
+site_author: Audiothor
+site_url: https://audiothor.github.io/MusicScoreManager/
+repo_name: Audiothor/MusicScoreManager
+repo_url: https://github.com/Audiothor/MusicScoreManager
+
+theme:
+  name: material
+  language: fr
+  palette:
+    # Mode sombre par défaut
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: light blue
+      toggle:
+        icon: material/brightness-4
+        name: Passer au mode clair
+    # Mode clair basculable
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: light blue
+      toggle:
+        icon: material/brightness-7
+        name: Passer au mode sombre
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - tables
+  - attr_list
+
+nav:
+  - Accueil: index.md
+  - Guide d'utilisation:
+      - Gestion des Partitions: guide/scores.md
+      - Gestion des Setlists: guide/setlists.md
+      - Visualiseur & Concert: guide/viewer.md
+      - Partage & Transfert sans fil: guide/transfer.md
+      - Atelier d'assemblage PDF: guide/pdf-assembler.md
+      - Sauvegardes & Restauration: guide/backups.md
+  - À propos & Confidentialité:
+      - Politique de confidentialité: confidentialite.md
