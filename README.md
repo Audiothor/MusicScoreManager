@@ -2,13 +2,21 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.5.9
+# Music Score Manager v1.9.6.0
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### 📖 Projection Géométrique & Synchronisation des Annotations en Mode 2 Pages Paysage (v1.9.6.0)
+- **Alignement Rigoureux Page Gauche / Page Droite** : Lorsque le mode *Affichage 2 pages en mode paysage* est actif, les annotations créées en mode portrait (ou sur une page simple) sont projetées avec une précision absolue sur leur page respective (page de gauche `leftPage` ou page de droite `rightPage`).
+- **Support des Deux Pages Simultanées** : Les annotations des pages gauche et droite s'affichent simultanément à l'écran, sans omission de la page de droite.
+- **Prise en Compte des Marges et Centrage PDF (Letterbox / Pillarbox)** : Les coordonnées d'affichage tiennent compte des marges réelles calculées par le moteur de rendu PDF.js (`getBoundingClientRect()`), garantissant que les annotations tombent exactement sur les portées et les notes, quel que soit le ratio d'écran (16:9, 16:10, 4:3, tablette ou mobile).
+- **Échelle Visuelle Adaptée** : En mode 2 pages (où chaque page est affichée à environ 50% de la largeur d'écran), la taille des stickers, textes et épaisseurs de traits s'adapte automatiquement pour conserver des proportions naturelles par rapport aux portées musicales.
+- **Création et Déplacement Bivalents** : Poser ou déplacer un sticker ou du texte en mode 2 pages détecte automatiquement si le pointage s'effectue sur la page de gauche ou la page de droite et recalcule les coordonnées normalisées propres à cette page pour une cohérence parfaite lors du retour en mode portrait.
+- **Synchronisation Totale avec le Zoom (Zoom In / Zoom Out)** : Le zoom multipoint (pinch-to-zoom) et le déplacement panoramique restent synchronisés à 100% entre la partition PDF et l'ensemble de ses annotations.
 
 ### ⚡ Rendu Synchrone & Affichage Professionnel Partitions & Annotations (v1.9.5.9)
 - **Élimination de l'Effet « Annotations Flottantes »** : Les annotations ne s'affichent plus jamais avant la partition lors de l'ouverture ou du passage de page. Le conteneur reste invisible (`Opacity = 0`) tant que le rendu de la page PDF n'est pas 100% achevé.

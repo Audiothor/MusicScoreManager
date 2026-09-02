@@ -50,6 +50,79 @@ public partial class ViewerPage : ContentPage
     private bool _isAnnotationsLocked = false;
     private AbsoluteLayout ActiveAnnotationsContainer => AnnotationsContainer;
 
+    private bool _isTwoPagesMode = false;
+    private int _leftPageNumber = 1;
+    private int _rightPageNumber = 2;
+    private bool _hasRightPage = false;
+    private double _canvasXRel = 0.0;
+    private double _canvasYRel = 0.0;
+    private double _canvasWRel = 1.0;
+    private double _canvasHRel = 1.0;
+
+    private (double x, double y) PageToScreen(double rx, double ry, int pageNumber, double containerW, double containerH)
+    {
+        if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
+        {
+            double pageWRel = _canvasWRel / 2.0;
+            double pageHRel = _canvasHRel;
+            double pageXStartRel = (pageNumber == _rightPageNumber)
+                ? (_canvasXRel + pageWRel)
+                : _canvasXRel;
+
+            double screenX = (pageXStartRel + rx * pageWRel) * containerW;
+            double screenY = (_canvasYRel + ry * pageHRel) * containerH;
+            return (screenX, screenY);
+        }
+        else
+        {
+            double screenX = (_canvasXRel + rx * _canvasWRel) * containerW;
+            double screenY = (_canvasYRel + ry * _canvasHRel) * containerH;
+            return (screenX, screenY);
+        }
+    }
+
+    private (int pageNumber, double rx, double ry) ScreenToPage(double absX, double absY, double containerW, double containerH)
+    {
+        if (containerW <= 0 || containerH <= 0) return (_currentPage, 0.5, 0.5);
+
+        double relX = Math.Clamp(absX / containerW, 0.0, 1.0);
+        double relY = Math.Clamp(absY / containerH, 0.0, 1.0);
+
+        if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
+        {
+            double pageWRel = _canvasWRel / 2.0;
+            double midXRel = _canvasXRel + pageWRel;
+
+            if (_hasRightPage && relX >= midXRel)
+            {
+                double rx = pageWRel > 0 ? (relX - midXRel) / pageWRel : 0.0;
+                double ry = _canvasHRel > 0 ? (relY - _canvasYRel) / _canvasHRel : 0.0;
+                return (_rightPageNumber, Math.Clamp(rx, 0.0, 1.0), Math.Clamp(ry, 0.0, 1.0));
+            }
+            else
+            {
+                double rx = pageWRel > 0 ? (relX - _canvasXRel) / pageWRel : 0.0;
+                double ry = _canvasHRel > 0 ? (relY - _canvasYRel) / _canvasHRel : 0.0;
+                return (_leftPageNumber, Math.Clamp(rx, 0.0, 1.0), Math.Clamp(ry, 0.0, 1.0));
+            }
+        }
+        else
+        {
+            double rx = _canvasWRel > 0 ? (relX - _canvasXRel) / _canvasWRel : 0.0;
+            double ry = _canvasHRel > 0 ? (relY - _canvasYRel) / _canvasHRel : 0.0;
+            return (_currentPage, Math.Clamp(rx, 0.0, 1.0), Math.Clamp(ry, 0.0, 1.0));
+        }
+    }
+
+    private double GetPageDisplayScale()
+    {
+        if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
+        {
+            return 0.65;
+        }
+        return 1.0;
+    }
+
     private void UnlockAnnotations()
     {
         if (_isAnnotationsLocked)
@@ -283,6 +356,10 @@ public partial class ViewerPage : ContentPage
         {
             e.Cancel = true;
             ParsePageParams(e.Url);
+            if (_isScoreReady)
+            {
+                MainThread.BeginInvokeOnMainThread(RenderAnnotations);
+            }
         }
         else if (e.Url != null && e.Url.StartsWith("app://musicscore/rendering"))
         {
@@ -616,6 +693,25 @@ public partial class ViewerPage : ContentPage
             if (int.TryParse(query["current"], out int current)) _currentPage = current;
             string? display = query["displayCurrent"];
             _currentPageDisplay = !string.IsNullOrEmpty(display) ? display : _currentPage.ToString();
+
+            if (int.TryParse(query["twoPages"], out int tp))
+            {
+                _isTwoPagesMode = (tp == 1);
+            }
+
+            if (int.TryParse(query["leftPage"], out int lp)) _leftPageNumber = lp;
+            else _leftPageNumber = _currentPage;
+
+            if (int.TryParse(query["rightPage"], out int rp)) _rightPageNumber = rp;
+            else _rightPageNumber = _currentPage + 1;
+
+            if (int.TryParse(query["hasRight"], out int hr)) _hasRightPage = (hr == 1);
+            else _hasRightPage = _isTwoPagesMode && (_rightPageNumber <= _maxPages);
+
+            if (double.TryParse(query["cx"], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double cx)) _canvasXRel = Math.Clamp(cx, 0.0, 0.45);
+            if (double.TryParse(query["cy"], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double cy)) _canvasYRel = Math.Clamp(cy, 0.0, 0.45);
+            if (double.TryParse(query["cw"], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double cw) && cw > 0.1) _canvasWRel = Math.Clamp(cw, 0.1, 1.0);
+            if (double.TryParse(query["ch"], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double ch) && ch > 0.1) _canvasHRel = Math.Clamp(ch, 0.1, 1.0);
 
             UpdatePageIndicator();
         }
@@ -2429,9 +2525,13 @@ public partial class ViewerPage : ContentPage
         double containerW = ActiveAnnotationsContainer.Width;
         double containerH = ActiveAnnotationsContainer.Height;
 
+        var (targetPage, _, _) = ScreenToPage(_activeLivePoints[0].X, _activeLivePoints[0].Y, containerW, containerH);
+
         string content = string.Join(";", _activeLivePoints.Select(p => 
-            $"{Math.Clamp(p.X / containerW, 0.0, 1.0).ToString("F4", System.Globalization.CultureInfo.InvariantCulture)},{Math.Clamp(p.Y / containerH, 0.0, 1.0).ToString("F4", System.Globalization.CultureInfo.InvariantCulture)}"
-        ));
+        {
+            var (_, rx, ry) = ScreenToPage(p.X, p.Y, containerW, containerH);
+            return $"{rx.ToString("F4", System.Globalization.CultureInfo.InvariantCulture)},{ry.ToString("F4", System.Globalization.CultureInfo.InvariantCulture)}";
+        }));
 
         var annotation = new Annotation
         {
@@ -2441,7 +2541,7 @@ public partial class ViewerPage : ContentPage
             Content = content,
             Color = _currentHighlightColor,
             Scale = _currentHighlightThickness / 30.0,
-            PageNumber = _currentPage
+            PageNumber = targetPage
         };
 
         await _databaseService.SaveAnnotationAsync(annotation);
@@ -2604,9 +2704,13 @@ public partial class ViewerPage : ContentPage
         double containerW = ActiveAnnotationsContainer.Width;
         double containerH = ActiveAnnotationsContainer.Height;
 
+        var (targetPage, _, _) = ScreenToPage(_activeLivePoints[0].X, _activeLivePoints[0].Y, containerW, containerH);
+
         string content = string.Join(";", _activeLivePoints.Select(p => 
-            $"{Math.Clamp(p.X / containerW, 0.0, 1.0).ToString("F4", System.Globalization.CultureInfo.InvariantCulture)},{Math.Clamp(p.Y / containerH, 0.0, 1.0).ToString("F4", System.Globalization.CultureInfo.InvariantCulture)}"
-        ));
+        {
+            var (_, rx, ry) = ScreenToPage(p.X, p.Y, containerW, containerH);
+            return $"{rx.ToString("F4", System.Globalization.CultureInfo.InvariantCulture)},{ry.ToString("F4", System.Globalization.CultureInfo.InvariantCulture)}";
+        }));
 
         var annotation = new Annotation
         {
@@ -2616,7 +2720,7 @@ public partial class ViewerPage : ContentPage
             Content = content,
             Color = _currentDrawColor,
             Scale = _currentDrawThickness / 9.0,
-            PageNumber = _currentPage
+            PageNumber = targetPage
         };
 
         await _databaseService.SaveAnnotationAsync(annotation);
@@ -2765,8 +2869,9 @@ public partial class ViewerPage : ContentPage
         try
         {
             _isPromptingText = true;
-            double relX = Math.Clamp(absX / ActiveAnnotationsContainer.Width, 0.0, 1.0);
-            double relY = Math.Clamp(absY / ActiveAnnotationsContainer.Height, 0.0, 1.0);
+            double containerW = ActiveAnnotationsContainer.Width;
+            double containerH = ActiveAnnotationsContainer.Height;
+            var (targetPage, relX, relY) = ScreenToPage(absX, absY, containerW, containerH);
 
             string text = await DisplayPromptAsync("Ajouter du texte", "Tapez votre mot ou texte :", "OK", "Annuler");
             if (!string.IsNullOrWhiteSpace(text))
@@ -2782,7 +2887,7 @@ public partial class ViewerPage : ContentPage
                     Scale = _currentTextSize, // 8, 10, 12, 14, 16, 18
                     Color = _currentTextColor,
                     BackgroundColor = "Transparent",
-                    PageNumber = _currentPage
+                    PageNumber = targetPage
                 };
 
                 await _databaseService.SaveAnnotationAsync(annotation);
@@ -3102,8 +3207,9 @@ public partial class ViewerPage : ContentPage
             string bgColor = _currentStickerBgColor;
             double scale = StickerSizeSlider.Value;
 
-            double relX = position.Value.X / ActiveAnnotationsContainer.Width;
-            double relY = position.Value.Y / ActiveAnnotationsContainer.Height;
+            double containerW = ActiveAnnotationsContainer.Width;
+            double containerH = ActiveAnnotationsContainer.Height;
+            var (targetPage, relX, relY) = ScreenToPage(position.Value.X, position.Value.Y, containerW, containerH);
 
             var annotation = new Annotation
             {
@@ -3115,7 +3221,7 @@ public partial class ViewerPage : ContentPage
                 Scale = scale,
                 Color = color,
                 BackgroundColor = bgColor,
-                PageNumber = _currentPage
+                PageNumber = targetPage
             };
 
             await _databaseService.SaveAnnotationAsync(annotation);
@@ -3159,9 +3265,9 @@ public partial class ViewerPage : ContentPage
 
         UnlockAnnotations();
 
-        // Calculer les coordonnées relatives (0.0 à 1.0)
-        double relX = Math.Clamp(absX / ActiveAnnotationsContainer.Width, 0.0, 1.0);
-        double relY = Math.Clamp(absY / ActiveAnnotationsContainer.Height, 0.0, 1.0);
+        double containerW = ActiveAnnotationsContainer.Width;
+        double containerH = ActiveAnnotationsContainer.Height;
+        var (targetPage, relX, relY) = ScreenToPage(absX, absY, containerW, containerH);
 
         // Récupérer les styles actuellement configurés dans le bandeau
         string color = _currentStickerColor;
@@ -3178,7 +3284,7 @@ public partial class ViewerPage : ContentPage
             Scale = scale,
             Color = color,
             BackgroundColor = bgColor,
-            PageNumber = _currentPage
+            PageNumber = targetPage
         };
 
         await _databaseService.SaveAnnotationAsync(annotation);
@@ -3423,14 +3529,30 @@ public partial class ViewerPage : ContentPage
     {
         if (containerW <= 0 || containerH <= 0) return null;
 
-        var pageAnns = _annotations.Where(a => a.PageNumber == _currentPage).Reverse().ToList();
-        foreach (var ann in pageAnns)
+        List<Annotation> visibleAnnotations;
+        if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
         {
+            visibleAnnotations = _annotations
+                .Where(a => a.PageNumber == _leftPageNumber || (_hasRightPage && a.PageNumber == _rightPageNumber))
+                .Reverse()
+                .ToList();
+        }
+        else
+        {
+            visibleAnnotations = _annotations
+                .Where(a => a.PageNumber == _currentPage)
+                .Reverse()
+                .ToList();
+        }
+
+        double displayScale = GetPageDisplayScale();
+
+        foreach (var ann in visibleAnnotations)
+        {
+            var (ax, ay) = PageToScreen(ann.X, ann.Y, ann.PageNumber, containerW, containerH);
             if (ann.Type == AnnotationType.Sticker || ann.Type == AnnotationType.Text)
             {
-                double ax = ann.X * containerW;
-                double ay = ann.Y * containerH;
-                double radius = Math.Max(30.0, 30.0 * Math.Max(0.8, ann.Scale));
+                double radius = Math.Max(25.0, 30.0 * Math.Max(0.6, ann.Scale) * displayScale);
                 if (Math.Abs(x - ax) <= radius && Math.Abs(y - ay) <= radius)
                 {
                     return ann;
@@ -3448,9 +3570,8 @@ public partial class ViewerPage : ContentPage
                             double.TryParse(coords[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double rx) &&
                             double.TryParse(coords[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double ry))
                         {
-                            double px = rx * containerW;
-                            double py = ry * containerH;
-                            if (Math.Abs(x - px) <= 25.0 && Math.Abs(y - py) <= 25.0)
+                            var (px, py) = PageToScreen(rx, ry, ann.PageNumber, containerW, containerH);
+                            if (Math.Abs(x - px) <= 25.0 * displayScale && Math.Abs(y - py) <= 25.0 * displayScale)
                             {
                                 return ann;
                             }
@@ -3474,8 +3595,19 @@ public partial class ViewerPage : ContentPage
             return;
         }
 
-        // On ne conserve que les éléments live en cours de dessin (s'il y en a un)
-        var pageAnnotations = _annotations.Where(a => a.PageNumber == _currentPage).ToList();
+        List<Annotation> visibleAnnotations;
+        if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
+        {
+            visibleAnnotations = _annotations
+                .Where(a => a.PageNumber == _leftPageNumber || (_hasRightPage && a.PageNumber == _rightPageNumber))
+                .ToList();
+        }
+        else
+        {
+            visibleAnnotations = _annotations
+                .Where(a => a.PageNumber == _currentPage)
+                .ToList();
+        }
 
         var elementsToRemove = ActiveAnnotationsContainer.Children
             .Where(c => c != _activeLivePolyline)
@@ -3489,7 +3621,7 @@ public partial class ViewerPage : ContentPage
         double containerW = ActiveAnnotationsContainer.Width;
         double containerH = ActiveAnnotationsContainer.Height;
 
-        foreach (var ann in pageAnnotations)
+        foreach (var ann in visibleAnnotations)
         {
             if (ann.Type == AnnotationType.Drawing)
             {
@@ -3519,7 +3651,8 @@ public partial class ViewerPage : ContentPage
 
     private Border CreateTextBorder(Annotation ann, double containerW, double containerH)
     {
-        double fontSize = ann.Scale <= 0 ? 14.0 : ann.Scale;
+        double displayScale = GetPageDisplayScale();
+        double fontSize = (ann.Scale <= 0 ? 14.0 : ann.Scale) * displayScale;
 
         var label = new Label
         {
@@ -3539,8 +3672,8 @@ public partial class ViewerPage : ContentPage
         var border = new Border
         {
             BindingContext = ann,
-            Padding = new Thickness(6, 2),
-            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 4 },
+            Padding = new Thickness(6 * displayScale, 2 * displayScale),
+            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = (float)(4 * displayScale) },
             StrokeThickness = (ann == _selectedAnnotation) ? 1.5 : 0,
             Stroke = (ann == _selectedAnnotation) ? Color.FromArgb("#007ACC") : Colors.Transparent,
             BackgroundColor = (ann == _selectedAnnotation) ? Color.FromArgb("#33007ACC") : Colors.Transparent,
@@ -3554,10 +3687,9 @@ public partial class ViewerPage : ContentPage
         double charCount = string.IsNullOrEmpty(ann.Content) ? 1 : ann.Content.Length;
         double estimatedTextWidth = charCount * (fontSize * 0.75);
 
-        double w = Math.Max(Math.Max(size.Width + 14, estimatedTextWidth + 16), 24);
-        double h = Math.Max(Math.Max(size.Height + 6, (fontSize * 1.5) + 6), 20);
-        double absX = ann.X * containerW;
-        double absY = ann.Y * containerH;
+        double w = Math.Max(Math.Max(size.Width + (14 * displayScale), estimatedTextWidth + (16 * displayScale)), 24 * displayScale);
+        double h = Math.Max(Math.Max(size.Height + (6 * displayScale), (fontSize * 1.5) + (6 * displayScale)), 20 * displayScale);
+        var (absX, absY) = PageToScreen(ann.X, ann.Y, ann.PageNumber, containerW, containerH);
 
         AbsoluteLayout.SetLayoutBounds(border, new Rect(absX - (w / 2), absY - (h / 2), w, h));
 
@@ -3631,10 +3763,13 @@ public partial class ViewerPage : ContentPage
                     case GestureStatus.Completed:
                         if (containerW > 0 && containerH > 0)
                         {
-                            double finalAbsX = (a.X * containerW) + b.TranslationX;
-                            double finalAbsY = (a.Y * containerH) + b.TranslationY;
-                            a.X = Math.Clamp(finalAbsX / containerW, 0.0, 1.0);
-                            a.Y = Math.Clamp(finalAbsY / containerH, 0.0, 1.0);
+                            var (currSx, currSy) = PageToScreen(a.X, a.Y, a.PageNumber, containerW, containerH);
+                            double finalAbsX = currSx + b.TranslationX;
+                            double finalAbsY = currSy + b.TranslationY;
+                            var (newPage, newRx, newRy) = ScreenToPage(finalAbsX, finalAbsY, containerW, containerH);
+                            a.PageNumber = newPage;
+                            a.X = newRx;
+                            a.Y = newRy;
                         }
                         b.TranslationX = 0;
                         b.TranslationY = 0;
@@ -3656,6 +3791,7 @@ public partial class ViewerPage : ContentPage
 
     private Microsoft.Maui.Controls.Shapes.Polyline CreatePencilPolyline(Annotation ann, double containerW, double containerH)
     {
+        double displayScale = GetPageDisplayScale();
         var pointCollection = new PointCollection();
         if (!string.IsNullOrEmpty(ann.Content))
         {
@@ -3667,7 +3803,8 @@ public partial class ViewerPage : ContentPage
                     double.TryParse(coords[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double rx) && 
                     double.TryParse(coords[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double ry))
                 {
-                    pointCollection.Add(new Point(rx * containerW, ry * containerH));
+                    var (px, py) = PageToScreen(rx, ry, ann.PageNumber, containerW, containerH);
+                    pointCollection.Add(new Point(px, py));
                 }
             }
         }
@@ -3677,7 +3814,7 @@ public partial class ViewerPage : ContentPage
             BindingContext = ann,
             Points = pointCollection,
             Stroke = ParseColor(ann.Color),
-            StrokeThickness = ann.Scale * 9.0, // 3px par mm (1mm=3, 2mm=6, 3mm=9, 4mm=12, 5mm=15)
+            StrokeThickness = ann.Scale * 9.0 * displayScale, // 3px par mm (1mm=3, 2mm=6, 3mm=9, 4mm=12, 5mm=15)
             StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Round,
             StrokeLineJoin = Microsoft.Maui.Controls.Shapes.PenLineJoin.Round,
             Opacity = 1.0, // 100% opaque, se met en premier plan et cache ce qui est derrière
@@ -3719,6 +3856,7 @@ public partial class ViewerPage : ContentPage
 
     private Microsoft.Maui.Controls.Shapes.Polyline CreateHighlightPolyline(Annotation ann, double containerW, double containerH)
     {
+        double displayScale = GetPageDisplayScale();
         var pointCollection = new PointCollection();
         if (!string.IsNullOrEmpty(ann.Content))
         {
@@ -3730,7 +3868,8 @@ public partial class ViewerPage : ContentPage
                     double.TryParse(coords[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double rx) && 
                     double.TryParse(coords[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double ry))
                 {
-                    pointCollection.Add(new Point(rx * containerW, ry * containerH));
+                    var (px, py) = PageToScreen(rx, ry, ann.PageNumber, containerW, containerH);
+                    pointCollection.Add(new Point(px, py));
                 }
             }
         }
@@ -3740,7 +3879,7 @@ public partial class ViewerPage : ContentPage
             BindingContext = ann,
             Points = pointCollection,
             Stroke = ParseColor(ann.Color),
-            StrokeThickness = ann.Scale * 30.0,
+            StrokeThickness = ann.Scale * 30.0 * displayScale,
             StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Flat,
             StrokeLineJoin = Microsoft.Maui.Controls.Shapes.PenLineJoin.Round,
             Opacity = (ann == _selectedAnnotation) ? 0.55 : 0.28,
@@ -3782,7 +3921,8 @@ public partial class ViewerPage : ContentPage
 
     private Border CreateStickerBorder(Annotation ann, double containerW, double containerH)
     {
-        double effectiveScale = Math.Max(0.5, ann.Scale <= 0 ? 1.0 : ann.Scale);
+        double displayScale = GetPageDisplayScale();
+        double effectiveScale = Math.Max(0.5, ann.Scale <= 0 ? 1.0 : ann.Scale) * displayScale;
         double fontSize = 15.0 * effectiveScale;
 
         var label = new Label
@@ -3819,10 +3959,9 @@ public partial class ViewerPage : ContentPage
         double estimatedTextWidth = charCount * (fontSize * 0.75);
 
         // Garantir une largeur et hauteur amplement suffisantes pour ne JAMAIS tronquer le mot sur PDF ou Image
-        double w = Math.Max(Math.Max(size.Width + 18, estimatedTextWidth + (22 * effectiveScale)), 28 * effectiveScale);
-        double h = Math.Max(Math.Max(size.Height + 8, (fontSize * 1.5) + (10 * effectiveScale)), 22 * effectiveScale);
-        double absX = ann.X * containerW;
-        double absY = ann.Y * containerH;
+        double w = Math.Max(Math.Max(size.Width + (18 * displayScale), estimatedTextWidth + (22 * effectiveScale)), 28 * effectiveScale);
+        double h = Math.Max(Math.Max(size.Height + (8 * displayScale), (fontSize * 1.5) + (10 * effectiveScale)), 22 * effectiveScale);
+        var (absX, absY) = PageToScreen(ann.X, ann.Y, ann.PageNumber, containerW, containerH);
 
         AbsoluteLayout.SetLayoutBounds(border, new Rect(absX - (w / 2), absY - (h / 2), w, h));
 
@@ -3882,10 +4021,13 @@ public partial class ViewerPage : ContentPage
                     case GestureStatus.Completed:
                         if (containerW > 0 && containerH > 0)
                         {
-                            double finalAbsX = (a.X * containerW) + b.TranslationX;
-                            double finalAbsY = (a.Y * containerH) + b.TranslationY;
-                            a.X = Math.Clamp(finalAbsX / containerW, 0.0, 1.0);
-                            a.Y = Math.Clamp(finalAbsY / containerH, 0.0, 1.0);
+                            var (currSx, currSy) = PageToScreen(a.X, a.Y, a.PageNumber, containerW, containerH);
+                            double finalAbsX = currSx + b.TranslationX;
+                            double finalAbsY = currSy + b.TranslationY;
+                            var (newPage, newRx, newRy) = ScreenToPage(finalAbsX, finalAbsY, containerW, containerH);
+                            a.PageNumber = newPage;
+                            a.X = newRx;
+                            a.Y = newRy;
                         }
                         b.TranslationX = 0;
                         b.TranslationY = 0;
