@@ -27,6 +27,15 @@
 		<AndroidPackageFormats Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">aab;apk</AndroidPackageFormats>
 	</PropertyGroup>
 
+	<!-- Signature Android Release automatique avec le keystore officiel -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' and Exists('$(MSBuildProjectDirectory)\keystore\musicscoremanager-release.keystore')">
+		<AndroidKeyStore>true</AndroidKeyStore>
+		<AndroidSigningKeyStore>$(MSBuildProjectDirectory)\keystore\musicscoremanager-release.keystore</AndroidSigningKeyStore>
+		<AndroidSigningStorePass>MSM_Secured_KeyStore_2026_Audiothor!#</AndroidSigningStorePass>
+		<AndroidSigningKeyAlias>musicscoremanager</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>MSM_Secured_KeyStore_2026_Audiothor!#</AndroidSigningKeyPass>
+	</PropertyGroup>
+
 	<!-- Branding : Icône et Splash Screen -->
 	<ItemGroup>
 		<MauiIcon Include="Resources\AppIcon\appicon.png" ForegroundScale="0.65" Color="#121212" />
