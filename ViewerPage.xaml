@@ -67,6 +67,9 @@
                     <AbsoluteLayout.GestureRecognizers>
                         <DropGestureRecognizer Drop="OnStickerDrop" AllowDrop="True" />
                         <TapGestureRecognizer Tapped="OnPlacementTapped" />
+                        <PointerGestureRecognizer PointerPressed="OnHighlightPointerPressed" 
+                                                  PointerMoved="OnHighlightPointerMoved" 
+                                                  PointerReleased="OnHighlightPointerReleased" />
                     </AbsoluteLayout.GestureRecognizers>
                 </AbsoluteLayout>
             </Grid>
@@ -498,7 +501,7 @@
 
                 <!-- Bouton Reset Nettoyage complet -->
                 <Button Grid.Column="7" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="18" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                <Button Grid.Column="8" x:Name="LockUnlockBtn" Text="🔒" BackgroundColor="#D32F2F" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="16" Padding="0" WidthRequest="40" HeightRequest="34" CornerRadius="6" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="8" x:Name="LockUnlockBtn" Text="🔓" BackgroundColor="#2E7D32" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="16" Padding="0" WidthRequest="40" HeightRequest="34" CornerRadius="6" VerticalOptions="Center" HorizontalOptions="Center" />
                 <Button Grid.Column="9" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
                 <Button Grid.Column="10" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="18" FontAttributes="Bold" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
             </Grid>
