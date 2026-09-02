@@ -62,6 +62,7 @@
                                 HorizontalOptions="Fill" 
                                 VerticalOptions="Fill" 
                                 ZIndex="10"
+                                Opacity="0"
                                 InputTransparent="False"
                                 CascadeInputTransparent="False">
                     <AbsoluteLayout.GestureRecognizers>

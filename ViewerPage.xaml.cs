@@ -194,7 +194,14 @@ public partial class ViewerPage : ContentPage
         try
         {
             _annotations = await _databaseService.GetAnnotationsForScoreAsync(_score.Id);
-            MainThread.BeginInvokeOnMainThread(() => RenderAnnotations());
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                if (_isScoreReady)
+                {
+                    RenderAnnotations();
+                    if (ActiveAnnotationsContainer != null) ActiveAnnotationsContainer.Opacity = 1;
+                }
+            });
         }
         catch (Exception ex)
         {
@@ -281,7 +288,13 @@ public partial class ViewerPage : ContentPage
         {
             e.Cancel = true;
             _isScoreReady = false;
-            MainThread.BeginInvokeOnMainThread(() => RenderAnnotations());
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                if (ActiveAnnotationsContainer != null)
+                {
+                    ActiveAnnotationsContainer.Opacity = 0;
+                }
+            });
         }
         else if (e.Url != null && e.Url.StartsWith("app://musicscore/end"))
         {
@@ -297,6 +310,14 @@ public partial class ViewerPage : ContentPage
         {
             e.Cancel = true;
             _isScoreReady = true;
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                RenderAnnotations();
+                if (ActiveAnnotationsContainer != null)
+                {
+                    ActiveAnnotationsContainer.Opacity = 1;
+                }
+            });
             // Démarrer si on veut le visuel OU le son
             if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
         }
@@ -363,6 +384,12 @@ public partial class ViewerPage : ContentPage
             else if (_score.Type == ScoreType.PDF)
             {
                 System.Diagnostics.Debug.WriteLine("[Viewer] Mode PDF - Démarrage chargement WebView");
+                _isScoreReady = false;
+                if (ActiveAnnotationsContainer != null)
+                {
+                    ActiveAnnotationsContainer.Opacity = 0;
+                    ActiveAnnotationsContainer.Children.Clear();
+                }
                 ScoreImage.IsVisible = false;
                 PdfWebView.IsVisible = true;
                 ImageContainer.IsVisible = true;
@@ -416,16 +443,13 @@ public partial class ViewerPage : ContentPage
         if (!Directory.Exists(pdfjsDir)) Directory.CreateDirectory(pdfjsDir);
 
         string[] files = { "pdf.min.js", "pdf.worker.min.js", "viewer.html" };
-        bool allExist = files.All(f => {
-            string path = Path.Combine(pdfjsDir, f);
-            return File.Exists(path) && new FileInfo(path).Length > 0;
-        });
 
-        if (!allExist)
+        foreach (var file in files)
         {
-            foreach (var file in files)
+            string dest = Path.Combine(pdfjsDir, file);
+            // Toujours rafraîchir viewer.html pour intégrer les améliorations du lecteur
+            if (!File.Exists(dest) || file == "viewer.html")
             {
-                string dest = Path.Combine(pdfjsDir, file);
                 try
                 {
                     using var stream = await FileSystem.OpenAppPackageFileAsync($"pdfjs/{file}");
@@ -442,14 +466,11 @@ public partial class ViewerPage : ContentPage
         _isPdfJsReady = true;
     }
 
-
-
     private async void OnPdfWebViewNavigated(object sender, WebNavigatedEventArgs e)
     {
         if (_score.Type == ScoreType.PDF && e.Result == WebNavigationResult.Success)
         {
-            System.Diagnostics.Debug.WriteLine("[Viewer] WebView Navigated - Prêt.");
-            _isScoreReady = true;
+            System.Diagnostics.Debug.WriteLine("[Viewer] WebView Navigated - Shell HTML prêt.");
 
             // Synchronisation de sécurité des rotations personnalisées
             if (_pageRotations.Count > 0)
@@ -596,7 +617,6 @@ public partial class ViewerPage : ContentPage
             string? display = query["displayCurrent"];
             _currentPageDisplay = !string.IsNullOrEmpty(display) ? display : _currentPage.ToString();
 
-            _isScoreReady = true;
             UpdatePageIndicator();
         }
         catch { }
@@ -1598,6 +1618,12 @@ public partial class ViewerPage : ContentPage
         _score = targetScore;
         _currentIndex = targetIndex;
         Title = _score.Title;
+        _isScoreReady = false;
+        if (ActiveAnnotationsContainer != null)
+        {
+            ActiveAnnotationsContainer.Opacity = 0;
+            ActiveAnnotationsContainer.Children.Clear();
+        }
 
         // Réinitialiser le zoom et les translations
         ZoomLayout.Scale = 1;
