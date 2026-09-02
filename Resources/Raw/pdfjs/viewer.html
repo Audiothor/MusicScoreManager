@@ -664,13 +664,22 @@
 
         function reportPageInfo() {
             if (!pdfDoc) return;
+            const rect = canvas.getBoundingClientRect();
+            const vw = window.innerWidth || 1;
+            const vh = window.innerHeight || 1;
+            const cx = Math.max(0, rect.left / vw);
+            const cy = Math.max(0, rect.top / vh);
+            const cw = Math.min(1, rect.width / vw);
+            const ch = Math.min(1, rect.height / vh);
+
             if (isTwoPagesMode()) {
                 const leftNum = (pageNum % 2 === 0) ? (pageNum - 1) : pageNum;
                 const rightNum = leftNum + 1;
-                const display = (rightNum <= pdfDoc.numPages) ? `${leftNum}-${rightNum}` : `${leftNum}`;
-                window.location.href = `app://musicscore/pageinfo?max=${pdfDoc.numPages}&current=${leftNum}&displayCurrent=${display}`;
+                const hasRight = (rightNum <= pdfDoc.numPages) ? 1 : 0;
+                const display = hasRight ? `${leftNum}-${rightNum}` : `${leftNum}`;
+                window.location.href = `app://musicscore/pageinfo?max=${pdfDoc.numPages}&current=${leftNum}&displayCurrent=${display}&twoPages=1&leftPage=${leftNum}&rightPage=${rightNum}&hasRight=${hasRight}&cx=${cx.toFixed(4)}&cy=${cy.toFixed(4)}&cw=${cw.toFixed(4)}&ch=${ch.toFixed(4)}`;
             } else {
-                window.location.href = `app://musicscore/pageinfo?max=${pdfDoc.numPages}&current=${pageNum}&displayCurrent=${pageNum}`;
+                window.location.href = `app://musicscore/pageinfo?max=${pdfDoc.numPages}&current=${pageNum}&displayCurrent=${pageNum}&twoPages=0&leftPage=${pageNum}&rightPage=${pageNum}&hasRight=0&cx=${cx.toFixed(4)}&cy=${cy.toFixed(4)}&cw=${cw.toFixed(4)}&ch=${ch.toFixed(4)}`;
             }
         }
 
