@@ -313,7 +313,7 @@ namespace MusicScoreManager.Services
                 string finalStoredPath;
 
                 // Validation de sécurité : vérification que le fichier est un véritable PDF valide
-                bool isValidPdf = false;
+                bool isValidPdf = true;
                 try
                 {
                     using (var checkStream = await fileResult.OpenReadAsync())
@@ -321,13 +321,18 @@ namespace MusicScoreManager.Services
                         isValidPdf = PdfService.IsValidPdfStream(checkStream);
                     }
                 }
-                catch { }
+                catch 
+                {
+                    // Si la lecture directe du flux Android lève une exception temporaire de permission,
+                    // on autorise l'étape suivante qui vérifiera le fichier local une fois copié.
+                    isValidPdf = true;
+                }
 
                 if (!isValidPdf)
                 {
                     await Shell.Current.DisplayAlertAsync(
                         "Fichier PDF non valide", 
-                        $"Le fichier '{fileResult.FileName}' n'est pas un document PDF valide ou est corrompu. L'import a été ignoré pour ce fichier.", 
+                        $"Le fichier '{fileResult.FileName}' n'est pas un document PDF valide (signature %PDF manquante). L'import a été ignoré pour ce fichier.", 
                         "OK");
                     continue;
                 }

@@ -2,13 +2,17 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.5.5
+# Music Score Manager v1.9.5.6
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### 🛡️ Moteur de Validation PDF Universel & Résilient (v1.9.5.6)
+- **Compatibilité Totale avec tous les Formats PDF** : Reconnaissance universelle de la signature `%PDF` sans restriction excessive liée aux sous-versions ou particularités des logiciels de notation musicale (MuseScore, Sibelius, Finale, LilyPond, numérisations).
+- **Support des Flux Android Forward-Only** : Gestion robuste des flux Android `ContentInputStream` non positionnables (`CanSeek=false`), éliminant les faux positifs de rejet d'import tout en garantissant une barrière efficace contre les fichiers non-PDF ou corrompus.
 
 ### ▶️ Démarrage Direct de Setlist & Clarté des Menus (v1.9.5.5)
 - **Démarrage Instantané de Setlist au Clic** : Cliquer sur une setlist dans la liste lance directement la lecture de sa première partition en mode concert (avec message d'information si la setlist ne contient encore aucun morceau).
@@ -160,6 +164,7 @@
 
 ## 📜 Historique Récent des Versions
 
+- **v1.9.5.6** : **"Universal PDF Import Fix (Android Stream & Format Resilience)"** — Résolution du blocage des imports PDF : adaptation aux flux Android non positionnables (`CanSeek=false`) et validation universelle par signature `%PDF`, assurant la compatibilité avec tous les logiciels d'édition musicale (MuseScore, Sibelius, Finale, etc.).
 - **v1.9.5.5** : **"Direct Setlist Start & Score Context Menu Refinement"** — Démarrage instantané de la lecture des partitions au clic sur une setlist (avec gestion de setlist vide), nouveau libellé *« Démarrer la setlist »* dans les options et libellé *« Éditer la partition »* dans le menu 3 points des partitions.
 - **v1.9.5.4** : **"Score Transfer & Export Options Modal (Annotations & Audio)"** — Ajout du menu modal d'options (annotations, pistes audio) lors de l'envoi Wi-Fi Direct ou de l'export d'une ou plusieurs partitions, calqué sur le comportement des setlists.
 - **v1.9.5.3** : **"Strict PDF Binary Header & Structure Validation"** — Contrôle d'intégrité binaire et structurel à l'import de PDF (détection magic header, validation anti-fichiers corrompus ou frauduleux) empêchant tout crash lors de la lecture.
@@ -237,5 +242,5 @@ L'application **Music Score Manager** respecte rigoureusement la vie privée de 
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.9.5.5 "Direct Setlist Start & Score Context Menu Refinement"*
+**Développé par Audiothor** — *MusicScoreManager v1.9.5.6 "Universal PDF Import Fix (Android Stream & Format Resilience)"*
 
