@@ -2,13 +2,18 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.5.8
+# Music Score Manager v1.9.5.9
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### ⚡ Rendu Synchrone & Affichage Professionnel Partitions & Annotations (v1.9.5.9)
+- **Élimination de l'Effet « Annotations Flottantes »** : Les annotations ne s'affichent plus jamais avant la partition lors de l'ouverture ou du passage de page. Le conteneur reste invisible (`Opacity = 0`) tant que le rendu de la page PDF n'est pas 100% achevé.
+- **Synchronisation Parfaite du Cycle de Vie PDF.js** : La couche d'annotations et la partition apparaissent ensemble, au même instant, offrant une présentation instantanée, propre et professionnelle.
+- **Nettoyage Instantané lors du Changement de Morceau** : Lors du passage à une autre partition dans une setlist, les annotations précédentes sont immédiatement masquées et vidées pour éviter tout artefact visuel.
 
 ### 🎨 Boîte à Outils d'Annotation Fluide & Réactive (v1.9.5.8)
 - **Déverrouillage Automatique & Accès Immédiat** : Les annotations sont désormais déverrouillées par défaut lors de l'ouverture de la barre d'outils. Cliquer sur un outil (✎ Crayon, 🖌 Surligneur, T Texte, ❏ Stickers) déverrouille instantanément la surface de dessin sans message bloquant.

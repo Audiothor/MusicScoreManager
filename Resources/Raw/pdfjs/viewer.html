@@ -502,9 +502,7 @@
                     reportPageInfo();
                     preloadAdjacentPages(leftNum, activeDocId);
 
-                    if (leftNum === 1) {
-                        window.location.href = 'app://musicscore/ready';
-                    }
+                    window.location.href = 'app://musicscore/ready';
                     return;
                 }
 
@@ -594,9 +592,7 @@
                     reportPageInfo();
                     preloadAdjacentPages(leftNum, activeDocId);
 
-                    if (leftNum === 1) {
-                        window.location.href = 'app://musicscore/ready';
-                    }
+                    window.location.href = 'app://musicscore/ready';
                 } catch (err) {
                     if (err && err.name === 'RenderingCancelledException') return;
                     console.error("Erreur rendu 2 pages: ", err);
@@ -614,9 +610,7 @@
                     reportPageInfo();
                     preloadAdjacentPages(num, activeDocId);
 
-                    if (num === 1) {
-                        window.location.href = 'app://musicscore/ready';
-                    }
+                    window.location.href = 'app://musicscore/ready';
                     return;
                 }
                 
@@ -660,9 +654,7 @@
                     reportPageInfo();
                     preloadAdjacentPages(num, activeDocId);
 
-                    if (num === 1) {
-                        window.location.href = 'app://musicscore/ready';
-                    }
+                    window.location.href = 'app://musicscore/ready';
                 } catch (err) {
                     if (err && err.name === 'RenderingCancelledException') return;
                     console.error("Erreur rendu page: ", err);
