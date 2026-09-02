@@ -15,18 +15,11 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/confidentialite/"/>
     </url>
     <url>
-        <loc>https://audiothor.github.io/MusicScoreManager/guide/backups/</loc>
+        <loc>https://audiothor.github.io/MusicScoreManager/guide/quit/</loc>
         <lastmod>2026-09-02</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/guide/backups/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/guide/backups/"/>
-    </url>
-    <url>
-        <loc>https://audiothor.github.io/MusicScoreManager/guide/pdf-assembler/</loc>
-        <lastmod>2026-09-02</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/guide/pdf-assembler/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/guide/pdf-assembler/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/guide/quit/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/guide/quit/"/>
     </url>
     <url>
         <loc>https://audiothor.github.io/MusicScoreManager/guide/scores/</loc>
@@ -43,11 +36,18 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/guide/setlists/"/>
     </url>
     <url>
-        <loc>https://audiothor.github.io/MusicScoreManager/guide/transfer/</loc>
+        <loc>https://audiothor.github.io/MusicScoreManager/guide/settings/</loc>
         <lastmod>2026-09-02</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/guide/transfer/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/guide/transfer/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/guide/settings/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/guide/settings/"/>
+    </url>
+    <url>
+        <loc>https://audiothor.github.io/MusicScoreManager/guide/tools/</loc>
+        <lastmod>2026-09-02</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/guide/tools/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/guide/tools/"/>
     </url>
     <url>
         <loc>https://audiothor.github.io/MusicScoreManager/guide/viewer/</loc>
@@ -71,18 +71,11 @@
         <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/confidentialite/"/>
     </url>
     <url>
-        <loc>https://audiothor.github.io/MusicScoreManager/en/guide/backups/</loc>
+        <loc>https://audiothor.github.io/MusicScoreManager/en/guide/quit/</loc>
         <lastmod>2026-09-02</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/guide/backups/"/>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/guide/backups/"/>
-    </url>
-    <url>
-        <loc>https://audiothor.github.io/MusicScoreManager/en/guide/pdf-assembler/</loc>
-        <lastmod>2026-09-02</lastmod>
-        <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/guide/pdf-assembler/"/>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/guide/pdf-assembler/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/guide/quit/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/guide/quit/"/>
     </url>
     <url>
         <loc>https://audiothor.github.io/MusicScoreManager/en/guide/scores/</loc>
@@ -99,11 +92,18 @@
         <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/guide/setlists/"/>
     </url>
     <url>
-        <loc>https://audiothor.github.io/MusicScoreManager/en/guide/transfer/</loc>
+        <loc>https://audiothor.github.io/MusicScoreManager/en/guide/settings/</loc>
         <lastmod>2026-09-02</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/guide/transfer/"/>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/guide/transfer/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/guide/settings/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/guide/settings/"/>
+    </url>
+    <url>
+        <loc>https://audiothor.github.io/MusicScoreManager/en/guide/tools/</loc>
+        <lastmod>2026-09-02</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/guide/tools/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/guide/tools/"/>
     </url>
     <url>
         <loc>https://audiothor.github.io/MusicScoreManager/en/guide/viewer/</loc>
