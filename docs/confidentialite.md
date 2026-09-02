@@ -1,6 +1,6 @@
 # Politique de Confidentialité / Privacy Policy
 
-*Dernière mise à jour : 29 août 2026 / Last updated: August 29, 2026*
+*Dernière mise à jour : 2 septembre 2026 / Last updated: September 2, 2026*
 
 ---
 
