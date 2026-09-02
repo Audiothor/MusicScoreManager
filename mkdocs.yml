@@ -34,6 +34,44 @@ theme:
     - search.highlight
     - content.code.copy
 
+extra:
+  alternate:
+    - name: Français
+      link: /MusicScoreManager/
+      lang: fr
+    - name: English
+      link: /MusicScoreManager/en/
+      lang: en
+
+plugins:
+  - search
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: fr
+          default: true
+          name: Français
+          build: true
+        - locale: en
+          name: English
+          build: true
+          site_name: Music Score Manager
+          site_description: Official documentation for Music Score Manager - Cross-platform music sheet & setlist management app for musicians.
+          nav_translations:
+            Accueil: Home
+            Guide d'utilisation: User Guide
+            Gestion des Partitions: Score Management
+            Gestion des Setlists: Setlist Management
+            Visualiseur & Concert: Viewer & Stage Mode
+            Partage & Transfert sans fil: Wireless Sharing & Transfer
+            Atelier d'assemblage PDF: PDF Assembler Studio
+            Sauvegardes & Restauration: Backups & Restoration
+            À propos & Confidentialité: About & Privacy
+            Politique de confidentialité: Privacy Policy
+
 markdown_extensions:
   - admonition
   - pymdownx.details

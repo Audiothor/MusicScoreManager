@@ -61,3 +61,6 @@ keystore_credentials.txt
 keystore_credentials.json
 *.p12
 *.pfx
+
+# MkDocs
+site/
