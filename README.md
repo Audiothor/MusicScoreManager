@@ -2,13 +2,18 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.7.0
+# Music Score Manager v1.9.7.1
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### 📊 Espace Disponible sur le Stockage & Taille de la Base de Données (v1.9.7.1)
+- **Espace Libre sur le Stockage** : Affichage en direct de l'espace disponible (en Mo ou Go) sur l'unité de stockage où se trouvent vos partitions (mémoire interne ou carte SD/dossier externe).
+- **Taille de la Base de Données** : Affichage transparent de l'espace occupé par la base SQLite (`scores.db3` ainsi que ses journaux WAL/SHM).
+- **Libellés de Menus Épurés** : Harmonisation du sous-menu *Paramètres Annotations* dans le menu principal des paramètres, tout en conservant les deux chapitres distincts à l'intérieur : *« Gestion des stickers Favoris »* et *« Sélection des catégories de stickers »*.
 
 ### 🎼 Nouveaux Stickers Musicaux, Filtrage des Catégories & Barres d'Outils Collées (v1.9.7.0)
 - **Nouvelles Catégories de Stickers Musicaux** : Ajout de 3 nouvelles catégories musicales situées entre *Doigtés* et *Rythme* :

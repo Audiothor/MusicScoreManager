@@ -17,6 +17,36 @@ namespace MusicScoreManager.Services
             _databasePath = Path.Combine(FileSystem.AppDataDirectory, "scores.db3");
         }
 
+        public string DatabasePath => _databasePath;
+
+        public long GetDatabaseSizeInBytes()
+        {
+            try
+            {
+                long total = 0;
+                if (File.Exists(_databasePath))
+                {
+                    total += new FileInfo(_databasePath).Length;
+                }
+                // Inclure également les fichiers WAL et SHM de SQLite s'ils existent
+                string walPath = _databasePath + "-wal";
+                if (File.Exists(walPath))
+                {
+                    total += new FileInfo(walPath).Length;
+                }
+                string shmPath = _databasePath + "-shm";
+                if (File.Exists(shmPath))
+                {
+                    total += new FileInfo(shmPath).Length;
+                }
+                return total;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
         private Task Init()
         {
             lock (_initLock)

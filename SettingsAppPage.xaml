@@ -79,8 +79,18 @@
                         </Grid>
                         
                         <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                            <Label Text="💾 Espace disque occupé :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Text="💾 Espace disque occupé (PDF) :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
                             <Label Grid.Column="1" x:Name="PdfSizeLabel" Text="..." TextColor="#2ECC71" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*, Auto" Margin="0,2">
+                            <Label Text="💽 Espace disponible sur le stockage :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="1" x:Name="AvailableDiskSpaceLabel" Text="..." TextColor="#3498DB" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*, Auto" Margin="0,2">
+                            <Label Text="🗄️ Taille de la base de données :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="1" x:Name="DatabaseSizeLabel" Text="..." TextColor="#F39C12" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
                         </Grid>
                     </VerticalStackLayout>
                 </Border>
