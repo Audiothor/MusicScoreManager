@@ -65,12 +65,12 @@ public partial class SettingsAppPage : ContentPage
     {
         try
         {
-            var (total, pdfCount, imageCount) = await _databaseService.GetScoreCountsByTypeAsync();
+            var (count, totalBytes) = await _databaseService.GetScoreStatsAsync(_settingsService);
+            double sizeInMb = (double)totalBytes / (1024.0 * 1024.0);
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                PdfCountLabel.Text = $"{pdfCount} partition{(pdfCount > 1 ? "s" : "")}";
-                ImageCountLabel.Text = $"{imageCount} partition{(imageCount > 1 ? "s" : "")}";
-                TotalCountLabel.Text = $"{total} partition{(total > 1 ? "s" : "")}";
+                PdfCountLabel.Text = $"{count} partition{(count > 1 ? "s" : "")}";
+                PdfSizeLabel.Text = $"{sizeInMb:F1} Mo";
             });
         }
         catch (Exception ex)

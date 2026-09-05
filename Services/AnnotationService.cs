@@ -41,19 +41,15 @@ public class StickerCategory
 
 public class AnnotationService
 {
-    public List<StickerCategory> GetStickerCategories(List<string>? favorites = null)
+    public List<StickerCategory> GetStickerCategories(List<string>? favorites = null, List<string>? activeCategoryNames = null)
     {
-        var categories = new List<StickerCategory>();
-
-        categories.Add(new StickerCategory
+        var allPredefined = new List<(string Name, List<string> Items)>
         {
-            Name = "Favoris",
-            Stickers = (favorites ?? new List<string>()).Select(s => new StickerItem { Text = s }).ToList()
-        });
-
-        var predefined = new List<(string Name, List<string> Items)>
-        {
+            ("Favoris", (favorites ?? new List<string>())),
             ("Doigtés", new List<string> { "1", "2", "3", "4", "5", "0", "T", "+", "1-2", "2-3", "3-4", "4-5" }),
+            ("Notes", new List<string> { "𝅝", "𝅗𝅥", "♩", "♪", "♫", "𝅘𝅥𝅯", "♬", "𝅘𝅥𝅰", "♩.", "♪.", "𝅗𝅥.", "3" }),
+            ("Silences", new List<string> { "𝄻", "𝄼", "𝄽", "𝄾", "𝄿", "𝅀", "𝄺" }),
+            ("Altérations", new List<string> { "♯", "♭", "♮", "𝄪", "𝄫" }),
             ("Rythme", new List<string> { "↑", "↓", "v", "•", "|", "Rall.", "Accel.", "A tempo", "Rit.", "♩ =" }),
             ("Nuances", new List<string> { "pp", "p", "mp", "mf", "f", "ff", "sfz", "<", ">", "Cantabile", "Dolce", "Marcato", "Legato", "Staccato" }),
             ("Structure", new List<string> { "A", "B", "C", "D", "1", "2", "3", "Coda", "Segno", "D.C.", "Fine", "VI-DE", "→", "V.S." }),
@@ -61,12 +57,27 @@ public class AnnotationService
             ("Travail", new List<string> { "!", "?", "👁", "À travailler", "OK", "Rythme faux", "Justesse", "🔴", "🟢", "🔵" })
         };
 
-        foreach (var p in predefined)
+        var categories = new List<StickerCategory>();
+        foreach (var p in allPredefined)
         {
+            if (activeCategoryNames == null || activeCategoryNames.Contains(p.Name, StringComparer.OrdinalIgnoreCase))
+            {
+                categories.Add(new StickerCategory
+                {
+                    Name = p.Name,
+                    Stickers = p.Items.Select(s => new StickerItem { Text = s }).ToList()
+                });
+            }
+        }
+
+        // Si tout a été désactivé par inadvertance, on affiche au moins la première catégorie
+        if (categories.Count == 0 && allPredefined.Count > 0)
+        {
+            var fallback = allPredefined[0];
             categories.Add(new StickerCategory
             {
-                Name = p.Name,
-                Stickers = p.Items.Select(s => new StickerItem { Text = s }).ToList()
+                Name = fallback.Name,
+                Stickers = fallback.Items.Select(s => new StickerItem { Text = s }).ToList()
             });
         }
 
