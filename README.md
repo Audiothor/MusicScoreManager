@@ -2,13 +2,18 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.6.1
+# Music Score Manager v1.9.6.2
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### 📋 Ajout Direct dans un Setlist depuis le Menu des Partitions (v1.9.6.2)
+- **Action Rapide dans le Menu Contextuel** : Dans l'onglet *Partitions*, le menu des 3 petits points (`⋮`) intègre directement le bouton **« 📋 Ajouter dans un Setlist »** sous *« ✏️ Éditer la partition »*.
+- **Placement Prioritaire en 1ère Position** : L'utilisateur sélectionne la setlist de destination parmi les setlists existantes ; la partition y est insérée immédiatement à la toute première place (position 1), décalant harmonieusement toutes les autres partitions vers le bas.
+- **Sécurité et Déduplication** : Si la setlist sélectionnée est verrouillée, une demande de confirmation est présentée avant d'effectuer l'ajout. Si la partition était déjà présente dans la setlist, elle est déplacée en tête sans création de doublon.
 
 ### 🔒 Verrouillage Automatique Sécurisé des Annotations (v1.9.6.1)
 - **Verrouillage Systématique par Défaut à l'Ouverture** : À l'ouverture de toute partition ou lors du passage au morceau suivant d'une setlist, les annotations sont verrouillées (`🔒` rouge) et le conteneur tactile d'annotations devient transparent aux clics (`InputTransparent = true`). Cela garantit que les interactions de lecture (tourner la page à gauche/droite, ouvrir le menu au centre) restent 100% prioritaires et fluides sans aucun risque de déplacer accidentellement un sticker ou un texte.

@@ -273,6 +273,15 @@
                             HeightRequest="44" 
                             Clicked="OnMenuEditClicked" />
 
+                    <!-- Action : Ajouter dans un Setlist -->
+                    <Button Text="📋  Ajouter dans un Setlist" 
+                            BackgroundColor="#2A2A2A" 
+                            TextColor="White" 
+                            FontSize="14" 
+                            CornerRadius="10" 
+                            HeightRequest="44" 
+                            Clicked="OnMenuAddToSetlistClicked" />
+
                     <!-- Action : Modifier l'assemblage PDF (En dessous) -->
                     <Button x:Name="ScoreMenuModifyAssemblyButton"
                             Text="📑  Modifier l'assemblage PDF" 
