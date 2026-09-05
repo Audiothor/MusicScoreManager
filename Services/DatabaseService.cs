@@ -342,6 +342,25 @@ namespace MusicScoreManager.Services
             });
         }
 
+        public async Task AddScoreToSetlistAtBeginningAsync(int setlistId, int scoreId)
+        {
+            await Init();
+            var existingAssociations = await _database!.Table<SetlistScore>()
+                                                      .Where(ss => ss.SetlistId == setlistId)
+                                                      .OrderBy(ss => ss.Order)
+                                                      .ToListAsync();
+
+            var scoreIds = existingAssociations.Select(ss => ss.ScoreId).ToList();
+
+            // Si la partition était déjà dans la setlist, on retire son ancienne position pour éviter les doublons
+            scoreIds.RemoveAll(id => id == scoreId);
+
+            // On insère en première position (index 0)
+            scoreIds.Insert(0, scoreId);
+
+            await UpdateSetlistScoresAsync(setlistId, scoreIds);
+        }
+
         public async Task<List<string>> GetSetlistNamesForScoreAsync(int scoreId)
         {
             await Init();

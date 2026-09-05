@@ -1039,6 +1039,63 @@ public partial class ScoresPage : ContentPage
         }
     }
 
+    private async void OnMenuAddToSetlistClicked(object sender, EventArgs e)
+    {
+        ScoreMenuOverlay.IsVisible = false;
+        if (_selectedScoreForMenu == null)
+            return;
+
+        var score = _selectedScoreForMenu;
+        _selectedScoreForMenu = null;
+
+        var setlists = await _databaseService.GetSetlistsAsync();
+        if (setlists == null || setlists.Count == 0)
+        {
+            await DisplayAlertAsync("Setlists", "Aucune setlist n'a été créée pour le moment.", "OK");
+            return;
+        }
+
+        setlists = setlists.OrderBy(s => s.Name).ToList();
+
+        var displayMap = new Dictionary<string, Models.Setlist>();
+        foreach (var s in setlists)
+        {
+            string displayName = string.IsNullOrWhiteSpace(s.Name) ? $"Setlist #{s.Id}" : s.Name;
+            if (displayName.Equals("Annuler", StringComparison.OrdinalIgnoreCase))
+            {
+                displayName = $"{displayName} (Setlist)";
+            }
+            string candidate = displayName;
+            int counter = 2;
+            while (displayMap.ContainsKey(candidate))
+            {
+                candidate = $"{displayName} ({counter++})";
+            }
+            displayMap[candidate] = s;
+        }
+
+        string action = await DisplayActionSheetAsync("Choisir une setlist", "Annuler", null, displayMap.Keys.ToArray());
+        if (string.IsNullOrEmpty(action) || action == "Annuler" || !displayMap.TryGetValue(action, out var targetSetlist))
+        {
+            return;
+        }
+
+        if (targetSetlist.IsLocked)
+        {
+            bool proceed = await DisplayAlertAsync(
+                "Setlist verrouillée",
+                $"La setlist '{targetSetlist.Name}' est verrouillée. Voulez-vous tout de même y ajouter la partition '{score.Title}' en première place ?",
+                "Oui",
+                "Non");
+            if (!proceed)
+                return;
+        }
+
+        await _databaseService.AddScoreToSetlistAtBeginningAsync(targetSetlist.Id, score.Id);
+
+        await DisplayAlertAsync("Succès", $"La partition '{score.Title}' a été ajoutée en première place dans la setlist '{targetSetlist.Name}'.", "OK");
+    }
+
     private void OnMenuExchangeClicked(object sender, EventArgs e)
     {
         ScoreMenuOverlay.IsVisible = false;
