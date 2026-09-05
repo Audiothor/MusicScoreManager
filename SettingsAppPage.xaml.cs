@@ -67,10 +67,55 @@ public partial class SettingsAppPage : ContentPage
         {
             var (count, totalBytes) = await _databaseService.GetScoreStatsAsync(_settingsService);
             double sizeInMb = (double)totalBytes / (1024.0 * 1024.0);
+
+            // Taille de la base de données SQLite
+            long dbBytes = _databaseService.GetDatabaseSizeInBytes();
+            string dbSizeText;
+            if (dbBytes < 1024 * 1024)
+            {
+                dbSizeText = $"{dbBytes / 1024.0:F1} Ko";
+            }
+            else
+            {
+                dbSizeText = $"{dbBytes / (1024.0 * 1024.0):F2} Mo";
+            }
+
+            // Espace disque disponible à l'emplacement des partitions
+            string freeSpaceText = "Indisponible";
+            try
+            {
+                string targetDir = _settingsService.ScoresRootDirectory;
+                if (string.IsNullOrWhiteSpace(targetDir) || !Directory.Exists(targetDir))
+                {
+                    targetDir = FileSystem.AppDataDirectory;
+                }
+
+                var root = Path.GetPathRoot(Path.GetFullPath(targetDir));
+                if (!string.IsNullOrEmpty(root))
+                {
+                    var driveInfo = new DriveInfo(root);
+                    long freeBytes = driveInfo.AvailableFreeSpace;
+                    if (freeBytes >= 1024L * 1024L * 1024L)
+                    {
+                        freeSpaceText = $"{freeBytes / (1024.0 * 1024.0 * 1024.0):F2} Go";
+                    }
+                    else
+                    {
+                        freeSpaceText = $"{freeBytes / (1024.0 * 1024.0):F1} Mo";
+                    }
+                }
+            }
+            catch (Exception exDrive)
+            {
+                System.Diagnostics.Debug.WriteLine($"[SettingsAppPage] Erreur lecture espace disque: {exDrive.Message}");
+            }
+
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 PdfCountLabel.Text = $"{count} partition{(count > 1 ? "s" : "")}";
                 PdfSizeLabel.Text = $"{sizeInMb:F1} Mo";
+                AvailableDiskSpaceLabel.Text = freeSpaceText;
+                DatabaseSizeLabel.Text = dbSizeText;
             });
         }
         catch (Exception ex)
