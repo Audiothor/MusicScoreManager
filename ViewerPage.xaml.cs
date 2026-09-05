@@ -312,7 +312,7 @@ public partial class ViewerPage : ContentPage
         {
             var favorites = await _databaseService.GetFavoriteStickersAsync();
             var favTexts = favorites.Select(f => f.Text).ToList();
-            var categories = _annotationService.GetStickerCategories(favTexts);
+            var categories = _annotationService.GetStickerCategories(favTexts, _settingsService.ActiveStickerCategories);
             
             MainThread.BeginInvokeOnMainThread(() => {
                 if (StickerCategoriesCollection != null)
@@ -1909,6 +1909,9 @@ public partial class ViewerPage : ContentPage
                 
                 AnnotationBar.TranslationY = newY;
                 StickerPickerOverlay.TranslationY = newY;
+                HighlightOptionsOverlay.TranslationY = newY;
+                DrawOptionsOverlay.TranslationY = newY;
+                TextOptionsOverlay.TranslationY = newY;
                 break;
         }
     }
@@ -1931,6 +1934,9 @@ public partial class ViewerPage : ContentPage
             TextAnnotationBtn.BackgroundColor = Colors.Transparent;
             AnnotationBar.TranslationY = 0;
             StickerPickerOverlay.TranslationY = 0;
+            HighlightOptionsOverlay.TranslationY = 0;
+            DrawOptionsOverlay.TranslationY = 0;
+            TextOptionsOverlay.TranslationY = 0;
             _selectedAnnotation = null;
             _pendingSticker = null;
             _isAnnotationMode = false;
@@ -2092,7 +2098,7 @@ public partial class ViewerPage : ContentPage
                         if (StickerPickerOverlay.IsVisible)
                         {
                             double pickerHeight = StickerPickerOverlay.Height > 0 ? StickerPickerOverlay.Height : 270;
-                            double pickerTop = containerHeight - pickerHeight - 70 + StickerPickerOverlay.TranslationY;
+                            double pickerTop = containerHeight - pickerHeight - 45 + StickerPickerOverlay.TranslationY;
                             if (touchY >= pickerTop && touchY <= pickerTop + pickerHeight)
                                 insideOverlay = true;
                         }
@@ -2384,9 +2390,9 @@ public partial class ViewerPage : ContentPage
 
         _isHighlightMode = !_isHighlightMode;
         HighlightOptionsOverlay.IsVisible = _isHighlightMode;
-
         if (_isHighlightMode)
         {
+            HighlightOptionsOverlay.TranslationY = AnnotationBar.TranslationY;
             _isDrawMode = false;
             DrawOptionsOverlay.IsVisible = false;
             DrawBtn.BackgroundColor = Colors.Transparent;
@@ -2592,9 +2598,9 @@ public partial class ViewerPage : ContentPage
 
         _isDrawMode = !_isDrawMode;
         DrawOptionsOverlay.IsVisible = _isDrawMode;
-
         if (_isDrawMode)
         {
+            DrawOptionsOverlay.TranslationY = AnnotationBar.TranslationY;
             _isHighlightMode = false;
             HighlightOptionsOverlay.IsVisible = false;
             HighlightBtn.BackgroundColor = Colors.Transparent;
@@ -2773,9 +2779,9 @@ public partial class ViewerPage : ContentPage
 
         _isTextMode = !_isTextMode;
         TextOptionsOverlay.IsVisible = _isTextMode;
-
         if (_isTextMode)
         {
+            TextOptionsOverlay.TranslationY = AnnotationBar.TranslationY;
             _isHighlightMode = false;
             HighlightOptionsOverlay.IsVisible = false;
             HighlightBtn.BackgroundColor = Colors.Transparent;
@@ -2947,6 +2953,10 @@ public partial class ViewerPage : ContentPage
 
         ActiveAnnotationsContainer.InputTransparent = false;
         StickerPickerOverlay.IsVisible = !StickerPickerOverlay.IsVisible;
+        if (StickerPickerOverlay.IsVisible)
+        {
+            StickerPickerOverlay.TranslationY = AnnotationBar.TranslationY;
+        }
         
         if (StickerPickerOverlay.IsVisible && StickerCategoriesCollection.ItemsSource == null)
         {
@@ -2986,6 +2996,9 @@ public partial class ViewerPage : ContentPage
         // Réinitialiser la translation pour éviter qu'elle reste décalée lors de la prochaine ouverture
         AnnotationBar.TranslationY = 0;
         StickerPickerOverlay.TranslationY = 0;
+        HighlightOptionsOverlay.TranslationY = 0;
+        DrawOptionsOverlay.TranslationY = 0;
+        TextOptionsOverlay.TranslationY = 0;
         
         _selectedAnnotation = null;
         _pendingSticker = null;
@@ -3197,7 +3210,7 @@ public partial class ViewerPage : ContentPage
             {
                 // Vérifier si le drop tombe précisément À L'INTÉRIEUR du sélecteur de stickers
                 double pickerHeight = StickerPickerOverlay.Height > 0 ? StickerPickerOverlay.Height : 270;
-                double pickerTop = containerHeight - pickerHeight - 70 + StickerPickerOverlay.TranslationY;
+                double pickerTop = containerHeight - pickerHeight - 45 + StickerPickerOverlay.TranslationY;
                 double pickerBottom = pickerTop + pickerHeight;
 
                 if (absY >= pickerTop && absY <= pickerBottom)

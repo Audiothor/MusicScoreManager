@@ -74,20 +74,13 @@
                         <Label Text="{Binding [Scores_Total], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontAttributes="Bold" FontSize="14" />
                         
                         <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                            <Label Text="📄 PDF :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Text="📄 Partitions PDF :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
                             <Label Grid.Column="1" x:Name="PdfCountLabel" Text="..." TextColor="#007ACC" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
                         </Grid>
                         
                         <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                            <Label Text="🖼️ Image :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
-                            <Label Grid.Column="1" x:Name="ImageCountLabel" Text="..." TextColor="#2ECC71" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
-                        </Grid>
-                        
-                        <BoxView HeightRequest="1" Color="#333333" Margin="0,4" />
-                        
-                        <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                            <Label Text="{Binding [Scores_Total], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
-                            <Label Grid.Column="1" x:Name="TotalCountLabel" Text="..." TextColor="White" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+                            <Label Text="💾 Espace disque occupé :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Grid.Column="1" x:Name="PdfSizeLabel" Text="..." TextColor="#2ECC71" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
                         </Grid>
                     </VerticalStackLayout>
                 </Border>

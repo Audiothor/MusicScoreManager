@@ -58,25 +58,27 @@ namespace MusicScoreManager.Services
             return scores;
         }
 
-        public async Task<(int total, int pdfCount, int imageCount)> GetScoreCountsByTypeAsync()
+        public async Task<(int totalCount, long totalBytes)> GetScoreStatsAsync(SettingsService settingsService)
         {
             await Init();
             var allScores = await _database!.Table<Score>().ToListAsync();
-            int pdf = 0;
-            int image = 0;
+            long totalBytes = 0;
+            int count = 0;
             foreach (var score in allScores)
             {
-                string ext = Path.GetExtension(score.FilePath)?.ToLowerInvariant() ?? "";
-                if (score.Type == ScoreType.PDF || ext == ".pdf")
+                count++;
+                try
                 {
-                    pdf++;
+                    string fullPath = settingsService.GetAbsolutePath(score.FilePath, false);
+                    if (!string.IsNullOrEmpty(fullPath) && File.Exists(fullPath))
+                    {
+                        var fi = new FileInfo(fullPath);
+                        totalBytes += fi.Length;
+                    }
                 }
-                else
-                {
-                    image++;
-                }
+                catch { }
             }
-            return (allScores.Count, pdf, image);
+            return (count, totalBytes);
         }
  
         private async Task LoadDetailsForScoresAsync(List<Score> scores)

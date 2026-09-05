@@ -2,13 +2,24 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.6.2
+# Music Score Manager v1.9.7.0
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### 🎼 Nouveaux Stickers Musicaux, Filtrage des Catégories & Barres d'Outils Collées (v1.9.7.0)
+- **Nouvelles Catégories de Stickers Musicaux** : Ajout de 3 nouvelles catégories musicales situées entre *Doigtés* et *Rythme* :
+  - **Notes** : Symboles de ronde, blanche, noire, croche, double-croche, triolets, etc. (𝅝, 𝅗𝅥, ♩, ♪, ♫, 𝅘𝅥𝅯, ♬, 𝅘𝅥𝅰, ♩., ♪., 𝅗𝅥., 3).
+  - **Silences** : Symboles de pause, demi-pause, soupir, demi-soupir, quart de soupir, etc. (𝄻, 𝄼, 𝄽, 𝄾, 𝄿, 𝅀, 𝄺).
+  - **Altérations** : Symboles de dièse, bémol, bécarre, double-dièse, double-bémol (♯, ♭, ♮, 𝄪, 𝄫).
+- **Sélection des Catégories de Stickers Actives** : Dans les paramètres de l'application (*Paramètres d'annotations*), l'écran est scindé en deux chapitres clairs :
+  - *Chapitre 1 : Gestion des stickers Favoris* (création, modification et suppression de vos stickers personnalisés).
+  - *Chapitre 2 : Sélection des catégories de stickers* (cases à cocher pour afficher uniquement les catégories de stickers utiles lors de vos répétitions et concerts).
+- **Barres d'Outils d'Annotations Collées & Déplacement Synchronisé** : Les boîtes d'options secondaires (Surligneur, Crayon, Texte, Stickers) sont désormais parfaitement collées juste au-dessus de la barre d'annotations principale. Lorsque vous déplacez verticalement la barre d'annotations sur l'écran, la boîte d'options ouverte suit le déplacement en temps réel de façon transparente.
+- **Statistiques de Bibliothèque Précises** : Suppression du comptage des images obsolètes au profit de l'affichage en temps réel du volume total occupé sur le stockage par vos partitions PDF (en Mo).
 
 ### 📋 Ajout Direct dans un Setlist depuis le Menu des Partitions (v1.9.6.2)
 - **Action Rapide dans le Menu Contextuel** : Dans l'onglet *Partitions*, le menu des 3 petits points (`⋮`) intègre directement le bouton **« 📋 Ajouter dans un Setlist »** sous *« ✏️ Éditer la partition »*.

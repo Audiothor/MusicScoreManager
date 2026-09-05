@@ -26,6 +26,41 @@ namespace MusicScoreManager.Services
             set => Preferences.Set(ExportsRootKey, value);
         }
 
+        private const string ActiveStickerCategoriesKey = "ActiveStickerCategories";
+
+        public static readonly List<string> AllStickerCategories = new()
+        {
+            "Favoris",
+            "Doigtés",
+            "Notes",
+            "Silences",
+            "Altérations",
+            "Rythme",
+            "Nuances",
+            "Structure",
+            "Technique",
+            "Travail"
+        };
+
+        public List<string> ActiveStickerCategories
+        {
+            get
+            {
+                string raw = Preferences.Get(ActiveStickerCategoriesKey, string.Empty);
+                if (string.IsNullOrWhiteSpace(raw))
+                {
+                    return new List<string>(AllStickerCategories);
+                }
+                var list = raw.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+                return list.Count > 0 ? list : new List<string>(AllStickerCategories);
+            }
+            set
+            {
+                string raw = string.Join(";", value);
+                Preferences.Set(ActiveStickerCategoriesKey, raw);
+            }
+        }
+
         public string GetDefaultExportsRoot()
         {
             string path;
