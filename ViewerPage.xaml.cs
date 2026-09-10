@@ -220,6 +220,7 @@ public partial class ViewerPage : ContentPage
         System.Diagnostics.Debug.WriteLine("[Viewer] OnAppearing appelé.");
 
         LockAnnotations();
+        PedalMidiService.Instance.ActionTriggered += OnPedalActionTriggered;
 
 #if ANDROID
         SetupNativeTouchHandling();
@@ -1623,6 +1624,7 @@ public partial class ViewerPage : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
+        PedalMidiService.Instance.ActionTriggered -= OnPedalActionTriggered;
 
         // Nettoyage asynchrone non-bloquant pour une fermeture de page instantanée (< 50ms)
         _ = Task.Run(() =>
@@ -1653,6 +1655,158 @@ public partial class ViewerPage : ContentPage
             }
             catch { }
         });
+    }
+
+    private async void OnPedalActionTriggered(PedalAction action)
+    {
+        try
+        {
+            switch (action)
+            {
+                case PedalAction.NextPage:
+                    OnNextTapped(this, EventArgs.Empty);
+                    break;
+
+                case PedalAction.PreviousPage:
+                    OnPrevTapped(this, EventArgs.Empty);
+                    break;
+
+                case PedalAction.ScrollDown:
+                    if (_score.Type == ScoreType.PDF && PdfWebView.IsVisible)
+                    {
+                        _ = PdfWebView.EvaluateJavaScriptAsync("window.scrollBy({ top: window.innerHeight * 0.5, behavior: 'smooth' });");
+                    }
+                    break;
+
+                case PedalAction.ScrollUp:
+                    if (_score.Type == ScoreType.PDF && PdfWebView.IsVisible)
+                    {
+                        _ = PdfWebView.EvaluateJavaScriptAsync("window.scrollBy({ top: -window.innerHeight * 0.5, behavior: 'smooth' });");
+                    }
+                    break;
+
+                case PedalAction.FirstPage:
+                    await GoToPage(1);
+                    break;
+
+                case PedalAction.LastPage:
+                    await GoToPage(_maxPages);
+                    break;
+
+                case PedalAction.NextScore:
+                    if (_setlistScores != null && _currentIndex < _setlistScores.Count - 1 && !_isSwitchingScore)
+                    {
+                        _isSwitchingScore = true;
+                        try
+                        {
+                            int nextIndex = _currentIndex + 1;
+                            var nextScore = _setlistScores[nextIndex];
+                            await SwitchToScoreAsync(nextScore, nextIndex, toLastPage: false);
+                        }
+                        finally
+                        {
+                            _isSwitchingScore = false;
+                        }
+                    }
+                    break;
+
+                case PedalAction.PreviousScore:
+                    if (_setlistScores != null && _currentIndex > 0 && !_isSwitchingScore)
+                    {
+                        _isSwitchingScore = true;
+                        try
+                        {
+                            int prevIndex = _currentIndex - 1;
+                            var prevScore = _setlistScores[prevIndex];
+                            await SwitchToScoreAsync(prevScore, prevIndex, toLastPage: false);
+                        }
+                        finally
+                        {
+                            _isSwitchingScore = false;
+                        }
+                    }
+                    break;
+
+                case PedalAction.ToggleMetronome:
+                    if (_isMetronomePlaying)
+                    {
+                        StopMetronome();
+                    }
+                    else
+                    {
+                        StartMetronome();
+                    }
+                    break;
+
+                case PedalAction.ToggleMetronomeSound:
+                    _score.HasMetronomeSound = !_score.HasMetronomeSound;
+                    if ((_score.HasMetronomeSound || _score.ShowMetronome) && !_isMetronomePlaying)
+                    {
+                        StartMetronome();
+                    }
+                    else if (!_score.HasMetronomeSound && !_score.ShowMetronome)
+                    {
+                        StopMetronome();
+                    }
+                    await _databaseService.SaveScoreAsync(_score);
+                    break;
+
+                case PedalAction.ToggleAudio:
+                    OnAudioPlayPauseClicked(this, EventArgs.Empty);
+                    break;
+
+                case PedalAction.RestartAudio:
+                    try
+                    {
+                        AudioPlayer.SeekTo(TimeSpan.Zero);
+                        if (!_isAudioPlaying)
+                        {
+                            OnAudioPlayPauseClicked(this, EventArgs.Empty);
+                        }
+                    }
+                    catch { }
+                    break;
+
+                case PedalAction.ResetZoom:
+                    OnResetZoomClicked(this, EventArgs.Empty);
+                    break;
+
+                case PedalAction.OpenPageJump:
+                    OnGoToPageClicked(this, EventArgs.Empty);
+                    break;
+
+                case PedalAction.ToggleAnnotationsLock:
+                    if (_isAnnotationsLocked)
+                    {
+                        UnlockAnnotations();
+                    }
+                    else
+                    {
+                        LockAnnotations();
+                    }
+                    break;
+
+                case PedalAction.UndoAnnotation:
+                    OnUndoAnnotationClicked(this, EventArgs.Empty);
+                    break;
+
+                case PedalAction.RedoAnnotation:
+                    OnRedoAnnotationClicked(this, EventArgs.Empty);
+                    break;
+
+                case PedalAction.OpenQuickMenu:
+                    ShowMenu();
+                    break;
+
+                case PedalAction.CloseViewer:
+                    await Navigation.PopAsync();
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur action pédale/MIDI ({action}): {ex.Message}");
+        }
     }
 
     private bool _isSwitchingScore = false;

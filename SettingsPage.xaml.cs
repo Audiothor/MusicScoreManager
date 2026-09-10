@@ -28,6 +28,11 @@ public partial class SettingsPage : ContentPage
         await Navigation.PushAsync(new SettingsAnnotationsPage());
     }
 
+    private async void OnSettingsPedalsTapped(object sender, TappedEventArgs e)
+    {
+        await Navigation.PushAsync(new SettingsPedalsPage());
+    }
+
     private async void OnSettingsAppTapped(object sender, TappedEventArgs e)
     {
         await Navigation.PushAsync(new SettingsAppPage());

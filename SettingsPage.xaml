@@ -72,6 +72,16 @@
 
                         <Grid Padding="15" BackgroundColor="Transparent">
                             <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnSettingsPedalsTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Text="{Binding [Settings_Pedals], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="#333333" />
+
+                        <Grid Padding="15" BackgroundColor="Transparent">
+                            <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnSettingsAppTapped" />
                             </Grid.GestureRecognizers>
                             <Label Text="{Binding [Settings_App], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" VerticalOptions="Center" />

@@ -2,13 +2,43 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.7.1
+# Music Score Manager v1.9.8.0
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### 🦶 Support Natif des Pédaliers Bluetooth & Événements MIDI (v1.9.8.0)
+- **Contrôle Mains-Libres Total sur Scène** : Prise en charge universelle des pédaliers sans fil Bluetooth/USB (clavier HID) et des contrôleurs MIDI (USB-OTG et Bluetooth MIDI).
+- **Testeur & Diagnostic en Direct** : Section interactive dans les paramètres avec voyant d'écoute en temps réel (🟢) affichant le nom de la touche/commande, le code hexadécimal, la source, le type de pression (court ou long) et l'action déclenchée.
+- **Système de Profils Préconfigurés pour Pédales Phares** :
+  - *Standard (Flèches, Page Up/Down, Espace, Entrée)*
+  - *PageFlip Dragonfly (4 pédales)*
+  - *PageFlip Firefly & Butterfly*
+  - *AirTurn Duo 500 & PEDpro*
+  - *AirTurn Quad 500 (4 pédales)*
+  - *Joyo JSP-01 Wireless Page Turner*
+  - *Thomann / Harley Benton PageTurn Pedal*
+  - *Donner Wireless Page Turner*
+  - *IK Multimedia iRig BlueTurn*
+  - *Coda Music Technologies STOMP*
+  - *Contrôleur MIDI Avancé (USB / Bluetooth - Sustain CC 64, Sostenuto CC 66, Soft CC 67, Notes C1-F1, Program Change)*
+- **Profils Personnalisés & Mode Apprentissage ("Learn")** : Créez vos propres profils personnalisés, dupliquez, réinitialisez, et apprenez automatiquement une touche en actionnant simplement la pédale souhaitée.
+- **Palette Complète d'Actions Assignables** :
+  - ➡️ Page suivante / ⬅️ Page précédente
+  - ⬆️ Défiler vers le haut / ⬇️ Défiler vers le bas
+  - ⏮️ Début de morceau (page 1) / ⏭️ Fin de morceau
+  - 📑 Morceau suivant ou précédent dans la setlist (appui court ou appui long)
+  - ⏱️ Démarrer / Arrêter le métronome & Activer / Couper son
+  - 🎵 Lecture / Pause & Recommencer la piste audio d'accompagnement
+  - 🔍 Rétablir le zoom à 100%
+  - 🔢 Ouvrir le saut direct de page
+  - 🔒 Verrouiller / Déverrouiller les annotations
+  - ↩️ Annuler (Undo) / ↪️ Rétablir (Redo) les annotations
+  - 📋 Ouvrir le menu central / 🚪 Fermer le lecteur
+- **Sensibilité d'Appui Long Paramétrable** : Réglette fine de 200 ms à 1000 ms pour adapter le déclenchement de la pression longue à votre jeu scénique.
 
 ### 📊 Espace Disponible sur le Stockage & Taille de la Base de Données (v1.9.7.1)
 - **Espace Libre sur le Stockage** : Affichage en direct de l'espace disponible (en Mo ou Go) sur l'unité de stockage où se trouvent vos partitions (mémoire interne ou carte SD/dossier externe).

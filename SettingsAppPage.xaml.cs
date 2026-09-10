@@ -90,11 +90,39 @@ public partial class SettingsAppPage : ContentPage
                     targetDir = FileSystem.AppDataDirectory;
                 }
 
-                var root = Path.GetPathRoot(Path.GetFullPath(targetDir));
-                if (!string.IsNullOrEmpty(root))
+                long freeBytes = -1;
+
+#if ANDROID
+                try
                 {
-                    var driveInfo = new DriveInfo(root);
-                    long freeBytes = driveInfo.AvailableFreeSpace;
+                    var statFs = new Android.OS.StatFs(targetDir);
+                    freeBytes = statFs.AvailableBlocksLong * statFs.BlockSizeLong;
+                }
+                catch
+                {
+                    try
+                    {
+                        var extPath = Android.OS.Environment.ExternalStorageDirectory?.AbsolutePath ?? "/storage/emulated/0";
+                        var statFs = new Android.OS.StatFs(extPath);
+                        freeBytes = statFs.AvailableBlocksLong * statFs.BlockSizeLong;
+                    }
+                    catch { }
+                }
+#else
+                try
+                {
+                    var root = Path.GetPathRoot(Path.GetFullPath(targetDir));
+                    if (!string.IsNullOrEmpty(root))
+                    {
+                        var driveInfo = new DriveInfo(root);
+                        freeBytes = driveInfo.AvailableFreeSpace;
+                    }
+                }
+                catch { }
+#endif
+
+                if (freeBytes >= 0)
+                {
                     if (freeBytes >= 1024L * 1024L * 1024L)
                     {
                         freeSpaceText = $"{freeBytes / (1024.0 * 1024.0 * 1024.0):F2} Go";
