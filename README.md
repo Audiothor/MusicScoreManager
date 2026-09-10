@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.8.0
+# Music Score Manager v1.9.8.1
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
@@ -10,7 +10,7 @@
 
 ## 🚀 Fonctionnalités Clés
 
-### 🦶 Support Natif des Pédaliers Bluetooth & Événements MIDI (v1.9.8.0)
+### 🦶 Support Natif des Pédaliers Bluetooth & Événements MIDI (v1.9.8.1)
 - **Contrôle Mains-Libres Total sur Scène** : Prise en charge universelle des pédaliers sans fil Bluetooth/USB (clavier HID) et des contrôleurs MIDI (USB-OTG et Bluetooth MIDI).
 - **Testeur & Diagnostic en Direct** : Section interactive dans les paramètres avec voyant d'écoute en temps réel (🟢) affichant le nom de la touche/commande, le code hexadécimal, la source, le type de pression (court ou long) et l'action déclenchée.
 - **Système de Profils Préconfigurés pour Pédales Phares** :
@@ -239,7 +239,9 @@
 
 ## 📜 Historique Récent des Versions
 
-- **v1.9.5.7** : **"Standard Extension-based PDF Import"** — Suppression des tests d'intégrité binaire stricts et retour à l'import basé sur l'extension `.pdf` pour garantir l'acceptation sans blocage de tous les fichiers PDF.
+- **v1.9.8.1** : **"Bluetooth Pedals & MIDI Events Edition"** — Support natif des pédaliers Bluetooth (AirTurn, PageFlip, Joyo, Donner, Thomann, iRig, STOMP) et contrôleurs MIDI (USB/Bluetooth), diagnostic en direct, gestionnaire de profils avec détection auto (Learn mode) et contrôle mains-libres complet du lecteur.
+- **v1.9.7.1** : **"Storage & Database Metrics Edition"** — Affichage de l'espace disque disponible et de la taille de la base SQLite dans les paramètres et les statistiques de bibliothèque.
+- **v1.9.7.0** : **"Musical Stickers & UI Pinning Edition"** — Nouvelles catégories de stickers musicaux (Notes, Silences, Altérations), filtrage des catégories actives et boîtes d'options synchronisées.
 - **v1.9.5.5** : **"Direct Setlist Start & Score Context Menu Refinement"** — Démarrage instantané de la lecture des partitions au clic sur une setlist (avec gestion de setlist vide), nouveau libellé *« Démarrer la setlist »* dans les options et libellé *« Éditer la partition »* dans le menu 3 points des partitions.
 - **v1.9.5.4** : **"Score Transfer & Export Options Modal (Annotations & Audio)"** — Ajout du menu modal d'options (annotations, pistes audio) lors de l'envoi Wi-Fi Direct ou de l'export d'une ou plusieurs partitions, calqué sur le comportement des setlists.
 - **v1.9.5.2** : **"Missing File Visual Indicators & Warning Banners"** — Ajout d'une pastille d'alerte rouge avec point d'exclamation (!) à gauche des 3 points dans la bibliothèque, bannière d'avertissement dans l'édition de partition et badge d'erreur dans les setlists si un PDF est manquant.
@@ -316,5 +318,5 @@ L'application **Music Score Manager** respecte rigoureusement la vie privée de 
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.9.5.7 "Standard Extension-based PDF Import"*
+**Développé par Audiothor** — *MusicScoreManager v1.9.8.1 "Bluetooth Pedals & MIDI Events Edition"*
 
