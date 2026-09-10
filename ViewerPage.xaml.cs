@@ -205,6 +205,12 @@ public partial class ViewerPage : ContentPage
         // Verrouillage systématique par défaut pour ne pas bloquer les interactions et le changement de page
         LockAnnotations();
 
+        // Activer la zone tactile supérieure si nous sommes dans une setlist
+        if (TopSetlistTouchBar != null)
+        {
+            TopSetlistTouchBar.IsVisible = _setlistScores != null && _setlistScores.Count > 0;
+        }
+
         // Repositionner dynamiquement les annotations lors des changements de taille du conteneur (rotation, layout, etc.)
         AnnotationsContainer.SizeChanged += (s, e) => RenderAnnotations();
         AnnotationsContainer.HandlerChanged += (s, e) => {
@@ -218,6 +224,11 @@ public partial class ViewerPage : ContentPage
     {
         base.OnAppearing();
         System.Diagnostics.Debug.WriteLine("[Viewer] OnAppearing appelé.");
+
+        if (TopSetlistTouchBar != null)
+        {
+            TopSetlistTouchBar.IsVisible = _setlistScores != null && _setlistScores.Count > 0;
+        }
 
         LockAnnotations();
         PedalMidiService.Instance.ActionTriggered += OnPedalActionTriggered;
@@ -2435,6 +2446,14 @@ public partial class ViewerPage : ContentPage
                         return;
                     }
 
+                    // Zone haute centrale (12% haut, 25%-75% largeur) -> Déroulement de la setlist (si dans une setlist)
+                    if (_setlistScores != null && _setlistScores.Count > 0 && _touchDownY < height * 0.12 && _touchDownX >= width * 0.25 && _touchDownX <= width * 0.75)
+                    {
+                        MainThread.BeginInvokeOnMainThread(() => ShowSetlistProgressOverlay());
+                        args.Handled = true;
+                        return;
+                    }
+
                     // Zone basse (15%) -> Barre d'annotations (quand la barre est fermée)
                     if (_touchDownY > height * 0.85)
                     {
@@ -4231,6 +4250,173 @@ public partial class ViewerPage : ContentPage
 
         return border;
     }
+
+    #region Setlist Progress Overlay (v2.0.0)
+
+    private void OnTopSetlistTouchTapped(object? sender, EventArgs e)
+    {
+        if (_setlistScores != null && _setlistScores.Count > 0)
+        {
+            ShowSetlistProgressOverlay();
+        }
+    }
+
+    private void OnCloseSetlistProgressClicked(object? sender, EventArgs e)
+    {
+        HideSetlistProgressOverlay();
+    }
+
+    private void ShowSetlistProgressOverlay()
+    {
+        if (_setlistScores == null || _setlistScores.Count == 0) return;
+
+        // Mettre à jour le compteur
+        int total = _setlistScores.Count;
+        int currentDisplayIndex = (_currentIndex >= 0 && _currentIndex < total) ? _currentIndex + 1 : 1;
+        if (SetlistProgressCounterLabel != null)
+        {
+            SetlistProgressCounterLabel.Text = $"{currentDisplayIndex} / {total}";
+        }
+
+        // Construire la liste des éléments
+        if (SetlistProgressStack != null)
+        {
+            SetlistProgressStack.Children.Clear();
+
+            for (int i = 0; i < _setlistScores.Count; i++)
+            {
+                var s = _setlistScores[i];
+                int itemIndex = i;
+                bool isCurrent = (i == _currentIndex) || (_score != null && s.Id == _score.Id);
+                bool isPassed = i < _currentIndex;
+
+                // Border conteneur de chaque partition
+                var itemBorder = new Border
+                {
+                    Padding = new Thickness(12, 10),
+                    StrokeThickness = isCurrent ? 2 : 1,
+                    BackgroundColor = isCurrent 
+                        ? Microsoft.Maui.Graphics.Color.FromArgb("#243B55") 
+                        : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#141418") : Microsoft.Maui.Graphics.Color.FromArgb("#1E1E26")),
+                    Stroke = isCurrent 
+                        ? Microsoft.Maui.Graphics.Color.FromArgb("#00B4D8") 
+                        : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#2C2C38") : Microsoft.Maui.Graphics.Color.FromArgb("#3C3C4C")),
+                    StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 10 }
+                };
+
+                var itemGrid = new Grid
+                {
+                    ColumnDefinitions = new ColumnDefinitionCollection
+                    {
+                        new ColumnDefinition { Width = GridLength.Auto },
+                        new ColumnDefinition { Width = GridLength.Star },
+                        new ColumnDefinition { Width = GridLength.Auto }
+                    },
+                    ColumnSpacing = 12
+                };
+
+                // Badge statut / numéro
+                string statusIcon = isCurrent ? "▶" : (isPassed ? "✓" : $"{i + 1}");
+                var badgeLabel = new Label
+                {
+                    Text = statusIcon,
+                    TextColor = isCurrent ? Microsoft.Maui.Graphics.Color.FromArgb("#00FFB2") : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#7A7A90") : Microsoft.Maui.Graphics.Color.FromArgb("#CCCCCC")),
+                    FontAttributes = FontAttributes.Bold,
+                    FontSize = 14,
+                    WidthRequest = 26,
+                    HorizontalTextAlignment = TextAlignment.Center,
+                    VerticalTextAlignment = TextAlignment.Center
+                };
+                Grid.SetColumn(badgeLabel, 0);
+                itemGrid.Children.Add(badgeLabel);
+
+                // Informations du morceau (Titre & Compositeur)
+                var infoStack = new VerticalStackLayout { Spacing = 2, VerticalOptions = LayoutOptions.Center };
+                var titleLabel = new Label
+                {
+                    Text = s.Title,
+                    FontAttributes = isCurrent ? FontAttributes.Bold : FontAttributes.None,
+                    FontSize = isCurrent ? 14 : 13,
+                    TextColor = isCurrent ? Microsoft.Maui.Graphics.Colors.White : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#8E8E9E") : Microsoft.Maui.Graphics.Color.FromArgb("#E0E0E0")),
+                    LineBreakMode = LineBreakMode.TailTruncation
+                };
+                infoStack.Children.Add(titleLabel);
+
+                if (!string.IsNullOrWhiteSpace(s.Composer))
+                {
+                    var composerLabel = new Label
+                    {
+                        Text = s.Composer,
+                        FontSize = 11,
+                        TextColor = isCurrent ? Microsoft.Maui.Graphics.Color.FromArgb("#A0D8EF") : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#666675") : Microsoft.Maui.Graphics.Color.FromArgb("#9999AA")),
+                        LineBreakMode = LineBreakMode.TailTruncation
+                    };
+                    infoStack.Children.Add(composerLabel);
+                }
+                Grid.SetColumn(infoStack, 1);
+                itemGrid.Children.Add(infoStack);
+
+                // Indicateur texte droite
+                string stateText = isCurrent ? "En cours" : (isPassed ? "Passé" : "À venir");
+                var stateLabel = new Label
+                {
+                    Text = stateText,
+                    FontSize = 11,
+                    FontAttributes = isCurrent ? FontAttributes.Bold : FontAttributes.None,
+                    TextColor = isCurrent ? Microsoft.Maui.Graphics.Color.FromArgb("#00B4D8") : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#606070") : Microsoft.Maui.Graphics.Color.FromArgb("#808090")),
+                    VerticalTextAlignment = TextAlignment.Center
+                };
+                Grid.SetColumn(stateLabel, 2);
+                itemGrid.Children.Add(stateLabel);
+
+                itemBorder.Content = itemGrid;
+
+                // Taper sur un morceau permet d'y aller directement
+                var tapGesture = new TapGestureRecognizer();
+                tapGesture.Tapped += async (sdr, ev) =>
+                {
+                    HideSetlistProgressOverlay();
+                    if (itemIndex != _currentIndex)
+                    {
+                        await SwitchToScoreAsync(s, itemIndex, toLastPage: false);
+                    }
+                };
+                itemBorder.GestureRecognizers.Add(tapGesture);
+
+                SetlistProgressStack.Children.Add(itemBorder);
+            }
+        }
+
+        if (SetlistProgressModal != null)
+        {
+            SetlistProgressModal.IsVisible = true;
+            SetlistProgressOverlay.Opacity = 0;
+            SetlistProgressOverlay.TranslationY = -60;
+            _ = Task.WhenAll(
+                SetlistProgressOverlay.FadeTo(1, 200, Easing.CubicOut),
+                SetlistProgressOverlay.TranslateTo(0, 0, 200, Easing.CubicOut)
+            );
+        }
+    }
+
+    private void HideSetlistProgressOverlay()
+    {
+        if (SetlistProgressModal != null && SetlistProgressModal.IsVisible)
+        {
+            _ = Task.WhenAll(
+                SetlistProgressOverlay.FadeTo(0, 150, Easing.CubicIn),
+                SetlistProgressOverlay.TranslateTo(0, -60, 150, Easing.CubicIn)
+            ).ContinueWith(t =>
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    SetlistProgressModal.IsVisible = false;
+                });
+            });
+        }
+    }
+
+    #endregion
 
     #endregion
 }
