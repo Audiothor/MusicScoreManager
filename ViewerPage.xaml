@@ -607,6 +607,100 @@
             </VerticalStackLayout>
         </Border>
 
+        <!-- Zone tactile transparente du haut au centre pour ouvrir le déroulement de la setlist -->
+        <ContentView x:Name="TopSetlistTouchBar"
+                     VerticalOptions="Start"
+                     HorizontalOptions="Center"
+                     HeightRequest="60"
+                     WidthRequest="350"
+                     BackgroundColor="Transparent"
+                     ZIndex="500"
+                     IsVisible="False">
+            <ContentView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnTopSetlistTouchTapped" />
+            </ContentView.GestureRecognizers>
+        </ContentView>
+
+        <!-- Volet Déroulement de la Setlist (Haut de l'écran) -->
+        <Grid x:Name="SetlistProgressModal"
+              IsVisible="False"
+              ZIndex="999"
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill">
+            <!-- Arrière-plan semi-transparent pour fermer en cliquant à côté -->
+            <BoxView BackgroundColor="#70000000"
+                     HorizontalOptions="Fill"
+                     VerticalOptions="Fill">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnCloseSetlistProgressClicked" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+
+            <!-- Boîte de déroulement de la setlist fixée en haut -->
+            <Border x:Name="SetlistProgressOverlay"
+                    VerticalOptions="Start"
+                    HorizontalOptions="Center"
+                    WidthRequest="480"
+                    MaximumHeightRequest="420"
+                    Margin="15,0,15,0"
+                    Padding="16,14,16,16"
+                    BackgroundColor="#F4181820"
+                    Stroke="#007ACC"
+                    StrokeThickness="1.5">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="0,0,18,18" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="#000000" Offset="0,6" Radius="15" Opacity="0.75" />
+                </Border.Shadow>
+
+                <Grid RowDefinitions="Auto, 1, *" RowSpacing="10">
+                    <!-- Entête du déroulement -->
+                    <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto">
+                        <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
+                            <Label Text="📋" FontSize="18" VerticalOptions="Center" />
+                            <Label Text="Déroulement de la setlist" 
+                                   TextColor="White" 
+                                   FontAttributes="Bold" 
+                                   FontSize="16" 
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <Label Grid.Column="1" 
+                               x:Name="SetlistProgressCounterLabel"
+                               Text="1 / 5" 
+                               TextColor="#00B4D8" 
+                               FontAttributes="Bold" 
+                               FontSize="13" 
+                               HorizontalOptions="End" 
+                               VerticalOptions="Center"
+                               Margin="0,0,12,0" />
+
+                        <Button Grid.Column="2" 
+                                Text="✕" 
+                                BackgroundColor="#33FFFFFF" 
+                                TextColor="White" 
+                                FontSize="14" 
+                                FontAttributes="Bold"
+                                WidthRequest="32" 
+                                HeightRequest="32" 
+                                CornerRadius="16"
+                                Padding="0"
+                                VerticalOptions="Center"
+                                Clicked="OnCloseSetlistProgressClicked" />
+                    </Grid>
+
+                    <!-- Séparateur -->
+                    <BoxView Grid.Row="1" HeightRequest="1" Color="#334466" />
+
+                    <!-- Liste déroulante des partitions de la setlist -->
+                    <ScrollView Grid.Row="2" Orientation="Vertical">
+                        <VerticalStackLayout x:Name="SetlistProgressStack" Spacing="6" />
+                    </ScrollView>
+                </Grid>
+            </Border>
+        </Grid>
+
         <!-- Zone tactile transparente du bas pour activer les annotations (PDF & Images, même zoomés) -->
         <ContentView x:Name="BottomTouchBar"
                      VerticalOptions="End"

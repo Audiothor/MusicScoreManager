@@ -2,13 +2,24 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v1.9.8.1
+# Music Score Manager v2.0.0
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
 ---
 
 ## 🚀 Fonctionnalités Clés
+
+### 📋 Volet Déroulement de la Setlist en Direct (v2.0.0)
+- **Suivi Scénique Intuitif** : Pendant la lecture des partitions d'une setlist, visualisez instantanément où vous en êtes dans le déroulé de votre prestation.
+- **Ouverture Discrète depuis le Haut** : Un simple appui tout en haut au centre de la page (barre d'outils invisible) fait descendre avec fluidité le volet d'avancement fixé au sommet de l'écran.
+- **Distinction Visuelle Immédiate** :
+  - **Partition en cours** : Mise en valeur par un fond contrasté bleu nuit, contour lumineux cyan, badge `▶` vert éclatant et libellé *« En cours »*.
+  - **Partitions déjà passées** : Grisées avec badge coché `✓` pour savoir en un coup d'œil ce qui a déjà été joué.
+  - **Partitions à venir** : Affichées clairement avec leur ordre numérique pour anticiper le morceau suivant.
+- **Navigation Directe & Fermeture Simplissime** :
+  - Cliquez sur n'importe quel morceau de la liste pour y sauter directement et instantanément.
+  - Fermez la boîte en un clin d'œil via le bouton croix `✕`, en tapant sur le fond semi-transparent ou en cliquant sur le morceau courant.
 
 ### 🦶 Support Natif des Pédaliers Bluetooth & Événements MIDI (v1.9.8.1)
 - **Contrôle Mains-Libres Total sur Scène** : Prise en charge universelle des pédaliers sans fil Bluetooth/USB (clavier HID) et des contrôleurs MIDI (USB-OTG et Bluetooth MIDI).
