@@ -694,7 +694,7 @@
                     <BoxView Grid.Row="1" HeightRequest="1" Color="#334466" />
 
                     <!-- Liste déroulante des partitions de la setlist -->
-                    <ScrollView Grid.Row="2" Orientation="Vertical">
+                    <ScrollView x:Name="SetlistProgressScrollView" Grid.Row="2" Orientation="Vertical">
                         <VerticalStackLayout x:Name="SetlistProgressStack" Spacing="6" />
                     </ScrollView>
                 </Grid>

@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v2.0.1
+# Music Score Manager v2.0.1.1
 
 **Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
 
@@ -10,13 +10,14 @@
 
 ## 🚀 Fonctionnalités Clés
 
-### 📋 Volet Déroulement de la Setlist en Direct & Paramètre Dédié (v2.0.1)
+### 📋 Volet Déroulement de la Setlist en Direct, Couleurs Dédiées & Centrage Automatique (v2.0.1.1)
 - **Suivi Scénique Intuitif** : Pendant la lecture des partitions d'une setlist, visualisez instantanément où vous en êtes dans le déroulé de votre prestation.
 - **Ouverture Discrète depuis le Haut** : Un simple appui tout en haut au centre de la page (barre d'outils invisible) fait descendre avec fluidité le volet d'avancement fixé au sommet de l'écran.
-- **Distinction Visuelle Immédiate** :
-  - **Partition en cours** : Mise en valeur par un fond contrasté bleu nuit, contour lumineux cyan, badge `▶` vert éclatant et libellé *« En cours »*.
-  - **Partitions déjà passées** : Grisées avec badge coché `✓` pour savoir en un coup d'œil ce qui a déjà été joué.
-  - **Partitions à venir** : Affichées clairement avec leur ordre numérique pour anticiper le morceau suivant.
+- **Centrage Automatique Immédiat** : À l'ouverture du volet, la liste défile automatiquement pour centrer le morceau actuellement en cours d'exécution dans la boîte.
+- **Palette Visuelle Dédiée par Statut** :
+  - **Partition en cours** : Mise en valeur par un fond contrasté bleu nuit, contour lumineux cyan, badge `▶` vert éclatant, titre en blanc éclatant et libellé *« En cours »* cyan.
+  - **Partitions déjà passées** : Badge coché `✓` vert sauge (`#52B788`), texte gris bleuté apaisé (`#8A95A5`) et libellé *« Passé »*.
+  - **Partitions à venir** : Numéro bleu pastel (`#74C0FC`), texte blanc cassé doux (`#EAF2FF`), compositeur azuréen (`#A5C8E4`) et libellé *« À venir »* (`#4DABF7`).
 - **Navigation Directe & Fermeture Simplissime** :
   - Cliquez sur n'importe quel morceau de la liste pour y sauter directement et instantanément.
   - Fermez la boîte en un clin d'œil via le bouton croix `✕`, en tapant sur le fond semi-transparent ou en cliquant sur le morceau courant.
