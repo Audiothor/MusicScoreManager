@@ -205,10 +205,11 @@ public partial class ViewerPage : ContentPage
         // Verrouillage systématique par défaut pour ne pas bloquer les interactions et le changement de page
         LockAnnotations();
 
-        // Activer la zone tactile supérieure si nous sommes dans une setlist
+        // Activer la zone tactile supérieure si nous sommes dans une setlist et que l'option est activée
         if (TopSetlistTouchBar != null)
         {
-            TopSetlistTouchBar.IsVisible = _setlistScores != null && _setlistScores.Count > 0;
+            bool isSetlistProgressEnabled = Preferences.Default.Get("ShowSetlistProgressOverlay", true);
+            TopSetlistTouchBar.IsVisible = isSetlistProgressEnabled && _setlistScores != null && _setlistScores.Count > 0;
         }
 
         // Repositionner dynamiquement les annotations lors des changements de taille du conteneur (rotation, layout, etc.)
@@ -227,7 +228,8 @@ public partial class ViewerPage : ContentPage
 
         if (TopSetlistTouchBar != null)
         {
-            TopSetlistTouchBar.IsVisible = _setlistScores != null && _setlistScores.Count > 0;
+            bool isSetlistProgressEnabled = Preferences.Default.Get("ShowSetlistProgressOverlay", true);
+            TopSetlistTouchBar.IsVisible = isSetlistProgressEnabled && _setlistScores != null && _setlistScores.Count > 0;
         }
 
         LockAnnotations();
@@ -2446,8 +2448,8 @@ public partial class ViewerPage : ContentPage
                         return;
                     }
 
-                    // Zone haute centrale (12% haut, 25%-75% largeur) -> Déroulement de la setlist (si dans une setlist)
-                    if (_setlistScores != null && _setlistScores.Count > 0 && _touchDownY < height * 0.12 && _touchDownX >= width * 0.25 && _touchDownX <= width * 0.75)
+                    // Zone haute centrale (12% haut, 25%-75% largeur) -> Déroulement de la setlist (si dans une setlist et activé)
+                    if (_setlistScores != null && _setlistScores.Count > 0 && Preferences.Default.Get("ShowSetlistProgressOverlay", true) && _touchDownY < height * 0.12 && _touchDownX >= width * 0.25 && _touchDownX <= width * 0.75)
                     {
                         MainThread.BeginInvokeOnMainThread(() => ShowSetlistProgressOverlay());
                         args.Handled = true;
@@ -4255,7 +4257,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnTopSetlistTouchTapped(object? sender, EventArgs e)
     {
-        if (_setlistScores != null && _setlistScores.Count > 0)
+        if (_setlistScores != null && _setlistScores.Count > 0 && Preferences.Default.Get("ShowSetlistProgressOverlay", true))
         {
             ShowSetlistProgressOverlay();
         }
