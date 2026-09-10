@@ -9,6 +9,7 @@ public partial class SettingsSetlistsPage : ContentPage
         // Charger les préférences
         DefaultContinuousSwitch.IsToggled = Preferences.Default.Get("DefaultContinuousReading", true);
         ReturnToSetlistSwitch.IsToggled = Preferences.Default.Get("ReturnToSetlistOnEndOfScore", false);
+        ShowSetlistProgressSwitch.IsToggled = Preferences.Default.Get("ShowSetlistProgressOverlay", true);
     }
 
     private void OnDefaultContinuousToggled(object sender, ToggledEventArgs e)
@@ -19,6 +20,11 @@ public partial class SettingsSetlistsPage : ContentPage
     private void OnReturnToSetlistToggled(object sender, ToggledEventArgs e)
     {
         Preferences.Default.Set("ReturnToSetlistOnEndOfScore", e.Value);
+    }
+
+    private void OnShowSetlistProgressToggled(object sender, ToggledEventArgs e)
+    {
+        Preferences.Default.Set("ShowSetlistProgressOverlay", e.Value);
     }
 
     private async void OnBackClicked(object sender, EventArgs e)
