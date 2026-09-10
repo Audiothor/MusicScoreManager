@@ -57,8 +57,20 @@ namespace MusicScoreManager
         {
             var active = _pedalService.ActiveProfile;
             ProfileDescLabel.Text = active.Description;
-            DeleteProfileBtn.IsEnabled = !active.IsBuiltIn;
-            DeleteProfileBtn.Opacity = active.IsBuiltIn ? 0.4 : 1.0;
+            ProfileShortcutsTitleLabel.Text = $"Raccourcis du profil : {active.Name}";
+
+            if (active.IsBuiltIn)
+            {
+                DeleteProfileBtn.IsVisible = false;
+                Grid.SetColumnSpan(NewProfileBtn, 2);
+            }
+            else
+            {
+                DeleteProfileBtn.IsVisible = true;
+                DeleteProfileBtn.IsEnabled = true;
+                DeleteProfileBtn.Opacity = 1.0;
+                Grid.SetColumnSpan(NewProfileBtn, 1);
+            }
 
             _bindings.Clear();
             foreach (var b in active.Bindings)

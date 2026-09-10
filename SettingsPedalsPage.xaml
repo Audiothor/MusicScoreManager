@@ -105,29 +105,40 @@
                         <Label x:Name="ProfileDescLabel" Text="Description du profil..." TextColor="#9E9E9E" FontSize="12" FontAttributes="Italic" />
 
                         <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
-                            <Button Text="➕ Nouveau profil" 
+                            <Button x:Name="NewProfileBtn"
+                                    Grid.Column="0"
+                                    Text="➕ Nouveau profil" 
                                     BackgroundColor="#2C2C2C" 
                                     TextColor="#007ACC" 
                                     BorderColor="#007ACC" 
                                     BorderWidth="1" 
                                     CornerRadius="8" 
+                                    HeightRequest="42"
                                     Clicked="OnNewCustomProfileClicked" />
                             
                             <Button x:Name="DeleteProfileBtn" 
+                                    Grid.Column="1"
                                     Text="🗑️ Supprimer" 
                                     BackgroundColor="#2C2C2C" 
                                     TextColor="#FF6B6B" 
                                     BorderColor="#FF6B6B" 
                                     BorderWidth="1" 
                                     CornerRadius="8" 
+                                    HeightRequest="42"
                                     Clicked="OnDeleteProfileClicked" />
                         </Grid>
                     </VerticalStackLayout>
                 </Border>
 
                 <!-- CHAPITRE 3 : Configuration des Touches & Actions -->
-                <Grid ColumnDefinitions="*, Auto">
-                    <Label Text="Raccourcis du profil" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" />
+                <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                    <Label x:Name="ProfileShortcutsTitleLabel" 
+                           Text="Raccourcis du profil : Standard" 
+                           TextColor="#007ACC" 
+                           FontSize="17" 
+                           FontAttributes="Bold" 
+                           VerticalOptions="Center" 
+                           LineBreakMode="TailTruncation" />
                     <Button Grid.Column="1" 
                             Text="➕ Apprendre une touche" 
                             BackgroundColor="#007ACC" 
@@ -135,6 +146,7 @@
                             FontSize="13" 
                             CornerRadius="8" 
                             Padding="12,6" 
+                            VerticalOptions="Center"
                             Clicked="OnLearnKeyClicked" />
                 </Grid>
 
