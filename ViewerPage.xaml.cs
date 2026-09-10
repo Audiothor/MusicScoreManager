@@ -4281,6 +4281,7 @@ public partial class ViewerPage : ContentPage
         }
 
         // Construire la liste des éléments
+        Border? currentItemBorder = null;
         if (SetlistProgressStack != null)
         {
             SetlistProgressStack.Children.Clear();
@@ -4299,12 +4300,17 @@ public partial class ViewerPage : ContentPage
                     StrokeThickness = isCurrent ? 2 : 1,
                     BackgroundColor = isCurrent 
                         ? Microsoft.Maui.Graphics.Color.FromArgb("#243B55") 
-                        : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#141418") : Microsoft.Maui.Graphics.Color.FromArgb("#1E1E26")),
+                        : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#141418") : Microsoft.Maui.Graphics.Color.FromArgb("#1C1E26")),
                     Stroke = isCurrent 
                         ? Microsoft.Maui.Graphics.Color.FromArgb("#00B4D8") 
-                        : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#2C2C38") : Microsoft.Maui.Graphics.Color.FromArgb("#3C3C4C")),
+                        : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#2C2C38") : Microsoft.Maui.Graphics.Color.FromArgb("#3C3C50")),
                     StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 10 }
                 };
+
+                if (isCurrent)
+                {
+                    currentItemBorder = itemBorder;
+                }
 
                 var itemGrid = new Grid
                 {
@@ -4322,7 +4328,9 @@ public partial class ViewerPage : ContentPage
                 var badgeLabel = new Label
                 {
                     Text = statusIcon,
-                    TextColor = isCurrent ? Microsoft.Maui.Graphics.Color.FromArgb("#00FFB2") : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#7A7A90") : Microsoft.Maui.Graphics.Color.FromArgb("#CCCCCC")),
+                    TextColor = isCurrent 
+                        ? Microsoft.Maui.Graphics.Color.FromArgb("#00FFB2") 
+                        : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#52B788") : Microsoft.Maui.Graphics.Color.FromArgb("#74C0FC")),
                     FontAttributes = FontAttributes.Bold,
                     FontSize = 14,
                     WidthRequest = 26,
@@ -4339,7 +4347,9 @@ public partial class ViewerPage : ContentPage
                     Text = s.Title,
                     FontAttributes = isCurrent ? FontAttributes.Bold : FontAttributes.None,
                     FontSize = isCurrent ? 14 : 13,
-                    TextColor = isCurrent ? Microsoft.Maui.Graphics.Colors.White : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#8E8E9E") : Microsoft.Maui.Graphics.Color.FromArgb("#E0E0E0")),
+                    TextColor = isCurrent 
+                        ? Microsoft.Maui.Graphics.Colors.White 
+                        : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#8A95A5") : Microsoft.Maui.Graphics.Color.FromArgb("#EAF2FF")),
                     LineBreakMode = LineBreakMode.TailTruncation
                 };
                 infoStack.Children.Add(titleLabel);
@@ -4350,7 +4360,9 @@ public partial class ViewerPage : ContentPage
                     {
                         Text = s.Composer,
                         FontSize = 11,
-                        TextColor = isCurrent ? Microsoft.Maui.Graphics.Color.FromArgb("#A0D8EF") : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#666675") : Microsoft.Maui.Graphics.Color.FromArgb("#9999AA")),
+                        TextColor = isCurrent 
+                            ? Microsoft.Maui.Graphics.Color.FromArgb("#A0D8EF") 
+                            : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#5C6773") : Microsoft.Maui.Graphics.Color.FromArgb("#A5C8E4")),
                         LineBreakMode = LineBreakMode.TailTruncation
                     };
                     infoStack.Children.Add(composerLabel);
@@ -4365,7 +4377,9 @@ public partial class ViewerPage : ContentPage
                     Text = stateText,
                     FontSize = 11,
                     FontAttributes = isCurrent ? FontAttributes.Bold : FontAttributes.None,
-                    TextColor = isCurrent ? Microsoft.Maui.Graphics.Color.FromArgb("#00B4D8") : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#606070") : Microsoft.Maui.Graphics.Color.FromArgb("#808090")),
+                    TextColor = isCurrent 
+                        ? Microsoft.Maui.Graphics.Color.FromArgb("#00B4D8") 
+                        : (isPassed ? Microsoft.Maui.Graphics.Color.FromArgb("#52B788") : Microsoft.Maui.Graphics.Color.FromArgb("#4DABF7")),
                     VerticalTextAlignment = TextAlignment.Center
                 };
                 Grid.SetColumn(stateLabel, 2);
@@ -4398,6 +4412,21 @@ public partial class ViewerPage : ContentPage
                 SetlistProgressOverlay.FadeTo(1, 200, Easing.CubicOut),
                 SetlistProgressOverlay.TranslateTo(0, 0, 200, Easing.CubicOut)
             );
+
+            // Centrer automatiquement le morceau en cours dans la boîte de défilement
+            if (currentItemBorder != null && SetlistProgressScrollView != null)
+            {
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    // Petit délai pour laisser le temps au layout de calculer les positions des éléments
+                    await Task.Delay(100);
+                    try
+                    {
+                        await SetlistProgressScrollView.ScrollToAsync(currentItemBorder, ScrollToPosition.Center, animated: true);
+                    }
+                    catch { }
+                });
+            }
         }
     }
 
