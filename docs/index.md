@@ -1,6 +1,6 @@
 # Manuel d'Utilisation - Music Score Manager
 
-Bienvenue sur la documentation complète et détaillée de **Music Score Manager v2.0.1.1**, l'application multiplateforme (Android / Windows) conçue sur mesure pour les musiciens solistes, ensembles, chorales et orchestres.
+Bienvenue sur la documentation complète et détaillée de **Music Score Manager v2.0.2**, l'application multiplateforme (Android / Windows) conçue sur mesure pour les musiciens solistes, ensembles, chorales et orchestres.
 
 ---
 
