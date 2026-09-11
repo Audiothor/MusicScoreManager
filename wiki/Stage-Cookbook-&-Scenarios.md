@@ -1,3 +1,5 @@
+> **🇫🇷 Français** | [🇬🇧 English Version](Stage-Cookbook-&-Scenarios-EN)
+
 # 🎭 Recettes de Scène & Scénarios Concrets (Stage Cookbook)
 
 Ce guide pratique propose des protocoles éprouvés en répétition et en concert pour tirer le meilleur parti de Music Score Manager selon votre formation musicale.

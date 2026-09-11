@@ -1,3 +1,5 @@
+> **🇫🇷 Français** | [🇬🇧 English Version](Architecture-&-Internals-EN)
+
 # 🔬 Architecture Interne & Spécifications des Protocoles
 
 Ce document détaille les choix d'ingénierie logicielle, les formats de conteneurs, le schéma relationnel de persistance et les protocoles réseau de Music Score Manager.

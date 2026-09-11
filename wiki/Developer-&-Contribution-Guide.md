@@ -1,3 +1,5 @@
+> **🇫🇷 Français** | [🇬🇧 English Version](Developer-&-Contribution-Guide-EN)
+
 # 🛠️ Guide Développeur & Contribution
 
 Bienvenue aux développeurs et contributeurs Open Source souhaitant participer à l'évolution de **Music Score Manager**.

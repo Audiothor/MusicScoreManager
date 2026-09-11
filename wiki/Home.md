@@ -1,3 +1,5 @@
+> **🇫🇷 Français** | [🇬🇧 English Version](Home-EN)
+
 # 🏛️ Bienvenue sur le Wiki Technique de Music Score Manager
 
 Bienvenue dans l'espace communautaire et d'ingénierie avancée de **Music Score Manager**.
