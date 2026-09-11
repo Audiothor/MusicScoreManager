@@ -1,3 +1,5 @@
+> **🇫🇷 Français** | [🇬🇧 English Version](Hardware-Compatibility-&-Pedals-EN)
+
 # 🦶 Compatibilité Matériel, Pédaliers Bluetooth & Contrôleurs MIDI
 
 Sur scène, le contrôle mains-libres est un élément vital de l'expérience musicale. Cette page répertorie tous les périphériques testés, leurs spécificités de commutation, et les réglages matériels recommandés pour une fiabilité totale en direct.

@@ -1,3 +1,5 @@
+> **🇫🇷 Français** | [🇬🇧 English Version](Troubleshooting-&-OS-FAQ-EN)
+
 # 🚑 Dépannage Technique & FAQ Système (Troubleshooting)
 
 Cette section recense les solutions aux problèmes fréquemment rencontrés sur les appareils Android et Windows en situation réelle.
