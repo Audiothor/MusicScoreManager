@@ -3,43 +3,506 @@
 </p>
 
 # Music Score Manager v2.0.1.1
-
-**Music Score Manager** est une application mobile multiplateforme construite avec **.NET MAUI** (ciblant principalement Android) conçue pour les musiciens afin de gérer, organiser, annoter et visualiser leurs partitions (PDF standardisés) de manière efficace, particulièrement en situation de concert.
+> **Le gestionnaire & visualiseur professionnel de partitions musicales pour répétitions, pupitres et concerts en direct.**
 
 ---
 
-## 🚀 Fonctionnalités Clés
+## 📑 Sommaire Général
 
-### 📋 Volet Déroulement de la Setlist en Direct, Couleurs Dédiées & Centrage Automatique (v2.0.1.1)
-- **Suivi Scénique Intuitif** : Pendant la lecture des partitions d'une setlist, visualisez instantanément où vous en êtes dans le déroulé de votre prestation.
-- **Ouverture Discrète depuis le Haut** : Un simple appui tout en haut au centre de la page (barre d'outils invisible) fait descendre avec fluidité le volet d'avancement fixé au sommet de l'écran.
-- **Centrage Automatique Immédiat** : À l'ouverture du volet, la liste défile automatiquement pour centrer le morceau actuellement en cours d'exécution dans la boîte.
+1. [Chapitre 1 : Description Complète de l'Application, Installation & Prérequis](#chapitre-1--description-complète-de-lapplication-installation--prérequis)
+2. [Chapitre 2 : Partitions — Actions, Bibliothèque & Visualiseur de Scène](#chapitre-2--partitions--actions-bibliothèque--visualiseur-de-scène)
+3. [Chapitre 3 : Setlists — Organisation des Programmes & Déroulement Scénique](#chapitre-3--setlists--organisation-des-programmes--déroulement-scénique)
+4. [Chapitre 4 : Outils — Boîte à Utilitaires Avancés](#chapitre-4--outils--boîte-à-utilitaires-avancés)
+5. [Chapitre 5 : Paramètres — Personnalisation & Préférences](#chapitre-5--paramètres--personnalisation--préférences)
+6. [Chapitre 6 : Détails Techniques, Confidentialité, Droits & Liens GitHub](#chapitre-6--détails-techniques-confidentialité-droits--liens-github)
+
+---
+
+## Chapitre 1 : Description Complète de l'Application, Installation & Prérequis
+
+### 1.1 Présentation Générale & Philosophie
+**Music Score Manager** est une application multiplateforme développée avec **.NET 10 MAUI**, principalement conçue pour les tablettes et smartphones **Android** (ainsi que les postes de travail **Windows**). Conçue par des musiciens pour des musiciens, elle répond aux exigences les plus strictes de la pratique musicale : répétitions de pupitre, travail personnel, cours de musique, répétitions générales et exécution scénique en concert live.
+
+L'application élimine définitivement les classeurs papier volumineux et remplace les visualiseurs PDF généralistes inadaptés à la scène. Elle offre une expérience taillée sur mesure :
+- **100% Hors-Ligne & Sans Dépendance Réseau** : L'ensemble de la bibliothèque, de la base de données, des métadonnées, des annotations et des fichiers audio est stocké localement sur l'appareil. Aucun accès Internet n'est requis sur scène.
+- **Réactivité Instantanée (< 50 ms)** : Architecture optimisée sans copie de fichiers superflue (*zero-copy*), avec pré-rendu hors-écran (*offscreen canvas double-buffering*) pour des tournes de page sans saccade ni latence.
+- **Confort Visuel Scénique** : Interface native sombre (Dark Mode `#121212`) prévenant tout éblouissement sur scène et éliminant tout flash blanc lors du chargement des partitions.
+- **Contrôle Mains-Libres Intégral** : Prise en charge native des pédaliers tourne-page sans fil Bluetooth (profils HID et clavier) ainsi que des contrôleurs MIDI (USB-OTG et Bluetooth MIDI).
+- **Écosystème d'Annotations Professionnel** : Stylet, crayon à main levée, surligneurs Stabilo translucides, textes typographiés et plus de 100 stickers musicaux intégrés.
+
+---
+
+### 1.2 Prérequis Système & Matériels
+
+| Composant | Prérequis Minimum | Recommandé pour la Scène |
+| :--- | :--- | :--- |
+| **Système d'exploitation** | **Android 12.0** (API 31) ou supérieur | **Android 13 / 14 / 15 / 16** (Target SDK 36) |
+| **Alternative Desktop** | **Windows 10** (build 19041+) | **Windows 11** avec écran tactile ou stylet |
+| **Écran & Affichage** | Écran 8 pouces tactile | **Tablette 10.5 à 13.3 pouces** (haute définition, ratio 4:3 ou 16:10) |
+| **Stockage** | 200 Mo d'espace libre pour l'application | 4 Go+ selon l'envergure de votre bibliothèque PDF/Audio |
+| **Mémoire Vive (RAM)** | 3 Go de RAM | 4 Go à 8 Go de RAM |
+| **Contrôleurs Pédalier** | Écran tactile | **Pédalier Bluetooth HID** (AirTurn, PageFlip, Joyo, Donner...) ou **Contrôleur MIDI** |
+| **Connexion Réseau** | Aucune connexion Internet requise | Carte Wi-Fi active uniquement pour le partage direct P2P entre musiciens |
+
+---
+
+### 1.3 Installation & Déploiement
+
+#### Méthode 1 : Installation du Package APK (Android)
+1. Téléchargez la dernière version du fichier APK (`MusicScoreManager-Signed.apk`) depuis les Releases du dépôt GitHub.
+2. Sur votre tablette ou smartphone Android, autorisez l'installation d'applications provenant de sources inconnues pour votre navigateur ou explorateur de fichiers (*Paramètres > Sécurité > Sources inconnues* ou *Installer applications inconnues*).
+3. Ouvrez le fichier APK et validez l'installation.
+4. Au premier lancement, accordez les permissions requises pour la gestion des fichiers multimédias, le Bluetooth et la détection d'appareils locaux.
+
+#### Méthode 2 : Compilation & Déploiement depuis les Sources
+Pour les développeurs souhaitant compiler l'application :
+1. Installez le **SDK .NET 10** et les charges de travail .NET MAUI :
+   ```powershell
+   dotnet workload install maui
+   dotnet workload install maui-android
+   ```
+2. Clonez le dépôt Git officiel :
+   ```powershell
+   git clone https://github.com/Audiothor/MusicScoreManager.git
+   cd MusicScoreManager
+   ```
+3. Ouvrez le projet dans **Visual Studio 2022** (avec composants MAUI) ou compilez en ligne de commande :
+   ```powershell
+   # Compilation et exécution directe sur tablette Android connectée en USB
+   dotnet build -t:Run -f net10.0-android36.0
+
+   # Génération du package Release APK pour distribution
+   dotnet publish -f net10.0-android36.0 -c Release
+   ```
+
+---
+
+## Chapitre 2 : Partitions — Actions, Bibliothèque & Visualiseur de Scène
+
+L'onglet **Partitions** constitue la porte d'entrée principale de votre répertoire musical. Il permet d'organiser, classer, rechercher, modifier et exécuter vos partitions en plein écran.
+
+```mermaid
+graph TD
+    A[Onglet Partitions] --> B[Recherche Instantanée]
+    A --> C[Filtrage par Étiquettes]
+    A --> D[Tris Multi-Critères]
+    A --> E[Mode Multi-Sélection]
+    A --> F[Bouton d'Importation +]
+    A --> G[Cartes de Partitions]
+    G --> H[Clic Direct : Visualiseur Plein Écran]
+    G --> I[Menu Contextuel ⋮]
+    I --> J[Édition Métadonnées]
+    I --> K[Ajout dans un Setlist]
+    I --> L[Atelier d'Assemblage PDF]
+    I --> M[Wi-Fi Direct P2P]
+    I --> N[Export .msmscore]
+    I --> O[Suppression]
+```
+
+### 2.1 Barre d'Outils Supérieure & Actions Globales
+La barre supérieure met à votre disposition des outils instantanés :
+- **Barre de Recherche (`SearchBar`)** : Filtre en temps réel au fil de la frappe par titre du morceau, nom du compositeur ou nom du fichier.
+- **Bouton Filtrage par Étiquettes (`🏷️`)** :
+  - Ouvre une modale interactive avec barre de recherche interne et tri des étiquettes (A-Z, Z-A, les plus utilisées, les moins utilisées).
+  - Sélection d'un ou plusieurs tags pour n'afficher que les morceaux correspondants.
+  - Bandeau horizontal des étiquettes actives affiché sous la barre d'outils avec pastilles colorées et bouton croix pour retirer un filtre en un clic.
+  - Boutons *« Tout effacer »* et *« Appliquer »*.
+- **Bouton de Tri Multi-Critères (`⇅`)** :
+  - *Date d'ajout (Plus récent d'abord)* [Par défaut]
+  - *Date d'ajout (Plus ancien d'abord)*
+  - *Titre (A-Z)* et *Titre (Z-A)*
+  - *Date de dernière modification*
+  - *Évaluation (Meilleures notes par étoiles)*
+  - *Compositeur (A-Z)* : respecte le paramètre de tri des morceaux sans compositeur (placés au début ou à la fin).
+  - *Sans étiquette d'abord* : idéal pour repérer les morceaux récemment importés non encore classés.
+- **Bouton Multi-Sélection (`☑`)** :
+  - Active les cases à cocher sur chaque partition de la bibliothèque.
+  - Déploie un bandeau d'actions groupées en bas de l'écran avec compteur dynamique (*« X sélectionné(s) »*) :
+    - 🗑️ **Supprimer en masse** : Suppression sécurisée avec boîte de confirmation.
+    - 🏷️ **Étiquettes groupées** : Ouvre une boîte modale permettant soit d'ajouter des étiquettes à toutes les partitions cochées, soit de remplacer l'intégralité de leurs étiquettes.
+    - 📦 **Exporter en paquet (`.msmscores`)** : Génère une archive groupée unique avec boîte d'options pour inclure ou exclure les annotations manuscrites et les pistes audio.
+    - 📤 **Envoyer en masse** : Transfert Wi-Fi Direct direct des morceaux sélectionnés vers une autre tablette.
+- **Bouton d'Importation (`+`)** :
+  - **Import de documents PDF** : Sélection d'un ou plusieurs fichiers PDF. Un contrôle d'intégrité binaire strict vérifie l'en-tête `%PDF-` pour rejeter tout fichier corrompu.
+  - **Import d'Images & Photos** : Lors de la sélection d'images (photos de partitions papier prises avec l'appareil photo ou scans JPEG/PNG), l'application détecte automatiquement la sélection multiple et propose intelligemment :
+    - *Option A* : Fusionner toutes les photos en **une seule partition PDF multi-pages** ordonnée.
+    - *Option B* : Convertir chaque photo en une partition PDF individuelle.
+  - **Mode Copie vs Mode Liaison** : Selon le paramétrage, le fichier est soit copié dans le stockage de l'application, soit lié à son emplacement d'origine (marqué par un badge `🔗`).
+
+---
+
+### 2.2 Cartes de Partitions & Indicateurs Visuels
+Chaque partition est présentée sous forme d'une carte moderne :
+- **Titre du morceau** : Typographie claire avec retour automatique à la ligne.
+- **Pastille d'alerte rouge `(!)` et Texte rouge** : Signalétique immédiate si le fichier PDF physique associé est manquant ou a été déplacé sur le stockage. Empêche les ouvertures accidentelles et alerte le musicien avant un concert.
+- **Pastille `🔗` bleue** : Indique un fichier lié en stockage externe.
+- **Sous-titre personnalisable** : Affiche au choix le nom du compositeur, la date d'ajout, ou les deux à la fois.
+- **Badges d'étiquettes colorés** : Pilules avec couleur personnalisée pour visualiser immédiatement le genre musical, le pupitre ou le projet.
+- **Bouton Menu Options (`⋮`)** : Déploie le menu contextuel détaillé.
+
+---
+
+### 2.3 Menu Contextuel d'une Partition (`⋮`)
+Un clic sur les 3 points d'une partition ouvre une carte modale sombre et moderne proposant l'ensemble des actions disponibles :
+1. 📖 **Ouvrir la partition** : Lance le visualiseur plein écran en mode concert.
+2. ✏️ **Éditer la partition** : Ouvre la page d'édition détaillée `ScoreEditPage` :
+   - *Titre & Compositeur*
+   - *Tonalité* : Notation internationale (A, B, C, D, E, F, G avec altérations majeures/mineures) et notation classique (Do, Ré, Mi, Fa, Sol, La, Si).
+   - *Tempo (BPM)* : Indication métronomique de référence.
+   - *Évaluation* : Attribution d'une note de 1 à 5 étoiles.
+   - *Étiquettes associées* : Ajout/retrait dynamique de tags.
+   - *Accordéon Métronome* : Chiffrage de mesure (2/4, 3/4, 4/4, 6/8...), subdivision rythmique, nombre de mesures de pré-compte et coupure/activation du son par défaut.
+   - *Accordéon Pistes Audio* : Rapprochement d'une ou plusieurs pistes audio d'accompagnement (MP3, WAV, AAC, OGG, FLAC), écoute d'un extrait de prévisualisation, réglage du volume relatif et suppression.
+   - *Métadonnées Techniques* : Emplacement physique complet, dossier parent, taille en Mo/Ko, type de fichier, date d'ajout et date de dernière modification.
+   - *Bannière d'avertissement fichier manquant* : Présente si le PDF est introuvable avec bouton permettant de re-sélectionner le fichier sur l'appareil.
+3. 📋 **Ajouter dans un Setlist** : Affiche la liste des setlists existantes. La partition est insérée **prioritairement en 1ère position** du setlist choisi pour une préparation scénique rapide. Si le setlist est verrouillé, une confirmation de sécurité est demandée. Si la partition y figurait déjà, elle est repositionnée sans créer de doublon.
+4. 📑 **Modifier l'assemblage PDF** : Ouvre immédiatement la partition dans l'atelier d'assemblage PDF pour réorganiser, pivoter ou supprimer des pages.
+5. 📡 **Envoyer en Wi-Fi Direct** : Déploie une boîte de dialogue avec options à cocher (*Inclure les annotations manuscrites*, *Inclure les pistes audio rattachées*) avant d'engager le transfert P2P sans fil.
+6. 📦 **Exporter (.msmscore)** : Exporte une archive autonome complète transportable par clé USB, messagerie ou cloud avec boîte d'options (annotations, pistes audio).
+7. 🏷️ **Renommer** : Boîte de saisie rapide pour modifier le titre d'affichage.
+8. 🗑️ **Supprimer la partition** : Boîte de dialogue destructive sécurisée avec confirmation.
+
+---
+
+### 2.4 Le Visualiseur de Partitions Plein Écran (`ViewerPage`)
+Le visualiseur constitue le centre opérationnel en répétition et sur scène :
+
+```mermaid
+graph LR
+    V[Visualiseur Plein Écran] --> R[Rendu PDF.js Double-Buffer]
+    V --> P[Mode 2 Pages Paysage]
+    V --> A[Barre d'Annotations Mobile]
+    V --> M[Métronome Haute Précision]
+    V --> S[Lecteur Audio Synchronisé]
+    V --> D[Volet Déroulement Setlist]
+    V --> C[Menu Central Double-Tap]
+```
+
+#### Rendu & Performance d'Affichage
+- **Moteur PDF.js optimisé** : Rendu vectoriel haute fidélité sans pixellisation lors des zooms.
+- **Rendu Synchrone & Anti-Flash** : Le conteneur d'annotations et la partition s'affichent strictement au même instant, éliminant tout effet désagréable d'« annotations flottantes ».
+- **Cache Hors-Écran (*Offscreen Canvas Cache*)** : Les pages adjacentes sont pré-calculées en mémoire pour un changement de page à latence quasi nulle.
+
+#### Mode 2 Pages en Paysage
+- Lorsque l'option *Affichage 2 pages en mode paysage* est cochée dans les paramètres et que l'écran est horizontal, le visualiseur affiche deux pages consécutives côte à côte.
+- **Projection Géométrique Précise** : Les annotations créées en mode portrait (ou sur une page unique) sont projetées avec une précision millimétrique sur la page de gauche (`leftPage`) ou de droite (`rightPage`), en tenant compte des marges réelles (*letterbox* / *pillarbox*).
+- **Adaptation d'Échelle** : L'épaisseur des traits, la taille des stickers et les polices de texte s'adaptent automatiquement à la réduction de 50% de la largeur de page.
+
+#### Navigation & Gestuelle Tactile
+- **Tourne-Page Tactile** : Zones de tap personnalisables (taper à gauche / taper à droite) et gestes de balayage (swipe gauche, swipe droite, glisser vers le haut / le bas).
+- **Zoom & Pan Unifiés** : Pincement à deux doigts (*pinch-to-zoom*) et déplacement libre panoramique, synchronisés à 100% avec les calques d'annotations.
+- **Indicateur de Page & Saut Direct** : Badge cliquable en bas à droite (`ex: 3/12`). Un tap ouvre une boîte de dialogue pour sauter directement à la page souhaitée.
+
+#### Menu Central Moderne (Double-Tap)
+Un double appui au centre de l'écran déploie un menu d'actions rapides :
+- **↻ Rotation (+90°)** : Pivote la partition par pas de 90 degrés.
+- **Portée de la Rotation** : Interrupteur pour choisir d'appliquer la rotation uniquement à la page en cours ou à toutes les pages de la partition.
+- **Mémorisation des Rotations** : Enregistre l'angle choisi dans la base de données locale afin de le retrouver automatiquement lors des prochaines ouvertures.
+- **🔍 Rétablir la taille d'origine (100%)** : Réinitialise instantanément le zoom et recentre la partition.
+- **📄 Saut de Page** : Accès rapide au choix numérique de page.
+- **Interrupteurs Métronome & Audio** : Affiche ou masque à la volée les overlays du métronome et du lecteur audio.
+- **📑 Modifier l'assemblage PDF** : Bascule vers l'atelier d'assemblage.
+- **✏️ Modifier la partition** : Accès rapide à la fiche des métadonnées.
+- **Retour à l'accueil / Fermer** : Sortie fluide du visualiseur.
+
+#### Boîte à Outils d'Annotations Complète
+La barre d'outils d'annotation apparaît sur demande et peut être translatée verticalement sur l'écran par glisser-déposer (*Pan*). Ses boîtes d'options secondaires restent magnétiquement collées au-dessus :
+- 🖌 **Surligneur Fluo (Stabilo)** :
+  - Tracé translucide laissant les notes de musique, portées et paroles parfaitement lisibles.
+  - Bords biseautés droits (`PenLineCap.Flat`) pour un rendu réaliste.
+  - Palette de 4 teintes lumineuses : Jaune fluo, Vert éclatant, Bleu ciel, Rose vif.
+  - 3 largeurs de trait : Fine (5 mm), Moyenne (10 mm), Large (18 mm).
+- **T Texte Typographié** :
+  - Saisie de remarques textuelles à l'emplacement touché sur la partition.
+  - 6 coloris de texte : Noir, Blanc, Rouge, Bleu, Vert, Jaune.
+  - 5 tailles de police : 8, 12, 16, 20 et 24 points.
+- ✎ **Crayon à Main Levée** :
+  - Dessin opaque à 100% au premier plan (idéal pour biffer des mesures ou masquer des portées).
+  - 6 couleurs franches : Noir, Rouge, Bleu, Vert, Jaune, Blanc.
+  - 5 épaisseurs de mine calibrées de 1 mm à 5 mm.
+- ❏ **Tiroir de Stickers Musicaux** :
+  - Plus de 100 symboles classés par catégories :
+    - *Favoris* : Vos stickers personnalisés avec texte sur mesure.
+    - *Doigtés* : Chiffres de doigtés pour piano, cordes et vents (1, 2, 3, 4, 5, p, i, m, a).
+    - *Nuances* : $ppp$, $pp$, $p$, $mp$, $mf$, $f$, $ff$, $fff$, crescendo, decrescendo.
+    - *Articulations* : Staccato, accent, tenuto, point d'orgue, mordant, trille.
+    - *Répétitions* : Segno, Coda, Da Capo, Dal Segno, barres de reprise.
+    - *Notes Musicales* : Ronde (𝅝), Blanche (𝅗𝅥), Noire (♩), Croche (♪), Deux croches (♫), Double-croche (𝅘𝅥𝅯), Triolets (3)...
+    - *Silences* : Pause (𝄻), Demi-pause (𝄼), Soupir (𝄽), Demi-soupir (𝄾), Quart de soupir (𝄿)...
+    - *Altérations* : Dièse (♯), Bémol (♭), Bécarre (♮), Double-dièse (𝄪), Double-bémol (𝄫).
+    - *Symboles & Respirations* : Coup d'archet (poussé/tiré), respiration (virgule), métronome, lunettes d'attention, étoiles.
+  - Réglette grand format tactile pour ajuster la taille du sticker avant ou après la pose.
+- ↩ **Undo & ↪ Redo** : Historique dynamique complet permettant d'annuler ou rétablir pas à pas chaque tracé, texte ou sticker posé.
+- ✧ **Nettoyage Général** : Efface en un clic toutes les annotations présentes sur la page courante après confirmation.
+- 🔒/🔓 **Verrouillage Sécurisé Strict** :
+  - Par défaut, à l'ouverture d'une partition ou au passage d'un morceau, la surface est **automatiquement verrouillée (`🔒` rouge)** et insensible aux gestes d'édition pour éviter tout déplacement involontaire d'annotation pendant le jeu.
+  - La sélection d'un outil (Crayon, Surligneur, Texte, Stickers) déverrouille instantanément la surface (`🔓` vert).
+  - La fermeture de la barre d'annotations (bouton ✕) réactive immédiatement le verrouillage de protection.
+- 🗑 **Suppression Ciblée** : Toucher une annotation existante permet de l'ajuster ou de la supprimer via le bouton corbeille ou par double-tap.
+
+#### Métronome Haute Précision Embarqué
+- **Moteur Temporel Thread-Safe Dédié** : Double régulation atomique sans dérive CPU (`Stopwatch` + `SpinWait`), immunisée contre les ralentissements de l'appareil.
+- **Latence Instantanée (SoundPool Android)** : Déclenchement matériel audio direct des échantillons sonores préchargés en mémoire.
+- **Indicateur Visuel & LED Clignotante** : Pulsation lumineuse synchronisée sur les temps forts et temps faibles.
+- **Contrôle On/Off du Son à la Volée** : Possibilité de couper le clic sonore tout en conservant le repère visuel de la pulsation LED.
+- **Pré-compte Ultra-Précis** : Décompte avant démarrage de la lecture audio pour un départ parfait.
+
+#### Lecteur Audio Synchronisé
+- Déploiement d'une barre de transport compacte avec bouton Lecture/Pause.
+- Barre de progression interactive permettant de se déplacer librement dans le morceau avec affichage du temps écoulé et de la durée totale.
+- Idéal pour répéter avec bandes orchestre, playbacks ou enregistrements de témoins.
+
+---
+
+## Chapitre 3 : Setlists — Organisation des Programmes & Déroulement Scénique
+
+Le menu **Setlists** est l'outil indispensable pour planifier et enchaîner vos concerts, messes, auditions ou répétitions d'ensemble.
+
+```mermaid
+graph TD
+    S[Onglet Setlists] --> S1[Recherche & Filtres par Statut]
+    S --> S2[Tri des Setlists]
+    S --> S3[Création d'une Setlist +]
+    S --> S4[Lancement Direct au Tap]
+    S --> S5[Menu Contextuel ⋮]
+    S5 --> S6[Démarrage Mode Concert]
+    S5 --> S7[Éditeur de Morceaux SetlistEditPage]
+    S5 --> S8[Wi-Fi Direct P2P]
+    S5 --> S9[Export .msmsetlist]
+    S5 --> S10[Duplication Instantanée]
+    S5 --> S11[Verrouillage de Sécurité]
+    S6 --> V[Volet Déroulement en Direct v2.0.1.1]
+```
+
+### 3.1 Barre d'Outils Supérieure des Setlists
+- **Recherche Instantanée** : Localisation immédiate d'une setlist par nom.
+- **Tris Multi-Critères (`⇅`)** : Tri par *Nom (A-Z / Z-A)*, *Date de création (Récent / Ancien)* ou *Statut*.
+- **Filtres Horizontaux par Statut** : Filtrez en un toucher selon l'état de préparation :
+  - *Toutes*
+  - *Active* (badge vert) : programmes actuellement en cours de travail ou joués en tournée.
+  - *À venir* (badge orange) : concerts en préparation future.
+  - *Terminée* (badge gris) : archives de concerts passés.
+- **Bouton Créer (`+`)** : Création immédiate d'une nouvelle setlist avec saisie du titre.
+
+---
+
+### 3.2 Gestion des Cartes de Setlists
+- Chaque carte affiche le nom du programme, sa date de création, son badge d'état coloré et un cadenas rouge `🔒` s'il est verrouillé.
+- **Glissement Latéral (Swipe)** :
+  - Glisser vers la gauche pour faire apparaître les raccourcis *Renommer* et *Supprimer*.
+- **Démarrage Immédiat au Clic Direct** : Toucher directement une setlist lance instantanément le visualiseur sur son premier morceau en mode concert (si la setlist est vide, un message d'aide invite à y intégrer des partitions).
+
+---
+
+### 3.3 Menu Contextuel d'une Setlist (`⋮`)
+1. ▶️ **Démarrer la setlist** : Lance le premier morceau dans le visualiseur en activant l'enchaînement scénique.
+2. ✏️ **Éditer la setlist** : Ouvre `SetlistEditPage` pour ajouter, réorganiser ou supprimer des partitions.
+3. 📡 **Envoyer en Wi-Fi Direct** : Propose les options d'inclusion des annotations et des pistes audio, puis transmet le paquet complet vers d'autres tablettes.
+4. 📦 **Exporter (.msmsetlist)** : Génère un fichier archive contenant la liste ordonnée, les partitions PDF, les annotations et les audios rattachés.
+5. 📑 **Dupliquer la setlist** : Clone en un clic l'intégralité du programme avec tous ses morceaux et leur ordre exact (très utile pour adapter un concert d'une date à l'autre).
+6. 🏷️ **Renommer** : Modification rapide du nom.
+7. 🔒 **Verrouiller / Déverrouiller** : Mode concert qui sanctuarise le programme en interdisant toute modification ou suppression accidentelle sur scène.
+8. 🗑️ **Supprimer la setlist** : Suppression de la liste (les partitions sources de votre bibliothèque restent intactes).
+
+---
+
+### 3.4 Page d'Édition d'une Setlist (`SetlistEditPage`)
+- **Modification du Nom & Statut** : Ajustez le nom et basculez entre *Active*, *À venir* et *Terminée*.
+- **Interrupteur Cadenas** : Verrouillez le programme dès que l'ordre des morceaux est finalisé.
+- **Bouton « + Ajouter des partitions »** : Ouvre la sélection de bibliothèque avec barre de recherche et sélection multiple pour intégrer plusieurs morceaux simultanément.
+- **Réorganisation Intuitive des Morceaux** :
+  - Boutons fléchés **▲ Monter** et **▼ Descendre** pour ajuster la position de chaque pièce.
+  - Glisser-déposer tactile sur les morceaux.
+  - Numérotation séquentielle automatique (1, 2, 3...).
+  - Bouton Corbeille **🗑️** pour retirer un morceau de la setlist.
+- **Indicateurs d'Intégrité & Cache** : Témoin en direct (⚡) garantissant que tous les fichiers PDF de la liste sont disponibles en cache rapide.
+
+---
+
+### 3.5 Volet Déroulement de la Setlist en Direct (v2.0.1.1)
+En mode lecture de setlist, l'application offre une vue d'ensemble du concert :
+- **Ouverture Discrète depuis le Haut** : Une barre invisible située tout en haut au centre de l'écran réagit au toucher et fait descendre avec fluidité le volet d'avancement fixé au sommet.
+- **Centrage Automatique Immédiat** : À l'ouverture du volet, la liste défile automatiquement pour centrer le morceau actuellement joué dans la boîte.
 - **Palette Visuelle Dédiée par Statut** :
-  - **Partition en cours** : Mise en valeur par un fond contrasté bleu nuit, contour lumineux cyan, badge `▶` vert éclatant, titre en blanc éclatant et libellé *« En cours »* cyan.
-  - **Partitions déjà passées** : Badge coché `✓` vert sauge (`#52B788`), texte gris bleuté apaisé (`#8A95A5`) et libellé *« Passé »*.
+  - **Partition en cours** : Fond contrasté bleu nuit, contour lumineux cyan, badge `▶` vert éclatant, titre blanc éclatant et libellé *« En cours »*.
+  - **Partitions passées** : Badge coché `✓` vert sauge (`#52B788`), texte gris bleuté apaisé (`#8A95A5`) et libellé *« Passé »*.
   - **Partitions à venir** : Numéro bleu pastel (`#74C0FC`), texte blanc cassé doux (`#EAF2FF`), compositeur azuréen (`#A5C8E4`) et libellé *« À venir »* (`#4DABF7`).
-- **Navigation Directe & Fermeture Simplissime** :
-  - Cliquez sur n'importe quel morceau de la liste pour y sauter directement et instantanément.
-  - Fermez la boîte en un clin d'œil via le bouton croix `✕`, en tapant sur le fond semi-transparent ou en cliquant sur le morceau courant.
-- **Activation / Désactivation dans les Paramètres Setlists** : Dans le menu *Paramètres Setlists*, activez ou désactivez selon vos préférences l'ouverture de ce volet de déroulement (activé par défaut).
+- **Saut Instantané & Fermeture** :
+  - Touchez n'importe quel morceau de la liste pour y sauter directement et instantanément.
+  - Fermez la boîte d'un tap sur le bouton croix `✕`, sur l'arrière-plan semi-transparent ou sur le morceau courant.
+- **Enchaînement Continu** : Lorsque vous arrivez à la fin d'une partition, tourner la page bascule immédiatement sur la première page du morceau suivant de la setlist.
 
-### 🦶 Support Natif des Pédaliers Bluetooth & Événements MIDI (v1.9.8.1)
-- **Contrôle Mains-Libres Total sur Scène** : Prise en charge universelle des pédaliers sans fil Bluetooth/USB (clavier HID) et des contrôleurs MIDI (USB-OTG et Bluetooth MIDI).
-- **Testeur & Diagnostic en Direct** : Section interactive dans les paramètres avec voyant d'écoute en temps réel (🟢) affichant le nom de la touche/commande, le code hexadécimal, la source, le type de pression (court ou long) et l'action déclenchée.
-- **Système de Profils Préconfigurés pour Pédales Phares** :
-  - *Standard (Flèches, Page Up/Down, Espace, Entrée)*
-  - *PageFlip Dragonfly (4 pédales)*
-  - *PageFlip Firefly & Butterfly*
-  - *AirTurn Duo 500 & PEDpro*
-  - *AirTurn Quad 500 (4 pédales)*
-  - *Joyo JSP-01 Wireless Page Turner*
-  - *Thomann / Harley Benton PageTurn Pedal*
-  - *Donner Wireless Page Turner*
-  - *IK Multimedia iRig BlueTurn*
-  - *Coda Music Technologies STOMP*
-  - *Contrôleur MIDI Avancé (USB / Bluetooth - Sustain CC 64, Sostenuto CC 66, Soft CC 67, Notes C1-F1, Program Change)*
-- **Profils Personnalisés & Mode Apprentissage ("Learn")** : Créez vos propres profils personnalisés, dupliquez, réinitialisez, et apprenez automatiquement une touche en actionnant simplement la pédale souhaitée.
-- **Palette Complète d'Actions Assignables** :
+---
+
+## Chapitre 4 : Outils — Boîte à Utilitaires Avancés
+
+L'onglet **Outils** regroupe 6 modules autonomes pensés pour simplifier la vie numérique du musicien, chacun accessible via une page dédiée avec bouton de retour `← Retour`.
+
+```mermaid
+graph TD
+    T[Onglet Outils] --> T1[1. Créateur & Assemblage PDF]
+    T --> T2[2. Transfert Wi-Fi Direct P2P & QR Code]
+    T --> T3[3. Gestion des Étiquettes]
+    T --> T4[4. Imports de Paquets & Setlists]
+    T --> T5[5. Gestion des Doublons SHA-256]
+    T --> T6[6. Gestion des Sauvegardes]
+```
+
+### 4.1 Créateur & Assemblage PDF (`PdfAssemblerPage`)
+Cet atelier complet résout tous les problèmes d'agencement de vos partitions sans nécessiter d'ordinateur ni de logiciel externe :
+- **Sources de Documents** :
+  - 📸 *Créer depuis des photos/scans* pris avec l'appareil ou stockés en galerie.
+  - 📖 *Modifier une partition existante* de votre bibliothèque Music Score Manager.
+  - 📁 *Ouvrir un fichier PDF externe* depuis le stockage de l'appareil.
+- **Outils d'Édition de Pages** :
+  - **➕ Photos** : Ajouter des images supplémentaires dans le document.
+  - **➕ PDF** : Insérer et fusionner les pages d'un autre document PDF.
+  - **📄 Page Blanche** : Insérer une page vierge à l'endroit désiré (indispensable pour caler les tournes de pages sur les pupitres en mode 2 pages).
+  - **🔄 Tout pivoter** : Appliquer une rotation de 90° à l'intégralité du document en un clic.
+  - **⇅ Inverser l'ordre** : Retourner l'ordre complet des pages (pratique pour les scans réalisés à l'envers).
+- **Actions par Page Individuelle** :
+  - Monter (▲) et Descendre (▼) pour réordonner les pages.
+  - Pivoter individuellement une page à 90° (⟳).
+  - Dupliquer une page (📑) pour répéter un passage.
+  - Supprimer une page (🗑️).
+  - Prévisualisation haute définition en plein écran (loupe 🔍) avec zoom et rotation interactive.
+- **Enregistrement Souple** :
+  - Si vous modifiez une partition existante : choix entre **écraser la partition existante** (en préservant toutes ses métadonnées, notes et tags) ou **l'enregistrer comme nouvelle partition autonome**.
+
+---
+
+### 4.2 Transfert Wi-Fi Direct (P2P) & Diffusion QR Code (`WifiTransferPage`)
+Partagez vos partitions et setlists directement entre tablettes sur scène, en salle de répétition ou en coulisses **sans aucune connexion Internet, sans câble et sans routeur externe**.
+
+#### Mode 1-à-1 : Transfert Direct
+1. **Sur la tablette réceptrice** : Ouvrez *Outils > Transfert Wi-Fi Direct* et cliquez sur **« 🟢 Mode Réception (Se rendre visible) »**.
+2. **Sur la tablette émettrice** : Sélectionnez une partition ou une setlist › cliquez sur *Envoyer en Wi-Fi Direct* › choisissez d'inclure ou non les annotations et audios.
+3. La tablette réceptrice apparaît dans la liste : cliquez sur **« Envoyer »**.
+4. Une confirmation s'affiche sur la tablette réceptrice : cliquez sur **« Accepter »**. Le transfert binaire TCP s'exécute à haute vitesse (Mo/s) et les éléments s'intègrent automatiquement dans la bibliothèque.
+
+#### Mode 1-à-Plusieurs : Diffusion de Groupe par QR Code
+Idéal pour un chef d'orchestre, chef de chœur ou leader de groupe souhaitant distribuer le programme à tous ses musiciens simultanément :
+1. **Sur la tablette émettrice (Leader)** : Lancez l'envoi d'une setlist ou sélection de morceaux et cliquez sur **« 📲 Mode Diffusion Groupe (QR Code) »**.
+2. Un grand QR Code s'affiche à l'écran, associé à l'adresse locale du serveur temporaire et à un compteur de musiciens connectés en direct.
+3. **Sur les tablettes des musiciens** : Chaque musicien ouvre *Outils > Transfert Wi-Fi Direct* et scanne le QR Code à l'écran à l'aide de sa caméra.
+4. Toutes les tablettes téléchargent simultanément le programme complet en parallèle.
+
+---
+
+### 4.3 Gestion des Étiquettes (`TagsPage` & `TagEditPage`)
+- Visualisez la liste complète de vos étiquettes avec leur pastille colorée.
+- Recherche instantanée parmi les tags existants.
+- **Création & Modification** :
+  - Saisie du libellé de l'étiquette.
+  - Palette de couleurs prédéfinies ou mélangeur RVB personnalisé avec trois réglettes (Rouge, Vert, Bleu) et rendu en temps réel du badge.
+- **Gestion Sécurisée** : Renommez ou supprimez une étiquette (sa suppression retire proprement le tag sur les partitions associées sans altérer les partitions elles-mêmes).
+
+---
+
+### 4.4 Imports de Paquets & Setlists (`ImportPackagePage`)
+- Importez des archives générées par Music Score Manager depuis le stockage interne, une clé USB-OTG ou un dossier partagé :
+  - Fichiers `.msmscore` (partition unitaire avec son PDF, ses annotations et ses audios).
+  - Fichiers `.msmscores` (paquet groupé de multiples partitions).
+  - Fichiers `.msmsetlist` (setlist complète avec son ordonnancement, ses partitions membres, ses calques d'annotations et ses pistes audio).
+- Décompression automatique, contrôle d'intégrité et intégration transparente dans la base de données.
+
+---
+
+### 4.5 Gestion des Doublons (`DuplicatesPage`)
+- Analyse approfondie de la bibliothèque de partitions.
+- **Identification Cryptographique Infaillible** : Le moteur calcule l'empreinte binaire **SHA-256** et la taille exacte en octets de chaque fichier. Il repère les partitions strictement identiques même si leurs noms de fichiers ou leurs titres sont différents.
+- Affichage par groupes de doublons avec indication de la mémoire gaspillée.
+- Outils de suppression ciblée pour assainir votre stockage et libérer de la mémoire sur la tablette.
+
+---
+
+### 4.6 Gestion des Sauvegardes (`BackupsPage`)
+- **Sauvegarde Manuelle Immédiate** : Export instantané d'une copie conforme de la base SQLite (`scores.db3` contenant tous vos morceaux, compositeurs, tags, setlists, liaisons et annotations).
+- **Restauration en un Clic** : Restaurez l'application à un état antérieur en sélectionnant une sauvegarde dans la liste historique.
+- **Sauvegarde Automatique Programmée** :
+  - Définition de l'intervalle de sauvegarde automatique (ex: tous les 30 jours).
+  - Rétention maximale (ex: conservation des 6 sauvegardes les plus récentes avec purge automatique des anciennes).
+- **Transparence sur les Fichiers Physiques** : Rappel clair que la base de données référence vos partitions et pistes audio situées dans vos répertoires de stockage, invitant à sauvegarder également ces dossiers sur support externe.
+
+---
+
+## Chapitre 5 : Paramètres — Personnalisation & Préférences
+
+Le menu **Paramètres** regroupe 8 sous-menus pour adapter l'application à vos habitudes de travail :
+
+```mermaid
+graph TD
+    P[Onglet Paramètres] --> P1[Paramètres Partitions]
+    P --> P2[Paramètres Setlists]
+    P --> P3[Paramètres Étiquettes]
+    P --> P4[Paramètres Annotations]
+    P --> P5[Paramètres Pédales & MIDI]
+    P --> P6[Paramètres Application]
+    P --> P7[Aide & Dépannage]
+    P --> P8[À Propos & Licences]
+```
+
+### 5.1 Paramètres Partitions (`SettingsScoresPage`)
+- **Tri par défaut à l'ouverture** : Définissez l'ordre automatique de la bibliothèque (*Date d'ajout récente/ancienne, Titre A-Z/Z-A, Date de modification, Note par étoiles, Compositeur, Sans étiquette d'abord*).
+- **Partitions sans compositeur en premier** : Interrupteur permettant, lors d'un tri par compositeur, d'afficher les morceaux sans compositeur en tête de liste (si activé) ou à la fin (si désactivé).
+- **Informations sous le titre de la partition** : Choisissez ce qui s'affiche sous le titre dans la liste (*Date d'ajout*, *Compositeur*, ou *Compositeur et date d'ajout*).
+- **Affichage du numéro de page** : Activez ou masquez le badge de numérotation en bas à droite du visualiseur.
+- **Taille d'affichage du numéro de page** : Slider de réglage de 10 px à 40 px avec valeur numérique en direct.
+- **Affichage 2 pages en mode paysage** : Active la présentation double page lorsque la tablette est tournée à l'horizontale.
+- **Ergonomie des Gestes de Navigation** :
+  - *Aller vers page suivante* : Glisser vers la gauche, Taper à droite, ou Glisser vers le haut.
+  - *Aller vers page précédente* : Glisser vers la droite, Taper à gauche, ou Glisser vers le bas.
+
+---
+
+### 5.2 Paramètres Setlists (`SettingsSetlistsPage`)
+- **Lecture en continu par défaut** : Active le passage automatique au morceau suivant dès que la dernière page d'une partition est tournée.
+- **Retour à la setlist en fin de partition** : Si la lecture en continu est désactivée, tourner la dernière page ramène automatiquement à l'écran de setlist.
+- **Afficher le déroulement de la setlist** : Active ou désactive le déclenchement du volet d'avancement au tap en haut de l'écran (activé par défaut).
+
+---
+
+### 5.3 Paramètres Étiquettes (`TagsPage`)
+Accès direct à la console de gestion, personnalisation des couleurs et organisation de vos catégories de morceaux.
+
+---
+
+### 5.4 Paramètres Annotations (`SettingsAnnotationsPage`)
+L'écran est structuré en deux chapitres clairs :
+- **Chapitre 1 : Gestion des stickers Favoris** :
+  - Zone de saisie pour créer des stickers personnalisés avec n'importe quel libellé (ex: *« Attention solo »*, *« Vibrato »*, *« Regarder le chef »*, *« Respirer »*).
+  - Liste de vos favoris avec bouton de suppression immédiate `✕`.
+- **Chapitre 2 : Sélection des catégories de stickers actives** :
+  - Cases à cocher pour afficher uniquement les catégories utiles à votre pratique dans le tiroir d'annotations (*Favoris, Doigtés, Nuances, Articulations, Répétitions, Notes, Silences, Altérations, Symboles*). Permet d'alléger l'interface sur scène.
+
+---
+
+### 5.5 Paramètres Pédaliers Bluetooth & Événements MIDI (`SettingsPedalsPage`)
+Ce module assure la configuration universelle de vos accessoires de commande au pied :
+
+#### Chapitre 1 : Diagnostic & Testeur en Direct
+- Interrupteur général d'activation du service de détection.
+- Voyant lumineux vert 🟢 (*« En écoute... »*).
+- **Boîte d'événement en temps réel** : Actionnez une pédale pour afficher immédiatement le nom de la touche capturée, le code hexadécimal/keycode, la source (Clavier HID ou Contrôleur MIDI), l'horodatage, le badge *« ⏱️ Pression Longue »* si applicable, et l'action déclenchée en vert.
+
+#### Chapitre 2 : Profils de Pédales Phares Préconfigurés
+Sélectionnez directement votre pédale dans le menu déroulant :
+- *Standard (Flèches directionnelles, Page Up / Page Down, Espace, Entrée)*
+- *PageFlip Dragonfly (4 pédales)*
+- *PageFlip Firefly & Butterfly*
+- *AirTurn Duo 500 & PEDpro*
+- *AirTurn Quad 500 (4 pédales)*
+- *Joyo JSP-01 Wireless Page Turner*
+- *Thomann / Harley Benton PageTurn Pedal*
+- *Donner Wireless Page Turner*
+- *IK Multimedia iRig BlueTurn*
+- *Coda Music Technologies STOMP*
+- *Contrôleur MIDI Avancé (USB / Bluetooth : Sustain CC 64, Sostenuto CC 66, Soft CC 67, Notes C1-F1, Program Change)*
+
+#### Chapitre 3 : Profils Personnalisés & Mode Apprentissage (*Learn Mode*)
+- Créez de nouveaux profils sur mesure, dupliquez un profil existant, renommez ou réinitialisez les valeurs d'usine.
+- **Mode Apprentissage Automatique** : Cliquez sur *« Apprendre »* et appuyez simplement sur la pédale de votre choix pour mapper automatiquement le signal reçu.
+- **Palette Complète d'Actions Assignables (Appui Court & Appui Long)** :
   - ➡️ Page suivante / ⬅️ Page précédente
   - ⬆️ Défiler vers le haut / ⬇️ Défiler vers le bas
   - ⏮️ Début de morceau (page 1) / ⏭️ Fin de morceau
@@ -51,264 +514,84 @@
   - 🔒 Verrouiller / Déverrouiller les annotations
   - ↩️ Annuler (Undo) / ↪️ Rétablir (Redo) les annotations
   - 📋 Ouvrir le menu central / 🚪 Fermer le lecteur
-- **Sensibilité d'Appui Long Paramétrable** : Réglette fine de 200 ms à 1000 ms pour adapter le déclenchement de la pression longue à votre jeu scénique.
 
-### 📊 Espace Disponible sur le Stockage & Taille de la Base de Données (v1.9.7.1)
-- **Espace Libre sur le Stockage** : Affichage en direct de l'espace disponible (en Mo ou Go) sur l'unité de stockage où se trouvent vos partitions (mémoire interne ou carte SD/dossier externe).
-- **Taille de la Base de Données** : Affichage transparent de l'espace occupé par la base SQLite (`scores.db3` ainsi que ses journaux WAL/SHM).
-- **Libellés de Menus Épurés** : Harmonisation du sous-menu *Paramètres Annotations* dans le menu principal des paramètres, tout en conservant les deux chapitres distincts à l'intérieur : *« Gestion des stickers Favoris »* et *« Sélection des catégories de stickers »*.
-
-### 🎼 Nouveaux Stickers Musicaux, Filtrage des Catégories & Barres d'Outils Collées (v1.9.7.0)
-- **Nouvelles Catégories de Stickers Musicaux** : Ajout de 3 nouvelles catégories musicales situées entre *Doigtés* et *Rythme* :
-  - **Notes** : Symboles de ronde, blanche, noire, croche, double-croche, triolets, etc. (𝅝, 𝅗𝅥, ♩, ♪, ♫, 𝅘𝅥𝅯, ♬, 𝅘𝅥𝅰, ♩., ♪., 𝅗𝅥., 3).
-  - **Silences** : Symboles de pause, demi-pause, soupir, demi-soupir, quart de soupir, etc. (𝄻, 𝄼, 𝄽, 𝄾, 𝄿, 𝅀, 𝄺).
-  - **Altérations** : Symboles de dièse, bémol, bécarre, double-dièse, double-bémol (♯, ♭, ♮, 𝄪, 𝄫).
-- **Sélection des Catégories de Stickers Actives** : Dans les paramètres de l'application (*Paramètres d'annotations*), l'écran est scindé en deux chapitres clairs :
-  - *Chapitre 1 : Gestion des stickers Favoris* (création, modification et suppression de vos stickers personnalisés).
-  - *Chapitre 2 : Sélection des catégories de stickers* (cases à cocher pour afficher uniquement les catégories de stickers utiles lors de vos répétitions et concerts).
-- **Barres d'Outils d'Annotations Collées & Déplacement Synchronisé** : Les boîtes d'options secondaires (Surligneur, Crayon, Texte, Stickers) sont désormais parfaitement collées juste au-dessus de la barre d'annotations principale. Lorsque vous déplacez verticalement la barre d'annotations sur l'écran, la boîte d'options ouverte suit le déplacement en temps réel de façon transparente.
-- **Statistiques de Bibliothèque Précises** : Suppression du comptage des images obsolètes au profit de l'affichage en temps réel du volume total occupé sur le stockage par vos partitions PDF (en Mo).
-
-### 📋 Ajout Direct dans un Setlist depuis le Menu des Partitions (v1.9.6.2)
-- **Action Rapide dans le Menu Contextuel** : Dans l'onglet *Partitions*, le menu des 3 petits points (`⋮`) intègre directement le bouton **« 📋 Ajouter dans un Setlist »** sous *« ✏️ Éditer la partition »*.
-- **Placement Prioritaire en 1ère Position** : L'utilisateur sélectionne la setlist de destination parmi les setlists existantes ; la partition y est insérée immédiatement à la toute première place (position 1), décalant harmonieusement toutes les autres partitions vers le bas.
-- **Sécurité et Déduplication** : Si la setlist sélectionnée est verrouillée, une demande de confirmation est présentée avant d'effectuer l'ajout. Si la partition était déjà présente dans la setlist, elle est déplacée en tête sans création de doublon.
-
-### 🔒 Verrouillage Automatique Sécurisé des Annotations (v1.9.6.1)
-- **Verrouillage Systématique par Défaut à l'Ouverture** : À l'ouverture de toute partition ou lors du passage au morceau suivant d'une setlist, les annotations sont verrouillées (`🔒` rouge) et le conteneur tactile d'annotations devient transparent aux clics (`InputTransparent = true`). Cela garantit que les interactions de lecture (tourner la page à gauche/droite, ouvrir le menu au centre) restent 100% prioritaires et fluides sans aucun risque de déplacer accidentellement un sticker ou un texte.
-- **Verrouillage Automatique à la Fermeture de la Barre d'Outils (Bouton ✕)** : Fermer la barre d'annotations (avec la croix ✕ ou le bouton bas) réactive instantanément le verrouillage des annotations (`🔒`), protégeant la partition contre tout geste involontaire pendant le jeu ou les répétitions.
-- **Déverrouillage Intuitif à la Sélection d'un Outil** : Dès que l'utilisateur clique sur un outil d'édition (Crayon ✎, Surligneur 🖌, Texte T, Stickers ❏ ou le bouton Cadenas), la surface se déverrouille automatiquement (`🔓` vert) pour permettre la pose et l'édition immédiates.
-
-### 📖 Projection Géométrique & Synchronisation des Annotations en Mode 2 Pages Paysage (v1.9.6.0)
-- **Alignement Rigoureux Page Gauche / Page Droite** : Lorsque le mode *Affichage 2 pages en mode paysage* est actif, les annotations créées en mode portrait (ou sur une page simple) sont projetées avec une précision absolue sur leur page respective (page de gauche `leftPage` ou page de droite `rightPage`).
-- **Support des Deux Pages Simultanées** : Les annotations des pages gauche et droite s'affichent simultanément à l'écran, sans omission de la page de droite.
-- **Prise en Compte des Marges et Centrage PDF (Letterbox / Pillarbox)** : Les coordonnées d'affichage tiennent compte des marges réelles calculées par le moteur de rendu PDF.js (`getBoundingClientRect()`), garantissant que les annotations tombent exactement sur les portées et les notes, quel que soit le ratio d'écran (16:9, 16:10, 4:3, tablette ou mobile).
-- **Échelle Visuelle Adaptée** : En mode 2 pages (où chaque page est affichée à environ 50% de la largeur d'écran), la taille des stickers, textes et épaisseurs de traits s'adapte automatiquement pour conserver des proportions naturelles par rapport aux portées musicales.
-- **Création et Déplacement Bivalents** : Poser ou déplacer un sticker ou du texte en mode 2 pages détecte automatiquement si le pointage s'effectue sur la page de gauche ou la page de droite et recalcule les coordonnées normalisées propres à cette page pour une cohérence parfaite lors du retour en mode portrait.
-- **Synchronisation Totale avec le Zoom (Zoom In / Zoom Out)** : Le zoom multipoint (pinch-to-zoom) et le déplacement panoramique restent synchronisés à 100% entre la partition PDF et l'ensemble de ses annotations.
-
-### ⚡ Rendu Synchrone & Affichage Professionnel Partitions & Annotations (v1.9.5.9)
-- **Élimination de l'Effet « Annotations Flottantes »** : Les annotations ne s'affichent plus jamais avant la partition lors de l'ouverture ou du passage de page. Le conteneur reste invisible (`Opacity = 0`) tant que le rendu de la page PDF n'est pas 100% achevé.
-- **Synchronisation Parfaite du Cycle de Vie PDF.js** : La couche d'annotations et la partition apparaissent ensemble, au même instant, offrant une présentation instantanée, propre et professionnelle.
-- **Nettoyage Instantané lors du Changement de Morceau** : Lors du passage à une autre partition dans une setlist, les annotations précédentes sont immédiatement masquées et vidées pour éviter tout artefact visuel.
-
-### 🎨 Boîte à Outils d'Annotation Fluide & Réactive (v1.9.5.8)
-- **Déverrouillage Automatique & Accès Immédiat** : Les annotations sont désormais déverrouillées par défaut lors de l'ouverture de la barre d'outils. Cliquer sur un outil (✎ Crayon, 🖌 Surligneur, T Texte, ❏ Stickers) déverrouille instantanément la surface de dessin sans message bloquant.
-- **Pose de Stickers Instantanée au Toucher (Android & Desktop)** : Correction complète de l'interception tactile Android : toucher l'écran pose immédiatement le sticker choisi sans risque de tourner accidentellement la page.
-- **Sélection Tactile des Annotations sur la Partition** : Toucher un sticker ou un texte existant le sélectionne directement pour ajuster sa couleur, sa taille ou le supprimer en un clic.
-- **Support Complet Crayon & Surligneur sous Windows** : Ajout des écouteurs de pointeurs natifs pour le dessin fluide à la souris et au stylet.
-- **Protection Anti-Fermeture Involontaire** : Toucher la partition pour dessiner ou poser un sticker ne referme plus accidentellement la barre d'outils d'annotation.
-
-### 📂 Import Standard & Fluide de Partitions PDF (v1.9.5.7)
-- **Import Basé sur l'Extension** : Importation directe et sans restriction de tout document `.pdf` sélectionné, assurant 100% de compatibilité avec tous vos fichiers PDF et logiciels d'édition musicale.
-
-### ▶️ Démarrage Direct de Setlist & Clarté des Menus (v1.9.5.5)
-- **Démarrage Instantané de Setlist au Clic** : Cliquer sur une setlist dans la liste lance directement la lecture de sa première partition en mode concert (avec message d'information si la setlist ne contient encore aucun morceau).
-- **Option « Démarrer la setlist » (3 points ⋮)** : Remplacement de l'ancien libellé par *« ▶️ Démarrer la setlist »* pour une intention d'action immédiate, tout en conservant l'option dédiée *« ✏️ Éditer la setlist »*.
-- **Libellé « Éditer la partition »** : Harmonisation du menu contextuel des partitions pour remplacer *« Éditer les informations »* par *« ✏️ Éditer la partition »*.
-
-### 🎛️ Options de Partage & Export de Partition (v1.9.5.4)
-- **Menu d'Options Détaillé (Annotations & Audio)** : Comme pour les setlists, l'envoi Wi-Fi Direct ou l'export de partition propose désormais un menu d'options permettant de cocher/décocher l'inclusion des annotations manuscrites et des pistes audio rattachées.
-- **Harmonisation Complète** : Fonctionne aussi bien pour le partage d'une partition individuelle que pour l'envoi/export groupé en multi-sélection.
-
-### 🛡️ Contrôle Strict & Intégrité des Fichiers PDF (v1.9.5.3)
-- **Validation Binaire de l'En-tête & Structure PDF** : Vérification systématique lors de tout import ou assemblage que le fichier est un véritable document PDF intègre (magic header `%PDF-`, terminaison, descripteurs natifs de rendu) même s'il porte l'extension `.pdf`.
-- **Protection Anti-Crash** : Rejet automatique des fichiers corrompus, incomplets ou renommés artificiellement avec avertissement explicite à l'utilisateur, empêchant toute instabilité du visualiseur de partitions.
-
-### ⚠️ Indicateurs Visuels de Fichier Manquant (v1.9.5.2)
-- **Badge d'Erreur Rouge (!)** : Pastille rouge vive avec point d'exclamation positionnée à gauche du bouton 3 points (⋮) dans la bibliothèque de partitions dès qu'un fichier PDF est introuvable ou déplacé.
-- **Alerte dans l'Édition de Partition** : Bannière d'avertissement rouge explicite à l'ouverture de la page d'édition pour informer immédiatement que le fichier PDF associé est manquant.
-- **Indication dans les Setlists** : Badge d'alerte rouge affiché sur les partitions d'une setlist dont le fichier PDF est manquant avec blocage préventif de l'ouverture.
-
-### 📋 Duplication de Setlists & Tris Intelligents (v1.9.5.1)
-- **Duplication de Setlist en un Clic** : Dupliquez instantanément n'importe quelle setlist avec l'intégralité de ses morceaux et de leur ordre depuis le menu d'options (3 points ⋮).
-- **Tri Compositeur Intelligent avec Option On/Off** : Tri alphabétique des compositeurs avec affichage automatique des partitions sans compositeur à la fin (par défaut), ou au début via le nouveau paramètre *Partitions sans compositeur en premier*.
-- **Tri Sans Étiquette** : Option de tri direct *Sans étiquette d'abord* pour identifier immédiatement les partitions non classées et leur attribuer des étiquettes.
-
-### 🌟 Ergonomie, Métadonnées & Expérience Partition (v1.9.4.0)
-- **Menu Central & Rétablissement du Zoom (100%)** : Ajout d'un bouton « 🔍 Rétablir la taille d'origine (100%) » dans le menu central au double-tap. Détection du double-tap optimisée et fonctionnelle en toutes circonstances (même en plein zoom ou dézoom).
-- **Sous-titres de Partition Configurables** : Nouveau paramètre dans *Paramètres > Partitions* permettant de choisir les informations affichées sous le titre de chaque partition dans la bibliothèque (*Date d'ajout*, *Compositeur*, ou *Compositeur et date d'ajout*).
-- **Popup Moderne & Ergonomique (3 points ⋮)** : Carte sombre moderne avec coins arrondis, ombre portée, en-tête complet (icône 🎵 ou 📋, titre, sous-titre, bouton fermeture ✕) et boutons larges bien espacés évitant les erreurs de manipulation (*Ouvrir*, *Éditer les informations*, *Envoyer en Wi-Fi Direct*, *Exporter*, *Renommer*, *Supprimer*).
-- **Page d'Édition Métadonnées Enrichie** : Nouveaux champs pour *Compositeur*, *Tempo (BPM)*, *Tonalité* (supportant la notation classique *Do, Ré, Mi...* et anglo-saxonne *A, B, C...*), et *Évaluation (étoiles)*. Section *Étiquettes* réordonnée au-dessus du tempo.
-- **Affichage Épuré du Chemin de Fichier** : Affichage précis du dossier parent (`dirname`) entre parenthèses à côté du libellé pour une clarté optimale.
-- **Accordéons Ergonomiques** : Sections *Métronome* et *Fichiers audio* fermées par défaut pour alléger l'interface d'édition.
-- **Tri des Partitions par Défaut (Récent)** : Tri automatique des partitions avec les plus récemment ajoutées en premier (`Date d'ajout (Récent)`), entièrement personnalisable dans les paramètres.
-- **Ouverture & Fermeture Ultra-Fluides (< 50ms)** : Double-buffering off-screen canvas éliminant le balayage visuel, fond natif Android noir `#000000` sans flash blanc, et nettoyage asynchrone évitant tout gel UI lors de la fermeture du viewer.
-
-### 📑 Atelier d'Assemblage & Nouvelle Ergonomie de l'Onglet Outils (v1.9.5.0)
-- **Ergonomie Unifiée (Modèle Paramètres)** : Remplacement complet des anciens accordéons par un hub épuré sous forme de liste de cartes avec chevrons `›`. Chaque outil s'ouvre désormais dans sa propre sous-page dédiée avec en-tête `← Retour` assurant un confort visuel maximal, sans défilement surchargé.
-- **Modification Complète de Partitions Existantes** : Chargez n'importe quelle partition PDF de votre bibliothèque ou fichier externe pour en modifier l'assemblage complet : réorganisation de l'ordre des pages (▲ / ▼), rotation individuelle (⟳ 90°), rotation globale de tout le document, inversion complète de l'ordre des pages, duplication (📑) et suppression de pages (🗑️).
-- **Insertion de Pages Blanches & Fusion Multi-PDF** : Insérez à volonté des pages blanches (idéal pour synchroniser vos tournes de pages) ou fusionnez des pages provenant d'autres fichiers PDF / photos.
-- **Visualisation / Zoom Haute Définition par Page** : Prévisualisez chaque page en plein écran (bouton `🔍` ou tap sur miniature) avec navigation précédent/suivant et rotation interactive pour vérifier la netteté et la mise en page.
-- **Remplacement direct ou Nouvelle copie** : Choisissez d'écraser la partition existante en conservant vos réglages ou de l'enregistrer comme nouvelle copie autonome.
-- **Raccourcis Directs dans l'Application** : Accédez à l'atelier d'assemblage en un clic depuis le menu contextuel (⋮) de la bibliothèque de partitions, la page d'édition des métadonnées ou directement depuis le menu central du lecteur de partitions.
-- **Sous-pages Dédiées** :
-  - `📑 Créateur & Assemblage PDF` (`PdfAssemblerPage`)
-  - `📡 Transfert Wi-Fi Direct (P2P)` (`WifiTransferPage`)
-  - `🏷️ Gestion des étiquettes` (`TagsPage`)
-  - `📦 Imports de paquets & setlists` (`ImportPackagePage`)
-  - `🔍 Gestion des doublons` (`DuplicatesPage`)
-  - `💾 Gestion des sauvegardes` (`BackupsPage`)
-- **Détection & Fusion Intelligente à l'Import** : Lors de l'import (`+` dans Partitions), si plusieurs photos/images sont sélectionnées, l'application propose automatiquement de les fusionner en 1 seule partition PDF multi-pages (tri naturel des pages) ou de les convertir individuellement.
-- **Conversion Automatique en PDF** : Toute image importée est proprement convertie au format PDF standardisé pour unifier l'expérience de lecture, de zoom et d'annotations.
-
-### 📡 Envoi & Diffusion Sans Fil Wi-Fi Direct & QR Code (v1.9.5.0)
-- **Transfert Wi-Fi Direct Ultra-Rapide (P2P)** : Échangez instantanément des partitions ou des setlists entières d'une tablette à une autre en streaming TCP binaire direct sans aucune connexion Internet ni box requise.
-- **Diffusion de Groupe par QR Code (1-à-plusieurs)** : Le chef de pupitre ou leader génère un point d'accès/serveur local temporaire et affiche un QR Code à l'écran : tous les musiciens du groupe le scannent simultanément pour télécharger le programme en parallèle.
-- **Zéro Configuration Manuelle** : L'application gère de façon transparente la découverte UDP balise, l'ouverture et la fermeture des sockets sans nécessiter de manipulations techniques dans les paramètres Android.
-- **Export & Import de Packages Autonomes (`.msmsetlist`, `.msmscore`, `.msmscores`)** : Les exports et imports de fichiers physiques restent 100% opérationnels pour l'archivage ou le partage USB.
-- **Boîte de Dialogue avec Options d'Envoi** : Choisissez précisément avant l'envoi d'inclure ou non vos annotations (doigtés, surlignages, textes) et les pistes audio (MP3/WAV) rattachées.
-
-#### 📖 Guide pas à pas : Envoi direct à une personne (1-à-1)
-1. **Sur la tablette émettrice** :
-   - Sélectionnez la partition (menu `⋮` › *Envoyer en Wi-Fi Direct*) ou cochez plusieurs partitions via le mode multi-sélection (bouton `☑`), ou ouvrez une Setlist (`⋮` › *Envoyer en Wi-Fi Direct*).
-   - Cochez les options souhaitées (*Inclure les annotations*, *Inclure les pistes audio*).
-   - L'écran affiche la recherche automatique des tablettes à proximité.
-2. **Sur la tablette réceptrice** :
-   - Ouvrez l'onglet **Outils** › **Transfert Wi-Fi Direct (P2P)** › cliquez sur **« 🟢 Mode Réception (Se rendre visible) »** (ou depuis le bouton de transfert de la page Partitions).
-3. **Transmission instantanée** :
-   - L'émetteur voit apparaître le nom de la tablette réceptrice et clique sur **« Envoyer »**.
-   - Un message de confirmation s'affiche sur la tablette réceptrice : cliquez sur **« Accepter »**.
-   - Le transfert s'effectue à haute vitesse (Mo/s) et les partitions, annotations et audios sont intégrés directement dans la bibliothèque !
-
-#### 📖 Guide pas à pas : Diffusion à tout un groupe en parallèle (1-à-Plusieurs)
-1. **Sur la tablette du chef de pupitre / leader (Émetteur)** :
-   - Sélectionnez les partitions ou la setlist à diffuser › cliquez sur *Envoyer*.
-   - Cliquez sur le bouton rose **« 📲 Mode Diffusion Groupe (QR Code) »**.
-   - Un grand QR Code s'affiche à l'écran avec l'adresse locale du serveur de partage et un compteur de musiciens connectés en direct.
-2. **Sur les tablettes de tous les musiciens (Récepteurs)** :
-   - Chaque musicien ouvre **Outils** › **Transfert Wi-Fi Direct (P2P)**.
-   - Il scanne le QR Code affiché sur la tablette du leader (ou saisit l'adresse `http://...`).
-   - Le téléchargement et l'intégration s'exécutent simultanément en parallèle pour tous les musiciens du groupe, sans nécessiter de box Internet !
-
-
-### ⏱️ Métronome Temps Réel Haute Précision & Contrôle du Son (v1.8.22 - v1.8.26)
-- **Régularité Absolue & Moteur Thread-Safe (v1.8.26)** : Verrouillage atomique du thread d'horloge pour empêcher tout conflit de tempo. Cadence rigoureusement métronomique et fluide avec double temporisation fine (`Thread.Sleep` + `SpinWait`) et synchronisation visuelle LED découplée.
-- **Contrôle On/Off du Son dans le Menu Central (v1.8.26)** : Possibilité d'activer ou de couper le son du métronome à la volée directement depuis le menu central de la partition, tout en conservant l'option assignée par défaut à la partition.
-- **Latence Matérielle Instantanée (SoundPool Android)** : Lecture des sons de clic et de pré-compte via `SoundPool` pré-chargé en mémoire vive sans instanciation ni décodage en cours de jeu.
-- **Pré-compte Synchronisé au Microseconde Près** : Décompte avant démarrage audio rigoureusement calé sur la pulsation du morceau.
-
-### 🔍 Zoom & Gestes Tactiles Avancés (v1.8.0 - v1.8.19)
-- **Zoom Unifié & Synchronisation Parfaite des Stickers (v1.8.19)** : Zoom et pan unifiés sur `ZoomLayout` pour PDF et Images. Les stickers (annotations) suivent le zoom et le déplacement en temps réel avec une proportion et un alignement millimétrique sur les portées musicales.
-- **Ergonomie & Gestes de Tourne-Page Personnalisables (v1.8.18)** : Configuration sur mesure des gestes pour page suivante (glisser à gauche, taper à droite, glisser vers le haut) et page précédente (glisser à droite, taper à gauche, glisser vers le bas) dans les Paramètres Partitions.
-- **Fluid & Precision Zoom** : Zoom dynamique et pan fluide pour les partitions au format Image et PDF.
-- **Rendu PDF Ultra-Rapide avec Pré-rendu (v1.8.14)** : Pré-rendu hors-écran (*Offscreen Canvas Cache*) des pages adjacentes pour des sauts de page instantanés à 0 ms de latence.
-- **Rotation Hybride par Page (v1.8.14 - v1.8.17)** : Choix flexible de pivoter une page spécifique à 90° ou toute la partition, avec persistance SQLite dédiée et synchronisation temps réel par page.
-- **Indicateur Cadenas Annotations** : Visualisation claire avec fond rouge (verrouillé) et vert (déverrouillé).
-- **Métadonnées de Fichier Complètes (v1.8.15 - v1.8.21)** : Affichage de la taille du fichier, de sa date de dernière modification, de son horodatage d'ajout et de son **type précis avec extension** (ex: *PDF (.pdf)*, *Image (.png)*) dans la page d'édition.
-- **Sécurisation des Gestes (Safe Boundaries)** : Gestion intelligente des zones tactiles pour éviter les sorties d'écran et la navigation intempestive aux extrémités de la partition.
-- **Intégration des Étiquettes dans l'onglet Outils (v1.8.30)** : Fusion complète de la gestion des étiquettes (création, recherche, modification, suppression) sous forme de chapitre dédié dans **Outils** aux côtés de la **Gestion des sauvegardes**.
-- **Menu Principal Optimisé à 5 Onglets Stricts (v1.8.30)** : Barre de navigation épurée (`[Partitions] [Setlists] [Outils] [Paramètres] [Quitter]`) éliminant définitivement l'apparition du menu « More / Plus » sur les interfaces mobiles et tablettes.
-- **Page « À propos » Dédiée (v1.8.29)** : Présentation officielle de l'application avec logo, version dynamique, détails de la licence GNU GPLv3, liste exhaustive des licences des frameworks utilisés (.NET MAUI, CommunityToolkit, SQLite, PDF.js) et lien direct vers le projet Open Source sur GitHub.
-- **Moteur de Localisation Multilingue (v1.8.29)** : Chapitre *Langue* ajouté dans les *Paramètres Application* (avant Bibliothèque) avec sélecteur intuitif. Prise en charge initiale de 4 langues (🇫🇷 Français, 🇬🇧 Anglais, 🇩🇪 Allemand, 🇪🇸 Espagnol). Architecture structurée avec fichiers de traduction JSON indépendants (`Resources/Raw/Languages/*.json`) pour une maintenance et un ajout de nouvelles langues facilités.
-- **Menu Quitter Intégré & Suppression de la Croix (v1.8.28)** : Ajout de l'onglet `Quitter` (`🚪`) directement dans la barre de navigation principale à droite de Paramètres pour une fermeture propre et immédiate de l'application. Suppression de l'ancienne croix discrète sur la page Partitions.
-- **Message d'État de Chargement Évolué (v1.8.28)** : Affichage explicite de *"Chargement des partitions en cours..."* lors de l'initialisation de l'application ou d'une recherche, et *"Aucune partition trouvée."* uniquement lorsqu'aucune partition n'est présente dans la base.
-- **Accès Direct au Saut de Page** : Clic direct sur l'indicateur de numérotation de page (`1/5`) pour ouvrir le prompt de changement de page.
-
-### 🎨 Édition & Système d'Annotations Dynamiques (v1.8.1 - v1.8.27)
-- **Mode Dessin & Annotations au Crayon (v1.8.27)** : Nouvel outil `✎` interactif permettant de dessiner librement à main levée au doigt sur la partition. Tracé opaque (100% au premier plan pour masquer les éléments désirés). Palette de 6 couleurs (Noir, Rouge, Bleu, Vert, Jaune, Blanc) et 5 épaisseurs de trait (1mm, 2mm, 3mm, 4mm, 5mm). Support complet de la sélection, suppression au double-tap et de l'historique Undo/Redo.
-- **Historique Dynamique Undo / Redo (v1.8.25 - v1.8.27)** : Nouveaux boutons `↩` (Annuler) et `↪` (Rétablir) intégrés directement dans la barre d'outils d'annotations. Permet d'annuler et rétablir instantanément n'importe quel dessin au crayon, surlignage, ajout ou suppression de sticker.
-- **Surlignage Stabilo à Bords Droits / Biseautés (v1.8.25)** : Extrémités de sélection nettes et droites (`PenLineCap.Flat`) remplaçant l'effet arrondi pour un rendu de surlignage authentique et précis sur les portées et textes.
-- **Pipeline Tactile Natif & Surlignage Stabilo Temps Réel (v1.8.24)** : Capture matérielle directe des événements tactiles Android. Tracé instantané et fluide du surlignage au doigt (`🖍`) sur PDF et Image sans blocage ni latence. Restauration complète du zoom/dézoom multi-touch (Pinch à 2 doigts) et du déplacement (Pan) sur les partitions PDF.
-- **Surlignage Translucide Tactile / Stabilo (v1.8.23 - v1.8.25)** : Outil `🖍` avec rendu translucide naturel (sans masquer les notes et annotations sous-jacentes). Palette ergonomique de 4 couleurs fluo et 3 épaisseurs de trait (5 mm, 10 mm, 18 mm).
-- **Harmonisation Typographique & Rendu Anti-Rognage des Stickers (v1.8.31)** : Échelle typographique affinée (taille de base 15px au lieu de 24px) pour des annotations musicales et textuelles nettes et parfaitement proportionnées. Marges dynamiques de sécurité évitant toute troncature/coupure de texte sur Android. Refonte visuelle du tiroir avec boutons de catégories en pilules et pastilles stickers bold parfaitement centrées.
-- **Tiroir à Stickers Unifié & Bouton Fermer ✕** : Sélection rapide avec bouton de fermeture dédié sur l'overlay.
-- **Réglette de Taille Tactile Élargie** : Slider grand format ergonomique sur ligne dédiée pour un ajustement facile aux doigts.
-- **Placement Délimité Précis (v1.8.12)** : Possibilité de déposer des stickers en dessous de la barre d'annotations même si celle-ci a été déplacée au milieu/haut de l'écran.
-- **Verrouillage Strict (Lock Safety)** : Interdiction d'ajouter ou modifier des stickers si le cadenas est verrouillé avec message d'information explicite.
-- **Édition Temps Réel** : Modification dynamique en mode déverrouillé (couleurs texte/fond et taille).
-
-### ⚡ Performance "Zero-Copy" & Cache Setlists (v1.0.1 - v1.1.1)
-- **Mise en Cache Automatique** : Les setlists sont pré-chargées en tâche de fond dans un stockage ultra-rapide.
-- **Résilience du Cache** : Tolérance aux fichiers inaccessibles sans interruption du flux principal.
-- **Chargement Direct** : Suppression des copies disques lors de l'ouverture d'un PDF pour une transition instantanée entre morceaux.
-- **Indicateur de Statut** : Visualisation en temps réel de l'état du cache (⏳/⚡) dans l'éditeur de setlist.
-
-### 🎵 Gestion des Partitions & Échange Wi-Fi Direct (v1.0.5 - v1.9.5)
-- **Échange Wi-Fi Direct Unitaire & Groupé (v1.9.5)** : Option d'envoi disponible directement dans le menu contextuel (3 points) de chaque partition ainsi qu'en mode sélection multiple.
-- **Stockage Public Configurable** : Définissez vos propres répertoires pour les partitions et les fichiers audio.
-- **Super-Détection & Scan Récursif** : Scan intelligent tolérant et détection automatique des fichiers déjà présents dans l'arborescence racine/sous-dossiers pour éviter la duplication.
-- **Import Hybride** : Choisissez entre "Copier" (interne) ou "Lier" (externe avec icône 🔗 et option de rapatriement rapide).
-
-### 🏷️ Système d'Étiquettes (Chips)
-- **Gestion Globale** : Créez et personnalisez vos étiquettes avec des couleurs (Palette + Sliders RGB).
-- **Filtrage Rapide** : Carrousel horizontal pour filtrer instantanément par catégorie.
-
-### 📋 Gestion de Setlists (v0.2.0+)
-- **Mode Édition Avancé** : Réordonnez vos partitions par **glisser-déposer**.
-- **Gestion des Statuts** : Marquez vos listes comme `À venir`, `Active` ou `Terminée` avec filtrage sur l'accueil.
-- **Lecture en Continu** : Transition automatique entre les morceaux d'une même liste.
-- **Mode Concert (Verrouillage)** : Bouton de verrouillage persistant pour désactiver toute modification accidentelle sur scène.
-
-### ⏱️ Métronome Pro & Audio Sync
-- **Haute Précision** : Boucle temporelle basée sur `Stopwatch` sans dérive CPU.
-- **Bip de Pré-compte & Synchronisation** : Son distinctif (880Hz) et calage précis du démarrage audio sur le temps fort.
-
-### 🛡️ Gestion des Sauvegardes
-- **Sauvegarde Automatique & Rétention** : Sauvegarde automatique configurable avec rétention paramétrable.
-- **Restauration en un Clic** : Restaurez n'importe quelle version précédente depuis l'historique UI.
+#### Chapitre 4 : Sensibilité d'Appui Long
+- Réglette fine réglable de **200 ms à 1000 ms** pour adapter le temps de maintien nécessaire au déclenchement de la seconde action sans faux positifs sur scène.
 
 ---
 
-## 📜 Historique Récent des Versions
-
-- **v1.9.8.1** : **"Bluetooth Pedals & MIDI Events Edition"** — Support natif des pédaliers Bluetooth (AirTurn, PageFlip, Joyo, Donner, Thomann, iRig, STOMP) et contrôleurs MIDI (USB/Bluetooth), diagnostic en direct, gestionnaire de profils avec détection auto (Learn mode) et contrôle mains-libres complet du lecteur.
-- **v1.9.7.1** : **"Storage & Database Metrics Edition"** — Affichage de l'espace disque disponible et de la taille de la base SQLite dans les paramètres et les statistiques de bibliothèque.
-- **v1.9.7.0** : **"Musical Stickers & UI Pinning Edition"** — Nouvelles catégories de stickers musicaux (Notes, Silences, Altérations), filtrage des catégories actives et boîtes d'options synchronisées.
-- **v1.9.5.5** : **"Direct Setlist Start & Score Context Menu Refinement"** — Démarrage instantané de la lecture des partitions au clic sur une setlist (avec gestion de setlist vide), nouveau libellé *« Démarrer la setlist »* dans les options et libellé *« Éditer la partition »* dans le menu 3 points des partitions.
-- **v1.9.5.4** : **"Score Transfer & Export Options Modal (Annotations & Audio)"** — Ajout du menu modal d'options (annotations, pistes audio) lors de l'envoi Wi-Fi Direct ou de l'export d'une ou plusieurs partitions, calqué sur le comportement des setlists.
-- **v1.9.5.2** : **"Missing File Visual Indicators & Warning Banners"** — Ajout d'une pastille d'alerte rouge avec point d'exclamation (!) à gauche des 3 points dans la bibliothèque, bannière d'avertissement dans l'édition de partition et badge d'erreur dans les setlists si un PDF est manquant.
-- **v1.9.5.1** : **"Setlist Duplication, Smart Composer & Untagged Sort"** — Ajout de la duplication instantanée de setlists avec conservation de l'ordre des morceaux, tri intelligent par compositeur avec paramètre personnalisable (sans compositeur au début/fin), et nouveau tri direct des partitions sans étiquette.
-- **v1.9.5.0** : **"Wi-Fi Direct P2P, QR Group Broadcast & PDF Studio Edition"** — Intégration du transfert sans fil Wi-Fi Direct ultra-rapide (streaming binaire TCP) et de la diffusion simultanée de groupe par QR Code (serveur local HTTP), nouveau popup moderne unifié pour les setlists et partitions avec mise en avant de l'édition d'informations, atelier d'assemblage PDF et migration complète sous licence GNU GPLv3.
-- **v1.9.4.0** : **"Ergonomic UI & Performance Edition"** — Rétablissement du zoom 100% dans le menu central, détection double-tap unifiée même zoomé, sous-titres de partitions personnalisables en paramètres, popup moderne et ergonomique pour les options de partition, nouveaux champs d'édition (compositeur, tempo, tonalité, rating), tri par défaut automatique (récent), et moteur d'ouverture/fermeture PDF ultra-rapide (< 50ms).
-- **v1.9.3.0** : **"Smart Image-to-PDF & Assembler Edition"** — Fusion multi-images automatique en PDF à l'import, atelier créateur et assembleur de pages PDF dans l'onglet Outils, uniformisation de la bibliothèque exclusivement au format PDF standardisé.
-- **v1.9.0.0** : **"Full Setlist & Package Transfer Edition"** — Envoi P2P de setlists complètes avec options d'annotations/audio, export/import d'archives autonomes `.msmsetlist`, `.msmscore`, `.msmscores`.
-- **v1.8.31** : **"Harmonized Typography & Sticker Rendering"** — Pastilles stickers centrées, marges anti-rognage et échelle typographique fine.
-- **v1.8.30** : **"Unified Tools & 5-Tabs Layout"** — Intégration des étiquettes dans Outils et barre de navigation épurée à 5 onglets.
-- **v1.8.27** : **"Pencil Drawing & Undo/Redo Engine"** — Outil dessin à main levée, surlignage stabilo biseauté et historique complet Annuler/Rétablir.
-
----
-
-## 🛠️ Stack Technique
-
-- **Framework** : .NET 10 (MAUI)
-- **Base de données** : SQLite (via `sqlite-net-pcl`)
-- **Lecteur PDF** : PDF.js (injecté via WebView)
-- **Lecteur Audio** : `Plugin.Maui.Audio` & `CommunityToolkit.Maui.MediaElement`
-- **Compatibilité** : Android 12.0+ (API 31) minimum (Target SDK 36.0)
-- **Logiciel de compilation** : Visual Studio 2022 / .NET CLI (`dotnet build`)
+### 5.6 Paramètres Application (`SettingsAppPage`)
+- **Moteur de Localisation Multilingue** : Choix parmi **8 langues intégrées** avec drapeaux et application instantanée :
+  - 🇫🇷 Français
+  - 🇬🇧 English
+  - 🇩🇪 Deutsch
+  - 🇪🇸 Español
+  - 🇮🇹 Italiano
+  - 🇵🇱 Polski
+  - 🇳🇱 Nederlands
+  - 🇵🇹 Português
+- **Statistiques de Bibliothèque & Métriques de Stockage** :
+  - 📄 Nombre total de partitions PDF enregistrées.
+  - 💾 Espace disque total occupé par vos partitions PDF (en Mo/Go).
+  - 💽 **Espace disque disponible sur le stockage** : Capacité libre restante sur la mémoire interne ou carte SD de l'appareil.
+  - 🗄️ **Taille de la base de données** : Espace occupé par le fichier SQLite `scores.db3` et ses journaux de transactions (WAL/SHM).
+- **Répertoires de Stockage Personnalisables** :
+  - Chemin racine des partitions (`ScoresRootDirectory`).
+  - Chemin racine des pistes audio (`AudioRootDirectory`).
+  - Chemin racine des fichiers exportés (`ExportsRootDirectory`).
+  - *Remarque Android* : Permet de choisir un dossier public afin de synchroniser facilement vos partitions en connectant la tablette par câble USB à un ordinateur (PC/Mac).
 
 ---
 
-## 📂 Structure du Projet
-
-- `/Models` : Entités (`Score`, `Setlist`, `Tag`, `ScoreTag`, `BackupFile`, etc.).
-- `/Services` : Logique métier (`DatabaseService`, `SettingsService`, etc.).
-- `/Converters` : Convertisseurs XAML pour l'affichage dynamique.
-- `/Resources/Raw/pdfjs` : Moteur de rendu PDF interne.
-- `ViewerPage.xaml(.cs)` : Lecteur principal de partitions (PDF & Images, annotations, audio & métronome).
+### 5.7 Aide & Dépannage (`HelpPage`)
+Conseils d'utilisation, astuces pour les tournes de pages sur scène et résolution des questions fréquentes.
 
 ---
 
-## 📥 Installation & Compilation
+### 5.8 À Propos (`AboutPage`)
+Affichage de la version installée, présentation du projet Open Source, mentions de copyright et licences détaillées de tous les composants tiers intégrés.
 
-1. Clonez le dépôt.
-2. Ouvrez la solution dans Visual Studio 2022 ou utilisez la CLI.
-3. Ciblez le framework `net10.0-android36.0` (ou `net10.0-windows10.0.19041.0`).
-4. Lancez ou générez l'application :
+---
 
-```powershell
-# Compilation & Exécution Debug Android
-dotnet build -t:Run -f net10.0-android36.0
+## Chapitre 6 : Détails Techniques, Confidentialité, Droits & Liens GitHub
 
-# Publication Release APK
-dotnet publish -f net10.0-android36.0 -c Release
-```
+### 6.1 Stack Technique & Architecture Logicielle
 
-## 📄 Licence
+| Domaine | Composant / Technologie | Version / Remarque |
+| :--- | :--- | :--- |
+| **Framework Principal** | Microsoft **.NET 10 (MAUI)** | Multiplateforme Android / Windows |
+| **Langage** | C# 13 & XAML | Pattern MVVM & Code-Behind réactif |
+| **Base de Données Locale** | **SQLite** (`sqlite-net-pcl`, `SQLitePCLRaw`) | Mode Write-Ahead Logging (WAL) haute vitesse |
+| **Moteur de Rendu PDF** | **Mozilla PDF.js** | Intégration WebView avec off-screen double-buffering |
+| **Moteur Audio** | `Plugin.Maui.Audio` & `CommunityToolkit.Maui.MediaElement` | Décodage et lecture matérielle |
+| **Métronome** | Moteur propriétaire C# thread-safe + `SoundPool` Android | Latence 0 ms, synchronisation microseconde |
+| **Scanner & Codes-Barres** | `ZXing.Net.Maui` | Décodage instantané de QR Codes en mode caméra |
+| **Transfert Sans Fil** | Sockets TCP / UDP P2P binaire & Mini-serveur HTTP local | Streaming direct sans connexion Internet |
+| **Licence Logicielle** | **GNU General Public License v3.0 (GPLv3)** | Logiciel Libre et Open Source |
 
-Ce projet est sous licence libre **GNU General Public License v3.0 (GPLv3)**.  
-Consultez le fichier [LICENSE](LICENSE) pour prendre connaissance de l'intégralité des termes et conditions.
+---
+
+### 6.2 Droits & Permissions Android Requises
+L'application ne sollicite que les permissions strictement indispensables à ses fonctionnalités musicales :
+- **Gestion du stockage externe (`MANAGE_EXTERNAL_STORAGE` / `READ_MEDIA_*`)** : Permet de lire, créer, assembler et exporter vos fichiers de partitions et pistes audio dans des dossiers accessibles par câble USB.
+- **Bluetooth & Détection d'appareils à proximité (`BLUETOOTH_CONNECT`, `BLUETOOTH_SCAN`, `NEARBY_WIFI_DEVICES`)** : Indispensable pour communiquer avec les pédaliers sans fil et détecter les autres tablettes lors des échanges Wi-Fi Direct.
+- **Accès Caméra (`CAMERA`)** : Uniquement sollicité lors du scan du QR Code d'un chef de pupitre pour rejoindre une diffusion de groupe.
+- **Réseau Local (`INTERNET`, `ACCESS_NETWORK_STATE`, `ACCESS_WIFI_STATE`)** : Utilisé exclusivement pour la liaison socket locale Wi-Fi Direct P2P et le mini-serveur temporaire de partage de groupe. **Aucune donnée ne transite par Internet.**
+
+---
+
+### 6.3 Politique de Confidentialité & Protection de la Vie Privée
+Music Score Manager respecte scrupuleusement votre vie privée et garantit une souveraineté totale de vos données :
+- **0 Collecte de Données Personnelles** : Aucun compte utilisateur, aucune adresse email, aucun identifiant personnel n'est requis ni collecté.
+- **0 Télémétrie, 0 Traçage, 0 Publicité** : L'application n'embarque aucun SDK publicitaire, aucun outil d'analyse de comportement, aucun tracker tiers.
+- **Stockage 100% Local** : Vos partitions, vos annotations manuscrites, vos pistes audio et vos setlists demeurent exclusivement sur votre appareil et sous votre contrôle absolu.
+- **Conformité Réglementaire** : Strictement conforme aux directives de confidentialité de Google Play et au RGPD. Consultez la déclaration complète dans [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
+
+---
+
+### 6.4 Droits de l'Application & Licence Libre GNU GPLv3
+Ce programme est un **logiciel libre** distribué sous la licence **GNU General Public License v3.0 (GPLv3)**.
+Vous êtes libre de l'utiliser, d'en étudier le code source, de le modifier et de redistribuer vos modifications sous réserve de maintenir la même licence libre.
 
 ```
 Music Score Manager
@@ -320,16 +603,27 @@ the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 ```
 
+Consultez le fichier complet [LICENSE](LICENSE) pour les termes légaux exhaustifs.
+
+#### Remerciements & Licences des Bibliothèques Tierces
+- **Microsoft .NET & .NET MAUI** : Licence MIT / GPLv3 compatible — Microsoft Corporation.
+- **.NET MAUI Community Toolkit** : Licence MIT — .NET Foundation.
+- **Mozilla PDF.js** : Licence Apache 2.0 — Mozilla Foundation.
+- **sqlite-net-pcl** : Licence MIT — Frank A. Krueger.
+- **Plugin.Maui.Audio** : Licence MIT — Gerald Versluis.
+- **ZXing.Net.Maui** : Licence Apache 2.0 — Redth.
+
 ---
 
-## 🔒 Politique de Confidentialité / Privacy Policy
+### 6.5 Liens Officiels & Ressources du Projet
 
-L'application **Music Score Manager** respecte rigoureusement la vie privée de ses utilisateurs :
-- **0 collecte de données personnelles** (pas d'identifiants, pas de tracking, pas de télémétrie).
-- **Stockage 100% local** sur l'appareil.
-- **Conformité Google Play Store** : Consultez le document complet dans [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
+- 🌐 **Dépôt Officiel GitHub** : [https://github.com/Audiothor/MusicScoreManager](https://github.com/Audiothor/MusicScoreManager)
+- 📖 **Documentation en Ligne (MkDocs / GitHub Pages)** : [https://audiothor.github.io/MusicScoreManager/](https://audiothor.github.io/MusicScoreManager/)
+- 🐞 **Signalement de Bugs & Suggestions d'Évolutions** : [GitHub Issues](https://github.com/Audiothor/MusicScoreManager/issues)
+- 📦 **Téléchargement des Versions Officielles (Releases)** : [GitHub Releases](https://github.com/Audiothor/MusicScoreManager/releases)
 
 ---
 
-**Développé par Audiothor** — *MusicScoreManager v1.9.8.1 "Bluetooth Pedals & MIDI Events Edition"*
-
+<p align="center">
+  <b>Music Score Manager v2.0.1.1</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
+</p>
