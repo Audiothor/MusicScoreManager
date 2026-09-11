@@ -95,7 +95,7 @@ my_concert.msmsetlist
 ```json
 {
   "formatVersion": "2.0",
-  "appVersion": "2.0.1.1",
+  "appVersion": "2.0.2",
   "packageType": "Setlist",
   "createdDate": "2026-09-11T21:30:00Z",
   "setlist": {

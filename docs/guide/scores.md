@@ -37,9 +37,9 @@ En haut de l'écran des partitions se trouvent plusieurs commandes essentielles 
 
 5. **Bouton Ajouter (➕)** :
    - **Importation de PDF** : Contrôle strict de l'intégrité binaire (`%PDF-`) empêchant tout plantage.
-   - **Importation de Photos / Images** : Lors de la sélection d'images ou photos de partitions, l'application détecte automatiquement la sélection multiple et propose :
-     * De les fusionner en **une seule partition PDF multi-pages**.
-     * Ou de les convertir en partitions PDF individuelles distinctes.
+   - **Importation et conversion d'Images (v2.0.2)** : L'application manipulant **exclusivement des fichiers PDF en interne**, la sélection d'un ou plusieurs fichiers images (PNG, JPEG, GIF, WEBP, BMP) affiche un message d'information listant les fichiers images et demandant la confirmation de conversion en PDF :
+     * **Refuser** : Les images sont ignorées (non converties, non ajoutées). Les éventuels PDF sélectionnés en même temps continuent leur import normal.
+     * **Accepter** : Les images sont converties en PDF (au choix de l'utilisateur : fusionnées en un seul PDF multi-pages ou générées en partitions PDF individuelles).
 
 ---
 

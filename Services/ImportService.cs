@@ -63,7 +63,35 @@ namespace MusicScoreManager.Services
                 var imageFiles = validResults.Where(r => IsImageFile(r.FileName ?? r.FullPath)).ToList();
                 var pdfFiles = validResults.Where(r => IsPdfFile(r.FileName ?? r.FullPath)).ToList();
 
-                // Cas 1 : Plusieurs images sélectionnées -> Proposer de fusionner en un unique PDF
+                // Information et confirmation obligatoire pour les fichiers de type image
+                if (imageFiles.Any())
+                {
+                    var fileNames = imageFiles.Select(f => Path.GetFileName(f.FileName ?? f.FullPath)).ToList();
+                    string fileListStr = string.Join("\n• ", fileNames.Take(8));
+                    if (fileNames.Count > 8)
+                    {
+                        fileListStr += $"\n... et {fileNames.Count - 8} autre(s)";
+                    }
+
+                    string alertTitle = "Conversion des images en PDF";
+                    string alertMessage = (imageFiles.Count == 1)
+                        ? $"L'application Music Score Manager manipule exclusivement des fichiers PDF en interne.\n\nLe fichier suivant est une image :\n• {fileListStr}\n\nCe fichier doit être converti en format PDF pour être importé dans l'application.\n\nAcceptez-vous cette conversion ?"
+                        : $"L'application Music Score Manager manipule exclusivement des fichiers PDF en interne.\n\nLes {imageFiles.Count} fichiers suivants sont des images :\n• {fileListStr}\n\nCes fichiers doivent être convertis en format PDF pour être importés dans l'application.\n\nAcceptez-vous cette conversion ?";
+
+                    bool acceptConversion = await Shell.Current.DisplayAlertAsync(
+                        alertTitle,
+                        alertMessage,
+                        "Accepter (Convertir en PDF)",
+                        "Refuser (Ignorer les images)");
+
+                    if (!acceptConversion)
+                    {
+                        // L'utilisateur refuse la conversion : les fichiers images ne sont pas convertis ni intégrés
+                        imageFiles.Clear();
+                    }
+                }
+
+                // Cas 1 : Plusieurs images acceptées -> Proposer de fusionner en un unique PDF ou partitions individuelles
                 if (imageFiles.Count > 1)
                 {
                     string action = await Shell.Current.DisplayActionSheetAsync(
@@ -75,8 +103,8 @@ namespace MusicScoreManager.Services
 
                     if (action == "Annuler" || string.IsNullOrEmpty(action))
                     {
-                        // Si l'utilisateur annule et qu'il n'y a pas d'autres fichiers PDF, on quitte
-                        if (!pdfFiles.Any()) return importedScores;
+                        // L'utilisateur annule le traitement des images
+                        imageFiles.Clear();
                     }
                     else if (action.StartsWith("📑"))
                     {
@@ -136,47 +164,22 @@ namespace MusicScoreManager.Services
                                 }
                             }
                         }
-
-                        // Traiter les éventuels PDFs restants
-                        if (pdfFiles.Any())
-                        {
-                            var pdfImported = await ProcessPdfFilesAsync(pdfFiles, rootDir);
-                            importedScores.AddRange(pdfImported);
-                        }
-
-                        return importedScores;
                     }
                     else
                     {
                         // Convertir individuellement chaque image en un PDF
                         var converted = await ConvertAndImportIndividualImagesAsync(imageFiles, rootDir);
                         importedScores.AddRange(converted);
-
-                        if (pdfFiles.Any())
-                        {
-                            var pdfImported = await ProcessPdfFilesAsync(pdfFiles, rootDir);
-                            importedScores.AddRange(pdfImported);
-                        }
-
-                        return importedScores;
                     }
                 }
                 else if (imageFiles.Count == 1)
                 {
-                    // 1 seule image -> conversion automatique en PDF dans la bibliothèque
+                    // 1 seule image acceptée -> conversion en PDF dans la bibliothèque
                     var converted = await ConvertAndImportIndividualImagesAsync(imageFiles, rootDir);
                     importedScores.AddRange(converted);
-
-                    if (pdfFiles.Any())
-                    {
-                        var pdfImported = await ProcessPdfFilesAsync(pdfFiles, rootDir);
-                        importedScores.AddRange(pdfImported);
-                    }
-
-                    return importedScores;
                 }
 
-                // Cas 2 : Uniquement des fichiers PDF
+                // Traiter les éventuels fichiers PDF (qu'ils soient seuls ou accompagnés d'images)
                 if (pdfFiles.Any())
                 {
                     var pdfImported = await ProcessPdfFilesAsync(pdfFiles, rootDir);
