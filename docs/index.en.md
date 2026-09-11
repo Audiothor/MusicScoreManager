@@ -1,41 +1,49 @@
 # User Manual - Music Score Manager
 
-Welcome to the comprehensive, in-depth documentation for **Music Score Manager**, the cross-platform application (Android / Windows / iOS / macOS) tailor-made for solo musicians, ensembles, choirs, and orchestras.
+Welcome to the comprehensive, in-depth documentation for **Music Score Manager v2.0.1.1**, the cross-platform application (Android / Windows) tailor-made for solo musicians, ensembles, choirs, and orchestras.
 
 ---
 
-## 🎯 Application Overview
+## 📑 6-Chapter Documentation Structure
 
-The app is structured around **5 primary tabs** in the bottom navigation bar, complemented by the dedicated **Fullscreen Stage Mode Viewer**:
+The official user manual and documentation are strictly organized around 6 comprehensive chapters:
 
 ```mermaid
 graph TD
-    A[Music Score Manager] --> B[🎵 1. Scores Menu]
-    A --> C[📋 2. Setlists Menu]
-    A --> D[🛠️ 3. Tools Menu]
-    A --> E[⚙️ 4. Settings Menu]
-    A --> F[🚪 5. Quit Menu]
-    B --> G[📖 Fullscreen Viewer]
-    C --> G
+    A[Music Score Manager] --> C1[1. Description, Installation & Prerequisites]
+    A --> C2[2. Scores & Stage Viewer]
+    A --> C3[3. Setlists & Live Performance]
+    A --> C4[4. Advanced Tools & P2P]
+    A --> C5[5. Settings & Customization]
+    A --> C6[6. Technical Details & Privacy]
 ```
 
-1. **🎵 Scores Menu**: Your complete digital music library. Import PDFs, categorize with multi-tags, sort by composers or dates, and customize score metadata.
-2. **📋 Setlists Menu**: Rehearsal and concert performance planner. Arrange songs in order, start stage performance with a single tap, and duplicate setlists in seconds.
-3. **📖 Sheet Music Viewer**: The stage companion. Seamless page turns, pinch-to-zoom, central quick menu, persistent rotations, annotation suite, precision metronome, and audio accompaniment.
-4. **🛠️ Tools Menu**: The powerhouse utility box. PDF Assembler Studio, Wi-Fi Direct P2P & QR Code group broadcasts without internet, tag management, duplicate finder, package imports, and database backups.
-5. **⚙️ Settings Menu**: In-depth app customization. Default sort behaviors, card display subtitles, turn page gestures, favorite stickers, directory paths, and 8 selectable languages.
-6. **🚪 Quit Menu**: Graceful application exit with automatic session persistence.
+1. **[Chapter 1: Full Description of the App, Installation & Prerequisites](guide/scores.en.md)**  
+   Philosophy, highlights, 100% offline autonomy, zero latency (< 50ms), stage-optimized Dark Mode, hardware requirements (Android 12+, Windows 10/11), and installation / build procedures.
+
+2. **[Chapter 2: Scores — Actions, Library & Fullscreen Stage Viewer](guide/scores.en.md)**  
+   Real-time search, tag filtering, multi-criteria sorting, batch multi-selection, PDF / image imports (smart multi-image fusion into multi-page PDF), score card indicators, context menu (⋮), complete metadata editing, and the fullscreen stage viewer ([`ViewerPage`](guide/viewer.en.md)) featuring 2-page landscape mode with geometric projection, full annotation suite (chiseled highlighter, pencil, text, musical stickers), thread-safe regulated metronome, audio backing track player, and double-tap quick menu.
+
+3. **[Chapter 3: Setlists — Program Planning & Live Stage Flow](guide/setlists.en.md)**  
+   Concert planning, status filters (Active, Upcoming, Completed), direct one-tap start, 1-click setlist duplication, concert lock mode, and the **Live Setlist Progress Drawer (v2.0.1.1)** with automatic scrolling/centering on the current piece and color-coded status badges.
+
+4. **[Chapter 4: Tools — Advanced Utility Studio](guide/tools.en.md)**  
+   PDF Assembler Studio ([`PdfAssemblerPage`](guide/tools.en.md)), Wi-Fi Direct P2P & QR Code group broadcasts without internet ([`WifiTransferPage`](guide/tools.en.md)), tag management with RGB mixer ([`TagsPage`](guide/tools.en.md)), package imports (`.msmsetlist`, `.msmscore`, `.msmscores`), duplicate detection via SHA-256 binary hash ([`DuplicatesPage`](guide/tools.en.md)), and database backup & restore ([`BackupsPage`](guide/tools.en.md)).
+
+5. **[Chapter 5: Settings — Configuration & Preferences](guide/settings.en.md)**  
+   Score settings (sorting, gestures, 2-page landscape mode, page number badge), Setlist settings (continuous play, progress drawer toggle), Annotation settings (custom favorite stickers & active sticker categories), Bluetooth Pedals & MIDI Events ([`SettingsPedalsPage`](guide/settings.en.md)) with real-time signal monitor, factory profiles, Learn mode, and long-press sensitivity, and App settings (8 built-in languages, available disk space, SQLite database size, and USB-accessible storage folders).
+
+6. **[Chapter 6: Technical Details, Privacy, Rights & GitHub Links](confidentialite.en.md)**  
+   Software architecture (.NET 10 MAUI, SQLite WAL, Mozilla PDF.js, SoundPool), transparent Android permissions, strict zero-data privacy policy (0 data collected, 0 telemetry, 100% local storage), free GNU General Public License v3.0 (GPLv3), and official GitHub project links.
 
 ---
 
-## 🧭 Detailed Guide Contents
+## 🧭 Quick Access to Guides
 
-Explore every feature and menu thoroughly:
-
-- [🎵 Scores Menu Guide](guide/scores.md)
-- [📋 Setlists Menu Guide](guide/setlists.md)
-- [📖 Viewer & Stage Mode Guide](guide/viewer.md)
-- [🛠️ Tools Menu Guide](guide/tools.md)
-- [⚙️ Settings Menu Guide](guide/settings.md)
-- [🚪 Quit Menu Guide](guide/quit.md)
-- [🔒 Privacy Policy](confidentialite.md)
+- [🎵 Scores Menu Guide](guide/scores.en.md)
+- [📖 Viewer & Stage Mode Guide](guide/viewer.en.md)
+- [📋 Setlists Menu Guide](guide/setlists.en.md)
+- [🛠️ Tools Menu Guide](guide/tools.en.md)
+- [⚙️ Settings Menu Guide](guide/settings.en.md)
+- [🚪 Quit Menu Guide](guide/quit.en.md)
+- [🔒 Privacy Policy & Legal Notice](confidentialite.en.md)
