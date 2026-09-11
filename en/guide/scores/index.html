@@ -937,9 +937,9 @@
 <p><strong>Add Score Button (➕)</strong>:</p>
 </li>
 <li><strong>PDF Import</strong>: Strict binary <code>%PDF-</code> verification prevents corrupt or misnamed files from crashing the viewer.</li>
-<li><strong>Photos / Images Import</strong>: When importing photos of sheet music, the app automatically detects multiple images and suggests:<ul>
-<li>Merging them into a <strong>single multi-page PDF score</strong>.</li>
-<li>Or converting each image into an individual PDF score.</li>
+<li><strong>Photos / Images Import &amp; Conversion (v2.0.2)</strong>: As the app <strong>exclusively manages PDF files internally</strong>, selecting one or more image files (PNG, JPEG, GIF, WEBP, BMP) triggers an informative confirmation dialog listing the selected image files and asking whether to convert them to PDF:<ul>
+<li><strong>Refuse</strong>: Image files are ignored (not converted, not added). Any accompanying PDF files in the same batch continue their normal import.</li>
+<li><strong>Accept</strong>: Images are converted to PDF (users choose between merging into a single multi-page PDF score or creating individual PDF scores).</li>
 </ul>
 </li>
 </ol>
