@@ -422,10 +422,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#vue-densemble-de-lapplication" class="md-nav__link">
+  <a href="#structure-de-la-documentation-en-6-chapitres" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🎯 Vue d'Ensemble de l'Application
+        📑 Structure de la Documentation en 6 Chapitres
       
     </span>
   </a>
@@ -433,10 +433,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sommaire-du-guide-detaille" class="md-nav__link">
+  <a href="#acces-rapide-aux-guides-detailles" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🧭 Sommaire du Guide Détaillé
+        🧭 Accès Rapide aux Guides Détaillés
       
     </span>
   </a>
@@ -796,10 +796,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#vue-densemble-de-lapplication" class="md-nav__link">
+  <a href="#structure-de-la-documentation-en-6-chapitres" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🎯 Vue d'Ensemble de l'Application
+        📑 Structure de la Documentation en 6 Chapitres
       
     </span>
   </a>
@@ -807,10 +807,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sommaire-du-guide-detaille" class="md-nav__link">
+  <a href="#acces-rapide-aux-guides-detailles" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🧭 Sommaire du Guide Détaillé
+        🧭 Accès Rapide aux Guides Détaillés
       
     </span>
   </a>
@@ -838,38 +838,54 @@
 
 
 <h1 id="manuel-dutilisation-music-score-manager">Manuel d'Utilisation - Music Score Manager</h1>
-<p>Bienvenue sur la documentation complète et détaillée de <strong>Music Score Manager</strong>, l'application multiplateforme (Android / Windows / iOS / macOS) conçue sur mesure pour les musiciens solistes, ensembles, chorales et orchestres.</p>
+<p>Bienvenue sur la documentation complète et détaillée de <strong>Music Score Manager v2.0.1.1</strong>, l'application multiplateforme (Android / Windows) conçue sur mesure pour les musiciens solistes, ensembles, chorales et orchestres.</p>
 <hr />
-<h2 id="vue-densemble-de-lapplication">🎯 Vue d'Ensemble de l'Application</h2>
-<p>L'application est organisée autour de <strong>5 onglets principaux</strong> accessibles depuis la barre de navigation inférieure, complétés par le <strong>Visualiseur Plein Écran (Mode Scène)</strong> :</p>
+<h2 id="structure-de-la-documentation-en-6-chapitres">📑 Structure de la Documentation en 6 Chapitres</h2>
+<p>Le manuel d'utilisation et la documentation officielle sont organisés rigoureusement selon les 6 chapitres fondamentaux :</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>graph TD
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    A[Music Score Manager] --&gt; B[🎵 1. Menu Partitions]
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    A --&gt; C[📋 2. Menu Setlists]
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    A --&gt; D[🛠️ 3. Menu Outils]
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    A --&gt; E[⚙️ 4. Menu Paramètres]
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    A --&gt; F[🚪 5. Menu Quitter]
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    B --&gt; G[📖 Visualiseur Plein Écran]
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    C --&gt; G
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    A[Music Score Manager] --&gt; C1[1. Description, Installation &amp; Prérequis]
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    A --&gt; C2[2. Partitions &amp; Visualiseur Scénique]
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    A --&gt; C3[3. Setlists &amp; Déroulement Concert]
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    A --&gt; C4[4. Outils Avancés &amp; P2P]
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    A --&gt; C5[5. Paramètres &amp; Personnalisation]
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    A --&gt; C6[6. Détails Techniques &amp; Confidentialité]
 </code></pre></div>
 <ol>
-<li><strong>🎵 Menu Partitions</strong> : Votre bibliothèque musicale complète. Importez des PDF, organisez par tags, triez par compositeurs ou dates, et gérez vos métadonnées musicales.</li>
-<li><strong>📋 Menu Setlists</strong> : La préparation de vos concerts et répétitions. Classez vos morceaux dans l'ordre de passage, lancez le concert d'un simple toucher et dupliquez vos listes.</li>
-<li><strong>📖 Visualiseur de Partitions</strong> : Le cœur de scène. Tourne de page fluide, zoom tactile, double-tap central, mémorisation des rotations, annotations complètes, métronome ultra-précis et lecteur audio synchronisé.</li>
-<li><strong>🛠️ Menu Outils</strong> : La boîte à outils avancée. Atelier d'assemblage PDF, transferts Wi-Fi Direct P2P et diffusion QR Code sans réseau, gestionnaire d'étiquettes, détection de doublons, import de paquets et sauvegardes.</li>
-<li><strong>⚙️ Menu Paramètres</strong> : La personnalisation approfondie. Préférences de tri, options d'affichage des cartes, gestes de navigation, stickers favoris, gestion des dossiers et choix parmi 8 langues.</li>
-<li><strong>🚪 Menu Quitter</strong> : Fermeture propre de l'application avec enregistrement automatique de votre session.</li>
+<li>
+<p><strong><a href="guide/scores/">Chapitre 1 : Description Complète de l'Application, Installation &amp; Prérequis</a></strong><br />
+   Philosophie, points forts, 100% hors-ligne, zéro latence, Dark Mode scénique, prérequis système (Android 12+, Windows 10/11) et procédures d'installation / compilation.</p>
+</li>
+<li>
+<p><strong><a href="guide/scores/">Chapitre 2 : Partitions — Actions, Bibliothèque &amp; Visualiseur de Scène</a></strong><br />
+   Recherche en direct, filtrage par étiquettes, tri multi-critères, mode multi-sélection, import PDF / images (fusion intelligente en PDF multi-pages), menu contextuel (⋮), métadonnées complètes (<a href="guide/scores/#menu-contextuel-dune-partition-3-petits-points"><code>ScoreEditPage</code></a>) et visualiseur plein écran (<a href="guide/viewer/"><code>ViewerPage</code></a>) avec mode 2 pages paysage, annotations complètes (surligneur Stabilo biseauté, crayon, texte, stickers), métronome régulé thread-safe, lecteur audio et menu central au double-tap.</p>
+</li>
+<li>
+<p><strong><a href="guide/setlists/">Chapitre 3 : Setlists — Organisation des Programmes &amp; Déroulement Scénique</a></strong><br />
+   Création de programmes, filtres par statut (Active, À venir, Terminée), démarrage immédiat au tap, duplication de setlist, verrouillage concert et le <strong>Volet Déroulement de la Setlist en Direct (v2.0.1.1)</strong> avec centrage automatique et statuts colorés.</p>
+</li>
+<li>
+<p><strong><a href="guide/tools/">Chapitre 4 : Outils — Boîte à Utilitaires Avancés</a></strong><br />
+   Atelier d'assemblage PDF (<a href="guide/tools/#1-createur-assemblage-pdf-atelier-studio"><code>PdfAssemblerPage</code></a>), transfert Wi-Fi Direct P2P et diffusion groupe QR Code (<a href="guide/tools/#2-transfert-wi-fi-direct-p2p-diffusion-groupe"><code>WifiTransferPage</code></a>), gestionnaire d'étiquettes avec sélecteur RVB (<a href="guide/tools/#3-gestion-des-etiquettes-tags"><code>TagsPage</code></a>), imports de paquets (<code>.msmsetlist</code>, <code>.msmscore</code>, <code>.msmscores</code>), détection de doublons par empreinte SHA-256 (<a href="guide/tools/#5-gestion-des-doublons"><code>DuplicatesPage</code></a>) et sauvegardes / restaurations (<a href="guide/tools/#6-gestion-des-sauvegardes-restauration"><code>BackupsPage</code></a>).</p>
+</li>
+<li>
+<p><strong><a href="guide/settings/">Chapitre 5 : Paramètres — Configuration &amp; Personnalisation</a></strong><br />
+   Paramètres Partitions (tris, gestes, affichage 2 pages, compteur de page), Paramètres Setlists (lecture continue, déroulement scénique), Paramètres Annotations (stickers favoris et sélection des catégories actives), Paramètres Pédaliers Bluetooth &amp; Événements MIDI (<a href="guide/settings/#5-parametres-pedaliers-bluetooth-evenements-midi"><code>SettingsPedalsPage</code></a> avec diagnostic direct, profils constructeurs, mode apprentissage et réactivité d'appui long), et Paramètres Application (8 langues intégrées, espace disque disponible, taille SQLite et dossiers publics).</p>
+</li>
+<li>
+<p><strong><a href="confidentialite/">Chapitre 6 : Détails Techniques, Confidentialité, Droits &amp; Liens GitHub</a></strong><br />
+   Architecture logicielle (.NET 10 MAUI, SQLite WAL, Mozilla PDF.js, SoundPool), permissions Android transparentes, politique de confidentialité stricte (0 donnée collectée, 0 télémétrie, 100% stockage local), licence libre GNU General Public License v3.0 (GPLv3) et liens officiels vers le projet GitHub.</p>
+</li>
 </ol>
 <hr />
-<h2 id="sommaire-du-guide-detaille">🧭 Sommaire du Guide Détaillé</h2>
-<p>Explorez chaque menu en détail via les sections ci-dessous :</p>
+<h2 id="acces-rapide-aux-guides-detailles">🧭 Accès Rapide aux Guides Détaillés</h2>
 <ul>
 <li><a href="guide/scores/">🎵 Guide Complet du Menu Partitions</a></li>
+<li><a href="guide/viewer/">📖 Guide Détaillé du Visualiseur Plein Écran</a></li>
 <li><a href="guide/setlists/">📋 Guide Complet du Menu Setlists</a></li>
-<li><a href="guide/viewer/">📖 Guide du Visualiseur &amp; Mode Concert</a></li>
 <li><a href="guide/tools/">🛠️ Guide Complet du Menu Outils</a></li>
 <li><a href="guide/settings/">⚙️ Guide Complet du Menu Paramètres</a></li>
 <li><a href="guide/quit/">🚪 Guide du Menu Quitter</a></li>
-<li><a href="confidentialite/">🔒 Politique de Confidentialité</a></li>
+<li><a href="confidentialite/">🔒 Politique de Confidentialité &amp; Mentions Légales</a></li>
 </ul>
 
 

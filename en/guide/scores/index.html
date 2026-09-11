@@ -893,9 +893,9 @@
 <p>At the top of the scores view, you have immediate access to several critical tools:</p>
 <ol>
 <li><strong>Real-time Search Bar</strong>:</li>
-<li>Type a few letters to instantly filter your library by <strong>piece title</strong> or <strong>composer name</strong>.</li>
+<li>Type a few letters to instantly filter your library by <strong>piece title</strong>, <strong>composer name</strong>, or file name.</li>
 <li>
-<p>One-tap clear button to quickly return to your full catalog.</p>
+<p>Fast one-tap clear button to quickly return to your full catalog.</p>
 </li>
 <li>
 <p><strong>Batch Multi-selection Button (☑️)</strong>:</p>
@@ -904,17 +904,19 @@
 <li>
 <p>Reveals an action bar at the bottom:</p>
 <ul>
-<li><strong>🏷️ Assign Tags</strong>: Add or remove tags from all selected scores at once.</li>
-<li><strong>📡 Share via Wi-Fi Direct</strong>: Send the entire batch over local peer-to-peer Wi-Fi in a single transfer.</li>
-<li><strong>📦 Export Package (.msmscores)</strong>: Generates a single compressed archive bundling all selected scores.</li>
-<li><strong>🗑️ Batch Delete</strong>: Remove selected items with safety confirmation.</li>
+<li><strong>🏷️ Assign Tags</strong>: Modal overlay to add or replace tags across all selected scores at once.</li>
+<li><strong>📡 Share via Wi-Fi Direct</strong>: Send the entire batch over local peer-to-peer Wi-Fi without internet.</li>
+<li><strong>📦 Export Package (.msmscores)</strong>: Generates a single compressed archive bundling all selected scores (with options to include annotations and audio backing tracks).</li>
+<li><strong>🗑️ Batch Delete</strong>: Secure bulk deletion with confirmation prompt.</li>
 </ul>
 </li>
 <li>
 <p><strong>Tag Filter Button (🏷️)</strong>:</p>
 </li>
+<li>Opens the tag selection modal with internal tag search and tag sort (A-Z, Z-A, most/least used).</li>
+<li>Displays active filters in a horizontal carousel with color pills and quick-remove buttons.</li>
 <li>
-<p>Opens the tag selection panel to display only pieces matching one or several categories (e.g., <em>Jazz</em>, <em>Brass Section</em>, <em>Summer Festival</em>).</p>
+<p><em>« Clear all »</em> and <em>« Apply »</em> buttons.</p>
 </li>
 <li>
 <p><strong>Sort Order Selector (🔃)</strong>:</p>
@@ -927,33 +929,38 @@
 <li><strong>Title (A-Z) / Title (Z-A)</strong>.</li>
 <li><strong>Modification date (Recently edited)</strong>.</li>
 <li><strong>Rating (Highest rated)</strong>: Pieces with 1 to 5 stars listed in descending order.</li>
-<li><strong>Composer (A-Z)</strong>: Alphabetical composer order. A dedicated toggle in <em>Settings &gt; Scores</em> controls whether pieces without a composer are shown at the very top or at the end.</li>
+<li><strong>Composer (A-Z)</strong>: Alphabetical composer order. A dedicated toggle in <em>Settings &gt; Scores</em> controls whether pieces without a composer appear at the very top or at the end.</li>
 <li><strong>Untagged pieces first</strong>: Prioritizes scores with no assigned tags so you can quickly organize them.</li>
 </ul>
 </li>
 <li>
 <p><strong>Add Score Button (➕)</strong>:</p>
 </li>
-<li>Opens your device's native file picker to import one or multiple PDF documents.</li>
+<li><strong>PDF Import</strong>: Strict binary <code>%PDF-</code> verification prevents corrupt or misnamed files from crashing the viewer.</li>
+<li><strong>Photos / Images Import</strong>: When importing photos of sheet music, the app automatically detects multiple images and suggests:<ul>
+<li>Merging them into a <strong>single multi-page PDF score</strong>.</li>
+<li>Or converting each image into an individual PDF score.</li>
+</ul>
+</li>
 </ol>
 <hr />
 <h2 id="import-process-storage-strategy">📥 Import Process &amp; Storage Strategy</h2>
-<p>When selecting PDF files, Music Score Manager offers a storage choice for individual files or for the whole batch:</p>
+<p>When importing scores, the app offers two flexible storage modes:</p>
 <ul>
 <li><strong>Copy to app library (Recommended)</strong>:<br />
   Copies the PDF into Music Score Manager's sandboxed storage directory. Scores stay accessible even if the original download folder is cleaned up or files are moved.</li>
-<li><strong>Link external original file</strong>:<br />
-  Retains the absolute path on storage without duplicating the file, saving device storage space.</li>
+<li><strong>Link external original file (External)</strong>:<br />
+  Retains the absolute path on storage without duplicating the file, marked by a blue <code>🔗</code> badge.</li>
 </ul>
 <hr />
 <h2 id="score-card-breakdown">🗂️ Score Card Breakdown</h2>
 <p>Every score is displayed as an informative card:
 - <strong>Piece Title</strong>.
 - <strong>Customizable Subtitle</strong> (configurable in Settings: composer name, date added, or both).
-- <strong>Star Rating</strong> (from 1 to 5 yellow stars).
-- <strong>Color-coded Tag Badges</strong> for quick visual classification.
-- <strong>⚠️ Missing File Warning Indicator (Red Exclamation Mark)</strong>:<br />
-  If a PDF file was moved or deleted from device storage, a bright red warning badge appears to the left of the 3-dots ⋮ button, notifying you before a concert that the score cannot be rendered.</p>
+- <strong>Color-coded Tag Badges</strong> for instant visual classification.
+- <strong>🔗 External Linked File Badge</strong> when stored in custom external folders.
+- <strong>⚠️ Missing File Warning Indicator (Red Exclamation Mark (!))</strong>:<br />
+  If a PDF file was moved or deleted from storage, a bright red warning badge appears to the left of the 3-dots ⋮ button, notifying you before a concert that the score cannot be opened.</p>
 <hr />
 <h2 id="context-menu-3-dots">⋮ Context Menu (3 dots)</h2>
 <p>Tapping the <strong>⋮</strong> button on any score card opens the full context actions menu:</p>
@@ -966,17 +973,25 @@
 <p><strong>✏️ Edit score</strong>:</p>
 </li>
 <li>
-<p>Opens the detailed metadata editor:</p>
+<p>Opens the detailed metadata editor (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ScoreEditPage.xaml"><code>ScoreEditPage</code></a>):</p>
 <ul>
-<li><strong>Title</strong>.</li>
-<li><strong>Composer / Arranger</strong>.</li>
-<li><strong>Target Tempo (BPM)</strong>: Automatically configures the metronome when opening this score.</li>
-<li><strong>Musical Key</strong> (e.g., <em>C Major</em>, <em>Bb Minor</em>).</li>
+<li><strong>Title</strong> &amp; <strong>Composer / Arranger</strong>.</li>
+<li><strong>Musical Key</strong> (both standard notation <em>A, B, C...</em> and classical solfège <em>Do, Ré, Mi...</em>).</li>
+<li><strong>Target Tempo (BPM)</strong>: Automatically initializes the metronome when opening this score.</li>
 <li><strong>Star Rating (1 to 5 stars)</strong>.</li>
-<li><strong>Tag Assignments &amp; Creation</strong>.</li>
-<li><strong>Associated PDF File Path</strong> with file replacement button.</li>
-<li><strong>Red Warning Banner</strong> if the PDF file is missing.</li>
+<li><strong>Dynamic Tag Selection</strong>.</li>
+<li><strong>Metronome Accordion</strong>: Time signature (2/4, 3/4, 4/4, 6/8...), subdivision, pre-count measures, and default mute/sound toggle.</li>
+<li><strong>Audio Tracks Accordion</strong>: Attach backing audio tracks (MP3, WAV, etc.), preview listening, and relative volume adjustment.</li>
+<li><strong>Technical File Details</strong>: Full path, file size, modification date, and button to re-link files if moved.</li>
 </ul>
+</li>
+<li>
+<p><strong>📋 Add to Setlist</strong>:</p>
+</li>
+<li>Inserts the score immediately into the chosen setlist.</li>
+<li><strong>High-priority 1st position placement</strong> (automatically shifts other songs down).</li>
+<li>
+<p>Handles deduplication and confirmation if the setlist is locked.</p>
 </li>
 <li>
 <p><strong>📑 Modify PDF assembly</strong>:</p>
@@ -987,30 +1002,30 @@
 <li>
 <p><strong>📡 Send via Wi-Fi Direct</strong>:</p>
 </li>
-<li>Opens a <strong>Sharing Options modal</strong> asking you to choose:<ul>
+<li>Opens the sharing options modal asking you to choose:<ul>
 <li>☑️ <em>Include handwritten annotations &amp; drawings</em>.</li>
 <li>☑️ <em>Include attached audio backing tracks</em> (MP3/WAV).</li>
 </ul>
 </li>
 <li>
-<p>Starts searching for nearby devices using high-speed Wi-Fi Direct P2P.</p>
+<p>Starts high-speed P2P Wi-Fi Direct transfer to nearby devices.</p>
 </li>
 <li>
 <p><strong>📦 Export score (.msmscore)</strong>:</p>
 </li>
 <li>
-<p>Produces a self-contained archive file containing the PDF, metadata, annotations, and audio.</p>
+<p>Produces a self-contained archive file containing the PDF, metadata, and optional annotations/audio.</p>
 </li>
 <li>
 <p><strong>🏷️ Rename score</strong>:</p>
 </li>
 <li>
-<p>Fast shortcut to rename the piece without opening the full editor.</p>
+<p>Fast dialog shortcut to rename the piece without opening the full editor.</p>
 </li>
 <li>
 <p><strong>🗑️ Delete score</strong>:</p>
 </li>
-<li>Removes the piece from your library with a confirmation prompt.</li>
+<li>Removes the piece from your library with a safety confirmation prompt.</li>
 </ol>
 
 

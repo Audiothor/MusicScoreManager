@@ -1024,12 +1024,18 @@
 <p>The <strong>Tools</strong> menu hosts Music Score Manager's powerful suite of built-in utilities designed to manipulate, share, clean up, and safeguard your music catalog completely offline.</p>
 <hr />
 <h2 id="1-pdf-creator-assembler-studio">📑 1. PDF Creator &amp; Assembler Studio</h2>
-<p>The <strong>PDF Assembler Studio</strong> is an all-in-one document manipulation studio built right into the app.</p>
+<p>The <strong>PDF Assembler Studio</strong> (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/PdfAssemblerPage.xaml"><code>PdfAssemblerPage</code></a>) is an all-in-one document manipulation studio built right into the app.</p>
 <h3 id="key-capabilities">Key Capabilities:</h3>
 <ul>
 <li><strong>Build PDFs from Photos or Scans</strong>:</li>
 <li>Select photos of sheet music from your gallery or camera (<code>.jpg</code>, <code>.png</code>).</li>
 <li>Compiles them into a crisp, high-resolution PDF document preserving 100% of their aspect ratio.</li>
+<li><strong>Modify Existing Scores or External PDFs</strong>:</li>
+<li>Load any piece from your library or any external PDF document directly into the studio.</li>
+<li><strong>Merge Additional Sheets or Photos</strong>:</li>
+<li>Insert additional photos (<code>➕ Photos</code>) or merge pages from another PDF file (<code>➕ PDF</code>).</li>
+<li><strong>Insert Blank Pages (<code>📄 Blank Page</code>)</strong>:</li>
+<li>Strategic feature to synchronize page turns on physical music stands and dual-page landscape views.</li>
 <li><strong>Interactive Page Thumbnails</strong>:</li>
 <li>View miniature previews of every page with its sequence index number.</li>
 <li><strong>Rearrange Pages</strong>:</li>
@@ -1042,54 +1048,63 @@
 <li>Remove cover pages, blank sheets, or unwanted download advertisements.</li>
 <li><strong>Reverse All Pages</strong>:</li>
 <li>Quickly fixes sheet music scanned in backwards order.</li>
-<li><strong>Save as New or Replace</strong>:</li>
-<li>Save as a brand new score or overwrite the original PDF directly in your library.</li>
+<li><strong>Rotate Entire Document</strong>:</li>
+<li>Single-tap 90° rotation across all pages in the document.</li>
+<li><strong>High-Definition Page Preview</strong>:</li>
+<li>Tap the magnifying glass icon or the thumbnail to preview any page in full screen with interactive zoom and rotation.</li>
+<li><strong>Save as New or Overwrite</strong>:</li>
+<li>Save as a brand new score or overwrite the original PDF directly in your library while preserving all metadata and ratings.</li>
 </ul>
 <hr />
 <h2 id="2-wi-fi-direct-transfer-p2p-group-broadcast">📡 2. Wi-Fi Direct Transfer (P2P) &amp; Group Broadcast</h2>
-<p>The <strong>Wi-Fi Direct Transfer</strong> module powers direct wireless sharing between devices <strong>with no external internet, router, or mobile data required</strong>.</p>
+<p>The <strong>Wi-Fi Direct Transfer</strong> module (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/WifiTransferPage.xaml"><code>WifiTransferPage</code></a>) powers direct wireless sharing between devices <strong>with no external internet, router, or mobile data required</strong>.</p>
 <h3 id="a-direct-tablet-to-tablet-transfer-p2p">A. Direct Tablet-to-Tablet Transfer (P2P):</h3>
 <ol>
 <li><strong>Receiver</strong>:</li>
-<li>Opens <strong>Tools &gt; Wi-Fi Direct Transfer</strong>, enables Wi-Fi, and taps <strong>Receive</strong>. The device enters discoverable mode.</li>
+<li>Opens <strong>Tools &gt; Wi-Fi Direct Transfer</strong>, enables Wi-Fi, and taps <strong>« 🟢 Receive Mode (Make Visible) »</strong>. The device enters discoverable mode.</li>
 <li><strong>Sender</strong>:</li>
 <li>Picks a score or setlist to share.</li>
 <li>Selects whether to bundle personal annotations and audio tracks.</li>
 <li>Selects the target recipient from the discovered devices list. The binary stream transfers in seconds over local TCP sockets.</li>
+<li><strong>Acceptance</strong>:</li>
+<li>Receiver taps <strong>Accept</strong> on the confirmation prompt, and items integrate immediately into the library.</li>
 </ol>
 <h3 id="b-multi-musician-group-broadcast-qr-code">B. Multi-Musician Group Broadcast (QR Code):</h3>
 <ol>
-<li><strong>The Sender</strong>:</li>
-<li>Switches to <strong>Group Broadcast Mode</strong>. The app initiates a secure local hotspot with an embedded HTTP server and displays a <strong>high-resolution QR Code</strong> on screen.</li>
-<li><strong>Group Musicians</strong>:</li>
-<li>Open their camera or the app's <strong>Tools &gt; Receive</strong> screen to scan the QR Code.</li>
-<li>All band members download the score or complete setlist simultaneously!</li>
+<li><strong>The Band Leader / Conductor (Sender)</strong>:</li>
+<li>Selects the setlist or pieces to share and taps <strong>« 📲 Group Broadcast Mode (QR Code) »</strong>.</li>
+<li>The app starts an ad-hoc local server and displays a <strong>large QR Code</strong> on screen with a live connected musicians counter.</li>
+<li><strong>Group Musicians (Receivers)</strong>:</li>
+<li>Open <strong>Tools &gt; Wi-Fi Direct Transfer</strong> and scan the QR Code on the leader's tablet.</li>
+<li>All band members download the score or complete setlist in parallel simultaneously without needing an internet router!</li>
 </ol>
 <hr />
 <h2 id="3-tag-management">🏷️ 3. Tag Management</h2>
-<p>The <strong>Tag Management</strong> screen gives you full control over library categorization:
+<p>The <strong>Tag Management</strong> screen (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/TagsPage.xaml"><code>TagsPage</code></a> &amp; <a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/TagEditPage.xaml"><code>TagEditPage</code></a>) gives you full control over library categorization:
 - <strong>Create New Tags</strong> with custom names (e.g., <em>Choir</em>, <em>Sight Reading</em>, <em>Christmas Concert</em>, <em>Lead Sheet</em>).
-- <strong>Vibrant Color Palette</strong>: Assign a distinct color badge to each tag for instant visual spotting in score lists.
-- <strong>Edit &amp; Rename</strong> existing tags.
-- <strong>Delete Tags</strong>: Safely removes tags without affecting any underlying sheet music files.</p>
+- <strong>RGB Color Palette &amp; Sliders</strong>: Choose predefined colors or mix custom colors using Red, Green, and Blue sliders with real-time badge preview.
+- <strong>Search, Edit &amp; Rename</strong> existing tags.
+- <strong>Delete Tags</strong>: Safely removes tags without deleting any underlying sheet music files.</p>
 <hr />
 <h2 id="4-package-setlist-imports">📦 4. Package &amp; Setlist Imports</h2>
-<p>The <strong>Package Import</strong> tool handles external archives shared by colleagues:
+<p>The <strong>Package Import</strong> tool (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ImportPackagePage.xaml"><code>ImportPackagePage</code></a>) handles external archives:
 - <strong>Supported Formats</strong>: <code>.msmsetlist</code> (complete setlist), <code>.msmscore</code> (individual score with annotations/audio), and <code>.msmscores</code> (batch archive of multiple pieces).
 - <strong>Automated Extraction</strong>: Extracts PDFs, recreates musical metadata (composer, key, tempo, rating), restores drawings/annotations, and attaches audio files automatically.</p>
 <hr />
 <h2 id="5-duplicate-finder">🔍 5. Duplicate Finder</h2>
-<p>The <strong>Duplicate Finder</strong> audits your library storage to free up disk space:
-- <strong>SHA-256 Cryptographic Hash Check</strong>: Compares the exact binary contents of PDF files, catching duplicates even if filenames are different.
-- <strong>Side-by-Side Duplicate Groups</strong>: Displays matching files with their file sizes, dates, and paths.
+<p>The <strong>Duplicate Finder</strong> (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/DuplicatesPage.xaml"><code>DuplicatesPage</code></a>) audits your library storage to free up disk space:
+- <strong>SHA-256 Cryptographic Hash Check</strong>: Compares the exact binary contents and byte length of PDF files, catching duplicates even if filenames or titles differ.
+- <strong>Side-by-Side Duplicate Groups</strong>: Displays matching files with their file sizes, dates, and wasted storage space.
 - <strong>Safe Cleaning</strong>: Delete redundant copies while keeping the original library entry intact.</p>
 <hr />
 <h2 id="6-database-backups-restoration">💾 6. Database Backups &amp; Restoration</h2>
-<p>The <strong>Backups</strong> utility ensures your annotations and organization are never lost:
-- <strong>Instant Manual Snapshot</strong>: Create a dated backup of your SQLite database (scores, setlists, tags, links, annotations, settings).
-- <strong>Backup History</strong>: View all restore points saved on device storage with exact timestamps and file sizes.
-- <strong>One-Click Restoration</strong>: Revert back to any previous state in case of a mistake or device replacement.
-- <strong>External Export</strong>: Copy backup archives to an external USB thumb drive, micro-SD card, or cloud folder.</p>
+<p>The <strong>Backups</strong> utility (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/BackupsPage.xaml"><code>BackupsPage</code></a>) ensures your annotations and organization are never lost:
+- <strong>Instant Manual Snapshot</strong>: Create a dated backup of your SQLite database (<code>scores.db3</code> containing scores, setlists, tags, links, annotations, and preferences).
+- <strong>One-Click Restoration</strong>: Revert back to any previous state in case of an issue or device change.
+- <strong>Automated Backup Scheduling</strong>:
+  - Configurable interval in days (e.g., every 30 days).
+  - Maximum retention limit with automated rotation (e.g., keep the 6 most recent backups).
+- <strong>Physical Files Storage Notice</strong>: Clear reminders that physical score and audio files located in public storage should also be backed up independently.</p>
 
 
 

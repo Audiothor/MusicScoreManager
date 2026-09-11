@@ -575,6 +575,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#controle-mains-libres-pedaliers-bluetooth-evenements-midi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🦶 Contrôle Mains-Libres : Pédaliers Bluetooth &amp; Événements MIDI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#menu-central-rapide-double-tap" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -845,6 +856,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#controle-mains-libres-pedaliers-bluetooth-evenements-midi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🦶 Contrôle Mains-Libres : Pédaliers Bluetooth &amp; Événements MIDI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#menu-central-rapide-double-tap" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -909,7 +931,7 @@
 
 
 <h1 id="visualiseur-plein-ecran-mode-scene">📖 Visualiseur Plein Écran (Mode Scène)</h1>
-<p>Le <strong>Visualiseur</strong> (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ViewerPage.xaml"><code>ViewerPage</code></a>) est l'espace où la musique prend vie. Conçu pour éliminer toute distraction visuelle, il offre une lisibilité maximale et des commandes gestuelles ultra-rapides.</p>
+<p>Le <strong>Visualiseur</strong> (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ViewerPage.xaml"><code>ViewerPage</code></a>) est l'espace où la musique prend vie. Conçu pour éliminer toute distraction visuelle, il offre une lisibilité maximale, un rendu synchrone ultra-fluide et des commandes gestuelles ultra-rapides.</p>
 <hr />
 <h2 id="gestes-navigation-sur-scene">👆 Gestes &amp; Navigation sur Scène</h2>
 <ul>
@@ -919,82 +941,86 @@
 <li>Tapez sur la moitié gauche ou glissez de gauche à droite.</li>
 <li><strong>Enchaînement automatique dans une setlist</strong> :</li>
 <li>Lorsque vous atteignez la dernière page d'un morceau appartenant à une setlist, la tourne de page suivante ouvre instantanément le premier feuillet du morceau suivant.</li>
-<li><strong>Zoom tactile (Pinch-to-zoom)</strong> :</li>
-<li>Écartez deux doigts pour agrandir une portée, une mesure serrée ou une nuance subtile. Vous pouvez déplacer la page librement même en zoomant.</li>
-<li><strong>Affichage 1 ou 2 pages en mode paysage</strong> :</li>
+<li><strong>Zoom tactile (Pinch-to-zoom) &amp; Pan</strong> :</li>
+<li>Écartez deux doigts pour agrandir une portée ou une mesure. Vous pouvez déplacer la page librement même en zoomant.</li>
+<li><strong>Affichage 2 pages en mode paysage</strong> :</li>
 <li>Sur tablette en orientation horizontale, activez dans les paramètres l'affichage double-page côte à côte (comme un vrai recueil de partitions ouvert).</li>
+<li>Les annotations sont synchronisées géométriquement avec une fidélité absolue sur la page de gauche et la page de droite en tenant compte des marges réelles (<em>letterbox/pillarbox</em>).</li>
+<li><strong>Indicateur de Page Cliquable</strong> :</li>
+<li>Badge de numérotation en bas à droite (<code>ex: 2/8</code>). Un clic ouvre la boîte de saut direct vers la page de votre choix.</li>
 </ul>
 <hr />
+<h2 id="controle-mains-libres-pedaliers-bluetooth-evenements-midi">🦶 Contrôle Mains-Libres : Pédaliers Bluetooth &amp; Événements MIDI</h2>
+<p>Music Score Manager intègre un moteur de commande matérielle universel :
+- <strong>Pédaliers Bluetooth HID &amp; Claviers</strong> : Compatibilité totale avec AirTurn, PageFlip Dragonfly/Firefly, Joyo, Donner, Thomann/Harley Benton, IK Multimedia iRig BlueTurn, Coda STOMP, touches fléchées, etc.
+- <strong>Contrôleurs MIDI (USB-OTG &amp; Bluetooth MIDI)</strong> : Pédales sustain (CC 64), sostenuto (CC 66), soft pedal (CC 67), notes MIDI et Program Changes.
+- <strong>Actions Déclenchables au Pied</strong> (au choix sur appui court ou appui long avec réglette de sensibilité réglable de 200 à 1000 ms) :
+  - Page suivante / précédente
+  - Morceau suivant / précédent dans la setlist
+  - Début / fin du morceau
+  - Défilement haut / bas
+  - Démarrer / couper le métronome et son
+  - Play / Pause de la bande audio d'accompagnement
+  - Rétablir le zoom à 100%
+  - Ouvrir le saut direct de page
+  - Verrouiller / déverrouiller les annotations
+  - Annuler (Undo) / Rétablir (Redo)
+  - Ouvrir le menu central / Quitter le lecteur</p>
+<hr />
 <h2 id="menu-central-rapide-double-tap">🎛️ Menu Central Rapide (Double-Tap)</h2>
-<p>Faites un <strong>double-clic ou double-tape au centre de l'écran</strong> pour afficher le menu d'actions rapides sans quitter votre partition :</p>
+<p>Faites un <strong>double-clic ou double-tap au centre de l'écran</strong> pour afficher le menu d'actions rapides sans quitter votre partition :</p>
 <ol>
 <li><strong>↻ Rotation (+90°)</strong> :</li>
 <li>Fait pivoter la partition de 90° dans le sens des aiguilles d'une montre.</li>
-<li><strong>Option « Appliquer à cette page uniquement »</strong> : cochez cette case si seule une page spécifique a été scannée à l'envers ou en paysage. Si décoché, la rotation s'applique à l'intégralité du document.</li>
-<li>
-<p>La rotation choisie est <strong>automatiquement mémorisée</strong> pour les prochaines ouvertures.</p>
-</li>
-<li>
-<p><strong>🔍 Rétablir la taille d'origine (100%)</strong> :</p>
-</li>
-<li>
-<p>Réinitialise immédiatement le zoom et recadre parfaitement la page sur l'écran sans changer de feuillet.</p>
-</li>
-<li>
-<p><strong>📑 Modifier l'assemblage PDF</strong> :</p>
-</li>
-<li>
-<p>Bascule directement la partition en cours dans l'Atelier d'Assemblage PDF pour réorganiser, ajouter ou supprimer des pages à la volée.</p>
-</li>
-<li>
-<p><strong>⏱️ Afficher / Masquer le Métronome</strong> :</p>
-</li>
-<li>
-<p>Déploie le panneau de métronome intégré.</p>
-</li>
-<li>
-<p><strong>🎧 Afficher / Masquer le Lecteur Audio</strong> :</p>
-</li>
-<li>Déploie la barre de lecture audio en bas de l'écran.</li>
+<li><strong>Option « Appliquer à cette page uniquement »</strong> : permet de pivoter uniquement une page spécifique scannée en paysage.</li>
+<li><strong>Interrupteur « Mémoriser les rotations »</strong> : enregistre l'orientation dans la base de données locale.</li>
+<li><strong>🔍 Rétablir la taille d'origine (100%)</strong> :</li>
+<li>Réinitialise immédiatement le zoom et recadre parfaitement la page sur l'écran.</li>
+<li><strong>📄 Page</strong> : Saut numérique de page.</li>
+<li><strong>⏱️ Afficher / Masquer le Métronome</strong> : Active ou masque l'overlay métronome.</li>
+<li><strong>🎧 Afficher / Masquer le Lecteur Audio</strong> : Active ou masque la barre audio.</li>
+<li><strong>📑 Modifier l'assemblage PDF</strong> : Bascule directement dans l'Atelier d'Assemblage PDF.</li>
+<li><strong>✏️ Modifier la partition</strong> : Accès direct à l'édition des métadonnées musicales.</li>
+<li><strong>Retour à l'accueil / Fermer</strong> : Sortie propre du visualiseur.</li>
 </ol>
 <hr />
 <h2 id="boite-a-outils-dannotation-complete">✍️ Boîte à Outils d'Annotation Complète</h2>
-<p>Activez la barre d'annotation pour marquer vos partitions comme sur papier :</p>
+<p>La barre d'annotation peut être translatée verticalement sur l'écran par glissement (<em>pan</em>), avec boîtes d'options secondaires collées au-dessus :</p>
 <ul>
-<li><strong>✏️ Crayon à main levée</strong> :</li>
-<li>Pour noter doigtés, coups d'archet, respirations et annotations personnelles.</li>
-<li>Choix de plusieurs couleurs et réglage fin de l'épaisseur du trait.</li>
-<li><strong>🖍️ Surligneur Stabilo biseauté</strong> :</li>
-<li>Trait large semi-transparent laissant les notes et portées parfaitement lisibles.</li>
-<li><strong>🧹 Gomme de précision</strong> :</li>
-<li>Effacez vos traits au toucher.</li>
-<li><strong>⭐ Stickers &amp; Symboles Musicaux</strong> :</li>
-<li>Insérez des symboles expressifs (points d'orgue, nuances <em>p</em>, <em>f</em>, <em>ff</em>, dièses, bémols, bécarres, flèches, textes d'attention).</li>
-<li>Gestion de stickers favoris personnalisables dans les paramètres.</li>
+<li><strong>🖌️ Surligneur Fluo (Stabilo)</strong> :</li>
+<li>Rendu translucide naturel à bords biseautés droits (<code>PenLineCap.Flat</code>).</li>
+<li>4 teintes fluo (jaune, vert, bleu, rose) et 3 largeurs (5 mm, 10 mm, 18 mm).</li>
+<li><strong>T Texte Typographié</strong> :</li>
+<li>Saisie textuelle directe sur la partition, 6 couleurs et 5 tailles de police.</li>
+<li><strong>✏️ Crayon à Main Levée</strong> :</li>
+<li>Tracé opaque à 100%, 6 couleurs et 5 épaisseurs de trait calibrées de 1 mm à 5 mm.</li>
+<li><strong>❏ Stickers Musicaux &amp; Favoris</strong> :</li>
+<li>Plus de 100 stickers organisés par catégories : Favoris, Doigtés, Nuances, Articulations, Répétitions, Notes (𝅝, 𝅗𝅥, ♩, ♪, ♫...), Silences (𝄻, 𝄼, 𝄽, 𝄾...), Altérations (♯, ♭, ♮, 𝄪, 𝄫) et Symboles.</li>
+<li>Réglette grand format ergonomique pour ajuster la taille du sticker au doigt.</li>
 <li><strong>↩️ Annuler (Undo) / ↪️ Rétablir (Redo)</strong> :</li>
-<li>Historique complet de vos tracés pour annuler une fausse manipulation en un éclair.</li>
-<li><strong>🗑️ Effacer toutes les annotations de la page</strong> :</li>
-<li>Remet la page dans son état d'origine.</li>
+<li>Historique dynamique complet pour annuler ou rétablir chaque modification.</li>
+<li><strong>🔒/🔓 Cadenas de Verrouillage de Sécurité</strong> :</li>
+<li>Verrouillage automatique systématique à l'ouverture pour sanctuariser la partition contre toute fausse manipulation.</li>
+<li>Déverrouillage automatique au choix d'un outil d'édition.</li>
+<li>Re-verrouillage automatique à la fermeture de la barre (bouton ✕).</li>
+<li><strong>✧ Nettoyage Général</strong> : Réinitialise toutes les annotations de la page.</li>
+<li><strong>🗑️ Suppression Ciblée</strong> : Sélection tactile d'une annotation existante pour la supprimer au doigt ou par double-tap.</li>
 </ul>
 <hr />
 <h2 id="metronome-haute-precision-integre">⏱️ Métronome Haute Précision Intégré</h2>
 <ul>
-<li><strong>Zéro latence audio</strong> : battements ultra-réguliers grâce au moteur audio natif optimisé.</li>
-<li><strong>Réglage du tempo</strong> :</li>
-<li>Molette ou curseur de 30 à 300 BPM.</li>
-<li>Boutons fins <strong>-1 / +1</strong> et <strong>-5 / +5 BPM</strong>.</li>
-<li><strong>Tap Tempo</strong> : tapez le rythme en cadence avec votre doigt pour détecter automatiquement le BPM.</li>
-<li><strong>Métronome visuel</strong> : flashs lumineux synchronisés sur le tempo pour répétition silencieuse.</li>
-<li><strong>Pré-compte</strong> : son distinctif pour annoncer le premier temps de la mesure (2/4, 3/4, 4/4, 6/8, etc.).</li>
-<li><strong>Synchronisation automatique</strong> : si la partition contient un tempo de référence renseigné lors de son édition, le métronome s'initialise automatiquement sur cette valeur !</li>
+<li><strong>Moteur Thread-Safe Régulé</strong> : Zéro dérive CPU grâce à la double boucle <code>Stopwatch</code> + <code>SpinWait</code>.</li>
+<li><strong>Zéro Latence Audio</strong> : Échantillons déclenchés via <code>SoundPool</code> natif Android.</li>
+<li><strong>Affichage Visuel &amp; LED</strong> : Pulsation lumineuse synchronisée sur les temps forts et temps faibles.</li>
+<li><strong>Coupure du Clic Sonore</strong> : Possibilité d'activer ou de couper le son à la volée tout en conservant le repère visuel.</li>
+<li><strong>Pré-compte Synchronisé</strong> : Décompte de mesures avant démarrage de la lecture audio.</li>
 </ul>
 <hr />
 <h2 id="lecteur-audio-synchronise-accompagnement-playback">🎧 Lecteur Audio Synchronisé (Accompagnement &amp; Playback)</h2>
 <ul>
-<li>Associez une piste d'accompagnement sonore (fichier MP3, WAV, M4A) à n'importe quelle partition.</li>
-<li>Barre de lecture compacte en bas de l'écran avec bouton Lecture/Pause.</li>
-<li>Barre de progression temporelle pour avancer ou reculer rapidement dans le morceau.</li>
-<li>Contrôle de volume dédié indépendant du volume général de la tablette.</li>
+<li>Prise en charge des fichiers MP3, WAV, AAC, FLAC rattachés.</li>
+<li>Barre de transport compacte avec bouton Lecture/Pause.</li>
+<li>Slider de progression avec affichage du temps écoulé et temps total.</li>
 </ul>
 
 
