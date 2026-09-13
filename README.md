@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v2.0.2
+# Music Score Manager v2.0.3
 > **Le gestionnaire & visualiseur professionnel de partitions musicales pour répétitions, pupitres et concerts en direct.**
 
 ---
@@ -124,9 +124,9 @@ La barre supérieure met à votre disposition des outils instantanés :
     - 📤 **Envoyer en masse** : Transfert Wi-Fi Direct direct des morceaux sélectionnés vers une autre tablette.
 - **Bouton d'Importation (`+`)** :
   - **Import de documents PDF** : Sélection d'un ou plusieurs fichiers PDF. Un contrôle d'intégrité binaire strict vérifie l'en-tête `%PDF-` pour rejeter tout fichier corrompu.
-  - **Import et conversion des Images (v2.0.2)** : L'application manipulant **exclusivement des fichiers PDF en interne**, la sélection d'un ou plusieurs fichiers images (PNG, JPEG, GIF, WEBP, BMP) déclenche systématiquement un dialogue informatif listant les fichiers images sélectionnés et demandant si l'utilisateur accepte leur conversion en PDF :
-    - *En cas de refus* : Les images sont ignorées (aucune conversion, aucune intégration). Si des fichiers PDF accompagnaient la sélection, ils continuent leur import normal.
-    - *En cas d'acceptation* : Les images sont automatiquement converties en PDF. Pour plusieurs images, l'utilisateur choisit entre fusionner en **une seule partition PDF multi-pages** ou générer des partitions PDF individuelles.
+  - **Import et conversion des Images (v2.0.3)** : La sélection d'un ou plusieurs fichiers images (PNG, JPEG, GIF, WEBP, BMP) informe simplement l'utilisateur que les fichiers images sélectionnés vont être convertis en PDF pour être intégrés dans la bibliothèque :
+    - *En cas d'annulation* : Les images sont ignorées. Si des fichiers PDF accompagnaient la sélection, ils continuent leur import normal.
+    - *En cas de validation* : Les images sont automatiquement converties en documents PDF haute netteté. Pour plusieurs images, l'utilisateur choisit entre fusionner en **une seule partition PDF multi-pages** ou générer des partitions PDF individuelles. Les nouvelles partitions sont immédiatement visibles dans la bibliothèque.
   - **Mode Copie vs Mode Liaison** : Selon le paramétrage, le fichier est soit copié dans le stockage de l'application, soit lié à son emplacement d'origine (marqué par un badge `🔗`).
 
 ---
@@ -625,5 +625,5 @@ Consultez le fichier complet [LICENSE](LICENSE) pour les termes légaux exhausti
 ---
 
 <p align="center">
-  <b>Music Score Manager v2.0.2</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
+  <b>Music Score Manager v2.0.3</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
 </p>

@@ -1,6 +1,6 @@
 # User Manual - Music Score Manager
 
-Welcome to the comprehensive, in-depth documentation for **Music Score Manager v2.0.2**, the cross-platform application (Android / Windows) tailor-made for solo musicians, ensembles, choirs, and orchestras.
+Welcome to the comprehensive, in-depth documentation for **Music Score Manager v2.0.3**, the cross-platform application (Android / Windows) tailor-made for solo musicians, ensembles, choirs, and orchestras.
 
 ---
 

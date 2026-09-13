@@ -27,11 +27,12 @@ namespace MusicScoreManager.Services
             var importedScores = new List<Score>();
             try
             {
-                var status = await CheckAndRequestStoragePermissionAsync();
-                if (status != PermissionStatus.Granted)
+                // Sur Android, FilePicker utilise le sélecteur système SAF qui n'exige pas de permission préalable.
+                try
                 {
-                    return importedScores;
+                    await CheckAndRequestStoragePermissionAsync();
                 }
+                catch { /* Ne pas bloquer si les permissions optionnelles échouent */ }
 
                 var customFileType = new FilePickerFileType(
                     new Dictionary<DevicePlatform, IEnumerable<string>>
@@ -57,36 +58,43 @@ namespace MusicScoreManager.Services
                 var rootDir = _settingsService.ScoresRootDirectory;
                 if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
 
-                var validResults = results.Where(r => r != null && !string.IsNullOrEmpty(r.FullPath)).Cast<FileResult>().ToList();
+                var cacheDir = FileSystem.CacheDirectory;
+                if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
+
+                var validResults = results.Where(r => r != null && (!string.IsNullOrEmpty(r.FullPath) || !string.IsNullOrEmpty(r.FileName))).Cast<FileResult>().ToList();
                 if (!validResults.Any()) return importedScores;
 
                 var imageFiles = validResults.Where(r => IsImageFile(r.FileName ?? r.FullPath)).ToList();
                 var pdfFiles = validResults.Where(r => IsPdfFile(r.FileName ?? r.FullPath)).ToList();
 
-                // Information et confirmation obligatoire pour les fichiers de type image
+                // Information conviviale pour les fichiers de type image
                 if (imageFiles.Any())
                 {
-                    var fileNames = imageFiles.Select(f => Path.GetFileName(f.FileName ?? f.FullPath)).ToList();
+                    var fileNames = imageFiles
+                        .Select(f => Path.GetFileName(f.FileName ?? f.FullPath))
+                        .Where(n => !string.IsNullOrEmpty(n))
+                        .ToList();
+
                     string fileListStr = string.Join("\n• ", fileNames.Take(8));
                     if (fileNames.Count > 8)
                     {
                         fileListStr += $"\n... et {fileNames.Count - 8} autre(s)";
                     }
 
-                    string alertTitle = "Conversion des images en PDF";
+                    string alertTitle = "Importation d'images";
                     string alertMessage = (imageFiles.Count == 1)
-                        ? $"L'application Music Score Manager manipule exclusivement des fichiers PDF en interne.\n\nLe fichier suivant est une image :\n• {fileListStr}\n\nCe fichier doit être converti en format PDF pour être importé dans l'application.\n\nAcceptez-vous cette conversion ?"
-                        : $"L'application Music Score Manager manipule exclusivement des fichiers PDF en interne.\n\nLes {imageFiles.Count} fichiers suivants sont des images :\n• {fileListStr}\n\nCes fichiers doivent être convertis en format PDF pour être importés dans l'application.\n\nAcceptez-vous cette conversion ?";
+                        ? $"Le fichier sélectionné est une image :\n• {fileListStr}\n\nIl va être converti au format PDF pour être intégré à votre bibliothèque.\n\nSouhaitez-vous continuer ?"
+                        : $"Les {imageFiles.Count} fichiers sélectionnés sont des images :\n• {fileListStr}\n\nIls vont être convertis au format PDF pour être intégrés à votre bibliothèque.\n\nSouhaitez-vous continuer ?";
 
                     bool acceptConversion = await Shell.Current.DisplayAlertAsync(
                         alertTitle,
                         alertMessage,
-                        "Accepter (Convertir en PDF)",
-                        "Refuser (Ignorer les images)");
+                        "Continuer",
+                        "Annuler");
 
                     if (!acceptConversion)
                     {
-                        // L'utilisateur refuse la conversion : les fichiers images ne sont pas convertis ni intégrés
+                        // L'utilisateur refuse : on ignore les images
                         imageFiles.Clear();
                     }
                 }
@@ -110,9 +118,9 @@ namespace MusicScoreManager.Services
                     {
                         // Fusionner en un unique PDF
                         var firstFileName = Path.GetFileNameWithoutExtension(imageFiles[0].FileName ?? imageFiles[0].FullPath);
-                        // Nettoyer les numéros de page éventuels à la fin (ex: "Partition_1" -> "Partition")
                         var suggestedTitle = Regex.Replace(firstFileName, @"[_-]?\d+$", "").Trim();
                         if (string.IsNullOrEmpty(suggestedTitle)) suggestedTitle = firstFileName;
+                        if (string.IsNullOrWhiteSpace(suggestedTitle)) suggestedTitle = "Partition";
 
                         string? inputTitle = await Shell.Current.DisplayPromptAsync(
                             "Titre de la partition",
@@ -124,8 +132,6 @@ namespace MusicScoreManager.Services
                         if (inputTitle != null) // non annulé
                         {
                             var finalTitle = string.IsNullOrWhiteSpace(inputTitle) ? suggestedTitle : inputTitle.Trim();
-                            
-                            // Tri naturel des images par nom de fichier (ex: page1, page2, page10...)
                             var sortedImages = imageFiles.OrderBy(f => f.FileName ?? f.FullPath, new NaturalComparer()).ToList();
                             var tempPaths = new List<string>();
 
@@ -133,10 +139,17 @@ namespace MusicScoreManager.Services
                             {
                                 foreach (var img in sortedImages)
                                 {
-                                    var tempPath = Path.Combine(FileSystem.CacheDirectory, $"{Guid.NewGuid()}_{img.FileName}");
-                                    using var srcStream = await img.OpenReadAsync();
-                                    using var dstStream = File.Create(tempPath);
-                                    await srcStream.CopyToAsync(dstStream);
+                                    var ext = Path.GetExtension(img.FileName ?? img.FullPath);
+                                    if (string.IsNullOrWhiteSpace(ext)) ext = ".jpg";
+                                    var cleanExt = new string(ext.Where(c => char.IsLetterOrDigit(c) || c == '.').ToArray());
+                                    if (string.IsNullOrWhiteSpace(cleanExt)) cleanExt = ".jpg";
+
+                                    var tempPath = Path.Combine(cacheDir, $"{Guid.NewGuid()}{cleanExt}");
+                                    using (var srcStream = await img.OpenReadAsync())
+                                    using (var dstStream = File.Create(tempPath))
+                                    {
+                                        await srcStream.CopyToAsync(dstStream);
+                                    }
                                     tempPaths.Add(tempPath);
                                 }
 
@@ -155,6 +168,11 @@ namespace MusicScoreManager.Services
 
                                 await _databaseService.SaveScoreAsync(score);
                                 importedScores.Add(score);
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"[ImportService] Erreur fusion images : {ex.Message}");
+                                await Shell.Current.DisplayAlertAsync("Erreur de conversion", $"Impossible de créer la partition PDF : {ex.Message}", "OK");
                             }
                             finally
                             {
@@ -189,6 +207,7 @@ namespace MusicScoreManager.Services
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[ImportService] Erreur lors de l'import : {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("Erreur d'import", $"Une erreur est survenue lors de l'import : {ex.Message}", "OK");
             }
 
             return importedScores;
@@ -197,10 +216,17 @@ namespace MusicScoreManager.Services
         private async Task<List<Score>> ConvertAndImportIndividualImagesAsync(List<FileResult> imageFiles, string rootDir)
         {
             var results = new List<Score>();
+            var cacheDir = FileSystem.CacheDirectory;
+            if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
 
             foreach (var img in imageFiles)
             {
-                var tempPath = Path.Combine(FileSystem.CacheDirectory, $"{Guid.NewGuid()}_{img.FileName}");
+                var ext = Path.GetExtension(img.FileName ?? img.FullPath);
+                if (string.IsNullOrWhiteSpace(ext)) ext = ".jpg";
+                var cleanExt = new string(ext.Where(c => char.IsLetterOrDigit(c) || c == '.').ToArray());
+                if (string.IsNullOrWhiteSpace(cleanExt)) cleanExt = ".jpg";
+
+                var tempPath = Path.Combine(cacheDir, $"{Guid.NewGuid()}{cleanExt}");
                 try
                 {
                     using (var src = await img.OpenReadAsync())
@@ -210,6 +236,8 @@ namespace MusicScoreManager.Services
                     }
 
                     var rawName = Path.GetFileNameWithoutExtension(img.FileName ?? img.FullPath);
+                    if (string.IsNullOrWhiteSpace(rawName)) rawName = "Partition";
+
                     var sanitized = SanitizeFileName(rawName);
                     var localPdfPath = GetUniqueFilePath(rootDir, sanitized, ".pdf");
 
@@ -229,6 +257,7 @@ namespace MusicScoreManager.Services
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine($"[ImportService] Erreur conversion image {img.FileName} : {ex.Message}");
+                    await Shell.Current.DisplayAlertAsync("Erreur de conversion", $"Impossible de convertir {Path.GetFileName(img.FileName ?? "l'image")} en PDF : {ex.Message}", "OK");
                 }
                 finally
                 {
