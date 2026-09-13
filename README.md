@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v2.0.3
+# Music Score Manager v2.0.4
 > **Le gestionnaire & visualiseur professionnel de partitions musicales pour répétitions, pupitres et concerts en direct.**
 
 ---
@@ -124,9 +124,9 @@ La barre supérieure met à votre disposition des outils instantanés :
     - 📤 **Envoyer en masse** : Transfert Wi-Fi Direct direct des morceaux sélectionnés vers une autre tablette.
 - **Bouton d'Importation (`+`)** :
   - **Import de documents PDF** : Sélection d'un ou plusieurs fichiers PDF. Un contrôle d'intégrité binaire strict vérifie l'en-tête `%PDF-` pour rejeter tout fichier corrompu.
-  - **Import et conversion des Images (v2.0.3)** : La sélection d'un ou plusieurs fichiers images (PNG, JPEG, GIF, WEBP, BMP) informe simplement l'utilisateur que les fichiers images sélectionnés vont être convertis en PDF pour être intégrés dans la bibliothèque :
+  - **Import et conversion des Images (v2.0.4)** : La sélection d'un ou plusieurs fichiers images (PNG, JPEG, GIF, WEBP, BMP) informe simplement l'utilisateur que les fichiers images sélectionnés vont être convertis en format PDF haute netteté pour être intégrés dans la bibliothèque :
     - *En cas d'annulation* : Les images sont ignorées. Si des fichiers PDF accompagnaient la sélection, ils continuent leur import normal.
-    - *En cas de validation* : Les images sont automatiquement converties en documents PDF haute netteté. Pour plusieurs images, l'utilisateur choisit entre fusionner en **une seule partition PDF multi-pages** ou générer des partitions PDF individuelles. Les nouvelles partitions sont immédiatement visibles dans la bibliothèque.
+    - *En cas de validation* : Les images sont converties en documents PDF haute netteté. Une **boîte de chargement modale bloquante** avec indicateur d'activité et message d'avancement en temps réel s'affiche à l'écran, garantissant que l'utilisateur est informé de l'opération en cours. Pour plusieurs images, l'utilisateur choisit entre fusionner en **une seule partition PDF multi-pages** ou générer des partitions individuelles. Dès l'opération terminée, une confirmation explicite informe l'utilisateur et la bibliothèque est instantanément rafraîchie.
   - **Mode Copie vs Mode Liaison** : Selon le paramétrage, le fichier est soit copié dans le stockage de l'application, soit lié à son emplacement d'origine (marqué par un badge `🔗`).
 
 ---
@@ -309,12 +309,18 @@ graph TD
 ### 3.4 Page d'Édition d'une Setlist (`SetlistEditPage`)
 - **Modification du Nom & Statut** : Ajustez le nom et basculez entre *Active*, *À venir* et *Terminée*.
 - **Interrupteur Cadenas** : Verrouillez le programme dès que l'ordre des morceaux est finalisé.
-- **Bouton « + Ajouter des partitions »** : Ouvre la sélection de bibliothèque avec barre de recherche et sélection multiple pour intégrer plusieurs morceaux simultanément.
+- **Bouton « + Ajouter des partitions » (v2.0.4)** : Ouvre la sélection de bibliothèque `ScoreSelectionPage` enrichie :
+  - *Recherche instantanée* par titre ou compositeur.
+  - *Bouton de Tri dédié (`⇅`)* : Tri par Titre (A-Z / Z-A), Date d'ajout (Récent / Ancien), Compositeur (A-Z), Par étiquettes, ou par Pertinence de correspondance.
+  - *Filtrage par une ou plusieurs étiquettes* : Sélection multiple d'étiquettes avec bascule interactive *Mode ET (Toutes)* ou *Mode OU (Au moins une)*.
+  - *Compteur dynamique* sur le bouton d'ajout en bas d'écran.
+- **Gestion des Doublons de Partitions (v2.0.4)** : Une même partition peut être insérée plusieurs fois au sein d'un même programme (rappels, morceaux répétés, thèmes d'ouverture et clôture).
+  - *Bouton Dupliquer (`⧉`)* : Clone immédiatement la partition à la suite de sa position dans la liste d'un simple toucher.
+  - *Ré-ajout sans restriction* : L'ajout depuis la bibliothèque permet de réinsérer un morceau déjà présent dans la setlist.
 - **Réorganisation Intuitive des Morceaux** :
-  - Boutons fléchés **▲ Monter** et **▼ Descendre** pour ajuster la position de chaque pièce.
   - Glisser-déposer tactile sur les morceaux.
   - Numérotation séquentielle automatique (1, 2, 3...).
-  - Bouton Corbeille **🗑️** pour retirer un morceau de la setlist.
+  - Bouton Retirer (`✕`) pour enlever un morceau de la setlist.
 - **Indicateurs d'Intégrité & Cache** : Témoin en direct (⚡) garantissant que tous les fichiers PDF de la liste sont disponibles en cache rapide.
 
 ---
@@ -625,5 +631,5 @@ Consultez le fichier complet [LICENSE](LICENSE) pour les termes légaux exhausti
 ---
 
 <p align="center">
-  <b>Music Score Manager v2.0.3</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
+  <b>Music Score Manager v2.0.4</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
 </p>

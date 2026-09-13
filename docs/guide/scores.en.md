@@ -37,9 +37,9 @@ At the top of the scores view, you have immediate access to several critical too
 
 5. **Add Score Button (➕)**:
    - **PDF Import**: Strict binary `%PDF-` verification prevents corrupt or misnamed files from crashing the viewer.
-    - **Photos / Images Import & Conversion (v2.0.3)**: Selecting one or more image files (PNG, JPEG, GIF, WEBP, BMP) informs the user that the selected image files will be converted into PDF format:
+    - **Photos / Images Import & Conversion (v2.0.4)**: Selecting one or more image files (PNG, JPEG, GIF, WEBP, BMP) informs the user that the selected image files will be converted into PDF format:
       * **Cancel**: Image files are ignored. Any accompanying PDF files in the same batch continue their normal import.
-      * **Continue**: Images are seamlessly converted to high-definition PDF (users choose between merging into a single multi-page PDF score or creating individual PDF scores). The new scores immediately appear in the library.
+      * **Continue**: A blocking loading overlay with progress status informs the user during high-definition PDF conversion. Images are merged into a single multi-page PDF score or created as individual PDF scores, and a completion alert is displayed once finished.
 
 ---
 
