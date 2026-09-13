@@ -937,8 +937,16 @@ public partial class ScoresPage : ContentPage
         var scores = await _importService.ImportScoresAsync();
         if (scores != null && scores.Any())
         {
-            // Recharger la liste après l'import réussi
-            await LoadScoresAsync(SearchScoreBar.Text);
+            if (!string.IsNullOrEmpty(SearchScoreBar?.Text))
+            {
+                SearchScoreBar.Text = string.Empty;
+            }
+            await LoadScoresAsync(string.Empty);
+
+            string msg = scores.Count == 1
+                ? $"La partition \"{scores[0].Title}\" a été importée avec succès."
+                : $"{scores.Count} partitions ont été importées avec succès.";
+            await DisplayAlertAsync("Import terminé", msg, "OK");
         }
     }
 

@@ -358,8 +358,11 @@ public partial class PdfAssemblerPage : ContentPage
             };
 
             var results = await FilePicker.Default.PickMultipleAsync(options);
-            var validResults = results.Where(r => r != null && !string.IsNullOrEmpty(r.FullPath)).Cast<FileResult>().ToList();
-            if (!validResults.Any()) return;
+            var validResults = results?.Where(r => r != null && (!string.IsNullOrEmpty(r.FullPath) || !string.IsNullOrEmpty(r.FileName))).Cast<FileResult>().ToList();
+            if (validResults == null || !validResults.Any()) return;
+
+            var cacheDir = FileSystem.CacheDirectory;
+            if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
 
             if (clearFirst)
             {
@@ -370,7 +373,12 @@ public partial class PdfAssemblerPage : ContentPage
 
             foreach (var res in sortedResults)
             {
-                var tempPath = Path.Combine(FileSystem.CacheDirectory, $"{Guid.NewGuid()}_{res.FileName}");
+                var ext = Path.GetExtension(res.FileName ?? res.FullPath);
+                if (string.IsNullOrWhiteSpace(ext)) ext = ".jpg";
+                var cleanExt = new string(ext.Where(c => char.IsLetterOrDigit(c) || c == '.').ToArray());
+                if (string.IsNullOrWhiteSpace(cleanExt)) cleanExt = ".jpg";
+
+                var tempPath = Path.Combine(cacheDir, $"{Guid.NewGuid()}{cleanExt}");
                 using (var src = await res.OpenReadAsync())
                 using (var dst = File.Create(tempPath))
                 {

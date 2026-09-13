@@ -335,42 +335,91 @@ namespace MusicScoreManager.Services
 
             foreach (var item in itemList)
             {
-                using var sourceImage = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(item.ImagePath!);
-                
-                // Correction automatique de l'orientation Exif de l'appareil photo
-                sourceImage.Mutate(x => x.AutoOrient());
+                byte[] jpegBytes;
+                int width;
+                int height;
 
-                // Appliquer la rotation demandée par l'utilisateur
-                int normalizedRotation = (item.Rotation % 360 + 360) % 360;
-                if (normalizedRotation == 90)
+                try
                 {
-                    sourceImage.Mutate(x => x.Rotate(RotateMode.Rotate90));
+                    using var sourceImage = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(item.ImagePath!);
+                    
+                    // Correction automatique de l'orientation Exif de l'appareil photo
+                    sourceImage.Mutate(x => x.AutoOrient());
+
+                    // Appliquer la rotation demandée par l'utilisateur
+                    int normalizedRotation = (item.Rotation % 360 + 360) % 360;
+                    if (normalizedRotation == 90)
+                    {
+                        sourceImage.Mutate(x => x.Rotate(RotateMode.Rotate90));
+                    }
+                    else if (normalizedRotation == 180)
+                    {
+                        sourceImage.Mutate(x => x.Rotate(RotateMode.Rotate180));
+                    }
+                    else if (normalizedRotation == 270)
+                    {
+                        sourceImage.Mutate(x => x.Rotate(RotateMode.Rotate270));
+                    }
+
+                    // Limiter la taille maximale à 2480px (équivalent 300 DPI A4) pour économiser la mémoire et accélérer le traitement
+                    int maxDimension = 2480;
+                    if (sourceImage.Width > maxDimension || sourceImage.Height > maxDimension)
+                    {
+                        sourceImage.Mutate(x => x.Resize(new ResizeOptions
+                        {
+                            Size = new SixLabors.ImageSharp.Size(maxDimension, maxDimension),
+                            Mode = SixLabors.ImageSharp.Processing.ResizeMode.Max
+                        }));
+                    }
+
+                    // Aplatir sur un fond blanc pur en RGB24 (3 canaux garantis : évite le bug des 3 miniatures sur images 1-canal N&B/niveaux de gris)
+                    using var rgbImage = new Image<SixLabors.ImageSharp.PixelFormats.Rgb24>(sourceImage.Width, sourceImage.Height);
+                    rgbImage.Mutate(ctx =>
+                    {
+                        ctx.BackgroundColor(SixLabors.ImageSharp.Color.White);
+                        ctx.DrawImage(sourceImage, new SixLabors.ImageSharp.Point(0, 0), 1f);
+                    });
+
+                    using var ms = new MemoryStream();
+                    rgbImage.SaveAsJpeg(ms, new JpegEncoder
+                    {
+                        Quality = 90,
+                        ColorType = JpegColorType.Rgb
+                    });
+
+                    jpegBytes = ms.ToArray();
+                    width = rgbImage.Width;
+                    height = rgbImage.Height;
                 }
-                else if (normalizedRotation == 180)
+                catch (Exception)
                 {
-                    sourceImage.Mutate(x => x.Rotate(RotateMode.Rotate180));
+#if ANDROID
+                    // Fallback natif Android (supporte HEIC, WebP, etc.)
+                    using var bmp = BitmapFactory.DecodeFile(item.ImagePath!);
+                    if (bmp == null) throw;
+
+                    int rot = (item.Rotation % 360 + 360) % 360;
+                    Bitmap finalBmp = bmp;
+                    if (rot != 0)
+                    {
+                        var matrix = new Matrix();
+                        matrix.PostRotate(rot);
+                        finalBmp = Bitmap.CreateBitmap(bmp, 0, 0, bmp.Width, bmp.Height, matrix, true);
+                    }
+
+                    using var ms = new MemoryStream();
+                    finalBmp.Compress(Bitmap.CompressFormat.Jpeg!, 90, ms);
+                    jpegBytes = ms.ToArray();
+                    width = finalBmp.Width;
+                    height = finalBmp.Height;
+
+                    if (finalBmp != bmp) finalBmp.Dispose();
+#else
+                    throw;
+#endif
                 }
-                else if (normalizedRotation == 270)
-                {
-                    sourceImage.Mutate(x => x.Rotate(RotateMode.Rotate270));
-                }
 
-                // Aplatir sur un fond blanc pur en RGB24 (3 canaux garantis : évite le bug des 3 miniatures sur images 1-canal N&B/niveaux de gris)
-                using var rgbImage = new Image<SixLabors.ImageSharp.PixelFormats.Rgb24>(sourceImage.Width, sourceImage.Height);
-                rgbImage.Mutate(ctx =>
-                {
-                    ctx.BackgroundColor(SixLabors.ImageSharp.Color.White);
-                    ctx.DrawImage(sourceImage, new SixLabors.ImageSharp.Point(0, 0), 1f);
-                });
-
-                using var ms = new MemoryStream();
-                rgbImage.SaveAsJpeg(ms, new JpegEncoder
-                {
-                    Quality = 92,
-                    ColorType = JpegColorType.Rgb
-                });
-
-                encodedPages.Add((ms.ToArray(), rgbImage.Width, rgbImage.Height));
+                encodedPages.Add((jpegBytes, width, height));
             }
 
             // Écriture du document PDF standard conforme ISO 32000-1 (PDF 1.4)
