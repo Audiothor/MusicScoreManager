@@ -9,6 +9,8 @@ namespace MusicScoreManager.Services
         private readonly SettingsService _settingsService;
         private readonly PdfService _pdfService;
 
+        public event Action<bool, string?>? ConversionStateChanged;
+
         public ImportService(DatabaseService databaseService, PdfService? pdfService = null)
         {
             _databaseService = databaseService;
@@ -135,6 +137,7 @@ namespace MusicScoreManager.Services
                             var sortedImages = imageFiles.OrderBy(f => f.FileName ?? f.FullPath, new NaturalComparer()).ToList();
                             var tempPaths = new List<string>();
 
+                            ConversionStateChanged?.Invoke(true, $"Fusion et conversion de {sortedImages.Count} images en document PDF...");
                             try
                             {
                                 foreach (var img in sortedImages)
@@ -176,6 +179,7 @@ namespace MusicScoreManager.Services
                             }
                             finally
                             {
+                                ConversionStateChanged?.Invoke(false, null);
                                 foreach (var t in tempPaths)
                                 {
                                     try { if (File.Exists(t)) File.Delete(t); } catch { }
@@ -219,50 +223,71 @@ namespace MusicScoreManager.Services
             var cacheDir = FileSystem.CacheDirectory;
             if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
 
-            foreach (var img in imageFiles)
+            ConversionStateChanged?.Invoke(true, imageFiles.Count > 1 
+                ? $"Conversion de {imageFiles.Count} images en cours..." 
+                : "Conversion de l'image en PDF...");
+
+            try
             {
-                var ext = Path.GetExtension(img.FileName ?? img.FullPath);
-                if (string.IsNullOrWhiteSpace(ext)) ext = ".jpg";
-                var cleanExt = new string(ext.Where(c => char.IsLetterOrDigit(c) || c == '.').ToArray());
-                if (string.IsNullOrWhiteSpace(cleanExt)) cleanExt = ".jpg";
-
-                var tempPath = Path.Combine(cacheDir, $"{Guid.NewGuid()}{cleanExt}");
-                try
+                for (int i = 0; i < imageFiles.Count; i++)
                 {
-                    using (var src = await img.OpenReadAsync())
-                    using (var dst = File.Create(tempPath))
-                    {
-                        await src.CopyToAsync(dst);
-                    }
-
+                    var img = imageFiles[i];
                     var rawName = Path.GetFileNameWithoutExtension(img.FileName ?? img.FullPath);
                     if (string.IsNullOrWhiteSpace(rawName)) rawName = "Partition";
 
-                    var sanitized = SanitizeFileName(rawName);
-                    var localPdfPath = GetUniqueFilePath(rootDir, sanitized, ".pdf");
-
-                    await _pdfService.ConvertImagesToPdfAsync(new[] { tempPath }, localPdfPath);
-
-                    var score = new Score
+                    if (imageFiles.Count > 1)
                     {
-                        Title = rawName,
-                        FilePath = _settingsService.GetRelativePath(localPdfPath),
-                        Type = ScoreType.PDF,
-                        DateAdded = DateTime.Now
-                    };
+                        ConversionStateChanged?.Invoke(true, $"Conversion ({i + 1}/{imageFiles.Count}) :\n\"{rawName}\"...");
+                    }
+                    else
+                    {
+                        ConversionStateChanged?.Invoke(true, $"Conversion en cours :\n\"{rawName}\"...");
+                    }
 
-                    await _databaseService.SaveScoreAsync(score);
-                    results.Add(score);
+                    var ext = Path.GetExtension(img.FileName ?? img.FullPath);
+                    if (string.IsNullOrWhiteSpace(ext)) ext = ".jpg";
+                    var cleanExt = new string(ext.Where(c => char.IsLetterOrDigit(c) || c == '.').ToArray());
+                    if (string.IsNullOrWhiteSpace(cleanExt)) cleanExt = ".jpg";
+
+                    var tempPath = Path.Combine(cacheDir, $"{Guid.NewGuid()}{cleanExt}");
+                    try
+                    {
+                        using (var src = await img.OpenReadAsync())
+                        using (var dst = File.Create(tempPath))
+                        {
+                            await src.CopyToAsync(dst);
+                        }
+
+                        var sanitized = SanitizeFileName(rawName);
+                        var localPdfPath = GetUniqueFilePath(rootDir, sanitized, ".pdf");
+
+                        await _pdfService.ConvertImagesToPdfAsync(new[] { tempPath }, localPdfPath);
+
+                        var score = new Score
+                        {
+                            Title = rawName,
+                            FilePath = _settingsService.GetRelativePath(localPdfPath),
+                            Type = ScoreType.PDF,
+                            DateAdded = DateTime.Now
+                        };
+
+                        await _databaseService.SaveScoreAsync(score);
+                        results.Add(score);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[ImportService] Erreur conversion image {img.FileName} : {ex.Message}");
+                        await Shell.Current.DisplayAlertAsync("Erreur de conversion", $"Impossible de convertir {Path.GetFileName(img.FileName ?? "l'image")} en PDF : {ex.Message}", "OK");
+                    }
+                    finally
+                    {
+                        try { if (File.Exists(tempPath)) File.Delete(tempPath); } catch { }
+                    }
                 }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"[ImportService] Erreur conversion image {img.FileName} : {ex.Message}");
-                    await Shell.Current.DisplayAlertAsync("Erreur de conversion", $"Impossible de convertir {Path.GetFileName(img.FileName ?? "l'image")} en PDF : {ex.Message}", "OK");
-                }
-                finally
-                {
-                    try { if (File.Exists(tempPath)) File.Delete(tempPath); } catch { }
-                }
+            }
+            finally
+            {
+                ConversionStateChanged?.Invoke(false, null);
             }
 
             return results;

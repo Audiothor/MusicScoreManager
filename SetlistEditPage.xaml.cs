@@ -136,7 +136,7 @@ public partial class SetlistEditPage : ContentPage
             }
 
             var allScores = _orderedScores.Select(os => os.Score).ToList();
-            int index = allScores.IndexOf(orderedScore.Score);
+            int index = _orderedScores.IndexOf(orderedScore);
             
             await Navigation.PushAsync(new ViewerPage(
                 orderedScore.Score, 
@@ -205,15 +205,29 @@ public partial class SetlistEditPage : ContentPage
         bool added = false;
         foreach (var score in selectedScores)
         {
-            if (!_orderedScores.Any(os => os.Score.Id == score.Id))
-            {
-                _orderedScores.Add(new OrderedScore { Score = score, DisplayOrder = _orderedScores.Count + 1 });
-                added = true;
-            }
+            _orderedScores.Add(new OrderedScore { Score = score, DisplayOrder = _orderedScores.Count + 1, IsLocked = _isLocked });
+            added = true;
         }
 
         if (added)
         {
+            _ = PrepareSetlistStatusAsync(_orderedScores.Select(os => os.Score).ToList());
+        }
+    }
+
+    private void OnDuplicateScoreClicked(object sender, EventArgs e)
+    {
+        if (sender is Button button && button.CommandParameter is OrderedScore orderedScore)
+        {
+            int index = _orderedScores.IndexOf(orderedScore);
+            var duplicate = new OrderedScore
+            {
+                Score = orderedScore.Score,
+                DisplayOrder = index + 2,
+                IsLocked = _isLocked
+            };
+            _orderedScores.Insert(index + 1, duplicate);
+            UpdateOrderNumbers();
             _ = PrepareSetlistStatusAsync(_orderedScores.Select(os => os.Score).ToList());
         }
     }

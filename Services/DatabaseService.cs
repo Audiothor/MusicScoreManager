@@ -384,10 +384,7 @@ namespace MusicScoreManager.Services
 
             var scoreIds = existingAssociations.Select(ss => ss.ScoreId).ToList();
 
-            // Si la partition était déjà dans la setlist, on retire son ancienne position pour éviter les doublons
-            scoreIds.RemoveAll(id => id == scoreId);
-
-            // On insère en première position (index 0)
+            // On insère en première position (index 0), en autorisant les doublons
             scoreIds.Insert(0, scoreId);
 
             await UpdateSetlistScoresAsync(setlistId, scoreIds);

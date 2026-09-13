@@ -1,6 +1,5 @@
 using MusicScoreManager.Models;
 using MusicScoreManager.Services;
-using System.Collections.ObjectModel;
 using Microsoft.Maui.Controls.Shapes;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -13,8 +12,10 @@ public partial class ScoreSelectionPage : ContentPage
     private List<Score> _allScores = new();
     private List<Tag> _allTags = new();
     private List<SelectableScore> _selectableScores = new();
-    private int? _selectedTagId;
-    
+    private readonly HashSet<int> _selectedTagIds = new();
+    private bool _matchAllTags = false;
+    private string _currentSort = "TitleAsc";
+
     public TaskCompletionSource<IEnumerable<Score>> SelectionTask { get; } = new();
 
     public ScoreSelectionPage(DatabaseService databaseService)
@@ -33,12 +34,24 @@ public partial class ScoreSelectionPage : ContentPage
     {
         _allScores = await _databaseService.GetScoresAsync();
         _allTags = await _databaseService.GetTagsAsync();
-        
+
         // Initialiser la liste des scores sélectionnables
-        _selectableScores = _allScores.Select(s => new SelectableScore { Score = s }).ToList();
-        
+        _selectableScores = _allScores.Select(s =>
+        {
+            var item = new SelectableScore { Score = s };
+            item.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == nameof(SelectableScore.IsSelected))
+                {
+                    UpdateConfirmButtonText();
+                }
+            };
+            return item;
+        }).ToList();
+
         PopulateTags();
         FilterScores();
+        UpdateConfirmButtonText();
     }
 
     private void PopulateTags()
@@ -46,30 +59,61 @@ public partial class ScoreSelectionPage : ContentPage
         TagFiltersStack.Children.Clear();
 
         // "Tous" chip
-        var allChip = CreateTagChip("Tous", null, "#333333");
+        bool isAll = _selectedTagIds.Count == 0;
+        var allChip = CreateChip("Tous", () =>
+        {
+            _selectedTagIds.Clear();
+            PopulateTags();
+            FilterScores();
+        }, isAll ? "#007ACC" : "#333333", isAll);
         TagFiltersStack.Children.Add(allChip);
+
+        // Chip Mode ET / OU si plusieurs tags sélectionnés
+        if (_selectedTagIds.Count > 1)
+        {
+            string modeText = _matchAllTags ? "Mode : ET (Toutes) ⇄" : "Mode : OU (Au moins une) ⇄";
+            var modeChip = CreateChip(modeText, () =>
+            {
+                _matchAllTags = !_matchAllTags;
+                PopulateTags();
+                FilterScores();
+            }, "#444444", true);
+            TagFiltersStack.Children.Add(modeChip);
+        }
 
         foreach (var tag in _allTags)
         {
-            var chip = CreateTagChip(tag.Name, tag.Id, tag.ColorHex);
+            bool isSelected = _selectedTagIds.Contains(tag.Id);
+            string displayText = isSelected ? $"✓ {tag.Name}" : tag.Name;
+            var chip = CreateChip(displayText, () =>
+            {
+                if (_selectedTagIds.Contains(tag.Id))
+                    _selectedTagIds.Remove(tag.Id);
+                else
+                    _selectedTagIds.Add(tag.Id);
+
+                PopulateTags();
+                FilterScores();
+            }, tag.ColorHex, isSelected);
+
             TagFiltersStack.Children.Add(chip);
         }
     }
 
-    private View CreateTagChip(string text, int? tagId, string colorHex)
+    private View CreateChip(string text, Action onTapped, string colorHex, bool isSelected)
     {
         var border = new Border
         {
             BackgroundColor = Color.FromArgb(colorHex),
-            Padding = new Thickness(15, 5, 10, 5),
-            StrokeThickness = _selectedTagId == tagId ? 2 : 0,
+            Padding = new Thickness(14, 5, 14, 5),
+            StrokeThickness = isSelected ? 2 : 0,
             Stroke = Colors.White,
             StrokeShape = new RoundRectangle { CornerRadius = 15 }
         };
 
         border.Content = new Label
         {
-            Text = text + "  ",
+            Text = text,
             TextColor = Colors.White,
             FontAttributes = FontAttributes.Bold,
             FontSize = 12,
@@ -77,11 +121,7 @@ public partial class ScoreSelectionPage : ContentPage
         };
 
         var tapGesture = new TapGestureRecognizer();
-        tapGesture.Tapped += (s, e) => {
-            _selectedTagId = tagId;
-            PopulateTags();
-            FilterScores();
-        };
+        tapGesture.Tapped += (s, e) => onTapped();
         border.GestureRecognizers.Add(tapGesture);
 
         return border;
@@ -89,20 +129,76 @@ public partial class ScoreSelectionPage : ContentPage
 
     private void FilterScores()
     {
-        string query = SearchScoreBar.Text ?? "";
+        string query = SearchScoreBar.Text?.Trim() ?? "";
         var filtered = _selectableScores.AsEnumerable();
 
         if (!string.IsNullOrWhiteSpace(query))
         {
-            filtered = filtered.Where(s => s.Score.Title.Contains(query, StringComparison.OrdinalIgnoreCase));
+            filtered = filtered.Where(s =>
+                (s.Score.Title != null && s.Score.Title.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                (s.Score.Composer != null && s.Score.Composer.Contains(query, StringComparison.OrdinalIgnoreCase)));
         }
 
-        if (_selectedTagId.HasValue)
+        if (_selectedTagIds.Count > 0)
         {
-            filtered = filtered.Where(s => s.Score.AppliedTags.Any(t => t.Id == _selectedTagId.Value));
+            if (_matchAllTags)
+            {
+                filtered = filtered.Where(s => _selectedTagIds.All(id => s.Score.AppliedTags.Any(t => t.Id == id)));
+            }
+            else
+            {
+                filtered = filtered.Where(s => _selectedTagIds.Any(id => s.Score.AppliedTags.Any(t => t.Id == id)));
+            }
         }
+
+        // Tri
+        filtered = _currentSort switch
+        {
+            "TitleDesc" => filtered.OrderByDescending(s => s.Score.Title),
+            "DateDesc" => filtered.OrderByDescending(s => s.Score.DateAdded),
+            "DateAsc" => filtered.OrderBy(s => s.Score.DateAdded),
+            "ComposerAsc" => filtered.OrderBy(s => string.IsNullOrEmpty(s.Score.Composer) ? "ZZZ" : s.Score.Composer).ThenBy(s => s.Score.Title),
+            "TagsAsc" => filtered.OrderBy(s => s.Score.AppliedTags.FirstOrDefault()?.Name ?? "ZZZ").ThenBy(s => s.Score.Title),
+            "TagMatches" => filtered.OrderByDescending(s => s.Score.AppliedTags.Count(t => _selectedTagIds.Contains(t.Id))).ThenBy(s => s.Score.Title),
+            _ => filtered.OrderBy(s => s.Score.Title) // "TitleAsc"
+        };
 
         ScoresCollectionView.ItemsSource = filtered.ToList();
+    }
+
+    private async void OnSortClicked(object sender, EventArgs e)
+    {
+        var options = new List<string>
+        {
+            "Titre (A-Z)",
+            "Titre (Z-A)",
+            "Date d'ajout (Récent)",
+            "Date d'ajout (Ancien)",
+            "Compositeur (A-Z)",
+            "Par étiquettes (A-Z)"
+        };
+
+        if (_selectedTagIds.Count > 0)
+        {
+            options.Add("Correspondance d'étiquettes (Pertinence)");
+        }
+
+        string action = await DisplayActionSheetAsync("Trier par", "Annuler", null, options.ToArray());
+        if (string.IsNullOrEmpty(action) || action == "Annuler") return;
+
+        _currentSort = action switch
+        {
+            "Titre (A-Z)" => "TitleAsc",
+            "Titre (Z-A)" => "TitleDesc",
+            "Date d'ajout (Récent)" => "DateDesc",
+            "Date d'ajout (Ancien)" => "DateAsc",
+            "Compositeur (A-Z)" => "ComposerAsc",
+            "Par étiquettes (A-Z)" => "TagsAsc",
+            "Correspondance d'étiquettes (Pertinence)" => "TagMatches",
+            _ => "TitleAsc"
+        };
+
+        FilterScores();
     }
 
     private void OnSearchBarTextChanged(object sender, TextChangedEventArgs e)
@@ -116,11 +212,17 @@ public partial class ScoreSelectionPage : ContentPage
         {
             if (selectable.Score.IsFileMissing)
             {
-                await this.DisplayAlertAsync("Fichier manquant", "Cette partition ne peut pas être ajoutée car son fichier est introuvable.", "OK");
+                await DisplayAlertAsync("Fichier manquant", "Cette partition ne peut pas être ajoutée car son fichier est introuvable.", "OK");
                 return;
             }
             selectable.IsSelected = !selectable.IsSelected;
         }
+    }
+
+    private void UpdateConfirmButtonText()
+    {
+        int count = _selectableScores.Count(s => s.IsSelected);
+        ConfirmButton.Text = count > 0 ? $"Ajouter à la Setlist ({count})" : "Ajouter à la Setlist";
     }
 
     private async void OnConfirmSelectionClicked(object sender, EventArgs e)
@@ -139,7 +241,6 @@ public partial class ScoreSelectionPage : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-        // Assurer que la tâche se termine si l'utilisateur utilise le bouton retour du système
         SelectionTask.TrySetResult(Enumerable.Empty<Score>());
     }
 }
@@ -148,10 +249,10 @@ public class SelectableScore : INotifyPropertyChanged
 {
     private bool _isSelected;
     public Score Score { get; set; } = null!;
-    public bool IsSelected 
-    { 
-        get => _isSelected; 
-        set { _isSelected = value; OnPropertyChanged(); } 
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set { _isSelected = value; OnPropertyChanged(); }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

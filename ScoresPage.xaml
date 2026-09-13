@@ -860,6 +860,50 @@
                 </Grid>
             </Border>
         </ContentView>
+
+        <!-- Modal bloquant de conversion d'image en cours -->
+        <ContentView x:Name="ConversionLoadingOverlay" 
+                     Grid.RowSpan="3"
+                     IsVisible="False" 
+                     BackgroundColor="#B0000000" 
+                     InputTransparent="False"
+                     ZIndex="1000">
+            <Border BackgroundColor="#1E1E1E" 
+                    Stroke="#007ACC"
+                    StrokeThickness="2"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" 
+                    WidthRequest="320"
+                    Padding="25">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
+                    <ActivityIndicator IsRunning="True" 
+                                       Color="#007ACC" 
+                                       HeightRequest="55" 
+                                       WidthRequest="55" 
+                                       HorizontalOptions="Center" />
+                    <Label Text="Conversion en cours" 
+                           TextColor="White" 
+                           FontAttributes="Bold" 
+                           FontSize="18" 
+                           HorizontalOptions="Center" 
+                           HorizontalTextAlignment="Center" />
+                    <Label x:Name="ConversionStatusLabel"
+                           Text="Conversion de l'image en PDF..." 
+                           TextColor="#CCCCCC" 
+                           FontSize="14" 
+                           HorizontalOptions="Center" 
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="Veuillez patienter..." 
+                           TextColor="#888888" 
+                           FontSize="12" 
+                           FontAttributes="Italic"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+        </ContentView>
     </Grid>
 
 </ContentPage>

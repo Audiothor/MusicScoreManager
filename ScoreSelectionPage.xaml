@@ -8,26 +8,39 @@
 
     <Grid RowDefinitions="Auto, Auto, *, Auto">
         
-        <!-- Recherche -->
-        <Grid Grid.Row="0" Margin="15,15,15,10">
-            <SearchBar x:Name="SearchScoreBar"
-                       Placeholder="Rechercher par nom..."
+        <!-- Recherche et Tri -->
+        <Grid Grid.Row="0" Margin="15,15,15,8" ColumnDefinitions="*, Auto" ColumnSpacing="10">
+            <SearchBar Grid.Column="0"
+                       x:Name="SearchScoreBar"
+                       Placeholder="Rechercher par titre, compositeur..."
                        PlaceholderColor="#888888"
                        TextColor="#FFFFFF"
                        BackgroundColor="#1E1E1E"
                        TextChanged="OnSearchBarTextChanged" />
+
+            <Button Grid.Column="1"
+                    x:Name="SortButton"
+                    Text="⇅"
+                    FontSize="20"
+                    FontAttributes="Bold"
+                    WidthRequest="50"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    BackgroundColor="#333333"
+                    TextColor="White"
+                    Clicked="OnSortClicked" />
         </Grid>
 
-        <!-- Filtres par Tags -->
-        <ScrollView Grid.Row="1" Orientation="Horizontal" Margin="15,0,15,15" HeightRequest="40">
-            <HorizontalStackLayout x:Name="TagFiltersStack" Spacing="10" VerticalOptions="Center" />
+        <!-- Filtres par Tags & Options -->
+        <ScrollView Grid.Row="1" Orientation="Horizontal" Margin="15,0,15,10" HeightRequest="40">
+            <HorizontalStackLayout x:Name="TagFiltersStack" Spacing="8" VerticalOptions="Center" />
         </ScrollView>
 
         <!-- Liste des partitions -->
         <CollectionView Grid.Row="2"
                         x:Name="ScoresCollectionView"
                         Margin="15,0"
-                        SelectionMode="None"> <!-- Mode None car on gère par CheckBox -->
+                        SelectionMode="None">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10" />
             </CollectionView.ItemsLayout>
@@ -45,7 +58,7 @@
                         </Border.GestureRecognizers>
                         
                         <Grid ColumnDefinitions="*, Auto">
-                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <VerticalStackLayout Grid.Column="0" Spacing="3">
                                 <HorizontalStackLayout Spacing="5">
                                     <Label Text="⚠️" 
                                            TextColor="Red" 
@@ -66,6 +79,9 @@
                                         </Label.Triggers>
                                     </Label>
                                 </HorizontalStackLayout>
+                                <Label Text="{Binding Score.Composer}" 
+                                       TextColor="#AAAAAA" 
+                                       FontSize="12" />
                                 <FlexLayout BindableLayout.ItemsSource="{Binding Score.AppliedTags}"
                                             Wrap="Wrap"
                                             Direction="Row">
@@ -106,6 +122,7 @@
                     TextColor="White"
                     Clicked="OnCancelClicked" />
             <Button Grid.Column="1"
+                    x:Name="ConfirmButton"
                     Text="Ajouter à la Setlist"
                     BackgroundColor="#007ACC"
                     TextColor="White"

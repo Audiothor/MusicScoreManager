@@ -161,18 +161,27 @@
                                    Margin="0,-1,0,0" />
                         </Border>
 
-                        <!-- Bouton Supprimer (Reste à droite) -->
-                        <Button Grid.Column="3" 
-                                Text="✕" 
-                                BackgroundColor="Transparent" 
-                                TextColor="#FF4444" 
-                                FontSize="18"
-                                WidthRequest="40"
-                                HeightRequest="40"
-                                Padding="0"
-                                IsVisible="{Binding IsNotLocked}"
-                                Clicked="OnRemoveScoreClicked" 
-                                CommandParameter="{Binding .}" />
+                        <!-- Actions : Dupliquer et Supprimer -->
+                        <HorizontalStackLayout Grid.Column="3" Spacing="0" VerticalOptions="Center" IsVisible="{Binding IsNotLocked}">
+                            <Button Text="⧉" 
+                                    BackgroundColor="Transparent" 
+                                    TextColor="#007ACC" 
+                                    FontSize="16"
+                                    WidthRequest="36"
+                                    HeightRequest="40"
+                                    Padding="0"
+                                    Clicked="OnDuplicateScoreClicked" 
+                                    CommandParameter="{Binding .}" />
+                            <Button Text="✕" 
+                                    BackgroundColor="Transparent" 
+                                    TextColor="#FF4444" 
+                                    FontSize="18"
+                                    WidthRequest="36"
+                                    HeightRequest="40"
+                                    Padding="0"
+                                    Clicked="OnRemoveScoreClicked" 
+                                    CommandParameter="{Binding .}" />
+                        </HorizontalStackLayout>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

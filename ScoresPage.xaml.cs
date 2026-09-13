@@ -51,6 +51,8 @@ public partial class ScoresPage : ContentPage
 
         _currentSort = Preferences.Default.Get("DefaultScoreSort", "DateDesc");
 
+        _importService.ConversionStateChanged += OnConversionStateChanged;
+
         WifiDevicesListView.ItemsSource = _discoveredDevices;
     }
 
@@ -932,6 +934,18 @@ public partial class ScoresPage : ContentPage
         await LoadScoresAsync(e.NewTextValue);
     }
 
+    private void OnConversionStateChanged(bool isConverting, string? statusMessage)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            ConversionLoadingOverlay.IsVisible = isConverting;
+            if (!string.IsNullOrEmpty(statusMessage))
+            {
+                ConversionStatusLabel.Text = statusMessage;
+            }
+        });
+    }
+
     private async void OnImportClicked(object sender, EventArgs e)
     {
         var scores = await _importService.ImportScoresAsync();
@@ -944,8 +958,8 @@ public partial class ScoresPage : ContentPage
             await LoadScoresAsync(string.Empty);
 
             string msg = scores.Count == 1
-                ? $"La partition \"{scores[0].Title}\" a été importée avec succès."
-                : $"{scores.Count} partitions ont été importées avec succès.";
+                ? $"La partition \"{scores[0].Title}\" a été importée et est disponible dans votre bibliothèque."
+                : $"{scores.Count} partitions ont été importées et sont disponibles dans votre bibliothèque.";
             await DisplayAlertAsync("Import terminé", msg, "OK");
         }
     }
