@@ -63,6 +63,7 @@ plugins:
           nav_translations:
             Accueil: Home
             Guide des Menus: Menu Guide
+            Description & Installation: Description & Installation
             Menu Partitions: Scores Menu
             Menu Setlists: Setlists Menu
             Visualiseur & Scène: Viewer & Stage Mode
@@ -90,6 +91,7 @@ markdown_extensions:
 nav:
   - Accueil: index.md
   - Guide des Menus:
+      - Description & Installation: guide/installation.md
       - Menu Partitions: guide/scores.md
       - Menu Setlists: guide/setlists.md
       - Visualiseur & Scène: guide/viewer.md
