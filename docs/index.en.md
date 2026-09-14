@@ -18,7 +18,7 @@ graph TD
     A --> C6[6. Technical Details & Privacy]
 ```
 
-1. **[Chapter 1: Full Description of the App, Installation & Prerequisites](guide/scores.en.md)**  
+1. **[Chapter 1: Full Description of the App, Installation & Prerequisites](guide/installation.en.md)**  
    Philosophy, highlights, 100% offline autonomy, zero latency (< 50ms), stage-optimized Dark Mode, hardware requirements (Android 12+, Windows 10/11), and installation / build procedures.
 
 2. **[Chapter 2: Scores — Actions, Library & Fullscreen Stage Viewer](guide/scores.en.md)**  
@@ -40,6 +40,7 @@ graph TD
 
 ## 🧭 Quick Access to Guides
 
+- [🚀 Chapter 1: Description & Installation](guide/installation.en.md)
 - [🎵 Scores Menu Guide](guide/scores.en.md)
 - [📖 Viewer & Stage Mode Guide](guide/viewer.en.md)
 - [📋 Setlists Menu Guide](guide/setlists.en.md)
