@@ -1,6 +1,6 @@
 <h1 style="text-align: center;">Music Score Manager</h1>
 <p style="text-align: center;">
-  <img src="../site/assets/images/MusicScoreManager.png" alt="Music Score Manager" style="max-width: 100%; height: auto;">
+  <img src="images/MusicScoreManager.png" alt="Music Score Manager" style="max-width: 100%; height: auto;">
 </p>
 
 Bienvenue sur la documentation complète et détaillée de **Music Score Manager**, l'application ***GRATUITE et SANS PUBLICITE*** multiplateforme (Android / Windows) conçue sur mesure pour les musiciens solistes, ensembles, chorales et orchestres.
@@ -8,7 +8,7 @@ Il a été développé pour répondre aux besoins des musiciens issus de conserv
 
 ---
 
-## Pourquoi utiliser Music Score Manager ?
+<h2 style="text-align: center;">Pourquoi utiliser Music Score Manager ?</h2>
 
 1. **Visualiseur de partitions**
     Affichage rapide, multipages, zooms, editions du compositeurs, ajout d'étiquettes, filtres nombreux...
