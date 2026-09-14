@@ -45,32 +45,69 @@ L'application élimine définitivement les classeurs papier volumineux et rempla
 
 ## 1.4 Installation & Déploiement
 
-### Méthode 1 : Installation du Package APK (Android)
+### 📱 Pour Android
 
-1. Téléchargez la dernière version du fichier APK signé (`MusicScoreManager-vX.Y.Z.apk`) depuis les [Releases GitHub](https://github.com/Audiothor/MusicScoreManager/releases).
+#### Méthode 1 : Installation via le Google Play Store (Recommandé)
+
+C'est la méthode la plus simple, rapide et sécurisée pour installer et maintenir à jour **Music Score Manager** :
+
+1. Ouvrez l'application **Google Play Store** sur votre tablette ou smartphone Android.
+2. Recherchez **Music Score Manager** (par *Audiothor*) ou accédez directement à la fiche du store :  
+   👉 [**Music Score Manager sur Google Play Store**](https://play.google.com/store/apps/details?id=com.audiothor.musicscoremanager)
+3. Appuyez sur **Installer**.
+4. L'application est installée en quelques secondes et recevra automatiquement toutes les futures mises à jour officielles.
+
+#### Méthode 2 : Installation Manuelle via le Package APK (Hors-Ligne)
+
+Pour les musiciens ne disposant pas des services Google ou souhaitant une installation autonome hors-ligne :
+
+1. Téléchargez la dernière version du fichier APK signé (`MusicScoreManager-vX.Y.Z.apk`) depuis les [Releases officielles sur GitHub](https://github.com/Audiothor/MusicScoreManager/releases).
 2. Sur votre tablette ou smartphone Android, autorisez l'installation d'applications provenant de sources inconnues pour votre navigateur ou explorateur de fichiers (*Paramètres > Sécurité > Installer applications inconnues*).
 3. Ouvrez le fichier APK téléchargé et validez l'installation.
-4. Au premier lancement, accordez les permissions requises pour l'accès aux fichiers multimédias, le Bluetooth et la détection d'appareils locaux.
+4. Au premier lancement, accordez les permissions requises pour l'accès aux fichiers multimédias, le Bluetooth (pour les pédaliers) et la détection d'appareils locaux (pour le Wi-Fi Direct).
 
-### Méthode 2 : Compilation & Déploiement depuis les Sources
+---
 
-Pour les développeurs souhaitant compiler et personnaliser l'application :
+### 💻 Pour Windows (PC, Portables & Tablettes Surface)
+
+**Music Score Manager** fonctionne nativement sur **Windows 10** (build 19041+) et **Windows 11** avec support complet des écrans tactiles, du stylet, de la souris et des raccourcis clavier :
+
+#### Méthode 1 : Téléchargement Direct de la Version Windows
+
+1. Rendez-vous sur les [Releases GitHub](https://github.com/Audiothor/MusicScoreManager/releases) et téléchargez la dernière archive Windows (ex. `MusicScoreManager-Windows-vX.Y.Z.zip` ou l'exécutable d'installation).
+2. Extrayez le contenu du fichier ZIP dans le dossier de votre choix (par exemple dans `C:\Programmes\MusicScoreManager` ou dans votre dossier utilisateur).
+3. Double-cliquez sur `MusicScoreManager.exe` pour lancer l'application.  
+   *(Optionnel : faites un clic droit sur l'exécutable pour créer un raccourci sur le Bureau ou l'épingler à la Barre des tâches).*
+4. **Remarque Windows SmartScreen** : Si un écran bleu « Windows a protégé votre ordinateur » s'affiche au premier démarrage, cliquez sur **« Informations complémentaires »** puis sur le bouton **« Exécuter quand même »**.
+
+---
+
+### 🛠️ Pour les Développeurs : Compilation depuis les Sources (.NET MAUI)
+
+Pour les développeurs souhaitant compiler et personnaliser l'application pour Android ou Windows :
 
 1. Installez le **SDK .NET 10** et les charges de travail .NET MAUI :
    ```powershell
    dotnet workload install maui
    dotnet workload install maui-android
+   dotnet workload install maui-windows
    ```
 2. Clonez le dépôt Git officiel :
    ```powershell
    git clone https://github.com/Audiothor/MusicScoreManager.git
    cd MusicScoreManager
    ```
-3. Ouvrez le projet dans **Visual Studio 2022** (avec composants MAUI) ou compilez en ligne de commande :
+3. Compilez selon la cible souhaitée :
    ```powershell
-   # Compilation et exécution directe sur tablette Android connectée en USB
+   # Pour Android : exécution directe sur tablette Android connectée en USB
    dotnet build -t:Run -f net10.0-android
 
-   # Génération du package Release APK signé pour distribution
+   # Pour Android : génération du package Release APK signé
    dotnet publish -f net10.0-android -c Release
+
+   # Pour Windows : compilation de la version exécutable Windows
+   dotnet build -f net10.0-windows10.0.19041.0 -c Release
+
+   # Pour Windows : publication du binaire complet autonome
+   dotnet publish -f net10.0-windows10.0.19041.0 -c Release
    ```
