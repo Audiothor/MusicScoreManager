@@ -48,31 +48,54 @@ L'application élimine définitivement les classeurs papier volumineux et rempla
 
 ### 1.3 Installation & Déploiement
 
-#### Méthode 1 : Installation du Package APK (Android)
-1. Téléchargez la dernière version du fichier APK (`MusicScoreManager-Signed.apk`) depuis les Releases du dépôt GitHub.
-2. Sur votre tablette ou smartphone Android, autorisez l'installation d'applications provenant de sources inconnues pour votre navigateur ou explorateur de fichiers (*Paramètres > Sécurité > Sources inconnues* ou *Installer applications inconnues*).
-3. Ouvrez le fichier APK et validez l'installation.
-4. Au premier lancement, accordez les permissions requises pour la gestion des fichiers multimédias, le Bluetooth et la détection d'appareils locaux.
+#### 📱 Pour Android
 
-#### Méthode 2 : Compilation & Déploiement depuis les Sources
-Pour les développeurs souhaitant compiler l'application :
+##### Méthode 1 : Installation via le Google Play Store (Recommandé)
+C'est la méthode la plus simple, la plus rapide et la plus sécurisée :
+1. Ouvrez le **Google Play Store** sur votre tablette ou smartphone Android.
+2. Recherchez **Music Score Manager** (développé par *Audiothor*) ou accédez directement à la fiche du store :  
+   👉 [**Music Score Manager sur Google Play Store**](https://play.google.com/store/apps/details?id=com.audiothor.musicscoremanager)
+3. Cliquez sur **Installer**. Les futures mises à jour officielles seront déployées automatiquement.
+
+##### Méthode 2 : Installation Manuelle via le Package APK (Hors-Ligne)
+Pour les appareils sans Google Play ou pour une utilisation 100% autonome :
+1. Téléchargez la dernière version du fichier APK signé (`MusicScoreManager-vX.Y.Z.apk`) depuis les [Releases du dépôt GitHub](https://github.com/Audiothor/MusicScoreManager/releases).
+2. Sur votre appareil Android, autorisez l'installation d'applications de sources inconnues (*Paramètres > Sécurité > Installer applications inconnues*).
+3. Ouvrez le fichier APK et validez l'installation.
+4. Au premier lancement, accordez les permissions requises pour les fichiers multimédias, le Bluetooth (pédaliers) et la détection locale (Wi-Fi Direct).
+
+---
+
+#### 💻 Pour Windows (PC, Portables & Tablettes Surface)
+**Music Score Manager** s'exécute nativement sous **Windows 10** (build 19041+) et **Windows 11** avec prise en charge du tactile, de la souris, du stylet et des raccourcis clavier :
+1. Téléchargez l'archive Windows (`MusicScoreManager-Windows-vX.Y.Z.zip`) depuis les [Releases GitHub](https://github.com/Audiothor/MusicScoreManager/releases).
+2. Extrayez l'archive dans le répertoire de votre choix (ex. `C:\Programmes\MusicScoreManager`).
+3. Lancez `MusicScoreManager.exe` (vous pouvez créer un raccourci Bureau ou l'épingler à la Barre des tâches).
+4. *(Si Windows SmartScreen affiche un écran de protection au 1er lancement, cliquez sur « Informations complémentaires » puis « Exécuter quand même »).*
+
+---
+
+#### 🛠️ Pour les Développeurs : Compilation depuis les Sources (.NET MAUI)
 1. Installez le **SDK .NET 10** et les charges de travail .NET MAUI :
    ```powershell
    dotnet workload install maui
    dotnet workload install maui-android
+   dotnet workload install maui-windows
    ```
 2. Clonez le dépôt Git officiel :
    ```powershell
    git clone https://github.com/Audiothor/MusicScoreManager.git
    cd MusicScoreManager
    ```
-3. Ouvrez le projet dans **Visual Studio 2022** (avec composants MAUI) ou compilez en ligne de commande :
+3. Compilez selon la plateforme ciblée :
    ```powershell
-   # Compilation et exécution directe sur tablette Android connectée en USB
-   dotnet build -t:Run -f net10.0-android36.0
+   # Pour Android : compilation et déploiement USB
+   dotnet build -t:Run -f net10.0-android
+   dotnet publish -f net10.0-android -c Release
 
-   # Génération du package Release APK pour distribution
-   dotnet publish -f net10.0-android36.0 -c Release
+   # Pour Windows : compilation exécutable Release
+   dotnet build -f net10.0-windows10.0.19041.0 -c Release
+   dotnet publish -f net10.0-windows10.0.19041.0 -c Release
    ```
 
 ---

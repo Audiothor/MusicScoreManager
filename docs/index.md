@@ -10,35 +10,35 @@ Il a été développé pour répondre aux besoins des musiciens issus de conserv
 
 <h2 style="text-align: center;">Pourquoi utiliser Music Score Manager ?</h2>
 
-1. **Visualiseur de partitions**
-    Affichage rapide, multipages, zooms, editions du compositeurs, ajout d'étiquettes, filtres nombreux...
-2. **Gestion Puissante des Setlists**
+1. **Visualiseur de partitions**  
+   Affichage rapide, multipages, zooms, editions du compositeurs, ajout d'étiquettes, filtres nombreux...
+2. **Gestion Puissante des Setlists**  
     Ordonancement, parametres de lectures de liste…
-3. **Partages de partitions et de Setlists immédiats (sans internet)**
+3. **Partages de partitions et de Setlists immédiats (sans internet)**  
     100% autonome sur scène : Envoi de partitions uniques ou de programmes complets incluant les annotations manuscrites et les fichiers audio d'accompagnement.
     Mode Leader avec QR Code pour distribuer un programme à tout un pupitre en quelques secondes.
-4. **Prise en Charge Totale des Pédales Bluetooth / Tourne-Pages**
+4. **Prise en Charge Totale des Pédales Bluetooth / Tourne-Pages**  
     Mains libres sur l'instrument : Compatible avec tous les pédaliers Bluetooth du marché (AirTurn, PageFlip, Donner, Coda, CubeSuite...).
     Mappage personnalisé complet : Affectation libre des touches physiques pour tourner les pages, naviguer, déclencher le métronome ou piloter le lecteur audio.
-5. **Atelier d'Annotations Musicales & Bibliothèque de Stickers (+100 symboles)**
+5. **Atelier d'Annotations Musicales & Bibliothèque de Stickers (+100 symboles)**  
     Outils réalistes : Surligneur fluo biseauté translucide (qui ne masque pas les portées ni les paroles), crayon fin à opaque, et saisie de texte libre.
     Plus de 100 stickers musicaux professionnels classés par catégories : nuances, doigtés d'instruments, signes de reprise (Coda, Segno, Da Capo), respirations,     coups d'archet, etc. et paramétrage de ses favoris
     Historique Undo / Redo illimité pour corriger sans stress.
-6. **Métronome Haute Précision**
+6. **Métronome Haute Précision**  
     Avec son du métronome ou pas
     Signal visuel LED pulsé synchronisé sur les temps forts et faibles.
     Option silencieuse à la volée : Coupure instantanée du son tout en conservant le repère visuel de la pulsation LED pendant le concert.
-7. **Lecteur Audio Multipiste Synchronisé aux Morceaux**
+7. **Lecteur Audio Multipiste Synchronisé aux Morceaux**  
     Rapprochement d'une ou plusieurs pistes d'accompagnement (MP3, WAV, AAC, FLAC, OGG) à chaque partition.
     Barre de transport compacte intégrée au visualiseur pour lancer les bandes orchestre, playbacks ou enregistrements de témoins sans quitter la partition des yeux.
     Réglage du pré-compte et du volume d'écoute relatif.
-8. **Import Intelligent & Fusion d'Images en PDF Haute Définition**
+8. **Import Intelligent & Fusion d'Images en PDF Haute Définition**  
     Conversion d'images et photos : Photographiez une partition papier avec votre tablette ; l'application propose soit de générer des pages individuelles, soit de     les fusionner automatiquement en 1 seule partition PDF multi-pages, avec modal bloquant et barre d'état en direct.
-9. **Atelier d'Assemblage PDF Embarqué**
+9. **Atelier d'Assemblage PDF Embarqué**  
     Pas besoin d'ordinateur ou d'outil externe : réorganisez les pages d'une partition directement dans l'application par simple glisser-déposer tactile.
     Rotation individuelle des pages à 90°, 180° ou 270° (très pratique pour les pages numérisées à l'envers ou en format paysage).
     Suppression de pages blanches et insertion de nouvelles pages à la volée.
-10. **Classification Dynamique & Filtrage Multi-Étiquettes (Mode ET / OU)**
+10. **Classification Dynamique & Filtrage Multi-Étiquettes (Mode ET / OU)**  
 
 
 Et beaucoup d'autres fonctionnalités...

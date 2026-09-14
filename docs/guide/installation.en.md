@@ -45,32 +45,69 @@ The app completely replaces heavy physical sheet music binders and generic PDF v
 
 ## 1.4 Installation & Deployment
 
-### Method 1: Installing the APK Package (Android)
+### 📱 For Android
 
-1. Download the latest signed APK file (`MusicScoreManager-vX.Y.Z.apk`) from [GitHub Releases](https://github.com/Audiothor/MusicScoreManager/releases).
+#### Method 1: Installing via the Google Play Store (Recommended)
+
+This is the easiest, fastest, and most secure way to install and keep **Music Score Manager** up to date:
+
+1. Open the **Google Play Store** on your Android tablet or smartphone.
+2. Search for **Music Score Manager** (by *Audiothor*) or click the direct store link:  
+   👉 [**Music Score Manager on Google Play Store**](https://play.google.com/store/apps/details?id=com.audiothor.musicscoremanager)
+3. Tap **Install**.
+4. The application will be installed within seconds and will automatically receive future official updates.
+
+#### Method 2: Manual Installation via APK Package (Offline / Without Google Play)
+
+For musicians without Google Play Services or those looking for an autonomous offline install:
+
+1. Download the latest signed APK file (`MusicScoreManager-vX.Y.Z.apk`) from official [GitHub Releases](https://github.com/Audiothor/MusicScoreManager/releases).
 2. On your Android device, allow installing apps from unknown sources for your browser or file manager (*Settings > Security > Install unknown apps*).
 3. Open the downloaded APK file and confirm installation.
-4. On first launch, grant the required permissions for media storage, Bluetooth, and local device detection.
+4. On first launch, grant the required permissions for media storage, Bluetooth (for page turners), and local device discovery (for Wi-Fi Direct).
 
-### Method 2: Building and Deploying from Source
+---
 
-For developers looking to build and customize the app:
+### 💻 For Windows (PC, Laptops & Surface Tablets)
+
+**Music Score Manager** runs natively on **Windows 10** (build 19041+) and **Windows 11** with full support for touch screens, styluses, mouse, and keyboard shortcuts:
+
+#### Method 1: Direct Download of the Windows Version
+
+1. Go to [GitHub Releases](https://github.com/Audiothor/MusicScoreManager/releases) and download the latest Windows package (e.g., `MusicScoreManager-Windows-vX.Y.Z.zip` or the installer).
+2. Extract the ZIP archive to your preferred directory (e.g., `C:\Program Files\MusicScoreManager` or your user folder).
+3. Double-click `MusicScoreManager.exe` to launch the application.  
+   *(Optional: right-click the executable to create a Desktop shortcut or pin it to your Taskbar).*
+4. **Windows SmartScreen Note**: If a blue screen appears stating "Windows protected your PC", click **"More info"** and then **"Run anyway"**.
+
+---
+
+### 🛠️ For Developers: Building from Source (.NET MAUI)
+
+For developers who want to compile and customize the application for Android or Windows:
 
 1. Install the **.NET 10 SDK** and .NET MAUI workloads:
    ```powershell
    dotnet workload install maui
    dotnet workload install maui-android
+   dotnet workload install maui-windows
    ```
 2. Clone the official Git repository:
    ```powershell
    git clone https://github.com/Audiothor/MusicScoreManager.git
    cd MusicScoreManager
    ```
-3. Open the project in **Visual Studio 2022** (with MAUI components) or build via CLI:
+3. Build according to the desired target:
    ```powershell
-   # Build and deploy directly to USB-connected Android tablet
+   # For Android: deploy directly to USB-connected Android tablet
    dotnet build -t:Run -f net10.0-android
 
-   # Generate signed Release APK package for distribution
+   # For Android: generate signed Release APK package
    dotnet publish -f net10.0-android -c Release
+
+   # For Windows: compile Windows executable
+   dotnet build -f net10.0-windows10.0.19041.0 -c Release
+
+   # For Windows: publish standalone binary
+   dotnet publish -f net10.0-windows10.0.19041.0 -c Release
    ```
