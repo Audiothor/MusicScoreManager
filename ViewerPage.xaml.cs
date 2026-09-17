@@ -1526,14 +1526,7 @@ public partial class ViewerPage : ContentPage
         BottomTouchBar.IsVisible = !AnnotationBar.IsVisible;
 
         var score = _score;
-        await Navigation.PopToRootAsync();
-        await Shell.Current.GoToAsync("//ToolsPage");
-        var toolsPage = Shell.Current.CurrentPage as ToolsPage 
-            ?? Handler?.MauiContext?.Services.GetService<ToolsPage>();
-        if (toolsPage != null)
-        {
-            await toolsPage.OpenScoreInAssemblerAsync(score);
-        }
+        await ToolsPage.NavigateAndOpenScoreAsync(score, Navigation);
     }
 
     private async void OnEditScoreClicked(object sender, EventArgs e)

@@ -27,6 +27,50 @@ public partial class ToolsPage : ContentPage
     {
     }
 
+    public static Score? PendingScoreToAssemble { get; set; }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (PendingScoreToAssemble != null)
+        {
+            var scoreToOpen = PendingScoreToAssemble;
+            PendingScoreToAssemble = null;
+
+            await Task.Delay(100);
+            await OpenScoreInAssemblerAsync(scoreToOpen);
+        }
+    }
+
+    /// <summary>
+    /// Navigue de manière fiable vers l'onglet Outils et ouvre l'atelier d'assemblage avec la partition donnée.
+    /// Évite les problèmes d'asynchronisme de navigation du Shell.
+    /// </summary>
+    public static async Task NavigateAndOpenScoreAsync(Score score, INavigation? fallbackNavigation = null)
+    {
+        PendingScoreToAssemble = score;
+
+        if (fallbackNavigation != null)
+        {
+            try
+            {
+                await fallbackNavigation.PopToRootAsync();
+            }
+            catch { }
+        }
+
+        await Shell.Current.GoToAsync("//ToolsPage");
+
+        // Si ToolsPage est déjà actif et visible (auquel cas OnAppearing ne sera pas rappelé)
+        if (Shell.Current.CurrentPage is ToolsPage toolsPage && PendingScoreToAssemble != null)
+        {
+            PendingScoreToAssemble = null;
+            await Task.Delay(50);
+            await toolsPage.OpenScoreInAssemblerAsync(score);
+        }
+    }
+
     /// <summary>
     /// Ouvre directement l'atelier d'assemblage PDF pour modifier une partition spécifique.
     /// </summary>

@@ -1080,13 +1080,7 @@ public partial class ScoresPage : ContentPage
             var score = _selectedScoreForMenu;
             _selectedScoreForMenu = null;
 
-            await Shell.Current.GoToAsync("//ToolsPage");
-            var toolsPage = Shell.Current.CurrentPage as ToolsPage 
-                ?? Handler?.MauiContext?.Services.GetService<ToolsPage>();
-            if (toolsPage != null)
-            {
-                await toolsPage.OpenScoreInAssemblerAsync(score);
-            }
+            await ToolsPage.NavigateAndOpenScoreAsync(score);
         }
     }
 
