@@ -631,14 +631,7 @@ public partial class ScoreEditPage : ContentPage
     private async void OnModifyAssemblyClicked(object? sender, EventArgs e)
     {
         var score = _score;
-        await Navigation.PopToRootAsync();
-        await Shell.Current.GoToAsync("//ToolsPage");
-        var toolsPage = Shell.Current.CurrentPage as ToolsPage 
-            ?? Handler?.MauiContext?.Services.GetService<ToolsPage>();
-        if (toolsPage != null)
-        {
-            await toolsPage.OpenScoreInAssemblerAsync(score);
-        }
+        await ToolsPage.NavigateAndOpenScoreAsync(score, Navigation);
     }
 
     private string? FindFileRecursively(string dir, string fileName, long size)
