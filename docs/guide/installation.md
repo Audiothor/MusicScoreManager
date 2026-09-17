@@ -1,8 +1,10 @@
-# 🚀 Chapitre 1 : Description de l'Application, Installation & Prérequis
+# Description, Installation & Prérequis
 
 ## 1.1 Présentation Générale & Philosophie
 
 **Music Score Manager** est une application multiplateforme développée avec **.NET 10 MAUI**, principalement conçue pour les tablettes et smartphones **Android** (ainsi que les postes de travail **Windows**). Conçue par des musiciens pour des musiciens, elle répond aux exigences les plus strictes de la pratique musicale : répétitions de pupitre, travail personnel, cours de musique, répétitions générales et exécution scénique en concert live.
+
+
 
 L'application élimine définitivement les classeurs papier volumineux et remplace les visualiseurs PDF généralistes inadaptés à la scène. Elle offre une expérience taillée sur mesure :
 
@@ -11,6 +13,15 @@ L'application élimine définitivement les classeurs papier volumineux et rempla
 - **Confort Visuel Scénique** : Interface native sombre (Dark Mode `#121212`) prévenant tout éblouissement sur scène et éliminant tout flash blanc lors du chargement des partitions.
 - **Contrôle Mains-Libres Intégral** : Prise en charge native des pédaliers tourne-page sans fil Bluetooth (profils HID et clavier) ainsi que des contrôleurs MIDI (USB-OTG et Bluetooth MIDI).
 - **Écosystème d'Annotations Professionnel** : Stylet, crayon à main levée, surligneurs Stabilo translucides, textes typographiés et plus de 100 stickers musicaux intégrés.
+
+
+
+*Contribution / Disclamer
+L'application a évolué et continue d'évoluer d'après les remarques des musiciens.
+Elle n'est évidement pas parfaite et vous pouvez soumettre des propositions, bugs ou remarques sur Github !
+Merci !*
+
+
 
 ---
 
@@ -31,15 +42,15 @@ L'application élimine définitivement les classeurs papier volumineux et rempla
 
 ## 1.3 Prérequis Système & Matériels
 
-| Composant | Prérequis Minimum | Recommandé pour la Scène |
-| :--- | :--- | :--- |
-| **Système d'exploitation** | **Android 12.0** (API 31) ou supérieur | **Android 13 / 14 / 15 / 16** (Target SDK 36) |
-| **Alternative Desktop** | **Windows 10** (build 19041+) | **Windows 11** avec écran tactile ou stylet |
-| **Écran & Affichage** | Écran 8 pouces tactile | **Tablette 10.5 à 13.3 pouces** (haute définition, ratio 4:3 ou 16:10) |
-| **Stockage** | 200 Mo d'espace libre pour l'application | 4 Go+ selon l'envergure de votre bibliothèque PDF/Audio |
-| **Mémoire Vive (RAM)** | 3 Go de RAM | 4 Go à 8 Go de RAM |
-| **Contrôleurs Pédalier** | Écran tactile | **Pédalier Bluetooth HID** (AirTurn, PageFlip, Joyo, Donner...) ou **Contrôleur MIDI** |
-| **Connexion Réseau** | Aucune connexion Internet requise | Carte Wi-Fi active uniquement pour le partage direct P2P entre musiciens |
+| Composant                  | Prérequis Minimum                        | Recommandé pour la Scène                                                               |
+|:-------------------------- |:---------------------------------------- |:-------------------------------------------------------------------------------------- |
+| **Système d'exploitation** | **Android 12.0** (API 31) ou supérieur   | **Android 13 / 14 / 15 / 16** (Target SDK 36)                                          |
+| **Alternative Desktop**    | **Windows 10** (build 19041+)            | **Windows 11** avec écran tactile ou stylet                                            |
+| **Écran & Affichage**      | Écran 8 pouces tactile                   | **Tablette 10.5 à 13.3 pouces** (haute définition, ratio 4:3 ou 16:10)                 |
+| **Stockage**               | 200 Mo d'espace libre pour l'application | 4 Go+ selon l'envergure de votre bibliothèque PDF/Audio                                |
+| **Mémoire Vive (RAM)**     | 3 Go de RAM                              | 4 Go à 8 Go de RAM                                                                     |
+| **Contrôleurs Pédalier**   | Écran tactile                            | **Pédalier Bluetooth HID** (AirTurn, PageFlip, Joyo, Donner...) ou **Contrôleur MIDI** |
+| **Connexion Réseau**       | Aucune connexion Internet requise        | Carte Wi-Fi active uniquement pour le partage direct P2P entre musiciens               |
 
 ---
 
@@ -87,27 +98,32 @@ Pour les musiciens ne disposant pas des services Google ou souhaitant une instal
 Pour les développeurs souhaitant compiler et personnaliser l'application pour Android ou Windows :
 
 1. Installez le **SDK .NET 10** et les charges de travail .NET MAUI :
+   
    ```powershell
    dotnet workload install maui
    dotnet workload install maui-android
    dotnet workload install maui-windows
    ```
+
 2. Clonez le dépôt Git officiel :
+   
    ```powershell
    git clone https://github.com/Audiothor/MusicScoreManager.git
    cd MusicScoreManager
    ```
+
 3. Compilez selon la cible souhaitée :
+   
    ```powershell
    # Pour Android : exécution directe sur tablette Android connectée en USB
    dotnet build -t:Run -f net10.0-android
-
+   
    # Pour Android : génération du package Release APK signé
    dotnet publish -f net10.0-android -c Release
-
+   
    # Pour Windows : compilation de la version exécutable Windows
    dotnet build -f net10.0-windows10.0.19041.0 -c Release
-
+   
    # Pour Windows : publication du binaire complet autonome
    dotnet publish -f net10.0-windows10.0.19041.0 -c Release
    ```
