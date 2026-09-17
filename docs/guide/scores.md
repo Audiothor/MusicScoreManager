@@ -4,7 +4,7 @@ Le menu **Partitions** constitue la porte d'entrée de votre bibliothèque music
 
 
 <p style="text-align: center;">
-  <img src="../images/Partitions_fr_2.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
+  <img src="../../images/Partitions_fr_2.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
 </p>
 
 ---
@@ -122,7 +122,7 @@ Si le fichier PDF associé a été déplacé, renommé sur le stockage ou est in
 En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et ergonomique s'affiche :
 
 <p style="text-align: center;">
-  <img src="../images/Partitions_fr_3.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
+  <img src="../../images/Partitions_fr_3.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
 </p>
 
 1. **📖 Ouvrir la partition** :
@@ -134,7 +134,7 @@ En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et
    - Ouvre la page d'édition détaillée :
 
 <p style="text-align: center;">
-  <img src="../images/Partitions_fr_4.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
+  <img src="../../images/Partitions_fr_4.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
 </p>
 
 * **Titre** et **Compositeur / Arrangeur**.
