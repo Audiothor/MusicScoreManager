@@ -102,8 +102,448 @@ namespace MusicScoreManager.Services
         }
     }
 
+    public class RenderedPdfPage
+    {
+        public byte[] ImageBytes { get; set; } = Array.Empty<byte>();
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public int PageNumber { get; set; }
+        public bool IsTwoPages { get; set; }
+        public int LeftPage { get; set; }
+        public int RightPage { get; set; }
+        public bool HasRightPage { get; set; }
+    }
+
     public class PdfService
     {
+        private static readonly Dictionary<string, RenderedPdfPage> _pageMemoryCache = new();
+        private static readonly object _cacheLock = new();
+        private const int MaxMemoryCacheEntries = 12;
+
+        public static bool IsNativePdfSupported =>
+#if ANDROID || WINDOWS || IOS || MACCATALYST
+            true;
+#else
+            false;
+#endif
+
+        public static void ClearMemoryCache()
+        {
+            lock (_cacheLock)
+            {
+                _pageMemoryCache.Clear();
+            }
+        }
+
+        public async Task<int> GetPdfPageCountAsync(string pdfPath)
+        {
+            if (string.IsNullOrWhiteSpace(pdfPath) || !File.Exists(pdfPath)) return 1;
+
+            return await Task.Run(async () =>
+            {
+#if ANDROID
+                try
+                {
+                    var file = new Java.IO.File(pdfPath);
+                    using var fd = ParcelFileDescriptor.Open(file, ParcelFileMode.ReadOnly);
+                    if (fd != null)
+                    {
+                        using var renderer = new PdfRenderer(fd);
+                        return renderer.PageCount;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[PdfService] Android GetPdfPageCountAsync error: {ex.Message}");
+                }
+#endif
+#if WINDOWS
+                try
+                {
+                    var storageFile = await StorageFile.GetFileFromPathAsync(pdfPath);
+                    var pdfDoc = await PdfDocument.LoadFromFileAsync(storageFile);
+                    return (int)pdfDoc.PageCount;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[PdfService] Windows GetPdfPageCountAsync error: {ex.Message}");
+                }
+#endif
+#if IOS || MACCATALYST
+                try
+                {
+                    using var url = Foundation.NSUrl.FromFilename(pdfPath);
+                    using var pdfDoc = new PdfKit.PdfDocument(url);
+                    if (pdfDoc != null) return (int)pdfDoc.PageCount;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[PdfService] iOS GetPdfPageCountAsync error: {ex.Message}");
+                }
+#endif
+                return 1;
+            });
+        }
+
+        public async Task<RenderedPdfPage?> RenderPdfPageAsync(string pdfPath, int pageNumber, int rotation = 0, float scale = 2.0f)
+        {
+            if (string.IsNullOrWhiteSpace(pdfPath) || !File.Exists(pdfPath)) return null;
+
+            string cacheKey = $"{pdfPath}_p{pageNumber}_r{rotation}_s{scale}";
+            lock (_cacheLock)
+            {
+                if (_pageMemoryCache.TryGetValue(cacheKey, out var cached))
+                {
+                    return cached;
+                }
+            }
+
+            var rendered = await Task.Run(async () =>
+            {
+#if ANDROID
+                try
+                {
+                    var file = new Java.IO.File(pdfPath);
+                    using var fd = ParcelFileDescriptor.Open(file, ParcelFileMode.ReadOnly);
+                    if (fd == null) return null;
+
+                    using var renderer = new PdfRenderer(fd);
+                    int pageIndex = Math.Clamp(pageNumber - 1, 0, renderer.PageCount - 1);
+                    using var page = renderer.OpenPage(pageIndex);
+
+                    int renderW = Math.Max(1, (int)(page.Width * scale));
+                    int renderH = Math.Max(1, (int)(page.Height * scale));
+
+                    using var rawBmp = Bitmap.CreateBitmap(renderW, renderH, Bitmap.Config.Argb8888!);
+                    rawBmp.EraseColor(Android.Graphics.Color.White);
+                    page.Render(rawBmp, null, null, PdfRenderMode.ForDisplay);
+
+                    Bitmap finalBmp = rawBmp;
+                    bool recycled = false;
+                    int normRot = (rotation % 360 + 360) % 360;
+                    if (normRot != 0)
+                    {
+                        using var mat = new Android.Graphics.Matrix();
+                        mat.PostRotate(normRot);
+                        finalBmp = Bitmap.CreateBitmap(rawBmp, 0, 0, rawBmp.Width, rawBmp.Height, mat, true);
+                        recycled = true;
+                    }
+
+                    using var ms = new MemoryStream();
+                    finalBmp.Compress(Bitmap.CompressFormat.Jpeg!, 90, ms);
+                    int fw = finalBmp.Width;
+                    int fh = finalBmp.Height;
+
+                    if (recycled) finalBmp.Recycle();
+
+                    return new RenderedPdfPage
+                    {
+                        ImageBytes = ms.ToArray(),
+                        Width = fw,
+                        Height = fh,
+                        PageNumber = pageIndex + 1,
+                        IsTwoPages = false
+                    };
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[PdfService] Android RenderPdfPageAsync error: {ex.Message}");
+                }
+#endif
+#if WINDOWS
+                try
+                {
+                    var storageFile = await StorageFile.GetFileFromPathAsync(pdfPath);
+                    var pdfDoc = await PdfDocument.LoadFromFileAsync(storageFile);
+                    int pageIndex = Math.Clamp(pageNumber - 1, 0, (int)pdfDoc.PageCount - 1);
+
+                    using var page = pdfDoc.GetPage((uint)pageIndex);
+                    using var memStream = new InMemoryRandomAccessStream();
+                    var options = new PdfPageRenderOptions
+                    {
+                        DestinationWidth = (uint)Math.Max(1, (int)(page.Size.Width * scale)),
+                        DestinationHeight = (uint)Math.Max(1, (int)(page.Size.Height * scale))
+                    };
+                    await page.RenderToStreamAsync(memStream, options);
+
+                    using var readStream = memStream.AsStreamForRead();
+                    using var ms = new MemoryStream();
+                    await readStream.CopyToAsync(ms);
+                    byte[] bytes = ms.ToArray();
+                    int fw = (int)options.DestinationWidth;
+                    int fh = (int)options.DestinationHeight;
+
+                    int normRot = (rotation % 360 + 360) % 360;
+                    if (normRot != 0)
+                    {
+                        using var img = SixLabors.ImageSharp.Image.Load(bytes);
+                        img.Mutate(ctx => ctx.Rotate(normRot));
+                        using var rotMs = new MemoryStream();
+                        img.SaveAsJpeg(rotMs, new JpegEncoder { Quality = 90 });
+                        bytes = rotMs.ToArray();
+                        fw = img.Width;
+                        fh = img.Height;
+                    }
+
+                    return new RenderedPdfPage
+                    {
+                        ImageBytes = bytes,
+                        Width = fw,
+                        Height = fh,
+                        PageNumber = pageIndex + 1,
+                        IsTwoPages = false
+                    };
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[PdfService] Windows RenderPdfPageAsync error: {ex.Message}");
+                }
+#endif
+#if IOS || MACCATALYST
+                try
+                {
+                    using var url = Foundation.NSUrl.FromFilename(pdfPath);
+                    using var pdfDoc = new PdfKit.PdfDocument(url);
+                    if (pdfDoc != null)
+                    {
+                        int pageIndex = Math.Clamp(pageNumber - 1, 0, (int)pdfDoc.PageCount - 1);
+                        using var page = pdfDoc.GetPage(pageIndex);
+                        if (page != null)
+                        {
+                            var rect = page.GetBoundsForBox(PdfKit.PdfDisplayBox.Media);
+                            var size = new CoreGraphics.CGSize(rect.Width * scale, rect.Height * scale);
+                            using var img = page.GetThumbnail(size, PdfKit.PdfDisplayBox.Media);
+                            if (img != null)
+                            {
+                                using var jpegData = img.AsJPEG(0.9f);
+                                if (jpegData != null)
+                                {
+                                    return new RenderedPdfPage
+                                    {
+                                        ImageBytes = jpegData.ToArray(),
+                                        Width = (int)size.Width,
+                                        Height = (int)size.Height,
+                                        PageNumber = pageIndex + 1,
+                                        IsTwoPages = false
+                                    };
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[PdfService] iOS RenderPdfPageAsync error: {ex.Message}");
+                }
+#endif
+                return null;
+            });
+
+            if (rendered != null)
+            {
+                lock (_cacheLock)
+                {
+                    if (_pageMemoryCache.Count >= MaxMemoryCacheEntries)
+                    {
+                        var firstKey = _pageMemoryCache.Keys.FirstOrDefault();
+                        if (firstKey != null) _pageMemoryCache.Remove(firstKey);
+                    }
+                    _pageMemoryCache[cacheKey] = rendered;
+                }
+            }
+
+            return rendered;
+        }
+
+        public async Task<RenderedPdfPage?> RenderPdfTwoPagesAsync(string pdfPath, int leftPage, int rightPage, int leftRot = 0, int rightRot = 0, float scale = 1.5f)
+        {
+            if (string.IsNullOrWhiteSpace(pdfPath) || !File.Exists(pdfPath)) return null;
+
+            string cacheKey = $"{pdfPath}_spread_l{leftPage}_r{rightPage}_lr{leftRot}_rr{rightRot}_s{scale}";
+            lock (_cacheLock)
+            {
+                if (_pageMemoryCache.TryGetValue(cacheKey, out var cached))
+                {
+                    return cached;
+                }
+            }
+
+            var rendered = await Task.Run(async () =>
+            {
+#if ANDROID
+                try
+                {
+                    var file = new Java.IO.File(pdfPath);
+                    using var fd = ParcelFileDescriptor.Open(file, ParcelFileMode.ReadOnly);
+                    if (fd == null) return null;
+
+                    using var renderer = new PdfRenderer(fd);
+                    int totalPages = renderer.PageCount;
+                    int leftIdx = Math.Clamp(leftPage - 1, 0, totalPages - 1);
+                    int rightIdx = rightPage - 1;
+                    bool hasRight = (rightIdx >= 0 && rightIdx < totalPages);
+
+                    using var lPage = renderer.OpenPage(leftIdx);
+                    int lW = Math.Max(1, (int)(lPage.Width * scale));
+                    int lH = Math.Max(1, (int)(lPage.Height * scale));
+
+                    using var lRawBmp = Bitmap.CreateBitmap(lW, lH, Bitmap.Config.Argb8888!);
+                    lRawBmp.EraseColor(Android.Graphics.Color.White);
+                    lPage.Render(lRawBmp, null, null, PdfRenderMode.ForDisplay);
+
+                    Bitmap lBmp = lRawBmp;
+                    bool lRecycled = false;
+                    int lNormRot = (leftRot % 360 + 360) % 360;
+                    if (lNormRot != 0)
+                    {
+                        using var mat = new Android.Graphics.Matrix();
+                        mat.PostRotate(lNormRot);
+                        lBmp = Bitmap.CreateBitmap(lRawBmp, 0, 0, lRawBmp.Width, lRawBmp.Height, mat, true);
+                        lRecycled = true;
+                    }
+
+                    Bitmap? rBmp = null;
+                    bool rRecycled = false;
+                    if (hasRight)
+                    {
+                        using var rPage = renderer.OpenPage(rightIdx);
+                        int rW = Math.Max(1, (int)(rPage.Width * scale));
+                        int rH = Math.Max(1, (int)(rPage.Height * scale));
+
+                        using var rRawBmp = Bitmap.CreateBitmap(rW, rH, Bitmap.Config.Argb8888!);
+                        rRawBmp.EraseColor(Android.Graphics.Color.White);
+                        rPage.Render(rRawBmp, null, null, PdfRenderMode.ForDisplay);
+
+                        rBmp = rRawBmp;
+                        int rNormRot = (rightRot % 360 + 360) % 360;
+                        if (rNormRot != 0)
+                        {
+                            using var mat = new Android.Graphics.Matrix();
+                            mat.PostRotate(rNormRot);
+                            rBmp = Bitmap.CreateBitmap(rRawBmp, 0, 0, rRawBmp.Width, rRawBmp.Height, mat, true);
+                            rRecycled = true;
+                        }
+                    }
+
+                    int totalW = lBmp.Width + (rBmp != null ? rBmp.Width : lBmp.Width);
+                    int maxH = Math.Max(lBmp.Height, rBmp != null ? rBmp.Height : lBmp.Height);
+
+                    using var combined = Bitmap.CreateBitmap(totalW, maxH, Bitmap.Config.Argb8888!);
+                    combined.EraseColor(Android.Graphics.Color.White);
+
+                    using (var cv = new Android.Graphics.Canvas(combined))
+                    {
+                        cv.DrawBitmap(lBmp, 0, 0, null);
+                        if (rBmp != null)
+                        {
+                            cv.DrawBitmap(rBmp, lBmp.Width, 0, null);
+                        }
+                        using var paint = new Android.Graphics.Paint { Color = Android.Graphics.Color.Rgb(60, 60, 60), StrokeWidth = 3 };
+                        cv.DrawLine(lBmp.Width, 0, lBmp.Width, maxH, paint);
+                    }
+
+                    if (lRecycled) lBmp.Recycle();
+                    if (rRecycled && rBmp != null) rBmp.Recycle();
+
+                    using var ms = new MemoryStream();
+                    combined.Compress(Bitmap.CompressFormat.Jpeg!, 90, ms);
+
+                    return new RenderedPdfPage
+                    {
+                        ImageBytes = ms.ToArray(),
+                        Width = totalW,
+                        Height = maxH,
+                        PageNumber = leftIdx + 1,
+                        IsTwoPages = true,
+                        LeftPage = leftIdx + 1,
+                        RightPage = rightIdx + 1,
+                        HasRightPage = hasRight
+                    };
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[PdfService] Android RenderPdfTwoPagesAsync error: {ex.Message}");
+                }
+#endif
+#if WINDOWS
+                try
+                {
+                    var leftSingle = await RenderPdfPageAsync(pdfPath, leftPage, leftRot, scale);
+                    if (leftSingle == null) return null;
+
+                    var storageFile = await StorageFile.GetFileFromPathAsync(pdfPath);
+                    var pdfDoc = await PdfDocument.LoadFromFileAsync(storageFile);
+                    int totalPages = (int)pdfDoc.PageCount;
+                    int rightIdx = rightPage - 1;
+                    bool hasRight = (rightIdx >= 0 && rightIdx < totalPages);
+
+                    RenderedPdfPage? rightSingle = null;
+                    if (hasRight)
+                    {
+                        rightSingle = await RenderPdfPageAsync(pdfPath, rightPage, rightRot, scale);
+                    }
+
+                    using var leftImg = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(leftSingle.ImageBytes);
+                    SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>? rightImg = null;
+                    if (rightSingle != null)
+                    {
+                        rightImg = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(rightSingle.ImageBytes);
+                    }
+
+                    int totalW = leftImg.Width + (rightImg != null ? rightImg.Width : leftImg.Width);
+                    int maxH = Math.Max(leftImg.Height, rightImg != null ? rightImg.Height : leftImg.Height);
+
+                    using var combined = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(totalW, maxH);
+                    combined.Mutate(ctx =>
+                    {
+                        ctx.BackgroundColor(SixLabors.ImageSharp.Color.White);
+                        ctx.DrawImage(leftImg, new SixLabors.ImageSharp.Point(0, 0), 1.0f);
+                        if (rightImg != null)
+                        {
+                            ctx.DrawImage(rightImg, new SixLabors.ImageSharp.Point(leftImg.Width, 0), 1.0f);
+                        }
+                    });
+                    rightImg?.Dispose();
+
+                    using var ms = new MemoryStream();
+                    combined.SaveAsJpeg(ms, new JpegEncoder { Quality = 90 });
+
+                    return new RenderedPdfPage
+                    {
+                        ImageBytes = ms.ToArray(),
+                        Width = totalW,
+                        Height = maxH,
+                        PageNumber = leftPage,
+                        IsTwoPages = true,
+                        LeftPage = leftPage,
+                        RightPage = rightPage,
+                        HasRightPage = hasRight
+                    };
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[PdfService] Windows RenderPdfTwoPagesAsync error: {ex.Message}");
+                }
+#endif
+                return null;
+            });
+
+            if (rendered != null)
+            {
+                lock (_cacheLock)
+                {
+                    if (_pageMemoryCache.Count >= MaxMemoryCacheEntries)
+                    {
+                        var firstKey = _pageMemoryCache.Keys.FirstOrDefault();
+                        if (firstKey != null) _pageMemoryCache.Remove(firstKey);
+                    }
+                    _pageMemoryCache[cacheKey] = rendered;
+                }
+            }
+
+            return rendered;
+        }
+
         /// <summary>
         /// Convertit une liste de fichiers image en un unique fichier PDF multi-pages haute fidélité.
         /// Chaque image occupe 100% de la page avec ses proportions réelles.
