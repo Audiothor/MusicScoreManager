@@ -13,7 +13,7 @@ The [`SettingsScoresPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreMan
 - **Scores Without Composer First (Toggle On/Off)**:
   - When sorting by composer, choose whether pieces lacking a composer appear at the very top (On) or at the end of the alphabetical list (Off, default).
 - **Score Subtitle Display**:
-  - Choose which details appear beneath each title (*Date added*, *Composer only*, or *Composer and date added*).
+  - Customize and reorder the information shown under each title in the library using interactive **drag-and-drop** or ▲ / ▼ buttons (*Date added*, *Composer*, *Page count*), with individual checkboxes and real-time live preview.
 - **Current Page Number Display (Toggle On/Off)**:
   - Show or hide the bottom-right page index badge (e.g., *Page 3 / 12*).
 - **2-Page Landscape Display (Toggle On/Off)**:
@@ -59,20 +59,22 @@ The [`SettingsAnnotationsPage`](file:///c:/Users/comme/Documents/GitHub/MusicSco
 
 ## 🦶 5. Bluetooth Pedals & MIDI Controller Settings
 
-The [`SettingsPedalsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SettingsPedalsPage.xaml) page delivers complete hands-free stage control:
+The [`SettingsPedalsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SettingsPedalsPage.xaml) page delivers streamlined, robust hands-free stage control:
 
-- **Master Toggle & Live Signal Monitor**:
-  - Real-time listening indicator (🟢).
-  - Live diagnostic card displaying key name, hex code, event source (Bluetooth HID or MIDI), *« ⏱️ Long Press »* badge, and triggered action.
-- **Factory Pre-Configured Profiles**:
-  - *Standard (Keyboard arrows/PageUp/Down)*, *PageFlip Dragonfly (4 pedals)*, *PageFlip Firefly & Butterfly*, *AirTurn Duo 500 & PEDpro*, *AirTurn Quad 500*, *Joyo JSP-01*, *Thomann / Harley Benton PageTurn*, *Donner Wireless*, *IK Multimedia iRig BlueTurn*, *Coda STOMP*, and *Advanced MIDI Controller (USB / Bluetooth: CC 64 Sustain, CC 66 Sostenuto, CC 67 Soft, Notes C1-F1, Program Change)*.
-- **Custom Profiles & Learn Mode**:
-  - Create new custom profiles, duplicate, rename, or reset to factory defaults.
-  - **Auto-Learn Mode**: Click learn and simply press the pedal or MIDI button to automatically map the incoming command.
-- **Assignable Stage Actions (Short & Long Press)**:
-  - Next / previous page, next / previous song in setlist, start / end of piece, scroll up / down, metronome start/stop/mute, audio play/pause/restart, reset zoom 100%, direct page jump, lock/unlock annotations, undo/redo, central menu, exit viewer.
+- **Active Pedal Profile (Top of Page)**:
+  - Quickly select factory pre-configured profiles: *Standard*, *PageFlip Dragonfly / Firefly / Butterfly*, *AirTurn Duo / Quad*, *Joyo*, *Thomann / Harley Benton*, *Donner Wireless*, *IK Multimedia iRig*, *Coda STOMP*, and *Advanced MIDI Controller*.
+  - Create new custom profiles and delete with one tap.
+- **Stage Safety & Anti-Double Page Turn Protection**:
+  - **« Block fast page turns » Toggle**: Prevents accidental multiple page jumps caused by foot switch contact bounce, OS key auto-repeat, or nervous double presses in concert.
+  - **Adjustable safety debounce delay**: *300 ms (Fast)*, *450 ms (Standard recommended)*, *600 ms (Concert safe)*, *800 ms (Strict)*.
 - **Long-Press Sensitivity**:
-  - Fine-grained slider from 200 ms to 1000 ms to eliminate accidental triggers on stage.
+  - Fine-grained slider from 200 ms to 1000 ms to calibrate secondary action triggers on stage.
+- **Live Signal Monitor & Diagnostics**:
+  - Purely event-driven (0% CPU and zero battery drain when idle).
+  - Real-time display of incoming signals (Key name, Hex code, Bluetooth/MIDI source, Triggered action).
+- **Profile Shortcuts (Collapsible Accordion)**:
+  - Collapsed by default for a clean, non-cluttered interface; expands instantly on tap.
+  - Auto-learn mode button (*« ➕ Learn a key »*) to capture any foot pedal or MIDI command.
 
 ---
 

@@ -13,7 +13,7 @@ La page [`SettingsScoresPage`](file:///c:/Users/comme/Documents/GitHub/MusicScor
 - **Partitions sans compositeur en premier (Switch On/Off)** :
   - Lors d'un tri par compositeur, choisissez si les morceaux dont le champ compositeur est vide apparaissent au tout début (On) ou à la fin de l'ordre alphabétique (Off, comportement par défaut).
 - **Informations sous le titre de la partition** :
-  - Personnalisez le sous-titre figurant sur les cartes de la bibliothèque (*Date d'ajout*, *Compositeur seul*, ou *Compositeur et date d'ajout*).
+  - Personnalisez et réordonnez les informations affichées sous chaque titre dans la bibliothèque par **glisser-déposer (Drag & Drop)** ou boutons ▲ / ▼ (*Date d'ajout*, *Compositeur*, *Nombre de pages*), avec activation individuelle par cases à cocher et encadré d'aperçu en direct.
 - **Affichage du numéro de la page actuelle (Switch On/Off)** :
   - Affiche ou masque la pastille discrète indiquant la page en cours (ex : *Page 3 / 12*) en bas à droite de l'écran pendant le jeu.
 - **Affichage 2 pages en mode paysage (Switch On/Off)** :
@@ -59,19 +59,22 @@ La page [`SettingsAnnotationsPage`](file:///c:/Users/comme/Documents/GitHub/Musi
 
 ## 🦶 5. Paramètres Pédaliers Bluetooth & Événements MIDI
 
-La page [`SettingsPedalsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SettingsPedalsPage.xaml) assure le contrôle mains-libres complet :
+La page [`SettingsPedalsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SettingsPedalsPage.xaml) assure le contrôle mains-libres complet et ergonomique :
 
-- **Interrupteur Général & Testeur en Direct** :
-  - Voyant d'écoute en temps réel (🟢).
-  - Diagnostic immédiat affichant le nom de la touche pressée, le code hexadécimal, la source (Bluetooth HID ou MIDI), le badge *« ⏱️ Pression Longue »* et l'action exécutée.
-- **Profils de Pédales Préconfigurés** :
-  - *Standard (Touches clavier)*, *PageFlip Dragonfly (4 pédales)*, *PageFlip Firefly & Butterfly*, *AirTurn Duo 500 & PEDpro*, *AirTurn Quad 500*, *Joyo JSP-01*, *Thomann / Harley Benton*, *Donner Wireless*, *IK Multimedia iRig BlueTurn*, *Coda STOMP*, *Contrôleur MIDI Avancé (USB / Bluetooth : CC 64, CC 66, CC 67, Notes C1-F1, Program Change)*.
-- **Profils Personnalisés & Mode Apprentissage (*Learn Mode*)** :
-  - Création, duplication, réinitialisation et capture automatique par appui sur la pédale.
-- **Palette d'Actions Assignables (Appui Court & Appui Long)** :
-  - Tourner les pages, changer de morceau dans la setlist, aller au début/fin, défiler, métronome On/Off/Mute, audio Play/Pause, reset zoom 100%, saut direct, verrouiller/déverrouiller annotations, annuler/rétablir, menu central, quitter.
+- **Profil de Pédale Actif (En tête de page)** :
+  - Sélection rapide parmi de nombreux profils d'usine préconfigurés : *Standard*, *PageFlip Dragonfly / Firefly / Butterfly*, *AirTurn Duo / Quad*, *Joyo*, *Thomann / Harley Benton*, *Donner Wireless*, *IK Multimedia iRig*, *Coda STOMP*, *Contrôleur MIDI Avancé (USB / Bluetooth)*.
+  - Création de profils personnalisés et suppression en 1 clic.
+- **Sécurité Scène & Protection Anti-Double Saut de Page** :
+  - **Interrupteur « Bloquer le défilement rapide »** : élimine les sauts de plusieurs pages involontaires causés par le rebond mécanique des commutateurs, l'auto-répétition du clavier ou un appui trop appuyé en plein concert.
+  - **Délai de sécurité anti-rebond réglable** : *300 ms (Rapide)*, *450 ms (Standard recommandé)*, *600 ms (Sécurisé concert)*, *800 ms (Strict)*.
 - **Sensibilité d'Appui Long** :
-  - Réglette réglable de 200 ms à 1000 ms pour calibrer le déclenchement des actions sur pression prolongée.
+  - Curseur réglable de 200 ms à 1000 ms pour calibrer la détection des actions secondaires prolongées.
+- **Diagnostic & Testeur en Direct** :
+  - Fonctionnement purement événementiel (0% de CPU et de batterie consommés au repos).
+  - Affichage en temps réel du signal reçu (Touche, Code hexadécimal, Source Bluetooth/MIDI, Action déclenchée).
+- **Raccourcis du Profil (Accordéon Rabattable)** :
+  - En-tête replié par défaut pour une lisibilité maximale, dépliable d'un simple toucher.
+  - Bouton *« ➕ Apprendre une touche »* (*Learn Mode*) pour capturer automatiquement une nouvelle commande au pied.
 
 ---
 
