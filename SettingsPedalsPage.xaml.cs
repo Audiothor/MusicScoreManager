@@ -16,6 +16,13 @@ namespace MusicScoreManager
         private readonly PedalMidiService _pedalService;
         private ObservableCollection<PedalBindingViewModel> _bindings = new();
         private bool _isLearningKey = false;
+        private readonly List<(int Ms, string Label)> _cooldownOptions = new()
+        {
+            (300, "300 ms (Rapide)"),
+            (450, "450 ms (Standard recommandé)"),
+            (600, "600 ms (Sécurisé concert)"),
+            (800, "800 ms (Strict)")
+        };
 
         public SettingsPedalsPage()
         {
@@ -25,6 +32,15 @@ namespace MusicScoreManager
             ThresholdSlider.Value = _pedalService.LongPressThresholdMs;
             ThresholdValueLabel.Text = $"{_pedalService.LongPressThresholdMs} ms";
             ServiceEnabledSwitch.IsToggled = _pedalService.IsEnabled;
+
+            // Protection anti-double saut de page
+            BlockFastTurnSwitch.IsToggled = _pedalService.BlockFastPageTurn;
+            FastTurnDelayRow.IsVisible = _pedalService.BlockFastPageTurn;
+
+            FastTurnDelayPicker.ItemsSource = _cooldownOptions.Select(o => o.Label).ToList();
+            int currentCooldown = _pedalService.FastTurnCooldownMs;
+            int matchedIdx = _cooldownOptions.FindIndex(o => o.Ms == currentCooldown);
+            FastTurnDelayPicker.SelectedIndex = matchedIdx >= 0 ? matchedIdx : 1; // Default 450 ms
         }
 
         protected override void OnAppearing()
@@ -204,6 +220,31 @@ namespace MusicScoreManager
             int val = (int)e.NewValue;
             _pedalService.LongPressThresholdMs = val;
             ThresholdValueLabel.Text = $"{val} ms";
+        }
+
+        private void OnBlockFastTurnToggled(object sender, ToggledEventArgs e)
+        {
+            _pedalService.BlockFastPageTurn = e.Value;
+            FastTurnDelayRow.IsVisible = e.Value;
+        }
+
+        private void OnFastTurnDelayChanged(object? sender, EventArgs e)
+        {
+            int idx = FastTurnDelayPicker.SelectedIndex;
+            if (idx >= 0 && idx < _cooldownOptions.Count)
+            {
+                _pedalService.FastTurnCooldownMs = _cooldownOptions[idx].Ms;
+            }
+        }
+
+        private void OnToggleShortcutsAccordionClicked(object? sender, EventArgs e)
+        {
+            bool willBeVisible = !ShortcutsContentLayout.IsVisible;
+            ShortcutsContentLayout.IsVisible = willBeVisible;
+            AccordionChevronLabel.Text = willBeVisible ? "▼" : "▶";
+            ShortcutsSubtitleLabel.Text = willBeVisible 
+                ? "Toucher pour rabattre les touches configurées" 
+                : "Toucher pour afficher les touches configurées";
         }
 
         private async void OnBackClicked(object sender, EventArgs e)
