@@ -1013,7 +1013,7 @@
 <li><strong>Scores Without Composer First (Toggle On/Off)</strong>:</li>
 <li>When sorting by composer, choose whether pieces lacking a composer appear at the very top (On) or at the end of the alphabetical list (Off, default).</li>
 <li><strong>Score Subtitle Display</strong>:</li>
-<li>Choose which details appear beneath each title (<em>Date added</em>, <em>Composer only</em>, or <em>Composer and date added</em>).</li>
+<li>Customize and reorder the information shown under each title in the library using interactive <strong>drag-and-drop</strong> or ▲ / ▼ buttons (<em>Date added</em>, <em>Composer</em>, <em>Page count</em>), with individual checkboxes and real-time live preview.</li>
 <li><strong>Current Page Number Display (Toggle On/Off)</strong>:</li>
 <li>Show or hide the bottom-right page index badge (e.g., <em>Page 3 / 12</em>).</li>
 <li><strong>2-Page Landscape Display (Toggle On/Off)</strong>:</li>
@@ -1052,20 +1052,22 @@
 </ul>
 <hr />
 <h2 id="5-bluetooth-pedals-midi-controller-settings">🦶 5. Bluetooth Pedals &amp; MIDI Controller Settings</h2>
-<p>The <a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SettingsPedalsPage.xaml"><code>SettingsPedalsPage</code></a> page delivers complete hands-free stage control:</p>
+<p>The <a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SettingsPedalsPage.xaml"><code>SettingsPedalsPage</code></a> page delivers streamlined, robust hands-free stage control:</p>
 <ul>
-<li><strong>Master Toggle &amp; Live Signal Monitor</strong>:</li>
-<li>Real-time listening indicator (🟢).</li>
-<li>Live diagnostic card displaying key name, hex code, event source (Bluetooth HID or MIDI), <em>« ⏱️ Long Press »</em> badge, and triggered action.</li>
-<li><strong>Factory Pre-Configured Profiles</strong>:</li>
-<li><em>Standard (Keyboard arrows/PageUp/Down)</em>, <em>PageFlip Dragonfly (4 pedals)</em>, <em>PageFlip Firefly &amp; Butterfly</em>, <em>AirTurn Duo 500 &amp; PEDpro</em>, <em>AirTurn Quad 500</em>, <em>Joyo JSP-01</em>, <em>Thomann / Harley Benton PageTurn</em>, <em>Donner Wireless</em>, <em>IK Multimedia iRig BlueTurn</em>, <em>Coda STOMP</em>, and <em>Advanced MIDI Controller (USB / Bluetooth: CC 64 Sustain, CC 66 Sostenuto, CC 67 Soft, Notes C1-F1, Program Change)</em>.</li>
-<li><strong>Custom Profiles &amp; Learn Mode</strong>:</li>
-<li>Create new custom profiles, duplicate, rename, or reset to factory defaults.</li>
-<li><strong>Auto-Learn Mode</strong>: Click learn and simply press the pedal or MIDI button to automatically map the incoming command.</li>
-<li><strong>Assignable Stage Actions (Short &amp; Long Press)</strong>:</li>
-<li>Next / previous page, next / previous song in setlist, start / end of piece, scroll up / down, metronome start/stop/mute, audio play/pause/restart, reset zoom 100%, direct page jump, lock/unlock annotations, undo/redo, central menu, exit viewer.</li>
+<li><strong>Active Pedal Profile (Top of Page)</strong>:</li>
+<li>Quickly select factory pre-configured profiles: <em>Standard</em>, <em>PageFlip Dragonfly / Firefly / Butterfly</em>, <em>AirTurn Duo / Quad</em>, <em>Joyo</em>, <em>Thomann / Harley Benton</em>, <em>Donner Wireless</em>, <em>IK Multimedia iRig</em>, <em>Coda STOMP</em>, and <em>Advanced MIDI Controller</em>.</li>
+<li>Create new custom profiles and delete with one tap.</li>
+<li><strong>Stage Safety &amp; Anti-Double Page Turn Protection</strong>:</li>
+<li><strong>« Block fast page turns » Toggle</strong>: Prevents accidental multiple page jumps caused by foot switch contact bounce, OS key auto-repeat, or nervous double presses in concert.</li>
+<li><strong>Adjustable safety debounce delay</strong>: <em>300 ms (Fast)</em>, <em>450 ms (Standard recommended)</em>, <em>600 ms (Concert safe)</em>, <em>800 ms (Strict)</em>.</li>
 <li><strong>Long-Press Sensitivity</strong>:</li>
-<li>Fine-grained slider from 200 ms to 1000 ms to eliminate accidental triggers on stage.</li>
+<li>Fine-grained slider from 200 ms to 1000 ms to calibrate secondary action triggers on stage.</li>
+<li><strong>Live Signal Monitor &amp; Diagnostics</strong>:</li>
+<li>Purely event-driven (0% CPU and zero battery drain when idle).</li>
+<li>Real-time display of incoming signals (Key name, Hex code, Bluetooth/MIDI source, Triggered action).</li>
+<li><strong>Profile Shortcuts (Collapsible Accordion)</strong>:</li>
+<li>Collapsed by default for a clean, non-cluttered interface; expands instantly on tap.</li>
+<li>Auto-learn mode button (<em>« ➕ Learn a key »</em>) to capture any foot pedal or MIDI command.</li>
 </ul>
 <hr />
 <h2 id="6-app-settings-general">🌐 6. App Settings (General)</h2>

@@ -1013,7 +1013,7 @@
 <li><strong>Partitions sans compositeur en premier (Switch On/Off)</strong> :</li>
 <li>Lors d'un tri par compositeur, choisissez si les morceaux dont le champ compositeur est vide apparaissent au tout début (On) ou à la fin de l'ordre alphabétique (Off, comportement par défaut).</li>
 <li><strong>Informations sous le titre de la partition</strong> :</li>
-<li>Personnalisez le sous-titre figurant sur les cartes de la bibliothèque (<em>Date d'ajout</em>, <em>Compositeur seul</em>, ou <em>Compositeur et date d'ajout</em>).</li>
+<li>Personnalisez et réordonnez les informations affichées sous chaque titre dans la bibliothèque par <strong>glisser-déposer (Drag &amp; Drop)</strong> ou boutons ▲ / ▼ (<em>Date d'ajout</em>, <em>Compositeur</em>, <em>Nombre de pages</em>), avec activation individuelle par cases à cocher et encadré d'aperçu en direct.</li>
 <li><strong>Affichage du numéro de la page actuelle (Switch On/Off)</strong> :</li>
 <li>Affiche ou masque la pastille discrète indiquant la page en cours (ex : <em>Page 3 / 12</em>) en bas à droite de l'écran pendant le jeu.</li>
 <li><strong>Affichage 2 pages en mode paysage (Switch On/Off)</strong> :</li>
@@ -1052,19 +1052,22 @@
 </ul>
 <hr />
 <h2 id="5-parametres-pedaliers-bluetooth-evenements-midi">🦶 5. Paramètres Pédaliers Bluetooth &amp; Événements MIDI</h2>
-<p>La page <a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SettingsPedalsPage.xaml"><code>SettingsPedalsPage</code></a> assure le contrôle mains-libres complet :</p>
+<p>La page <a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SettingsPedalsPage.xaml"><code>SettingsPedalsPage</code></a> assure le contrôle mains-libres complet et ergonomique :</p>
 <ul>
-<li><strong>Interrupteur Général &amp; Testeur en Direct</strong> :</li>
-<li>Voyant d'écoute en temps réel (🟢).</li>
-<li>Diagnostic immédiat affichant le nom de la touche pressée, le code hexadécimal, la source (Bluetooth HID ou MIDI), le badge <em>« ⏱️ Pression Longue »</em> et l'action exécutée.</li>
-<li><strong>Profils de Pédales Préconfigurés</strong> :</li>
-<li><em>Standard (Touches clavier)</em>, <em>PageFlip Dragonfly (4 pédales)</em>, <em>PageFlip Firefly &amp; Butterfly</em>, <em>AirTurn Duo 500 &amp; PEDpro</em>, <em>AirTurn Quad 500</em>, <em>Joyo JSP-01</em>, <em>Thomann / Harley Benton</em>, <em>Donner Wireless</em>, <em>IK Multimedia iRig BlueTurn</em>, <em>Coda STOMP</em>, <em>Contrôleur MIDI Avancé (USB / Bluetooth : CC 64, CC 66, CC 67, Notes C1-F1, Program Change)</em>.</li>
-<li><strong>Profils Personnalisés &amp; Mode Apprentissage (<em>Learn Mode</em>)</strong> :</li>
-<li>Création, duplication, réinitialisation et capture automatique par appui sur la pédale.</li>
-<li><strong>Palette d'Actions Assignables (Appui Court &amp; Appui Long)</strong> :</li>
-<li>Tourner les pages, changer de morceau dans la setlist, aller au début/fin, défiler, métronome On/Off/Mute, audio Play/Pause, reset zoom 100%, saut direct, verrouiller/déverrouiller annotations, annuler/rétablir, menu central, quitter.</li>
+<li><strong>Profil de Pédale Actif (En tête de page)</strong> :</li>
+<li>Sélection rapide parmi de nombreux profils d'usine préconfigurés : <em>Standard</em>, <em>PageFlip Dragonfly / Firefly / Butterfly</em>, <em>AirTurn Duo / Quad</em>, <em>Joyo</em>, <em>Thomann / Harley Benton</em>, <em>Donner Wireless</em>, <em>IK Multimedia iRig</em>, <em>Coda STOMP</em>, <em>Contrôleur MIDI Avancé (USB / Bluetooth)</em>.</li>
+<li>Création de profils personnalisés et suppression en 1 clic.</li>
+<li><strong>Sécurité Scène &amp; Protection Anti-Double Saut de Page</strong> :</li>
+<li><strong>Interrupteur « Bloquer le défilement rapide »</strong> : élimine les sauts de plusieurs pages involontaires causés par le rebond mécanique des commutateurs, l'auto-répétition du clavier ou un appui trop appuyé en plein concert.</li>
+<li><strong>Délai de sécurité anti-rebond réglable</strong> : <em>300 ms (Rapide)</em>, <em>450 ms (Standard recommandé)</em>, <em>600 ms (Sécurisé concert)</em>, <em>800 ms (Strict)</em>.</li>
 <li><strong>Sensibilité d'Appui Long</strong> :</li>
-<li>Réglette réglable de 200 ms à 1000 ms pour calibrer le déclenchement des actions sur pression prolongée.</li>
+<li>Curseur réglable de 200 ms à 1000 ms pour calibrer la détection des actions secondaires prolongées.</li>
+<li><strong>Diagnostic &amp; Testeur en Direct</strong> :</li>
+<li>Fonctionnement purement événementiel (0% de CPU et de batterie consommés au repos).</li>
+<li>Affichage en temps réel du signal reçu (Touche, Code hexadécimal, Source Bluetooth/MIDI, Action déclenchée).</li>
+<li><strong>Raccourcis du Profil (Accordéon Rabattable)</strong> :</li>
+<li>En-tête replié par défaut pour une lisibilité maximale, dépliable d'un simple toucher.</li>
+<li>Bouton <em>« ➕ Apprendre une touche »</em> (<em>Learn Mode</em>) pour capturer automatiquement une nouvelle commande au pied.</li>
 </ul>
 <hr />
 <h2 id="6-parametres-application-general">🌐 6. Paramètres Application (Général)</h2>
