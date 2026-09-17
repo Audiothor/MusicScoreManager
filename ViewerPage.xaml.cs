@@ -626,6 +626,12 @@ public partial class ViewerPage : ContentPage
                 if (_maxPages < 1) _maxPages = 1;
             }
 
+            if (_score.PageCount != _maxPages)
+            {
+                _score.PageCount = _maxPages;
+                _ = _databaseService.SaveScoreAsync(_score);
+            }
+
             double containerW = this.Width > 0 ? this.Width : ImageContainer.Width;
             double containerH = this.Height > 0 ? this.Height : ImageContainer.Height;
 

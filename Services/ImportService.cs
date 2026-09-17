@@ -166,7 +166,8 @@ namespace MusicScoreManager.Services
                                     Title = finalTitle,
                                     FilePath = _settingsService.GetRelativePath(localPdfPath),
                                     Type = ScoreType.PDF,
-                                    DateAdded = DateTime.Now
+                                    DateAdded = DateTime.Now,
+                                    PageCount = tempPaths.Count
                                 };
 
                                 await _databaseService.SaveScoreAsync(score);
@@ -268,7 +269,8 @@ namespace MusicScoreManager.Services
                             Title = rawName,
                             FilePath = _settingsService.GetRelativePath(localPdfPath),
                             Type = ScoreType.PDF,
-                            DateAdded = DateTime.Now
+                            DateAdded = DateTime.Now,
+                            PageCount = 1
                         };
 
                         await _databaseService.SaveScoreAsync(score);
@@ -408,12 +410,15 @@ namespace MusicScoreManager.Services
                     }
                 }
 
+                int pageCount = await _pdfService.GetPdfPageCountAsync(_settingsService.GetAbsolutePath(finalStoredPath));
+
                 var score = new Score
                 {
                     Title = Path.GetFileNameWithoutExtension(fileResult.FileName ?? fileResult.FullPath),
                     FilePath = finalStoredPath,
                     Type = ScoreType.PDF,
-                    DateAdded = DateTime.Now
+                    DateAdded = DateTime.Now,
+                    PageCount = pageCount > 0 ? pageCount : 1
                 };
 
                 await _databaseService.SaveScoreAsync(score);

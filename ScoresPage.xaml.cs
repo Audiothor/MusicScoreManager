@@ -14,6 +14,7 @@ public partial class ScoresPage : ContentPage
     private readonly IWifiDirectTransferService _wifiService;
     private readonly ExportImportService _exportImportService;
     private readonly SettingsService _settingsService = new();
+    private readonly PdfService _pdfService = new();
     private string _currentSort = "DateDesc";
     private bool _hasUserCustomSort = false;
     private readonly List<int> _selectedTagIds = new();
@@ -96,6 +97,25 @@ public partial class ScoresPage : ContentPage
                 string subtitlePref = Preferences.Default.Get("ScoreSubtitleDisplay", "DateAdded");
                 foreach (var score in scores)
                 {
+                    if (score.PageCount <= 0)
+                    {
+                        if (score.Type == ScoreType.Image)
+                        {
+                            score.PageCount = 1;
+                            _ = _databaseService.SaveScoreAsync(score);
+                        }
+                        else if (score.Type == ScoreType.PDF)
+                        {
+                            string fullPath = _settingsService.GetAbsolutePath(score.FilePath);
+                            if (File.Exists(fullPath))
+                            {
+                                int cnt = await _pdfService.GetPdfPageCountAsync(fullPath);
+                                score.PageCount = cnt > 0 ? cnt : 1;
+                                _ = _databaseService.SaveScoreAsync(score);
+                            }
+                        }
+                    }
+
                     score.DisplaySubtitle = score.GetSubtitle(subtitlePref);
                     score.PropertyChanged -= OnScorePropertyChanged;
                     score.PropertyChanged += OnScorePropertyChanged;
@@ -223,6 +243,25 @@ public partial class ScoresPage : ContentPage
         string subtitlePref = Preferences.Default.Get("ScoreSubtitleDisplay", "DateAdded");
         foreach (var score in scores)
         {
+            if (score.PageCount <= 0)
+            {
+                if (score.Type == ScoreType.Image)
+                {
+                    score.PageCount = 1;
+                    _ = _databaseService.SaveScoreAsync(score);
+                }
+                else if (score.Type == ScoreType.PDF)
+                {
+                    string fullPath = _settingsService.GetAbsolutePath(score.FilePath);
+                    if (File.Exists(fullPath))
+                    {
+                        int cnt = await _pdfService.GetPdfPageCountAsync(fullPath);
+                        score.PageCount = cnt > 0 ? cnt : 1;
+                        _ = _databaseService.SaveScoreAsync(score);
+                    }
+                }
+            }
+
             score.DisplaySubtitle = score.GetSubtitle(subtitlePref);
             score.PropertyChanged -= OnScorePropertyChanged;
             score.PropertyChanged += OnScorePropertyChanged;
@@ -1012,9 +1051,8 @@ public partial class ScoresPage : ContentPage
         {
             _selectedScoreForMenu = score;
             ScoreMenuTitleLabel.Text = score.Title;
-            string comp = !string.IsNullOrWhiteSpace(score.Composer) ? score.Composer : "Compositeur non renseigné";
-            string date = score.DateAdded != default ? score.DateAdded.ToString("dd/MM/yyyy") : "";
-            ScoreMenuSubtitleLabel.Text = $"{comp} • {date}";
+            string subtitlePref = Preferences.Default.Get("ScoreSubtitleDisplay", "DateAdded");
+            ScoreMenuSubtitleLabel.Text = score.GetSubtitle(subtitlePref);
             ScoreMenuModifyAssemblyButton.IsVisible = (score.Type == ScoreType.PDF && !score.IsFileMissing);
             ScoreMenuOverlay.IsVisible = true;
         }
