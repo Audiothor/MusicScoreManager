@@ -678,6 +678,7 @@ public partial class PdfAssemblerPage : ContentPage
             File.Move(tempOutPath, targetPath);
 
             _editingScore.Title = title;
+            _editingScore.PageCount = _pdfPages.Count;
             _editingScore.DateModified = DateTime.Now;
             await _databaseService.SaveScoreAsync(_editingScore);
 
@@ -771,7 +772,8 @@ public partial class PdfAssemblerPage : ContentPage
                 Composer = _editingScore?.Composer ?? string.Empty,
                 BPM = _editingScore?.BPM ?? 120,
                 Key = _editingScore?.Key ?? MusicalKey.None,
-                Rating = _editingScore?.Rating ?? 0
+                Rating = _editingScore?.Rating ?? 0,
+                PageCount = _pdfPages.Count
             };
 
             await _databaseService.SaveScoreAsync(score);

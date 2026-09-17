@@ -48,6 +48,20 @@ namespace MusicScoreManager.Models
         [Ignore]
         public bool IsExternal { get; set; }
 
+        private int _pageCount = 0;
+        public int PageCount
+        {
+            get => _pageCount;
+            set
+            {
+                if (_pageCount != value)
+                {
+                    _pageCount = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private string _displaySubtitle = string.Empty;
         [Ignore]
         public string DisplaySubtitle
@@ -66,16 +80,59 @@ namespace MusicScoreManager.Models
         public string GetSubtitle(string displayOption)
         {
             string dateStr = DateAdded != default ? DateAdded.ToString("dd/MM/yyyy") : "";
-            string composerStr = !string.IsNullOrWhiteSpace(Composer) ? Composer.Trim() : "";
+            string composerStr = !string.IsNullOrWhiteSpace(Composer) ? Composer.Trim() : "Compositeur non renseigné";
+            int pages = PageCount > 0 ? PageCount : 1;
+            string pagesStr = pages > 1 ? $"{pages} pages" : "1 page";
 
-            return displayOption switch
+            // Rétrocompatibilité avec les anciennes options fixes
+            if (displayOption == "Composer")
             {
-                "Composer" => !string.IsNullOrEmpty(composerStr) ? composerStr : "Compositeur non renseigné",
-                "ComposerAndDate" => !string.IsNullOrEmpty(composerStr) 
-                    ? $"{composerStr} • {dateStr}" 
-                    : dateStr,
-                _ => dateStr // "DateAdded"
-            };
+                return !string.IsNullOrWhiteSpace(Composer) ? composerStr : "Compositeur non renseigné";
+            }
+            if (displayOption == "DateAdded")
+            {
+                return dateStr;
+            }
+            if (displayOption == "ComposerAndDate")
+            {
+                return !string.IsNullOrWhiteSpace(Composer)
+                    ? $"{Composer.Trim()} • {dateStr}"
+                    : dateStr;
+            }
+
+            // Format dynamique ordonnancé (ex: "Composer,PageCount,DateAdded")
+            if (string.IsNullOrWhiteSpace(displayOption)) return string.Empty;
+
+            var tokens = displayOption.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var parts = new List<string>();
+
+            foreach (var token in tokens)
+            {
+                switch (token)
+                {
+                    case "Composer":
+                        if (!string.IsNullOrWhiteSpace(Composer))
+                        {
+                            parts.Add(Composer.Trim());
+                        }
+                        else if (tokens.Length == 1)
+                        {
+                            parts.Add("Compositeur non renseigné");
+                        }
+                        break;
+                    case "PageCount":
+                        parts.Add(pagesStr);
+                        break;
+                    case "DateAdded":
+                        if (!string.IsNullOrWhiteSpace(dateStr))
+                        {
+                            parts.Add(dateStr);
+                        }
+                        break;
+                }
+            }
+
+            return parts.Count > 0 ? string.Join(" • ", parts) : string.Empty;
         }
 
         private bool _isSelected;
