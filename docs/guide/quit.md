@@ -1,12 +1,12 @@
-# 🚪 Menu Quitter
+<h1 style="text-align: center;">Quitter</h1>
 
-Le menu **Quitter** ([`QuitPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/QuitPage.xaml)) permet de fermer proprement l'application.
+Le menu **Quitter** permet de fermer proprement l'application.
 
 ---
 
-## 🔒 Processus de Fermeture Sécurisée
+## Processus de Fermeture Sécurisée
 
-Lorsque vous appuyez sur l'onglet **Quitter (🚪)** dans la barre de navigation :
+Lorsque vous appuyez sur l'onglet **Quitter** dans la barre de navigation :
 
 1. **Sauvegarde de l'état de session** :
    - L'application enregistre l'ensemble de vos paramètres en cours, la dernière partition consultée, vos filtres actifs et l'état de la base de données SQLite.

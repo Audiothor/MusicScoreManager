@@ -1,4 +1,4 @@
-# 🛠️ Menu Outils
+# 🛠️ Outils
 
 Le menu **Outils** regroupe la suite d'utilitaires spécialisés de Music Score Manager pour manipuler, partager, nettoyer et sécuriser vos partitions sans dépendre d'un ordinateur ou d'Internet.
 
@@ -9,6 +9,7 @@ Le menu **Outils** regroupe la suite d'utilitaires spécialisés de Music Score 
 L'**Atelier d'Assemblage PDF** ([`PdfAssemblerPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/PdfAssemblerPage.xaml)) est un studio complet de retouche et de composition de documents PDF multi-pages.
 
 ### Fonctionnalités disponibles :
+
 - **Créer un PDF à partir de photos ou d'images** :
   - Sélectionnez plusieurs photos de partitions prises avec votre appareil photo ou stockées dans votre galerie (`.jpg`, `.png`).
   - L'application compile les images en conservant 100% de leur résolution et de leur rapport d'aspect.
@@ -34,6 +35,7 @@ L'**Atelier d'Assemblage PDF** ([`PdfAssemblerPage`](file:///c:/Users/comme/Docu
 La page [`WifiTransferPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/WifiTransferPage.xaml) gère les échanges sans fil directs entre musiciens, **sans box internet ni routeur 4G/5G requis**.
 
 ### A. Échange Direct de Tablette à Tablette (P2P) :
+
 1. **Destinataire** :
    - Ouvre **Outils > Transfert Wi-Fi Direct**, active le Wi-Fi de sa tablette et appuie sur **Recevoir**. Son appareil devient visible sur le réseau local ad-hoc.
 2. **Émetteur** :
@@ -42,6 +44,7 @@ La page [`WifiTransferPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreM
    - Sélectionne le destinataire dans la liste des appareils détectés. Le transfert binaire TCP s'exécute à très grande vitesse.
 
 ### B. Mode Diffusion de Groupe par QR Code (Multi-Musiciens) :
+
 1. **L'émetteur** :
    - Active le **Mode Diffusion Groupe**. L'application démarre un point d'accès Wi-Fi sécurisé et un serveur local HTTP embarqué, puis affiche un **QR Code haute résolution** sur son écran.
 2. **Les membres du groupe** :
@@ -53,6 +56,7 @@ La page [`WifiTransferPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreM
 ## 🏷️ 3. Gestion des Étiquettes (Tags)
 
 La page [`TagsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/TagsPage.xaml) vous donne le plein contrôle sur la taxonomie de votre bibliothèque :
+
 - **Créer une nouvelle étiquette** avec un nom personnalisé (ex : *Chorale*, *Solfège*, *Concert Noël*, *Guitare Acoustique*).
 - **Palette de couleurs vives** : assignez une pastille colorée unique à chaque étiquette pour une identification visuelle instantanée dans la liste des partitions.
 - **Modifier ou renommer** un tag existant.
@@ -63,6 +67,7 @@ La page [`TagsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/T
 ## 📦 4. Imports de Paquets & Setlists
 
 La page [`ImportPackagePage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ImportPackagePage.xaml) vous permet de charger des archives partagées par des tiers :
+
 - **Formats reconnus** : `.msmsetlist` (setlist complète), `.msmscore` (partition individuelle avec annotations/audio) et `.msmscores` (paquet groupé de plusieurs partitions).
 - **Importation automatisée** : extrait les documents PDF, recrée les métadonnées musicales (tempo, compositeur, tonalité, note), réinjecte les calques d'annotations et rattache les fichiers audio dans votre bibliothèque locale en une seule opération.
 
@@ -71,6 +76,7 @@ La page [`ImportPackagePage`](file:///c:/Users/comme/Documents/GitHub/MusicScore
 ## 🔍 5. Gestion des Doublons
 
 La page [`DuplicatesPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/DuplicatesPage.xaml) inspecte votre répertoire de partitions pour libérer de l'espace de stockage et clarifier votre bibliothèque :
+
 - **Analyse d'empreinte SHA-256** : compare le contenu binaire exact de vos PDF (même si deux fichiers portent des noms différents).
 - **Regroupement par doublons** : affiche les fichiers en double côte à côte avec leurs métadonnées, dates et chemins.
 - **Suppression sécurisée** : supprimez les copies superflues en conservant la version originale de référence.
@@ -80,6 +86,7 @@ La page [`DuplicatesPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreMan
 ## 💾 6. Gestion des Sauvegardes & Restauration
 
 La page [`BackupsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/BackupsPage.xaml) assure la pérennité totale de votre travail musical :
+
 - **Sauvegarde manuelle immédiate** : créez un instantané horodaté de votre base de données SQLite (partitions, setlists, liaisons, annotations, tags, paramètres).
 - **Historique des sauvegardes** : liste détaillée des points de sauvegarde enregistrés sur votre appareil avec date, heure et poids.
 - **Restauration en un clic** : rétablissez n'importe quel état antérieur en cas de mauvaise manipulation ou de réinstallation.

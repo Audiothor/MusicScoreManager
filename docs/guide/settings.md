@@ -1,4 +1,4 @@
-# ⚙️ Menu Paramètres
+# ⚙️ Paramètres
 
 Le menu **Paramètres** ([`SettingsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SettingsPage.xaml)) vous permet d'adapter précisément Music Score Manager à vos habitudes de jeu, votre instrument et la taille de votre écran.
 
@@ -103,6 +103,7 @@ La page [`HelpPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/H
 ## ℹ️ 8. À propos
 
 La page [`AboutPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/AboutPage.xaml) fournit les informations légales et techniques :
+
 - Numéro de version dynamique.
 - Licence libre **GNU General Public License v3.0 (GPLv3)**.
 - Liste exhaustive des frameworks tiers utilisés (.NET MAUI, CommunityToolkit, SQLite, Mozilla PDF.js, SkiaSharp, ZXing).
