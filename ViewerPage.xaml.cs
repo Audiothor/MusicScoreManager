@@ -629,6 +629,18 @@ public partial class ViewerPage : ContentPage
             double containerW = this.Width > 0 ? this.Width : ImageContainer.Width;
             double containerH = this.Height > 0 ? this.Height : ImageContainer.Height;
 
+            if (containerW <= 0 || containerH <= 0)
+            {
+                try
+                {
+                    var display = DeviceDisplay.MainDisplayInfo;
+                    double density = Math.Max(1.0, display.Density);
+                    containerW = display.Width / density;
+                    containerH = display.Height / density;
+                }
+                catch { }
+            }
+
             bool twoPagesPref = Preferences.Default.Get("TwoPagesLandscape", true);
             bool isLandscape = (containerW > containerH);
             _isTwoPagesMode = twoPagesPref && isLandscape && _maxPages > 1;
@@ -642,6 +654,12 @@ public partial class ViewerPage : ContentPage
                 int rightNum = leftNum + 1;
                 int leftRot = GetRotationForPage(leftNum);
                 int rightRot = GetRotationForPage(rightNum);
+
+                _leftPageNumber = leftNum;
+                _rightPageNumber = rightNum;
+                _hasRightPage = (rightNum <= _maxPages);
+                _currentPage = _leftPageNumber;
+                _currentPageDisplay = _hasRightPage ? $"{_leftPageNumber}-{_rightPageNumber}" : $"{_leftPageNumber}";
 
                 rendered = await _pdfService.RenderPdfTwoPagesAsync(fullPath, leftNum, rightNum, leftRot, rightRot);
                 if (rendered != null)
@@ -657,6 +675,9 @@ public partial class ViewerPage : ContentPage
             {
                 int pNum = Math.Clamp(pageNum, 1, _maxPages);
                 int rot = GetRotationForPage(pNum);
+
+                _currentPage = pNum;
+                _currentPageDisplay = _currentPage.ToString();
 
                 rendered = await _pdfService.RenderPdfPageAsync(fullPath, pNum, rot);
                 if (rendered != null)
@@ -2050,7 +2071,7 @@ public partial class ViewerPage : ContentPage
                 case PedalAction.RestartAudio:
                     try
                     {
-                        AudioPlayer.SeekTo(TimeSpan.Zero);
+                        await AudioPlayer.SeekTo(TimeSpan.Zero);
                         if (!_isAudioPlaying)
                         {
                             OnAudioPlayPauseClicked(this, EventArgs.Empty);
