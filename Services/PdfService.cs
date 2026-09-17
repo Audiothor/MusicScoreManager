@@ -383,45 +383,54 @@ namespace MusicScoreManager.Services
                     int rightIdx = rightPage - 1;
                     bool hasRight = (rightIdx >= 0 && rightIdx < totalPages);
 
-                    using var lPage = renderer.OpenPage(leftIdx);
-                    int lW = Math.Max(1, (int)(lPage.Width * scale));
-                    int lH = Math.Max(1, (int)(lPage.Height * scale));
-
-                    using var lRawBmp = Bitmap.CreateBitmap(lW, lH, Bitmap.Config.Argb8888!);
-                    lRawBmp.EraseColor(Android.Graphics.Color.White);
-                    lPage.Render(lRawBmp, null, null, PdfRenderMode.ForDisplay);
-
-                    Bitmap lBmp = lRawBmp;
-                    bool lRecycled = false;
+                    Bitmap lBmp;
                     int lNormRot = (leftRot % 360 + 360) % 360;
-                    if (lNormRot != 0)
+                    using (var lPage = renderer.OpenPage(leftIdx))
                     {
-                        using var mat = new Android.Graphics.Matrix();
-                        mat.PostRotate(lNormRot);
-                        lBmp = Bitmap.CreateBitmap(lRawBmp, 0, 0, lRawBmp.Width, lRawBmp.Height, mat, true);
-                        lRecycled = true;
+                        int lW = Math.Max(1, (int)(lPage.Width * scale));
+                        int lH = Math.Max(1, (int)(lPage.Height * scale));
+
+                        var lRawBmp = Bitmap.CreateBitmap(lW, lH, Bitmap.Config.Argb8888!);
+                        lRawBmp.EraseColor(Android.Graphics.Color.White);
+                        lPage.Render(lRawBmp, null, null, PdfRenderMode.ForDisplay);
+
+                        if (lNormRot != 0)
+                        {
+                            using var mat = new Android.Graphics.Matrix();
+                            mat.PostRotate(lNormRot);
+                            lBmp = Bitmap.CreateBitmap(lRawBmp, 0, 0, lRawBmp.Width, lRawBmp.Height, mat, true);
+                            lRawBmp.Recycle();
+                        }
+                        else
+                        {
+                            lBmp = lRawBmp;
+                        }
                     }
 
                     Bitmap? rBmp = null;
-                    bool rRecycled = false;
                     if (hasRight)
                     {
-                        using var rPage = renderer.OpenPage(rightIdx);
-                        int rW = Math.Max(1, (int)(rPage.Width * scale));
-                        int rH = Math.Max(1, (int)(rPage.Height * scale));
-
-                        using var rRawBmp = Bitmap.CreateBitmap(rW, rH, Bitmap.Config.Argb8888!);
-                        rRawBmp.EraseColor(Android.Graphics.Color.White);
-                        rPage.Render(rRawBmp, null, null, PdfRenderMode.ForDisplay);
-
-                        rBmp = rRawBmp;
                         int rNormRot = (rightRot % 360 + 360) % 360;
-                        if (rNormRot != 0)
+                        using (var rPage = renderer.OpenPage(rightIdx))
                         {
-                            using var mat = new Android.Graphics.Matrix();
-                            mat.PostRotate(rNormRot);
-                            rBmp = Bitmap.CreateBitmap(rRawBmp, 0, 0, rRawBmp.Width, rRawBmp.Height, mat, true);
-                            rRecycled = true;
+                            int rW = Math.Max(1, (int)(rPage.Width * scale));
+                            int rH = Math.Max(1, (int)(rPage.Height * scale));
+
+                            var rRawBmp = Bitmap.CreateBitmap(rW, rH, Bitmap.Config.Argb8888!);
+                            rRawBmp.EraseColor(Android.Graphics.Color.White);
+                            rPage.Render(rRawBmp, null, null, PdfRenderMode.ForDisplay);
+
+                            if (rNormRot != 0)
+                            {
+                                using var mat = new Android.Graphics.Matrix();
+                                mat.PostRotate(rNormRot);
+                                rBmp = Bitmap.CreateBitmap(rRawBmp, 0, 0, rRawBmp.Width, rRawBmp.Height, mat, true);
+                                rRawBmp.Recycle();
+                            }
+                            else
+                            {
+                                rBmp = rRawBmp;
+                            }
                         }
                     }
 
@@ -442,8 +451,8 @@ namespace MusicScoreManager.Services
                         cv.DrawLine(lBmp.Width, 0, lBmp.Width, maxH, paint);
                     }
 
-                    if (lRecycled) lBmp.Recycle();
-                    if (rRecycled && rBmp != null) rBmp.Recycle();
+                    lBmp.Recycle();
+                    if (rBmp != null) rBmp.Recycle();
 
                     using var ms = new MemoryStream();
                     combined.Compress(Bitmap.CompressFormat.Jpeg!, 90, ms);
