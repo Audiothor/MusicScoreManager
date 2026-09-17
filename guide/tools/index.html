@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#menu-outils" class="md-skip">
+        <a href="#outils" class="md-skip">
           Aller au contenu
         </a>
       
@@ -1048,7 +1048,7 @@
   
 
 
-<h1 id="menu-outils">🛠️ Menu Outils</h1>
+<h1 id="outils">🛠️ Outils</h1>
 <p>Le menu <strong>Outils</strong> regroupe la suite d'utilitaires spécialisés de Music Score Manager pour manipuler, partager, nettoyer et sécuriser vos partitions sans dépendre d'un ordinateur ou d'Internet.</p>
 <hr />
 <h2 id="1-createur-assemblage-pdf-atelier-studio">📑 1. Créateur &amp; Assemblage PDF (Atelier Studio)</h2>
@@ -1095,29 +1095,37 @@
 </ol>
 <hr />
 <h2 id="3-gestion-des-etiquettes-tags">🏷️ 3. Gestion des Étiquettes (Tags)</h2>
-<p>La page <a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/TagsPage.xaml"><code>TagsPage</code></a> vous donne le plein contrôle sur la taxonomie de votre bibliothèque :
-- <strong>Créer une nouvelle étiquette</strong> avec un nom personnalisé (ex : <em>Chorale</em>, <em>Solfège</em>, <em>Concert Noël</em>, <em>Guitare Acoustique</em>).
-- <strong>Palette de couleurs vives</strong> : assignez une pastille colorée unique à chaque étiquette pour une identification visuelle instantanée dans la liste des partitions.
-- <strong>Modifier ou renommer</strong> un tag existant.
-- <strong>Supprimer une étiquette</strong> : supprime l'étiquette de l'application sans endommager les partitions qui la possédaient.</p>
+<p>La page <a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/TagsPage.xaml"><code>TagsPage</code></a> vous donne le plein contrôle sur la taxonomie de votre bibliothèque :</p>
+<ul>
+<li><strong>Créer une nouvelle étiquette</strong> avec un nom personnalisé (ex : <em>Chorale</em>, <em>Solfège</em>, <em>Concert Noël</em>, <em>Guitare Acoustique</em>).</li>
+<li><strong>Palette de couleurs vives</strong> : assignez une pastille colorée unique à chaque étiquette pour une identification visuelle instantanée dans la liste des partitions.</li>
+<li><strong>Modifier ou renommer</strong> un tag existant.</li>
+<li><strong>Supprimer une étiquette</strong> : supprime l'étiquette de l'application sans endommager les partitions qui la possédaient.</li>
+</ul>
 <hr />
 <h2 id="4-imports-de-paquets-setlists">📦 4. Imports de Paquets &amp; Setlists</h2>
-<p>La page <a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ImportPackagePage.xaml"><code>ImportPackagePage</code></a> vous permet de charger des archives partagées par des tiers :
-- <strong>Formats reconnus</strong> : <code>.msmsetlist</code> (setlist complète), <code>.msmscore</code> (partition individuelle avec annotations/audio) et <code>.msmscores</code> (paquet groupé de plusieurs partitions).
-- <strong>Importation automatisée</strong> : extrait les documents PDF, recrée les métadonnées musicales (tempo, compositeur, tonalité, note), réinjecte les calques d'annotations et rattache les fichiers audio dans votre bibliothèque locale en une seule opération.</p>
+<p>La page <a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ImportPackagePage.xaml"><code>ImportPackagePage</code></a> vous permet de charger des archives partagées par des tiers :</p>
+<ul>
+<li><strong>Formats reconnus</strong> : <code>.msmsetlist</code> (setlist complète), <code>.msmscore</code> (partition individuelle avec annotations/audio) et <code>.msmscores</code> (paquet groupé de plusieurs partitions).</li>
+<li><strong>Importation automatisée</strong> : extrait les documents PDF, recrée les métadonnées musicales (tempo, compositeur, tonalité, note), réinjecte les calques d'annotations et rattache les fichiers audio dans votre bibliothèque locale en une seule opération.</li>
+</ul>
 <hr />
 <h2 id="5-gestion-des-doublons">🔍 5. Gestion des Doublons</h2>
-<p>La page <a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/DuplicatesPage.xaml"><code>DuplicatesPage</code></a> inspecte votre répertoire de partitions pour libérer de l'espace de stockage et clarifier votre bibliothèque :
-- <strong>Analyse d'empreinte SHA-256</strong> : compare le contenu binaire exact de vos PDF (même si deux fichiers portent des noms différents).
-- <strong>Regroupement par doublons</strong> : affiche les fichiers en double côte à côte avec leurs métadonnées, dates et chemins.
-- <strong>Suppression sécurisée</strong> : supprimez les copies superflues en conservant la version originale de référence.</p>
+<p>La page <a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/DuplicatesPage.xaml"><code>DuplicatesPage</code></a> inspecte votre répertoire de partitions pour libérer de l'espace de stockage et clarifier votre bibliothèque :</p>
+<ul>
+<li><strong>Analyse d'empreinte SHA-256</strong> : compare le contenu binaire exact de vos PDF (même si deux fichiers portent des noms différents).</li>
+<li><strong>Regroupement par doublons</strong> : affiche les fichiers en double côte à côte avec leurs métadonnées, dates et chemins.</li>
+<li><strong>Suppression sécurisée</strong> : supprimez les copies superflues en conservant la version originale de référence.</li>
+</ul>
 <hr />
 <h2 id="6-gestion-des-sauvegardes-restauration">💾 6. Gestion des Sauvegardes &amp; Restauration</h2>
-<p>La page <a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/BackupsPage.xaml"><code>BackupsPage</code></a> assure la pérennité totale de votre travail musical :
-- <strong>Sauvegarde manuelle immédiate</strong> : créez un instantané horodaté de votre base de données SQLite (partitions, setlists, liaisons, annotations, tags, paramètres).
-- <strong>Historique des sauvegardes</strong> : liste détaillée des points de sauvegarde enregistrés sur votre appareil avec date, heure et poids.
-- <strong>Restauration en un clic</strong> : rétablissez n'importe quel état antérieur en cas de mauvaise manipulation ou de réinstallation.
-- <strong>Export &amp; Sauvegarde externe</strong> : enregistrez votre archive de sauvegarde sur une clé USB, carte micro-SD ou dossier cloud personnel.</p>
+<p>La page <a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/BackupsPage.xaml"><code>BackupsPage</code></a> assure la pérennité totale de votre travail musical :</p>
+<ul>
+<li><strong>Sauvegarde manuelle immédiate</strong> : créez un instantané horodaté de votre base de données SQLite (partitions, setlists, liaisons, annotations, tags, paramètres).</li>
+<li><strong>Historique des sauvegardes</strong> : liste détaillée des points de sauvegarde enregistrés sur votre appareil avec date, heure et poids.</li>
+<li><strong>Restauration en un clic</strong> : rétablissez n'importe quel état antérieur en cas de mauvaise manipulation ou de réinstallation.</li>
+<li><strong>Export &amp; Sauvegarde externe</strong> : enregistrez votre archive de sauvegarde sur une clé USB, carte micro-SD ou dossier cloud personnel.</li>
+</ul>
 
 
 

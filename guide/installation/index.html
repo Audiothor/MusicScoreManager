@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#chapitre-1-description-de-lapplication-installation-prerequis" class="md-skip">
+        <a href="#description-installation-prerequis" class="md-skip">
           Aller au contenu
         </a>
       
@@ -1082,7 +1082,7 @@
   
 
 
-<h1 id="chapitre-1-description-de-lapplication-installation-prerequis">🚀 Chapitre 1 : Description de l'Application, Installation &amp; Prérequis</h1>
+<h1 id="description-installation-prerequis">Description, Installation &amp; Prérequis</h1>
 <h2 id="11-presentation-generale-philosophie">1.1 Présentation Générale &amp; Philosophie</h2>
 <p><strong>Music Score Manager</strong> est une application multiplateforme développée avec <strong>.NET 10 MAUI</strong>, principalement conçue pour les tablettes et smartphones <strong>Android</strong> (ainsi que les postes de travail <strong>Windows</strong>). Conçue par des musiciens pour des musiciens, elle répond aux exigences les plus strictes de la pratique musicale : répétitions de pupitre, travail personnel, cours de musique, répétitions générales et exécution scénique en concert live.</p>
 <p>L'application élimine définitivement les classeurs papier volumineux et remplace les visualiseurs PDF généralistes inadaptés à la scène. Elle offre une expérience taillée sur mesure :</p>
@@ -1093,6 +1093,10 @@
 <li><strong>Contrôle Mains-Libres Intégral</strong> : Prise en charge native des pédaliers tourne-page sans fil Bluetooth (profils HID et clavier) ainsi que des contrôleurs MIDI (USB-OTG et Bluetooth MIDI).</li>
 <li><strong>Écosystème d'Annotations Professionnel</strong> : Stylet, crayon à main levée, surligneurs Stabilo translucides, textes typographiés et plus de 100 stickers musicaux intégrés.</li>
 </ul>
+<p><em>Contribution / Disclamer
+L'application a évolué et continue d'évoluer d'après les remarques des musiciens.
+Elle n'est évidement pas parfaite et vous pouvez soumettre des propositions, bugs ou remarques sur Github !
+Merci !</em></p>
 <hr />
 <h2 id="12-les-10-points-forts-de-music-score-manager">1.2 Les 10 Points Forts de Music Score Manager</h2>
 <ol>
@@ -1190,17 +1194,22 @@
 <h3 id="pour-les-developpeurs-compilation-depuis-les-sources-net-maui">🛠️ Pour les Développeurs : Compilation depuis les Sources (.NET MAUI)</h3>
 <p>Pour les développeurs souhaitant compiler et personnaliser l'application pour Android ou Windows :</p>
 <ol>
-<li>Installez le <strong>SDK .NET 10</strong> et les charges de travail .NET MAUI :
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">dotnet</span> <span class="n">workload</span> <span class="n">install</span> <span class="n">maui</span>
+<li>Installez le <strong>SDK .NET 10</strong> et les charges de travail .NET MAUI :</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">dotnet</span> <span class="n">workload</span> <span class="n">install</span> <span class="n">maui</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">dotnet</span> <span class="n">workload</span> <span class="n">install</span> <span class="n">maui-android</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">dotnet</span> <span class="n">workload</span> <span class="n">install</span> <span class="n">maui-windows</span>
-</code></pre></div></li>
-<li>Clonez le dépôt Git officiel :
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">Audiothor</span><span class="p">/</span><span class="n">MusicScoreManager</span><span class="p">.</span><span class="n">git</span>
+</code></pre></div>
+<ol>
+<li>Clonez le dépôt Git officiel :</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">Audiothor</span><span class="p">/</span><span class="n">MusicScoreManager</span><span class="p">.</span><span class="n">git</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">cd </span><span class="n">MusicScoreManager</span>
-</code></pre></div></li>
-<li>Compilez selon la cible souhaitée :
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c"># Pour Android : exécution directe sur tablette Android connectée en USB</span>
+</code></pre></div>
+<ol>
+<li>Compilez selon la cible souhaitée :</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c"># Pour Android : exécution directe sur tablette Android connectée en USB</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">dotnet</span> <span class="n">build</span> <span class="n">-t</span><span class="p">:</span><span class="n">Run</span> <span class="o">-f</span> <span class="n">net10</span><span class="p">.</span><span class="n">0-android</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c"># Pour Android : génération du package Release APK signé</span>
@@ -1211,8 +1220,7 @@
 <a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
 <a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c"># Pour Windows : publication du binaire complet autonome</span>
 <a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">dotnet</span> <span class="n">publish</span> <span class="o">-f</span> <span class="n">net10</span><span class="p">.</span><span class="n">0-windows10</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">19041</span><span class="p">.</span><span class="n">0</span> <span class="n">-c</span> <span class="n">Release</span>
-</code></pre></div></li>
-</ol>
+</code></pre></div>
 
 
 
