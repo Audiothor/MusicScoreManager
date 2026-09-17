@@ -17,9 +17,12 @@ namespace MusicScoreManager.Services
         private const string CustomProfilesKey = "MSM_CustomPedalProfiles_Json";
         private const string LongPressThresholdKey = "MSM_PedalLongPressThresholdMs";
         private const string IsPedalEnabledKey = "MSM_PedalServiceEnabled";
+        private const string BlockFastTurnKey = "MSM_PedalBlockFastTurn";
+        private const string FastTurnCooldownMsKey = "MSM_PedalFastTurnCooldownMs";
 
         private readonly Dictionary<int, (DateTime PressTime, System.Threading.Timer? Timer)> _activeKeyDowns = new();
         private readonly object _lock = new();
+        private DateTime _lastPageTurnTime = DateTime.MinValue;
 
         public event Action<PedalAction>? ActionTriggered;
         public event Action<PedalRawEvent>? RawEventReceived;
@@ -35,6 +38,18 @@ namespace MusicScoreManager.Services
         {
             get => Preferences.Get(LongPressThresholdKey, 450);
             set => Preferences.Set(LongPressThresholdKey, value);
+        }
+
+        public bool BlockFastPageTurn
+        {
+            get => Preferences.Get(BlockFastTurnKey, true);
+            set => Preferences.Set(BlockFastTurnKey, value);
+        }
+
+        public int FastTurnCooldownMs
+        {
+            get => Preferences.Get(FastTurnCooldownMsKey, 450);
+            set => Preferences.Set(FastTurnCooldownMsKey, value);
         }
 
         public List<PedalProfile> Profiles { get; private set; } = new();
@@ -547,6 +562,21 @@ namespace MusicScoreManager.Services
         public void TriggerAction(PedalAction action)
         {
             if (action == PedalAction.None) return;
+
+            // Protection anti-double saut de page (anti-rebond matériel / limitation de cadence scène)
+            if (BlockFastPageTurn && (action == PedalAction.NextPage || action == PedalAction.PreviousPage))
+            {
+                lock (_lock)
+                {
+                    double elapsed = (DateTime.Now - _lastPageTurnTime).TotalMilliseconds;
+                    if (elapsed < FastTurnCooldownMs)
+                    {
+                        Debug.WriteLine($"[PedalMidiService] Saut de page ignoré par sécurité anti-rebond ({elapsed:F0} ms < {FastTurnCooldownMs} ms)");
+                        return;
+                    }
+                    _lastPageTurnTime = DateTime.Now;
+                }
+            }
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
