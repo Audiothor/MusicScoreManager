@@ -249,7 +249,6 @@ public partial class ViewerPage : ContentPage
         // 2. Initialiser le métronome, l'audio et les annotations en tâche de fond
         _ = Task.Run(async () => {
             InitializeMetronome();
-            InitializeAudio();
             await LoadAnnotationsAsync();
             await InitializeAnnotationUI();
 
@@ -259,20 +258,28 @@ public partial class ViewerPage : ContentPage
                 if (refreshedScore != null)
                 {
                     _score = refreshedScore;
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        Title = _score.Title;
-                        if (MenuTitleLabel != null) MenuTitleLabel.Text = _score.Title;
-                        if (MetronomeBpmLabel != null) MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
-                        if (MenuMetronomeSwitch != null) MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
-                        if (MenuAudioSwitch != null) MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer;
-                    });
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur rafraîchissement score: {ex.Message}");
             }
+
+            InitializeAudio(forceReload: true);
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                Title = _score.Title;
+                if (MenuTitleLabel != null) MenuTitleLabel.Text = _score.Title;
+                if (MetronomeBpmLabel != null) MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+                if (MenuMetronomeSwitch != null) MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
+                if (MenuAudioSwitch != null)
+                {
+                    bool hasAudio = _score.AudioFiles != null && _score.AudioFiles.Count > 0;
+                    MenuAudioSwitch.IsEnabled = hasAudio;
+                    MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
+                }
+            });
         });
     }
 
@@ -359,7 +366,9 @@ public partial class ViewerPage : ContentPage
     private void SetupMenuUI()
     {
         MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
-        MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer;
+        bool hasAudio = _score.AudioFiles != null && _score.AudioFiles.Count > 0;
+        MenuAudioSwitch.IsEnabled = hasAudio;
+        MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
         SaveRotationSwitch.IsToggled = _score.IsRotationSaved;
         UpdateRotateButtonText();
     }
@@ -1254,35 +1263,98 @@ public partial class ViewerPage : ContentPage
     }
 
     private bool _isAudioInitialized = false;
+    private bool _isAudioEventsSubscribed = false;
+    private double _audioPlayerXBase = 0;
+    private double _audioPlayerYBase = 0;
 
-    private void InitializeAudio()
+    private void EnsureAudioEventsSubscribed()
     {
-        if (_isAudioInitialized) return;
-        _isAudioInitialized = true;
+        if (_isAudioEventsSubscribed) return;
+        _isAudioEventsSubscribed = true;
 
-        _selectedAudioFile = _score.AudioFiles.FirstOrDefault(af => af.IsSelected);
-        AudioPlayerOverlay.IsVisible = _score.ShowAudioPlayer && _selectedAudioFile != null;
-        MenuAudioSwitch.IsEnabled = _selectedAudioFile != null;
-
-        if (_selectedAudioFile != null)
+        AudioPlayer.PositionChanged += OnAudioPositionChanged;
+        AudioPlayer.MediaEnded += OnAudioMediaEnded;
+        AudioPlayer.PropertyChanged += (s, e) =>
         {
-            string fullPath = _settingsService.GetAbsolutePath(_selectedAudioFile.FilePath, isAudio: true);
-            AudioPlayer.Source = MediaSource.FromFile(fullPath);
-            AudioPlayer.PositionChanged += OnAudioPositionChanged;
-
-            // Écouter PropertyChanged car Duration peut ne pas être prêt immédiatement à MediaOpened
-            AudioPlayer.PropertyChanged += (s, e) =>
+            if (e.PropertyName == nameof(CommunityToolkit.Maui.Views.MediaElement.Duration))
             {
-                if (e.PropertyName == nameof(CommunityToolkit.Maui.Views.MediaElement.Duration))
+                MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    MainThread.BeginInvokeOnMainThread(() =>
+                    if (AudioPlayer.Duration > TimeSpan.Zero)
                     {
                         AudioTotalTimeLabel.Text = AudioPlayer.Duration.ToString(@"m\:ss");
                         AudioSlider.Maximum = AudioPlayer.Duration.TotalSeconds;
-                    });
+                    }
+                });
+            }
+        };
+    }
+
+    private void OnAudioMediaEnded(object? sender, EventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            _isAudioPlaying = false;
+            if (AudioPlayBtn != null) AudioPlayBtn.Text = "▶";
+            if (AudioSlider != null) AudioSlider.Value = 0;
+            if (AudioCurrentTimeLabel != null) AudioCurrentTimeLabel.Text = "0:00";
+        });
+    }
+
+    private void InitializeAudio(bool forceReload = false)
+    {
+        if (_isAudioInitialized && !forceReload) return;
+        _isAudioInitialized = true;
+
+        EnsureAudioEventsSubscribed();
+
+        _selectedAudioFile = _score.AudioFiles?.FirstOrDefault(af => af.IsSelected) 
+                             ?? _score.AudioFiles?.FirstOrDefault();
+
+        bool hasAudio = _selectedAudioFile != null;
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            if (MenuAudioSwitch != null)
+            {
+                MenuAudioSwitch.IsEnabled = hasAudio;
+                MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
+            }
+
+            AudioPlayerOverlay.IsVisible = _score.ShowAudioPlayer && hasAudio;
+
+            if (hasAudio && _selectedAudioFile != null)
+            {
+                if (AudioTrackNameLabel != null)
+                {
+                    AudioTrackNameLabel.Text = _selectedAudioFile.FileName;
                 }
-            };
-        }
+
+                string fullPath = _settingsService.GetAbsolutePath(_selectedAudioFile.FilePath, isAudio: true);
+                if (File.Exists(fullPath))
+                {
+                    try
+                    {
+                        AudioPlayer.Source = MediaSource.FromFile(fullPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur source audio: {ex.Message}");
+                    }
+                }
+            }
+            else
+            {
+                try
+                {
+                    AudioPlayer.Stop();
+                    AudioPlayer.Source = null;
+                }
+                catch { }
+                _isAudioPlaying = false;
+                if (AudioPlayBtn != null) AudioPlayBtn.Text = "▶";
+            }
+        });
     }
 
     private void OnAudioPositionChanged(object? sender, MediaPositionChangedEventArgs e)
@@ -1307,8 +1379,8 @@ public partial class ViewerPage : ContentPage
         }
         else
         {
-            // Pré-compte synchronisé
-            if (_score.PreCountMeasures > 0)
+            // Pré-compte synchronisé uniquement au début (position <= 500ms)
+            if (AudioPlayer.Position <= TimeSpan.FromMilliseconds(500) && _score.PreCountMeasures > 0)
             {
                 AudioPlayBtn.IsEnabled = false;
 
@@ -1343,6 +1415,7 @@ public partial class ViewerPage : ContentPage
             }
             else
             {
+                // Reprise immédiate à l'endroit précis de la pause
                 AudioPlayer.Play();
             }
 
@@ -1351,8 +1424,87 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private void OnAudioToStartClicked(object sender, EventArgs e) => AudioPlayer.SeekTo(TimeSpan.Zero);
-    private void OnAudioToEndClicked(object sender, EventArgs e) => AudioPlayer.SeekTo(AudioPlayer.Duration);
+    private void OnAudioToStartClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            AudioPlayer.Pause();
+            AudioPlayer.SeekTo(TimeSpan.Zero);
+        }
+        catch { }
+        _isAudioPlaying = false;
+        AudioPlayBtn.Text = "▶";
+        AudioCurrentTimeLabel.Text = "0:00";
+        AudioSlider.Value = 0;
+    }
+
+    private void OnAudioRewindClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            var newPos = AudioPlayer.Position - TimeSpan.FromSeconds(5);
+            if (newPos < TimeSpan.Zero) newPos = TimeSpan.Zero;
+            AudioPlayer.SeekTo(newPos);
+            AudioSlider.Value = newPos.TotalSeconds;
+            AudioCurrentTimeLabel.Text = newPos.ToString(@"m\:ss");
+        }
+        catch { }
+    }
+
+    private void OnAudioForwardClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            var newPos = AudioPlayer.Position + TimeSpan.FromSeconds(5);
+            if (AudioPlayer.Duration > TimeSpan.Zero && newPos > AudioPlayer.Duration)
+                newPos = AudioPlayer.Duration;
+            AudioPlayer.SeekTo(newPos);
+            AudioSlider.Value = newPos.TotalSeconds;
+            AudioCurrentTimeLabel.Text = newPos.ToString(@"m\:ss");
+        }
+        catch { }
+    }
+
+    private void OnAudioCloseClicked(object sender, EventArgs e)
+    {
+        AudioPlayerOverlay.IsVisible = false;
+        if (MenuAudioSwitch != null) MenuAudioSwitch.IsToggled = false;
+        _score.ShowAudioPlayer = false;
+        _ = _databaseService.SaveScoreAsync(_score);
+    }
+
+    private void OnAudioPlayerPanUpdated(object? sender, PanUpdatedEventArgs e)
+    {
+        if (_isDraggingAudioSlider) return;
+
+        switch (e.StatusType)
+        {
+            case GestureStatus.Started:
+                _audioPlayerXBase = AudioPlayerOverlay.TranslationX;
+                _audioPlayerYBase = AudioPlayerOverlay.TranslationY;
+                break;
+            case GestureStatus.Running:
+                double newX = _audioPlayerXBase + e.TotalX;
+                double newY = _audioPlayerYBase + e.TotalY;
+                if (this.Width > 0 && this.Height > 0)
+                {
+                    double w = AudioPlayerOverlay.Width > 0 ? AudioPlayerOverlay.Width : 265;
+                    double h = AudioPlayerOverlay.Height > 0 ? AudioPlayerOverlay.Height : 90;
+                    double minX = -5;
+                    double maxX = Math.Max(minX, this.Width - w - 10);
+                    double minY = -5;
+                    double maxY = Math.Max(minY, this.Height - h - 10);
+                    newX = Math.Clamp(newX, minX, maxX);
+                    newY = Math.Clamp(newY, minY, maxY);
+                }
+                AudioPlayerOverlay.TranslationX = newX;
+                AudioPlayerOverlay.TranslationY = newY;
+                break;
+            case GestureStatus.Completed:
+            case GestureStatus.Canceled:
+                break;
+        }
+    }
 
     private void OnAudioSliderDragStarted(object sender, EventArgs e)
     {
@@ -1391,12 +1543,21 @@ public partial class ViewerPage : ContentPage
         await _databaseService.SaveScoreAsync(_score);
     }
 
-
-
     private async void OnMenuAudioToggled(object sender, ToggledEventArgs e)
     {
         _score.ShowAudioPlayer = e.Value;
-        AudioPlayerOverlay.IsVisible = e.Value && _selectedAudioFile != null;
+        if (e.Value)
+        {
+            if (_selectedAudioFile == null || AudioPlayer.Source == null)
+            {
+                InitializeAudio(forceReload: true);
+            }
+            AudioPlayerOverlay.IsVisible = (_selectedAudioFile != null);
+        }
+        else
+        {
+            AudioPlayerOverlay.IsVisible = false;
+        }
         await _databaseService.SaveScoreAsync(_score);
     }
 
@@ -1404,6 +1565,18 @@ public partial class ViewerPage : ContentPage
     {
         MenuTitleLabel.Text = _score.Title;
         MenuModifyAssemblyButton.IsVisible = (_score.Type == ScoreType.PDF);
+
+        bool hasAudio = _score.AudioFiles != null && _score.AudioFiles.Count > 0;
+        if (hasAudio && (_selectedAudioFile == null || AudioPlayer.Source == null))
+        {
+            InitializeAudio(forceReload: true);
+        }
+        if (MenuAudioSwitch != null)
+        {
+            MenuAudioSwitch.IsEnabled = hasAudio;
+            MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
+        }
+
         UpdateRotateButtonText();
         CentralMenuOverlay.IsVisible = true;
         ImageContainer.InputTransparent = true; // Empêche l'image de bloquer les clics sur le menu !
@@ -2240,13 +2413,18 @@ public partial class ViewerPage : ContentPage
         if (MenuTitleLabel != null) MenuTitleLabel.Text = _score.Title;
         if (MetronomeBpmLabel != null) MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
         if (MenuMetronomeSwitch != null) MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
-        if (MenuAudioSwitch != null) MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer;
+        if (MenuAudioSwitch != null)
+        {
+            bool hasAudio = _score.AudioFiles != null && _score.AudioFiles.Count > 0;
+            MenuAudioSwitch.IsEnabled = hasAudio;
+            MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
+        }
 
         _currentRotation = _score.IsRotationSaved ? _score.Rotation : 0;
 
         await LoadPageRotationsAsync();
         await LoadAnnotationsAsync();
-        InitializeAudio();
+        InitializeAudio(forceReload: true);
         InitializeMetronome();
 
         string fullPath = _settingsService.GetAbsolutePath(_score.FilePath);

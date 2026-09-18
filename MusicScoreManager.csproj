@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>2.1.3</ApplicationDisplayVersion>
-		<ApplicationVersion>20103</ApplicationVersion>
-		<!-- Version actuelle : v2.1.3 "Correction navigation asynchrone Shell vers l'atelier d'assemblage PDF" -->
+		<ApplicationDisplayVersion>2.1.4</ApplicationDisplayVersion>
+		<ApplicationVersion>20104</ApplicationVersion>
+		<!-- Version actuelle : v2.1.4 "Lecteur audio amovible et activation automatique" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		
