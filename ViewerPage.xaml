@@ -97,29 +97,103 @@
             </VerticalStackLayout>
         </Border>
 
-        <!-- Overlay LECTEUR AUDIO (Haut) -->
+        <!-- Overlay LECTEUR AUDIO Flottant & Amovible (Haut Gauche - Opposé du métronome) -->
         <Border x:Name="AudioPlayerOverlay" 
                 IsVisible="False"
                 VerticalOptions="Start" 
-                HorizontalOptions="Fill"
-                Margin="80,5,130,0" 
-                Padding="10,0"
-                BackgroundColor="#CC1E1E1E"
+                HorizontalOptions="Start"
+                Margin="10,5,0,0" 
+                Padding="8,6"
+                BackgroundColor="#EE1E1E1E"
                 StrokeThickness="1"
                 Stroke="#444444"
-                HeightRequest="45">
+                WidthRequest="265"
+                ZIndex="20">
             <Border.StrokeShape>
-                <RoundRectangle CornerRadius="22" />
+                <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
-            <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
-                <Button Grid.Column="0" Text="⏮" BackgroundColor="Transparent" TextColor="White" FontSize="16" Padding="0" Clicked="OnAudioToStartClicked" />
-                <Button Grid.Column="1" x:Name="AudioPlayBtn" Text="▶" BackgroundColor="Transparent" TextColor="White" FontSize="20" Padding="0" Clicked="OnAudioPlayPauseClicked" />
-                <Button Grid.Column="2" Text="⏭" BackgroundColor="Transparent" TextColor="White" FontSize="16" Padding="0" Clicked="OnAudioToEndClicked" />
-                
-                <Label Grid.Column="3" x:Name="AudioCurrentTimeLabel" Text="0:00" TextColor="White" FontSize="12" VerticalOptions="Center" />
-                <Slider Grid.Column="4" x:Name="AudioSlider" MinimumTrackColor="#007ACC" MaximumTrackColor="#555555" ThumbColor="White" DragStarted="OnAudioSliderDragStarted" DragCompleted="OnAudioSliderDragCompleted" ValueChanged="OnAudioSliderValueChanged" VerticalOptions="Center" />
-                <Label Grid.Column="5" x:Name="AudioTotalTimeLabel" Text="0:00" TextColor="White" FontSize="12" VerticalOptions="Center" />
-            </Grid>
+            <Border.GestureRecognizers>
+                <PanGestureRecognizer PanUpdated="OnAudioPlayerPanUpdated" />
+            </Border.GestureRecognizers>
+            <VerticalStackLayout Spacing="3">
+                <!-- Entête : Poignée de déplacement, Titre / Nom du morceau, Fermer -->
+                <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+                    <HorizontalStackLayout Grid.Column="0" Spacing="4" VerticalOptions="Center">
+                        <Label Text="⠿" TextColor="#888888" FontSize="13" VerticalOptions="Center" />
+                        <Label Text="🎵" FontSize="11" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <Label Grid.Column="1" x:Name="AudioTrackNameLabel" Text="Audio" TextColor="#CCCCCC" FontSize="11" FontAttributes="Bold" LineBreakMode="TailTruncation" VerticalOptions="Center" Margin="4,0" />
+                    <Button Grid.Column="2" Text="✕" TextColor="#888888" BackgroundColor="Transparent" FontSize="11" Padding="0" WidthRequest="22" HeightRequest="22" Clicked="OnAudioCloseClicked" />
+                </Grid>
+
+                <!-- Boutons de commande : Stop/Début, Reculer, Play/Pause, Avancer -->
+                <Grid ColumnDefinitions="*, *, *, *" ColumnSpacing="5" HorizontalOptions="Fill">
+                    <!-- Stop / Retour début -->
+                    <Button Grid.Column="0" 
+                            Text="⏮" 
+                            ToolTipProperties.Text="Stop / Début"
+                            BackgroundColor="#2D2D35" 
+                            TextColor="White" 
+                            FontSize="15" 
+                            HeightRequest="32" 
+                            Padding="0" 
+                            CornerRadius="6"
+                            Clicked="OnAudioToStartClicked" />
+
+                    <!-- Reculer (-5s) -->
+                    <Button Grid.Column="1" 
+                            Text="⏪" 
+                            ToolTipProperties.Text="Reculer de 5s"
+                            BackgroundColor="#2D2D35" 
+                            TextColor="White" 
+                            FontSize="15" 
+                            HeightRequest="32" 
+                            Padding="0" 
+                            CornerRadius="6"
+                            Clicked="OnAudioRewindClicked" />
+
+                    <!-- Play / Pause -->
+                    <Button Grid.Column="2" 
+                            x:Name="AudioPlayBtn" 
+                            Text="▶" 
+                            ToolTipProperties.Text="Lecture / Pause"
+                            BackgroundColor="#007ACC" 
+                            TextColor="White" 
+                            FontSize="16" 
+                            FontAttributes="Bold"
+                            HeightRequest="32" 
+                            Padding="0" 
+                            CornerRadius="6"
+                            Clicked="OnAudioPlayPauseClicked" />
+
+                    <!-- Avancer (+5s) -->
+                    <Button Grid.Column="3" 
+                            Text="⏩" 
+                            ToolTipProperties.Text="Avancer de 5s"
+                            BackgroundColor="#2D2D35" 
+                            TextColor="White" 
+                            FontSize="15" 
+                            HeightRequest="32" 
+                            Padding="0" 
+                            CornerRadius="6"
+                            Clicked="OnAudioForwardClicked" />
+                </Grid>
+
+                <!-- Barre de déplacement dans le son (Slider) et durée -->
+                <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="6" VerticalOptions="Center" Margin="0,1,0,0">
+                    <Label Grid.Column="0" x:Name="AudioCurrentTimeLabel" Text="0:00" TextColor="#AAAAAA" FontSize="10" VerticalOptions="Center" />
+                    <Slider Grid.Column="1" x:Name="AudioSlider" 
+                            MinimumTrackColor="#007ACC" 
+                            MaximumTrackColor="#555555" 
+                            ThumbColor="White" 
+                            HeightRequest="24"
+                            DragStarted="OnAudioSliderDragStarted" 
+                            DragCompleted="OnAudioSliderDragCompleted" 
+                            ValueChanged="OnAudioSliderValueChanged" 
+                            VerticalOptions="Center" />
+                    <Label Grid.Column="2" x:Name="AudioTotalTimeLabel" Text="0:00" TextColor="#AAAAAA" FontSize="10" VerticalOptions="Center" />
+                </Grid>
+            </VerticalStackLayout>
         </Border>
 
         <!-- Sélecteur de Stickers et Réglages (Drawer Unique) -->

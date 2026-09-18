@@ -56,6 +56,7 @@ public partial class ScoreEditPage : ContentPage
         MetronomeSoundSwitch.IsToggled = _score.HasMetronomeSound;
 
         // 6. Audio
+        AudioPlayerSwitch.IsToggled = _score.ShowAudioPlayer;
         PreCountEntry.Text = _score.PreCountMeasures.ToString();
         PreCountStepper.Value = Math.Clamp(_score.PreCountMeasures, 0, 8);
         PreCountStepper.ValueChanged += (s, e) => PreCountEntry.Text = ((int)e.NewValue).ToString();
@@ -601,6 +602,7 @@ public partial class ScoreEditPage : ContentPage
         _score.HasMetronomeSound = MetronomeSoundSwitch.IsToggled;
         
         // Audio
+        _score.ShowAudioPlayer = AudioPlayerSwitch.IsToggled;
         if (int.TryParse(PreCountEntry.Text, out int preCount)) _score.PreCountMeasures = preCount;
 
         // Sauvegarde de la partition
@@ -621,6 +623,7 @@ public partial class ScoreEditPage : ContentPage
 
         foreach (var af in _score.AudioFiles)
         {
+            af.Id = 0; // Réinitialiser l'Id pour garantir une insertion correcte suite à la suppression précédente
             af.ScoreId = _score.Id;
             await _databaseService.SaveAudioFileAsync(af);
         }
