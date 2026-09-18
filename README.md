@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v2.1.5
+# Music Score Manager v2.1.6
 > **Le gestionnaire & visualiseur professionnel de partitions musicales pour répétitions, pupitres et concerts en direct.**
 
 ---
