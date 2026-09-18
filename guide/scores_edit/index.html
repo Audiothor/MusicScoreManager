@@ -12,19 +12,15 @@
         <meta name="author" content="Audiothor">
       
       
-        <link rel="canonical" href="https://audiothor.github.io/MusicScoreManager/guide/scores/">
+        <link rel="canonical" href="https://audiothor.github.io/MusicScoreManager/guide/scores_edit/">
       
       
-        <link rel="prev" href="../installation/">
-      
-      
-        <link rel="next" href="../setlists/">
       
       
         
           <link rel="alternate" href="./" hreflang="fr">
         
-          <link rel="alternate" href="../../en/guide/scores/" hreflang="en">
+          <link rel="alternate" href="../../en/guide/scores_edit/" hreflang="en">
         
       
       
@@ -33,7 +29,7 @@
     
     
       
-        <title>Menu Partitions - Music Score Manager</title>
+        <title>Scores edit - Music Score Manager</title>
       
     
     
@@ -83,11 +79,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#partitions" class="md-skip">
-          Aller au contenu
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -118,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Menu Partitions
+              Scores edit
             
           </span>
         </div>
@@ -171,7 +162,7 @@
           </li>
         
           <li class="md-select__item">
-            <a href="../../en/guide/scores/" hreflang="en" class="md-select__link">
+            <a href="../../en/guide/scores_edit/" hreflang="en" class="md-select__link">
               English
             </a>
           </li>
@@ -274,12 +265,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../installation/" class="md-tabs__link">
           
   
@@ -388,31 +377,28 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
@@ -430,7 +416,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -473,19 +459,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../scores/" class="md-nav__link">
         
   
   
@@ -501,7 +478,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -760,8 +736,6 @@
   
   
   
-    
-  
   
 </nav>
                   </div>
@@ -781,12 +755,51 @@
   
 
 
-<h1 id="partitions">Partitions</h1>
+<h1 style="text-align: center;">Partitions</h1>
+<h2 style="text-align: center;">Edition</h2>
+
+<p>L'édition d'une partition ne modifie pas le pdf en lui même mais les détails de la partition sélectionnée.
+Ces informations ne seront présentes que dans ce logiciel <strong>Music Score Manager</strong> mais ne toucheront pas votre PDF.</p>
+<p style="text-align: center;">
+  <img src="../images/Partitions_fr_4.jpeg" alt="Edition d'une partition" style="max-width: 100%; height: auto;">
+</p>
+
+<hr />
 <ul>
-<li><a href="../scores_main/">Interface principale des partitions</a></li>
-<li><a href="../scores_edit/">Éditer une partition</a></li>
-<li><a href="../scores_notes/">Notes et détails</a></li>
+<li>
+<p><strong>Titre</strong> : Le titre de vote morceau tel qui sera affiché dans l'application (espaces autorisés)</p>
+</li>
+<li>
+<p><strong>Compositeur / Arrangeur</strong> : Cet information peut être utile sur la page principale des partitions</p>
+</li>
+<li>
+<p><strong>Informations techniques</strong> : taille, date de modification, date d'ajout et information si des annotations ont été faites ou non sur cette partition.</p>
+</li>
+<li>
+<p><strong>Atelier d'assemblage PDF</strong> : Vous permet de restructurer votre ficheir pdf en lui permettant des rotations de pages, changer l'ordre etc...
+  Une aide plus précise est disponible pour expliquer cela dans le chapitre "Outils"</p>
+</li>
+<li>
+<p><strong>Étiquettes (tags)</strong> : Pour assigner une ou plusieurs étiquettes à votre partition (Pour créer des étiquettes, se rendre dans les Outils). Cela s'avère très pratique ensuite pour trier et rechercher des partitions</p>
+</li>
+<li>
+<p><strong>Tempo de référence (BPM)</strong> : C'est une valeur qui pourra être utiliser pour travailler vote partition (il défini le tempo sur lequel vous pourrez travailler par la vue du métronome ou l'écoute)</p>
+</li>
+<li>
+<p><strong>Tonalité musicale</strong> : (solfège classique <em>Do, Ré, Mi...</em> et international <em>A, B, C...</em>).</p>
+</li>
+<li>
+<p><strong>Evaluation (1 à 5 étoiles)</strong> : vous sert à donner une note à votre partition (plus facile à retrouver ensuite lros du filtre de tri)</p>
+</li>
+<li>
+<p><strong>Métronome</strong> : options données au métronome  avec une ouverture de celui à l'ouverture de votre partition avec une activation du son du métronome ou pas.partition.</p>
+</li>
+<li>
+<p><strong>Pistes audio</strong> : association de fichiers audio d'accompagnement (MP3, WAV, etc.), pré-écoute et réglage du volume.
+  L'ajout de ces fichiers vous permettra de les jouer pendant l'affichage de votre partition (idéal pour completer avec d'autres voix que votre instrument)</p>
+</li>
 </ul>
+<p>En cas de modifications, n'oubliez pas de cliquer sur le bouton 'Enregistrer' pour sauvegarder vos modifications !</p>
 
 
 

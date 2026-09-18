@@ -12,19 +12,15 @@
         <meta name="author" content="Audiothor">
       
       
-        <link rel="canonical" href="https://audiothor.github.io/MusicScoreManager/guide/scores/">
+        <link rel="canonical" href="https://audiothor.github.io/MusicScoreManager/guide/scores_main/">
       
       
-        <link rel="prev" href="../installation/">
-      
-      
-        <link rel="next" href="../setlists/">
       
       
         
           <link rel="alternate" href="./" hreflang="fr">
         
-          <link rel="alternate" href="../../en/guide/scores/" hreflang="en">
+          <link rel="alternate" href="../../en/guide/scores_main/" hreflang="en">
         
       
       
@@ -33,7 +29,7 @@
     
     
       
-        <title>Menu Partitions - Music Score Manager</title>
+        <title>Scores main - Music Score Manager</title>
       
     
     
@@ -84,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#partitions" class="md-skip">
+        <a href="#1-interface-principale" class="md-skip">
           Aller au contenu
         </a>
       
@@ -118,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Menu Partitions
+              Scores main
             
           </span>
         </div>
@@ -171,7 +167,7 @@
           </li>
         
           <li class="md-select__item">
-            <a href="../../en/guide/scores/" hreflang="en" class="md-select__link">
+            <a href="../../en/guide/scores_main/" hreflang="en" class="md-select__link">
               English
             </a>
           </li>
@@ -274,12 +270,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../installation/" class="md-tabs__link">
           
   
@@ -388,31 +382,28 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
@@ -430,7 +421,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -473,19 +464,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../scores/" class="md-nav__link">
         
   
   
@@ -501,7 +483,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -760,8 +741,75 @@
   
   
   
-    
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-interface-principale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Interface principale
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Interface principale">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-partie-haute-de-lecran-plusieurs-commandes-essentielles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. Partie haute de l'écran - plusieurs commandes essentielles :
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-milieu-de-lecran-liste-des-partitions-referencees-dans-lapplication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. Milieu de l'écran - liste des partitions référencées dans l'application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-bas-de-lecran-menus-principaux-de-lapplication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. Bas de l'écran - menus principaux de l'application
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-menu-contextuel-dune-partition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Menu Contextuel d'une Partition ( ⋮ )
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -781,11 +829,189 @@
   
 
 
-<h1 id="partitions">Partitions</h1>
+<h1 style="text-align: center;">Partitions</h1>
+<h2 style="text-align: center;">Accueil</h2>
+
+<p>Le menu <strong>Partitions</strong> constitue la porte d'entrée de votre bibliothèque musicale. Il regroupe l'ensemble de vos partitions sous forme d'une grille de cartes modernes, réactives et optimisées pour les grands écrans comme pour les smartphones.</p>
+<p style="text-align: center;">
+  <img src="../images/Partitions_fr_2.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
+</p>
+
+<hr />
+<h2 id="1-interface-principale">1. Interface principale</h2>
+<p>Cet écran s'affiche lorsque vous lancez l'application.
+Si vous n'avez jamais lancé et donc importé de partitions, l'application vous signifiera que vous n'avez pas de partition à afficher.</p>
+<h3 id="a-partie-haute-de-lecran-plusieurs-commandes-essentielles">A. Partie haute de l'écran  - plusieurs commandes essentielles :</h3>
+<p><strong>[1] Barre de Recherche en Temps Réel</strong></p>
 <ul>
-<li><a href="../scores_main/">Interface principale des partitions</a></li>
-<li><a href="../scores_edit/">Éditer une partition</a></li>
-<li><a href="../scores_notes/">Notes et détails</a></li>
+<li>Saisissez quelques lettres pour filtrer instantanément la liste par <strong>titre de partition</strong>, <strong>nom de compositeur</strong> ou nom de fichier.</li>
+<li>Effacement rapide d'une touche pour retrouver la vue intégrale.</li>
+</ul>
+<p><strong>[2] Bouton de Filtrage par Étiquettes (🏷️)</strong></p>
+<ul>
+<li>Ouvre le volet de sélection des tags avec recherche interne et tri des tags (A-Z, Z-A, les plus/moins utilisés).</li>
+<li>Affiche les étiquettes actives sous forme de carrousel horizontal avec pastilles de couleur et boutons de retrait rapide.</li>
+<li>Boutons <em>« Tout effacer »</em> et <em>« Appliquer »</em>.</li>
+</ul>
+<p><strong>[3] Bouton de Tri Rapide (🔃)</strong></p>
+<ul>
+<li>Permet de réordonner instantanément votre bibliothèque selon :</li>
+<li><strong>Date d'ajout (Plus récent d'abord)</strong> : tri par défaut pour repérer immédiatement vos derniers imports.</li>
+<li><strong>Date d'ajout (Plus ancien d'abord)</strong>.</li>
+<li><strong>Titre (A-Z) / Titre (Z-A)</strong>.</li>
+<li><strong>Date de modification (Plus récent)</strong>.</li>
+<li><strong>Évaluation (Meilleures notes)</strong> : vos partitions notées de 1 à 5 étoiles classées par ordre décroissant.</li>
+<li><strong>Compositeur (A-Z)</strong> : ordre alphabétique des compositeurs. Un paramètre dédié dans <em>Paramètres &gt; Partitions</em> permet de choisir si les partitions sans compositeur renseigné apparaissent au tout début ou à la fin.</li>
+<li><strong>Sans étiquette d'abord</strong> : place en tête les partitions qui n'ont encore aucun tag assigné pour vous aider à les classer facilement.</li>
+</ul>
+<p><strong>[4] Bouton Multi-sélection (☑️)</strong></p>
+<ul>
+<li>Active le mode de sélection par lots pour appliquer des actions sur plusieurs partitions à la fois.</li>
+<li>Affiche une barre d'actions en bas de l'écran :</li>
+<li><strong>🏷️ Assigner des étiquettes</strong> : modale pour ajouter ou remplacer simultanément des tags sur toutes les partitions cochées.</li>
+<li><strong>📡 Partager en Wi-Fi Direct</strong> : transmettez tout le paquet sélectionné en une seule fois sans fil.</li>
+<li><strong>📦 Exporter (.msmscores)</strong> : génère une archive compressée unique regroupant tous les fichiers choisis (avec choix des annotations et des pistes audio).</li>
+<li><strong>🗑️ Supprimer</strong> : suppression groupée avec confirmation de sécurité.</li>
+<li></li>
+</ul>
+<p><strong>[5] Bouton Ajouter (➕)</strong></p>
+<ul>
+<li><strong>Importation de PDF</strong> : Contrôle strict de l'intégrité binaire (<code>%PDF-</code>) empêchant tout plantage. L'import peut se faire par lot (plusieurs pdf importés en une seule fois)</li>
+<li><strong>Importation et conversion d'Images</strong> : La sélection d'un ou plusieurs fichiers images (PNG, JPEG, GIF, WEBP, BMP) affiche un message d'information listant les fichiers images qui vont être convertis en PDF :</li>
+<li><strong>Annuler</strong> : Les images sont ignorées. Les éventuels PDF sélectionnés en même temps continuent leur import normal.</li>
+<li><strong>Continuer</strong> : Une boîte de chargement modale bloquante avec indicateur d'avancement informe l'utilisateur pendant la conversion en PDF haute netteté. Les images sont fusionnées en un seul PDF multi-pages ou converties en partitions individuelles selon le choix de l'utilisateur, puis une confirmation s'affiche dès l'import terminé.</li>
+<li>Lors de l'ajout de partitions depuis votre appareil, l'application propose deux modes de gestion :</li>
+<li><strong>Copier vers la bibliothèque (Conseillé)</strong> :<br />
+    Le fichier PDF est copié dans le dossier interne dédié de Music Score Manager. Vos partitions restent accessibles en permanence même si le fichier original est déplacé ou supprimé de son dossier de téléchargement.</li>
+<li><strong>Lier le fichier original (Externe)</strong> :<br />
+    L'application conserve le chemin d'accès absolu vers le fichier sans le dupliquer pour économiser l'espace mémoire (signalé par un badge <code>🔗</code>).</li>
+</ul>
+<h3 id="b-milieu-de-lecran-liste-des-partitions-referencees-dans-lapplication">B. Milieu de l'écran - liste des partitions référencées dans l'application</h3>
+<ul>
+<li><strong>[6] : La partition</strong></li>
+</ul>
+<p>Chaque partition est représentée par une carte visuelle comprenant :</p>
+<p>a. <strong>Titre principal de l'œuvre</strong>.</p>
+<p>b. <strong>Sous-titre personnalisable</strong> (configurable dans les paramètres : compositeur, date d'ajout ou combinaison des deux).</p>
+<p>c. <strong>Pastilles d'étiquettes colorées</strong> pour repérer les catégories au premier coup d'œil.</p>
+<p><strong>🔗 Pastille de liaison externe</strong> si le fichier est stocké hors du dossier interne.</p>
+<p><strong>⚠️ Pastille d'alerte rouge (!) et Titre rouge</strong> :<br />
+Si le fichier PDF associé a été déplacé, renommé sur le stockage ou est introuvable, une pastille rouge d'avertissement avec point d'exclamation apparaît à gauche du bouton ⋮ pour vous prévenir qu'elle ne pourra pas s'ouvrir en concert.</p>
+<ul>
+<li><strong>[7] : Menu contextuel</strong>
+  Accès au menu contextuel d'une partition (voir le chapitre § 2 ci-dessous) </li>
+</ul>
+<h3 id="c-bas-de-lecran-menus-principaux-de-lapplication">C. Bas de l'écran - menus principaux de l'application</h3>
+<ul>
+<li>
+<p><strong>[8] Partitions</strong>
+  Le menu actuel, en gras quand vous êtes dans ce menu</p>
+</li>
+<li>
+<p><strong>[9] : Setlists</strong>
+  Il gère les groupements de partitions pour un concert par exemple
+  =&gt; Voir le chapitre dédié aux Setlists</p>
+</li>
+<li>
+<p><strong>[10] : Outils</strong>
+  A cet endroit sont disposés de multiples outils utiles pour vos partitions (transformations, imports, sauvegardes, gestion des étiquettes etc...)
+  =&gt; Voir le chapitre dédié aux Outils</p>
+</li>
+<li>
+<p><strong>[11] : Paramètres</strong>
+  Tous les paramètres de l'applciation, des partitions, Setlists etc...
+  =&gt; Voir le chapitre dédié aux Paramètres</p>
+</li>
+<li>
+<p><strong>[12] : Quitter</strong>
+  Tout simplement pour quitter l'application en cours
+  =&gt; Voir le chapitre dédié à la fonction de Quitter</p>
+</li>
+</ul>
+<hr />
+<h2 id="2-menu-contextuel-dune-partition">2. Menu Contextuel d'une Partition ( ⋮ )</h2>
+<p>En cliquant sur le bouton <strong>⋮</strong> d'une carte de partition, une carte moderne et ergonomique s'affiche :</p>
+<p style="text-align: center;">
+  <img src="../images/Partitions_fr_3.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
+</p>
+
+<ol>
+<li>
+<p><strong>📖 Ouvrir la partition</strong> :</p>
+</li>
+<li>
+<p>Ouvre immédiatement la partition dans le visualiseur plein écran (mode concert).</p>
+</li>
+<li>
+<p><strong>✏️ Éditer la partition</strong> :</p>
+</li>
+<li>Ouvre la page d'édition détaillée :</li>
+</ol>
+<p style="text-align: center;">
+  <img src="../images/Partitions_fr_4.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
+</p>
+
+<ul>
+<li>
+<p><strong>Titre</strong> et <strong>Compositeur / Arrangeur</strong>.</p>
+</li>
+<li>
+<p><strong>Tonalité musicale</strong> (solfège classique <em>Do, Ré, Mi...</em> et international <em>A, B, C...</em>).</p>
+</li>
+<li>
+<p><strong>Tempo de référence (BPM)</strong> : valeur initiale pour le métronome.</p>
+</li>
+<li>
+<p><strong>Note (1 à 5 étoiles)</strong>.</p>
+</li>
+<li>
+<p><strong>Étiquettes (tags)</strong> : sélection dynamique (Pour créer des étiquettes, se rendre dans les Outils)</p>
+</li>
+<li>
+<p><strong>Accordéon Métronome</strong> : chiffrage de mesure (2/4, 3/4, 4/4, 6/8...), subdivision, pré-compte et coupure/activation du son par défaut.</p>
+</li>
+<li>
+<p><strong>Accordéon Pistes audio</strong> : association de fichiers audio d'accompagnement (MP3, WAV, etc.), pré-écoute et réglage du volume.</p>
+</li>
+<li>
+<p><strong>Informations techniques</strong> : chemin d'accès, taille, date de modification, date d'ajout et information si des annotations ont été faites sur cette partition.
+  A noter la présence d'un bouton pour réassigner le fichier en cas de déplacement.
+  En cas de modifications, n'oubliez pas de cliquer sur le bouton 'Enregistrer' pour sauvegarder vos modifications.</p>
+</li>
+<li>
+<p><strong>📋 Ajouter dans un Setlist</strong> :</p>
+</li>
+<li>Permet d'insérer instantanément la partition dans la setlist de votre choix.</li>
+<li><strong>Placement prioritaire en 1ère position</strong> (décalant les autres morceaux vers le bas).</li>
+<li>Gestion des setlists verrouillées.</li>
+</ul>
+<blockquote>
+<ol>
+<li><strong>📑 Modifier l'assemblage PDF</strong> :</li>
+</ol>
+</blockquote>
+<ul>
+<li>Ouvre la partition directement dans l'<strong>Atelier d'Assemblage PDF</strong> pour réorganiser les pages, insérer une page blanche, supprimer des pages inutiles ou effectuer des rotations. Très pratique quand votre fichier pdf est mal organisé.
+  Vous pouvez retrouver cet outil directement dans le menu "Outils" aussi.
+  =&gt; Le détail des modifications d'assemblage est disponible plus en détail dans la partie "Outils"</li>
+</ul>
+<blockquote>
+<p>5.<strong>📡 Envoyer en Wi-Fi Direct</strong> :</p>
+</blockquote>
+<ul>
+<li>Ouvre une boîte modale d'options de partage vous permettant de cocher/décocher :</li>
+<li>☑️ <em>Inclure les annotations manuscrites</em> dessinées sur le document.</li>
+<li>☑️ <em>Inclure les pistes audio rattachées</em> (MP3/WAV).</li>
+<li>Lance la recherche immédiate des appareils à proximité en Wi-Fi Direct P2P.</li>
+<li>Il est juste nécessaire que la personne qui reçoit la partition aille dans "Outils", "Transfert Wi-Fi Direct" et clique sur "Activer la Réception"
+  La partition est immédiatement envoyées et incue dans le Music Score Manager de la personne qui reçoit !
+  =&gt; Le détail des envois/réceptions immédiates est disponible plus en détail dans la partie "Outils"</li>
+<li><strong>📦 Exporter la partition (.msmscore)</strong> :</li>
+<li>Génère une archive (=un fichier) autonome transportable avec un choix  d'options (annotations, pistes audio) d'export.</li>
+<li><strong>🏷️ Renommer la partition</strong> :</li>
+<li>Boîte de dialogue rapide pour changer le titre affiché sans entrer dans l'édition complète.</li>
+<li><strong>🗑️ Supprimer la partition</strong> :</li>
+<li>Supprime la partition de votre bibliothèque avec demande de confirmation sécurisée.</li>
 </ul>
 
 
