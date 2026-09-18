@@ -1150,7 +1150,7 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private void MetronomeTick(bool isPreCount = false)
+    private void MetronomeTick(bool isPreCount = false, int preCountBeat = 0, int preCountTotal = 0)
     {
         if (!_isMetronomeRunning && !isPreCount) return;
 
@@ -1167,28 +1167,53 @@ public partial class ViewerPage : ContentPage
                 }
             }
 #else
-            if (isPreCount && _preCountAudioPlayer != null)
+            try
             {
-                _preCountAudioPlayer.Play();
+                if (isPreCount && _preCountAudioPlayer != null)
+                {
+                    _preCountAudioPlayer.Seek(0);
+                    _preCountAudioPlayer.Play();
+                }
+                else if (!isPreCount && _metronomeAudioPlayer != null)
+                {
+                    _metronomeAudioPlayer.Seek(0);
+                    _metronomeAudioPlayer.Play();
+                }
             }
-            else if (!isPreCount && _metronomeAudioPlayer != null)
-            {
-                _metronomeAudioPlayer.Play();
-            }
+            catch { }
 #endif
         }
 
-        // 2. Flash visuel fluide sans bloquer l'horloge
-        if (_score.ShowMetronome && !isPreCount)
+        // 2. Flash visuel fluide synchro avec le métronome (en continu et pendant le pré-compte)
+        if (_score.ShowMetronome || (MetronomeOverlay != null && MetronomeOverlay.IsVisible))
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                MetronomeLight.Color = Color.FromArgb("#007ACC");
-                await Task.Delay(40);
-                if (_isMetronomeRunning)
+                try
                 {
-                    MetronomeLight.Color = Color.FromArgb("#333333");
+                    if (isPreCount && preCountTotal > 0 && MetronomeBpmLabel != null)
+                    {
+                        MetronomeBpmLabel.Text = $"● {preCountBeat} / {preCountTotal}";
+                    }
+                    else if (!isPreCount && MetronomeBpmLabel != null)
+                    {
+                        MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+                    }
+
+                    if (MetronomeLight != null)
+                    {
+                        // Couleur orange vif pour le pré-compte, bleu standard pour le métronome
+                        MetronomeLight.Color = isPreCount ? Color.FromArgb("#FF9800") : Color.FromArgb("#007ACC");
+                    }
+
+                    await Task.Delay(50);
+
+                    if (MetronomeLight != null)
+                    {
+                        MetronomeLight.Color = Color.FromArgb("#333333");
+                    }
                 }
+                catch { }
             });
         }
     }
@@ -1369,63 +1394,178 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private CancellationTokenSource? _preCountCts;
+    private bool _isPreCounting = false;
+
+    private void CancelPreCount()
+    {
+        _isPreCounting = false;
+        try
+        {
+            _preCountCts?.Cancel();
+        }
+        catch { }
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            if (MetronomeBpmLabel != null) MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+            if (MetronomeLight != null) MetronomeLight.Color = Color.FromArgb("#333333");
+            if (AudioPlayBtn != null)
+            {
+                AudioPlayBtn.Text = "▶";
+                AudioPlayBtn.IsEnabled = true;
+            }
+        });
+    }
+
     private async void OnAudioPlayPauseClicked(object sender, EventArgs e)
     {
+        // 1. Si un pré-compte est en cours, un nouvel appui annule le pré-compte et stoppe
+        if (_isPreCounting)
+        {
+            CancelPreCount();
+            _isAudioPlaying = false;
+            return;
+        }
+
+        // 2. Si l'audio joue déjà, on met en pause
         if (_isAudioPlaying)
         {
-            AudioPlayer.Pause();
+            try
+            {
+                AudioPlayer.Pause();
+            }
+            catch { }
             AudioPlayBtn.Text = "▶";
             _isAudioPlaying = false;
+
+            // Arrêter également le métronome synchronisé en pause
+            if (_isMetronomePlaying)
+            {
+                StopMetronome();
+            }
         }
         else
         {
-            // Pré-compte synchronisé uniquement au début (position <= 500ms)
-            if (AudioPlayer.Position <= TimeSpan.FromMilliseconds(500) && _score.PreCountMeasures > 0)
+            // 3. Démarrage de la lecture : au début OU lors de la reprise après une pause
+            // Si le pré-compte est configuré (> 0), on le joue SYSTÉMATIQUEMENT
+            if (_score.PreCountMeasures > 0)
             {
-                AudioPlayBtn.IsEnabled = false;
-
-                bool wasMetronomeRunning = _isMetronomePlaying;
-                StopMetronome();
-
-                int totalBeeps = _score.PreCountMeasures;
-                double bpm = _score.BPM;
-
-                await Task.Run(() =>
-                {
-                    var sw = Stopwatch.StartNew();
-                    for (int i = 0; i < totalBeeps; i++)
-                    {
-                        MetronomeTick(isPreCount: true);
-                        long targetTicks = (long)((i + 1) * (60.0 / bpm * Stopwatch.Frequency));
-                        while (sw.ElapsedTicks < targetTicks)
-                        {
-                            long remainingTicks = targetTicks - sw.ElapsedTicks;
-                            double remainingMs = (double)remainingTicks / Stopwatch.Frequency * 1000.0;
-                            if (remainingMs > 4.0) Thread.Sleep((int)(remainingMs - 2.0));
-                            else if (remainingMs > 0.05) Thread.SpinWait(20);
-                        }
-                    }
-                });
-
-                // DÉMARRAGE SYNCHRONISÉ : on lance l'audio ET le métronome continu en même temps
-                if (wasMetronomeRunning) StartMetronome();
-                AudioPlayer.Play();
-
-                AudioPlayBtn.IsEnabled = true;
+                await RunPreCountAndPlayAsync();
             }
             else
             {
-                // Reprise immédiate à l'endroit précis de la pause
+                try
+                {
+                    AudioPlayer.Play();
+                }
+                catch { }
+
+                if (_score.ShowMetronome || _score.HasMetronomeSound)
+                {
+                    StartMetronome();
+                }
+
+                AudioPlayBtn.Text = "⏸";
+                _isAudioPlaying = true;
+            }
+        }
+    }
+
+    private async Task RunPreCountAndPlayAsync()
+    {
+        _isPreCounting = true;
+        _preCountCts = new CancellationTokenSource();
+        var token = _preCountCts.Token;
+
+        AudioPlayBtn.Text = "⏸"; // Permet à l'utilisateur de cliquer pour annuler le pré-compte
+
+        bool wasMetronomeRunning = _isMetronomePlaying;
+        StopMetronome();
+
+        int totalBeeps = _score.PreCountMeasures;
+        double bpm = _score.BPM > 0 ? _score.BPM : 120.0;
+        double intervalMs = 60000.0 / bpm;
+
+        bool completed = await Task.Run(() =>
+        {
+            var sw = Stopwatch.StartNew();
+
+            for (int i = 0; i < totalBeeps; i++)
+            {
+                if (token.IsCancellationRequested) return false;
+
+                // 1. Déclencher le tick sonore et visuel synchro métronome
+                MetronomeTick(isPreCount: true, preCountBeat: i + 1, preCountTotal: totalBeeps);
+
+                // 2. Attente ultra-précise sans dérive temporelle cumulée
+                double targetMs = (i + 1) * intervalMs;
+                while (sw.Elapsed.TotalMilliseconds < targetMs)
+                {
+                    if (token.IsCancellationRequested) return false;
+
+                    double remainingMs = targetMs - sw.Elapsed.TotalMilliseconds;
+                    if (remainingMs > 15.0)
+                    {
+                        Thread.Sleep((int)(remainingMs - 10.0));
+                    }
+                    else if (remainingMs > 1.0)
+                    {
+                        Thread.Sleep(1);
+                    }
+                    else if (remainingMs > 0)
+                    {
+                        Thread.SpinWait(30);
+                    }
+                }
+            }
+
+            return !token.IsCancellationRequested;
+        });
+
+        _isPreCounting = false;
+
+        if (completed && !token.IsCancellationRequested)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                if (MetronomeBpmLabel != null) MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+                if (MetronomeLight != null) MetronomeLight.Color = Color.FromArgb("#333333");
+            });
+
+            // Lancement synchronisé de l'audio
+            try
+            {
                 AudioPlayer.Play();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur Play audio: {ex.Message}");
+            }
+
+            if (wasMetronomeRunning || _score.ShowMetronome || _score.HasMetronomeSound)
+            {
+                StartMetronome();
             }
 
             AudioPlayBtn.Text = "⏸";
             _isAudioPlaying = true;
         }
+        else
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                if (MetronomeBpmLabel != null) MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+                if (MetronomeLight != null) MetronomeLight.Color = Color.FromArgb("#333333");
+                AudioPlayBtn.Text = "▶";
+            });
+            _isAudioPlaying = false;
+        }
     }
 
     private void OnAudioToStartClicked(object sender, EventArgs e)
     {
+        CancelPreCount();
         try
         {
             AudioPlayer.Pause();
@@ -1436,10 +1576,15 @@ public partial class ViewerPage : ContentPage
         AudioPlayBtn.Text = "▶";
         AudioCurrentTimeLabel.Text = "0:00";
         AudioSlider.Value = 0;
+        if (_isMetronomePlaying)
+        {
+            StopMetronome();
+        }
     }
 
     private void OnAudioRewindClicked(object sender, EventArgs e)
     {
+        CancelPreCount();
         try
         {
             var newPos = AudioPlayer.Position - TimeSpan.FromSeconds(5);
@@ -1453,6 +1598,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnAudioForwardClicked(object sender, EventArgs e)
     {
+        CancelPreCount();
         try
         {
             var newPos = AudioPlayer.Position + TimeSpan.FromSeconds(5);
@@ -1467,6 +1613,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnAudioCloseClicked(object sender, EventArgs e)
     {
+        CancelPreCount();
         AudioPlayerOverlay.IsVisible = false;
         if (MenuAudioSwitch != null) MenuAudioSwitch.IsToggled = false;
         _score.ShowAudioPlayer = false;
@@ -2110,6 +2257,7 @@ public partial class ViewerPage : ContentPage
         base.OnDisappearing();
         PedalMidiService.Instance.ActionTriggered -= OnPedalActionTriggered;
         PdfService.ClearMemoryCache();
+        CancelPreCount();
 
         // Nettoyage asynchrone non-bloquant pour une fermeture de page instantanée (< 50ms)
         _ = Task.Run(() =>
@@ -2362,6 +2510,7 @@ public partial class ViewerPage : ContentPage
 
         System.Diagnostics.Debug.WriteLine($"[Viewer] SwitchToScoreAsync: Passage fluide à la partition '{targetScore.Title}' (Index {targetIndex}, toLastPage: {toLastPage})");
 
+        CancelPreCount();
         StopMetronome();
         try
         {
