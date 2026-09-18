@@ -42,6 +42,9 @@ namespace MusicScoreManager.Models
         public bool ShowAudioPlayer { get; set; } = false;
         public int PreCountMeasures { get; set; } = 4;
 
+        // Annotations
+        public bool ShowAnnotations { get; set; } = true;
+
         [Ignore]
         public bool IsFileMissing { get; set; }
 

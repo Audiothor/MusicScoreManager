@@ -62,7 +62,10 @@ public partial class ScoreEditPage : ContentPage
         PreCountStepper.ValueChanged += (s, e) => PreCountEntry.Text = ((int)e.NewValue).ToString();
         PreCountEntry.TextChanged += (s, e) => { if (int.TryParse(e.NewTextValue, out int val)) PreCountStepper.Value = val; };
 
-        // 7. Tags
+        // 7. Annotations
+        AnnotationsSwitch.IsToggled = _score.ShowAnnotations;
+
+        // 8. Tags
         if (_score.AppliedTags != null)
         {
             _selectedTagIds = _score.AppliedTags.Select(t => t.Id).ToList();
@@ -144,6 +147,13 @@ public partial class ScoreEditPage : ContentPage
         bool isCurrentlyVisible = AudioAccordionBody.IsVisible;
         AudioAccordionBody.IsVisible = !isCurrentlyVisible;
         AudioAccordionArrow.Text = !isCurrentlyVisible ? "▼" : "▶";
+    }
+
+    private void OnToggleAnnotationsAccordionTapped(object? sender, EventArgs e)
+    {
+        bool isCurrentlyVisible = AnnotationsAccordionBody.IsVisible;
+        AnnotationsAccordionBody.IsVisible = !isCurrentlyVisible;
+        AnnotationsAccordionArrow.Text = !isCurrentlyVisible ? "▼" : "▶";
     }
 
     private void LoadFileMetadata()
@@ -604,6 +614,9 @@ public partial class ScoreEditPage : ContentPage
         // Audio
         _score.ShowAudioPlayer = AudioPlayerSwitch.IsToggled;
         if (int.TryParse(PreCountEntry.Text, out int preCount)) _score.PreCountMeasures = preCount;
+
+        // Annotations
+        _score.ShowAnnotations = AnnotationsSwitch.IsToggled;
 
         // Sauvegarde de la partition
         await _databaseService.SaveScoreAsync(_score);

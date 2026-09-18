@@ -67,6 +67,7 @@ namespace MusicScoreManager.Services
         public bool HasMetronomeSound { get; set; }
         public bool ShowAudioPlayer { get; set; }
         public int PreCountMeasures { get; set; }
+        public bool ShowAnnotations { get; set; } = true;
         public List<string> Tags { get; set; } = new();
         public List<string> TagColors { get; set; } = new();
         public List<AnnotationMetadata> Annotations { get; set; } = new();

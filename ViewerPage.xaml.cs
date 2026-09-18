@@ -279,6 +279,7 @@ public partial class ViewerPage : ContentPage
                     MenuAudioSwitch.IsEnabled = hasAudio;
                     MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
                 }
+                if (MenuAnnotationsSwitch != null) MenuAnnotationsSwitch.IsToggled = _score.ShowAnnotations;
             });
         });
     }
@@ -317,7 +318,11 @@ public partial class ViewerPage : ContentPage
                 if (_isScoreReady)
                 {
                     RenderAnnotations();
-                    if (ActiveAnnotationsContainer != null) ActiveAnnotationsContainer.Opacity = 1;
+                    if (ActiveAnnotationsContainer != null)
+                    {
+                        ActiveAnnotationsContainer.IsVisible = _score.ShowAnnotations;
+                        ActiveAnnotationsContainer.Opacity = (_score.ShowAnnotations && _isScoreReady) ? 1 : 0;
+                    }
                 }
             });
         }
@@ -369,6 +374,7 @@ public partial class ViewerPage : ContentPage
         bool hasAudio = _score.AudioFiles != null && _score.AudioFiles.Count > 0;
         MenuAudioSwitch.IsEnabled = hasAudio;
         MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
+        if (MenuAnnotationsSwitch != null) MenuAnnotationsSwitch.IsToggled = _score.ShowAnnotations;
         SaveRotationSwitch.IsToggled = _score.IsRotationSaved;
         UpdateRotateButtonText();
     }
@@ -439,7 +445,8 @@ public partial class ViewerPage : ContentPage
                 RenderAnnotations();
                 if (ActiveAnnotationsContainer != null)
                 {
-                    ActiveAnnotationsContainer.Opacity = 1;
+                    ActiveAnnotationsContainer.IsVisible = _score.ShowAnnotations;
+                    ActiveAnnotationsContainer.Opacity = (_score.ShowAnnotations && _isScoreReady) ? 1 : 0;
                 }
             });
             // Démarrer si on veut le visuel OU le son
@@ -491,7 +498,7 @@ public partial class ViewerPage : ContentPage
                     ScoreImage.IsVisible = true;
                     PdfWebView.IsVisible = false;
                     ImageContainer.IsVisible = true;
-                    AnnotationsContainer.IsVisible = true;
+                    AnnotationsContainer.IsVisible = _score.ShowAnnotations;
                     _currentPage = 1;
                     _maxPages = 1;
                     UpdatePageIndicator();
@@ -520,7 +527,7 @@ public partial class ViewerPage : ContentPage
                     PdfWebView.IsVisible = false;
                     ScoreImage.IsVisible = true;
                     ImageContainer.IsVisible = true;
-                    AnnotationsContainer.IsVisible = true;
+                    AnnotationsContainer.IsVisible = _score.ShowAnnotations;
 
                     await RenderPdfCurrentAsync(_currentPage > 0 ? _currentPage : 1);
                 }
@@ -536,7 +543,7 @@ public partial class ViewerPage : ContentPage
                     ScoreImage.IsVisible = false;
                     PdfWebView.IsVisible = true;
                     ImageContainer.IsVisible = true;
-                    AnnotationsContainer.IsVisible = true;
+                    AnnotationsContainer.IsVisible = _score.ShowAnnotations;
 
                     if (DeviceInfo.Platform == DevicePlatform.Android)
                     {
@@ -718,7 +725,8 @@ public partial class ViewerPage : ContentPage
 
                 if (ActiveAnnotationsContainer != null)
                 {
-                    ActiveAnnotationsContainer.Opacity = 1;
+                    ActiveAnnotationsContainer.IsVisible = _score.ShowAnnotations;
+                    ActiveAnnotationsContainer.Opacity = (_score.ShowAnnotations && _isScoreReady) ? 1 : 0;
                 }
 
                 if (_renderStopwatch.IsRunning)
@@ -1708,6 +1716,46 @@ public partial class ViewerPage : ContentPage
         await _databaseService.SaveScoreAsync(_score);
     }
 
+    private async void OnMenuAnnotationsToggled(object sender, ToggledEventArgs e)
+    {
+        _score.ShowAnnotations = e.Value;
+        ApplyAnnotationsVisibility(e.Value);
+        await _databaseService.SaveScoreAsync(_score);
+    }
+
+    private void ApplyAnnotationsVisibility(bool isVisible)
+    {
+        if (ActiveAnnotationsContainer != null)
+        {
+            ActiveAnnotationsContainer.IsVisible = isVisible;
+            ActiveAnnotationsContainer.Opacity = (isVisible && _isScoreReady) ? 1 : 0;
+        }
+
+        if (isVisible)
+        {
+            RenderAnnotations();
+        }
+        else
+        {
+            if (AnnotationBar != null && AnnotationBar.IsVisible)
+            {
+                OnCloseAnnotationBarClicked(this, EventArgs.Empty);
+            }
+
+            if (ActiveAnnotationsContainer != null)
+            {
+                var elementsToRemove = ActiveAnnotationsContainer.Children
+                    .Where(c => c != _activeLivePolyline)
+                    .ToList();
+
+                foreach (var el in elementsToRemove)
+                {
+                    ActiveAnnotationsContainer.Children.Remove(el);
+                }
+            }
+        }
+    }
+
     private void ShowMenu()
     {
         MenuTitleLabel.Text = _score.Title;
@@ -1722,6 +1770,10 @@ public partial class ViewerPage : ContentPage
         {
             MenuAudioSwitch.IsEnabled = hasAudio;
             MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
+        }
+        if (MenuAnnotationsSwitch != null)
+        {
+            MenuAnnotationsSwitch.IsToggled = _score.ShowAnnotations;
         }
 
         UpdateRotateButtonText();
@@ -2568,6 +2620,7 @@ public partial class ViewerPage : ContentPage
             MenuAudioSwitch.IsEnabled = hasAudio;
             MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
         }
+        if (MenuAnnotationsSwitch != null) MenuAnnotationsSwitch.IsToggled = _score.ShowAnnotations;
 
         _currentRotation = _score.IsRotationSaved ? _score.Rotation : 0;
 
@@ -2733,6 +2786,15 @@ public partial class ViewerPage : ContentPage
     {
         AnnotationBar.IsVisible = !AnnotationBar.IsVisible;
         BottomTouchBar.IsVisible = !AnnotationBar.IsVisible; // Masque la zone tactile quand la vraie barre d'annotations est ouverte, et inversement
+
+        if (AnnotationBar.IsVisible && !_score.ShowAnnotations)
+        {
+            _score.ShowAnnotations = true;
+            if (MenuAnnotationsSwitch != null) MenuAnnotationsSwitch.IsToggled = true;
+            ApplyAnnotationsVisibility(true);
+            _ = _databaseService.SaveScoreAsync(_score);
+        }
+
         if (!AnnotationBar.IsVisible)
         {
             StickerPickerOverlay.IsVisible = false;
@@ -4439,8 +4501,22 @@ public partial class ViewerPage : ContentPage
     {
         if (ActiveAnnotationsContainer == null) return;
 
-        ActiveAnnotationsContainer.IsVisible = true;
-        ActiveAnnotationsContainer.Opacity = _isScoreReady ? 1 : 0;
+        ActiveAnnotationsContainer.IsVisible = _score.ShowAnnotations;
+        ActiveAnnotationsContainer.Opacity = (_isScoreReady && _score.ShowAnnotations) ? 1 : 0;
+
+        var elementsToRemove = ActiveAnnotationsContainer.Children
+            .Where(c => c != _activeLivePolyline)
+            .ToList();
+
+        foreach (var el in elementsToRemove)
+        {
+            ActiveAnnotationsContainer.Children.Remove(el);
+        }
+
+        if (!_score.ShowAnnotations)
+        {
+            return;
+        }
 
         if (!_isScoreReady || ActiveAnnotationsContainer.Width <= 0 || ActiveAnnotationsContainer.Height <= 0)
         {
@@ -4459,15 +4535,6 @@ public partial class ViewerPage : ContentPage
             visibleAnnotations = _annotations
                 .Where(a => a.PageNumber == _currentPage)
                 .ToList();
-        }
-
-        var elementsToRemove = ActiveAnnotationsContainer.Children
-            .Where(c => c != _activeLivePolyline)
-            .ToList();
-
-        foreach (var el in elementsToRemove)
-        {
-            ActiveAnnotationsContainer.Children.Remove(el);
         }
 
         double containerW = ActiveAnnotationsContainer.Width;
