@@ -18,10 +18,6 @@ public partial class SettingsPage : ContentPage
         await Navigation.PushAsync(new SettingsSetlistsPage());
     }
 
-    private async void OnSettingsTagsTapped(object sender, TappedEventArgs e)
-    {
-        await Navigation.PushAsync(new TagsPage());
-    }
 
     private async void OnSettingsAnnotationsTapped(object sender, TappedEventArgs e)
     {
