@@ -1,12 +1,12 @@
-# 🛠️ Outils
+<h1 style="text-align: center;">Outils</h1>
 
 Le menu **Outils** regroupe la suite d'utilitaires spécialisés de Music Score Manager pour manipuler, partager, nettoyer et sécuriser vos partitions sans dépendre d'un ordinateur ou d'Internet.
 
 ---
 
-## 📑 1. Créateur & Assemblage PDF (Atelier Studio)
+## 1. Créateur & Assemblage PDF (Atelier Studio)
 
-L'**Atelier d'Assemblage PDF** ([`PdfAssemblerPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/PdfAssemblerPage.xaml)) est un studio complet de retouche et de composition de documents PDF multi-pages.
+L'**Atelier d'Assemblage PDF** est un studio complet de retouche et de composition de documents PDF multi-pages.
 
 ### Fonctionnalités disponibles :
 
@@ -30,20 +30,21 @@ L'**Atelier d'Assemblage PDF** ([`PdfAssemblerPage`](file:///c:/Users/comme/Docu
 
 ---
 
-## 📡 2. Transfert Wi-Fi Direct (P2P) & Diffusion Groupe
+## 2. Transfert Wi-Fi Direct (P2P) & Diffusion Groupe
 
-La page [`WifiTransferPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/WifiTransferPage.xaml) gère les échanges sans fil directs entre musiciens, **sans box internet ni routeur 4G/5G requis**.
+La page gère les échanges sans fil directs entre musiciens, **sans box internet ni routeur 4G/5G requis**.
+La manupulation sur 10s elle nécessite juste d'activer le wifi (sans internet nécessaire !)
 
-### A. Échange Direct de Tablette à Tablette (P2P) :
+### A. Échange Direct de Tablette à Tablette (P2P)
 
-1. **Destinataire** :
+1. **Le Destinataire** :
    - Ouvre **Outils > Transfert Wi-Fi Direct**, active le Wi-Fi de sa tablette et appuie sur **Recevoir**. Son appareil devient visible sur le réseau local ad-hoc.
-2. **Émetteur** :
+2. **L'Émetteur** :
    - Sélectionne la partition ou la setlist à envoyer (depuis les menus 3 points ⋮ ou en multi-sélection).
    - Choisit d'inclure ou non les annotations manuscrites et les pistes audio.
    - Sélectionne le destinataire dans la liste des appareils détectés. Le transfert binaire TCP s'exécute à très grande vitesse.
 
-### B. Mode Diffusion de Groupe par QR Code (Multi-Musiciens) :
+### B. Mode Diffusion de Groupe par QR Code (Multi-Musiciens)
 
 1. **L'émetteur** :
    - Active le **Mode Diffusion Groupe**. L'application démarre un point d'accès Wi-Fi sécurisé et un serveur local HTTP embarqué, puis affiche un **QR Code haute résolution** sur son écran.
@@ -53,9 +54,9 @@ La page [`WifiTransferPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreM
 
 ---
 
-## 🏷️ 3. Gestion des Étiquettes (Tags)
+## 3. Gestion des Étiquettes (Tags)
 
-La page [`TagsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/TagsPage.xaml) vous donne le plein contrôle sur la taxonomie de votre bibliothèque :
+La page vous donne le plein contrôle sur l'organisation de votre bibliothèque :
 
 - **Créer une nouvelle étiquette** avec un nom personnalisé (ex : *Chorale*, *Solfège*, *Concert Noël*, *Guitare Acoustique*).
 - **Palette de couleurs vives** : assignez une pastille colorée unique à chaque étiquette pour une identification visuelle instantanée dans la liste des partitions.
@@ -64,18 +65,18 @@ La page [`TagsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/T
 
 ---
 
-## 📦 4. Imports de Paquets & Setlists
+## 4. Imports de fichiers (Setlists, Partitions et paquets)
 
-La page [`ImportPackagePage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ImportPackagePage.xaml) vous permet de charger des archives partagées par des tiers :
+La page vous permet de charger des fichiers partagés par des tiers :
 
 - **Formats reconnus** : `.msmsetlist` (setlist complète), `.msmscore` (partition individuelle avec annotations/audio) et `.msmscores` (paquet groupé de plusieurs partitions).
 - **Importation automatisée** : extrait les documents PDF, recrée les métadonnées musicales (tempo, compositeur, tonalité, note), réinjecte les calques d'annotations et rattache les fichiers audio dans votre bibliothèque locale en une seule opération.
 
 ---
 
-## 🔍 5. Gestion des Doublons
+## 5. Gestion des Doublons
 
-La page [`DuplicatesPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/DuplicatesPage.xaml) inspecte votre répertoire de partitions pour libérer de l'espace de stockage et clarifier votre bibliothèque :
+La page inspecte votre répertoire de partitions pour libérer de l'espace de stockage et clarifier votre bibliothèque :
 
 - **Analyse d'empreinte SHA-256** : compare le contenu binaire exact de vos PDF (même si deux fichiers portent des noms différents).
 - **Regroupement par doublons** : affiche les fichiers en double côte à côte avec leurs métadonnées, dates et chemins.
@@ -83,7 +84,7 @@ La page [`DuplicatesPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreMan
 
 ---
 
-## 💾 6. Gestion des Sauvegardes & Restauration
+## 6. Gestion des Sauvegardes & Restauration
 
 La page [`BackupsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/BackupsPage.xaml) assure la pérennité totale de votre travail musical :
 

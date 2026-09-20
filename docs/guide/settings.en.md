@@ -39,13 +39,7 @@ The [`SettingsSetlistsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreM
 
 ---
 
-## 🏷️ 3. Tag Settings
-
-- Direct access to the tag manager ([`TagsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/TagsPage.xaml)), RGB color editor, and category classifications.
-
----
-
-## ✍️ 4. Annotation Settings
+## ✍️ 3. Annotation Settings
 
 The [`SettingsAnnotationsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SettingsAnnotationsPage.xaml) page is divided into two distinct chapters:
 
@@ -57,7 +51,7 @@ The [`SettingsAnnotationsPage`](file:///c:/Users/comme/Documents/GitHub/MusicSco
 
 ---
 
-## 🦶 5. Bluetooth Pedals & MIDI Controller Settings
+## 🦶 4. Bluetooth Pedals & MIDI Controller Settings
 
 The [`SettingsPedalsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SettingsPedalsPage.xaml) page delivers streamlined, robust hands-free stage control:
 
@@ -78,7 +72,7 @@ The [`SettingsPedalsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreMan
 
 ---
 
-## 🌐 6. App Settings (General)
+## 🌐 5. App Settings (General)
 
 The [`SettingsAppPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SettingsAppPage.xaml) page handles system settings:
 
@@ -97,13 +91,13 @@ The [`SettingsAppPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManage
 
 ---
 
-## ❓ 7. Built-in Help
+## ❓ 6. Built-in Help
 
 The [`HelpPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/HelpPage.xaml) page includes offline guides and stage troubleshooting tips.
 
 ---
 
-## ℹ️ 8. About
+## ℹ️ 7. About
 
 The [`AboutPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/AboutPage.xaml) page provides software credits and legal licenses:
 - Dynamic build version string.

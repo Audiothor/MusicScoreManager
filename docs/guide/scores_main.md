@@ -4,7 +4,7 @@
 Le menu **Partitions** constitue la porte d'entrée de votre bibliothèque musicale. Il regroupe l'ensemble de vos partitions sous forme d'une grille de cartes modernes, réactives et optimisées pour les grands écrans comme pour les smartphones.
 
 <p style="text-align: center;">
-  <img src="../images/Partitions_fr_2.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
+  <img src="../../images/Partitions_fr_2.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
 </p>
 
 ---
@@ -46,7 +46,8 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
   - **📡 Partager en Wi-Fi Direct** : transmettez tout le paquet sélectionné en une seule fois sans fil.
   - **📦 Exporter (.msmscores)** : génère une archive compressée unique regroupant tous les fichiers choisis (avec choix des annotations et des pistes audio).
   - **🗑️ Supprimer** : suppression groupée avec confirmation de sécurité.
-  - 
+
+
 
 **[5] Bouton Ajouter (➕)**
 
@@ -59,6 +60,8 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
     Le fichier PDF est copié dans le dossier interne dédié de Music Score Manager. Vos partitions restent accessibles en permanence même si le fichier original est déplacé ou supprimé de son dossier de téléchargement.
   - **Lier le fichier original (Externe)** :  
     L'application conserve le chemin d'accès absolu vers le fichier sans le dupliquer pour économiser l'espace mémoire (signalé par un badge `🔗`).
+
+
 
 ### B. Milieu de l'écran - liste des partitions référencées dans l'application
 
@@ -79,6 +82,8 @@ Si le fichier PDF associé a été déplacé, renommé sur le stockage ou est in
 
 - **[7] : Menu contextuel**
   Accès au menu contextuel d'une partition (voir le chapitre § 2 ci-dessous) 
+
+
 
 ### C. Bas de l'écran - menus principaux de l'application
 
@@ -108,20 +113,18 @@ Si le fichier PDF associé a été déplacé, renommé sur le stockage ou est in
 En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et ergonomique s'affiche :
 
 <p style="text-align: center;">
-  <img src="../images/Partitions_fr_3.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
+  <img src="../../images/Partitions_fr_3.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
 </p>
 
 1. **📖 Ouvrir la partition** :
    
    - Ouvre immédiatement la partition dans le visualiseur plein écran (mode concert).
 
-
-
 2. **✏️ Éditer la partition** :
 - Ouvre la page d'édition détaillée :
 
 <p style="text-align: center;">
-  <img src="../images/Partitions_fr_4.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
+  <img src="../../images/Partitions_fr_4.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
 </p>
 
 * **Titre** et **Compositeur / Arrangeur**.
@@ -141,23 +144,16 @@ En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et
 * **Informations techniques** : chemin d'accès, taille, date de modification, date d'ajout et information si des annotations ont été faites sur cette partition.
   A noter la présence d'un bouton pour réassigner le fichier en cas de déplacement.
   En cas de modifications, n'oubliez pas de cliquer sur le bouton 'Enregistrer' pour sauvegarder vos modifications.
-
-
-
 3. **📋 Ajouter dans un Setlist** :
 - Permet d'insérer instantanément la partition dans la setlist de votre choix.
 - **Placement prioritaire en 1ère position** (décalant les autres morceaux vers le bas).
 - Gestion des setlists verrouillées.
-
-
 
 > 6. **📑 Modifier l'assemblage PDF** :
 
 - Ouvre la partition directement dans l'**Atelier d'Assemblage PDF** pour réorganiser les pages, insérer une page blanche, supprimer des pages inutiles ou effectuer des rotations. Très pratique quand votre fichier pdf est mal organisé.
   Vous pouvez retrouver cet outil directement dans le menu "Outils" aussi.
   => Le détail des modifications d'assemblage est disponible plus en détail dans la partie "Outils"
-
-
 
 > 5.**📡 Envoyer en Wi-Fi Direct** :
 

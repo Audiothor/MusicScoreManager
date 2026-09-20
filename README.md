@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v2.1.6
+# Music Score Manager v2.1.7
 > **Le gestionnaire & visualiseur professionnel de partitions musicales pour répétitions, pupitres et concerts en direct.**
 
 ---
@@ -457,18 +457,17 @@ Idéal pour un chef d'orchestre, chef de chœur ou leader de groupe souhaitant d
 
 ## Chapitre 5 : Paramètres — Personnalisation & Préférences
 
-Le menu **Paramètres** regroupe 8 sous-menus pour adapter l'application à vos habitudes de travail :
+Le menu **Paramètres** regroupe 7 sous-menus pour adapter l'application à vos habitudes de travail :
 
 ```mermaid
 graph TD
     P[Onglet Paramètres] --> P1[Paramètres Partitions]
     P --> P2[Paramètres Setlists]
-    P --> P3[Paramètres Étiquettes]
-    P --> P4[Paramètres Annotations]
-    P --> P5[Paramètres Pédales & MIDI]
-    P --> P6[Paramètres Application]
-    P --> P7[Aide & Dépannage]
-    P --> P8[À Propos & Licences]
+    P --> P3[Paramètres Annotations]
+    P --> P4[Paramètres Pédales & MIDI]
+    P --> P5[Paramètres Application]
+    P --> P6[Aide & Dépannage]
+    P --> P7[À Propos & Licences]
 ```
 
 ### 5.1 Paramètres Partitions (`SettingsScoresPage`)
@@ -481,6 +480,7 @@ graph TD
 - **Ergonomie des Gestes de Navigation** :
   - *Aller vers page suivante* : Glisser vers la gauche, Taper à droite, ou Glisser vers le haut.
   - *Aller vers page précédente* : Glisser vers la droite, Taper à gauche, ou Glisser vers le bas.
+- **Organisation & Taxonomie (Gérer la liste des étiquettes)** : Raccourci vers la console de gestion des étiquettes (`TagsPage`).
 
 ---
 
@@ -491,12 +491,7 @@ graph TD
 
 ---
 
-### 5.3 Paramètres Étiquettes (`TagsPage`)
-Accès direct à la console de gestion, personnalisation des couleurs et organisation de vos catégories de morceaux.
-
----
-
-### 5.4 Paramètres Annotations (`SettingsAnnotationsPage`)
+### 5.3 Paramètres Annotations (`SettingsAnnotationsPage`)
 L'écran est structuré en deux chapitres clairs :
 - **Chapitre 1 : Gestion des stickers Favoris** :
   - Zone de saisie pour créer des stickers personnalisés avec n'importe quel libellé (ex: *« Attention solo »*, *« Vibrato »*, *« Regarder le chef »*, *« Respirer »*).
@@ -506,7 +501,7 @@ L'écran est structuré en deux chapitres clairs :
 
 ---
 
-### 5.5 Paramètres Pédaliers Bluetooth & Événements MIDI (`SettingsPedalsPage`)
+### 5.4 Paramètres Pédaliers Bluetooth & Événements MIDI (`SettingsPedalsPage`)
 Ce module assure la configuration universelle de vos accessoires de commande au pied :
 
 #### Chapitre 1 : Diagnostic & Testeur en Direct
@@ -526,17 +521,14 @@ Sélectionnez directement votre pédale dans le menu déroulant :
 - *Donner Wireless Page Turner*
 - *IK Multimedia iRig BlueTurn*
 - *Coda Music Technologies STOMP*
-- *Contrôleur MIDI Avancé (USB / Bluetooth : Sustain CC 64, Sostenuto CC 66, Soft CC 67, Notes C1-F1, Program Change)*
+- *Contrôleur MIDI Avancé (USB / Bluetooth)*
+- *Profil Personnalisé (avec suppression en un clic)*
 
-#### Chapitre 3 : Profils Personnalisés & Mode Apprentissage (*Learn Mode*)
-- Créez de nouveaux profils sur mesure, dupliquez un profil existant, renommez ou réinitialisez les valeurs d'usine.
-- **Mode Apprentissage Automatique** : Cliquez sur *« Apprendre »* et appuyez simplement sur la pédale de votre choix pour mapper automatiquement le signal reçu.
-- **Palette Complète d'Actions Assignables (Appui Court & Appui Long)** :
-  - ➡️ Page suivante / ⬅️ Page précédente
-  - ⬆️ Défiler vers le haut / ⬇️ Défiler vers le bas
-  - ⏮️ Début de morceau (page 1) / ⏭️ Fin de morceau
-  - 📑 Morceau suivant ou précédent dans la setlist (appui court ou appui long)
-  - ⏱️ Démarrer / Arrêter le métronome & Activer / Couper son
+#### Chapitre 3 : Raccourcis Configurables (Accordéon repliable)
+Attribution d'actions distinctes par pédale pour l'**Appui Court** et l'**Appui Long** :
+  - 📄 Tourner la page suivante / précédente
+  - ⏭️ Morceau suivant / ⏮️ Morceau précédent (dans la setlist)
+  - ⏱️ Activer / Désactiver le métronome
   - 🎵 Lecture / Pause & Recommencer la piste audio d'accompagnement
   - 🔍 Rétablir le zoom à 100%
   - 🔢 Ouvrir le saut direct de page
@@ -549,7 +541,7 @@ Sélectionnez directement votre pédale dans le menu déroulant :
 
 ---
 
-### 5.6 Paramètres Application (`SettingsAppPage`)
+### 5.5 Paramètres Application (`SettingsAppPage`)
 - **Moteur de Localisation Multilingue** : Choix parmi **8 langues intégrées** avec drapeaux et application instantanée :
   - 🇫🇷 Français
   - 🇬🇧 English
@@ -572,12 +564,12 @@ Sélectionnez directement votre pédale dans le menu déroulant :
 
 ---
 
-### 5.7 Aide & Dépannage (`HelpPage`)
+### 5.6 Aide & Dépannage (`HelpPage`)
 Conseils d'utilisation, astuces pour les tournes de pages sur scène et résolution des questions fréquentes.
 
 ---
 
-### 5.8 À Propos (`AboutPage`)
+### 5.7 À Propos (`AboutPage`)
 Affichage de la version installée, présentation du projet Open Source, mentions de copyright et licences détaillées de tous les composants tiers intégrés.
 
 ---
@@ -654,5 +646,5 @@ Consultez le fichier complet [LICENSE](LICENSE) pour les termes légaux exhausti
 ---
 
 <p align="center">
-  <b>Music Score Manager v2.1.0</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
+  <b>Music Score Manager v2.1.7</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
 </p>

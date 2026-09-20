@@ -396,4 +396,9 @@ public partial class SettingsScoresPage : ContentPage
     {
         await Navigation.PopAsync();
     }
+
+    private async void OnManageTagsTapped(object? sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new TagsPage());
+    }
 }

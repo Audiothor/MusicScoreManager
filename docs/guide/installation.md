@@ -4,8 +4,6 @@
 
 **Music Score Manager** est une application multiplateforme développée avec **.NET 10 MAUI**, principalement conçue pour les tablettes et smartphones **Android** (ainsi que les postes de travail **Windows**). Conçue par des musiciens pour des musiciens, elle répond aux exigences les plus strictes de la pratique musicale : répétitions de pupitre, travail personnel, cours de musique, répétitions générales et exécution scénique en concert live.
 
-
-
 L'application élimine définitivement les classeurs papier volumineux et remplace les visualiseurs PDF généralistes inadaptés à la scène. Elle offre une expérience taillée sur mesure :
 
 - **100% Hors-Ligne & Sans Dépendance Réseau** : L'ensemble de la bibliothèque, de la base de données, des métadonnées, des annotations et des fichiers audio est stocké localement sur l'appareil. Aucun accès Internet n'est requis sur scène.
@@ -16,10 +14,9 @@ L'application élimine définitivement les classeurs papier volumineux et rempla
 
 
 
-*Contribution / Disclamer
-L'application a évolué et continue d'évoluer d'après les remarques des musiciens.
-Elle n'est évidement pas parfaite et vous pouvez soumettre des propositions, bugs ou remarques sur Github !
-Merci !*
+***Recommandations***
+*L'application est optimisée pour fonctionner sur des tablettes de type A4 (14 pouces ou plus). En effet ce type de taille de tablette conviendra parfaitement pour l'affichage de partitions.
+Evidement un format inférieur peut tout à fait convenir, c'est juste une histoire de confort et de budget même si à présent on trouve facilement des tablettes de type Androïd à des tarifs relativement accessibles. (contrairement aux tablettes Apple qui sont à des prix que je trouve prohibitifs !)*
 
 
 
@@ -127,3 +124,17 @@ Pour les développeurs souhaitant compiler et personnaliser l'application pour A
    # Pour Windows : publication du binaire complet autonome
    dotnet publish -f net10.0-windows10.0.19041.0 -c Release
    ```
+
+---
+
+### ***Contribution / Disclamer***
+
+- L'application a évolué et continue d'évoluer d'après les remarques des musiciens.
+  Elle n'est évidement pas parfaite et vous pouvez soumettre des propositions, bugs ou remarques sur Github !
+  Merci !
+
+- L'application a été développée avec mes connaissances en C# mais aussi avec l'aide de l'IA Gemini sans laquelle je n'aurais pu réaliser ce projet de manière aussi aboutie et avec autant de fonctionnalités.
+
+- Le code de l'application est totalement transparent et accessible sous Github
+
+- L'application est garantie sans publicité et totalement gratuite.
