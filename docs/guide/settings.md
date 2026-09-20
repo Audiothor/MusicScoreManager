@@ -23,6 +23,8 @@ AFFICHAGE
   - Affiche ou masque la pastille discrète indiquant la page en cours (ex : *Page 3 / 12*) en bas à droite de l'écran pendant le jeu.
 - **Affichage 2 pages en mode paysage (Switch On/Off)** :
   - Sur tablette ou écran large orienté à l'horizontale, affiche deux pages juxtaposées avec synchronisation géométrique des annotations et adaptation d'échelle.
+- **Garder l'écran allumé pendant la lecture (Switch On/Off)** :
+  - Empêche la mise en veille et l'assombrissement automatique de l'écran lorsque vous jouez une partition sur scène ou en répétition.
 - **Taille d'affichage du numéro de page** :
   - Curseur réglable de **10 px à 40 px** avec aperçu direct de la taille pour adapter la lisibilité du compteur à votre distance de lecture du pupitre.
 
@@ -31,6 +33,11 @@ ERGONOMIE
 - **Gestes ergonomiques de tourne de page** :
   - *Aller vers la page suivante* : Glisser vers la gauche, Taper à droite, ou Glisser vers le haut.
   - *Aller vers la page précédente* : Glisser vers la droite, Taper à gauche, ou Glisser vers le bas.
+
+ORGANISATION
+
+- **Gérer la liste des étiquettes** :
+  - Accès direct à la gestion des étiquettes (création, couleurs, renommage, suppression) pour organiser votre bibliothèque.
 
 ---
 

@@ -18,11 +18,15 @@ The [`SettingsScoresPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreMan
   - Show or hide the bottom-right page index badge (e.g., *Page 3 / 12*).
 - **2-Page Landscape Display (Toggle On/Off)**:
   - Enables side-by-side dual page reading on horizontal tablets with complete geometric annotation projection.
+- **Keep Screen Awake While Reading (Toggle On/Off)**:
+  - Prevents the device screen from dimming or falling asleep while viewing a score during rehearsal or live performance.
 - **Page Number Font Size**:
   - Adjustable slider from **10 px to 40 px** with live text size preview.
 - **Ergonomic Page Turn Gestures**:
   - *Next page gesture*: Swipe left, Tap right, or Swipe up.
   - *Previous page gesture*: Swipe right, Tap left, or Swipe down.
+- **Organisation (Manage Tags)**:
+  - Direct shortcut to the tag management console (`TagsPage`) to create, recolor, rename, or delete library tags.
 
 ---
 

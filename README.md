@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v2.1.7
+# Music Score Manager v2.1.8
 > **Le gestionnaire & visualiseur professionnel de partitions musicales pour répétitions, pupitres et concerts en direct.**
 
 ---
@@ -477,10 +477,11 @@ graph TD
 - **Affichage du numéro de page** : Activez ou masquez le badge de numérotation en bas à droite du visualiseur.
 - **Taille d'affichage du numéro de page** : Slider de réglage de 10 px à 40 px avec valeur numérique en direct.
 - **Affichage 2 pages en mode paysage** : Active la présentation double page lorsque la tablette est tournée à l'horizontale.
+- **Garder l'écran allumé pendant la lecture** : Maintien de l'écran éveillé en continu (`KeepScreenOn`), empêchant l'assombrissement ou la mise en veille pendant la lecture d'une partition.
 - **Ergonomie des Gestes de Navigation** :
   - *Aller vers page suivante* : Glisser vers la gauche, Taper à droite, ou Glisser vers le haut.
   - *Aller vers page précédente* : Glisser vers la droite, Taper à gauche, ou Glisser vers le bas.
-- **Organisation & Taxonomie (Gérer la liste des étiquettes)** : Raccourci vers la console de gestion des étiquettes (`TagsPage`).
+- **Organisation (Gérer la liste des étiquettes)** : Raccourci vers la console de gestion des étiquettes (`TagsPage`).
 
 ---
 
@@ -646,5 +647,5 @@ Consultez le fichier complet [LICENSE](LICENSE) pour les termes légaux exhausti
 ---
 
 <p align="center">
-  <b>Music Score Manager v2.1.7</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
+  <b>Music Score Manager v2.1.8</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
 </p>

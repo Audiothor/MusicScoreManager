@@ -239,6 +239,16 @@ public partial class ViewerPage : ContentPage
         LockAnnotations();
         PedalMidiService.Instance.ActionTriggered += OnPedalActionTriggered;
 
+        try
+        {
+            bool keepScreenOn = Preferences.Default.Get("KeepScreenOn", true);
+            DeviceDisplay.Current.KeepScreenOn = keepScreenOn;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur KeepScreenOn: {ex.Message}");
+        }
+
 #if ANDROID
         SetupNativeTouchHandling();
 #endif
@@ -2307,6 +2317,12 @@ public partial class ViewerPage : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
+        try
+        {
+            DeviceDisplay.Current.KeepScreenOn = false;
+        }
+        catch { }
+
         PedalMidiService.Instance.ActionTriggered -= OnPedalActionTriggered;
         PdfService.ClearMemoryCache();
         CancelPreCount();
