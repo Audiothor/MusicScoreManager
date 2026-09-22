@@ -45,6 +45,12 @@ public partial class SettingsAnnotationsPage : ContentPage
         _settingsService = new SettingsService();
         LoadFavorites();
         LoadCategories();
+        LocalizationService.Instance.LanguageChanged += OnLanguageChanged;
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(LoadCategories);
     }
 
     private async void LoadFavorites()
@@ -60,18 +66,19 @@ public partial class SettingsAnnotationsPage : ContentPage
         try
         {
             var active = _settingsService.ActiveStickerCategories;
+            var loc = LocalizationService.Instance;
             var list = new List<StickerCategorySelectionItem>
             {
-                new() { Name = "Favoris", DisplayName = "⭐ Favoris (personnalisés)", IsSelected = active.Contains("Favoris", StringComparer.OrdinalIgnoreCase) },
-                new() { Name = "Doigtés", DisplayName = "✋ Doigtés (1, 2, 3, 4, 5...)", IsSelected = active.Contains("Doigtés", StringComparer.OrdinalIgnoreCase) },
-                new() { Name = "Notes", DisplayName = "🎵 Notes (𝅝, 𝅗𝅥, ♩, ♪, ♫...)", IsSelected = active.Contains("Notes", StringComparer.OrdinalIgnoreCase) },
-                new() { Name = "Silences", DisplayName = "𝄽 Silences (pause, soupir...)", IsSelected = active.Contains("Silences", StringComparer.OrdinalIgnoreCase) },
-                new() { Name = "Altérations", DisplayName = "♯ Altérations (dièse, bémol, bécarre...)", IsSelected = active.Contains("Altérations", StringComparer.OrdinalIgnoreCase) },
-                new() { Name = "Rythme", DisplayName = "⏱️ Rythme (tempo, rall, accel...)", IsSelected = active.Contains("Rythme", StringComparer.OrdinalIgnoreCase) },
-                new() { Name = "Nuances", DisplayName = "𝆑 Nuances (p, mp, mf, f, ff...)", IsSelected = active.Contains("Nuances", StringComparer.OrdinalIgnoreCase) },
-                new() { Name = "Structure", DisplayName = "𝄆 Structure (A, B, Coda, Segno...)", IsSelected = active.Contains("Structure", StringComparer.OrdinalIgnoreCase) },
-                new() { Name = "Technique", DisplayName = "🎻 Technique (Arco, Pizz, Ped...)", IsSelected = active.Contains("Technique", StringComparer.OrdinalIgnoreCase) },
-                new() { Name = "Travail", DisplayName = "🎯 Travail (!, ?, À travailler, Justesse...)", IsSelected = active.Contains("Travail", StringComparer.OrdinalIgnoreCase) }
+                new() { Name = "Favoris", DisplayName = "⭐ " + loc.GetString("Sticker_Cat_Desc_Favorites", "Favoris (personnalisés)"), IsSelected = active.Contains("Favoris", StringComparer.OrdinalIgnoreCase) },
+                new() { Name = "Doigtés", DisplayName = "✋ " + loc.GetString("Sticker_Cat_Desc_Fingerings", "Doigtés (1, 2, 3, 4, 5...)"), IsSelected = active.Contains("Doigtés", StringComparer.OrdinalIgnoreCase) },
+                new() { Name = "Notes", DisplayName = "🎵 " + loc.GetString("Sticker_Cat_Desc_Notes", "Notes (𝅝, 𝅗𝅥, ♩, ♪, ♫...)"), IsSelected = active.Contains("Notes", StringComparer.OrdinalIgnoreCase) },
+                new() { Name = "Silences", DisplayName = "𝄽 " + loc.GetString("Sticker_Cat_Desc_Rests", "Silences (pause, soupir...)"), IsSelected = active.Contains("Silences", StringComparer.OrdinalIgnoreCase) },
+                new() { Name = "Altérations", DisplayName = "♯ " + loc.GetString("Sticker_Cat_Desc_Accidentals", "Altérations (dièse, bémol, bécarre...)"), IsSelected = active.Contains("Altérations", StringComparer.OrdinalIgnoreCase) },
+                new() { Name = "Rythme", DisplayName = "⏱️ " + loc.GetString("Sticker_Cat_Desc_Rhythm", "Rythme (tempo, rall, accel...)"), IsSelected = active.Contains("Rythme", StringComparer.OrdinalIgnoreCase) },
+                new() { Name = "Nuances", DisplayName = "𝆑 " + loc.GetString("Sticker_Cat_Desc_Dynamics", "Nuances (p, mp, mf, f, ff...)"), IsSelected = active.Contains("Nuances", StringComparer.OrdinalIgnoreCase) },
+                new() { Name = "Structure", DisplayName = "𝄆 " + loc.GetString("Sticker_Cat_Desc_Structure", "Structure (A, B, Coda, Segno...)"), IsSelected = active.Contains("Structure", StringComparer.OrdinalIgnoreCase) },
+                new() { Name = "Technique", DisplayName = "🎻 " + loc.GetString("Sticker_Cat_Desc_Technique", "Technique (Arco, Pizz, Ped...)"), IsSelected = active.Contains("Technique", StringComparer.OrdinalIgnoreCase) },
+                new() { Name = "Travail", DisplayName = "🎯 " + loc.GetString("Sticker_Cat_Desc_Practice", "Travail (!, ?, À travailler, Justesse...)"), IsSelected = active.Contains("Travail", StringComparer.OrdinalIgnoreCase) }
             };
 
             _categories = new ObservableCollection<StickerCategorySelectionItem>(list);

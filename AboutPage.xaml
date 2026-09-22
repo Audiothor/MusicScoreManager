@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.AboutPage"
              BackgroundColor="#121212"
-             Title="À propos">
+             Title="{Binding [About_Title], Source={x:Static services:LocalizationService.Instance}}">
 
     <Grid RowDefinitions="Auto, *">
         <!-- Header personnalisé avec bouton Retour -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
             <Button Grid.Column="0" 
-                    Text="← Retour" 
+                    Text="{Binding [Common_Back], Source={x:Static services:LocalizationService.Instance}}" 
                     BackgroundColor="Transparent" 
                     TextColor="#007ACC" 
                     FontAttributes="Bold"
                     Clicked="OnBackClicked" />
             <Label Grid.Column="1" 
-                   Text="À propos" 
+                   Text="{Binding [About_Title], Source={x:Static services:LocalizationService.Instance}}" 
                    TextColor="White" 
                    FontSize="18" 
                    FontAttributes="Bold" 
@@ -43,7 +44,7 @@
                            FontSize="14" 
                            FontAttributes="Bold"
                            HorizontalOptions="Center" />
-                    <Label Text="Gestionnaire &amp; visualiseur professionnel de partitions musicales" 
+                    <Label Text="{Binding [About_Subtitle], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="#AAAAAA" 
                            FontSize="13" 
                            HorizontalTextAlignment="Center" 
@@ -51,7 +52,7 @@
                 </VerticalStackLayout>
 
                 <!-- Section Licence Application -->
-                <Label Text="Licence de l'application" TextColor="#FF3366" FontSize="16" FontAttributes="Bold" Margin="0,10,0,0" />
+                <Label Text="{Binding [About_App_License_Section], Source={x:Static services:LocalizationService.Instance}}" TextColor="#FF3366" FontSize="16" FontAttributes="Bold" Margin="0,10,0,0" />
                 <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="10" />
@@ -59,13 +60,13 @@
                     <VerticalStackLayout Spacing="6">
                         <Label Text="GNU General Public License v3.0 (GPLv3)" TextColor="White" FontAttributes="Bold" FontSize="14" />
                         <Label Text="Copyright © 2026 Audiothor" TextColor="#888888" FontSize="12" />
-                        <Label Text="Ce programme est un logiciel libre : vous pouvez le redistribuer et/ou le modifier selon les termes de la Licence Publique Générale GNU (GPLv3) publiée par la Free Software Foundation." 
+                        <Label Text="{Binding [About_Gpl_Notice], Source={x:Static services:LocalizationService.Instance}}" 
                                TextColor="#AAAAAA" FontSize="12" LineBreakMode="WordWrap" Margin="0,5,0,0" />
                     </VerticalStackLayout>
                 </Border>
 
                 <!-- Section Frameworks & Bibliothèques tierces -->
-                <Label Text="Frameworks &amp; Bibliothèques utilisés" TextColor="#007ACC" FontSize="16" FontAttributes="Bold" Margin="0,10,0,0" />
+                <Label Text="{Binding [About_Frameworks_Used], Source={x:Static services:LocalizationService.Instance}}" TextColor="#007ACC" FontSize="16" FontAttributes="Bold" Margin="0,10,0,0" />
                 <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="10" />
@@ -74,7 +75,7 @@
                         <!-- .NET MAUI -->
                         <VerticalStackLayout Spacing="2">
                             <Label Text="• Microsoft .NET &amp; .NET MAUI" TextColor="White" FontAttributes="Bold" FontSize="13" />
-                            <Label Text="Licence Publique Générale GNU v3.0 (GPLv3) — Microsoft Corporation" TextColor="#888888" FontSize="11" />
+                            <Label Text="GNU General Public License v3.0 (GPLv3) — Microsoft Corporation" TextColor="#888888" FontSize="11" />
                         </VerticalStackLayout>
 
                         <BoxView HeightRequest="1" Color="#2A2A2A" />
@@ -82,7 +83,7 @@
                         <!-- CommunityToolkit.Maui -->
                         <VerticalStackLayout Spacing="2">
                             <Label Text="• .NET MAUI Community Toolkit &amp; MediaElement" TextColor="White" FontAttributes="Bold" FontSize="13" />
-                            <Label Text="Licence Publique Générale GNU v3.0 (GPLv3) — .NET Foundation and Contributors" TextColor="#888888" FontSize="11" />
+                            <Label Text="GNU General Public License v3.0 (GPLv3) — .NET Foundation and Contributors" TextColor="#888888" FontSize="11" />
                         </VerticalStackLayout>
 
                         <BoxView HeightRequest="1" Color="#2A2A2A" />
@@ -90,7 +91,7 @@
                         <!-- SQLite -->
                         <VerticalStackLayout Spacing="2">
                             <Label Text="• sqlite-net-pcl &amp; SQLitePCLRaw" TextColor="White" FontAttributes="Bold" FontSize="13" />
-                            <Label Text="Licence Apache 2.0 / MIT — Frank A. Krueger, Eric Sink" TextColor="#888888" FontSize="11" />
+                            <Label Text="Apache License 2.0 / MIT — Frank A. Krueger, Eric Sink" TextColor="#888888" FontSize="11" />
                         </VerticalStackLayout>
 
                         <BoxView HeightRequest="1" Color="#2A2A2A" />
@@ -98,14 +99,14 @@
                         <!-- PDF.js -->
                         <VerticalStackLayout Spacing="2">
                             <Label Text="• Mozilla PDF.js" TextColor="White" FontAttributes="Bold" FontSize="13" />
-                            <Label Text="Licence Apache 2.0 — Mozilla Foundation" TextColor="#888888" FontSize="11" />
+                            <Label Text="Apache License 2.0 — Mozilla Foundation" TextColor="#888888" FontSize="11" />
                         </VerticalStackLayout>
                     </VerticalStackLayout>
                 </Border>
 
                 <!-- Section Code Source & Politique de Confidentialité -->
-                <Label Text="Code Source &amp; Confidentialité" TextColor="#FFD700" FontSize="16" FontAttributes="Bold" Margin="0,10,0,0" />
-                <Button Text="🔗 Projet GitHub : github.com/Audiothor/MusicScoreManager"
+                <Label Text="{Binding [About_Source_Privacy], Source={x:Static services:LocalizationService.Instance}}" TextColor="#FFD700" FontSize="16" FontAttributes="Bold" Margin="0,10,0,0" />
+                <Button Text="{Binding [About_GitHub_Button], Source={x:Static services:LocalizationService.Instance}}"
                         BackgroundColor="#2C2C2C"
                         TextColor="#00B0FF"
                         FontSize="13"
@@ -114,7 +115,7 @@
                         HeightRequest="50"
                         Clicked="OnGitHubClicked" />
 
-                <Button Text="🔒 Politique de Confidentialité (Privacy Policy)"
+                <Button Text="{Binding [About_Privacy_Policy_Button], Source={x:Static services:LocalizationService.Instance}}"
                         BackgroundColor="#2C2C2C"
                         TextColor="#2ECC71"
                         FontSize="13"
