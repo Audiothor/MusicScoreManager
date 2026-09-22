@@ -58,6 +58,10 @@ namespace MusicScoreManager
             {
                 InitCooldownOptions();
                 UpdateProfileUI();
+                if (!_isLearningKey)
+                {
+                    ListeningLabel.Text = LocalizationService.Instance.GetString("Pedals_Listening_Status", "🟢 En écoute...");
+                }
             });
         }
 
@@ -153,7 +157,7 @@ namespace MusicScoreManager
         {
             _isLearningKey = true;
             ListeningBadge.BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#B71C1C");
-            ListeningLabel.Text = "🔴 Appuyez sur la pédale...";
+            ListeningLabel.Text = "🔴 " + LocalizationService.Instance.GetString("Pedals_Press_Pedal", "Appuyez sur la pédale...");
 
             await DisplayAlertAsync("Mode Apprentissage", "Actionnez la pédale ou commande MIDI que vous souhaitez associer.\n\nLe signal sera détecté automatiquement.", "OK");
         }
@@ -202,9 +206,10 @@ namespace MusicScoreManager
                 {
                     _isLearningKey = false;
                     ListeningBadge.BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#1A334D");
-                    ListeningLabel.Text = "🟢 En écoute...";
+                    ListeningLabel.Text = LocalizationService.Instance.GetString("Pedals_Listening_Status", "🟢 En écoute...");
 
                     var existing = _pedalService.ActiveProfile.Bindings.FirstOrDefault(b => b.InputType == rawEvent.InputType && b.KeyCode == rawEvent.KeyCode);
+                    var loc = LocalizationService.Instance;
                     if (existing == null)
                     {
                         var newBinding = new PedalBinding
@@ -213,16 +218,22 @@ namespace MusicScoreManager
                             KeyCode = rawEvent.KeyCode,
                             KeyName = rawEvent.KeyName,
                             Action = PedalAction.NextPage,
-                            Description = "Touche apprise"
+                            Description = loc.GetString("Settings_Pedals_Key_Detected_Title", "Touche apprise")
                         };
                         _pedalService.ActiveProfile.Bindings.Add(newBinding);
                         _pedalService.SaveCustomProfiles();
                         UpdateProfileUI();
-                        await DisplayAlertAsync("Touche Détectée !", $"La commande « {rawEvent.KeyName} » a été ajoutée au profil.\nVous pouvez maintenant lui assigner l'action de votre choix.", "OK");
+                        await DisplayAlertAsync(
+                            loc.GetString("Settings_Pedals_Key_Detected_Title", "Touche Détectée !"), 
+                            string.Format(loc.GetString("Settings_Pedals_Key_Detected_Msg", "La commande « {0} » a été ajoutée au profil.\nVous pouvez maintenant lui assigner l'action de votre choix."), rawEvent.KeyName), 
+                            loc.GetString("Common_OK", "OK"));
                     }
                     else
                     {
-                        await DisplayAlertAsync("Touche Déjà Présente", $"La commande « {rawEvent.KeyName} » est déjà configurée dans ce profil.", "OK");
+                        await DisplayAlertAsync(
+                            loc.GetString("Settings_Pedals_Key_Exists_Title", "Touche Déjà Présente"), 
+                            string.Format(loc.GetString("Settings_Pedals_Key_Exists_Msg", "La commande « {0} » est déjà configurée dans ce profil."), rawEvent.KeyName), 
+                            loc.GetString("Common_OK", "OK"));
                     }
                 }
             });
@@ -261,9 +272,10 @@ namespace MusicScoreManager
             bool willBeVisible = !ShortcutsContentLayout.IsVisible;
             ShortcutsContentLayout.IsVisible = willBeVisible;
             AccordionChevronLabel.Text = willBeVisible ? "▼" : "▶";
+            var loc = LocalizationService.Instance;
             ShortcutsSubtitleLabel.Text = willBeVisible 
-                ? "Toucher pour rabattre les touches configurées" 
-                : "Toucher pour afficher les touches configurées";
+                ? loc.GetString("Settings_Pedals_Shortcuts_Hide", "Toucher pour rabattre les touches configurées") 
+                : loc.GetString("Settings_Pedals_Shortcuts_Show", "Toucher pour afficher les touches configurées");
         }
 
         private async void OnBackClicked(object sender, EventArgs e)

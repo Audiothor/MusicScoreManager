@@ -368,7 +368,7 @@ namespace MusicScoreManager.Services
                 }
             }
 
-            var rendered = await Task.Run(async () =>
+            var rendered = await Task.Run<RenderedPdfPage?>(async () =>
             {
 #if ANDROID
                 try
@@ -534,7 +534,10 @@ namespace MusicScoreManager.Services
                     System.Diagnostics.Debug.WriteLine($"[PdfService] Windows RenderPdfTwoPagesAsync error: {ex.Message}");
                 }
 #endif
-                return null;
+#if !WINDOWS && !ANDROID
+                await Task.CompletedTask;
+#endif
+                return (RenderedPdfPage?)null;
             });
 
             if (rendered != null)

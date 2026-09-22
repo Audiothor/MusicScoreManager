@@ -20,6 +20,16 @@ public partial class SettingsAppPage : ContentPage
         _pendingLang = LocalizationService.Instance.CurrentLanguage;
         RefreshUI();
         _ = LoadScoreStatsAsync();
+        LocalizationService.Instance.LanguageChanged += OnLanguageChanged;
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            RefreshUI();
+            _ = LoadScoreStatsAsync();
+        });
     }
 
     private void RefreshUI()
@@ -140,7 +150,11 @@ public partial class SettingsAppPage : ContentPage
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                PdfCountLabel.Text = $"{count} partition{(count > 1 ? "s" : "")}";
+                var loc = LocalizationService.Instance;
+                string scoreWord = count > 1 
+                    ? loc.GetString("Common_Scores_Plural", "partitions") 
+                    : loc.GetString("Common_Score_Singular", "partition");
+                PdfCountLabel.Text = $"{count} {scoreWord}";
                 PdfSizeLabel.Text = $"{sizeInMb:F1} Mo";
                 AvailableDiskSpaceLabel.Text = freeSpaceText;
                 DatabaseSizeLabel.Text = dbSizeText;

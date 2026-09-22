@@ -68,9 +68,10 @@ namespace MusicScoreManager
                 await _wifiService.StartListeningAsync(ConfirmIncomingTransferAsync, ProcessReceivedFilesAsync);
                 _isListening = true;
 
+                var loc = LocalizationService.Instance;
                 ToggleReceiveButton.Text = "🔴 Désactiver la Réception";
                 ToggleReceiveButton.BackgroundColor = Color.FromArgb("#E74C3C");
-                StatusBadgeLabel.Text = "🟢 En écoute (Visible)";
+                StatusBadgeLabel.Text = loc.GetString("Wifi_Listening_Visible", "🟢 En écoute (Visible)");
                 StatusBadgeLabel.TextColor = Color.FromArgb("#2ECC71");
 
                 await DisplayAlertAsync("Réception Activée", 
@@ -82,9 +83,10 @@ namespace MusicScoreManager
                 await _wifiService.StopListeningAsync();
                 _isListening = false;
 
+                var loc = LocalizationService.Instance;
                 ToggleReceiveButton.Text = "🟢 Activer la Réception (Se rendre visible)";
                 ToggleReceiveButton.BackgroundColor = Color.FromArgb("#2ECC71");
-                StatusBadgeLabel.Text = "⚫ En veille";
+                StatusBadgeLabel.Text = loc.GetString("Wifi_Idle_Status", "⚫ En veille");
                 StatusBadgeLabel.TextColor = Color.FromArgb("#AAAAAA");
             }
         }

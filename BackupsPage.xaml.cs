@@ -14,10 +14,21 @@ public partial class BackupsPage : ContentPage
         _databaseService = databaseService ?? new DatabaseService();
         _settingsService = new SettingsService();
 
-        FolderPathLabel.Text = $"Chemin : {_databaseService.GetBackupsFolder()}";
+        FolderPathLabel.Text = $"{LocalizationService.Instance.GetString("Scores_Edit_FilePath", "Chemin")} : {_databaseService.GetBackupsFolder()}";
         LoadSettings();
         LoadBackupsList();
         UpdateWarningText();
+
+        LocalizationService.Instance.LanguageChanged += OnLanguageChanged;
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            FolderPathLabel.Text = $"{LocalizationService.Instance.GetString("Scores_Edit_FilePath", "Chemin")} : {_databaseService.GetBackupsFolder()}";
+            UpdateWarningText();
+        });
     }
 
     protected override void OnAppearing()
@@ -37,11 +48,15 @@ public partial class BackupsPage : ContentPage
     {
         string scoresPath = _settingsService.ScoresRootDirectory;
         string audioPath = _settingsService.AudioRootDirectory;
+        var loc = LocalizationService.Instance;
 
-        BackupWarningLabel.Text = $"Important : La sauvegarde ne concerne UNIQUEMENT que la base de données (titres, tags, liens).\n\n" +
-                                  $"Les fichiers physiques des partitions situés dans :\n{scoresPath}\n\n" +
-                                  $"ainsi que les fichiers audio situés dans :\n{audioPath}\n\n" +
-                                  $"NE SONT PAS PRIS EN COMPTE. Vous devez les sauvegarder manuellement.";
+        string template = loc.GetString("Backups_Warning_Full_Notice",
+            "Important : La sauvegarde ne concerne UNIQUEMENT que la base de données (titres, tags, liens).\n\n" +
+            "Les fichiers physiques des partitions situés dans :\n{0}\n\n" +
+            "ainsi que les fichiers audio situés dans :\n{1}\n\n" +
+            "NE SONT PAS PRIS EN COMPTE. Vous devez les sauvegarder manuellement.");
+
+        BackupWarningLabel.Text = string.Format(template, scoresPath, audioPath);
     }
 
     private void LoadSettings()
@@ -62,20 +77,28 @@ public partial class BackupsPage : ContentPage
 
     private async void OnSaveSettingsClicked(object? sender, EventArgs e)
     {
+        var loc = LocalizationService.Instance;
         if (int.TryParse(IntervalEntry.Text, out int interval) && int.TryParse(MaxKeepEntry.Text, out int maxKeep))
         {
             Preferences.Default.Set("BackupIntervalDays", interval);
             Preferences.Default.Set("MaxBackupFiles", maxKeep);
-            await DisplayAlertAsync("Succès", "Paramètres enregistrés.", "OK");
+            await DisplayAlertAsync(
+                loc.GetString("Common_Success", "Succès"), 
+                loc.GetString("Backups_Settings_Saved", "Paramètres enregistrés."), 
+                loc.GetString("Common_OK", "OK"));
         }
         else
         {
-            await DisplayAlertAsync("Erreur", "Veuillez entrer des nombres valides.", "OK");
+            await DisplayAlertAsync(
+                loc.GetString("Common_Error", "Erreur"), 
+                loc.GetString("Backups_Invalid_Numbers", "Veuillez entrer des nombres valides."), 
+                loc.GetString("Common_OK", "OK"));
         }
     }
 
     private async void OnBackupClicked(object? sender, EventArgs e)
     {
+        var loc = LocalizationService.Instance;
         try
         {
             await _databaseService.BackupDatabaseAsync();
@@ -85,11 +108,17 @@ public partial class BackupsPage : ContentPage
             LoadBackupsList();
             Preferences.Default.Set("LastBackupDate", DateTime.Now);
             
-            await DisplayAlertAsync("Sauvegarde", "Base de données sauvegardée avec succès.", "OK");
+            await DisplayAlertAsync(
+                loc.GetString("Backups_Page_Title", "Sauvegarde"), 
+                loc.GetString("Backups_Success", "Base de données sauvegardée avec succès."), 
+                loc.GetString("Common_OK", "OK"));
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Erreur lors de la sauvegarde : {ex.Message}", "OK");
+            await DisplayAlertAsync(
+                loc.GetString("Common_Error", "Erreur"), 
+                string.Format(loc.GetString("Backups_Error_Msg", "Erreur lors de la sauvegarde : {0}"), ex.Message), 
+                loc.GetString("Common_OK", "OK"));
         }
     }
 
@@ -97,20 +126,29 @@ public partial class BackupsPage : ContentPage
     {
         if (sender is Button button && button.CommandParameter is BackupFile backup)
         {
-            bool confirm = await DisplayAlertAsync("Restauration", 
-                $"Voulez-vous vraiment restaurer la sauvegarde du {backup.DisplayDate} ?\n\nATTENTION : La base de données actuelle sera écrasée.", 
-                "Restaurer", "Annuler");
+            var loc = LocalizationService.Instance;
+            bool confirm = await DisplayAlertAsync(
+                loc.GetString("Backups_Restore_Btn", "Restauration"), 
+                string.Format(loc.GetString("Backups_Restore_Confirm", "Voulez-vous vraiment restaurer la sauvegarde du {0} ?\n\nATTENTION : La base de données actuelle sera écrasée."), backup.DisplayDate), 
+                loc.GetString("Backups_Restore_Btn", "Restaurer"), 
+                loc.GetString("Common_Cancel", "Annuler"));
 
             if (confirm)
             {
                 try
                 {
                     await _databaseService.RestoreBackupAsync(backup.FullPath);
-                    await DisplayAlertAsync("Succès", "Base de données restaurée avec succès.", "OK");
+                    await DisplayAlertAsync(
+                        loc.GetString("Common_Success", "Succès"), 
+                        loc.GetString("Backups_Restore_Success", "Base de données restaurée avec succès."), 
+                        loc.GetString("Common_OK", "OK"));
                 }
                 catch (Exception ex)
                 {
-                    await DisplayAlertAsync("Erreur", $"Erreur lors de la restauration : {ex.Message}", "OK");
+                    await DisplayAlertAsync(
+                        loc.GetString("Common_Error", "Erreur"), 
+                        string.Format(loc.GetString("Backups_Error_Msg", "Erreur lors de la restauration : {0}"), ex.Message), 
+                        loc.GetString("Common_OK", "OK"));
                 }
             }
         }
