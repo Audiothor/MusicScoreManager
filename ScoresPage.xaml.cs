@@ -1029,19 +1029,30 @@ public partial class ScoresPage : ContentPage
 
     private async void OnSortClicked(object sender, EventArgs e)
     {
-        string action = await DisplayActionSheetAsync("Trier par", "Annuler", null, 
-            "Date d'ajout (Récent)", "Date d'ajout (Ancien)", "Titre (A-Z)", "Titre (Z-A)", "Date de modification", "Évaluation (Note)", "Compositeur (A-Z)", "Sans étiquette d'abord");
+        var loc = LocalizationService.Instance;
+        string optDateDesc = loc.GetString("Sort_DateDesc", "Date d'ajout (Récent)");
+        string optDateAsc = loc.GetString("Sort_DateAsc", "Date d'ajout (Ancien)");
+        string optTitleAsc = loc.GetString("Sort_TitleAsc", "Titre (A-Z)");
+        string optTitleDesc = loc.GetString("Sort_TitleDesc", "Titre (Z-A)");
+        string optModDesc = loc.GetString("Sort_ModifiedDesc", "Date de modification");
+        string optRatingDesc = loc.GetString("Sort_RatingDesc", "Évaluation (Note)");
+        string optCompAsc = loc.GetString("Sort_ComposerAsc", "Compositeur (A-Z)");
+        string optNoTags = loc.GetString("Sort_NoTagsFirst", "Sans étiquette d'abord");
+        string cancel = loc.GetString("Common_Cancel", "Annuler");
 
-        if (action == "Date d'ajout (Récent)") { _currentSort = "DateDesc"; _hasUserCustomSort = true; }
-        else if (action == "Date d'ajout (Ancien)") { _currentSort = "DateAsc"; _hasUserCustomSort = true; }
-        else if (action == "Titre (A-Z)") { _currentSort = "TitleAsc"; _hasUserCustomSort = true; }
-        else if (action == "Titre (Z-A)") { _currentSort = "TitleDesc"; _hasUserCustomSort = true; }
-        else if (action == "Date de modification") { _currentSort = "ModifiedDesc"; _hasUserCustomSort = true; }
-        else if (action == "Évaluation (Note)") { _currentSort = "RatingDesc"; _hasUserCustomSort = true; }
-        else if (action == "Compositeur (A-Z)") { _currentSort = "ComposerAsc"; _hasUserCustomSort = true; }
-        else if (action == "Sans étiquette d'abord") { _currentSort = "NoTagsFirst"; _hasUserCustomSort = true; }
+        string action = await DisplayActionSheetAsync(loc.GetString("Sort_Dialog_Title", "Trier par"), cancel, null, 
+            optDateDesc, optDateAsc, optTitleAsc, optTitleDesc, optModDesc, optRatingDesc, optCompAsc, optNoTags);
 
-        if (action != "Annuler")
+        if (action == optDateDesc) { _currentSort = "DateDesc"; _hasUserCustomSort = true; }
+        else if (action == optDateAsc) { _currentSort = "DateAsc"; _hasUserCustomSort = true; }
+        else if (action == optTitleAsc) { _currentSort = "TitleAsc"; _hasUserCustomSort = true; }
+        else if (action == optTitleDesc) { _currentSort = "TitleDesc"; _hasUserCustomSort = true; }
+        else if (action == optModDesc) { _currentSort = "ModifiedDesc"; _hasUserCustomSort = true; }
+        else if (action == optRatingDesc) { _currentSort = "RatingDesc"; _hasUserCustomSort = true; }
+        else if (action == optCompAsc) { _currentSort = "ComposerAsc"; _hasUserCustomSort = true; }
+        else if (action == optNoTags) { _currentSort = "NoTagsFirst"; _hasUserCustomSort = true; }
+
+        if (!string.IsNullOrEmpty(action) && action != cancel)
             await LoadScoresAsync(SearchScoreBar.Text);
     }
 
@@ -1103,9 +1114,15 @@ public partial class ScoresPage : ContentPage
         _selectedScoreForMenu = null;
 
         var setlists = await _databaseService.GetSetlistsAsync();
+        string ok = LocalizationService.Instance.GetString("Common_OK", "OK");
+        string cancel = LocalizationService.Instance.GetString("Common_Cancel", "Annuler");
+        string yes = LocalizationService.Instance.GetString("Common_Yes", "Oui");
+        string no = LocalizationService.Instance.GetString("Common_No", "Non");
+
         if (setlists == null || setlists.Count == 0)
         {
-            await DisplayAlertAsync("Setlists", "Aucune setlist n'a été créée pour le moment.", "OK");
+            string emptyMsg = LocalizationService.Instance.GetString("Alert_No_Setlist", "Aucune setlist n'a été créée pour le moment.");
+            await DisplayAlertAsync("Setlists", emptyMsg, ok);
             return;
         }
 
@@ -1115,7 +1132,7 @@ public partial class ScoresPage : ContentPage
         foreach (var s in setlists)
         {
             string displayName = string.IsNullOrWhiteSpace(s.Name) ? $"Setlist #{s.Id}" : s.Name;
-            if (displayName.Equals("Annuler", StringComparison.OrdinalIgnoreCase))
+            if (displayName.Equals(cancel, StringComparison.OrdinalIgnoreCase))
             {
                 displayName = $"{displayName} (Setlist)";
             }
@@ -1128,26 +1145,31 @@ public partial class ScoresPage : ContentPage
             displayMap[candidate] = s;
         }
 
-        string action = await DisplayActionSheetAsync("Choisir une setlist", "Annuler", null, displayMap.Keys.ToArray());
-        if (string.IsNullOrEmpty(action) || action == "Annuler" || !displayMap.TryGetValue(action, out var targetSetlist))
+        string chooseTitle = LocalizationService.Instance.GetString("Alert_Choose_Setlist", "Choisir une setlist");
+        string action = await DisplayActionSheetAsync(chooseTitle, cancel, null, displayMap.Keys.ToArray());
+        if (string.IsNullOrEmpty(action) || action == cancel || !displayMap.TryGetValue(action, out var targetSetlist))
         {
             return;
         }
 
         if (targetSetlist.IsLocked)
         {
+            string lockedTitle = LocalizationService.Instance.GetString("Alert_Setlist_Locked_Title", "Setlist verrouillée");
+            string lockedMsg = string.Format(LocalizationService.Instance.GetString("Alert_Setlist_Locked_Msg", "La setlist '{0}' est verrouillée. Voulez-vous tout de même y ajouter la partition '{1}' en première place ?"), targetSetlist.Name, score.Title);
             bool proceed = await DisplayAlertAsync(
-                "Setlist verrouillée",
-                $"La setlist '{targetSetlist.Name}' est verrouillée. Voulez-vous tout de même y ajouter la partition '{score.Title}' en première place ?",
-                "Oui",
-                "Non");
+                lockedTitle,
+                lockedMsg,
+                yes,
+                no);
             if (!proceed)
                 return;
         }
 
         await _databaseService.AddScoreToSetlistAtBeginningAsync(targetSetlist.Id, score.Id);
 
-        await DisplayAlertAsync("Succès", $"La partition '{score.Title}' a été ajoutée en première place dans la setlist '{targetSetlist.Name}'.", "OK");
+        string successTitle = LocalizationService.Instance.GetString("Common_Success", "Succès");
+        string successMsg = string.Format(LocalizationService.Instance.GetString("Alert_Score_Added_To_Setlist", "La partition '{0}' a été ajoutée en première place dans la setlist '{1}'."), score.Title, targetSetlist.Name);
+        await DisplayAlertAsync(successTitle, successMsg, ok);
     }
 
     private void OnMenuExchangeClicked(object sender, EventArgs e)
@@ -1234,7 +1256,12 @@ public partial class ScoresPage : ContentPage
         ScoreMenuOverlay.IsVisible = false;
         if (_selectedScoreForMenu != null)
         {
-            string newTitle = await DisplayPromptAsync("Renommer", "Nouveau titre :", "OK", "Annuler", initialValue: _selectedScoreForMenu.Title);
+            string promptTitle = LocalizationService.Instance.GetString("Prompt_Rename_Title", "Renommer");
+            string promptMsg = LocalizationService.Instance.GetString("Prompt_Rename_Score_Msg", "Nouveau titre :");
+            string ok = LocalizationService.Instance.GetString("Common_OK", "OK");
+            string cancel = LocalizationService.Instance.GetString("Common_Cancel", "Annuler");
+
+            string newTitle = await DisplayPromptAsync(promptTitle, promptMsg, ok, cancel, initialValue: _selectedScoreForMenu.Title);
             if (!string.IsNullOrWhiteSpace(newTitle))
             {
                 _selectedScoreForMenu.Title = newTitle.Trim();
@@ -1249,7 +1276,13 @@ public partial class ScoresPage : ContentPage
         ScoreMenuOverlay.IsVisible = false;
         if (_selectedScoreForMenu != null)
         {
-            bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer '{_selectedScoreForMenu.Title}' ?", "Oui", "Non");
+            string title = LocalizationService.Instance.GetString("Alert_Delete_Title", "Supprimer");
+            string msgPattern = LocalizationService.Instance.GetString("Alert_Delete_Score_Msg", "Voulez-vous vraiment supprimer '{0}' ?");
+            string msg = string.Format(msgPattern, _selectedScoreForMenu.Title);
+            string yes = LocalizationService.Instance.GetString("Common_Yes", "Oui");
+            string no = LocalizationService.Instance.GetString("Common_No", "Non");
+
+            bool answer = await DisplayAlertAsync(title, msg, yes, no);
             if (answer)
             {
                 await _databaseService.DeleteScoreAsync(_selectedScoreForMenu);

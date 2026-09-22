@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.ScoreEditPage"
              BackgroundColor="#121212"
-             Title="Éditer la partition">
+             Title="{Binding [Score_Edit_Title], Source={x:Static services:LocalizationService.Instance}}">
 
     <Grid RowDefinitions="Auto, *">
         <!-- Header personnalisé avec titre grand et lisible -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="12,14" BackgroundColor="#1E1E1E">
             <Button Grid.Column="0" 
-                    Text="← Retour" 
+                    Text="{Binding [Common_Back], Source={x:Static services:LocalizationService.Instance}}" 
                     BackgroundColor="Transparent" 
                     TextColor="#007ACC" 
                     FontSize="16"
                     FontAttributes="Bold"
                     Clicked="OnCancelClicked" />
             <Label Grid.Column="1" 
-                   Text="Éditer la partition" 
+                   Text="{Binding [Score_Edit_Header], Source={x:Static services:LocalizationService.Instance}}" 
                    TextColor="White" 
                    FontSize="22" 
                    FontAttributes="Bold" 
@@ -58,34 +59,34 @@
                                    Margin="0,-1,0,0" />
                         </Border>
                         <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                            <Label Text="Fichier PDF introuvable ou manquant" TextColor="#FF6B6B" FontSize="14" FontAttributes="Bold" />
-                            <Label Text="Le fichier associé n'existe plus à l'emplacement indiqué. Il est impossible d'ouvrir cette partition." TextColor="#DDDDDD" FontSize="12" />
+                            <Label Text="{Binding [Score_Edit_MissingFile_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="#FF6B6B" FontSize="14" FontAttributes="Bold" />
+                            <Label Text="{Binding [Score_Edit_MissingFile_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#DDDDDD" FontSize="12" />
                         </VerticalStackLayout>
                     </Grid>
                 </Border>
 
                 <!-- 1. TITRE -->
                 <VerticalStackLayout Spacing="6">
-                    <Label Text="Titre" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
+                    <Label Text="{Binding [Score_Edit_Field_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
                     <Entry x:Name="TitleEntry" 
                            TextColor="White" 
                            BackgroundColor="#1E1E1E" 
                            FontSize="16"
                            HeightRequest="48"
-                           Placeholder="Titre de la partition"
+                           Placeholder="{Binding [Score_Edit_Placeholder_Title], Source={x:Static services:LocalizationService.Instance}}"
                            PlaceholderColor="#555555"
                            ClearButtonVisibility="WhileEditing" />
                 </VerticalStackLayout>
 
                 <!-- 2. COMPOSITEUR -->
                 <VerticalStackLayout Spacing="6">
-                    <Label Text="Compositeur" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
+                    <Label Text="{Binding [Score_Edit_Field_Composer], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
                     <Entry x:Name="ComposerEntry" 
                            TextColor="White" 
                            BackgroundColor="#1E1E1E" 
                            FontSize="15"
                            HeightRequest="48"
-                           Placeholder="Nom du compositeur / arrangeur"
+                           Placeholder="{Binding [Score_Edit_Placeholder_Composer], Source={x:Static services:LocalizationService.Instance}}"
                            PlaceholderColor="#555555"
                            ClearButtonVisibility="WhileEditing" />
                 </VerticalStackLayout>
@@ -97,22 +98,22 @@
                     </Border.StrokeShape>
                     <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" RowSpacing="6" ColumnSpacing="10">
                         <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="6" VerticalOptions="Center">
-                            <Label Text="📏 Taille :" TextColor="#AAAAAA" FontSize="12" />
+                            <Label Text="{Binding [Score_Edit_Meta_Size], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="12" />
                             <Label x:Name="FileSizeLabel" Text="--" TextColor="#4CAF50" FontSize="12" FontAttributes="Bold" />
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="6" VerticalOptions="Center">
-                            <Label Text="📅 Modifié le :" TextColor="#AAAAAA" FontSize="12" />
+                            <Label Text="{Binding [Score_Edit_Meta_Modified], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="12" />
                             <Label x:Name="FileModifiedDateLabel" Text="--" TextColor="#007ACC" FontSize="12" FontAttributes="Bold" />
                         </HorizontalStackLayout>
                         
                         <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Spacing="6" VerticalOptions="Center">
-                            <Label Text="✨ Ajouté le :" TextColor="#AAAAAA" FontSize="12" />
+                            <Label Text="{Binding [Score_Edit_Meta_Created], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="12" />
                             <Label x:Name="FileCreatedDateLabel" Text="--" TextColor="#E0E0E0" FontSize="12" />
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Spacing="6" VerticalOptions="Center">
-                            <Label Text="✏️ Annotations :" TextColor="#AAAAAA" FontSize="12" />
+                            <Label Text="{Binding [Score_Edit_Meta_Annotations], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="12" />
                             <Label x:Name="AnnotationsLabel" Text="--" TextColor="#FFA500" FontSize="12" FontAttributes="Bold" />
                         </HorizontalStackLayout>
                     </Grid>
@@ -127,11 +128,11 @@
                     </Border.StrokeShape>
                     <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
                         <VerticalStackLayout VerticalOptions="Center" Spacing="2">
-                            <Label Text="📑 Atelier d'Assemblage PDF" TextColor="#64B5F6" FontSize="13" FontAttributes="Bold" />
-                            <Label Text="Réorganiser l'ordre des pages, pivoter, dupliquer ou supprimer des pages." TextColor="#AAAAAA" FontSize="11" />
+                            <Label Text="{Binding [Score_Edit_Assembly_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="#64B5F6" FontSize="13" FontAttributes="Bold" />
+                            <Label Text="{Binding [Score_Edit_Assembly_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="11" />
                         </VerticalStackLayout>
                         <Button Grid.Column="1"
-                                Text="Modifier les pages"
+                                Text="{Binding [Score_Edit_Assembly_Btn], Source={x:Static services:LocalizationService.Instance}}"
                                 BackgroundColor="#007ACC"
                                 TextColor="White"
                                 FontSize="12"
@@ -144,7 +145,7 @@
 
                 <!-- 3. ÉTIQUETTES / TAGS (Au dessus de Tempo & Tonalité) -->
                 <VerticalStackLayout Spacing="8">
-                    <Label Text="Étiquettes" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
+                    <Label Text="{Binding [Score_Edit_Tags], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
                     
                     <FlexLayout x:Name="SelectedTagsFlexLayout" Wrap="Wrap" Direction="Row" AlignItems="Start">
                         <Button Text="+" 
@@ -164,7 +165,7 @@
                 <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
                     <!-- Tempo -->
                     <VerticalStackLayout Grid.Column="0" Spacing="6">
-                        <Label Text="Tempo (BPM)" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
+                        <Label Text="{Binding [Score_Edit_Tempo], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
                         <Grid ColumnDefinitions="*, Auto" ColumnSpacing="6">
                             <Entry x:Name="BpmEntry" 
                                    Text="120" 
@@ -186,7 +187,7 @@
 
                     <!-- Tonalité -->
                     <VerticalStackLayout Grid.Column="1" Spacing="6">
-                        <Label Text="Tonalité" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
+                        <Label Text="{Binding [Score_Edit_Key], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
                         <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" HeightRequest="48" Padding="10,0">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
@@ -194,7 +195,7 @@
                             <Picker x:Name="KeyPicker" 
                                     TextColor="White" 
                                     BackgroundColor="Transparent" 
-                                    Title="Sélectionner..." 
+                                    Title="{Binding [Score_Edit_Key_Placeholder], Source={x:Static services:LocalizationService.Instance}}" 
                                     TitleColor="#777777" 
                                     FontSize="14"
                                     VerticalOptions="Center" />
@@ -204,7 +205,7 @@
 
                 <!-- 5. ÉVALUATION (Étoiles) -->
                 <VerticalStackLayout Spacing="6">
-                    <Label Text="Évaluation" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
+                    <Label Text="{Binding [Score_Edit_Rating], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" />
                     <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="12,8">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="8" />
@@ -222,7 +223,7 @@
 
                             <Button Grid.Column="2" 
                                     x:Name="ClearRatingBtn"
-                                    Text="Effacer" 
+                                    Text="{Binding [Score_Edit_Rating_Clear], Source={x:Static services:LocalizationService.Instance}}" 
                                     TextColor="#888888" 
                                     BackgroundColor="Transparent" 
                                     FontSize="12" 
@@ -236,9 +237,9 @@
                 <!-- 6. CHEMIN DU FICHIER -->
                 <VerticalStackLayout Spacing="6">
                     <HorizontalStackLayout Spacing="6">
-                        <Label x:Name="FilePathTitleLabel" Text="Chemin du fichier" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" LineBreakMode="TailTruncation" />
+                        <Label x:Name="FilePathTitleLabel" Text="{Binding [Score_Edit_FilePath], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" LineBreakMode="TailTruncation" />
                         <Label x:Name="ExternalScoreIcon" Text="🔗" TextColor="#007ACC" FontSize="16" VerticalOptions="Center" IsVisible="False" />
-                        <Label x:Name="ExternalScoreLabel" Text="(Externe)" TextColor="#007ACC" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" IsVisible="False" />
+                        <Label x:Name="ExternalScoreLabel" Text="{Binding [Score_Edit_External], Source={x:Static services:LocalizationService.Instance}}" TextColor="#007ACC" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" IsVisible="False" />
                     </HorizontalStackLayout>
                     
                     <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
@@ -250,7 +251,7 @@
                                ClearButtonVisibility="WhileEditing" />
                         <Button Grid.Column="1" 
                                 x:Name="ImportScoreButton"
-                                Text="Rapatrier" 
+                                Text="{Binding [Score_Edit_Import], Source={x:Static services:LocalizationService.Instance}}" 
                                 IsVisible="False"
                                 BackgroundColor="#007ACC" 
                                 TextColor="White" 
@@ -268,7 +269,7 @@
                     <VerticalStackLayout Spacing="10">
                         <Grid ColumnDefinitions="Auto, *, Auto">
                             <Label Grid.Column="0" Text="⏱️" FontSize="18" VerticalOptions="Center" Margin="0,0,8,0" />
-                            <Label Grid.Column="1" Text="Métronome" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="{Binding [Score_Edit_Metronome], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
                             <Label Grid.Column="2" x:Name="MetronomeAccordionArrow" Text="▶" TextColor="#007ACC" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" />
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnToggleMetronomeAccordionTapped" />
@@ -278,11 +279,11 @@
                         <VerticalStackLayout x:Name="MetronomeAccordionBody" IsVisible="False" Spacing="12" Margin="0,8,0,0">
                             <BoxView HeightRequest="1" Color="#333333" />
                             <Grid ColumnDefinitions="*, Auto">
-                                <Label Text="Activer automatiquement sur cette partition" TextColor="#AAAAAA" VerticalOptions="Center" />
+                                <Label Text="{Binding [Score_Edit_Metronome_Auto], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" VerticalOptions="Center" />
                                 <Switch Grid.Column="1" x:Name="MetronomeSwitch" OnColor="#007ACC" ThumbColor="White" />
                             </Grid>
                             <Grid ColumnDefinitions="*, Auto">
-                                <Label Text="Son du métronome activé" TextColor="#AAAAAA" VerticalOptions="Center" />
+                                <Label Text="{Binding [Score_Edit_Metronome_Sound], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" VerticalOptions="Center" />
                                 <Switch Grid.Column="1" x:Name="MetronomeSoundSwitch" OnColor="#007ACC" ThumbColor="White" />
                             </Grid>
                         </VerticalStackLayout>
@@ -297,7 +298,7 @@
                     <VerticalStackLayout Spacing="10">
                         <Grid ColumnDefinitions="Auto, *, Auto">
                             <Label Grid.Column="0" Text="🎵" FontSize="18" VerticalOptions="Center" Margin="0,0,8,0" />
-                            <Label Grid.Column="1" x:Name="AudioAccordionTitleLabel" Text="Fichiers Audio" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Label Grid.Column="1" x:Name="AudioAccordionTitleLabel" Text="{Binding [Score_Edit_Audio_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
                             <Label Grid.Column="2" x:Name="AudioAccordionArrow" Text="▶" TextColor="#007ACC" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" />
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnToggleAudioAccordionTapped" />
@@ -307,11 +308,11 @@
                         <VerticalStackLayout x:Name="AudioAccordionBody" IsVisible="False" Spacing="12" Margin="0,8,0,0">
                             <BoxView HeightRequest="1" Color="#333333" />
                             <Grid ColumnDefinitions="*, Auto">
-                                <Label Text="Activer automatiquement le lecteur audio sur cette partition" TextColor="#AAAAAA" VerticalOptions="Center" />
+                                <Label Text="{Binding [Score_Edit_Audio_Auto], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" VerticalOptions="Center" />
                                 <Switch Grid.Column="1" x:Name="AudioPlayerSwitch" OnColor="#007ACC" ThumbColor="White" />
                             </Grid>
                             <Grid ColumnDefinitions="*, Auto">
-                                <Label Text="Pré-compte (Mesures)" TextColor="#AAAAAA" VerticalOptions="Center" />
+                                <Label Text="{Binding [Score_Edit_Precount], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" VerticalOptions="Center" />
                                 <HorizontalStackLayout Grid.Column="1" Spacing="10">
                                     <Entry x:Name="PreCountEntry" Text="4" Keyboard="Numeric" WidthRequest="60" TextColor="White" BackgroundColor="#121212" HorizontalTextAlignment="Center" />
                                     <Stepper x:Name="PreCountStepper" Minimum="0" Maximum="8" Increment="1" Value="4" />
@@ -320,7 +321,7 @@
 
                             <VerticalStackLayout x:Name="AudioFilesList" Spacing="10" />
 
-                            <Button Text="➕ Ajouter un fichier audio (.mp3, .wav, .aiff)" 
+                            <Button Text="{Binding [Score_Edit_Add_Audio], Source={x:Static services:LocalizationService.Instance}}" 
                                     BackgroundColor="#333333" 
                                     TextColor="White" 
                                     HorizontalOptions="Start"
@@ -337,7 +338,7 @@
                      <VerticalStackLayout Spacing="10">
                          <Grid ColumnDefinitions="Auto, *, Auto">
                              <Label Grid.Column="0" Text="🖍️" FontSize="18" VerticalOptions="Center" Margin="0,0,8,0" />
-                             <Label Grid.Column="1" Text="Annotations" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
+                             <Label Grid.Column="1" Text="{Binding [Score_Edit_Annotations], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
                              <Label Grid.Column="2" x:Name="AnnotationsAccordionArrow" Text="▶" TextColor="#007ACC" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" />
                              <Grid.GestureRecognizers>
                                  <TapGestureRecognizer Tapped="OnToggleAnnotationsAccordionTapped" />
@@ -347,7 +348,7 @@
                          <VerticalStackLayout x:Name="AnnotationsAccordionBody" IsVisible="False" Spacing="12" Margin="0,8,0,0">
                              <BoxView HeightRequest="1" Color="#333333" />
                              <Grid ColumnDefinitions="*, Auto">
-                                 <Label Text="Afficher les annotations sur cette partition" TextColor="#AAAAAA" VerticalOptions="Center" />
+                                 <Label Text="{Binding [Score_Edit_Annotations_Show], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" VerticalOptions="Center" />
                                  <Switch Grid.Column="1" x:Name="AnnotationsSwitch" OnColor="#007ACC" ThumbColor="White" />
                              </Grid>
                          </VerticalStackLayout>
@@ -357,7 +358,7 @@
                  <!-- BOUTONS D'ACTION -->
                 <Grid ColumnDefinitions="*, *" ColumnSpacing="15" Margin="0,15,0,20">
                     <Button Grid.Column="0"
-                            Text="Annuler" 
+                            Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#333333" 
                             TextColor="White" 
                             CornerRadius="8"
@@ -365,7 +366,7 @@
                             FontSize="16"
                             Clicked="OnCancelClicked" />
                     <Button Grid.Column="1"
-                            Text="Enregistrer" 
+                            Text="{Binding [Common_Save], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#007ACC" 
                             TextColor="White" 
                             FontAttributes="Bold"
@@ -392,11 +393,11 @@
                     <RoundRectangle CornerRadius="15" />
                 </Border.StrokeShape>
                 <Grid RowDefinitions="Auto, Auto, *, Auto">
-                    <Label Grid.Row="0" Text="Sélectionner les étiquettes" 
+                    <Label Grid.Row="0" Text="{Binding [Score_Edit_TagPicker_Title], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="White" FontSize="18" FontAttributes="Bold" Margin="0,0,0,15" />
                     
                     <SearchBar Grid.Row="1" x:Name="TagSearchBar" 
-                               Placeholder="Rechercher une étiquette..." 
+                               Placeholder="{Binding [Score_Edit_TagPicker_Search], Source={x:Static services:LocalizationService.Instance}}" 
                                PlaceholderColor="#888888" TextColor="White"
                                BackgroundColor="#333333" Margin="0,0,0,15"
                                TextChanged="OnTagSearchTextChanged" />
@@ -409,7 +410,7 @@
                                     AlignContent="Start" />
                     </ScrollView>
 
-                    <Button Grid.Row="3" Text="Terminer" 
+                    <Button Grid.Row="3" Text="{Binding [Score_Edit_TagPicker_Done], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#007ACC" TextColor="White" 
                             FontAttributes="Bold" Margin="0,15,0,0"
                             HeightRequest="50"

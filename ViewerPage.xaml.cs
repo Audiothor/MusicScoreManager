@@ -1797,7 +1797,9 @@ public partial class ViewerPage : ContentPage
     {
         if (RotationScopeLabel != null)
         {
-            RotationScopeLabel.Text = e.Value ? "Appliquer à TOUTE la partition" : "Appliquer à cette page uniquement";
+            RotationScopeLabel.Text = e.Value 
+                ? Services.LocalizationService.Instance.GetString("Viewer_Rotate_All_Pages", "Appliquer à TOUTE la partition") 
+                : Services.LocalizationService.Instance.GetString("Viewer_Rotate_Page_Only", "Appliquer à cette page uniquement");
         }
         UpdateRotateButtonText();
     }

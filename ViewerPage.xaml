@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:conv="clr-namespace:MusicScoreManager.Converters"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.ViewerPage"
              BackgroundColor="#000000"
              Title="{Binding Title}"
@@ -622,7 +623,7 @@
                 </Grid>
 
                 <!-- Rétablir la taille d'origine (Zoom Reset) -->
-                <Button Text="🔍 Rétablir la taille d'origine (100%)" 
+                <Button Text="{Binding [Viewer_Menu_ResetZoom], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="#2C3E50" 
                         TextColor="White" 
                         FontSize="13" 
@@ -632,36 +633,36 @@
 
                 <!-- Option de portée de rotation -->
                 <Grid ColumnDefinitions="*, Auto" Margin="5,0">
-                    <Label x:Name="RotationScopeLabel" Text="Appliquer à cette page uniquement" TextColor="#AAAAAA" FontSize="12" VerticalOptions="Center" />
+                    <Label x:Name="RotationScopeLabel" Text="{Binding [Viewer_Rotate_Page_Only], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="12" VerticalOptions="Center" />
                     <Switch Grid.Column="1" x:Name="RotateAllPagesSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnRotateAllPagesToggled" />
                 </Grid>
 
                 <Grid ColumnDefinitions="*, Auto" Margin="5,0">
-                    <Label Text="Mémoriser les rotations" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
+                    <Label Text="{Binding [Viewer_Remember_Rotation], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
                     <Switch Grid.Column="1" x:Name="SaveRotationSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnSaveRotationToggled" />
                 </Grid>
 
                 <BoxView HeightRequest="1" Color="#444444" Margin="0,5" />
 
                 <Grid ColumnDefinitions="*, Auto" Margin="5,0">
-                    <Label Text="Afficher Métronome" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
+                    <Label Text="{Binding [Viewer_Menu_ShowMetronome], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
                     <Switch Grid.Column="1" x:Name="MenuMetronomeSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnMenuMetronomeToggled" />
                 </Grid>
 
                 <Grid ColumnDefinitions="*, Auto" Margin="5,0">
-                    <Label Text="Afficher Lecteur Audio" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
+                    <Label Text="{Binding [Viewer_Menu_ShowAudio], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
                     <Switch Grid.Column="1" x:Name="MenuAudioSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnMenuAudioToggled" />
                 </Grid>
 
                 <Grid ColumnDefinitions="*, Auto" Margin="5,0">
-                    <Label Text="Afficher les annotations" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
+                    <Label Text="{Binding [Viewer_Menu_ShowAnnotations], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
                     <Switch Grid.Column="1" x:Name="MenuAnnotationsSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnMenuAnnotationsToggled" />
                 </Grid>
 
                 <BoxView HeightRequest="1" Color="#444444" Margin="0,5" />
 
                 <Button x:Name="MenuModifyAssemblyButton"
-                        Text="📑 Modifier l'assemblage PDF" 
+                        Text="{Binding [Viewer_Menu_ModifyAssembly], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="#2C3E50" 
                         TextColor="White" 
                         FontSize="13" 
@@ -669,17 +670,17 @@
                         HeightRequest="40"
                         Clicked="OnMenuModifyAssemblyClicked" />
 
-                <Button Text="✏️ Modifier la partition" 
+                <Button Text="{Binding [Viewer_Edit_Score], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="#007ACC" TextColor="White" 
                         FontAttributes="Bold" CornerRadius="10" HeightRequest="45"
                         Clicked="OnEditScoreClicked" />
 
-                <Button Text="Retour à l'accueil" 
+                <Button Text="{Binding [Viewer_Home], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="#E74C3C" TextColor="White" 
                         FontAttributes="Bold" CornerRadius="10" HeightRequest="45"
                         Clicked="OnBackClicked" />
                 
-                <Button Text="Fermer" 
+                <Button Text="{Binding [Common_Close], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="Transparent" TextColor="#AAAAAA" 
                         FontSize="13" HeightRequest="35"
                         Clicked="OnCloseMenuClicked" />

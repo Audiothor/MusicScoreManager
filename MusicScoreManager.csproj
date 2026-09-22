@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>2.1.8</ApplicationDisplayVersion>
-		<ApplicationVersion>20108</ApplicationVersion>
-		<!-- Version actuelle : v2.1.8 "Maintien de l'écran allumé (Keep Screen On) et menu Organisation" -->
+		<ApplicationDisplayVersion>2.1.9</ApplicationDisplayVersion>
+		<ApplicationVersion>20109</ApplicationVersion>
+		<!-- Version actuelle : v2.1.9 "Internationalisation complète (8 langues) et refonte multilingue" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		
