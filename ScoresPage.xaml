@@ -12,7 +12,7 @@
         <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto, Auto, Auto" Margin="15,15,15,10" ColumnSpacing="10">
             <SearchBar Grid.Column="0"
                        x:Name="SearchScoreBar"
-                       Placeholder="Rechercher..."
+                       Placeholder="{Binding [Scores_Search_Score_Placeholder], Source={x:Static services:LocalizationService.Instance}}"
                        PlaceholderColor="#888888"
                        TextColor="#FFFFFF"
                        BackgroundColor="#1E1E1E"
@@ -20,6 +20,7 @@
             
             <Button Grid.Column="1"
                     Text="🏷️"
+                    ToolTipProperties.Text="{Binding [Scores_Filter_By_Tags_Title], Source={x:Static services:LocalizationService.Instance}}"
                     FontSize="20"
                     WidthRequest="50"
                     HeightRequest="50"
@@ -418,13 +419,12 @@
                     <RoundRectangle CornerRadius="15" />
                 </Border.StrokeShape>
                 <Grid RowDefinitions="Auto, Auto, Auto, *, Auto" RowSpacing="15">
-                    
                     <!-- Header -->
                     <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
                         <Label Grid.Column="0"
-                               Text="Filtrer par étiquettes" 
+                               Text="{Binding [Scores_Filter_By_Tags_Title], Source={x:Static services:LocalizationService.Instance}}" 
                                TextColor="White" 
-                               FontAttributes="Bold"
+                               FontAttributes="Bold" 
                                FontSize="18" 
                                VerticalOptions="Center" />
                         <Label Grid.Column="1"
@@ -445,7 +445,7 @@
                     <Grid Grid.Row="1" ColumnDefinitions="*, Auto" ColumnSpacing="8">
                         <Entry Grid.Column="0"
                                x:Name="TagSearchEntry"
-                               Placeholder="Rechercher une étiquette..."
+                               Placeholder="{Binding [Scores_Search_Tag_Placeholder], Source={x:Static services:LocalizationService.Instance}}"
                                PlaceholderColor="#888888"
                                TextColor="White"
                                BackgroundColor="#2A2A2A"
@@ -453,7 +453,7 @@
                                TextChanged="OnTagSearchEntryTextChanged" />
                         <Button Grid.Column="1"
                                 Text="⇅"
-                                ToolTipProperties.Text="Trier les étiquettes"
+                                ToolTipProperties.Text="{Binding [Scores_Sort_Tags_Tooltip], Source={x:Static services:LocalizationService.Instance}}"
                                 BackgroundColor="#333333"
                                 TextColor="White"
                                 WidthRequest="40"
@@ -464,7 +464,7 @@
                     <!-- Infos de tri actuel -->
                     <Label Grid.Row="2"
                            x:Name="TagSortIndicatorLabel"
-                           Text="Tri : A-Z"
+                           Text="{Binding [Scores_Sort_Tag_AZ], Source={x:Static services:LocalizationService.Instance}}"
                            TextColor="#888888"
                            FontSize="12"
                            Margin="0,-5,0,0" />
@@ -482,14 +482,14 @@
                     <!-- Actions bas de page -->
                     <Grid Grid.Row="4" ColumnDefinitions="*, *" ColumnSpacing="10" Margin="0,5,0,0">
                         <Button Grid.Column="0"
-                                Text="Tout effacer"
+                                Text="{Binding [Scores_Clear_All_Tags], Source={x:Static services:LocalizationService.Instance}}"
                                 BackgroundColor="#333333"
                                 TextColor="White"
                                 CornerRadius="8"
                                 HeightRequest="44"
                                 Clicked="OnClearAllTagsClicked" />
                         <Button Grid.Column="1"
-                                Text="Appliquer"
+                                Text="{Binding [Scores_Apply_Filter], Source={x:Static services:LocalizationService.Instance}}"
                                 BackgroundColor="#007ACC"
                                 TextColor="White"
                                 FontAttributes="Bold"
@@ -518,17 +518,18 @@
             <Grid ColumnDefinitions="*, Auto, Auto, Auto, Auto" Padding="10,10" ColumnSpacing="6" VerticalOptions="Center">
                 <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
                     <Label x:Name="SelectedCountLabel"
-                           Text="0 sélectionné"
+                           Text="0"
                            TextColor="White"
                            FontAttributes="Bold"
                            FontSize="12" />
-                    <Label Text="Actions groupées"
+                    <Label Text="{Binding [Scores_Bulk_Actions], Source={x:Static services:LocalizationService.Instance}}"
                            TextColor="#888888"
                            FontSize="10" />
                 </VerticalStackLayout>
                 
                 <Button Grid.Column="1"
                         Text="🗑️"
+                        ToolTipProperties.Text="{Binding [Common_Delete], Source={x:Static services:LocalizationService.Instance}}"
                         BackgroundColor="#CC2929"
                         TextColor="White"
                         FontAttributes="Bold"
@@ -537,7 +538,7 @@
                         CornerRadius="8"
                         Clicked="OnBulkDeleteClicked" />
                 <Button Grid.Column="2"
-                        Text="🏷️ Étiquettes"
+                        Text="{Binding [Scores_Bulk_Tags], Source={x:Static services:LocalizationService.Instance}}"
                         BackgroundColor="#8E44AD"
                         TextColor="White"
                         FontAttributes="Bold"
@@ -545,7 +546,7 @@
                         CornerRadius="8"
                         Clicked="OnBulkTagsClicked" />
                 <Button Grid.Column="3"
-                        Text="📦 Exporter"
+                        Text="{Binding [Scores_Bulk_Export], Source={x:Static services:LocalizationService.Instance}}"
                         BackgroundColor="#2ECC71"
                         TextColor="White"
                         FontAttributes="Bold"
@@ -553,7 +554,7 @@
                         CornerRadius="8"
                         Clicked="OnBulkExportClicked" />
                 <Button Grid.Column="4"
-                        Text="📤 Envoyer"
+                        Text="{Binding [Scores_Bulk_Send], Source={x:Static services:LocalizationService.Instance}}"
                         BackgroundColor="#007ACC"
                         TextColor="White"
                         FontAttributes="Bold"
@@ -585,9 +586,9 @@
                     <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
                         <Label Grid.Column="0"
                                x:Name="BulkTagsHeaderLabel"
-                               Text="🏷️ Ajouter des étiquettes" 
+                               Text="{Binding [Scores_Bulk_Tags], Source={x:Static services:LocalizationService.Instance}}" 
                                TextColor="White" 
-                               FontAttributes="Bold"
+                               FontAttributes="Bold" 
                                FontSize="17" 
                                VerticalOptions="Center" />
                         <Label Grid.Column="1"
@@ -605,14 +606,14 @@
                     </Grid>
 
                     <Label Grid.Row="1"
-                           Text="Sélectionnez les étiquettes à appliquer à toutes les partitions cochées :" 
+                           Text="{Binding [Scores_Bulk_Tags_Sub], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="#AAAAAA" 
                            FontSize="12" />
 
                     <!-- Barre de recherche -->
                     <Entry Grid.Row="2"
                            x:Name="BulkTagSearchEntry"
-                           Placeholder="Rechercher une étiquette..."
+                           Placeholder="{Binding [Scores_Search_Tag_Placeholder], Source={x:Static services:LocalizationService.Instance}}"
                            PlaceholderColor="#888888"
                            TextColor="White"
                            BackgroundColor="#2A2A2A"
@@ -631,7 +632,7 @@
                     <!-- Boutons Annuler / Appliquer -->
                     <Grid Grid.Row="4" ColumnDefinitions="*, *" ColumnSpacing="12" Margin="0,5,0,0">
                         <Button Grid.Column="0" 
-                                Text="Annuler" 
+                                Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}" 
                                 BackgroundColor="#444444" 
                                 TextColor="White" 
                                 FontAttributes="Bold" 
@@ -639,7 +640,7 @@
                                 CornerRadius="8" 
                                 Clicked="OnBulkTagsCloseClicked" />
                         <Button Grid.Column="1" 
-                                Text="Appliquer" 
+                                Text="{Binding [Common_Apply], Source={x:Static services:LocalizationService.Instance}}" 
                                 BackgroundColor="#8E44AD" 
                                 TextColor="White" 
                                 FontAttributes="Bold" 

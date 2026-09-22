@@ -293,7 +293,10 @@ public partial class ScoresPage : ContentPage
             count = scores.Count(s => s.IsSelected);
         }
 
-        SelectedCountLabel.Text = count == 1 ? "1 partition sélectionnée" : $"{count} partitions sélectionnées";
+        var loc = LocalizationService.Instance;
+        SelectedCountLabel.Text = count == 1 
+            ? loc.GetString("Scores_Bulk_Selected_One", "1 partition sélectionnée") 
+            : string.Format(loc.GetString("Scores_Bulk_Selected_Multiple", "{0} partitions sélectionnées"), count);
     }
 
     private void UpdateMultiSelectUI()
@@ -328,18 +331,22 @@ public partial class ScoresPage : ContentPage
     {
         if (ScoresCollectionView.ItemsSource is not IEnumerable<Models.Score> scores) return;
 
+        var loc = LocalizationService.Instance;
         var selectedScores = scores.Where(s => s.IsSelected).ToList();
         if (!selectedScores.Any())
         {
-            await DisplayAlertAsync("Aucune sélection", "Veuillez sélectionner au moins une partition à supprimer.", "OK");
+            await DisplayAlertAsync(
+                loc.GetString("Scores_Bulk_No_Selection_Title", "Aucune sélection"), 
+                loc.GetString("Scores_Bulk_No_Selection_Msg", "Veuillez sélectionner au moins une partition."), 
+                loc.GetString("Common_OK", "OK"));
             return;
         }
 
         bool confirm = await DisplayAlertAsync(
-            "Suppression groupée", 
-            $"Voulez-vous vraiment supprimer les références de {selectedScores.Count} partition(s) dans la base de données ?\n\nNote : Les fichiers physiques ne seront pas supprimés de votre appareil.", 
-            "Oui", 
-            "Non");
+            loc.GetString("Scores_Bulk_Delete_Title", "Suppression groupée"), 
+            string.Format(loc.GetString("Scores_Bulk_Delete_Confirm", "Voulez-vous vraiment supprimer les références de {0} partition(s) dans la base de données ?\n\nNote : Les fichiers physiques ne seront pas supprimés de votre appareil."), selectedScores.Count), 
+            loc.GetString("Common_Yes", "Oui"), 
+            loc.GetString("Common_No", "Non"));
 
         if (confirm)
         {
@@ -350,7 +357,10 @@ public partial class ScoresPage : ContentPage
 
             IsMultiSelectActive = false; // Quitter le mode sélection multiple
             await LoadScoresAsync(SearchScoreBar.Text);
-            await DisplayAlertAsync("Suppression réussie", $"{selectedScores.Count} partition(s) ont été retirées de l'application.", "OK");
+            await DisplayAlertAsync(
+                loc.GetString("Common_Success", "Succès"), 
+                string.Format(loc.GetString("Scores_Bulk_Delete_Success", "{0} partition(s) ont été retirées de l'application."), selectedScores.Count), 
+                loc.GetString("Common_OK", "OK"));
         }
     }
 
@@ -361,14 +371,18 @@ public partial class ScoresPage : ContentPage
     {
         if (ScoresCollectionView.ItemsSource is not IEnumerable<Models.Score> scores) return;
 
+        var loc = LocalizationService.Instance;
         var selectedScores = scores.Where(s => s.IsSelected).ToList();
         if (!selectedScores.Any())
         {
-            DisplayAlertAsync("Aucune sélection", "Veuillez sélectionner au moins une partition à étiqueter.", "OK");
+            DisplayAlertAsync(
+                loc.GetString("Scores_Bulk_No_Selection_Title", "Aucune sélection"), 
+                loc.GetString("Scores_Bulk_No_Selection_Msg", "Veuillez sélectionner au moins une partition."), 
+                loc.GetString("Common_OK", "OK"));
             return;
         }
 
-        BulkTagsHeaderLabel.Text = $"🏷️ Étiqueter {selectedScores.Count} partition(s)";
+        BulkTagsHeaderLabel.Text = string.Format(LocalizationService.Instance.GetString("Scores_Bulk_Tags_Header", "🏷️ Étiqueter {0} partition(s)"), selectedScores.Count);
         _bulkSelectedTagIds.Clear();
         _bulkTagSearchQuery = string.Empty;
         BulkTagSearchEntry.Text = string.Empty;
@@ -448,7 +462,7 @@ public partial class ScoresPage : ContentPage
         {
             var noTags = new Label
             {
-                Text = "Aucune étiquette disponible. Créez-en dans le menu Outils.",
+                Text = LocalizationService.Instance.GetString("Scores_Bulk_No_Tags_Available", "Aucune étiquette disponible. Créez-en dans le menu Outils."),
                 TextColor = Color.FromArgb("#888888"),
                 FontSize = 12,
                 Margin = new Thickness(0, 10, 0, 0),
@@ -460,9 +474,13 @@ public partial class ScoresPage : ContentPage
 
     private async void OnApplyBulkTagsClicked(object sender, EventArgs e)
     {
+        var loc = LocalizationService.Instance;
         if (!_bulkSelectedTagIds.Any())
         {
-            await DisplayAlertAsync("Aucune étiquette", "Veuillez sélectionner au moins une étiquette à appliquer.", "OK");
+            await DisplayAlertAsync(
+                loc.GetString("Common_Warning", "Attention"), 
+                loc.GetString("Scores_Bulk_Tags_None_Selected", "Veuillez sélectionner au moins une étiquette à appliquer."), 
+                loc.GetString("Common_OK", "OK"));
             return;
         }
 
@@ -482,7 +500,10 @@ public partial class ScoresPage : ContentPage
         BulkTagsOverlay.IsVisible = false;
         IsMultiSelectActive = false; // Quitter le mode multi-sélection
         await LoadScoresAsync(SearchScoreBar.Text);
-        await DisplayAlertAsync("Étiquettes appliquées", $"{_bulkSelectedTagIds.Count} étiquette(s) attribuée(s) avec succès à {selectedScores.Count} partition(s).", "OK");
+        await DisplayAlertAsync(
+            loc.GetString("Common_Success", "Succès"), 
+            string.Format(loc.GetString("Scores_Bulk_Tags_Success", "{0} étiquette(s) attribuée(s) avec succès à {1} partition(s)."), _bulkSelectedTagIds.Count, selectedScores.Count), 
+            loc.GetString("Common_OK", "OK"));
     }
 
     private List<Models.Score>? _scoresToSendForExchange = null;
@@ -492,15 +513,19 @@ public partial class ScoresPage : ContentPage
     {
         if (ScoresCollectionView.ItemsSource is not IEnumerable<Models.Score> scores) return;
 
+        var loc = LocalizationService.Instance;
         var selectedScores = scores.Where(s => s.IsSelected).ToList();
         if (!selectedScores.Any())
         {
-            await DisplayAlertAsync("Aucune sélection", "Veuillez sélectionner au moins une partition à exporter.", "OK");
+            await DisplayAlertAsync(
+                loc.GetString("Scores_Bulk_No_Selection_Title", "Aucune sélection"), 
+                loc.GetString("Scores_Bulk_No_Selection_Msg", "Veuillez sélectionner au moins une partition."), 
+                loc.GetString("Common_OK", "OK"));
             return;
         }
 
         _scoresToSendForExchange = selectedScores;
-        ScoreOptionsTitle.Text = $"Exporter {selectedScores.Count} partition(s)";
+        ScoreOptionsTitle.Text = string.Format(loc.GetString("Scores_Bulk_Export_Title", "Exporter {0} partition(s)"), selectedScores.Count);
         ScoreOptSendWifiActionButton.IsVisible = false;
         ScoreOptExportFileActionButton.IsVisible = true;
         ScoreOptionsOverlay.IsVisible = true;
@@ -510,15 +535,19 @@ public partial class ScoresPage : ContentPage
     {
         if (ScoresCollectionView.ItemsSource is not IEnumerable<Models.Score> scores) return;
 
+        var loc = LocalizationService.Instance;
         var selectedScores = scores.Where(s => s.IsSelected).ToList();
         if (!selectedScores.Any())
         {
-            await DisplayAlertAsync("Aucune sélection", "Veuillez sélectionner au moins une partition à envoyer.", "OK");
+            await DisplayAlertAsync(
+                loc.GetString("Scores_Bulk_No_Selection_Title", "Aucune sélection"), 
+                loc.GetString("Scores_Bulk_No_Selection_Msg", "Veuillez sélectionner au moins une partition."), 
+                loc.GetString("Common_OK", "OK"));
             return;
         }
 
         _scoresToSendForExchange = selectedScores;
-        ScoreOptionsTitle.Text = $"Partager {selectedScores.Count} partition(s)";
+        ScoreOptionsTitle.Text = string.Format(loc.GetString("Scores_Bulk_Share_Title", "Partager {0} partition(s)"), selectedScores.Count);
         ScoreOptSendWifiActionButton.IsVisible = true;
         ScoreOptExportFileActionButton.IsVisible = false;
         ScoreOptionsOverlay.IsVisible = true;
@@ -824,8 +853,21 @@ public partial class ScoresPage : ContentPage
     {
         TagSearchEntry.Text = string.Empty;
         _tagSearchQuery = string.Empty;
+        UpdateTagSortIndicator();
         TagsFilterOverlay.IsVisible = true;
         RenderOverlayTags();
+    }
+
+    private void UpdateTagSortIndicator()
+    {
+        var loc = LocalizationService.Instance;
+        TagSortIndicatorLabel.Text = _tagSortType switch
+        {
+            "NameDesc" => loc.GetString("Scores_Sort_Tag_ZA", "Tri : Z-A"),
+            "SelectedFirst" => loc.GetString("Scores_Sort_Tag_SelectedFirst", "Tri : Sélectionnés d'abord"),
+            "Color" => loc.GetString("Scores_Sort_Tag_Color", "Tri : Couleur"),
+            _ => loc.GetString("Scores_Sort_Tag_AZ", "Tri : A-Z")
+        };
     }
 
     private void OnTagsFilterCloseClicked(object sender, EventArgs e)
@@ -844,24 +886,21 @@ public partial class ScoresPage : ContentPage
         if (_tagSortType == "NameAsc")
         {
             _tagSortType = "NameDesc";
-            TagSortIndicatorLabel.Text = "Tri : Z-A";
         }
         else if (_tagSortType == "NameDesc")
         {
             _tagSortType = "SelectedFirst";
-            TagSortIndicatorLabel.Text = "Tri : Sélectionnés d'abord";
         }
         else if (_tagSortType == "SelectedFirst")
         {
             _tagSortType = "Color";
-            TagSortIndicatorLabel.Text = "Tri : Couleur";
         }
         else
         {
             _tagSortType = "NameAsc";
-            TagSortIndicatorLabel.Text = "Tri : A-Z";
         }
 
+        UpdateTagSortIndicator();
         RenderOverlayTags();
     }
 
@@ -945,7 +984,7 @@ public partial class ScoresPage : ContentPage
         {
             var noTagsLabel = new Label
             {
-                Text = "Aucune étiquette trouvée.",
+                Text = LocalizationService.Instance.GetString("Scores_No_Tags_Found", "Aucune étiquette trouvée."),
                 TextColor = Color.FromArgb("#888888"),
                 FontSize = 13,
                 Margin = new Thickness(0, 10, 0, 0),

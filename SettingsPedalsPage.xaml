@@ -161,7 +161,7 @@
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="12" />
                                 </Border.StrokeShape>
-                                <Label x:Name="ListeningLabel" Text="🟢 En écoute..." TextColor="#4FC3F7" FontSize="11" FontAttributes="Bold" />
+                                <Label x:Name="ListeningLabel" Text="{Binding [Pedals_Listening_Status], Source={x:Static services:LocalizationService.Instance}}" TextColor="#4FC3F7" FontSize="11" FontAttributes="Bold" />
                             </Border>
                         </Grid>
 

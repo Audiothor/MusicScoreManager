@@ -390,7 +390,9 @@ public class LocalizationService : INotifyPropertyChanged
                 ["Common_Error"] = "Error",
                 ["Common_Success"] = "Success",
                 ["Common_Warning"] = "Warning",
-                ["Common_Info"] = "Information"
+                ["Common_Info"] = "Information",
+                ["Common_Score_Singular"] = "score",
+                ["Common_Scores_Plural"] = "scores"
             },
             "de" => new Dictionary<string, string>
             {
@@ -532,7 +534,9 @@ public class LocalizationService : INotifyPropertyChanged
                 ["Common_Error"] = "Fehler",
                 ["Common_Success"] = "Erfolg",
                 ["Common_Warning"] = "Warnung",
-                ["Common_Info"] = "Information"
+                ["Common_Info"] = "Information",
+                ["Common_Score_Singular"] = "Partitur",
+                ["Common_Scores_Plural"] = "Partituren"
             },
             "es" => new Dictionary<string, string>
             {
@@ -675,7 +679,9 @@ public class LocalizationService : INotifyPropertyChanged
                 ["Common_Error"] = "Error",
                 ["Common_Success"] = "Éxito",
                 ["Common_Warning"] = "Advertencia",
-                ["Common_Info"] = "Información"
+                ["Common_Info"] = "Información",
+                ["Common_Score_Singular"] = "partitura",
+                ["Common_Scores_Plural"] = "partituras"
             },
             _ => new Dictionary<string, string>
             {
@@ -821,7 +827,9 @@ public class LocalizationService : INotifyPropertyChanged
                 ["Common_Error"] = "Erreur",
                 ["Common_Success"] = "Succès",
                 ["Common_Warning"] = "Attention",
-                ["Common_Info"] = "Information"
+                ["Common_Info"] = "Information",
+                ["Common_Score_Singular"] = "partition",
+                ["Common_Scores_Plural"] = "partitions"
             }
         };
     }
