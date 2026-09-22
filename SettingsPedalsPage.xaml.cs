@@ -16,13 +16,24 @@ namespace MusicScoreManager
         private readonly PedalMidiService _pedalService;
         private ObservableCollection<PedalBindingViewModel> _bindings = new();
         private bool _isLearningKey = false;
-        private readonly List<(int Ms, string Label)> _cooldownOptions = new()
+        private List<(int Ms, string Label)> _cooldownOptions = new();
+
+        private void InitCooldownOptions()
         {
-            (300, "300 ms (Rapide)"),
-            (450, "450 ms (Standard recommandé)"),
-            (600, "600 ms (Sécurisé concert)"),
-            (800, "800 ms (Strict)")
-        };
+            var loc = LocalizationService.Instance;
+            _cooldownOptions = new List<(int Ms, string Label)>
+            {
+                (300, loc.GetString("Settings_Pedals_Cooldown_Fast", "300 ms (Rapide)")),
+                (450, loc.GetString("Settings_Pedals_Cooldown_Standard", "450 ms (Standard recommandé)")),
+                (600, loc.GetString("Settings_Pedals_Cooldown_Safe", "600 ms (Sécurisé concert)")),
+                (800, loc.GetString("Settings_Pedals_Cooldown_Strict", "800 ms (Strict)"))
+            };
+
+            FastTurnDelayPicker.ItemsSource = _cooldownOptions.Select(o => o.Label).ToList();
+            int currentCooldown = _pedalService.FastTurnCooldownMs;
+            int matchedIdx = _cooldownOptions.FindIndex(o => o.Ms == currentCooldown);
+            FastTurnDelayPicker.SelectedIndex = matchedIdx >= 0 ? matchedIdx : 1; // Default 450 ms
+        }
 
         public SettingsPedalsPage()
         {
@@ -37,10 +48,17 @@ namespace MusicScoreManager
             BlockFastTurnSwitch.IsToggled = _pedalService.BlockFastPageTurn;
             FastTurnDelayRow.IsVisible = _pedalService.BlockFastPageTurn;
 
-            FastTurnDelayPicker.ItemsSource = _cooldownOptions.Select(o => o.Label).ToList();
-            int currentCooldown = _pedalService.FastTurnCooldownMs;
-            int matchedIdx = _cooldownOptions.FindIndex(o => o.Ms == currentCooldown);
-            FastTurnDelayPicker.SelectedIndex = matchedIdx >= 0 ? matchedIdx : 1; // Default 450 ms
+            InitCooldownOptions();
+            LocalizationService.Instance.LanguageChanged += OnLanguageChanged;
+        }
+
+        private void OnLanguageChanged(object? sender, EventArgs e)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                InitCooldownOptions();
+                UpdateProfileUI();
+            });
         }
 
         protected override void OnAppearing()
@@ -73,7 +91,8 @@ namespace MusicScoreManager
         {
             var active = _pedalService.ActiveProfile;
             ProfileDescLabel.Text = active.Description;
-            ProfileShortcutsTitleLabel.Text = $"Raccourcis du profil : {active.Name}";
+            var format = LocalizationService.Instance.GetString("Settings_Pedals_Shortcuts_For_Profile", "Raccourcis du profil : {0}");
+            ProfileShortcutsTitleLabel.Text = string.Format(format, active.Name);
 
             if (active.IsBuiltIn)
             {
