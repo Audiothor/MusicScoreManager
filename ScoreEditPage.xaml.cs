@@ -125,7 +125,7 @@ public partial class ScoreEditPage : ContentPage
 
         if (_currentRating == 0)
         {
-            RatingTextLabel.Text = "Non notée";
+            RatingTextLabel.Text = LocalizationService.Instance.GetString("Score_Edit_Rating_None", "Non notée");
             RatingTextLabel.TextColor = Color.FromArgb("#888888");
         }
         else
@@ -577,9 +577,13 @@ public partial class ScoreEditPage : ContentPage
 
     private async void OnSaveClicked(object sender, EventArgs e)
     {
+        var loc = LocalizationService.Instance;
         if (string.IsNullOrWhiteSpace(TitleEntry.Text))
         {
-            await DisplayAlertAsync("Erreur", "Le titre ne peut pas être vide.", "OK");
+            await DisplayAlertAsync(
+                loc.GetString("Common_Error", "Erreur"), 
+                loc.GetString("Alert_Title_Required", "Le titre ne peut pas être vide."), 
+                loc.GetString("Common_OK", "OK"));
             return;
         }
 
@@ -592,7 +596,10 @@ public partial class ScoreEditPage : ContentPage
         {
             if (bpm < 40 || bpm > 250)
             {
-                await this.DisplayAlertAsync("BPM Invalide", "Le tempo doit être compris entre 40 et 250 BPM.", "OK");
+                await this.DisplayAlertAsync(
+                    loc.GetString("Common_Warning", "Attention"), 
+                    loc.GetString("Alert_Invalid_Bpm", "Le tempo doit être compris entre 40 et 250 BPM."), 
+                    loc.GetString("Common_OK", "OK"));
                 return;
             }
             _score.BPM = bpm;

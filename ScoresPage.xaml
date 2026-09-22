@@ -254,7 +254,7 @@
                     <BoxView HeightRequest="1" Color="#333333" Margin="0,0,0,4" />
                     
                     <!-- Action Principale : Ouvrir -->
-                    <Button Text="📖  Ouvrir la partition" 
+                    <Button Text="{Binding [Score_Menu_Open], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#007ACC" 
                             TextColor="White" 
                             FontSize="14" 
@@ -264,7 +264,7 @@
                             Clicked="OnMenuOpenClicked" />
 
                     <!-- Action : Modifier la partition (En vert) -->
-                    <Button Text="✏️  Éditer la partition" 
+                    <Button Text="{Binding [Score_Menu_Edit], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#1B3828" 
                             TextColor="#2ECC71" 
                             FontSize="14" 
@@ -274,7 +274,7 @@
                             Clicked="OnMenuEditClicked" />
 
                     <!-- Action : Ajouter dans un Setlist -->
-                    <Button Text="📋  Ajouter dans un Setlist" 
+                    <Button Text="{Binding [Score_Menu_AddToSetlist], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#2A2A2A" 
                             TextColor="White" 
                             FontSize="14" 
@@ -284,7 +284,7 @@
 
                     <!-- Action : Modifier l'assemblage PDF (En dessous) -->
                     <Button x:Name="ScoreMenuModifyAssemblyButton"
-                            Text="📑  Modifier l'assemblage PDF" 
+                            Text="{Binding [Score_Menu_ModifyAssembly], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#2A2A2A" 
                             TextColor="White" 
                             FontSize="14" 
@@ -293,7 +293,7 @@
                             Clicked="OnMenuModifyAssemblyClicked" />
 
                     <!-- Action : Wi-Fi Direct -->
-                    <Button Text="📡  Envoyer en Wi-Fi Direct" 
+                    <Button Text="{Binding [Score_Menu_SendWifi], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#2A2A2A" 
                             TextColor="White" 
                             FontSize="14" 
@@ -302,7 +302,7 @@
                             Clicked="OnMenuExchangeClicked" />
 
                     <!-- Action : Exporter -->
-                    <Button Text="📦  Exporter (.msmscore)" 
+                    <Button Text="{Binding [Score_Menu_Export], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#2A2A2A" 
                             TextColor="White" 
                             FontSize="14" 
@@ -311,7 +311,7 @@
                             Clicked="OnMenuExportClicked" />
 
                     <!-- Action : Renommer -->
-                    <Button Text="🏷️  Renommer" 
+                    <Button Text="{Binding [Score_Menu_Rename], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#2A2A2A" 
                             TextColor="White" 
                             FontSize="14" 
@@ -320,7 +320,7 @@
                             Clicked="OnMenuRenameClicked" />
 
                     <!-- Action : Supprimer (Stylisé destructif) -->
-                    <Button Text="🗑️  Supprimer la partition" 
+                    <Button Text="{Binding [Score_Menu_Delete], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#3A1E1E" 
                             TextColor="#FF6B6B" 
                             FontSize="14" 
@@ -351,30 +351,30 @@
                 </Border.StrokeShape>
                 <VerticalStackLayout Spacing="15">
                     <Label x:Name="ScoreOptionsTitle" 
-                           Text="Options de partage" 
+                           Text="{Binding [Options_Share_Title], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="White" 
                            FontAttributes="Bold" 
                            FontSize="18" 
                            HorizontalOptions="Center" />
                     
-                    <Label Text="Choisissez les éléments à inclure dans le package :" 
+                    <Label Text="{Binding [Options_Share_Subtitle], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="#AAAAAA" 
                            FontSize="13" />
 
                     <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
                         <CheckBox x:Name="ScoreOptAnnotationsCheckBox" IsChecked="True" Color="#007ACC" />
-                        <Label Text="Inclure les annotations (doigtés, etc.)" TextColor="White" VerticalOptions="Center" FontSize="13" />
+                        <Label Text="{Binding [Options_Include_Annotations], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" VerticalOptions="Center" FontSize="13" />
                     </HorizontalStackLayout>
 
                     <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
                         <CheckBox x:Name="ScoreOptAudioCheckBox" IsChecked="True" Color="#007ACC" />
-                        <Label Text="Inclure les pistes audio rattachées" TextColor="White" VerticalOptions="Center" FontSize="13" />
+                        <Label Text="{Binding [Options_Include_Audio], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" VerticalOptions="Center" FontSize="13" />
                     </HorizontalStackLayout>
 
                     <BoxView HeightRequest="1" Color="#333333" Margin="0,5" />
 
                     <Button x:Name="ScoreOptSendWifiActionButton"
-                            Text="📡 Envoyer en Wi-Fi Direct (P2P)"
+                            Text="{Binding [Options_Send_Wifi], Source={x:Static services:LocalizationService.Instance}}"
                             BackgroundColor="#007ACC"
                             TextColor="White"
                             FontAttributes="Bold"
@@ -383,7 +383,7 @@
                             Clicked="OnScoreOptionsSendWifiClicked" />
 
                     <Button x:Name="ScoreOptExportFileActionButton"
-                            Text="📦 Exporter en fichier (.msmscore)"
+                            Text="{Binding [Options_Export_Score_File], Source={x:Static services:LocalizationService.Instance}}"
                             BackgroundColor="#2ECC71"
                             TextColor="White"
                             FontAttributes="Bold"
@@ -391,7 +391,7 @@
                             CornerRadius="10"
                             Clicked="OnScoreOptionsExportFileClicked" />
 
-                    <Button Text="Annuler"
+                    <Button Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}"
                             BackgroundColor="Transparent"
                             TextColor="#888888"
                             HeightRequest="36"

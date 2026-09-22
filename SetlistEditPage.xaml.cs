@@ -48,8 +48,9 @@ public partial class SetlistEditPage : ContentPage
     {
         // Mise à jour de l'icône et du bouton de verrouillage
         LockBorder.BackgroundColor = _isLocked ? Color.FromArgb("#DC3545") : Color.FromArgb("#28A745");
-        LockBorder.Stroke = _isLocked ? Color.FromArgb("#DC3545") : Color.FromArgb("#28A745");
-        LockIconLabel.Text = _isLocked ? "VERROUILLÉ 🔒" : "DÉVERROUILLÉ 🔓";
+        LockIconLabel.Text = _isLocked 
+            ? Services.LocalizationService.Instance.GetString("Setlist_Edit_Locked", "VERROUILLÉ 🔒") 
+            : Services.LocalizationService.Instance.GetString("Setlist_Edit_Unlocked", "DÉVERROUILLÉ 🔓");
 
         // Désactivation des contrôles d'édition
         NameEntry.IsEnabled = !_isLocked;

@@ -2,8 +2,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:MusicScoreManager.Models"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.SetlistEditPage"
-             Title="Éditer la Setlist"
+             Title="{Binding [Setlist_Menu_Edit], Source={x:Static services:LocalizationService.Instance}}"
              BackgroundColor="#121212">
 
     <Grid RowDefinitions="Auto, *, Auto" Padding="15">
@@ -15,7 +16,7 @@
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
                 <VerticalStackLayout Spacing="10">
-                    <Label Text="Nom de la Setlist" TextColor="#888888" FontSize="12" />
+                    <Label Text="{Binding [Setlist_Name], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
                     <Entry x:Name="NameEntry" 
                            Placeholder="Ex: Concert d'été" 
                            TextColor="White" 
@@ -24,16 +25,16 @@
                     
                     <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
                         <VerticalStackLayout Grid.Column="0">
-                            <Label Text="Date du Concert" TextColor="#888888" FontSize="12" />
+                            <Label Text="{Binding [Setlist_Concert_Date], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
                             <DatePicker x:Name="ConcertDatePicker" TextColor="White" MinimumDate="2020-01-01" />
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1">
-                            <Label Text="Heure du Concert" TextColor="#888888" FontSize="12" />
+                            <Label Text="{Binding [Setlist_Concert_Time], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
                             <TimePicker x:Name="ConcertTimePicker" TextColor="White" Format="HH:mm" />
                         </VerticalStackLayout>
                     </Grid>
 
-                    <Label Text="Statut" TextColor="#888888" FontSize="12" Margin="0,5,0,0" />
+                    <Label Text="{Binding [Setlist_Status], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" Margin="0,5,0,0" />
                     <Grid ColumnDefinitions="*, Auto, Auto" VerticalOptions="Center">
                         <HorizontalStackLayout x:Name="StatusStack" Spacing="10" Grid.Column="0">
                             <!-- Les chips seront générés dynamiquement dans le code-behind -->
@@ -59,7 +60,7 @@
                                 <TapGestureRecognizer Tapped="OnLockTapped" />
                             </Border.GestureRecognizers>
                             <Label x:Name="LockIconLabel" 
-                                   Text="DÉVERROUILLÉ 🔓" 
+                                   Text="{Binding [Setlist_Edit_Unlocked], Source={x:Static services:LocalizationService.Instance}}" 
                                    TextColor="White" 
                                    FontSize="12" 
                                    FontAttributes="Bold"
@@ -72,8 +73,8 @@
 
                     <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
                         <VerticalStackLayout Grid.Column="0">
-                            <Label Text="Lecture en continu" TextColor="White" FontSize="14" FontAttributes="Bold" />
-                            <Label Text="Passe automatiquement au morceau suivant" TextColor="#888888" FontSize="11" />
+                            <Label Text="{Binding [Setlist_Continuous_Mode], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="14" FontAttributes="Bold" />
+                            <Label Text="{Binding [Setlist_Edit_Continuous_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="11" />
                         </VerticalStackLayout>
                         <Switch Grid.Column="1" x:Name="ContinuousSwitch" IsToggled="True" OnColor="#007ACC" ThumbColor="White" />
                     </Grid>
@@ -81,10 +82,10 @@
             </Border>
 
             <Grid ColumnDefinitions="*, Auto">
-                <Label Grid.Column="0" Text="Partitions" TextColor="White" FontSize="20" FontAttributes="Bold" VerticalOptions="Center" />
+                <Label Grid.Column="0" Text="{Binding [Setlist_Edit_Scores], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="20" FontAttributes="Bold" VerticalOptions="Center" />
                 <Button Grid.Column="1" 
                         x:Name="AddScoreButton"
-                        Text="+ Ajouter" 
+                        Text="{Binding [Setlist_Edit_Add], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="#007ACC" 
                         TextColor="White" 
                         Clicked="OnAddScoreClicked" />
@@ -186,7 +187,7 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
             <CollectionView.EmptyView>
-                <Label Text="Aucune partition. Cliquez sur + pour en ajouter." 
+                <Label Text="{Binding [Setlist_Edit_Empty], Source={x:Static services:LocalizationService.Instance}}" 
                        TextColor="#555555" 
                        HorizontalOptions="Center" 
                        VerticalOptions="Center" 
@@ -197,7 +198,7 @@
         <!-- Boutons d'action -->
         <VerticalStackLayout Grid.Row="2" Spacing="10" Margin="0,15,0,0">
             <Button x:Name="DeleteSetlistButton"
-                    Text="Supprimer la setlist"
+                    Text="{Binding [Setlist_Edit_Delete_Btn], Source={x:Static services:LocalizationService.Instance}}"
                     BackgroundColor="Transparent"
                     TextColor="#FF4444"
                     BorderColor="#FF4444"
@@ -207,12 +208,12 @@
 
             <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
                 <Button Grid.Column="0" 
-                        Text="Annuler" 
+                        Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="#333333" 
                         TextColor="White" 
                         Clicked="OnCancelClicked" />
                 <Button Grid.Column="1" 
-                        Text="Enregistrer" 
+                        Text="{Binding [Common_Save], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="#007ACC" 
                         TextColor="White" 
                         FontAttributes="Bold" 

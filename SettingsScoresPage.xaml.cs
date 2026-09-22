@@ -6,6 +6,20 @@ public partial class SettingsScoresPage : ContentPage
     {
         InitializeComponent();
         
+        var loc = Services.LocalizationService.Instance;
+
+        DefaultSortPicker.ItemsSource = new List<string>
+        {
+            loc.GetString("Sort_DateDesc", "Date d'ajout (Plus récent d'abord)"),
+            loc.GetString("Sort_DateAsc", "Date d'ajout (Plus ancien d'abord)"),
+            loc.GetString("Sort_TitleAsc", "Titre (A-Z)"),
+            loc.GetString("Sort_TitleDesc", "Titre (Z-A)"),
+            loc.GetString("Sort_ModifiedDesc", "Date de modification (Récent)"),
+            loc.GetString("Sort_RatingDesc", "Évaluation (Meilleures notes)"),
+            loc.GetString("Sort_ComposerAsc", "Compositeur (A-Z)"),
+            loc.GetString("Sort_NoTagsFirst", "Sans étiquette d'abord")
+        };
+
         // Charger les préférences
         string defaultSort = Preferences.Default.Get("DefaultScoreSort", "DateDesc");
         DefaultSortPicker.SelectedIndex = defaultSort switch
@@ -32,6 +46,13 @@ public partial class SettingsScoresPage : ContentPage
         KeepScreenOnSwitch.IsToggled = Preferences.Default.Get("KeepScreenOn", true);
         PageNumberSizeSlider.Value = Preferences.Default.Get("PageNumberSize", 20.0);
 
+        NextPageGesturePicker.ItemsSource = new List<string>
+        {
+            loc.GetString("Gesture_SwipeLeft", "Glisser vers la gauche"),
+            loc.GetString("Gesture_TapRight", "Taper à droite"),
+            loc.GetString("Gesture_SwipeUp", "Glisser vers le haut")
+        };
+
         string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
         NextPageGesturePicker.SelectedIndex = nextGesture switch
         {
@@ -39,6 +60,13 @@ public partial class SettingsScoresPage : ContentPage
             "TapRight" => 1,
             "SwipeUp" => 2,
             _ => 0
+        };
+
+        PrevPageGesturePicker.ItemsSource = new List<string>
+        {
+            loc.GetString("Gesture_SwipeRight", "Glisser vers la droite"),
+            loc.GetString("Gesture_TapLeft", "Taper à gauche"),
+            loc.GetString("Gesture_SwipeDown", "Glisser vers le bas")
         };
 
         string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
@@ -68,11 +96,12 @@ public partial class SettingsScoresPage : ContentPage
         string currentPref = Preferences.Default.Get("ScoreSubtitleDisplay", "DateAdded");
         string fullOrder = Preferences.Default.Get("ScoreSubtitleFullOrder", "");
 
+        var loc = Services.LocalizationService.Instance;
         var allItems = new Dictionary<string, (string Title, string Icon)>
         {
-            { "Composer", ("Compositeur", "🎵") },
-            { "PageCount", ("Nombre de pages", "📄") },
-            { "DateAdded", ("Date d'ajout", "📅") }
+            { "Composer", (loc.GetString("Score_Edit_Field_Composer", "Compositeur"), "🎵") },
+            { "PageCount", (loc.GetString("Settings_Scores_Show_Page_Number", "Nombre de pages"), "📄") },
+            { "DateAdded", (loc.GetString("Sort_DateAsc", "Date d'ajout"), "📅") }
         };
 
         List<string> orderedKeys = new();

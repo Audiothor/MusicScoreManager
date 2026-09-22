@@ -56,11 +56,11 @@
                     <SwipeView>
                         <SwipeView.RightItems>
                             <SwipeItems>
-                                <SwipeItem Text="Renommer" 
+                                <SwipeItem Text="{Binding [Common_Rename], Source={x:Static services:LocalizationService.Instance}}" 
                                            BackgroundColor="LightBlue" 
                                            Invoked="OnRenameSetlistInvoked" 
                                            CommandParameter="{Binding .}" />
-                                <SwipeItem Text="Supprimer" 
+                                <SwipeItem Text="{Binding [Common_Delete], Source={x:Static services:LocalizationService.Instance}}" 
                                            BackgroundColor="Red" 
                                            Invoked="OnDeleteSetlistInvoked" 
                                            CommandParameter="{Binding .}" />
@@ -194,7 +194,7 @@
                     <BoxView HeightRequest="1" Color="#333333" Margin="0,0,0,4" />
                     
                     <!-- Action Principale : Démarrer -->
-                    <Button Text="▶️  Démarrer la setlist" 
+                    <Button Text="{Binding [Setlist_Menu_Open], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#007ACC" 
                             TextColor="White" 
                             FontSize="14" 
@@ -204,7 +204,7 @@
                             Clicked="OnMenuOpenSetlistClicked" />
 
                     <!-- Action : Éditer l'ordre et les morceaux (En vert) -->
-                    <Button Text="✏️  Éditer la setlist" 
+                    <Button Text="{Binding [Setlist_Menu_Edit], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#1B3828" 
                             TextColor="#2ECC71" 
                             FontSize="14" 
@@ -214,7 +214,7 @@
                             Clicked="OnMenuEditSetlistClicked" />
 
                     <!-- Action : Wi-Fi Direct -->
-                    <Button Text="📡  Envoyer en Wi-Fi Direct" 
+                    <Button Text="{Binding [Setlist_Menu_SendWifi], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#2A2A2A" 
                             TextColor="White" 
                             FontSize="14" 
@@ -223,7 +223,7 @@
                             Clicked="OnMenuSendWifiTriggerClicked" />
 
                     <!-- Action : Exporter -->
-                    <Button Text="📦  Exporter (.msmsetlist)" 
+                    <Button Text="{Binding [Setlist_Menu_Export], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#2A2A2A" 
                             TextColor="White" 
                             FontSize="14" 
@@ -232,7 +232,7 @@
                             Clicked="OnMenuExportSetlistTriggerClicked" />
 
                     <!-- Action : Dupliquer -->
-                    <Button Text="📑  Dupliquer la setlist" 
+                    <Button Text="{Binding [Setlist_Menu_Duplicate], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#2A2A2A" 
                             TextColor="White" 
                             FontSize="14" 
@@ -241,7 +241,7 @@
                             Clicked="OnMenuDuplicateSetlistClicked" />
 
                     <!-- Action : Renommer -->
-                    <Button Text="🏷️  Renommer" 
+                    <Button Text="{Binding [Setlist_Menu_Rename], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#2A2A2A" 
                             TextColor="White" 
                             FontSize="14" 
@@ -250,7 +250,7 @@
                             Clicked="OnMenuRenameSetlistClicked" />
 
                     <!-- Action : Supprimer (Stylisé destructif) -->
-                    <Button Text="🗑️  Supprimer la setlist" 
+                    <Button Text="{Binding [Setlist_Menu_Delete], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#3A1E1E" 
                             TextColor="#FF6B6B" 
                             FontSize="14" 
@@ -281,30 +281,30 @@
                 </Border.StrokeShape>
                 <VerticalStackLayout Spacing="15">
                     <Label x:Name="SetlistOptionsTitle" 
-                           Text="Options de partage" 
+                           Text="{Binding [Options_Share_Title], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="White" 
                            FontAttributes="Bold" 
                            FontSize="18" 
                            HorizontalOptions="Center" />
                     
-                    <Label Text="Choisissez les éléments à inclure dans le package :" 
+                    <Label Text="{Binding [Options_Share_Subtitle], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="#AAAAAA" 
                            FontSize="13" />
 
                     <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
                         <CheckBox x:Name="OptAnnotationsCheckBox" IsChecked="True" Color="#007ACC" />
-                        <Label Text="Inclure les annotations (doigtés, etc.)" TextColor="White" VerticalOptions="Center" FontSize="13" />
+                        <Label Text="{Binding [Options_Share_Annotations], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" VerticalOptions="Center" FontSize="13" />
                     </HorizontalStackLayout>
 
                     <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
                         <CheckBox x:Name="OptAudioCheckBox" IsChecked="True" Color="#007ACC" />
-                        <Label Text="Inclure les pistes audio rattachées" TextColor="White" VerticalOptions="Center" FontSize="13" />
+                        <Label Text="{Binding [Options_Share_Audio], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" VerticalOptions="Center" FontSize="13" />
                     </HorizontalStackLayout>
 
                     <BoxView HeightRequest="1" Color="#333333" Margin="0,5" />
 
                     <Button x:Name="OptSendWifiActionButton"
-                            Text="📡 Envoyer en Wi-Fi Direct (P2P)"
+                            Text="{Binding [Options_Share_SendWifi], Source={x:Static services:LocalizationService.Instance}}"
                             BackgroundColor="#007ACC"
                             TextColor="White"
                             FontAttributes="Bold"
@@ -313,7 +313,7 @@
                             Clicked="OnOptionsSendWifiClicked" />
 
                     <Button x:Name="OptExportFileActionButton"
-                            Text="📦 Exporter en fichier (.msmsetlist)"
+                            Text="{Binding [Options_Export_Setlist_File], Source={x:Static services:LocalizationService.Instance}}"
                             BackgroundColor="#2ECC71"
                             TextColor="White"
                             FontAttributes="Bold"
@@ -321,7 +321,7 @@
                             CornerRadius="10"
                             Clicked="OnOptionsExportFileClicked" />
 
-                    <Button Text="Annuler"
+                    <Button Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}"
                             BackgroundColor="Transparent"
                             TextColor="#888888"
                             HeightRequest="36"

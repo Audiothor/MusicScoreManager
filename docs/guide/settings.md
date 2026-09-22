@@ -24,7 +24,8 @@ AFFICHAGE
 - **Affichage 2 pages en mode paysage (Switch On/Off)** :
   - Sur tablette ou écran large orienté à l'horizontale, affiche deux pages juxtaposées avec synchronisation géométrique des annotations et adaptation d'échelle.
 - **Garder l'écran allumé pendant la lecture (Switch On/Off)** :
-  - Empêche la mise en veille et l'assombrissement automatique de l'écran lorsque vous jouez une partition sur scène ou en répétition.
+  - Permet d'empecher l'assombrissement et la mise en veille automatique pendant la consultation d'une partition
+
 - **Taille d'affichage du numéro de page** :
   - Curseur réglable de **10 px à 40 px** avec aperçu direct de la taille pour adapter la lisibilité du compteur à votre distance de lecture du pupitre.
 
@@ -59,10 +60,12 @@ La page configure la lecture des concerts :
 La page est divisée en deux chapitres clairs :
 
 - **Chapitre 1 : Gestion des stickers Favoris** :
+  
   - Champ de saisie pour créer vos stickers personnalisés avec texte libre (ex : *Vibrato*, *Attention*, *Solo*, *Respirer*,*Intro Hélène*...).
   - Liste de vos favoris avec suppression unitaire `✕`.
-    
+
 - **Chapitre 2 : Sélection des catégories de stickers actives** :
+  
   - Cochez ou décochez les catégories de stickers que vous souhaitez voir apparaître dans le tiroir d'annotations (*Favoris, Doigtés, Nuances, Articulations, Répétitions, Notes, Silences, Altérations, Symboles*).
 
 ---
@@ -71,27 +74,23 @@ La page est divisée en deux chapitres clairs :
 
 La page permet la configuration précise de très nombreuses pédales pour commander des actions sur les partitions et donc assurer le contrôle mains-libres complet et de manière ergonomique :
 
-
 - **Profil de Pédale Actif (En tête de page)** :
+  
   - Sélection rapide parmi de nombreux profils d'usine préconfigurés : *Standard*, *PageFlip Dragonfly / Firefly / Butterfly*, *AirTurn Duo / Quad*, *Joyo*, *Thomann / Harley Benton*, *Donner Wireless*, *IK Multimedia iRig*, *Coda STOMP*, *Contrôleur MIDI Avancé (USB / Bluetooth)*.
   - Création de profils personnalisés et suppression en 1 clic.
-    
+
 - **Sécurité Scène & Protection Anti-Double Saut de Page** :
+  
   - **Interrupteur « Bloquer le défilement rapide »** : élimine les sauts de plusieurs pages involontaires causés par le rebond mécanique des commutateurs, l'auto-répétition du clavier ou un appui trop appuyé en plein concert.
   - **Délai de sécurité anti-rebond réglable** : *300 ms (Rapide)*, *450 ms (Standard recommandé)*, *600 ms (Sécurisé concert)*, *800 ms (Strict)*.
   - **Sensibilité d'Appui Long** : pour permettre l'accès à une actino secondaire si l'appareil le permet
 
-
-
 - **Diagnostic & Testeur en Direct** :
-
 1. Curseur réglable de 200 ms à 1000 ms pour calibrer la détection des actions secondaires prolongées.
 
 2. Fonctionnement purement événementiel (0% de CPU et de batterie consommés au repos).
 
 3. Affichage en temps réel du signal reçu (Touche, Code hexadécimal, Source Bluetooth/MIDI, Action déclenchée).
-
-
 
 Raccourcis du Profil (Accordéon Rabattable)** :
 
@@ -110,15 +109,16 @@ La page gère le système et l'environnement global de l'application.
   - Traduction instantanée dynamique de l'ensemble de l'interface.
     Nota : la langue prise par l'application est par défault celle qui est actuellement utilisée par l'OS de votre tablette/téléphone.
     Si la langue n'est pas prise en charge, elle se positionnera automatiquement sur l'anglais.
-    
 
 - **📊 Statistiques de la Bibliothèque & Métriques de Stockage** :
+  
   - Nombre total de partitions PDF enregistrées.
   - Espace disque total occupé par vos partitions PDF (en Mo).
   - **Espace disponible sur le stockage** : Capacité mémoire libre restante sur l'appareil. (en Go)
   - **Taille de la base de données** : Espace occupé par SQLite (`scores.db3` + journaux WAL/SHM).
-    
+
 - **📁 Emplacements des Répertoires Personnalisables** :
+  
   - Dossier racine des partitions, dossier des pistes audio, dossier des exports.
   - Prise en charge des répertoires publics Android pour liaison facile par câble USB à un PC.
 
