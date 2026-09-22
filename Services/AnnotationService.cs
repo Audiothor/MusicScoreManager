@@ -36,11 +36,31 @@ public class StickerItem : INotifyPropertyChanged
 public class StickerCategory
 {
     public string Name { get; set; } = string.Empty;
+    public string DisplayName { get; set; } = string.Empty;
     public List<StickerItem> Stickers { get; set; } = new();
 }
 
 public class AnnotationService
 {
+    public static string GetCategoryDisplayName(string name)
+    {
+        var loc = LocalizationService.Instance;
+        return name switch
+        {
+            "Favoris" => loc.GetString("Sticker_Cat_Favorites", name),
+            "Doigtés" => loc.GetString("Sticker_Cat_Fingerings", name),
+            "Notes" => loc.GetString("Sticker_Cat_Notes", name),
+            "Silences" => loc.GetString("Sticker_Cat_Rests", name),
+            "Altérations" => loc.GetString("Sticker_Cat_Accidentals", name),
+            "Rythme" => loc.GetString("Sticker_Cat_Rhythm", name),
+            "Nuances" => loc.GetString("Sticker_Cat_Dynamics", name),
+            "Structure" => loc.GetString("Sticker_Cat_Structure", name),
+            "Technique" => loc.GetString("Sticker_Cat_Technique", name),
+            "Travail" => loc.GetString("Sticker_Cat_Practice", name),
+            _ => name
+        };
+    }
+
     public List<StickerCategory> GetStickerCategories(List<string>? favorites = null, List<string>? activeCategoryNames = null)
     {
         var allPredefined = new List<(string Name, List<string> Items)>
@@ -65,6 +85,7 @@ public class AnnotationService
                 categories.Add(new StickerCategory
                 {
                     Name = p.Name,
+                    DisplayName = GetCategoryDisplayName(p.Name),
                     Stickers = p.Items.Select(s => new StickerItem { Text = s }).ToList()
                 });
             }
@@ -77,6 +98,7 @@ public class AnnotationService
             categories.Add(new StickerCategory
             {
                 Name = fallback.Name,
+                DisplayName = GetCategoryDisplayName(fallback.Name),
                 Stickers = fallback.Items.Select(s => new StickerItem { Text = s }).ToList()
             });
         }

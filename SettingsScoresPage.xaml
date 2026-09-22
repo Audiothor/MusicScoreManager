@@ -4,7 +4,7 @@
              xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.SettingsScoresPage"
              BackgroundColor="#121212"
-             Title="{Binding [Nav_Settings_Scores], Source={x:Static services:LocalizationService.Instance}}">
+             Title="{Binding [Settings_Scores], Source={x:Static services:LocalizationService.Instance}}">
 
     <Grid RowDefinitions="Auto, *">
         <!-- Header personnalisé avec bouton Retour -->
@@ -13,10 +13,10 @@
                     Text="{Binding [Common_Back], Source={x:Static services:LocalizationService.Instance}}" 
                     BackgroundColor="Transparent" 
                     TextColor="#007ACC" 
-                    FontAttributes="Bold"
+                    FontAttributes="Bold" 
                     Clicked="OnBackClicked" />
             <Label Grid.Column="1" 
-                   Text="{Binding [Nav_Settings_Scores], Source={x:Static services:LocalizationService.Instance}}" 
+                   Text="{Binding [Settings_Scores], Source={x:Static services:LocalizationService.Instance}}" 
                    TextColor="White" 
                    FontSize="18" 
                    FontAttributes="Bold" 
