@@ -79,11 +79,11 @@
 
             <!-- Option : Informations sous le titre de la partition -->
             <VerticalStackLayout Spacing="10">
-                <Label Text="Informations sous le titre de la partition" 
+                <Label Text="{Binding [Settings_Scores_Subtitle_Info], Source={x:Static services:LocalizationService.Instance}}" 
                        TextColor="White" 
                        FontSize="16" 
                        FontAttributes="Bold" />
-                <Label Text="Cochez les informations à afficher et réordonnez-les selon vos préférences (par glisser-déposer ou via les flèches ▲ / ▼) :" 
+                <Label Text="{Binding [Settings_Scores_Subtitle_Info_Desc], Source={x:Static services:LocalizationService.Instance}}" 
                        TextColor="#888888" 
                        FontSize="12" />
 
@@ -96,7 +96,7 @@
                         <RoundRectangle CornerRadius="10" />
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="3">
-                        <Label Text="Aperçu dans la bibliothèque :" TextColor="#888899" FontSize="11" FontAttributes="Bold" />
+                        <Label Text="{Binding [Settings_Scores_Subtitle_Preview], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888899" FontSize="11" FontAttributes="Bold" />
                         <Label Text="Nocturne Op. 9 No. 2" TextColor="White" FontSize="14" FontAttributes="Bold" />
                         <Label x:Name="SubtitlePreviewLabel" Text="Frédéric Chopin • 4 pages • 17/09/2026" TextColor="#00B4D8" FontSize="12" />
                     </VerticalStackLayout>
@@ -164,7 +164,7 @@
 
             <!-- Option : Taille d'affichage -->
             <VerticalStackLayout Spacing="10">
-                <Label Text="Taille d'affichage du numéro de page actuelle" 
+                <Label Text="{Binding [Settings_Scores_Page_Number_Size], Source={x:Static services:LocalizationService.Instance}}" 
                        TextColor="White" 
                        FontSize="16" />
                 <Grid ColumnDefinitions="Auto, *, Auto">

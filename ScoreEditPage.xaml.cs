@@ -209,9 +209,10 @@ public partial class ScoreEditPage : ContentPage
 
     private void UpdateFilePathLabel(string? filePath)
     {
+        string baseLabel = LocalizationService.Instance.GetString("Score_Edit_FilePath", "Chemin du fichier");
         if (string.IsNullOrWhiteSpace(filePath))
         {
-            FilePathTitleLabel.Text = "Chemin du fichier";
+            FilePathTitleLabel.Text = baseLabel;
             return;
         }
 
@@ -224,11 +225,11 @@ public partial class ScoreEditPage : ContentPage
                 dir = Path.GetDirectoryName(filePath);
             }
             
-            FilePathTitleLabel.Text = !string.IsNullOrWhiteSpace(dir) ? $"Chemin du fichier ({dir})" : "Chemin du fichier";
+            FilePathTitleLabel.Text = !string.IsNullOrWhiteSpace(dir) ? $"{baseLabel} ({dir})" : baseLabel;
         }
         catch
         {
-            FilePathTitleLabel.Text = "Chemin du fichier";
+            FilePathTitleLabel.Text = baseLabel;
         }
     }
 
@@ -347,7 +348,8 @@ public partial class ScoreEditPage : ContentPage
     {
         AudioFilesList.Children.Clear();
         int count = _score.AudioFiles.Count;
-        AudioAccordionTitleLabel.Text = count > 0 ? $"Fichiers Audio ({count})" : "Fichiers Audio";
+        string audioTitle = LocalizationService.Instance.GetString("Score_Edit_Audio_Section", "Fichiers Audio");
+        AudioAccordionTitleLabel.Text = count > 0 ? $"{audioTitle} ({count})" : audioTitle;
 
         foreach (var af in _score.AudioFiles)
         {

@@ -2,8 +2,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:MusicScoreManager"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.ScoreSelectionPage"
-             Title="Sélectionner des partitions"
+             Title="{Binding [Score_Selection_Title], Source={x:Static services:LocalizationService.Instance}}"
              BackgroundColor="#121212">
 
     <Grid RowDefinitions="Auto, Auto, *, Auto">
@@ -12,7 +13,7 @@
         <Grid Grid.Row="0" Margin="15,15,15,8" ColumnDefinitions="*, Auto" ColumnSpacing="10">
             <SearchBar Grid.Column="0"
                        x:Name="SearchScoreBar"
-                       Placeholder="Rechercher par titre, compositeur..."
+                       Placeholder="{Binding [Score_Selection_Placeholder], Source={x:Static services:LocalizationService.Instance}}"
                        PlaceholderColor="#888888"
                        TextColor="#FFFFFF"
                        BackgroundColor="#1E1E1E"
@@ -117,13 +118,13 @@
         <!-- Boutons d'action en bas -->
         <Grid Grid.Row="3" ColumnDefinitions="*, *" ColumnSpacing="15" Padding="15" BackgroundColor="#121212">
             <Button Grid.Column="0"
-                    Text="Annuler"
+                    Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}"
                     BackgroundColor="#333333"
                     TextColor="White"
                     Clicked="OnCancelClicked" />
             <Button Grid.Column="1"
                     x:Name="ConfirmButton"
-                    Text="Ajouter à la Setlist"
+                    Text="{Binding [Setlist_Edit_Add_Scores], Source={x:Static services:LocalizationService.Instance}}"
                     BackgroundColor="#007ACC"
                     TextColor="White"
                     FontAttributes="Bold"

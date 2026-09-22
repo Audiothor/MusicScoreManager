@@ -222,7 +222,8 @@ public partial class ScoreSelectionPage : ContentPage
     private void UpdateConfirmButtonText()
     {
         int count = _selectableScores.Count(s => s.IsSelected);
-        ConfirmButton.Text = count > 0 ? $"Ajouter à la Setlist ({count})" : "Ajouter à la Setlist";
+        string addText = LocalizationService.Instance.GetString("Setlist_Edit_Add_Scores", "Ajouter à la Setlist");
+        ConfirmButton.Text = count > 0 ? $"{addText} ({count})" : addText;
     }
 
     private async void OnConfirmSelectionClicked(object sender, EventArgs e)
