@@ -29,11 +29,11 @@
         <Grid Grid.Row="1">
             <ScrollView>
                 <VerticalStackLayout Spacing="14" Margin="16">
-                    <Label Text="Créer ou modifier l'assemblage de vos partitions PDF" 
+                    <Label Text="{Binding [PdfAssembler_Header_Title], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="White" 
                            FontAttributes="Bold" 
                            FontSize="15" />
-                    <Label Text="Assemblez des photos/images en une partition PDF, ou chargez une partition existante de votre bibliothèque pour réorganiser ses pages, ajuster les rotations, insérer des pages blanches, dupliquer ou supprimer des pages." 
+                    <Label Text="{Binding [PdfAssembler_Header_Subtitle], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="#888888" 
                            FontSize="12" />
 
@@ -41,7 +41,7 @@
                     <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, *" RowSpacing="8" ColumnSpacing="10" Margin="0,5">
                         <Button Grid.Row="0" Grid.Column="0"
                                 x:Name="PdfAssemblerPickButton"
-                                Text="📸 Créer depuis photos"
+                                Text="{Binding [PdfAssembler_Pick_Images], Source={x:Static services:LocalizationService.Instance}}"
                                 BackgroundColor="#007ACC"
                                 TextColor="White"
                                 FontAttributes="Bold"
@@ -51,7 +51,7 @@
 
                         <Button Grid.Row="0" Grid.Column="1"
                                 x:Name="PdfAssemblerPickScoreButton"
-                                Text="📖 Modifier une partition"
+                                Text="{Binding [PdfAssembler_Pick_Score], Source={x:Static services:LocalizationService.Instance}}"
                                 BackgroundColor="#2E7D32"
                                 TextColor="White"
                                 FontAttributes="Bold"
@@ -61,7 +61,7 @@
 
                         <Button Grid.Row="1" Grid.ColumnSpan="2"
                                 x:Name="PdfAssemblerPickExternalPdfButton"
-                                Text="📁 Ouvrir un fichier PDF externe..."
+                                Text="{Binding [PdfAssembler_Pick_External], Source={x:Static services:LocalizationService.Instance}}"
                                 BackgroundColor="#3A3A3A"
                                 TextColor="#64B5F6"
                                 FontAttributes="Bold"
@@ -87,16 +87,16 @@
                                 <Label Grid.Column="0" Text="✏️" FontSize="18" VerticalOptions="Center" />
                                 <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
                                     <Label x:Name="PdfAssemblerEditingScoreLabel" Text="Modification de la partition : [Titre]" TextColor="#64B5F6" FontSize="13" FontAttributes="Bold" />
-                                    <Label Text="Toutes les modifications mettront à jour votre partition." TextColor="#AAAAAA" FontSize="11" />
+                                    <Label Text="{Binding [PdfAssembler_Banner_Sub], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="11" />
                                 </VerticalStackLayout>
-                                <Button Grid.Column="2" Text="Changer" TextColor="#64B5F6" BackgroundColor="#243C5E" CornerRadius="6" FontSize="11" HeightRequest="32" Padding="10,0" Clicked="OnPdfAssemblerPickScoreClicked" />
+                                <Button Grid.Column="2" Text="{Binding [PdfAssembler_Banner_Change], Source={x:Static services:LocalizationService.Instance}}" TextColor="#64B5F6" BackgroundColor="#243C5E" CornerRadius="6" FontSize="11" HeightRequest="32" Padding="10,0" Clicked="OnPdfAssemblerPickScoreClicked" />
                             </Grid>
                         </Border>
 
                         <!-- Barre d'outils d'actions et ajouts de pages -->
                         <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
                             <HorizontalStackLayout Spacing="6">
-                                <Button Text="➕ Photos"
+                                <Button Text="{Binding [PdfAssembler_Btn_Photos], Source={x:Static services:LocalizationService.Instance}}"
                                         BackgroundColor="#2A2A2A"
                                         TextColor="#007ACC"
                                         FontSize="12"
@@ -105,7 +105,7 @@
                                         CornerRadius="6"
                                         Clicked="OnPdfAssemblerAddImagesClicked" />
 
-                                <Button Text="📄 Ajouter PDF"
+                                <Button Text="{Binding [PdfAssembler_Btn_Add_Pdf], Source={x:Static services:LocalizationService.Instance}}"
                                         BackgroundColor="#2A2A2A"
                                         TextColor="#2ECC71"
                                         FontSize="12"
@@ -114,7 +114,7 @@
                                         CornerRadius="6"
                                         Clicked="OnPdfAssemblerAddPdfClicked" />
 
-                                <Button Text="📄+ Page blanche"
+                                <Button Text="{Binding [PdfAssembler_Btn_Blank], Source={x:Static services:LocalizationService.Instance}}"
                                         BackgroundColor="#2A2A2A"
                                         TextColor="#F39C12"
                                         FontSize="12"
@@ -123,7 +123,7 @@
                                         CornerRadius="6"
                                         Clicked="OnPdfAssemblerAddBlankPageClicked" />
 
-                                <Button Text="🔄 Inverser ordre"
+                                <Button Text="{Binding [PdfAssembler_Btn_Reverse], Source={x:Static services:LocalizationService.Instance}}"
                                         BackgroundColor="#2A2A2A"
                                         TextColor="#E67E22"
                                         FontSize="12"
@@ -131,7 +131,7 @@
                                         CornerRadius="6"
                                         Clicked="OnPdfAssemblerReverseOrderClicked" />
 
-                                <Button Text="⟳ Tout pivoter (+90°)"
+                                <Button Text="{Binding [PdfAssembler_Btn_Rotate_All], Source={x:Static services:LocalizationService.Instance}}"
                                         BackgroundColor="#2A2A2A"
                                         TextColor="#9B59B6"
                                         FontSize="12"
@@ -139,7 +139,7 @@
                                         CornerRadius="6"
                                         Clicked="OnPdfAssemblerRotateAllClicked" />
 
-                                <Button Text="🧹 Réinitialiser"
+                                <Button Text="{Binding [PdfAssembler_Btn_Reset], Source={x:Static services:LocalizationService.Instance}}"
                                         BackgroundColor="#2A2A2A"
                                         TextColor="#E74C3C"
                                         FontSize="12"
@@ -150,9 +150,9 @@
                         </ScrollView>
 
                         <!-- Titre de la partition -->
-                        <Label Text="Titre de la partition :" TextColor="#AAAAAA" FontSize="12" FontAttributes="Bold" Margin="0,4,0,0" />
+                        <Label Text="{Binding [PdfAssembler_Title_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="12" FontAttributes="Bold" Margin="0,4,0,0" />
                         <Entry x:Name="PdfAssemblerTitleEntry"
-                               Placeholder="Ex: Sonate au Clair de Lune"
+                               Placeholder="{Binding [PdfAssembler_Title_Placeholder], Source={x:Static services:LocalizationService.Instance}}"
                                PlaceholderColor="#666666"
                                TextColor="White"
                                BackgroundColor="#2A2A2A"
@@ -161,7 +161,7 @@
                         <!-- En-tête de liste des pages -->
                         <Grid ColumnDefinitions="*, Auto" Margin="0,6,0,0">
                             <Label Grid.Column="0" x:Name="PdfAssemblerPagesCountLabel" Text="Pages (0) :" TextColor="#AAAAAA" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
-                            <Label Grid.Column="1" Text="▲/▼ ordonner  •  ⟳ pivoter  •  🔍 zoom  •  📑 dupliquer" TextColor="#666666" FontSize="11" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="{Binding [PdfAssembler_Pages_Hint], Source={x:Static services:LocalizationService.Instance}}" TextColor="#666666" FontSize="11" VerticalOptions="Center" />
                         </Grid>
 
                         <!-- Liste des pages -->
@@ -274,7 +274,7 @@
                         <!-- Mode Édition Partition Existante -->
                         <VerticalStackLayout x:Name="PdfAssemblerEditButtonsSection" Spacing="8" Margin="0,6,0,0" IsVisible="False">
                             <Button x:Name="PdfAssemblerOverwriteButton"
-                                    Text="💾 Enregistrer et remplacer la partition existante"
+                                    Text="{Binding [PdfAssembler_Btn_Save_Overwrite], Source={x:Static services:LocalizationService.Instance}}"
                                     BackgroundColor="#2ECC71"
                                     TextColor="White"
                                     FontAttributes="Bold"
@@ -285,7 +285,7 @@
                             <Grid ColumnDefinitions="*, *" ColumnSpacing="8">
                                 <Button Grid.Column="0"
                                         x:Name="PdfAssemblerSaveNewButton"
-                                        Text="📑 Enregistrer comme nouvelle copie"
+                                        Text="{Binding [PdfAssembler_Btn_Save_New], Source={x:Static services:LocalizationService.Instance}}"
                                         BackgroundColor="#007ACC"
                                         TextColor="White"
                                         FontAttributes="Bold"
@@ -294,7 +294,7 @@
                                         Clicked="OnPdfAssemblerSaveNewClicked" />
 
                                 <Button Grid.Column="1"
-                                        Text="❌ Annuler"
+                                        Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}"
                                         BackgroundColor="#333333"
                                         TextColor="#AAAAAA"
                                         HeightRequest="42"
@@ -306,7 +306,7 @@
                         <!-- Mode Création Depuis Zéro -->
                         <VerticalStackLayout x:Name="PdfAssemblerCreateButtonsSection" Spacing="8" Margin="0,6,0,0" IsVisible="True">
                             <Button x:Name="PdfAssemblerGenerateButton"
-                                    Text="✅ Générer la partition PDF et l'ajouter"
+                                    Text="{Binding [PdfAssembler_Btn_Generate], Source={x:Static services:LocalizationService.Instance}}"
                                     BackgroundColor="#2ECC71"
                                     TextColor="White"
                                     FontAttributes="Bold"
@@ -314,7 +314,7 @@
                                     CornerRadius="8"
                                     Clicked="OnPdfAssemblerGenerateClicked" />
 
-                            <Button Text="❌ Annuler"
+                            <Button Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}"
                                     BackgroundColor="#333333"
                                     TextColor="#AAAAAA"
                                     HeightRequest="40"
@@ -358,12 +358,12 @@
                     <VerticalStackLayout Spacing="14">
                         <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
                             <Label Grid.Column="0" Text="📖" FontSize="20" VerticalOptions="Center" />
-                            <Label Grid.Column="1" Text="Choisir une partition à modifier" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="{Binding [PdfAssembler_Picker_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
                             <Button Grid.Column="2" Text="✕" FontSize="14" TextColor="#888888" BackgroundColor="Transparent" WidthRequest="32" HeightRequest="32" Padding="0" Clicked="OnScorePickerCloseClicked" />
                         </Grid>
 
                         <SearchBar x:Name="ScorePickerSearchBar"
-                                   Placeholder="Rechercher une partition (titre, compositeur)..."
+                                   Placeholder="{Binding [PdfAssembler_Picker_Search_Placeholder], Source={x:Static services:LocalizationService.Instance}}"
                                    PlaceholderColor="#666666"
                                    TextColor="White"
                                    BackgroundColor="#2A2A2A"
@@ -389,11 +389,11 @@
                                                 <Label Text="{Binding DisplaySubtitle}" TextColor="#888888" FontSize="11" LineBreakMode="TailTruncation" />
                                             </VerticalStackLayout>
                                             <Button Grid.Column="2" 
-                                                    Text="Sélectionner" 
+                                                    Text="{Binding [Common_Select], Source={x:Static services:LocalizationService.Instance}}" 
                                                     BackgroundColor="#007ACC" 
                                                     TextColor="White" 
                                                     FontSize="12" 
-                                                    FontAttributes="Bold"
+                                                    FontAttributes="Bold" 
                                                     HeightRequest="34" 
                                                     CornerRadius="6" 
                                                     Clicked="OnScorePickerScoreSelected" 
@@ -403,13 +403,13 @@
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                             <CollectionView.EmptyView>
-                                <Label Text="Aucune partition trouvée." TextColor="#666666" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,30" />
+                                <Label Text="{Binding [PdfAssembler_Picker_Empty], Source={x:Static services:LocalizationService.Instance}}" TextColor="#666666" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,30" />
                             </CollectionView.EmptyView>
                         </CollectionView>
 
                         <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
                             <Button Grid.Column="0"
-                                    Text="📁 Parcourir un fichier PDF externe..."
+                                    Text="{Binding [PdfAssembler_Picker_Browse_External], Source={x:Static services:LocalizationService.Instance}}"
                                     BackgroundColor="#333333"
                                     TextColor="#64B5F6"
                                     FontSize="12"
@@ -418,7 +418,7 @@
                                     Clicked="OnScorePickerBrowseFileClicked" />
 
                             <Button Grid.Column="1"
-                                    Text="Annuler"
+                                    Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}"
                                     BackgroundColor="#2A2A2A"
                                     TextColor="#AAAAAA"
                                     FontSize="12"
@@ -479,7 +479,7 @@
                         <Grid ColumnDefinitions="*, Auto, *" ColumnSpacing="8">
                             <Button Grid.Column="0"
                                     x:Name="PreviewPrevButton"
-                                    Text="◀ Précédente"
+                                    Text="{Binding [Common_Previous], Source={x:Static services:LocalizationService.Instance}}"
                                     BackgroundColor="#2A2A2A"
                                     TextColor="White"
                                     FontSize="12"
@@ -488,7 +488,7 @@
                                     Clicked="OnPreviewPrevPageClicked" />
 
                             <Button Grid.Column="1"
-                                    Text="⟳ Pivoter (+90°)"
+                                    Text="{Binding [PdfAssembler_Btn_Rotate_90], Source={x:Static services:LocalizationService.Instance}}"
                                     BackgroundColor="#007ACC"
                                     TextColor="White"
                                     FontSize="12"
@@ -500,7 +500,7 @@
 
                             <Button Grid.Column="2"
                                     x:Name="PreviewNextButton"
-                                    Text="Suivante ▶"
+                                    Text="{Binding [Common_Next], Source={x:Static services:LocalizationService.Instance}}"
                                     BackgroundColor="#2A2A2A"
                                     TextColor="White"
                                     FontSize="12"
@@ -509,7 +509,7 @@
                                     Clicked="OnPreviewNextPageClicked" />
                         </Grid>
 
-                        <Button Text="Fermer"
+                        <Button Text="{Binding [Common_Close], Source={x:Static services:LocalizationService.Instance}}"
                                 BackgroundColor="#333333"
                                 TextColor="#AAAAAA"
                                 FontSize="12"
@@ -537,7 +537,7 @@
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="14" HorizontalOptions="Center">
                         <ActivityIndicator IsRunning="True" Color="#007ACC" WidthRequest="44" HeightRequest="44" />
-                        <Label x:Name="PdfLoadingLabel" Text="⏳ Extraction des pages de la partition..." TextColor="White" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
+                        <Label x:Name="PdfLoadingLabel" Text="{Binding [PdfAssembler_Loading_Extracting], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center" />
                     </VerticalStackLayout>
                 </Border>
             </Grid>

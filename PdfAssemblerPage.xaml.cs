@@ -40,7 +40,12 @@ public partial class PdfAssemblerPage : ContentPage
     {
         if (_pdfPages.Any())
         {
-            bool leave = await DisplayAlertAsync("Quitter", "Voulez-vous quitter l'atelier d'assemblage ? Les modifications non enregistrées seront perdues.", "Quitter", "Rester");
+            var loc = LocalizationService.Instance;
+            bool leave = await DisplayAlertAsync(
+                loc.GetString("PdfAssembler_Confirm_Quit_Title", "Quitter"),
+                loc.GetString("PdfAssembler_Confirm_Quit_Msg", "Voulez-vous quitter l'atelier d'assemblage ? Les modifications non enregistrées seront perdues."),
+                loc.GetString("PdfAssembler_Confirm_Quit_Title", "Quitter"),
+                loc.GetString("PdfAssembler_Stay", "Rester"));
             if (!leave) return;
         }
 
@@ -417,12 +422,13 @@ public partial class PdfAssemblerPage : ContentPage
     {
         bool hasPages = _pdfPages.Any();
         PdfAssemblerFormSection.IsVisible = hasPages;
-        PdfAssemblerPagesCountLabel.Text = $"Pages ({_pdfPages.Count}) :";
+        var loc = LocalizationService.Instance;
+        PdfAssemblerPagesCountLabel.Text = string.Format(loc.GetString("PdfAssembler_Pages_Count", "Pages ({0}) :"), _pdfPages.Count);
 
         if (_editingScore != null)
         {
             PdfAssemblerEditScoreBanner.IsVisible = true;
-            PdfAssemblerEditingScoreLabel.Text = $"Modification de la partition : {_editingScore.Title}";
+            PdfAssemblerEditingScoreLabel.Text = string.Format(loc.GetString("PdfAssembler_Banner_Editing", "Modification de la partition : {0}"), _editingScore.Title);
             PdfAssemblerEditButtonsSection.IsVisible = true;
             PdfAssemblerCreateButtonsSection.IsVisible = false;
         }
@@ -448,7 +454,12 @@ public partial class PdfAssemblerPage : ContentPage
 
     private async void OnPdfAssemblerClearClicked(object? sender, EventArgs e)
     {
-        bool confirm = await DisplayAlertAsync("Réinitialiser", "Voulez-vous effacer toutes les pages chargées ?", "Oui", "Non");
+        var loc = LocalizationService.Instance;
+        bool confirm = await DisplayAlertAsync(
+            loc.GetString("PdfAssembler_Btn_Reset", "Réinitialiser"),
+            loc.GetString("PdfAssembler_Reset_Confirm", "Voulez-vous effacer toutes les pages chargées ?"),
+            loc.GetString("Common_Yes", "Oui"),
+            loc.GetString("Common_No", "Non"));
         if (confirm)
         {
             ClearPdfAssemblerData();
@@ -457,7 +468,12 @@ public partial class PdfAssemblerPage : ContentPage
 
     private async void OnPdfAssemblerCancelClicked(object? sender, EventArgs e)
     {
-        bool confirm = await DisplayAlertAsync("Annuler", "Voulez-vous annuler l'assemblage et réinitialiser les modifications ?", "Oui", "Non");
+        var loc = LocalizationService.Instance;
+        bool confirm = await DisplayAlertAsync(
+            loc.GetString("Common_Cancel", "Annuler"),
+            loc.GetString("PdfAssembler_Cancel_Confirm", "Voulez-vous annuler l'assemblage et réinitialiser les modifications ?"),
+            loc.GetString("Common_Yes", "Oui"),
+            loc.GetString("Common_No", "Non"));
         if (confirm)
         {
             ClearPdfAssemblerData();
@@ -582,8 +598,9 @@ public partial class PdfAssemblerPage : ContentPage
         }
 
         var item = _pdfPages[_previewingPageIndex];
-        PagePreviewTitleLabel.Text = $"Page {_previewingPageIndex + 1} sur {_pdfPages.Count}";
-        PagePreviewInfoLabel.Text = $"{item.DisplayName} • Rotation : {item.RotationDisplay}";
+        var loc = LocalizationService.Instance;
+        PagePreviewTitleLabel.Text = string.Format(loc.GetString("PdfAssembler_Page_Of", "Page {0} sur {1}"), _previewingPageIndex + 1, _pdfPages.Count);
+        PagePreviewInfoLabel.Text = $"{item.DisplayName} • " + string.Format(loc.GetString("PdfAssembler_Rotation_Label", "Rotation : {0}"), item.RotationDisplay);
         PagePreviewImage.Source = item.ThumbnailSource;
         PagePreviewImage.Rotation = item.Rotation;
 
@@ -636,30 +653,31 @@ public partial class PdfAssemblerPage : ContentPage
     private async void OnPdfAssemblerSaveOverwriteClicked(object? sender, EventArgs e)
     {
         if (_editingScore == null) return;
+        var loc = LocalizationService.Instance;
 
         if (!_pdfPages.Any())
         {
-            await DisplayAlertAsync("Aucune page", "Veuillez conserver au moins une page.", "OK");
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), loc.GetString("PdfAssembler_No_Page_Error", "Veuillez conserver au moins une page."), loc.GetString("Common_OK", "OK"));
             return;
         }
 
         string title = PdfAssemblerTitleEntry.Text?.Trim() ?? string.Empty;
         if (string.IsNullOrWhiteSpace(title))
         {
-            await DisplayAlertAsync("Titre manquant", "Veuillez entrer un titre pour la partition.", "OK");
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), loc.GetString("PdfAssembler_Missing_Title", "Veuillez entrer un titre pour la partition."), loc.GetString("Common_OK", "OK"));
             return;
         }
 
         bool confirm = await DisplayAlertAsync(
-            "Remplacer la partition",
-            $"Voulez-vous enregistrer les modifications apportées à '{_editingScore.Title}' ({_pdfPages.Count} pages) ?\n\nLe document PDF sera remplacé avec le nouvel ordonnancement des pages.",
-            "Remplacer",
-            "Annuler");
+            loc.GetString("PdfAssembler_Overwrite_Confirm_Title", "Remplacer la partition"),
+            string.Format(loc.GetString("PdfAssembler_Overwrite_Confirm_Msg", "Voulez-vous enregistrer les modifications apportées à '{0}' ({1} pages) ?\n\nLe document PDF sera remplacé avec le nouvel ordonnancement des pages."), _editingScore.Title, _pdfPages.Count),
+            loc.GetString("PdfAssembler_Overwrite_Confirm_Title", "Remplacer"),
+            loc.GetString("Common_Cancel", "Annuler"));
 
         if (!confirm) return;
 
         PdfAssemblerOverwriteButton.IsEnabled = false;
-        PdfAssemblerOverwriteButton.Text = "⏳ Enregistrement du PDF...";
+        PdfAssemblerOverwriteButton.Text = "⏳...";
 
         try
         {
@@ -688,10 +706,10 @@ public partial class PdfAssemblerPage : ContentPage
             ClearPdfAssemblerData();
 
             bool openNow = await DisplayAlertAsync(
-                "Partition modifiée !",
-                $"La partition '{title}' a été mise à jour avec succès ({pageCount} pages).\n\nSouhaitez-vous l'ouvrir maintenant ?",
-                "Ouvrir",
-                "Fermer");
+                loc.GetString("PdfAssembler_Success_Title", "Partition modifiée !"),
+                string.Format(loc.GetString("PdfAssembler_Success_Msg", "La partition '{0}' a été mise à jour avec succès ({1} pages).\n\nSouhaitez-vous l'ouvrir maintenant ?"), title, pageCount),
+                loc.GetString("Score_Open", "Ouvrir"),
+                loc.GetString("Common_Close", "Fermer"));
 
             if (openNow)
             {
@@ -700,12 +718,12 @@ public partial class PdfAssemblerPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"La mise à jour a échoué : {ex.Message}", "OK");
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), $"{loc.GetString("Common_Error", "Erreur")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
         }
         finally
         {
             PdfAssemblerOverwriteButton.IsEnabled = true;
-            PdfAssemblerOverwriteButton.Text = "💾 Enregistrer et remplacer la partition existante";
+            PdfAssemblerOverwriteButton.Text = loc.GetString("PdfAssembler_Btn_Save_Overwrite", "💾 Enregistrer et remplacer la partition existante");
         }
     }
 
@@ -721,16 +739,17 @@ public partial class PdfAssemblerPage : ContentPage
 
     private async Task GenerateAndSaveScoreAsync(bool isNewCopy)
     {
+        var loc = LocalizationService.Instance;
         if (!_pdfPages.Any())
         {
-            await DisplayAlertAsync("Aucune page", "Veuillez ajouter au moins une page pour créer la partition.", "OK");
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), loc.GetString("PdfAssembler_No_Page_Error", "Veuillez ajouter au moins une page pour créer la partition."), loc.GetString("Common_OK", "OK"));
             return;
         }
 
         string title = PdfAssemblerTitleEntry.Text?.Trim() ?? string.Empty;
         if (string.IsNullOrWhiteSpace(title))
         {
-            await DisplayAlertAsync("Titre manquant", "Veuillez entrer un titre pour la partition.", "OK");
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), loc.GetString("PdfAssembler_Missing_Title", "Veuillez entrer un titre pour la partition."), loc.GetString("Common_OK", "OK"));
             return;
         }
 
@@ -740,7 +759,7 @@ public partial class PdfAssemblerPage : ContentPage
         }
 
         PdfAssemblerGenerateButton.IsEnabled = false;
-        PdfAssemblerGenerateButton.Text = "⏳ Génération du PDF...";
+        PdfAssemblerGenerateButton.Text = "⏳...";
 
         try
         {
@@ -783,10 +802,10 @@ public partial class PdfAssemblerPage : ContentPage
             ClearPdfAssemblerData();
 
             bool openNow = await DisplayAlertAsync(
-                "Partition créée !",
-                $"La partition '{title}' a été créée avec succès ({pageCount} pages) et ajoutée à votre bibliothèque.\n\nSouhaitez-vous l'ouvrir maintenant ?",
-                "Ouvrir",
-                "Fermer");
+                loc.GetString("PdfAssembler_Created_Title", "Partition créée !"),
+                string.Format(loc.GetString("PdfAssembler_Created_Msg", "La partition '{0}' a été créée avec succès ({1} pages) et ajoutée à votre bibliothèque.\n\nSouhaitez-vous l'ouvrir maintenant ?"), title, pageCount),
+                loc.GetString("Score_Open", "Ouvrir"),
+                loc.GetString("Common_Close", "Fermer"));
 
             if (openNow)
             {
@@ -795,12 +814,12 @@ public partial class PdfAssemblerPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"La génération a échoué : {ex.Message}", "OK");
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), $"{loc.GetString("Common_Error", "Erreur")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
         }
         finally
         {
             PdfAssemblerGenerateButton.IsEnabled = true;
-            PdfAssemblerGenerateButton.Text = "✅ Générer la partition PDF et l'ajouter";
+            PdfAssemblerGenerateButton.Text = loc.GetString("PdfAssembler_Btn_Generate", "✅ Générer la partition PDF et l'ajouter");
         }
     }
 

@@ -192,7 +192,7 @@
             <CollectionView.EmptyView>
                 <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
                     <Label x:Name="EmptyScoresLabel"
-                           Text="Chargement des partitions en cours..."
+                           Text="{Binding [Scores_Loading], Source={x:Static services:LocalizationService.Instance}}"
                            TextColor="#888888"
                            HorizontalOptions="Center" />
                 </StackLayout>

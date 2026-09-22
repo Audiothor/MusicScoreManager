@@ -203,19 +203,19 @@
                             </Grid.GestureRecognizers>
                             <VerticalStackLayout VerticalOptions="Center" Spacing="2">
                                 <Label x:Name="ProfileShortcutsTitleLabel" 
-                                       Text="Raccourcis du profil : Standard" 
+                                       Text="{Binding [Settings_Pedals_Shortcuts_Default], Source={x:Static services:LocalizationService.Instance}}" 
                                        TextColor="#007ACC" 
                                        FontSize="16" 
                                        FontAttributes="Bold" 
                                        LineBreakMode="TailTruncation" />
                                 <Label x:Name="ShortcutsSubtitleLabel"
-                                       Text="Toucher pour afficher / masquer les touches configurées" 
+                                       Text="{Binding [Settings_Pedals_Shortcuts_Toggle_Hint], Source={x:Static services:LocalizationService.Instance}}" 
                                        TextColor="#888888" 
                                        FontSize="12" />
                             </VerticalStackLayout>
 
                             <Button Grid.Column="1" 
-                                    Text="➕ Apprendre" 
+                                    Text="{Binding [Settings_Pedals_Learn_Btn], Source={x:Static services:LocalizationService.Instance}}" 
                                     BackgroundColor="#007ACC" 
                                     TextColor="White" 
                                     FontSize="12" 
@@ -267,7 +267,7 @@
                                                 </Grid>
 
                                                 <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8">
-                                                    <Label Text="Appui normal :" TextColor="#AAAAAA" FontSize="12" VerticalOptions="Center" />
+                                                    <Label Text="{Binding [Settings_Pedals_Normal_Press], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="12" VerticalOptions="Center" />
                                                     <Border Grid.Column="1" Stroke="#444444" StrokeThickness="1" BackgroundColor="#2C2C2C" Padding="6,0">
                                                         <Border.StrokeShape>
                                                             <RoundRectangle CornerRadius="6" />
@@ -280,7 +280,7 @@
                                                 </Grid>
 
                                                 <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8">
-                                                    <Label Text="Appui long :" TextColor="#FFA726" FontSize="12" VerticalOptions="Center" />
+                                                    <Label Text="{Binding [Settings_Pedals_Long_Press_Action], Source={x:Static services:LocalizationService.Instance}}" TextColor="#FFA726" FontSize="12" VerticalOptions="Center" />
                                                     <Border Grid.Column="1" Stroke="#444444" StrokeThickness="1" BackgroundColor="#2C2C2C" Padding="6,0">
                                                         <Border.StrokeShape>
                                                             <RoundRectangle CornerRadius="6" />
