@@ -335,7 +335,7 @@ public partial class SettingsScoresPage : ContentPage
         var enabledOptions = _subtitleOptions.Where(o => o.IsEnabled).ToList();
         if (!enabledOptions.Any())
         {
-            SubtitlePreviewLabel.Text = "(Aucune information sous le titre)";
+            SubtitlePreviewLabel.Text = $"({Services.LocalizationService.Instance.GetString("Settings_Scores_No_Subtitle_Info", "Aucune information sous le titre")})";
             SubtitlePreviewLabel.TextColor = Color.FromArgb("#888888");
             return;
         }
@@ -349,7 +349,7 @@ public partial class SettingsScoresPage : ContentPage
                     parts.Add("Frédéric Chopin");
                     break;
                 case "PageCount":
-                    parts.Add("4 pages");
+                    parts.Add($"4 {Services.LocalizationService.Instance.GetString("Common_Pages", "pages")}");
                     break;
                 case "DateAdded":
                     parts.Add(DateTime.Now.ToString("dd/MM/yyyy"));

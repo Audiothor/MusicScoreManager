@@ -3,21 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:MusicScoreManager.Models"
              xmlns:local="clr-namespace:MusicScoreManager"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.SettingsPedalsPage"
              BackgroundColor="#121212"
-             Title="Paramètres Pédales &amp; MIDI">
+             Title="{Binding [Settings_Pedals_Title], Source={x:Static services:LocalizationService.Instance}}">
 
     <Grid RowDefinitions="Auto, *">
         <!-- Header -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
             <Button Grid.Column="0" 
-                    Text="← Retour" 
+                    Text="{Binding [Common_Back], Source={x:Static services:LocalizationService.Instance}}" 
                     BackgroundColor="Transparent" 
                     TextColor="#007ACC" 
                     FontAttributes="Bold" 
                     Clicked="OnBackClicked" />
             <Label Grid.Column="1" 
-                    Text="Pédales &amp; Événements MIDI" 
+                    Text="{Binding [Settings_Pedals_Header], Source={x:Static services:LocalizationService.Instance}}" 
                     TextColor="White" 
                     FontSize="18" 
                     FontAttributes="Bold" 
@@ -30,14 +31,14 @@
             <VerticalStackLayout Spacing="22" Padding="20">
                 
                 <!-- CHAPITRE 1 : Profil de pédale actif (1ère position) -->
-                <Label Text="Profil de pédale actif" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" />
+                <Label Text="{Binding [Settings_Pedals_Profile_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" />
 
                 <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="10" />
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="14">
-                        <Label Text="Sélectionnez le modèle de votre pédalier pour charger sa configuration optimale :" TextColor="#AAAAAA" FontSize="13" />
+                        <Label Text="{Binding [Settings_Pedals_Profile_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="13" />
 
                         <Border Stroke="#444444" StrokeThickness="1" BackgroundColor="#2C2C2C" Padding="8,2">
                             <Border.StrokeShape>
@@ -55,31 +56,31 @@
                         <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
                             <Button x:Name="NewProfileBtn"
                                     Grid.Column="0"
-                                    Text="➕ Nouveau profil" 
+                                    Text="{Binding [Settings_Pedals_New_Profile], Source={x:Static services:LocalizationService.Instance}}" 
                                     BackgroundColor="#2C2C2C" 
                                     TextColor="#007ACC" 
                                     BorderColor="#007ACC" 
                                     BorderWidth="1" 
                                     CornerRadius="8" 
-                                    HeightRequest="42"
+                                    HeightRequest="42" 
                                     Clicked="OnNewCustomProfileClicked" />
                             
                             <Button x:Name="DeleteProfileBtn" 
                                     Grid.Column="1"
-                                    Text="🗑️ Supprimer" 
+                                    Text="{Binding [Settings_Pedals_Delete_Profile], Source={x:Static services:LocalizationService.Instance}}" 
                                     BackgroundColor="#2C2C2C" 
                                     TextColor="#FF6B6B" 
                                     BorderColor="#FF6B6B" 
                                     BorderWidth="1" 
                                     CornerRadius="8" 
-                                    HeightRequest="42"
+                                    HeightRequest="42" 
                                     Clicked="OnDeleteProfileClicked" />
                         </Grid>
                     </VerticalStackLayout>
                 </Border>
 
                 <!-- CHAPITRE 2 : Paramètres supplémentaires (Sécurité scène & Sensibilité) -->
-                <Label Text="Sécurité scène &amp; Sensibilité" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" />
+                <Label Text="{Binding [Settings_Pedals_Security_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" />
 
                 <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="15">
                     <Border.StrokeShape>
@@ -89,8 +90,8 @@
                         <!-- Anti-double saut de page -->
                         <Grid ColumnDefinitions="*, Auto">
                             <VerticalStackLayout VerticalOptions="Center" Spacing="2">
-                                <Label Text="Bloquer le défilement rapide (Anti-double saut)" TextColor="#FFFFFF" FontSize="14" FontAttributes="Bold" />
-                                <Label Text="Empêche de sauter plusieurs pages par erreur lors d'un appui involontairement prolongé ou d'un rebond matériel de la pédale." 
+                                <Label Text="{Binding [Settings_Pedals_Block_Fast_Turn], Source={x:Static services:LocalizationService.Instance}}" TextColor="#FFFFFF" FontSize="14" FontAttributes="Bold" />
+                                <Label Text="{Binding [Settings_Pedals_Block_Fast_Turn_Desc], Source={x:Static services:LocalizationService.Instance}}" 
                                        TextColor="#888888" FontSize="11" />
                             </VerticalStackLayout>
                             <Switch Grid.Column="1" 
@@ -103,7 +104,7 @@
 
                         <!-- Sélecteur de délai anti-rebond -->
                         <Grid x:Name="FastTurnDelayRow" ColumnDefinitions="*, Auto" ColumnSpacing="10">
-                            <Label Text="Délai de sécurité entre 2 pages :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Text="{Binding [Settings_Pedals_Security_Delay], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
                             <Border Grid.Column="1" Stroke="#444444" StrokeThickness="1" BackgroundColor="#2C2C2C" Padding="8,0">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="6" />
@@ -119,7 +120,7 @@
 
                         <!-- Seuil d'appui long -->
                         <Grid ColumnDefinitions="*, Auto">
-                            <Label Text="Délai de détection de l'appui long :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Text="{Binding [Settings_Pedals_Long_Press_Delay], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
                             <Label Grid.Column="1" x:Name="ThresholdValueLabel" Text="450 ms" TextColor="#007ACC" FontSize="14" FontAttributes="Bold" />
                         </Grid>
                         
@@ -131,7 +132,7 @@
                                 MaximumTrackColor="#444444" 
                                 ValueChanged="OnThresholdSliderChanged" />
                         
-                        <Label Text="Un appui maintenu au-delà de cette durée déclenchera l'action secondaire configurée (ex: Morceau suivant dans la setlist)." 
+                        <Label Text="{Binding [Settings_Pedals_Long_Press_Desc], Source={x:Static services:LocalizationService.Instance}}" 
                                TextColor="#777777" 
                                FontSize="11" />
                     </VerticalStackLayout>
@@ -139,7 +140,7 @@
 
                 <!-- CHAPITRE 3 : Diagnostic & Testeur en direct (3ème position) -->
                 <Grid ColumnDefinitions="*, Auto">
-                    <Label Text="Diagnostic &amp; Testeur en direct" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" />
+                    <Label Text="{Binding [Settings_Pedals_Diagnostic_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="#007ACC" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" />
                     <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
                         <Label Text="Actif" TextColor="#AAAAAA" FontSize="14" VerticalOptions="Center" />
                         <Switch x:Name="ServiceEnabledSwitch" IsToggled="True" Toggled="OnServiceEnabledToggled" OnColor="#007ACC" />
@@ -152,7 +153,7 @@
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="12">
                         <Grid ColumnDefinitions="*, Auto">
-                            <Label Text="Actionnez une pédale Bluetooth ou contrôleur MIDI pour tester le signal :" 
+                            <Label Text="{Binding [Settings_Pedals_Diagnostic_Desc], Source={x:Static services:LocalizationService.Instance}}" 
                                    TextColor="#CCCCCC" 
                                    FontSize="13" 
                                    VerticalOptions="Center" />
@@ -171,7 +172,7 @@
                             </Border.StrokeShape>
                             <VerticalStackLayout Spacing="6">
                                 <Grid ColumnDefinitions="*, Auto">
-                                    <Label x:Name="EventKeyLabel" Text="En attente d'un appui..." TextColor="#FFFFFF" FontSize="18" FontAttributes="Bold" />
+                                    <Label x:Name="EventKeyLabel" Text="{Binding [Settings_Pedals_Waiting_Input], Source={x:Static services:LocalizationService.Instance}}" TextColor="#FFFFFF" FontSize="18" FontAttributes="Bold" />
                                     <Label Grid.Column="1" x:Name="EventSourceLabel" Text="Bluetooth / MIDI" TextColor="#888888" FontSize="12" VerticalOptions="Center" />
                                 </Grid>
                                 <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">

@@ -51,7 +51,7 @@
                                        FontSize="15" 
                                        VerticalOptions="Center" />
                                 <Label Grid.Column="1" 
-                                       Text="✎ Modifier" 
+                                       Text="{Binding [Settings_App_Change_Btn], Source={x:Static services:LocalizationService.Instance}}" 
                                        TextColor="#007ACC" 
                                        FontSize="14" 
                                        FontAttributes="Bold" 
@@ -74,22 +74,22 @@
                         <Label Text="{Binding [Scores_Total], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontAttributes="Bold" FontSize="14" />
                         
                         <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                            <Label Text="📄 Partitions PDF :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Text="{Binding [Settings_App_Stats_Pdf_Count], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
                             <Label Grid.Column="1" x:Name="PdfCountLabel" Text="..." TextColor="#007ACC" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
                         </Grid>
                         
                         <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                            <Label Text="💾 Espace disque occupé (PDF) :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Text="{Binding [Settings_App_Stats_Pdf_Size], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
                             <Label Grid.Column="1" x:Name="PdfSizeLabel" Text="..." TextColor="#2ECC71" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
                         </Grid>
 
                         <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                            <Label Text="💽 Espace disponible sur le stockage :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Text="{Binding [Settings_App_Stats_Disk_Free], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
                             <Label Grid.Column="1" x:Name="AvailableDiskSpaceLabel" Text="..." TextColor="#3498DB" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
                         </Grid>
 
                         <Grid ColumnDefinitions="*, Auto" Margin="0,2">
-                            <Label Text="🗄️ Taille de la base de données :" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
+                            <Label Text="{Binding [Settings_App_Stats_Db_Size], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
                             <Label Grid.Column="1" x:Name="DatabaseSizeLabel" Text="..." TextColor="#F39C12" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
                         </Grid>
                     </VerticalStackLayout>
@@ -146,7 +146,7 @@
                     </VerticalStackLayout>
                 </Border>
     
-                <Label Text="Note: Sur Android, l'utilisation d'un dossier public permet d'accéder aux fichiers depuis un PC (USB). Si vous changez le répertoire, assurez-vous d'y déplacer manuellement vos fichiers." 
+                <Label Text="{Binding [Settings_App_Android_Note], Source={x:Static services:LocalizationService.Instance}}" 
                        TextColor="#888888" FontSize="12" />
     
             </VerticalStackLayout>
@@ -169,7 +169,7 @@
                     <RoundRectangle CornerRadius="12" />
                 </Border.StrokeShape>
                 <VerticalStackLayout Spacing="14">
-                    <Label Text="🌐 Choisir la langue" 
+                    <Label Text="{Binding [Settings_App_Language_Choose], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="White" 
                            FontSize="18" 
                            FontAttributes="Bold" 
@@ -251,7 +251,7 @@
                                 CornerRadius="8" 
                                 Clicked="OnCancelLangClicked" />
                         <Button Grid.Column="1" 
-                                Text="Appliquer" 
+                                Text="{Binding [Common_Apply], Source={x:Static services:LocalizationService.Instance}}" 
                                 BackgroundColor="#007ACC" 
                                 TextColor="White" 
                                 FontAttributes="Bold" 

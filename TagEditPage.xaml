@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.TagEditPage"
              BackgroundColor="#121212"
-             Title="Éditer l'étiquette">
+             Title="{Binding [Tag_Edit_Title], Source={x:Static services:LocalizationService.Instance}}">
 
     <ScrollView>
         <VerticalStackLayout Spacing="20" Margin="20">
-            <Label Text="Nom de l'étiquette" TextColor="#AAAAAA" />
+            <Label Text="{Binding [Tag_Edit_Name], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" />
             <Entry x:Name="NameEntry" 
                    TextColor="White" 
                    BackgroundColor="#1E1E1E" 
                    ClearButtonVisibility="WhileEditing" />
 
-            <Label Text="Couleurs de base" TextColor="#AAAAAA" />
+            <Label Text="{Binding [Tag_Edit_Basic_Colors], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" />
             
             <FlexLayout x:Name="ColorsFlexLayout" Wrap="Wrap" JustifyContent="SpaceEvenly">
                 <!-- Les couleurs seront injectées ici depuis le code-behind -->
             </FlexLayout>
 
-            <Label Text="Couleur personnalisée (RGB)" TextColor="#AAAAAA" Margin="0,10,0,0" />
+            <Label Text="{Binding [Tag_Edit_Custom_Color], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" Margin="0,10,0,0" />
             
             <Grid ColumnDefinitions="40, *, 40" RowDefinitions="Auto, Auto, Auto" RowSpacing="10" ColumnSpacing="10">
                 <Label Grid.Row="0" Grid.Column="0" Text="R" VerticalOptions="Center" TextColor="Red" />
@@ -39,41 +40,41 @@
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="8" />
                 </Border.StrokeShape>
-                <Label Text="Aperçu" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" FontAttributes="Bold" />
+                <Label Text="{Binding [Tag_Edit_Preview], Source={x:Static services:LocalizationService.Instance}}" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" FontAttributes="Bold" />
             </Border>
 
             <!-- Barre d'actions compacte (Supprimer, Annuler, Enregistrer) -->
             <Grid ColumnDefinitions="*, *, *" ColumnSpacing="10" Margin="0,25,0,20">
                 <Button x:Name="DeleteButton"
                         Grid.Column="0"
-                        Text="Supprimer" 
+                        Text="{Binding [Common_Delete], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="#C0392B" 
                         TextColor="White" 
-                        FontAttributes="Bold"
-                        FontSize="13"
-                        CornerRadius="8"
-                        HeightRequest="42"
-                        IsVisible="False"
+                        FontAttributes="Bold" 
+                        FontSize="13" 
+                        CornerRadius="8" 
+                        HeightRequest="42" 
+                        IsVisible="False" 
                         Clicked="OnDeleteClicked" />
 
-                <Button Grid.Column="1"
-                        Text="Annuler" 
+                <Button Grid.Column="1" 
+                        Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="#444444" 
                         TextColor="White" 
-                        FontAttributes="Bold"
-                        FontSize="13"
-                        CornerRadius="8"
-                        HeightRequest="42"
+                        FontAttributes="Bold" 
+                        FontSize="13" 
+                        CornerRadius="8" 
+                        HeightRequest="42" 
                         Clicked="OnCancelClicked" />
 
-                <Button Grid.Column="2"
-                        Text="Enregistrer" 
+                <Button Grid.Column="2" 
+                        Text="{Binding [Common_Save], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="#007ACC" 
                         TextColor="White" 
-                        FontAttributes="Bold"
-                        FontSize="13"
-                        CornerRadius="8"
-                        HeightRequest="42"
+                        FontAttributes="Bold" 
+                        FontSize="13" 
+                        CornerRadius="8" 
+                        HeightRequest="42" 
                         Clicked="OnSaveClicked" />
             </Grid>
         </VerticalStackLayout>

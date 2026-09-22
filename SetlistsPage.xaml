@@ -10,7 +10,7 @@
         <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto" Margin="15,15,15,15" ColumnSpacing="10">
             <SearchBar Grid.Column="0"
                        x:Name="SearchSetlistBar"
-                       Placeholder="Rechercher une Setlist..."
+                       Placeholder="{Binding [Setlist_Search_Placeholder], Source={x:Static services:LocalizationService.Instance}}"
                        PlaceholderColor="#888888"
                        TextColor="#FFFFFF"
                        BackgroundColor="#1E1E1E"

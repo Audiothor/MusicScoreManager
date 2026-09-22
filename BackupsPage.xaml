@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.BackupsPage"
              BackgroundColor="#121212"
-             Title="Gestion des sauvegardes">
+             Title="{Binding [Backups_Page_Title], Source={x:Static services:LocalizationService.Instance}}">
 
     <Grid RowDefinitions="Auto, *">
         <!-- Header personnalisé avec bouton Retour -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
             <Button Grid.Column="0" 
-                    Text="← Retour" 
+                    Text="{Binding [Common_Back], Source={x:Static services:LocalizationService.Instance}}" 
                     BackgroundColor="Transparent" 
                     TextColor="#007ACC" 
-                    FontAttributes="Bold"
+                    FontAttributes="Bold" 
                     Clicked="OnBackClicked" />
             <Label Grid.Column="1" 
-                   Text="Gestion des sauvegardes" 
-                   TextColor="White" 
-                   FontSize="18" 
-                   FontAttributes="Bold" 
-                   VerticalOptions="Center" 
-                   HorizontalOptions="Center"
-                   Margin="0,0,80,0" />
+                    Text="{Binding [Backups_Page_Title], Source={x:Static services:LocalizationService.Instance}}" 
+                    TextColor="White" 
+                    FontSize="18" 
+                    FontAttributes="Bold" 
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" 
+                    Margin="0,0,80,0" />
         </Grid>
 
         <ScrollView Grid.Row="1">
@@ -32,66 +33,66 @@
                         <RoundRectangle CornerRadius="10" />
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="12">
-                        <Label Text="Paramètres de sauvegarde automatique" 
+                        <Label Text="{Binding [Backups_Auto_Settings], Source={x:Static services:LocalizationService.Instance}}" 
                                TextColor="#007ACC" 
-                               FontAttributes="Bold"
+                               FontAttributes="Bold" 
                                FontSize="14" />
                         
                         <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto" ColumnSpacing="10" RowSpacing="10">
                             <Label Grid.Row="0" Grid.Column="0" 
-                                   Text="Intervalle (jours)" 
+                                   Text="{Binding [Backups_Interval], Source={x:Static services:LocalizationService.Instance}}" 
                                    TextColor="White" 
                                    VerticalOptions="Center" />
                             <Entry Grid.Row="0" Grid.Column="1" 
                                    x:Name="IntervalEntry" 
-                                   Text="30"
+                                   Text="30" 
                                    WidthRequest="80" 
                                    Keyboard="Numeric" 
-                                   TextColor="White"
-                                   HorizontalTextAlignment="Center"
+                                   TextColor="White" 
+                                   HorizontalTextAlignment="Center" 
                                    BackgroundColor="#2A2A2A" />
                             
                             <Label Grid.Row="1" Grid.Column="0" 
-                                   Text="Nombre de copies à garder" 
+                                   Text="{Binding [Backups_Retention], Source={x:Static services:LocalizationService.Instance}}" 
                                    TextColor="White" 
                                    VerticalOptions="Center" />
                             <Entry Grid.Row="1" Grid.Column="1" 
                                    x:Name="MaxKeepEntry" 
-                                   Text="6"
+                                   Text="6" 
                                    WidthRequest="80" 
                                    Keyboard="Numeric" 
-                                   TextColor="White"
-                                   HorizontalTextAlignment="Center"
+                                   TextColor="White" 
+                                   HorizontalTextAlignment="Center" 
                                    BackgroundColor="#2A2A2A" />
                         </Grid>
 
                         <Grid ColumnDefinitions="*, *" ColumnSpacing="12" Margin="0,5,0,0">
                             <Button Grid.Column="0" 
-                                    Text="Annuler" 
+                                    Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}" 
                                     BackgroundColor="#333333" 
                                     TextColor="White" 
-                                    HeightRequest="40"
-                                    CornerRadius="6"
+                                    HeightRequest="40" 
+                                    CornerRadius="6" 
                                     Clicked="OnCancelSettingsClicked" />
                             <Button Grid.Column="1" 
-                                    Text="Enregistrer" 
+                                    Text="{Binding [Common_Save], Source={x:Static services:LocalizationService.Instance}}" 
                                     BackgroundColor="#28A745" 
                                     TextColor="White" 
-                                    FontAttributes="Bold"
-                                    HeightRequest="40"
-                                    CornerRadius="6"
+                                    FontAttributes="Bold" 
+                                    HeightRequest="40" 
+                                    CornerRadius="6" 
                                     Clicked="OnSaveSettingsClicked" />
                         </Grid>
                     </VerticalStackLayout>
                 </Border>
 
                 <!-- Bouton de sauvegarde manuelle -->
-                <Button Text="💾 Sauvegarder la base de données maintenant"
-                        BackgroundColor="#007ACC"
-                        TextColor="White"
-                        FontAttributes="Bold"
-                        CornerRadius="8"
-                        HeightRequest="48"
+                <Button Text="{Binding [Backups_Manual_Btn], Source={x:Static services:LocalizationService.Instance}}" 
+                        BackgroundColor="#007ACC" 
+                        TextColor="White" 
+                        FontAttributes="Bold" 
+                        CornerRadius="8" 
+                        HeightRequest="48" 
                         Clicked="OnBackupClicked" />
 
                 <!-- Avertissement -->
@@ -100,7 +101,7 @@
                         <RoundRectangle CornerRadius="8" />
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="5">
-                        <Label Text="⚠️ Avertissement" TextColor="#D35400" FontAttributes="Bold" />
+                        <Label Text="{Binding [Backups_Warning_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="#D35400" FontAttributes="Bold" />
                         <Label x:Name="BackupWarningLabel" 
                                TextColor="#E67E22" 
                                FontSize="12" 
@@ -109,10 +110,10 @@
                 </Border>
 
                 <!-- Historique des sauvegardes -->
-                <Label Text="Historique des sauvegardes" 
+                <Label Text="{Binding [Backups_History_Title], Source={x:Static services:LocalizationService.Instance}}" 
                        TextColor="White" 
-                       FontAttributes="Bold"
-                       FontSize="15"
+                       FontAttributes="Bold" 
+                       FontSize="15" 
                        Margin="0,5,0,0" />
                 
                 <Label x:Name="FolderPathLabel" 
@@ -144,13 +145,13 @@
                                     </VerticalStackLayout>
 
                                     <Button Grid.Column="2" 
-                                            Text="Restaurer" 
+                                            Text="{Binding [Backups_Restore_Btn], Source={x:Static services:LocalizationService.Instance}}" 
                                             BackgroundColor="#333333" 
                                             TextColor="#007ACC" 
-                                            FontSize="12"
-                                            FontAttributes="Bold"
-                                            HeightRequest="36"
-                                            CornerRadius="6"
+                                            FontSize="12" 
+                                            FontAttributes="Bold" 
+                                            HeightRequest="36" 
+                                            CornerRadius="6" 
                                             Clicked="OnItemRestoreClicked" 
                                             CommandParameter="{Binding .}" />
                                 </Grid>
@@ -158,7 +159,7 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                     <CollectionView.EmptyView>
-                        <Label Text="Aucune sauvegarde disponible." 
+                        <Label Text="{Binding [Backups_Empty], Source={x:Static services:LocalizationService.Instance}}" 
                                TextColor="#666666" 
                                HorizontalOptions="Center" 
                                Margin="0,20" />

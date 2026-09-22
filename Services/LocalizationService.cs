@@ -78,34 +78,139 @@ public class LocalizationService : INotifyPropertyChanged
         LanguageChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    private static Dictionary<string, string> _frenchFallback = new();
+
     public string GetString(string key, string fallback = "")
     {
         if (string.IsNullOrEmpty(key)) return fallback;
-        if (_strings.TryGetValue(key, out var val))
+        if (_strings.TryGetValue(key, out var val) && !string.IsNullOrWhiteSpace(val))
         {
             return val;
         }
+
+        // Si la clé n'existe pas dans la langue sélectionnée, essayer le dictionnaire français
+        if (_frenchFallback.TryGetValue(key, out var frVal) && !string.IsNullOrWhiteSpace(frVal))
+        {
+            return frVal;
+        }
+
         return string.IsNullOrEmpty(fallback) ? key : fallback;
+    }
+
+    private Stream? OpenLanguageStream(string langCode)
+    {
+        var asm = typeof(LocalizationService).Assembly;
+
+        // 1. Chercher dans les Embedded Resources
+        string[] resourceCandidates = new[]
+        {
+            $"Languages.{langCode}.json",
+            $"MusicScoreManager.Languages.{langCode}.json",
+            $"MusicScoreManager.Resources.Raw.Languages.{langCode}.json"
+        };
+
+        foreach (var name in resourceCandidates)
+        {
+            var resStream = asm.GetManifestResourceStream(name);
+            if (resStream != null) return resStream;
+        }
+
+        var allNames = asm.GetManifestResourceNames();
+        var match = allNames.FirstOrDefault(n => n.EndsWith($".{langCode}.json", StringComparison.OrdinalIgnoreCase));
+        if (match != null)
+        {
+            var resStream = asm.GetManifestResourceStream(match);
+            if (resStream != null) return resStream;
+        }
+
+        // 2. Chercher dans le FileSystem via chemins locaux
+        string[] diskPaths = new[]
+        {
+            Path.Combine(AppContext.BaseDirectory, "Languages", $"{langCode}.json"),
+            Path.Combine(AppContext.BaseDirectory, "Resources", "Raw", "Languages", $"{langCode}.json"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages", $"{langCode}.json"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Raw", "Languages", $"{langCode}.json")
+        };
+
+        foreach (var path in diskPaths)
+        {
+            if (File.Exists(path))
+            {
+                try { return File.OpenRead(path); } catch { }
+            }
+        }
+
+        // 3. Chercher via FileSystem MAUI (OpenAppPackageFileAsync)
+        try
+        {
+            return FileSystem.OpenAppPackageFileAsync($"Languages/{langCode}.json").GetAwaiter().GetResult();
+        }
+        catch { }
+
+        return null;
+    }
+
+    private Dictionary<string, string> ReadDictionaryFromStream(Stream? stream)
+    {
+        if (stream == null) return new Dictionary<string, string>();
+        try
+        {
+            using (stream)
+            using (var reader = new StreamReader(stream))
+            {
+                string json = reader.ReadToEnd();
+                var dict = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                if (dict != null) return dict;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Localization] Error reading stream: {ex.Message}");
+        }
+        return new Dictionary<string, string>();
+    }
+
+    private void EnsureFrenchFallbackLoaded()
+    {
+        if (_frenchFallback.Count == 0)
+        {
+            try
+            {
+                using var frStream = OpenLanguageStream("fr");
+                var dict = ReadDictionaryFromStream(frStream);
+                if (dict.Count > 0)
+                {
+                    _frenchFallback = dict;
+                }
+                else
+                {
+                    _frenchFallback = GetFallbackDictionary("fr");
+                }
+            }
+            catch
+            {
+                _frenchFallback = GetFallbackDictionary("fr");
+            }
+        }
     }
 
     private void LoadLanguageStrings(string langCode)
     {
-        // Essayer d'ouvrir le fichier JSON depuis les assets
+        EnsureFrenchFallbackLoaded();
+
         try
         {
-            using var stream = FileSystem.OpenAppPackageFileAsync($"Languages/{langCode}.json").GetAwaiter().GetResult();
-            using var reader = new StreamReader(stream);
-            string json = reader.ReadToEnd();
-            var dict = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-            if (dict != null)
+            using var stream = OpenLanguageStream(langCode);
+            var dict = ReadDictionaryFromStream(stream);
+            if (dict.Count > 0)
             {
                 _strings = dict;
                 return;
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // Si le fichier package n'est pas encore accessible, charger le dictionnaire par défaut
+            System.Diagnostics.Debug.WriteLine($"[Localization] Error loading {langCode}: {ex.Message}");
         }
 
         // Fallback secours
@@ -114,25 +219,29 @@ public class LocalizationService : INotifyPropertyChanged
 
     private async Task LoadLanguageFileAsync(string langCode)
     {
-        try
-        {
-            using var stream = await FileSystem.OpenAppPackageFileAsync($"Languages/{langCode}.json");
-            using var reader = new StreamReader(stream);
-            string json = await reader.ReadToEndAsync();
-            var dict = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-            if (dict != null)
-            {
-                _strings = dict;
-                return;
-            }
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"[Localization] Error loading {langCode}.json: {ex.Message}");
-        }
+        EnsureFrenchFallbackLoaded();
 
-        _strings = GetFallbackDictionary(langCode);
+        await Task.Run(() =>
+        {
+            try
+            {
+                using var stream = OpenLanguageStream(langCode);
+                var dict = ReadDictionaryFromStream(stream);
+                if (dict.Count > 0)
+                {
+                    _strings = dict;
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Localization] Error loading {langCode}: {ex.Message}");
+            }
+
+            _strings = GetFallbackDictionary(langCode);
+        });
     }
+
 
     private static Dictionary<string, string> GetFallbackDictionary(string langCode)
     {

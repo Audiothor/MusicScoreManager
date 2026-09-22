@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.ToolsPage"
              BackgroundColor="#121212"
-             Title="Outils">
+             Title="{Binding [Nav_Tools], Source={x:Static services:LocalizationService.Instance}}">
 
     <Grid>
         <ScrollView>
             <VerticalStackLayout Spacing="20" Margin="20">
                 <!-- En-tête -->
                 <VerticalStackLayout HorizontalOptions="Center" Margin="0,5,0,10" Spacing="4">
-                    <Label Text="Outils &amp; Utilitaires" 
+                    <Label Text="{Binding [Tools_Header_Title], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="White" 
                            FontSize="22" 
                            FontAttributes="Bold"
                            HorizontalOptions="Center" />
-                    <Label Text="Boîte à outils pour assembler, transférer, organiser et sécuriser vos partitions" 
+                    <Label Text="{Binding [Tools_Header_Subtitle], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="#888888" 
                            FontSize="13" 
                            HorizontalOptions="Center"
@@ -36,8 +37,8 @@
                             </Grid.GestureRecognizers>
                             <Label Grid.Column="0" Text="📑" FontSize="24" VerticalOptions="Center" />
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                                <Label Text="Créateur &amp; Assemblage PDF" TextColor="White" FontSize="15" FontAttributes="Bold" />
-                                <Label Text="Assembler photos, modifier l'ordre des pages, pivoter, page blanche" TextColor="#888888" FontSize="12" />
+                                <Label Text="{Binding [Tools_PdfAssembler_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label Text="{Binding [Tools_PdfAssembler_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
                             </VerticalStackLayout>
                             <Label Grid.Column="2" Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>
@@ -51,8 +52,8 @@
                             </Grid.GestureRecognizers>
                             <Label Grid.Column="0" Text="📡" FontSize="24" VerticalOptions="Center" />
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                                <Label Text="Transfert Wi-Fi Direct (P2P)" TextColor="White" FontSize="15" FontAttributes="Bold" />
-                                <Label Text="Recevoir des partitions ou scanner un partage de groupe sans box" TextColor="#888888" FontSize="12" />
+                                <Label Text="{Binding [Tools_WifiTransfer_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label Text="{Binding [Tools_WifiTransfer_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
                             </VerticalStackLayout>
                             <Label Grid.Column="2" Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>
@@ -66,8 +67,8 @@
                             </Grid.GestureRecognizers>
                             <Label Grid.Column="0" Text="🏷️" FontSize="24" VerticalOptions="Center" />
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                                <Label Text="Gestion des étiquettes" TextColor="White" FontSize="15" FontAttributes="Bold" />
-                                <Label Text="Créer, attribuer des couleurs, renommer et organiser vos tags" TextColor="#888888" FontSize="12" />
+                                <Label Text="{Binding [Tools_Tags_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label Text="{Binding [Tools_Tags_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
                             </VerticalStackLayout>
                             <Label Grid.Column="2" Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>
@@ -81,8 +82,8 @@
                             </Grid.GestureRecognizers>
                             <Label Grid.Column="0" Text="📦" FontSize="24" VerticalOptions="Center" />
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                                <Label Text="Imports de paquets &amp; setlists" TextColor="White" FontSize="15" FontAttributes="Bold" />
-                                <Label Text="Importer des archives partagées (.msmsetlist, .msmscore)" TextColor="#888888" FontSize="12" />
+                                <Label Text="{Binding [Tools_ImportPackage_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label Text="{Binding [Tools_ImportPackage_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
                             </VerticalStackLayout>
                             <Label Grid.Column="2" Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>
@@ -96,8 +97,8 @@
                             </Grid.GestureRecognizers>
                             <Label Grid.Column="0" Text="🔍" FontSize="24" VerticalOptions="Center" />
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                                <Label Text="Gestion des doublons" TextColor="White" FontSize="15" FontAttributes="Bold" />
-                                <Label Text="Détecter les fichiers identiques par SHA-256 et nettoyer" TextColor="#888888" FontSize="12" />
+                                <Label Text="{Binding [Tools_Duplicates_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label Text="{Binding [Tools_Duplicates_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
                             </VerticalStackLayout>
                             <Label Grid.Column="2" Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>
@@ -111,8 +112,8 @@
                             </Grid.GestureRecognizers>
                             <Label Grid.Column="0" Text="💾" FontSize="24" VerticalOptions="Center" />
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                                <Label Text="Gestion des sauvegardes" TextColor="White" FontSize="15" FontAttributes="Bold" />
-                                <Label Text="Sauvegarde automatique, manuelle et restauration de la base" TextColor="#888888" FontSize="12" />
+                                <Label Text="{Binding [Tools_Backups_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label Text="{Binding [Tools_Backups_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
                             </VerticalStackLayout>
                             <Label Grid.Column="2" Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
                         </Grid>

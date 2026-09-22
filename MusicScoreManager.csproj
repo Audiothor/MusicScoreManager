@@ -62,6 +62,11 @@
 
 	<ItemGroup>
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="Resources\Raw\Languages\*.json" LogicalName="Languages.%(Filename)%(Extension)" />
+		<None Update="Resources\Raw\Languages\*.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
+
 
 </Project>
