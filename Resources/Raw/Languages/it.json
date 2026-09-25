@@ -584,5 +584,22 @@
   "Settings_Pedals_Key_Exists_Title": "Tasto già presente",
   "Settings_Pedals_Key_Exists_Msg": "Il comando '{0}' è già configurato in questo profilo.",
   "Wifi_Listening_Visible": "🟢 In ascolto (Visibile)",
-  "Wifi_Idle_Status": "⚫ In standby"
+  "Wifi_Idle_Status": "⚫ In standby",
+  "Common_All": "Tutti",
+  "Setlist_Concert_Date": "Concerto: {0:dd/MM/yyyy}",
+  "Setlist_Concert_Date_Time": "Concerto: {0:dd/MM/yyyy} alle {1:hh\\:mm}",
+  "Setlist_Created_On": "Creata il {0:dd/MM/yyyy}",
+  "Setlist_Sort_ConcertDateAsc": "Data del concerto (Prossimo prima)",
+  "Setlist_Sort_ConcertDateDesc": "Data del concerto (Più lontano prima)",
+  "Setlist_Sort_DateCreatedAsc": "Data di creazione (Meno recente)",
+  "Setlist_Sort_DateCreatedDesc": "Data di creazione (Più recente)",
+  "Setlist_Sort_NameAsc": "Nome (A-Z)",
+  "Setlist_Sort_NameDesc": "Nome (Z-A)",
+  "Setlist_Sort_Status": "Stato",
+  "Setlist_Status_Done": "Completata",
+  "Setlist_Status_Upcoming": "In arrivo",
+  "Settings_Setlists_Default_Sort": "Ordinamento predefinito delle scalette",
+  "Settings_Setlists_Default_Sort_Desc": "Ordinamento applicato automaticamente all'elenco delle scalette",
+  "Settings_Setlists_Done_At_Bottom": "Posiziona le scalette completate in fondo",
+  "Settings_Setlists_Done_At_Bottom_Desc": "Metti sempre le scalette con stato 'Completata' alla fine dell'elenco"
 }

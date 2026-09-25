@@ -584,5 +584,22 @@
   "Settings_Pedals_Key_Exists_Title": "Taste bereits vorhanden",
   "Settings_Pedals_Key_Exists_Msg": "Befehl '{0}' ist in diesem Profil bereits eingerichtet.",
   "Wifi_Listening_Visible": "🟢 Lauschen (Sichtbar)",
-  "Wifi_Idle_Status": "⚫ Ruhezustand"
+  "Wifi_Idle_Status": "⚫ Ruhezustand",
+  "Common_All": "Alle",
+  "Setlist_Concert_Date": "Konzert: {0:dd/MM/yyyy}",
+  "Setlist_Concert_Date_Time": "Konzert: {0:dd/MM/yyyy} um {1:hh\\:mm}",
+  "Setlist_Created_On": "Erstellt am {0:dd/MM/yyyy}",
+  "Setlist_Sort_ConcertDateAsc": "Konzertdatum (Nächste zuerst)",
+  "Setlist_Sort_ConcertDateDesc": "Konzertdatum (Späteste zuerst)",
+  "Setlist_Sort_DateCreatedAsc": "Erstellungsdatum (Älteste zuerst)",
+  "Setlist_Sort_DateCreatedDesc": "Erstellungsdatum (Neueste zuerst)",
+  "Setlist_Sort_NameAsc": "Name (A-Z)",
+  "Setlist_Sort_NameDesc": "Name (Z-A)",
+  "Setlist_Sort_Status": "Status",
+  "Setlist_Status_Done": "Erledigt",
+  "Setlist_Status_Upcoming": "Bevorstehend",
+  "Settings_Setlists_Default_Sort": "Standard-Sortierung der Setlists",
+  "Settings_Setlists_Default_Sort_Desc": "Sortierreihenfolge, die automatisch auf die Setlist-Liste angewendet wird",
+  "Settings_Setlists_Done_At_Bottom": "Erledigte Setlists nach unten verschieben",
+  "Settings_Setlists_Done_At_Bottom_Desc": "Setzt Setlists mit dem Status 'Erledigt' immer an das Ende der Liste"
 }

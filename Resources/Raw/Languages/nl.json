@@ -584,5 +584,22 @@
   "Settings_Pedals_Key_Exists_Title": "Toets al aanwezig",
   "Settings_Pedals_Key_Exists_Msg": "Opdracht '{0}' is al geconfigureerd in dit profiel.",
   "Wifi_Listening_Visible": "🟢 Luisteren (Zichtbaar)",
-  "Wifi_Idle_Status": "⚫ Stand-by"
+  "Wifi_Idle_Status": "⚫ Stand-by",
+  "Common_All": "Alles",
+  "Setlist_Concert_Date": "Concert: {0:dd/MM/yyyy}",
+  "Setlist_Concert_Date_Time": "Concert: {0:dd/MM/yyyy} om {1:hh\\:mm}",
+  "Setlist_Created_On": "Aangemaakt op {0:dd/MM/yyyy}",
+  "Setlist_Sort_ConcertDateAsc": "Concertdatum (Eerstkomend eerst)",
+  "Setlist_Sort_ConcertDateDesc": "Concertdatum (Verst weg eerst)",
+  "Setlist_Sort_DateCreatedAsc": "Aanmaakdatum (Oudste eerst)",
+  "Setlist_Sort_DateCreatedDesc": "Aanmaakdatum (Nieuwste eerst)",
+  "Setlist_Sort_NameAsc": "Naam (A-Z)",
+  "Setlist_Sort_NameDesc": "Naam (Z-A)",
+  "Setlist_Sort_Status": "Status",
+  "Setlist_Status_Done": "Voltooid",
+  "Setlist_Status_Upcoming": "Aankomend",
+  "Settings_Setlists_Default_Sort": "Standaard sortering van setlists",
+  "Settings_Setlists_Default_Sort_Desc": "Sorteervolgorde automatisch toegepast op de setlistlijst",
+  "Settings_Setlists_Done_At_Bottom": "Voltooide setlists onderaan plaatsen",
+  "Settings_Setlists_Done_At_Bottom_Desc": "Plaatst setlists met de status 'Voltooid' altijd aan het einde van de lijst"
 }

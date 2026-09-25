@@ -107,9 +107,18 @@ public partial class SetlistEditPage : ContentPage
             StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 }
         };
 
+        var loc = Services.LocalizationService.Instance;
+        string statusLabel = status switch
+        {
+            SetlistStatus.Upcoming => loc.GetString("Setlist_Status_Upcoming", "À venir"),
+            SetlistStatus.Active => loc.GetString("Setlist_Status_Active", "En cours"),
+            SetlistStatus.Done => loc.GetString("Setlist_Status_Done", "Terminée"),
+            _ => status.ToString()
+        };
+
         border.Content = new Label
         {
-            Text = status.ToString(),
+            Text = statusLabel,
             TextColor = isSelected ? Colors.White : Color.FromArgb(colorHex),
             FontSize = 12,
             FontAttributes = FontAttributes.Bold

@@ -122,7 +122,7 @@
                                         CommandParameter="{Binding .}" />
                                        
                                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
-                                       Text="{Binding DateCreated, StringFormat='Créé le {0:dd/MM/yyyy}'}" 
+                                       Text="{Binding SubtitleInfo}" 
                                        FontSize="12" 
                                        TextColor="#888888" 
                                        Margin="0,5,0,0"/>
