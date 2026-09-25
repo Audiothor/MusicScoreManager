@@ -21,7 +21,13 @@ public class Setlist
     public bool IsLocked { get; set; } = false;
 
     [Ignore]
-    public string StatusText => Status.ToString();
+    public string StatusText => Status switch
+    {
+        SetlistStatus.Upcoming => Services.LocalizationService.Instance.GetString("Setlist_Status_Upcoming", "À venir"),
+        SetlistStatus.Active => Services.LocalizationService.Instance.GetString("Setlist_Status_Active", "En cours"),
+        SetlistStatus.Done => Services.LocalizationService.Instance.GetString("Setlist_Status_Done", "Terminée"),
+        _ => Status.ToString()
+    };
 
     [Ignore]
     public Color StatusColor => Status switch
@@ -31,6 +37,30 @@ public class Setlist
         SetlistStatus.Done => Color.FromArgb("#6C757D"),
         _ => Colors.Gray
     };
+
+    [Ignore]
+    public string SubtitleInfo
+    {
+        get
+        {
+            var parts = new List<string>();
+            if (DateCreated != default)
+            {
+                parts.Add(string.Format(Services.LocalizationService.Instance.GetString("Setlist_Created_On", "Créée le {0:dd/MM/yyyy}"), DateCreated));
+            }
+            if (ConcertDate.HasValue)
+            {
+                string concertFormat = ConcertTime.HasValue
+                    ? Services.LocalizationService.Instance.GetString("Setlist_Concert_Date_Time", "Concert : {0:dd/MM/yyyy} à {1:hh\\:mm}")
+                    : Services.LocalizationService.Instance.GetString("Setlist_Concert_Date", "Concert : {0:dd/MM/yyyy}");
+                
+                parts.Add(ConcertTime.HasValue 
+                    ? string.Format(concertFormat, ConcertDate.Value, ConcertTime.Value) 
+                    : string.Format(concertFormat, ConcertDate.Value));
+            }
+            return string.Join(" • ", parts);
+        }
+    }
 }
 
 public enum SetlistStatus

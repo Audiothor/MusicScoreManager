@@ -16,7 +16,8 @@ public partial class SetlistsPage : ContentPage
     private readonly IWifiDirectTransferService _wifiService;
     private readonly ExportImportService _exportImportService;
 
-    private string _currentSort = "NameAsc";
+    private string _currentSort = "DateCreatedDesc";
+    private bool _hasUserCustomSort = false;
     private SetlistStatus? _selectedStatusFilter = null;
     private Setlist? _selectedSetlistForAction = null;
     private readonly ObservableCollection<WifiDeviceInfo> _discoveredDevices = new();
@@ -27,6 +28,8 @@ public partial class SetlistsPage : ContentPage
         _databaseService = databaseService;
         _wifiService = wifiService;
         _exportImportService = exportImportService;
+
+        _currentSort = Preferences.Default.Get("DefaultSetlistSort", "DateCreatedDesc");
 
         _wifiService.DeviceDiscovered += OnWifiDeviceDiscovered;
         _wifiService.ScanFinished += OnWifiScanFinished;
@@ -45,6 +48,10 @@ public partial class SetlistsPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        if (!_hasUserCustomSort)
+        {
+            _currentSort = Preferences.Default.Get("DefaultSetlistSort", "DateCreatedDesc");
+        }
         LoadStatusFilters();
         await LoadSetlistsAsync();
 
@@ -64,11 +71,19 @@ public partial class SetlistsPage : ContentPage
     private void LoadStatusFilters()
     {
         StatusFiltersStack.Children.Clear();
-        StatusFiltersStack.Children.Add(CreateStatusFilterChip("Tous", null));
+        var loc = LocalizationService.Instance;
+        StatusFiltersStack.Children.Add(CreateStatusFilterChip(loc.GetString("Common_All", "Tous"), null));
 
         foreach (SetlistStatus status in Enum.GetValues(typeof(SetlistStatus)))
         {
-            StatusFiltersStack.Children.Add(CreateStatusFilterChip(status.ToString(), status));
+            string label = status switch
+            {
+                SetlistStatus.Upcoming => loc.GetString("Setlist_Status_Upcoming", "À venir"),
+                SetlistStatus.Active => loc.GetString("Setlist_Status_Active", "En cours"),
+                SetlistStatus.Done => loc.GetString("Setlist_Status_Done", "Terminée"),
+                _ => status.ToString()
+            };
+            StatusFiltersStack.Children.Add(CreateStatusFilterChip(label, status));
         }
     }
 
@@ -126,13 +141,38 @@ public partial class SetlistsPage : ContentPage
             setlists = setlists.Where(s => s.Status == _selectedStatusFilter.Value).ToList();
         }
 
-        if (_currentSort == "NameAsc") setlists = setlists.OrderBy(s => s.Name).ToList();
-        else if (_currentSort == "NameDesc") setlists = setlists.OrderByDescending(s => s.Name).ToList();
-        else if (_currentSort == "DateAsc") setlists = setlists.OrderBy(s => s.DateCreated).ToList();
-        else if (_currentSort == "DateDesc") setlists = setlists.OrderByDescending(s => s.DateCreated).ToList();
-        else if (_currentSort == "Status") setlists = setlists.OrderBy(s => s.Status).ToList();
+        bool doneAtBottom = Preferences.Default.Get("SetlistsDoneAtBottom", true);
 
-        SetlistsCollectionView.ItemsSource = setlists;
+        IOrderedEnumerable<Setlist> ordered;
+        if (doneAtBottom)
+        {
+            ordered = setlists.OrderBy(s => s.Status == SetlistStatus.Done ? 1 : 0);
+            ordered = _currentSort switch
+            {
+                "DateCreatedAsc" or "DateAsc" => ordered.ThenBy(s => s.DateCreated),
+                "DateCreatedDesc" or "DateDesc" => ordered.ThenByDescending(s => s.DateCreated),
+                "ConcertDateAsc" => ordered.ThenBy(s => s.ConcertDate.HasValue ? 0 : 1).ThenBy(s => s.ConcertDate).ThenBy(s => s.ConcertTime),
+                "ConcertDateDesc" => ordered.ThenBy(s => s.ConcertDate.HasValue ? 0 : 1).ThenByDescending(s => s.ConcertDate).ThenByDescending(s => s.ConcertTime),
+                "NameDesc" => ordered.ThenByDescending(s => s.Name, StringComparer.CurrentCultureIgnoreCase),
+                "Status" => ordered.ThenBy(s => s.Status).ThenBy(s => s.Name, StringComparer.CurrentCultureIgnoreCase),
+                _ => ordered.ThenBy(s => s.Name, StringComparer.CurrentCultureIgnoreCase) // "NameAsc"
+            };
+        }
+        else
+        {
+            ordered = _currentSort switch
+            {
+                "DateCreatedAsc" or "DateAsc" => setlists.OrderBy(s => s.DateCreated),
+                "DateCreatedDesc" or "DateDesc" => setlists.OrderByDescending(s => s.DateCreated),
+                "ConcertDateAsc" => setlists.OrderBy(s => s.ConcertDate.HasValue ? 0 : 1).ThenBy(s => s.ConcertDate).ThenBy(s => s.ConcertTime),
+                "ConcertDateDesc" => setlists.OrderBy(s => s.ConcertDate.HasValue ? 0 : 1).ThenByDescending(s => s.ConcertDate).ThenByDescending(s => s.ConcertTime),
+                "NameDesc" => setlists.OrderByDescending(s => s.Name, StringComparer.CurrentCultureIgnoreCase),
+                "Status" => setlists.OrderBy(s => s.Status).ThenBy(s => s.Name, StringComparer.CurrentCultureIgnoreCase),
+                _ => setlists.OrderBy(s => s.Name, StringComparer.CurrentCultureIgnoreCase) // "NameAsc"
+            };
+        }
+
+        SetlistsCollectionView.ItemsSource = ordered.ToList();
     }
 
     private async void OnSearchBarTextChanged(object sender, TextChangedEventArgs e)
@@ -142,16 +182,30 @@ public partial class SetlistsPage : ContentPage
 
     private async void OnSortClicked(object sender, EventArgs e)
     {
-        string action = await DisplayActionSheetAsync("Trier par", "Annuler", null, 
-            "Nom (A-Z)", "Nom (Z-A)", "Date de création (Récent)", "Date de création (Ancien)", "Statut");
+        var loc = LocalizationService.Instance;
+        string cancel = loc.GetString("Common_Cancel", "Annuler");
+        string title = loc.GetString("Sort_Dialog_Title", "Trier par");
 
-        if (action == "Nom (A-Z)") _currentSort = "NameAsc";
-        else if (action == "Nom (Z-A)") _currentSort = "NameDesc";
-        else if (action == "Date de création (Récent)") _currentSort = "DateDesc";
-        else if (action == "Date de création (Ancien)") _currentSort = "DateAsc";
-        else if (action == "Statut") _currentSort = "Status";
+        string optDateDesc = loc.GetString("Setlist_Sort_DateCreatedDesc", "Date de création (Récent)");
+        string optDateAsc = loc.GetString("Setlist_Sort_DateCreatedAsc", "Date de création (Ancien)");
+        string optConcertAsc = loc.GetString("Setlist_Sort_ConcertDateAsc", "Date du concert (Prochain)");
+        string optConcertDesc = loc.GetString("Setlist_Sort_ConcertDateDesc", "Date du concert (Lointain)");
+        string optNameAsc = loc.GetString("Setlist_Sort_NameAsc", "Nom (A-Z)");
+        string optNameDesc = loc.GetString("Setlist_Sort_NameDesc", "Nom (Z-A)");
+        string optStatus = loc.GetString("Setlist_Sort_Status", "Statut");
 
-        if (action != "Annuler")
+        string action = await DisplayActionSheetAsync(title, cancel, null, 
+            optDateDesc, optDateAsc, optConcertAsc, optConcertDesc, optNameAsc, optNameDesc, optStatus);
+
+        if (action == optDateDesc) { _currentSort = "DateCreatedDesc"; _hasUserCustomSort = true; }
+        else if (action == optDateAsc) { _currentSort = "DateCreatedAsc"; _hasUserCustomSort = true; }
+        else if (action == optConcertAsc) { _currentSort = "ConcertDateAsc"; _hasUserCustomSort = true; }
+        else if (action == optConcertDesc) { _currentSort = "ConcertDateDesc"; _hasUserCustomSort = true; }
+        else if (action == optNameAsc) { _currentSort = "NameAsc"; _hasUserCustomSort = true; }
+        else if (action == optNameDesc) { _currentSort = "NameDesc"; _hasUserCustomSort = true; }
+        else if (action == optStatus) { _currentSort = "Status"; _hasUserCustomSort = true; }
+
+        if (!string.IsNullOrEmpty(action) && action != cancel)
             await LoadSetlistsAsync(SearchSetlistBar.Text);
     }
 
@@ -173,8 +227,7 @@ public partial class SetlistsPage : ContentPage
             _selectedSetlistForAction = setlist;
             SetlistMenuTitleLabel.Text = setlist.Name;
             string statusStr = setlist.StatusText;
-            string date = setlist.DateCreated != default ? setlist.DateCreated.ToString("dd/MM/yyyy") : "";
-            SetlistMenuSubtitleLabel.Text = $"{statusStr} • Créée le {date}";
+            SetlistMenuSubtitleLabel.Text = $"{statusStr} • {setlist.SubtitleInfo}";
             SetlistMenuOverlay.IsVisible = true;
         }
     }

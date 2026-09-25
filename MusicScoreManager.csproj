@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>2.1.11</ApplicationDisplayVersion>
-		<ApplicationVersion>20111</ApplicationVersion>
-		<!-- Version actuelle : v2.1.11 "Correctifs de traduction (actions groupées, étiquettes, sauvegardes, pédales, bibliothèque)" -->
+		<ApplicationDisplayVersion>2.1.12</ApplicationDisplayVersion>
+		<ApplicationVersion>20112</ApplicationVersion>
+		<!-- Version actuelle : v2.1.12 "Tri par défaut des setlists et relégation des setlists terminées en bas" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		
