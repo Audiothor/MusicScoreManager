@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v2.1.13
+# Music Score Manager v2.2.0
 > **Le gestionnaire & visualiseur professionnel de partitions musicales pour répétitions, pupitres et concerts en direct.**
 
 ---
@@ -162,6 +162,8 @@ Chaque partition est présentée sous forme d'une carte moderne :
 - **Sous-titre personnalisable** : Affiche au choix le nom du compositeur, la date d'ajout, ou les deux à la fois.
 - **Badges d'étiquettes colorés** : Pilules avec couleur personnalisée pour visualiser immédiatement le genre musical, le pupitre ou le projet.
 - **Bouton Menu Options (`⋮`)** : Déploie le menu contextuel détaillé.
+- **Bandelette d'Index Alphabétique Rapide (`A-Z`) (v2.2.0)** : Bandelette discrète située sur le bord droit lors des tris alphabétiques (par titre ou par compositeur), permettant d'un seul appui de sauter instantanément à la lettre voulue.
+- **Bouton Flottant « Haut de Page » (▲) (v2.2.0)** : Bouton discret apparaissant dès que la liste est défilée vers le bas pour revenir instantanément au début de la bibliothèque.
 
 ---
 
@@ -474,6 +476,8 @@ graph TD
 - **Tri par défaut à l'ouverture** : Définissez l'ordre automatique de la bibliothèque (*Date d'ajout récente/ancienne, Titre A-Z/Z-A, Date de modification, Note par étoiles, Compositeur, Sans étiquette d'abord*).
 - **Partitions sans compositeur en premier** : Interrupteur permettant, lors d'un tri par compositeur, d'afficher les morceaux sans compositeur en tête de liste (si activé) ou à la fin (si désactivé).
 - **Informations sous le titre de la partition** : Choisissez ce qui s'affiche sous le titre dans la liste (*Date d'ajout*, *Compositeur*, ou *Compositeur et date d'ajout*).
+- **Afficher la bandelette d'index alphabétique (v2.2.0)** : Active ou masque la bandelette latérale rapide (#, A à Z) sur la liste des partitions. Activé par défaut.
+- **Afficher le bouton flottant « Haut de page » (v2.2.0)** : Active ou masque le bouton flottant `▲` permettant de remonter au début de la liste. Activé par défaut.
 - **Affichage du numéro de page** : Activez ou masquez le badge de numérotation en bas à droite du visualiseur.
 - **Taille d'affichage du numéro de page** : Slider de réglage de 10 px à 40 px avec valeur numérique en direct.
 - **Affichage 2 pages en mode paysage** : Active la présentation double page lorsque la tablette est tournée à l'horizontale.
@@ -647,5 +651,5 @@ Consultez le fichier complet [LICENSE](LICENSE) pour les termes légaux exhausti
 ---
 
 <p align="center">
-  <b>Music Score Manager v2.1.13</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
+  <b>Music Score Manager v2.2.0</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
 </p>
