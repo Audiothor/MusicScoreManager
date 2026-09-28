@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v2.2.0
+# Music Score Manager v2.2.1
 > **Le gestionnaire & visualiseur professionnel de partitions musicales pour répétitions, pupitres et concerts en direct.**
 
 ---
@@ -651,5 +651,5 @@ Consultez le fichier complet [LICENSE](LICENSE) pour les termes légaux exhausti
 ---
 
 <p align="center">
-  <b>Music Score Manager v2.2.0</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
+  <b>Music Score Manager v2.2.1</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
 </p>
