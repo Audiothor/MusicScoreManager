@@ -133,7 +133,8 @@ Pour les développeurs souhaitant compiler et personnaliser l'application pour A
   Elle n'est évidement pas parfaite et vous pouvez soumettre des propositions, bugs ou remarques sur Github !
   Merci !
 
-- L'application a été développée avec mes connaissances en C# mais aussi avec l'aide de l'IA Gemini sans laquelle je n'aurais pu réaliser ce projet de manière aussi aboutie et avec autant de fonctionnalités.
+- L'application a été développée avec mes connaissances en C# et Python mais aussi avec l'aide de l'IA Gemini sans laquelle je n'aurais pu réaliser ce projet de manière aussi aboutie et avec autant de fonctionnalités.
+  Visual Studio Code + Antigravity IDE.
 
 - Le code de l'application est totalement transparent et accessible sous Github
 
