@@ -198,22 +198,20 @@
         <Border x:Name="AlphabeticalIndexBorder"
                 HorizontalOptions="End"
                 VerticalOptions="Center"
-                WidthRequest="24"
-                BackgroundColor="#B31A1A1A"
+                WidthRequest="28"
+                BackgroundColor="#D918181E"
                 Stroke="#333333"
                 StrokeThickness="1"
-                ZIndex="10"
-                Padding="0,6"
-                Margin="0,5,0,5">
+                ZIndex="30"
+                Padding="0,4"
+                Margin="0,0,2,0">
             <Border.StrokeShape>
-                <RoundRectangle CornerRadius="12" />
+                <RoundRectangle CornerRadius="14" />
             </Border.StrokeShape>
-            <ScrollView VerticalScrollBarVisibility="Never" Orientation="Vertical">
-                <VerticalStackLayout x:Name="AlphabeticalIndexLayout"
-                                     Spacing="1"
-                                     VerticalOptions="Center"
-                                     HorizontalOptions="Center" />
-            </ScrollView>
+            <VerticalStackLayout x:Name="AlphabeticalIndexLayout"
+                                 Spacing="0"
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Fill" />
         </Border>
 
         <!-- Floating Scroll-To-Top Button -->

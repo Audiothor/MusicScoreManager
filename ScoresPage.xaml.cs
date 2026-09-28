@@ -1374,25 +1374,56 @@ public partial class ScoresPage : ContentPage
         string[] letters = ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
         foreach (var letter in letters)
         {
+            var cell = new Grid
+            {
+                HeightRequest = 15,
+                HorizontalOptions = LayoutOptions.Fill,
+                BackgroundColor = Colors.Transparent,
+                InputTransparent = false
+            };
+
             var lbl = new Label
             {
                 Text = letter,
-                FontSize = 10,
+                FontSize = 9.5,
                 FontAttributes = FontAttributes.Bold,
-                TextColor = Color.FromArgb("#999999"),
+                TextColor = Color.FromArgb("#BBBBBB"),
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
                 HorizontalTextAlignment = TextAlignment.Center,
                 VerticalTextAlignment = TextAlignment.Center,
-                Padding = new Thickness(0, 1)
+                InputTransparent = true
             };
+
+            cell.Children.Add(lbl);
 
             var tap = new TapGestureRecognizer();
             string capturedLetter = letter;
-            tap.Tapped += (s, e) => OnAlphabeticalIndexTapped(capturedLetter);
-            lbl.GestureRecognizers.Add(tap);
+            var capturedCell = cell;
+            var capturedLbl = lbl;
 
-            AlphabeticalIndexLayout.Children.Add(lbl);
+            tap.Tapped += async (s, e) =>
+            {
+                try
+                {
+                    capturedCell.BackgroundColor = Color.FromArgb("#007ACC");
+                    capturedLbl.TextColor = Colors.White;
+                }
+                catch { }
+
+                OnAlphabeticalIndexTapped(capturedLetter);
+
+                await Task.Delay(250);
+                try
+                {
+                    capturedCell.BackgroundColor = Colors.Transparent;
+                    capturedLbl.TextColor = Color.FromArgb("#BBBBBB");
+                }
+                catch { }
+            };
+
+            cell.GestureRecognizers.Add(tap);
+            AlphabeticalIndexLayout.Children.Add(cell);
         }
     }
 
@@ -1421,25 +1452,43 @@ public partial class ScoresPage : ContentPage
             return;
 
         bool byComposer = _currentSort.StartsWith("Composer", StringComparison.OrdinalIgnoreCase);
+        bool isDescending = _currentSort.EndsWith("Desc", StringComparison.OrdinalIgnoreCase);
         int targetIndex = -1;
 
         if (letter == "#")
         {
-            for (int i = 0; i < scores.Count; i++)
+            if (!isDescending)
             {
-                string key = GetScoreSortKey(scores[i], byComposer);
-                if (string.IsNullOrEmpty(key) || !char.IsLetter(key[0]))
+                for (int i = 0; i < scores.Count; i++)
                 {
-                    targetIndex = i;
-                    break;
+                    string key = GetScoreSortKey(scores[i], byComposer);
+                    if (string.IsNullOrEmpty(key) || !char.IsLetter(key[0]))
+                    {
+                        targetIndex = i;
+                        break;
+                    }
                 }
+                if (targetIndex == -1) targetIndex = 0;
             }
-            if (targetIndex == -1) targetIndex = 0;
+            else
+            {
+                for (int i = scores.Count - 1; i >= 0; i--)
+                {
+                    string key = GetScoreSortKey(scores[i], byComposer);
+                    if (string.IsNullOrEmpty(key) || !char.IsLetter(key[0]))
+                    {
+                        targetIndex = i;
+                        break;
+                    }
+                }
+                if (targetIndex == -1) targetIndex = scores.Count - 1;
+            }
         }
         else
         {
             char targetChar = char.ToUpperInvariant(letter[0]);
 
+            // 1. Recherche exacte de la première occurrence de la lettre
             for (int i = 0; i < scores.Count; i++)
             {
                 string key = GetScoreSortKey(scores[i], byComposer);
@@ -1450,15 +1499,31 @@ public partial class ScoresPage : ContentPage
                 }
             }
 
+            // 2. Si absente, repli vers la lettre la plus proche selon le sens du tri
             if (targetIndex == -1)
             {
-                for (int i = 0; i < scores.Count; i++)
+                if (!isDescending)
                 {
-                    string key = GetScoreSortKey(scores[i], byComposer);
-                    if (!string.IsNullOrEmpty(key) && char.ToUpperInvariant(key[0]) > targetChar)
+                    for (int i = 0; i < scores.Count; i++)
                     {
-                        targetIndex = i;
-                        break;
+                        string key = GetScoreSortKey(scores[i], byComposer);
+                        if (!string.IsNullOrEmpty(key) && char.ToUpperInvariant(key[0]) > targetChar)
+                        {
+                            targetIndex = i;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < scores.Count; i++)
+                    {
+                        string key = GetScoreSortKey(scores[i], byComposer);
+                        if (!string.IsNullOrEmpty(key) && char.ToUpperInvariant(key[0]) < targetChar)
+                        {
+                            targetIndex = i;
+                            break;
+                        }
                     }
                 }
             }
@@ -1466,16 +1531,27 @@ public partial class ScoresPage : ContentPage
 
         if (targetIndex >= 0 && targetIndex < scores.Count)
         {
-            ScoresCollectionView.ScrollTo(targetIndex, position: ScrollToPosition.Start, animate: false);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                try
+                {
+                    ScoresCollectionView.ScrollTo(targetIndex, position: ScrollToPosition.Start, animate: true);
+                }
+                catch
+                {
+                    try
+                    {
+                        ScoresCollectionView.ScrollTo(scores[targetIndex], position: ScrollToPosition.Start, animate: true);
+                    }
+                    catch { }
+                }
+            });
         }
     }
 
     private static string GetScoreSortKey(Models.Score score, bool byComposer)
     {
-        string raw = byComposer
-            ? (!string.IsNullOrWhiteSpace(score.Composer) ? score.Composer : score.Title)
-            : score.Title;
-
+        string raw = byComposer ? (score.Composer ?? string.Empty) : (score.Title ?? string.Empty);
         if (string.IsNullOrWhiteSpace(raw)) return string.Empty;
 
         return RemoveDiacritics(raw.Trim());
