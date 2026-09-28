@@ -67,9 +67,9 @@ public partial class ViewerPage : ContentPage
     {
         if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
         {
-            double pageWRel = _canvasWRel / 2.0;
+            double pageWRel = _hasRightPage ? (_canvasWRel / 2.0) : _canvasWRel;
             double pageHRel = _canvasHRel;
-            double pageXStartRel = (pageNumber == _rightPageNumber)
+            double pageXStartRel = (_hasRightPage && pageNumber == _rightPageNumber)
                 ? (_canvasXRel + pageWRel)
                 : _canvasXRel;
 
@@ -94,7 +94,7 @@ public partial class ViewerPage : ContentPage
 
         if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
         {
-            double pageWRel = _canvasWRel / 2.0;
+            double pageWRel = _hasRightPage ? (_canvasWRel / 2.0) : _canvasWRel;
             double midXRel = _canvasXRel + pageWRel;
 
             if (_hasRightPage && relX >= midXRel)
@@ -118,6 +118,32 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private (double rx, double ry) ScreenToPageCoords(double absX, double absY, int targetPage, double containerW, double containerH)
+    {
+        if (containerW <= 0 || containerH <= 0) return (0.5, 0.5);
+
+        double relX = Math.Clamp(absX / containerW, 0.0, 1.0);
+        double relY = Math.Clamp(absY / containerH, 0.0, 1.0);
+
+        if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
+        {
+            double pageWRel = _hasRightPage ? (_canvasWRel / 2.0) : _canvasWRel;
+            double pageXStartRel = (_hasRightPage && targetPage == _rightPageNumber)
+                ? (_canvasXRel + pageWRel)
+                : _canvasXRel;
+
+            double rx = pageWRel > 0 ? (relX - pageXStartRel) / pageWRel : 0.0;
+            double ry = _canvasHRel > 0 ? (relY - _canvasYRel) / _canvasHRel : 0.0;
+            return (Math.Clamp(rx, 0.0, 1.0), Math.Clamp(ry, 0.0, 1.0));
+        }
+        else
+        {
+            double rx = _canvasWRel > 0 ? (relX - _canvasXRel) / _canvasWRel : 0.0;
+            double ry = _canvasHRel > 0 ? (relY - _canvasYRel) / _canvasHRel : 0.0;
+            return (Math.Clamp(rx, 0.0, 1.0), Math.Clamp(ry, 0.0, 1.0));
+        }
+    }
+
     private double GetPageDisplayScale()
     {
         if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
@@ -138,6 +164,10 @@ public partial class ViewerPage : ContentPage
         if (ActiveAnnotationsContainer != null)
         {
             ActiveAnnotationsContainer.InputTransparent = false;
+        }
+        if (AnnotationsContainer != null)
+        {
+            AnnotationsContainer.InputTransparent = false;
         }
     }
 
@@ -928,6 +958,8 @@ public partial class ViewerPage : ContentPage
 
     private void OnPanUpdated(object sender, PanUpdatedEventArgs e)
     {
+        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
+
         if (e.StatusType == GestureStatus.Started)
         {
             _panStartX = ZoomLayout.TranslationX;
@@ -2170,6 +2202,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnImageSwipedLeft(object? sender, SwipedEventArgs e)
     {
+        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
         if (ZoomLayout.Scale > 1.05) return;
         string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
         string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
@@ -2180,6 +2213,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnImageSwipedRight(object? sender, SwipedEventArgs e)
     {
+        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
         if (ZoomLayout.Scale > 1.05) return;
         string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
         string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
@@ -2190,6 +2224,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnImageSwipedUp(object? sender, SwipedEventArgs e)
     {
+        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
         if (ZoomLayout.Scale > 1.05) return;
         string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
         string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
@@ -2200,6 +2235,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnImageSwipedDown(object? sender, SwipedEventArgs e)
     {
+        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
         if (ZoomLayout.Scale > 1.05) return;
         string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
         string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
@@ -2638,6 +2674,10 @@ public partial class ViewerPage : ContentPage
             MenuAudioSwitch.IsEnabled = hasAudio;
             MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
         }
+        if (AnnotationBar != null && AnnotationBar.IsVisible)
+        {
+            _score.ShowAnnotations = true;
+        }
         if (MenuAnnotationsSwitch != null) MenuAnnotationsSwitch.IsToggled = _score.ShowAnnotations;
 
         _currentRotation = _score.IsRotationSaved ? _score.Rotation : 0;
@@ -2845,6 +2885,14 @@ public partial class ViewerPage : ContentPage
         else
         {
             AnnotationsContainer.InputTransparent = false;
+            AnnotationsContainer.Opacity = 1;
+            AnnotationsContainer.IsVisible = true;
+            if (ActiveAnnotationsContainer != null)
+            {
+                ActiveAnnotationsContainer.InputTransparent = false;
+                ActiveAnnotationsContainer.Opacity = 1;
+                ActiveAnnotationsContainer.IsVisible = true;
+            }
 #if ANDROID
             SetupNativeTouchHandling();
 #endif
@@ -2906,30 +2954,42 @@ public partial class ViewerPage : ContentPage
             switch (motionEvent.ActionMasked)
             {
                 case Android.Views.MotionEventActions.Down:
+                    (sender as Android.Views.View)?.Parent?.RequestDisallowInterceptTouchEvent(true);
                     if (_isHighlightMode) StartLiveHighlightStroke(new Point(touchX, touchY));
                     else if (_isDrawMode) StartLiveDrawStroke(new Point(touchX, touchY));
                     args.Handled = true;
                     return;
 
                 case Android.Views.MotionEventActions.Move:
+                    (sender as Android.Views.View)?.Parent?.RequestDisallowInterceptTouchEvent(true);
                     if (_isHighlightMode) AddLiveHighlightPoint(new Point(touchX, touchY));
                     else if (_isDrawMode) AddLiveDrawPoint(new Point(touchX, touchY));
                     args.Handled = true;
                     return;
 
                 case Android.Views.MotionEventActions.Up:
+                    (sender as Android.Views.View)?.Parent?.RequestDisallowInterceptTouchEvent(false);
                     if (_isHighlightMode) _ = FinishLiveHighlightStrokeAsync();
                     else if (_isDrawMode) _ = FinishLiveDrawStrokeAsync();
                     args.Handled = true;
                     return;
 
                 case Android.Views.MotionEventActions.Cancel:
-                    if (_activeLivePolyline != null)
+                    (sender as Android.Views.View)?.Parent?.RequestDisallowInterceptTouchEvent(false);
+                    if (_activeLivePoints.Count >= 1)
                     {
-                        ActiveAnnotationsContainer.Children.Remove(_activeLivePolyline);
-                        _activeLivePolyline = null;
+                        if (_isHighlightMode) _ = FinishLiveHighlightStrokeAsync();
+                        else if (_isDrawMode) _ = FinishLiveDrawStrokeAsync();
                     }
-                    _activeLivePoints.Clear();
+                    else
+                    {
+                        if (_activeLivePolyline != null)
+                        {
+                            ActiveAnnotationsContainer.Children.Remove(_activeLivePolyline);
+                            _activeLivePolyline = null;
+                        }
+                        _activeLivePoints.Clear();
+                    }
                     args.Handled = true;
                     return;
             }
@@ -3293,6 +3353,21 @@ public partial class ViewerPage : ContentPage
         HighlightOptionsOverlay.IsVisible = _isHighlightMode;
         if (_isHighlightMode)
         {
+            _score.ShowAnnotations = true;
+            if (AnnotationsContainer != null)
+            {
+                AnnotationsContainer.Opacity = 1;
+                AnnotationsContainer.IsVisible = true;
+                AnnotationsContainer.InputTransparent = false;
+            }
+            if (ActiveAnnotationsContainer != null)
+            {
+                ActiveAnnotationsContainer.Opacity = 1;
+                ActiveAnnotationsContainer.IsVisible = true;
+                ActiveAnnotationsContainer.InputTransparent = false;
+            }
+            RenderAnnotations();
+
             HighlightOptionsOverlay.TranslationY = AnnotationBar.TranslationY;
             _isDrawMode = false;
             DrawOptionsOverlay.IsVisible = false;
@@ -3306,7 +3381,6 @@ public partial class ViewerPage : ContentPage
             _pendingSticker = null;
             StickerPickerOverlay.IsVisible = false;
 
-            ActiveAnnotationsContainer.InputTransparent = false;
             HighlightBtn.BackgroundColor = Color.FromArgb("#40007ACC");
         }
         else
@@ -3357,9 +3431,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnCloseHighlightOptionsClicked(object sender, EventArgs e)
     {
-        _isHighlightMode = false;
         HighlightOptionsOverlay.IsVisible = false;
-        HighlightBtn.BackgroundColor = Colors.Transparent;
     }
 
     private void OnHighlightPointerPressed(object? sender, PointerEventArgs e)
@@ -3437,7 +3509,16 @@ public partial class ViewerPage : ContentPage
 
     private async Task FinishLiveHighlightStrokeAsync()
     {
-        if (_activeLivePoints.Count < 2 || ActiveAnnotationsContainer.Width <= 0 || ActiveAnnotationsContainer.Height <= 0)
+        if (_activeLivePoints.Count == 1)
+        {
+            var p0 = _activeLivePoints[0];
+            _activeLivePoints.Add(new Point(p0.X + 1.0, p0.Y));
+        }
+
+        double containerW = ActiveAnnotationsContainer.Width > 0 ? ActiveAnnotationsContainer.Width : (AnnotationsContainer.Width > 0 ? AnnotationsContainer.Width : this.Width);
+        double containerH = ActiveAnnotationsContainer.Height > 0 ? ActiveAnnotationsContainer.Height : (AnnotationsContainer.Height > 0 ? AnnotationsContainer.Height : this.Height);
+
+        if (_activeLivePoints.Count < 2 || containerW <= 0 || containerH <= 0)
         {
             if (_activeLivePolyline != null)
             {
@@ -3448,14 +3529,11 @@ public partial class ViewerPage : ContentPage
             return;
         }
 
-        double containerW = ActiveAnnotationsContainer.Width;
-        double containerH = ActiveAnnotationsContainer.Height;
-
         var (targetPage, _, _) = ScreenToPage(_activeLivePoints[0].X, _activeLivePoints[0].Y, containerW, containerH);
 
         string content = string.Join(";", _activeLivePoints.Select(p => 
         {
-            var (_, rx, ry) = ScreenToPage(p.X, p.Y, containerW, containerH);
+            var (rx, ry) = ScreenToPageCoords(p.X, p.Y, targetPage, containerW, containerH);
             return $"{rx.ToString("F4", System.Globalization.CultureInfo.InvariantCulture)},{ry.ToString("F4", System.Globalization.CultureInfo.InvariantCulture)}";
         }));
 
@@ -3501,6 +3579,21 @@ public partial class ViewerPage : ContentPage
         DrawOptionsOverlay.IsVisible = _isDrawMode;
         if (_isDrawMode)
         {
+            _score.ShowAnnotations = true;
+            if (AnnotationsContainer != null)
+            {
+                AnnotationsContainer.Opacity = 1;
+                AnnotationsContainer.IsVisible = true;
+                AnnotationsContainer.InputTransparent = false;
+            }
+            if (ActiveAnnotationsContainer != null)
+            {
+                ActiveAnnotationsContainer.Opacity = 1;
+                ActiveAnnotationsContainer.IsVisible = true;
+                ActiveAnnotationsContainer.InputTransparent = false;
+            }
+            RenderAnnotations();
+
             DrawOptionsOverlay.TranslationY = AnnotationBar.TranslationY;
             _isHighlightMode = false;
             HighlightOptionsOverlay.IsVisible = false;
@@ -3514,7 +3607,6 @@ public partial class ViewerPage : ContentPage
             _pendingSticker = null;
             StickerPickerOverlay.IsVisible = false;
 
-            ActiveAnnotationsContainer.InputTransparent = false;
             DrawBtn.BackgroundColor = Color.FromArgb("#40007ACC");
         }
         else
@@ -3577,9 +3669,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnCloseDrawOptionsClicked(object sender, EventArgs e)
     {
-        _isDrawMode = false;
         DrawOptionsOverlay.IsVisible = false;
-        DrawBtn.BackgroundColor = Colors.Transparent;
     }
 
     private void StartLiveDrawStroke(Point pt)
@@ -3616,7 +3706,16 @@ public partial class ViewerPage : ContentPage
 
     private async Task FinishLiveDrawStrokeAsync()
     {
-        if (_activeLivePoints.Count < 2 || ActiveAnnotationsContainer.Width <= 0 || ActiveAnnotationsContainer.Height <= 0)
+        if (_activeLivePoints.Count == 1)
+        {
+            var p0 = _activeLivePoints[0];
+            _activeLivePoints.Add(new Point(p0.X + 1.0, p0.Y));
+        }
+
+        double containerW = ActiveAnnotationsContainer.Width > 0 ? ActiveAnnotationsContainer.Width : (AnnotationsContainer.Width > 0 ? AnnotationsContainer.Width : this.Width);
+        double containerH = ActiveAnnotationsContainer.Height > 0 ? ActiveAnnotationsContainer.Height : (AnnotationsContainer.Height > 0 ? AnnotationsContainer.Height : this.Height);
+
+        if (_activeLivePoints.Count < 2 || containerW <= 0 || containerH <= 0)
         {
             if (_activeLivePolyline != null)
             {
@@ -3627,14 +3726,11 @@ public partial class ViewerPage : ContentPage
             return;
         }
 
-        double containerW = ActiveAnnotationsContainer.Width;
-        double containerH = ActiveAnnotationsContainer.Height;
-
         var (targetPage, _, _) = ScreenToPage(_activeLivePoints[0].X, _activeLivePoints[0].Y, containerW, containerH);
 
         string content = string.Join(";", _activeLivePoints.Select(p => 
         {
-            var (_, rx, ry) = ScreenToPage(p.X, p.Y, containerW, containerH);
+            var (rx, ry) = ScreenToPageCoords(p.X, p.Y, targetPage, containerW, containerH);
             return $"{rx.ToString("F4", System.Globalization.CultureInfo.InvariantCulture)},{ry.ToString("F4", System.Globalization.CultureInfo.InvariantCulture)}";
         }));
 
@@ -3782,9 +3878,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnCloseTextOptionsClicked(object sender, EventArgs e)
     {
-        _isTextMode = false;
         TextOptionsOverlay.IsVisible = false;
-        TextAnnotationBtn.BackgroundColor = Colors.Transparent;
     }
 
     private bool _isPromptingText = false;
@@ -3924,7 +4018,6 @@ public partial class ViewerPage : ContentPage
             {
                 _pendingSticker = null;
                 _isAnnotationMode = false;
-                AnnotationsContainer.InputTransparent = true;
 
                 MainThread.BeginInvokeOnMainThread(() => {
                     if (StickersCollection != null)

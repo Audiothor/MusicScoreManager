@@ -69,6 +69,7 @@
                     <AbsoluteLayout.GestureRecognizers>
                         <DropGestureRecognizer Drop="OnStickerDrop" AllowDrop="True" />
                         <TapGestureRecognizer Tapped="OnPlacementTapped" />
+                        <PanGestureRecognizer PanUpdated="OnHighlightPanUpdated" />
                         <PointerGestureRecognizer PointerPressed="OnHighlightPointerPressed" 
                                                   PointerMoved="OnHighlightPointerMoved" 
                                                   PointerReleased="OnHighlightPointerReleased" />
