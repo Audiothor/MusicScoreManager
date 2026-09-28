@@ -49,6 +49,9 @@ namespace MusicScoreManager.Models
         public bool IsFileMissing { get; set; }
 
         [Ignore]
+        public string TitleColorHex => IsFileMissing ? "#FF3B30" : "#FFFFFF";
+
+        [Ignore]
         public bool IsExternal { get; set; }
 
         private int _pageCount = 0;

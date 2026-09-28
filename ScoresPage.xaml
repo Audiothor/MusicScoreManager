@@ -73,11 +73,13 @@
             <HorizontalStackLayout x:Name="ActiveTagsStack" Spacing="10" VerticalOptions="Center" />
         </ScrollView>
 
-        <CollectionView Grid.Row="2"
-                        x:Name="ScoresCollectionView"
-                        Margin="15,0"
-                        SelectionMode="Single"
-                        SelectionChanged="OnScoreSelected">
+        <Grid Grid.Row="2" Margin="15,0,5,0">
+            <CollectionView x:Name="ScoresCollectionView"
+                            ItemSizingStrategy="MeasureFirstItem"
+                            SelectionMode="Single"
+                            SelectionChanged="OnScoreSelected"
+                            Scrolled="OnScoresScrolled"
+                            Margin="0,0,28,0">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10" />
             </CollectionView.ItemsLayout>
@@ -110,20 +112,12 @@
                                        VerticalOptions="Center"
                                        IsVisible="{Binding IsExternal}" />
                                 <Label Text="{Binding Title}" 
+                                       TextColor="{Binding TitleColorHex}"
                                        FontSize="16" 
                                        FontAttributes="Bold" 
                                        VerticalOptions="Center" 
                                        LineBreakMode="TailTruncation"
-                                       MaxLines="2">
-                                    <Label.Triggers>
-                                        <DataTrigger TargetType="Label" Binding="{Binding IsFileMissing}" Value="True">
-                                            <Setter Property="TextColor" Value="Red" />
-                                        </DataTrigger>
-                                        <DataTrigger TargetType="Label" Binding="{Binding IsFileMissing}" Value="False">
-                                            <Setter Property="TextColor" Value="White" />
-                                        </DataTrigger>
-                                    </Label.Triggers>
-                                </Label>
+                                       MaxLines="2" />
                             </HorizontalStackLayout>
 
                             <HorizontalStackLayout Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" VerticalOptions="Center" Spacing="0">
@@ -199,6 +193,56 @@
                 </StackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
+
+        <!-- Alphabetical Index Fast Scroller (A-Z) -->
+        <Border x:Name="AlphabeticalIndexBorder"
+                HorizontalOptions="End"
+                VerticalOptions="Center"
+                WidthRequest="24"
+                BackgroundColor="#B31A1A1A"
+                Stroke="#333333"
+                StrokeThickness="1"
+                ZIndex="10"
+                Padding="0,6"
+                Margin="0,5,0,5">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+            <ScrollView VerticalScrollBarVisibility="Never" Orientation="Vertical">
+                <VerticalStackLayout x:Name="AlphabeticalIndexLayout"
+                                     Spacing="1"
+                                     VerticalOptions="Center"
+                                     HorizontalOptions="Center" />
+            </ScrollView>
+        </Border>
+
+        <!-- Floating Scroll-To-Top Button -->
+        <Border x:Name="ScrollToTopButton"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                Margin="0,0,38,20"
+                WidthRequest="46"
+                HeightRequest="46"
+                BackgroundColor="#007ACC"
+                Stroke="#40FFFFFF"
+                StrokeThickness="1"
+                Shadow="{Shadow Brush=Black, Offset='0,4', Radius=8, Opacity=0.45}"
+                IsVisible="False"
+                ZIndex="20">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="23" />
+            </Border.StrokeShape>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnScrollToTopClicked" />
+            </Border.GestureRecognizers>
+            <Label Text="▲"
+                   TextColor="White"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" />
+        </Border>
+    </Grid>
 
         <!-- Overlay Menu Contextuel Partition Moderne & Ergonomique -->
         <ContentView x:Name="ScoreMenuOverlay" 

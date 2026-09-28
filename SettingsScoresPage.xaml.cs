@@ -41,6 +41,8 @@ public partial class SettingsScoresPage : ContentPage
         RenderSubtitleOptions();
         UpdateSubtitlePreview();
 
+        ShowAlphabeticalIndexSwitch.IsToggled = Preferences.Default.Get("ShowAlphabeticalIndex", true);
+        ShowScrollTopSwitch.IsToggled = Preferences.Default.Get("ShowScrollTop", true);
         ShowPageNumberSwitch.IsToggled = Preferences.Default.Get("ShowPageNumber", true);
         TwoPagesLandscapeSwitch.IsToggled = Preferences.Default.Get("TwoPagesLandscape", true);
         KeepScreenOnSwitch.IsToggled = Preferences.Default.Get("KeepScreenOn", true);
@@ -381,6 +383,16 @@ public partial class SettingsScoresPage : ContentPage
     private void OnComposerEmptyFirstToggled(object sender, ToggledEventArgs e)
     {
         Preferences.Default.Set("ComposerSortEmptyFirst", e.Value);
+    }
+
+    private void OnShowAlphabeticalIndexToggled(object sender, ToggledEventArgs e)
+    {
+        Preferences.Default.Set("ShowAlphabeticalIndex", e.Value);
+    }
+
+    private void OnShowScrollTopToggled(object sender, ToggledEventArgs e)
+    {
+        Preferences.Default.Set("ShowScrollTop", e.Value);
     }
 
     private void OnShowPageNumberToggled(object sender, ToggledEventArgs e)
