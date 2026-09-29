@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>2.2.1</ApplicationDisplayVersion>
-		<ApplicationVersion>20201</ApplicationVersion>
-		<!-- Version actuelle : v2.2.1 "Correction de la réactivité et du saut de l'index alphabétique" -->
+		<ApplicationDisplayVersion>2.2.2</ApplicationDisplayVersion>
+		<ApplicationVersion>20202</ApplicationVersion>
+		<!-- Version actuelle : v2.2.2 "Navigation instantanée de l'index alphabétique et remontée haut de page ultra-fluide" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

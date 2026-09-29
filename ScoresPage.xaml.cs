@@ -23,6 +23,9 @@ public partial class ScoresPage : ContentPage
     private string _tagSortType = "NameAsc"; // "NameAsc", "NameDesc", "SelectedFirst", "Color"
     private Models.Score? _selectedScoreForMenu;
     private CancellationTokenSource? _searchCts;
+    private bool _cachedShowScrollTop = true;
+    private bool _cachedShowAlphabeticalIndex = true;
+    private readonly Dictionary<string, int> _alphabeticalIndexMap = new();
 
     private readonly ObservableCollection<WifiDeviceInfo> _discoveredDevices = new();
 
@@ -56,6 +59,8 @@ public partial class ScoresPage : ContentPage
         _importService.ConversionStateChanged += OnConversionStateChanged;
 
         WifiDevicesListView.ItemsSource = _discoveredDevices;
+        _cachedShowScrollTop = Preferences.Default.Get("ShowScrollTop", true);
+        _cachedShowAlphabeticalIndex = Preferences.Default.Get("ShowAlphabeticalIndex", true);
         BuildAlphabeticalIndex();
     }
 
@@ -112,6 +117,7 @@ public partial class ScoresPage : ContentPage
                     }
                     ScoresCollectionView.ItemsSource = scores;
                     RecalculateSelectedCount();
+                    UpdateAlphabeticalIndexMap(scores);
                     UpdateAlphabeticalIndexVisibility();
                 });
 
@@ -263,6 +269,7 @@ public partial class ScoresPage : ContentPage
             }
             ScoresCollectionView.ItemsSource = scores;
             RecalculateSelectedCount();
+            UpdateAlphabeticalIndexMap(scores);
             UpdateAlphabeticalIndexVisibility();
         });
 
@@ -1376,7 +1383,7 @@ public partial class ScoresPage : ContentPage
         {
             var cell = new Grid
             {
-                HeightRequest = 15,
+                HeightRequest = 14.5,
                 HorizontalOptions = LayoutOptions.Fill,
                 BackgroundColor = Colors.Transparent,
                 InputTransparent = false
@@ -1385,7 +1392,7 @@ public partial class ScoresPage : ContentPage
             var lbl = new Label
             {
                 Text = letter,
-                FontSize = 9.5,
+                FontSize = 9.0,
                 FontAttributes = FontAttributes.Bold,
                 TextColor = Color.FromArgb("#BBBBBB"),
                 HorizontalOptions = LayoutOptions.Center,
@@ -1402,7 +1409,7 @@ public partial class ScoresPage : ContentPage
             var capturedCell = cell;
             var capturedLbl = lbl;
 
-            tap.Tapped += async (s, e) =>
+            tap.Tapped += (s, e) =>
             {
                 try
                 {
@@ -1413,13 +1420,18 @@ public partial class ScoresPage : ContentPage
 
                 OnAlphabeticalIndexTapped(capturedLetter);
 
-                await Task.Delay(250);
-                try
+                _ = Task.Delay(180).ContinueWith(_ =>
                 {
-                    capturedCell.BackgroundColor = Colors.Transparent;
-                    capturedLbl.TextColor = Color.FromArgb("#BBBBBB");
-                }
-                catch { }
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        try
+                        {
+                            capturedCell.BackgroundColor = Colors.Transparent;
+                            capturedLbl.TextColor = Color.FromArgb("#BBBBBB");
+                        }
+                        catch { }
+                    });
+                });
             };
 
             cell.GestureRecognizers.Add(tap);
@@ -1429,20 +1441,106 @@ public partial class ScoresPage : ContentPage
 
     private void UpdateAlphabeticalIndexVisibility()
     {
-        bool showIndexPref = Preferences.Default.Get("ShowAlphabeticalIndex", true);
+        _cachedShowAlphabeticalIndex = Preferences.Default.Get("ShowAlphabeticalIndex", true);
+        _cachedShowScrollTop = Preferences.Default.Get("ShowScrollTop", true);
+
         bool isAlphaSort = _currentSort is "TitleAsc" or "TitleDesc" or "ComposerAsc" or "ComposerDesc";
-        bool hasScores = ScoresCollectionView.ItemsSource is IEnumerable<Models.Score> list && list.Any();
+        bool hasScores = ScoresCollectionView?.ItemsSource is IEnumerable<Models.Score> list && list.Any();
 
         if (AlphabeticalIndexBorder != null)
         {
-            AlphabeticalIndexBorder.IsVisible = showIndexPref && isAlphaSort && hasScores;
+            AlphabeticalIndexBorder.IsVisible = _cachedShowAlphabeticalIndex && isAlphaSort && hasScores;
+        }
+    }
+
+    private void UpdateAlphabeticalIndexMap(IList<Models.Score> scores)
+    {
+        _alphabeticalIndexMap.Clear();
+        if (scores == null || scores.Count == 0) return;
+
+        bool byComposer = _currentSort.StartsWith("Composer", StringComparison.OrdinalIgnoreCase);
+        bool isDescending = _currentSort.EndsWith("Desc", StringComparison.OrdinalIgnoreCase);
+
+        var scoreKeys = new string[scores.Count];
+        for (int i = 0; i < scores.Count; i++)
+        {
+            scoreKeys[i] = GetScoreSortKey(scores[i], byComposer);
         }
 
-        if (ScoresCollectionView != null)
+        // Cible pour '#'
+        if (!isDescending)
         {
-            ScoresCollectionView.Margin = (AlphabeticalIndexBorder != null && AlphabeticalIndexBorder.IsVisible)
-                ? new Thickness(0, 0, 26, 0)
-                : new Thickness(0);
+            int hashIndex = -1;
+            for (int i = 0; i < scoreKeys.Length; i++)
+            {
+                if (string.IsNullOrEmpty(scoreKeys[i]) || !char.IsLetter(scoreKeys[i][0]))
+                {
+                    hashIndex = i;
+                    break;
+                }
+            }
+            _alphabeticalIndexMap["#"] = hashIndex >= 0 ? hashIndex : 0;
+        }
+        else
+        {
+            int hashIndex = -1;
+            for (int i = scoreKeys.Length - 1; i >= 0; i--)
+            {
+                if (string.IsNullOrEmpty(scoreKeys[i]) || !char.IsLetter(scoreKeys[i][0]))
+                {
+                    hashIndex = i;
+                    break;
+                }
+            }
+            _alphabeticalIndexMap["#"] = hashIndex >= 0 ? hashIndex : scoreKeys.Length - 1;
+        }
+
+        // Cibles pour chaque lettre A à Z
+        for (char c = 'A'; c <= 'Z'; c++)
+        {
+            string letterStr = c.ToString();
+            int targetIndex = -1;
+
+            // 1. Recherche exacte
+            for (int i = 0; i < scoreKeys.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(scoreKeys[i]) && char.ToUpperInvariant(scoreKeys[i][0]) == c)
+                {
+                    targetIndex = i;
+                    break;
+                }
+            }
+
+            // 2. Repli vers la lettre la plus proche
+            if (targetIndex == -1)
+            {
+                if (!isDescending)
+                {
+                    for (int i = 0; i < scoreKeys.Length; i++)
+                    {
+                        if (!string.IsNullOrEmpty(scoreKeys[i]) && char.ToUpperInvariant(scoreKeys[i][0]) > c)
+                        {
+                            targetIndex = i;
+                            break;
+                        }
+                    }
+                    if (targetIndex == -1) targetIndex = scoreKeys.Length - 1;
+                }
+                else
+                {
+                    for (int i = 0; i < scoreKeys.Length; i++)
+                    {
+                        if (!string.IsNullOrEmpty(scoreKeys[i]) && char.ToUpperInvariant(scoreKeys[i][0]) < c)
+                        {
+                            targetIndex = i;
+                            break;
+                        }
+                    }
+                    if (targetIndex == -1) targetIndex = scoreKeys.Length - 1;
+                }
+            }
+
+            _alphabeticalIndexMap[letterStr] = targetIndex;
         }
     }
 
@@ -1451,102 +1549,26 @@ public partial class ScoresPage : ContentPage
         if (ScoresCollectionView?.ItemsSource is not IList<Models.Score> scores || scores.Count == 0)
             return;
 
-        bool byComposer = _currentSort.StartsWith("Composer", StringComparison.OrdinalIgnoreCase);
-        bool isDescending = _currentSort.EndsWith("Desc", StringComparison.OrdinalIgnoreCase);
-        int targetIndex = -1;
+        if (!_alphabeticalIndexMap.TryGetValue(letter, out int targetIndex) || targetIndex < 0 || targetIndex >= scores.Count)
+            return;
 
-        if (letter == "#")
+        var targetItem = scores[targetIndex];
+
+        MainThread.BeginInvokeOnMainThread(() =>
         {
-            if (!isDescending)
+            try
             {
-                for (int i = 0; i < scores.Count; i++)
-                {
-                    string key = GetScoreSortKey(scores[i], byComposer);
-                    if (string.IsNullOrEmpty(key) || !char.IsLetter(key[0]))
-                    {
-                        targetIndex = i;
-                        break;
-                    }
-                }
-                if (targetIndex == -1) targetIndex = 0;
+                ScoresCollectionView.ScrollTo(targetItem, position: ScrollToPosition.Start, animate: false);
             }
-            else
-            {
-                for (int i = scores.Count - 1; i >= 0; i--)
-                {
-                    string key = GetScoreSortKey(scores[i], byComposer);
-                    if (string.IsNullOrEmpty(key) || !char.IsLetter(key[0]))
-                    {
-                        targetIndex = i;
-                        break;
-                    }
-                }
-                if (targetIndex == -1) targetIndex = scores.Count - 1;
-            }
-        }
-        else
-        {
-            char targetChar = char.ToUpperInvariant(letter[0]);
-
-            // 1. Recherche exacte de la première occurrence de la lettre
-            for (int i = 0; i < scores.Count; i++)
-            {
-                string key = GetScoreSortKey(scores[i], byComposer);
-                if (!string.IsNullOrEmpty(key) && char.ToUpperInvariant(key[0]) == targetChar)
-                {
-                    targetIndex = i;
-                    break;
-                }
-            }
-
-            // 2. Si absente, repli vers la lettre la plus proche selon le sens du tri
-            if (targetIndex == -1)
-            {
-                if (!isDescending)
-                {
-                    for (int i = 0; i < scores.Count; i++)
-                    {
-                        string key = GetScoreSortKey(scores[i], byComposer);
-                        if (!string.IsNullOrEmpty(key) && char.ToUpperInvariant(key[0]) > targetChar)
-                        {
-                            targetIndex = i;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < scores.Count; i++)
-                    {
-                        string key = GetScoreSortKey(scores[i], byComposer);
-                        if (!string.IsNullOrEmpty(key) && char.ToUpperInvariant(key[0]) < targetChar)
-                        {
-                            targetIndex = i;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (targetIndex >= 0 && targetIndex < scores.Count)
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
+            catch
             {
                 try
                 {
-                    ScoresCollectionView.ScrollTo(targetIndex, position: ScrollToPosition.Start, animate: true);
+                    ScoresCollectionView.ScrollTo(targetIndex, position: ScrollToPosition.Start, animate: false);
                 }
-                catch
-                {
-                    try
-                    {
-                        ScoresCollectionView.ScrollTo(scores[targetIndex], position: ScrollToPosition.Start, animate: true);
-                    }
-                    catch { }
-                }
-            });
-        }
+                catch { }
+            }
+        });
     }
 
     private static string GetScoreSortKey(Models.Score score, bool byComposer)
@@ -1574,16 +1596,14 @@ public partial class ScoresPage : ContentPage
 
     private void OnScoresScrolled(object? sender, ItemsViewScrolledEventArgs e)
     {
-        if (ScrollToTopButton == null) return;
-
-        bool showScrollTopPref = Preferences.Default.Get("ShowScrollTop", true);
-        if (!showScrollTopPref)
+        if (ScrollToTopButton == null || !_cachedShowScrollTop)
         {
-            if (ScrollToTopButton.IsVisible) ScrollToTopButton.IsVisible = false;
+            if (ScrollToTopButton != null && ScrollToTopButton.IsVisible)
+                ScrollToTopButton.IsVisible = false;
             return;
         }
 
-        bool shouldShow = e.FirstVisibleItemIndex >= 6 || e.VerticalOffset > 300;
+        bool shouldShow = e.FirstVisibleItemIndex >= 5 || e.VerticalOffset > 250;
         if (ScrollToTopButton.IsVisible != shouldShow)
         {
             ScrollToTopButton.IsVisible = shouldShow;
@@ -1594,11 +1614,29 @@ public partial class ScoresPage : ContentPage
     {
         if (ScoresCollectionView?.ItemsSource is IList<Models.Score> scores && scores.Count > 0)
         {
-            ScoresCollectionView.ScrollTo(0, position: ScrollToPosition.Start, animate: true);
+            var topItem = scores[0];
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                try
+                {
+                    ScoresCollectionView.ScrollTo(topItem, position: ScrollToPosition.Start, animate: false);
+                }
+                catch
+                {
+                    try
+                    {
+                        ScoresCollectionView.ScrollTo(0, position: ScrollToPosition.Start, animate: false);
+                    }
+                    catch { }
+                }
+            });
         }
         else if (ScoresCollectionView != null)
         {
-            ScoresCollectionView.ScrollTo(0, position: ScrollToPosition.Start, animate: true);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                ScoresCollectionView.ScrollTo(0, position: ScrollToPosition.Start, animate: false);
+            });
         }
     }
 }
