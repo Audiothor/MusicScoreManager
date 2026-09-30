@@ -605,5 +605,15 @@
   "Settings_Setlists_Default_Sort": "Domyślne sortowanie setlist",
   "Settings_Setlists_Default_Sort_Desc": "Kolejność sortowania automatycznie stosowana do listy setlist",
   "Settings_Setlists_Done_At_Bottom": "Umieść zakończone setlisty na dole",
-  "Settings_Setlists_Done_At_Bottom_Desc": "Zawsze umieszcza setlisty ze statusem 'Zakończona' na końcu listy"
+  "Settings_Setlists_Done_At_Bottom_Desc": "Zawsze umieszcza setlisty ze statusem 'Zakończona' na końcu listy",
+  "Score_Edit_Page_Number_Show": "Pokaż numery stron",
+  "Viewer_GoToPage_Title": "Przejdź do strony",
+  "Viewer_ShowPageNumber_Label": "Pokaż numery stron",
+  "Settings_App_Behavior": "Zachowanie aplikacji",
+  "Settings_Confirm_Quit_Title": "Zamknij aplikację",
+  "Settings_Confirm_Quit_Desc": "Zapytaj o potwierdzenie przed zamknięciem aplikacji",
+  "Settings_Confirm_Quit_Prompt": "Czy na pewno chcesz zamknąć aplikację?",
+  "Help_Online_Doc_Title": "Oficjalna pełna dokumentacja",
+  "Help_Online_Doc_Desc": "Zapoznaj się z kompletnym podręcznikiem, samouczkami i nowościami online",
+  "Help_Online_Doc_Btn": "Otwórz"
 }

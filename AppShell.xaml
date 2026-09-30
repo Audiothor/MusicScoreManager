@@ -5,7 +5,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:MusicScoreManager"
     Title="MusicScoreManager"
-    Shell.NavBarIsVisible="False">
+    Shell.NavBarIsVisible="False"
+    Shell.BackgroundColor="#121212"
+    Shell.TabBarBackgroundColor="#1E1E1E"
+    Shell.TabBarForegroundColor="#007ACC"
+    Shell.TabBarUnselectedColor="#888888"
+    Shell.TabBarTitleColor="#007ACC">
 
     <TabBar x:Name="MainTabBar">
         <Tab x:Name="TabScores" Title="Partitions" Icon="🎵">

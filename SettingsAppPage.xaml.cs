@@ -42,6 +42,13 @@ public partial class SettingsAppPage : ContentPage
         _pendingLang = currentLang;
         UpdateSelectedLanguageLabel(currentLang);
         UpdateCheckmarks(currentLang);
+
+        ConfirmBeforeQuitSwitch.IsToggled = Preferences.Default.Get("ConfirmBeforeQuit", false);
+    }
+
+    private void OnConfirmBeforeQuitToggled(object sender, ToggledEventArgs e)
+    {
+        Preferences.Default.Set("ConfirmBeforeQuit", e.Value);
     }
 
     private void UpdateSelectedLanguageLabel(string lang)

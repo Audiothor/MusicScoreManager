@@ -70,6 +70,11 @@ namespace MusicScoreManager.Services
                         await db.ExecuteAsync("ALTER TABLE Score ADD COLUMN ShowAnnotations INTEGER NOT NULL DEFAULT 1;");
                     }
                     catch { }
+                    try
+                    {
+                        await db.ExecuteAsync("ALTER TABLE Score ADD COLUMN ShowPageNumber INTEGER NOT NULL DEFAULT 1;");
+                    }
+                    catch { }
                     await db.CreateTableAsync<Setlist>();
                     await db.CreateTableAsync<SetlistScore>();
                     await db.CreateTableAsync<Tag>();
