@@ -1829,10 +1829,32 @@ public partial class ViewerPage : ContentPage
         }
 
         UpdateRotateButtonText();
+        UpdateCentralMenuSize(this.Height);
         CentralMenuOverlay.IsVisible = true;
         ImageContainer.InputTransparent = true; // Empêche l'image de bloquer les clics sur le menu !
         ZoomLayout.InputTransparent = true; // Empêche le layout de zoom de bloquer les clics sur le menu !
         BottomTouchBar.IsVisible = false; // Désactive la zone tactile du bas quand le menu est ouvert
+    }
+
+    private void UpdateCentralMenuSize(double screenHeight)
+    {
+        if (screenHeight <= 0)
+        {
+            screenHeight = this.Height > 0 ? this.Height : DeviceDisplay.MainDisplayInfo.Height / (DeviceDisplay.MainDisplayInfo.Density > 0 ? DeviceDisplay.MainDisplayInfo.Density : 1);
+        }
+
+        if (screenHeight > 0 && screenHeight < 560)
+        {
+            CentralMenuOverlay.MaximumHeightRequest = Math.Max(260, screenHeight - 60);
+            if (CentralMenuScrollView != null)
+                CentralMenuScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Default;
+        }
+        else
+        {
+            CentralMenuOverlay.MaximumHeightRequest = double.PositiveInfinity;
+            if (CentralMenuScrollView != null)
+                CentralMenuScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Never;
+        }
     }
 
     private void OnRotateAllPagesToggled(object sender, ToggledEventArgs e)
@@ -2383,6 +2405,10 @@ public partial class ViewerPage : ContentPage
                 {
                     UpdateCanvasBounds(width, height, _currentRenderedWidth, _currentRenderedHeight);
                 }
+            }
+            if (CentralMenuOverlay != null && CentralMenuOverlay.IsVisible)
+            {
+                UpdateCentralMenuSize(height);
             }
             RenderAnnotations();
         }
@@ -4100,35 +4126,6 @@ public partial class ViewerPage : ContentPage
     private DateTime _lastStickerTapTime = DateTime.MinValue;
     private StickerItem? _lastTappedSticker = null;
 
-    private async void OnStickerItemTapped(object? sender, TappedEventArgs e)
-    {
-        if (sender is View view && view.BindingContext is StickerItem sticker)
-        {
-            var now = DateTime.UtcNow;
-            if (_lastTappedSticker == sticker && (now - _lastStickerTapTime).TotalMilliseconds < 500)
-            {
-                // Double tap rapide détecté sur le mot / sticker !
-                _lastStickerTapTime = DateTime.MinValue;
-                _lastTappedSticker = null;
-
-                try
-                {
-                    await view.ScaleTo(1.2, 70);
-                    await view.ScaleTo(1.0, 70);
-                }
-                catch { }
-
-                await PlaceStickerDirectlyAsync(sticker);
-                return;
-            }
-
-            _lastStickerTapTime = now;
-            _lastTappedSticker = sticker;
-
-            SelectStickerItem(sticker, view);
-        }
-    }
-
     private async Task PlaceStickerDirectlyAsync(StickerItem sticker)
     {
         UnlockAnnotations();
@@ -4204,28 +4201,39 @@ public partial class ViewerPage : ContentPage
         catch { }
     }
 
-    private async void OnStickerDoubleTapped(object? sender, TappedEventArgs e)
-    {
-        if (sender is View view && view.BindingContext is StickerItem sticker)
-        {
-            await PlaceStickerDirectlyAsync(sticker);
-        }
-    }
-
-    private string _currentStickerColor = "#FFFFFF";
-    private string _currentStickerBgColor = "Transparent";
+    private string _currentStickerColor = "#FF0000";
+    private string _currentStickerBgColor = "#000000";
 
     private Color ParseColor(string colorStr)
     {
-        if (string.IsNullOrEmpty(colorStr))
+        if (string.IsNullOrWhiteSpace(colorStr))
             return Colors.Transparent;
 
-        if (colorStr.Equals("Transparent", StringComparison.OrdinalIgnoreCase))
+        string trimmed = colorStr.Trim();
+        if (trimmed.Equals("Transparent", StringComparison.OrdinalIgnoreCase))
             return Colors.Transparent;
+        if (trimmed.Equals("Black", StringComparison.OrdinalIgnoreCase))
+            return Colors.Black;
+        if (trimmed.Equals("White", StringComparison.OrdinalIgnoreCase))
+            return Colors.White;
+        if (trimmed.Equals("Red", StringComparison.OrdinalIgnoreCase))
+            return Color.FromArgb("#FF0000");
+        if (trimmed.Equals("Yellow", StringComparison.OrdinalIgnoreCase))
+            return Color.FromArgb("#FFD600");
+        if (trimmed.Equals("Green", StringComparison.OrdinalIgnoreCase))
+            return Color.FromArgb("#2ECC71");
+        if (trimmed.Equals("Blue", StringComparison.OrdinalIgnoreCase))
+            return Color.FromArgb("#007ACC");
+        if (trimmed.Equals("Orange", StringComparison.OrdinalIgnoreCase))
+            return Color.FromArgb("#FF9800");
+        if (trimmed.Equals("DarkGray", StringComparison.OrdinalIgnoreCase))
+            return Color.FromArgb("#333333");
+        if (trimmed.Equals("Ivory", StringComparison.OrdinalIgnoreCase))
+            return Color.FromArgb("#FFFFE0");
 
         try
         {
-            return Color.FromArgb(colorStr);
+            return Color.FromArgb(trimmed);
         }
         catch
         {
@@ -4258,11 +4266,14 @@ public partial class ViewerPage : ContentPage
         {
             _currentStickerColor = colorStr switch
             {
+                "Red" => "#FF0000",
                 "White" => "#FFFFFF",
                 "Black" => "#000000",
-                "Red" => "#FF0000",
                 "Blue" => "#007ACC",
-                _ => "#FFFFFF"
+                "Yellow" => "#FFD600",
+                "Green" => "#2ECC71",
+                "Orange" => "#FF9800",
+                _ => "#FF0000"
             };
             
             // APERÇU TEMPS RÉEL : Mettre à jour TOUS les stickers visibles dans le tiroir
@@ -4290,13 +4301,15 @@ public partial class ViewerPage : ContentPage
         {
             _currentStickerBgColor = colorStr switch
             {
+                "Black" => "#000000",
                 "Transparent" => "Transparent",
                 "DarkGray" => "#333333",
                 "Ivory" => "#FFFFE0",
                 "Red" => "#FF0000",
-                "Yellow" => "#FFFF00",
+                "Yellow" => "#FFD600",
                 "Green" => "#2ECC71",
-                _ => "Transparent"
+                "Blue" => "#007ACC",
+                _ => "#000000"
             };
             
             // APERÇU TEMPS RÉEL : Mettre à jour TOUS les stickers visibles dans le tiroir
@@ -4411,10 +4424,12 @@ public partial class ViewerPage : ContentPage
 
             await _databaseService.SaveAnnotationAsync(annotation);
             _annotations.Add(annotation);
+            _selectedAnnotation = annotation;
             _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Add, Annotation = annotation });
             _redoStack.Clear();
             UpdateUndoRedoButtons();
             RenderAnnotations();
+            HighlightPlacedAnnotation(annotation);
         }
     }
 
@@ -4467,11 +4482,36 @@ public partial class ViewerPage : ContentPage
         RenderAnnotations();
     }
 
-    private void OnStickerSelected(object? sender, SelectionChangedEventArgs e)
+    private async void OnStickerSelected(object? sender, SelectionChangedEventArgs e)
     {
         if (e.CurrentSelection.FirstOrDefault() is StickerItem sticker)
         {
+            var now = DateTime.UtcNow;
+            if (_lastTappedSticker == sticker && (now - _lastStickerTapTime).TotalMilliseconds < 500)
+            {
+                // Double tap rapide détecté sur le mot / sticker !
+                _lastStickerTapTime = DateTime.MinValue;
+                _lastTappedSticker = null;
+
+                if (sender is CollectionView cvDouble)
+                {
+                    cvDouble.SelectedItem = null;
+                }
+
+                await PlaceStickerDirectlyAsync(sticker);
+                return;
+            }
+
+            _lastStickerTapTime = now;
+            _lastTappedSticker = sticker;
+
             SelectStickerItem(sticker, null);
+
+            if (sender is CollectionView cv)
+            {
+                // Permet de re-sélectionner le même élément pour détecter un éventuel 2e clic (double-tap)
+                cv.SelectedItem = null;
+            }
         }
     }
 

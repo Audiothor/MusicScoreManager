@@ -7,7 +7,7 @@ public class StickerItem : INotifyPropertyChanged
 {
     public string Text { get; set; } = string.Empty;
     
-    private string _color = "#FFFFFF";
+    private string _color = "#FF0000";
     public string Color
     {
         get => _color;
@@ -21,7 +21,7 @@ public class StickerItem : INotifyPropertyChanged
         set { _scale = value; OnPropertyChanged(); }
     }
 
-    private string _bgColor = "Transparent";
+    private string _bgColor = "#000000";
     public string BackgroundColor
     {
         get => _bgColor;
