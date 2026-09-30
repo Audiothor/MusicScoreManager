@@ -652,5 +652,5 @@ Consultez le fichier complet [LICENSE](LICENSE) pour les termes légaux exhausti
 ---
 
 <p align="center">
-  <b>Music Score Manager v2.4.0</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
+  <b>Music Score Manager v2.4.1</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
 </p>
