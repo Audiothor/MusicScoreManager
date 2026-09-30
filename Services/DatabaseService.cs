@@ -581,7 +581,10 @@ namespace MusicScoreManager.Services
         public async Task<List<FavoriteSticker>> GetFavoriteStickersAsync()
         {
             await Init();
-            return await _database!.Table<FavoriteSticker>().ToListAsync();
+            return await _database!.Table<FavoriteSticker>()
+                                   .OrderBy(f => f.SortOrder)
+                                   .ThenBy(f => f.Id)
+                                   .ToListAsync();
         }
 
         public async Task<int> SaveFavoriteStickerAsync(FavoriteSticker sticker)
@@ -591,6 +594,12 @@ namespace MusicScoreManager.Services
                 return await _database!.UpdateAsync(sticker);
             else
                 return await _database!.InsertAsync(sticker);
+        }
+
+        public async Task SaveFavoriteStickersOrderAsync(IEnumerable<FavoriteSticker> stickers)
+        {
+            await Init();
+            await _database!.UpdateAllAsync(stickers);
         }
 
         public async Task<int> DeleteFavoriteStickerAsync(FavoriteSticker sticker)

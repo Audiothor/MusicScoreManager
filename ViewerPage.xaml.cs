@@ -290,7 +290,7 @@ public partial class ViewerPage : ContentPage
         _ = Task.Run(async () => {
             InitializeMetronome();
             await LoadAnnotationsAsync();
-            await InitializeAnnotationUI();
+            await InitializeAnnotationUI(force: true);
 
             try
             {
@@ -373,9 +373,9 @@ public partial class ViewerPage : ContentPage
     }
 
     private bool _isAnnotationUIInitialized = false;
-    private async Task InitializeAnnotationUI()
+    private async Task InitializeAnnotationUI(bool force = false)
     {
-        if (_isAnnotationUIInitialized) return;
+        if (_isAnnotationUIInitialized && !force) return;
         _isAnnotationUIInitialized = true;
 
         try
