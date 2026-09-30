@@ -4004,6 +4004,10 @@ public partial class ViewerPage : ContentPage
 
         if (StickersCollection != null)
         {
+            if (StickersCollection.ItemsSource is IEnumerable<StickerItem> items)
+            {
+                foreach (var item in items) item.IsSelected = false;
+            }
             StickersCollection.SelectedItem = null;
         }
     }
@@ -4037,6 +4041,10 @@ public partial class ViewerPage : ContentPage
 
         if (StickersCollection != null)
         {
+            if (StickersCollection.ItemsSource is IEnumerable<StickerItem> items)
+            {
+                foreach (var item in items) item.IsSelected = false;
+            }
             StickersCollection.SelectedItem = null;
         }
 
@@ -4063,6 +4071,7 @@ public partial class ViewerPage : ContentPage
                             s.Color = _currentStickerColor;
                             s.BackgroundColor = _currentStickerBgColor;
                             s.Scale = StickerSizeSlider.Value;
+                            s.IsSelected = false;
                         }
                         
                         StickersCollection.ItemsSource = category.Stickers;
@@ -4088,60 +4097,118 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private DateTime _lastStickerTapTime = DateTime.MinValue;
+    private StickerItem? _lastTappedSticker = null;
+
+    private async void OnStickerItemTapped(object? sender, TappedEventArgs e)
+    {
+        if (sender is View view && view.BindingContext is StickerItem sticker)
+        {
+            var now = DateTime.UtcNow;
+            if (_lastTappedSticker == sticker && (now - _lastStickerTapTime).TotalMilliseconds < 500)
+            {
+                // Double tap rapide détecté sur le mot / sticker !
+                _lastStickerTapTime = DateTime.MinValue;
+                _lastTappedSticker = null;
+
+                try
+                {
+                    await view.ScaleTo(1.2, 70);
+                    await view.ScaleTo(1.0, 70);
+                }
+                catch { }
+
+                await PlaceStickerDirectlyAsync(sticker);
+                return;
+            }
+
+            _lastStickerTapTime = now;
+            _lastTappedSticker = sticker;
+
+            SelectStickerItem(sticker, view);
+        }
+    }
+
+    private async Task PlaceStickerDirectlyAsync(StickerItem sticker)
+    {
+        UnlockAnnotations();
+
+        // S'assurer que les annotations sont actives et visibles
+        _score.ShowAnnotations = true;
+        if (AnnotationsContainer != null)
+        {
+            AnnotationsContainer.Opacity = 1;
+            AnnotationsContainer.IsVisible = true;
+            AnnotationsContainer.InputTransparent = false;
+        }
+        if (ActiveAnnotationsContainer != null)
+        {
+            ActiveAnnotationsContainer.Opacity = 1;
+            ActiveAnnotationsContainer.IsVisible = true;
+            ActiveAnnotationsContainer.InputTransparent = false;
+        }
+
+        int targetPage = _currentPage;
+        if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
+        {
+            targetPage = _leftPageNumber;
+        }
+
+        string color = _currentStickerColor;
+        string bgColor = _currentStickerBgColor;
+        double scale = StickerSizeSlider?.Value ?? 1.0;
+
+        // Positionnement en haut au centre de la partition (X: 0.5, Y: 0.08)
+        var annotation = new Annotation
+        {
+            ScoreId = _score.Id,
+            Type = AnnotationType.Sticker,
+            Content = sticker.Text,
+            X = 0.5,
+            Y = 0.08,
+            Scale = scale,
+            Color = color,
+            BackgroundColor = bgColor,
+            PageNumber = targetPage
+        };
+
+        await _databaseService.SaveAnnotationAsync(annotation);
+        _annotations.Add(annotation);
+        _selectedAnnotation = annotation;
+
+        _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Add, Annotation = annotation });
+        _redoStack.Clear();
+        UpdateUndoRedoButtons();
+
+        RenderAnnotations();
+        HighlightPlacedAnnotation(annotation);
+    }
+
+    private async void HighlightPlacedAnnotation(Annotation annotation)
+    {
+        try
+        {
+            if (ActiveAnnotationsContainer == null) return;
+            await Task.Delay(60);
+            var border = ActiveAnnotationsContainer.Children.OfType<Border>().FirstOrDefault(b => b.BindingContext == annotation);
+            if (border != null)
+            {
+                border.Stroke = Colors.Gold;
+                border.StrokeThickness = 3;
+                await border.ScaleTo(1.4, 120);
+                await border.ScaleTo(1.0, 120);
+                border.Stroke = Colors.Red;
+                border.StrokeThickness = 2;
+            }
+        }
+        catch { }
+    }
+
     private async void OnStickerDoubleTapped(object? sender, TappedEventArgs e)
     {
         if (sender is View view && view.BindingContext is StickerItem sticker)
         {
-            UnlockAnnotations();
-
-            // S'assurer que les annotations sont actives et visibles
-            _score.ShowAnnotations = true;
-            if (AnnotationsContainer != null)
-            {
-                AnnotationsContainer.Opacity = 1;
-                AnnotationsContainer.IsVisible = true;
-                AnnotationsContainer.InputTransparent = false;
-            }
-            if (ActiveAnnotationsContainer != null)
-            {
-                ActiveAnnotationsContainer.Opacity = 1;
-                ActiveAnnotationsContainer.IsVisible = true;
-                ActiveAnnotationsContainer.InputTransparent = false;
-            }
-
-            int targetPage = _currentPage;
-            if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
-            {
-                targetPage = _leftPageNumber;
-            }
-
-            string color = _currentStickerColor;
-            string bgColor = _currentStickerBgColor;
-            double scale = StickerSizeSlider?.Value ?? 1.0;
-
-            // Positionnement en haut au centre de la partition (X: 0.5, Y: 0.08)
-            var annotation = new Annotation
-            {
-                ScoreId = _score.Id,
-                Type = AnnotationType.Sticker,
-                Content = sticker.Text,
-                X = 0.5,
-                Y = 0.08,
-                Scale = scale,
-                Color = color,
-                BackgroundColor = bgColor,
-                PageNumber = targetPage
-            };
-
-            await _databaseService.SaveAnnotationAsync(annotation);
-            _annotations.Add(annotation);
-            _selectedAnnotation = annotation;
-
-            _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Add, Annotation = annotation });
-            _redoStack.Clear();
-            UpdateUndoRedoButtons();
-
-            RenderAnnotations();
+            await PlaceStickerDirectlyAsync(sticker);
         }
     }
 
@@ -4351,28 +4418,60 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private void SelectStickerItem(StickerItem sticker, View? view)
+    {
+        UnlockAnnotations();
+
+        _pendingSticker = sticker.Text;
+        _isAnnotationMode = true;
+        
+        if (ActiveAnnotationsContainer != null)
+        {
+            ActiveAnnotationsContainer.InputTransparent = false;
+        }
+        
+        // Appliquer les réglages actuels pour l'aperçu immédiat
+        sticker.Color = _currentStickerColor;
+        sticker.BackgroundColor = _currentStickerBgColor;
+        sticker.Scale = StickerSizeSlider?.Value ?? 1.0;
+
+        if (StickersCollection?.ItemsSource is IEnumerable<StickerItem> currentItems)
+        {
+            foreach (var item in currentItems)
+            {
+                item.IsSelected = (item == sticker);
+            }
+        }
+
+        if (StickersCollection != null && StickersCollection.SelectedItem != sticker)
+        {
+            StickersCollection.SelectedItem = sticker;
+        }
+
+        // Effet visuel immédiat sur le sticker / mot cliqué dans le tiroir
+        if (view != null)
+        {
+            try
+            {
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    await view.ScaleTo(1.15, 60);
+                    await view.ScaleTo(1.0, 60);
+                });
+            }
+            catch { }
+        }
+
+        // Nouvelle sélection de sticker ➔ on désélectionne l'annotation placée
+        _selectedAnnotation = null;
+        RenderAnnotations();
+    }
+
     private void OnStickerSelected(object? sender, SelectionChangedEventArgs e)
     {
         if (e.CurrentSelection.FirstOrDefault() is StickerItem sticker)
         {
-            UnlockAnnotations();
-
-            _pendingSticker = sticker.Text;
-            _isAnnotationMode = true;
-            
-            if (ActiveAnnotationsContainer != null)
-            {
-                ActiveAnnotationsContainer.InputTransparent = false;
-            }
-            
-            // Appliquer les réglages actuels pour l'aperçu immédiat
-            sticker.Color = _currentStickerColor;
-            sticker.BackgroundColor = _currentStickerBgColor;
-            sticker.Scale = StickerSizeSlider.Value;
-
-            // Nouvelle sélection de sticker ➔ on désélectionne l'annotation placée
-            _selectedAnnotation = null;
-            RenderAnnotations();
+            SelectStickerItem(sticker, null);
         }
     }
 
@@ -4417,12 +4516,21 @@ public partial class ViewerPage : ContentPage
         _isAnnotationMode = false;
         _pendingSticker = null;
 
+        if (StickersCollection?.ItemsSource is IEnumerable<StickerItem> placedItems)
+        {
+            foreach (var item in placedItems)
+            {
+                item.IsSelected = false;
+            }
+        }
+
         if (StickersCollection != null)
         {
             StickersCollection.SelectedItem = null;
         }
 
         RenderAnnotations();
+        HighlightPlacedAnnotation(annotation);
     }
 
     private async void OnPlacementTapped(object? sender, TappedEventArgs e)

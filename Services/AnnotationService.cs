@@ -28,6 +28,22 @@ public class StickerItem : INotifyPropertyChanged
         set { _bgColor = value; OnPropertyChanged(); }
     }
 
+    private bool _isSelected;
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set 
+        { 
+            _isSelected = value; 
+            OnPropertyChanged(); 
+            OnPropertyChanged(nameof(BorderColor));
+            OnPropertyChanged(nameof(BorderThickness));
+        }
+    }
+
+    public string BorderColor => IsSelected ? "#007ACC" : "Transparent";
+    public double BorderThickness => IsSelected ? 2.5 : 1.0;
+
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
