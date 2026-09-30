@@ -351,6 +351,10 @@
                                  <Label Text="{Binding [Score_Edit_Annotations_Show], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" VerticalOptions="Center" />
                                  <Switch Grid.Column="1" x:Name="AnnotationsSwitch" OnColor="#007ACC" ThumbColor="White" />
                              </Grid>
+                             <Grid ColumnDefinitions="*, Auto">
+                                 <Label Text="{Binding [Score_Edit_Page_Number_Show], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" VerticalOptions="Center" />
+                                 <Switch Grid.Column="1" x:Name="ShowPageNumberSwitch" OnColor="#007ACC" ThumbColor="White" />
+                             </Grid>
                          </VerticalStackLayout>
                      </VerticalStackLayout>
                  </Border>

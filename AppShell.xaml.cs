@@ -31,11 +31,29 @@ public partial class AppShell : Shell
         if (args.Target?.Location?.OriginalString?.Contains("QuitPage") == true)
         {
             args.Cancel();
-#if ANDROID
-            Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
-#else
-            Application.Current?.Quit();
-#endif
+            _ = HandleQuitAsync();
         }
+    }
+
+    private async Task HandleQuitAsync()
+    {
+        bool confirm = Preferences.Default.Get("ConfirmBeforeQuit", false);
+        if (confirm)
+        {
+            var loc = Services.LocalizationService.Instance;
+            bool proceed = await DisplayAlertAsync(
+                loc.GetString("Settings_Confirm_Quit_Title", "Quitter l'application"),
+                loc.GetString("Settings_Confirm_Quit_Prompt", "Voulez-vous vraiment quitter l'application ?"),
+                loc.GetString("Common_Yes", "Oui"),
+                loc.GetString("Common_No", "Non"));
+
+            if (!proceed) return;
+        }
+
+#if ANDROID
+        Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
+#else
+        Application.Current?.Quit();
+#endif
     }
 }

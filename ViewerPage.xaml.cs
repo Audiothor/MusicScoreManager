@@ -398,6 +398,16 @@ public partial class ViewerPage : ContentPage
                         }
                     }
                     StickerCategoriesCollection.ItemsSource = categories;
+
+                    var defaultCat = categories.FirstOrDefault(c => c.Stickers.Count > 0) ?? categories.FirstOrDefault();
+                    if (defaultCat != null)
+                    {
+                        StickerCategoriesCollection.SelectedItem = defaultCat;
+                        if (StickersCollection != null)
+                        {
+                            StickersCollection.ItemsSource = defaultCat.Stickers;
+                        }
+                    }
                 }
             });
         }
@@ -1031,7 +1041,7 @@ public partial class ViewerPage : ContentPage
 
     private void UpdatePageIndicator()
     {
-        bool showPageNumber = Preferences.Default.Get("ShowPageNumber", true);
+        bool showPageNumber = _score != null && _score.ShowPageNumber && Preferences.Default.Get("ShowPageNumber", true);
         double fontSize = Preferences.Default.Get("PageNumberSize", 14.0);
 
         if (showPageNumber)
@@ -2290,16 +2300,42 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private async void OnGoToPageClicked(object sender, EventArgs e)
+    private void OnGoToPageClicked(object sender, EventArgs e)
     {
-        string result = await DisplayPromptAsync("Aller à la page", $"Entrez un numéro de page (1-{_maxPages})", "OK", "Annuler", initialValue: _currentPage.ToString(), keyboard: Keyboard.Numeric);
-        if (int.TryParse(result, out int pageNum))
+        CentralMenuOverlay.IsVisible = false;
+        GoToPageEntry.Text = _currentPage.ToString();
+        GoToPageSubtitleLabel.Text = $"Page (1-{_maxPages}) :";
+        GoToPageShowNumberSwitch.IsToggled = _score.ShowPageNumber;
+        GoToPageModal.IsVisible = true;
+    }
+
+    private void OnGoToPageCancelClicked(object sender, EventArgs e)
+    {
+        GoToPageModal.IsVisible = false;
+        ImageContainer.InputTransparent = false;
+        ZoomLayout.InputTransparent = false;
+        BottomTouchBar.IsVisible = !AnnotationBar.IsVisible;
+    }
+
+    private async void OnGoToPageOkClicked(object sender, EventArgs e)
+    {
+        GoToPageModal.IsVisible = false;
+        ImageContainer.InputTransparent = false;
+        ZoomLayout.InputTransparent = false;
+        BottomTouchBar.IsVisible = !AnnotationBar.IsVisible;
+
+        bool showNumberChanged = _score.ShowPageNumber != GoToPageShowNumberSwitch.IsToggled;
+        _score.ShowPageNumber = GoToPageShowNumberSwitch.IsToggled;
+
+        if (int.TryParse(GoToPageEntry.Text, out int pageNum))
         {
             await GoToPage(pageNum);
-            CentralMenuOverlay.IsVisible = false;
-            ImageContainer.InputTransparent = false; // Restaure les gestes sur l'image
-            ZoomLayout.InputTransparent = false; // Restaure les gestes sur le layout de zoom
-            BottomTouchBar.IsVisible = !AnnotationBar.IsVisible; // Restaure la zone tactile du bas si la barre n'est pas déjà ouverte
+        }
+
+        if (showNumberChanged)
+        {
+            UpdatePageIndicator();
+            await _databaseService.SaveScoreAsync(_score);
         }
     }
 
@@ -3951,11 +3987,10 @@ public partial class ViewerPage : ContentPage
         if (StickerPickerOverlay.IsVisible)
         {
             StickerPickerOverlay.TranslationY = AnnotationBar.TranslationY;
-        }
-        
-        if (StickerPickerOverlay.IsVisible && StickerCategoriesCollection.ItemsSource == null)
-        {
-            await InitializeAnnotationUI();
+            if (StickerCategoriesCollection.ItemsSource == null || StickerCategoriesCollection.SelectedItem == null || StickersCollection?.ItemsSource == null)
+            {
+                await InitializeAnnotationUI(force: true);
+            }
         }
     }
 
@@ -4049,6 +4084,63 @@ public partial class ViewerPage : ContentPage
             e.Data.Properties.Add("Sticker", sticker.Text);
             // On désélectionne l'annotation placée lors d'un nouveau glisser-déposer
             _selectedAnnotation = null;
+            RenderAnnotations();
+        }
+    }
+
+    private async void OnStickerDoubleTapped(object? sender, TappedEventArgs e)
+    {
+        if (sender is View view && view.BindingContext is StickerItem sticker)
+        {
+            UnlockAnnotations();
+
+            // S'assurer que les annotations sont actives et visibles
+            _score.ShowAnnotations = true;
+            if (AnnotationsContainer != null)
+            {
+                AnnotationsContainer.Opacity = 1;
+                AnnotationsContainer.IsVisible = true;
+                AnnotationsContainer.InputTransparent = false;
+            }
+            if (ActiveAnnotationsContainer != null)
+            {
+                ActiveAnnotationsContainer.Opacity = 1;
+                ActiveAnnotationsContainer.IsVisible = true;
+                ActiveAnnotationsContainer.InputTransparent = false;
+            }
+
+            int targetPage = _currentPage;
+            if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
+            {
+                targetPage = _leftPageNumber;
+            }
+
+            string color = _currentStickerColor;
+            string bgColor = _currentStickerBgColor;
+            double scale = StickerSizeSlider?.Value ?? 1.0;
+
+            // Positionnement en haut au centre de la partition (X: 0.5, Y: 0.08)
+            var annotation = new Annotation
+            {
+                ScoreId = _score.Id,
+                Type = AnnotationType.Sticker,
+                Content = sticker.Text,
+                X = 0.5,
+                Y = 0.08,
+                Scale = scale,
+                Color = color,
+                BackgroundColor = bgColor,
+                PageNumber = targetPage
+            };
+
+            await _databaseService.SaveAnnotationAsync(annotation);
+            _annotations.Add(annotation);
+            _selectedAnnotation = annotation;
+
+            _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Add, Annotation = annotation });
+            _redoStack.Clear();
+            UpdateUndoRedoButtons();
+
             RenderAnnotations();
         }
     }

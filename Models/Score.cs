@@ -45,6 +45,9 @@ namespace MusicScoreManager.Models
         // Annotations
         public bool ShowAnnotations { get; set; } = true;
 
+        // Page Number
+        public bool ShowPageNumber { get; set; } = true;
+
         [Ignore]
         public bool IsFileMissing { get; set; }
 

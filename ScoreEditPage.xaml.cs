@@ -64,6 +64,7 @@ public partial class ScoreEditPage : ContentPage
 
         // 7. Annotations
         AnnotationsSwitch.IsToggled = _score.ShowAnnotations;
+        ShowPageNumberSwitch.IsToggled = _score.ShowPageNumber;
 
         // 8. Tags
         if (_score.AppliedTags != null)
@@ -626,6 +627,7 @@ public partial class ScoreEditPage : ContentPage
 
         // Annotations
         _score.ShowAnnotations = AnnotationsSwitch.IsToggled;
+        _score.ShowPageNumber = ShowPageNumberSwitch.IsToggled;
 
         // Sauvegarde de la partition
         await _databaseService.SaveScoreAsync(_score);

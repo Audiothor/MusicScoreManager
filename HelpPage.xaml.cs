@@ -40,6 +40,38 @@ public partial class HelpPage : ContentPage
         }
     }
 
+    private async void OnOpenOnlineDocClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            string lang = LocalizationService.Instance.CurrentLanguage;
+            string url = (lang == "fr") 
+                ? "https://audiothor.github.io/MusicScoreManager/" 
+                : "https://audiothor.github.io/MusicScoreManager/en/";
+            await Launcher.Default.OpenAsync(new Uri(url));
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[HelpPage] Error opening online doc: {ex.Message}");
+        }
+    }
+
+    private async void OnHelpWebViewNavigating(object sender, WebNavigatingEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(e.Url) && (e.Url.StartsWith("http://") || e.Url.StartsWith("https://")))
+        {
+            e.Cancel = true;
+            try
+            {
+                await Launcher.Default.OpenAsync(new Uri(e.Url));
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[HelpPage] Error opening link: {ex.Message}");
+            }
+        }
+    }
+
     private async void OnBackClicked(object sender, EventArgs e)
     {
         await Navigation.PopAsync();

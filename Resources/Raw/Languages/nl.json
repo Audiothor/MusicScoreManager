@@ -605,5 +605,15 @@
   "Settings_Setlists_Default_Sort": "Standaard sortering van setlists",
   "Settings_Setlists_Default_Sort_Desc": "Sorteervolgorde automatisch toegepast op de setlistlijst",
   "Settings_Setlists_Done_At_Bottom": "Voltooide setlists onderaan plaatsen",
-  "Settings_Setlists_Done_At_Bottom_Desc": "Plaatst setlists met de status 'Voltooid' altijd aan het einde van de lijst"
+  "Settings_Setlists_Done_At_Bottom_Desc": "Plaatst setlists met de status 'Voltooid' altijd aan het einde van de lijst",
+  "Score_Edit_Page_Number_Show": "Paginanummers weergeven",
+  "Viewer_GoToPage_Title": "Ga naar pagina",
+  "Viewer_ShowPageNumber_Label": "Paginanummers weergeven",
+  "Settings_App_Behavior": "Gedrag van de applicatie",
+  "Settings_Confirm_Quit_Title": "Applicatie afsluiten",
+  "Settings_Confirm_Quit_Desc": "Om bevestiging vragen voor het afsluiten van de applicatie",
+  "Settings_Confirm_Quit_Prompt": "Weet u zeker dat u de applicatie wilt afsluiten?",
+  "Help_Online_Doc_Title": "Officiële volledige documentatie",
+  "Help_Online_Doc_Desc": "Bekijk de complete handleiding, tutorials en nieuwste functies online",
+  "Help_Online_Doc_Btn": "Bekijken"
 }

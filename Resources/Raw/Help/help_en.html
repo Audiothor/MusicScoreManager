@@ -255,6 +255,21 @@
     <h1>📖 User Guide</h1>
     <div class="subtitle">Music Score Manager — Complete Manual &amp; Practical Tips</div>
 
+    <!-- Official Online Documentation Banner -->
+    <div style="background: linear-gradient(135deg, rgba(0, 122, 204, 0.25), rgba(46, 204, 113, 0.25)); border: 1px solid #007ACC; border-radius: 12px; padding: 16px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 220px;">
+            <div style="font-weight: 800; font-size: 16px; color: #FFFFFF; display: flex; align-items: center; gap: 8px;">
+                🌐 Official Online Documentation
+            </div>
+            <div style="font-size: 13px; color: #DDDDDD; margin-top: 4px;">
+                Explore the complete official user guide online with in-depth walkthroughs, tutorials, screenshots, and latest release features:
+            </div>
+        </div>
+        <a href="https://audiothor.github.io/MusicScoreManager/en/" target="_blank" style="background: #007ACC; color: #FFFFFF; text-decoration: none; font-weight: bold; font-size: 14px; padding: 10px 18px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+            Open Official Docs ↗
+        </a>
+    </div>
+
     <!-- Table of contents -->
     <div class="toc">
         <h3>📋 Quick Summary</h3>
@@ -348,13 +363,16 @@
             </div>
             <div class="feature-card">
                 <strong>🔍 Unified Zoom &amp; Pan</strong>
-                <span>Pinch with 2 fingers to zoom (1x to 5x), pan with 1 finger to move across the score.</span>
+                <span>Pinch with 2 fingers to zoom (1x to 5x), pan with 1 finger. Double-tap to reset zoom.</span>
             </div>
             <div class="feature-card">
                 <strong>🎯 Quick Central Menu</strong>
-                <span>Double-tap in the center of the score to open options, metronome, and audio controls.</span>
+                <span>Double-tap in the center of the score to open options (smooth vertical scrolling on phones).</span>
             </div>
         </div>
+
+        <h3>Page Number &amp; Jump Dialog</h3>
+        <p>Tapping the page number badge opens a modal dialog to <strong>jump directly to any page</strong> or <strong>toggle page number display on/off</strong> for this specific score.</p>
 
         <h3>Hybrid Page Rotation</h3>
         <p>Rotate either the <strong>current page only</strong> (+90°) or the <strong>entire score</strong> from the central menu.</p>
@@ -372,7 +390,7 @@
         <div class="grid-2">
             <div class="feature-card">
                 <strong>✎ Freehand Pencil</strong>
-                <span>100% opaque drawing. 6 colors, 5 line widths (1 to 5 mm). Perfect for striking out or correcting notes.</span>
+                <span>100% opaque drawing. Color choices, multiple line widths (1 to 5 mm). Perfect for striking out or correcting notes.</span>
             </div>
             <div class="feature-card">
                 <strong>🖌 Flat-Tip Highlighter</strong>
@@ -384,16 +402,17 @@
             </div>
             <div class="feature-card">
                 <strong>🏷 Musical Stickers</strong>
-                <span>Dynamics (<em>ff, mp, p</em>), Fingerings (1-5), Breaths, Segno, Coda, Accidentals ready to drag &amp; drop.</span>
+                <span>Dynamics (<em>ff, mp, p</em>), Fingerings (1-5), Breaths, Segno, Coda, Accidentals and reorderable Favorites.</span>
             </div>
         </div>
 
-        <h3>Annotation Controls &amp; Safety</h3>
+        <h3>Placement &amp; Annotation Controls</h3>
         <ul>
+            <li><strong>Sticker Placement:</strong> Drag the sticker from the drawer to its position, or <strong>double-tap the sticker</strong> in the drawer to place it directly at the top of the score!</li>
             <li><strong>🔒 Lock Safety:</strong> When locked (red button), annotations cannot be accidentally moved while playing. Unlock (🔓) to edit.</li>
             <li><strong>↩ Undo / ↪ Redo:</strong> Instantly revert or restore any drawing, highlighting, or sticker placement.</li>
-            <li><strong>Smooth Drag &amp; Move:</strong> When unlocked, freely drag any annotation into position without lag or crashes.</li>
-            <li><strong>Quick Delete:</strong> Double-tap any drawing, highlight, text, or sticker to remove it.</li>
+            <li><strong>Smooth Drag &amp; Move:</strong> When unlocked, freely drag any annotation into position.</li>
+            <li><strong>Quick Delete:</strong> Double-tap any drawing, highlight, text, or sticker on the score to remove it.</li>
         </ul>
     </div>
 
@@ -479,9 +498,16 @@
         </div>
 
         <ul>
-            <li><strong>Score Settings:</strong> Page turn gestures (Swipe/Tap), page number indicator size.</li>
+            <li><strong>Score Settings:</strong> Page turn gestures (Swipe/Tap), page number indicator toggle and size.</li>
             <li><strong>Setlist Settings:</strong> Default continuous mode and deletion confirmation.</li>
-            <li><strong>Application Settings:</strong> Interface language selection (FR, EN, ES, DE) and custom storage directories.</li>
+            <li><strong>Annotation Settings:</strong> Manage and reorder favorite stickers (up/down arrow buttons). The defined order is preserved in the annotation drawer.</li>
+            <li><strong>Application Settings:</strong>
+                <ul>
+                    <li><em>Behavior:</em> <strong>"Confirm before quitting"</strong> option to prevent accidental exits on stage.</li>
+                    <li><em>Language:</em> 8 languages available (Français, English, Deutsch, Español, Italiano, Nederlands, Polski, Português).</li>
+                    <li><em>Storage:</em> Custom storage directories for scores and audio tracks.</li>
+                </ul>
+            </li>
             <li><strong>Privacy Policy:</strong> 100% offline, zero data collection. Accessible under <em>Settings › About</em>.</li>
         </ul>
     </div>

@@ -605,5 +605,15 @@
   "Settings_Setlists_Default_Sort": "Tri par défaut des setlists",
   "Settings_Setlists_Default_Sort_Desc": "Ordre de tri appliqué automatiquement à la liste des setlists",
   "Settings_Setlists_Done_At_Bottom": "Placer les setlists terminées en bas",
-  "Settings_Setlists_Done_At_Bottom_Desc": "Relègue toujours les setlists au statut 'Terminée' en fin de liste"
+  "Settings_Setlists_Done_At_Bottom_Desc": "Relègue toujours les setlists au statut 'Terminée' en fin de liste",
+  "Score_Edit_Page_Number_Show": "Afficher les numéros de page",
+  "Viewer_GoToPage_Title": "Aller à la page",
+  "Viewer_ShowPageNumber_Label": "Afficher les numéros de page",
+  "Settings_App_Behavior": "Comportement de l'application",
+  "Settings_Confirm_Quit_Title": "Quitter l'application",
+  "Settings_Confirm_Quit_Desc": "Demander confirmation avant de fermer l'application",
+  "Settings_Confirm_Quit_Prompt": "Voulez-vous vraiment quitter l'application ?",
+  "Help_Online_Doc_Title": "Documentation Complète Officielle",
+  "Help_Online_Doc_Desc": "Consultez le guide exhaustif, tutoriels et nouveautés en ligne",
+  "Help_Online_Doc_Btn": "Consulter"
 }
