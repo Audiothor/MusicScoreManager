@@ -10,6 +10,7 @@ public class FavoriteSticker
     public string Text { get; set; } = string.Empty;
     public string Color { get; set; } = "#FFFFFF";
     public string BackgroundColor { get; set; } = "Transparent";
+    public int SortOrder { get; set; } = 0;
 
     public DateTime DateCreated { get; set; } = DateTime.Now;
 }

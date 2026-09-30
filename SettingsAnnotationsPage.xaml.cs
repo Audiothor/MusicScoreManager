@@ -56,6 +56,19 @@ public partial class SettingsAnnotationsPage : ContentPage
     private async void LoadFavorites()
     {
         var favs = await _databaseService.GetFavoriteStickersAsync();
+        bool needsReorder = false;
+        for (int i = 0; i < favs.Count; i++)
+        {
+            if (favs[i].SortOrder != i)
+            {
+                favs[i].SortOrder = i;
+                needsReorder = true;
+            }
+        }
+        if (needsReorder)
+        {
+            await _databaseService.SaveFavoriteStickersOrderAsync(favs);
+        }
         _favorites = new ObservableCollection<FavoriteSticker>(favs);
         FavoritesCollection.ItemsSource = _favorites;
     }
@@ -127,11 +140,52 @@ public partial class SettingsAnnotationsPage : ContentPage
         string text = FavoriteEntry.Text?.Trim() ?? "";
         if (string.IsNullOrEmpty(text)) return;
 
-        var fav = new FavoriteSticker { Text = text };
+        int nextOrder = _favorites.Count > 0 ? _favorites.Max(f => f.SortOrder) + 1 : 0;
+        var fav = new FavoriteSticker { Text = text, SortOrder = nextOrder };
         await _databaseService.SaveFavoriteStickerAsync(fav);
         
         _favorites.Add(fav);
         FavoriteEntry.Text = "";
+    }
+
+    private async void OnMoveFavoriteUpClicked(object? sender, EventArgs e)
+    {
+        if (sender is Button btn && btn.CommandParameter is FavoriteSticker fav)
+        {
+            int index = _favorites.IndexOf(fav);
+            if (index > 0)
+            {
+                _favorites.Move(index, index - 1);
+                await SaveFavoritesOrderAsync();
+            }
+        }
+    }
+
+    private async void OnMoveFavoriteDownClicked(object? sender, EventArgs e)
+    {
+        if (sender is Button btn && btn.CommandParameter is FavoriteSticker fav)
+        {
+            int index = _favorites.IndexOf(fav);
+            if (index >= 0 && index < _favorites.Count - 1)
+            {
+                _favorites.Move(index, index + 1);
+                await SaveFavoritesOrderAsync();
+            }
+        }
+    }
+
+    private async void OnFavoritesReorderCompleted(object? sender, EventArgs e)
+    {
+        await SaveFavoritesOrderAsync();
+    }
+
+    private async Task SaveFavoritesOrderAsync()
+    {
+        for (int i = 0; i < _favorites.Count; i++)
+        {
+            _favorites[i].SortOrder = i;
+        }
+        await _databaseService.SaveFavoriteStickersOrderAsync(_favorites.ToList());
     }
 
     private async void OnDeleteFavoriteClicked(object sender, EventArgs e)
@@ -143,6 +197,7 @@ public partial class SettingsAnnotationsPage : ContentPage
             {
                 await _databaseService.DeleteFavoriteStickerAsync(fav);
                 _favorites.Remove(fav);
+                await SaveFavoritesOrderAsync();
             }
         }
     }

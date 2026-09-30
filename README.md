@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v2.2.2
+# Music Score Manager v2.3.0
 > **Le gestionnaire & visualiseur professionnel de partitions musicales pour répétitions, pupitres et concerts en direct.**
 
 ---
@@ -500,7 +500,8 @@ graph TD
 L'écran est structuré en deux chapitres clairs :
 - **Chapitre 1 : Gestion des stickers Favoris** :
   - Zone de saisie pour créer des stickers personnalisés avec n'importe quel libellé (ex: *« Attention solo »*, *« Vibrato »*, *« Regarder le chef »*, *« Respirer »*).
-  - Liste de vos favoris avec bouton de suppression immédiate `✕`.
+  - **Réordonnancement interactif (v2.3.0)** : Boutons Monter (`▲`) et Descendre (`▼`) sous chaque sticker ainsi que réordonnancement par glisser-déposer (*drag-and-drop*) pour définir précisément leur ordre d'apparition dans le tiroir d'annotations.
+  - Bouton de suppression immédiate `✕`.
 - **Chapitre 2 : Sélection des catégories de stickers actives** :
   - Cases à cocher pour afficher uniquement les catégories utiles à votre pratique dans le tiroir d'annotations (*Favoris, Doigtés, Nuances, Articulations, Répétitions, Notes, Silences, Altérations, Symboles*). Permet d'alléger l'interface sur scène.
 
@@ -651,5 +652,5 @@ Consultez le fichier complet [LICENSE](LICENSE) pour les termes légaux exhausti
 ---
 
 <p align="center">
-  <b>Music Score Manager v2.2.2</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
+  <b>Music Score Manager v2.3.0</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
 </p>
