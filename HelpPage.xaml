@@ -6,14 +6,14 @@
              BackgroundColor="#121212"
              Title="{Binding [Settings_Help], Source={x:Static services:LocalizationService.Instance}}">
 
-    <Grid RowDefinitions="Auto, Auto, *">
+    <Grid RowDefinitions="Auto, *">
         <!-- Header avec bouton Retour -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
             <Button Grid.Column="0" 
                     Text="{Binding [Common_Back], Source={x:Static services:LocalizationService.Instance}}" 
                     BackgroundColor="Transparent" 
                     TextColor="#007ACC" 
-                    FontAttributes="Bold"
+                    FontAttributes="Bold" 
                     Clicked="OnBackClicked" />
             <Label Grid.Column="1" 
                    Text="{Binding [Settings_Help], Source={x:Static services:LocalizationService.Instance}}" 
@@ -21,37 +21,12 @@
                    FontSize="18" 
                    FontAttributes="Bold" 
                    VerticalOptions="Center" 
-                   HorizontalOptions="Center"
+                   HorizontalOptions="Center" 
                    Margin="0,0,80,0" />
         </Grid>
 
-        <!-- Bandeau Documentation Complète Officielle -->
-        <Border Grid.Row="1" BackgroundColor="#1A2733" Stroke="#007ACC" StrokeThickness="1" Margin="12,8,12,4" Padding="12,10">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10" />
-            </Border.StrokeShape>
-            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10" VerticalOptions="Center">
-                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="2">
-                    <Label Text="{Binding [Help_Online_Doc_Title], Source={x:Static services:LocalizationService.Instance}}" 
-                           TextColor="White" FontSize="14" FontAttributes="Bold" />
-                    <Label Text="{Binding [Help_Online_Doc_Desc], Source={x:Static services:LocalizationService.Instance}}" 
-                           TextColor="#AAAAAA" FontSize="12" LineBreakMode="WordWrap" />
-                </VerticalStackLayout>
-                <Button Grid.Column="1"
-                        Text="{Binding [Help_Online_Doc_Btn], Source={x:Static services:LocalizationService.Instance}}"
-                        BackgroundColor="#007ACC"
-                        TextColor="White"
-                        FontAttributes="Bold"
-                        FontSize="13"
-                        CornerRadius="8"
-                        Padding="12,6"
-                        VerticalOptions="Center"
-                        Clicked="OnOpenOnlineDocClicked" />
-            </Grid>
-        </Border>
-
         <!-- WebView affichant le guide HTML local -->
-        <WebView Grid.Row="2" x:Name="HelpWebView" BackgroundColor="#121212" Navigating="OnHelpWebViewNavigating" />
+        <WebView Grid.Row="1" x:Name="HelpWebView" BackgroundColor="#121212" Navigating="OnHelpWebViewNavigating" />
     </Grid>
 
 </ContentPage>
