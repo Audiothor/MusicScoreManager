@@ -1223,19 +1223,23 @@ public partial class ViewerPage : ContentPage
                 int soundId = isPreCount ? _preCountSoundId : _metronomeSoundId;
                 if (soundId != 0)
                 {
-                    _soundPool.Play(soundId, 1.0f, 1.0f, 1, 0, 1.0f);
+                    float vol = (float)Math.Clamp(_score.MetronomeVolume, 0.05, 1.0);
+                    _soundPool.Play(soundId, vol, vol, 1, 0, 1.0f);
                 }
             }
 #else
             try
             {
+                float vol = (float)Math.Clamp(_score.MetronomeVolume, 0.05, 1.0);
                 if (isPreCount && _preCountAudioPlayer != null)
                 {
+                    _preCountAudioPlayer.Volume = vol;
                     _preCountAudioPlayer.Seek(0);
                     _preCountAudioPlayer.Play();
                 }
                 else if (!isPreCount && _metronomeAudioPlayer != null)
                 {
+                    _metronomeAudioPlayer.Volume = vol;
                     _metronomeAudioPlayer.Seek(0);
                     _metronomeAudioPlayer.Play();
                 }
@@ -1306,45 +1310,170 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private async void OnMetronomeOverlayTapped(object sender, EventArgs e)
+    private void OnMetronomeOverlayTapped(object sender, EventArgs e)
     {
-        string soundOption = _score.HasMetronomeSound ? "Couper le son" : "Activer le son";
-        string? action = await this.DisplayActionSheetAsync("Paramètres du Métronome", "Annuler", null, "Changer le BPM", soundOption);
+        OpenMetronomeSettingsModal();
+    }
 
-        if (action == "Changer le BPM")
+    private void OnMetronomeSettingsButtonClicked(object sender, EventArgs e)
+    {
+        OpenMetronomeSettingsModal();
+    }
+
+    private readonly List<DateTime> _tapTempoHistory = new();
+
+    private void OpenMetronomeSettingsModal()
+    {
+        _tapTempoHistory.Clear();
+        ModalMetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+        ModalMetronomeBpmSlider.Value = Math.Clamp(_score.BPM, 40, 250);
+        ModalMetronomeSoundSwitch.IsToggled = _score.HasMetronomeSound;
+        ModalMetronomeVisualSwitch.IsToggled = _score.ShowMetronome;
+
+        int volPercent = (int)Math.Round(_score.MetronomeVolume * 100);
+        ModalMetronomeVolumeSlider.Value = Math.Clamp(volPercent, 5, 100);
+        ModalVolumeLabel.Text = $"{(int)ModalMetronomeVolumeSlider.Value}%";
+        ModalVolumeLayout.Opacity = _score.HasMetronomeSound ? 1.0 : 0.4;
+        ModalMetronomeVolumeSlider.IsEnabled = _score.HasMetronomeSound;
+
+        MetronomeSettingsModal.Opacity = 0;
+        MetronomeSettingsModal.IsVisible = true;
+        MetronomeSettingsModal.FadeTo(1.0, 180, Easing.CubicOut);
+    }
+
+    private async void OnCloseMetronomeSettingsModalClicked(object sender, EventArgs e)
+    {
+        await MetronomeSettingsModal.FadeTo(0, 150, Easing.CubicIn);
+        MetronomeSettingsModal.IsVisible = false;
+        await _databaseService.SaveScoreAsync(_score);
+    }
+
+    private void OnModalTapTempoClicked(object sender, EventArgs e)
+    {
+        var now = DateTime.Now;
+        if (_tapTempoHistory.Count > 0 && (now - _tapTempoHistory.Last()).TotalSeconds > 2.5)
         {
-            string? newBpmStr = await this.DisplayPromptAsync("Nouveau BPM", "Entrez le nouveau tempo (60-200) :", keyboard: Keyboard.Numeric, initialValue: _score.BPM.ToString());
-            if (int.TryParse(newBpmStr, out int newBpm))
-            {
-                if (newBpm < 60 || newBpm > 200)
-                {
-                    await this.DisplayAlertAsync("BPM Invalide", "Le tempo doit être compris entre 60 et 200 BPM.", "OK");
-                    return;
-                }
+            _tapTempoHistory.Clear();
+        }
 
-                _score.BPM = newBpm;
-                MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
-                if (_isMetronomePlaying) StartMetronome(); // Redémarre avec le nouvel intervalle
-                await _databaseService.SaveScoreAsync(_score);
+        _tapTempoHistory.Add(now);
+        if (_tapTempoHistory.Count > 4)
+        {
+            _tapTempoHistory.RemoveAt(0);
+        }
+
+        if (_tapTempoHistory.Count >= 2)
+        {
+            double totalMs = (_tapTempoHistory.Last() - _tapTempoHistory.First()).TotalMilliseconds;
+            double avgIntervalMs = totalMs / (_tapTempoHistory.Count - 1);
+            if (avgIntervalMs > 0)
+            {
+                int calculatedBpm = (int)Math.Round(60000.0 / avgIntervalMs);
+                SetMetronomeBpm(Math.Clamp(calculatedBpm, 40, 250));
             }
         }
-        else if (action == "Couper le son" || action == "Activer le son")
+    }
+
+    private void OnModalBpmMinus5Clicked(object sender, EventArgs e) => SetMetronomeBpm(_score.BPM - 5);
+    private void OnModalBpmMinus1Clicked(object sender, EventArgs e) => SetMetronomeBpm(_score.BPM - 1);
+    private void OnModalBpmPlus1Clicked(object sender, EventArgs e) => SetMetronomeBpm(_score.BPM + 1);
+    private void OnModalBpmPlus5Clicked(object sender, EventArgs e) => SetMetronomeBpm(_score.BPM + 5);
+
+    private void OnModalBpmSliderValueChanged(object sender, ValueChangedEventArgs e)
+    {
+        int newBpm = (int)Math.Round(e.NewValue);
+        if (newBpm != _score.BPM)
         {
-            _score.HasMetronomeSound = (action == "Activer le son");
-
-            // Si on a besoin du métronome (son OU visuel) et qu'il ne tourne pas, on le lance
-            if ((_score.HasMetronomeSound || _score.ShowMetronome) && !_isMetronomePlaying)
-            {
-                StartMetronome();
-            }
-            // Si on n'a plus besoin de rien, on arrête
-            else if (!_score.HasMetronomeSound && !_score.ShowMetronome)
-            {
-                StopMetronome();
-            }
-
-            await _databaseService.SaveScoreAsync(_score);
+            SetMetronomeBpm(newBpm);
         }
+    }
+
+    private void SetMetronomeBpm(int bpm)
+    {
+        int clampedBpm = Math.Clamp(bpm, 40, 250);
+        _score.BPM = clampedBpm;
+        ModalMetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+        if (Math.Abs(ModalMetronomeBpmSlider.Value - clampedBpm) > 0.5)
+        {
+            ModalMetronomeBpmSlider.Value = clampedBpm;
+        }
+        if (MetronomeBpmLabel != null)
+        {
+            MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
+        }
+        if (_isMetronomePlaying)
+        {
+            StartMetronome();
+        }
+    }
+
+    private void OnModalMetronomeSoundToggled(object sender, ToggledEventArgs e)
+    {
+        _score.HasMetronomeSound = e.Value;
+        ModalVolumeLayout.Opacity = e.Value ? 1.0 : 0.4;
+        ModalMetronomeVolumeSlider.IsEnabled = e.Value;
+
+        if ((_score.HasMetronomeSound || _score.ShowMetronome) && !_isMetronomePlaying)
+        {
+            StartMetronome();
+        }
+        else if (!_score.HasMetronomeSound && !_score.ShowMetronome)
+        {
+            StopMetronome();
+        }
+    }
+
+    private void OnModalMetronomeVisualToggled(object sender, ToggledEventArgs e)
+    {
+        _score.ShowMetronome = e.Value;
+        MetronomeOverlay.IsVisible = e.Value;
+        if (MenuMetronomeSwitch != null)
+        {
+            MenuMetronomeSwitch.IsToggled = e.Value;
+        }
+
+        if (e.Value && !_isMetronomePlaying)
+        {
+            StartMetronome();
+        }
+        else if (!e.Value && !_score.HasMetronomeSound)
+        {
+            StopMetronome();
+        }
+    }
+
+    private void OnModalVolumeSliderValueChanged(object sender, ValueChangedEventArgs e)
+    {
+        int percent = (int)Math.Round(e.NewValue);
+        ModalVolumeLabel.Text = $"{percent}%";
+        _score.MetronomeVolume = percent / 100.0;
+    }
+
+    private void OnModalVolumeSliderDragCompleted(object sender, EventArgs e)
+    {
+        PlayTestMetronomeClick();
+    }
+
+    private void PlayTestMetronomeClick()
+    {
+        try
+        {
+            float vol = (float)Math.Clamp(_score.MetronomeVolume, 0.05, 1.0);
+#if ANDROID
+            if (_soundPool != null && _metronomeSoundId != 0)
+            {
+                _soundPool.Play(_metronomeSoundId, vol, vol, 1, 0, 1.0f);
+            }
+#else
+            if (_metronomeAudioPlayer != null)
+            {
+                _metronomeAudioPlayer.Volume = vol;
+                _metronomeAudioPlayer.Seek(0);
+                _metronomeAudioPlayer.Play();
+            }
+#endif
+        }
+        catch { }
     }
 
     private bool _isAudioInitialized = false;

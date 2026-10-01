@@ -65,6 +65,7 @@ namespace MusicScoreManager.Services
         public bool ShowMetronome { get; set; }
         public int BPM { get; set; }
         public bool HasMetronomeSound { get; set; }
+        public double MetronomeVolume { get; set; } = 1.0;
         public bool ShowAudioPlayer { get; set; }
         public int PreCountMeasures { get; set; }
         public bool ShowAnnotations { get; set; } = true;

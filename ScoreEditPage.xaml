@@ -286,6 +286,19 @@
                                 <Label Text="{Binding [Score_Edit_Metronome_Sound], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" VerticalOptions="Center" />
                                 <Switch Grid.Column="1" x:Name="MetronomeSoundSwitch" OnColor="#007ACC" ThumbColor="White" />
                             </Grid>
+                            <VerticalStackLayout x:Name="MetronomeVolumeLayout" Spacing="6">
+                                <Grid ColumnDefinitions="*, Auto">
+                                    <Label Text="Volume du métronome" TextColor="#AAAAAA" VerticalOptions="Center" />
+                                    <Label x:Name="MetronomeVolumeLabel" Text="100%" TextColor="#00B0FF" FontAttributes="Bold" VerticalOptions="Center" />
+                                </Grid>
+                                <Slider x:Name="MetronomeVolumeSlider" 
+                                        Minimum="5" 
+                                        Maximum="100" 
+                                        Value="100"
+                                        MinimumTrackColor="#007ACC" 
+                                        MaximumTrackColor="#333333" 
+                                        ThumbColor="#00B0FF" />
+                            </VerticalStackLayout>
                         </VerticalStackLayout>
                     </VerticalStackLayout>
                 </Border>

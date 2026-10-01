@@ -37,6 +37,12 @@ namespace MusicScoreManager.Models
         public bool ShowMetronome { get; set; } = false;
         public int BPM { get; set; } = 120;
         public bool HasMetronomeSound { get; set; } = false;
+        private double _metronomeVolume = 1.0;
+        public double MetronomeVolume
+        {
+            get => _metronomeVolume <= 0.001 ? 1.0 : _metronomeVolume;
+            set => _metronomeVolume = Math.Clamp(value, 0.0, 1.0);
+        }
 
         // Audio
         public bool ShowAudioPlayer { get; set; } = false;
