@@ -2409,11 +2409,62 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private void UpdateAnnotationOverlaysLayout(double width, double height)
+    {
+        if (width <= 0 || height <= 0) return;
+        bool isPortrait = width < 480 || width < height;
+
+        // 1. Crayon (DrawOptionsOverlay)
+        if (DrawOptionsLayout != null)
+        {
+            DrawOptionsLayout.Orientation = isPortrait ? StackOrientation.Vertical : StackOrientation.Horizontal;
+        }
+        if (DrawOptionsSeparator != null)
+        {
+            DrawOptionsSeparator.IsVisible = !isPortrait;
+        }
+
+        // 2. Surlignage / Stabilo (HighlightOptionsOverlay)
+        if (HighlightOptionsLayout != null)
+        {
+            HighlightOptionsLayout.Orientation = isPortrait ? StackOrientation.Vertical : StackOrientation.Horizontal;
+        }
+        if (HighlightOptionsSeparator != null)
+        {
+            HighlightOptionsSeparator.IsVisible = !isPortrait;
+        }
+
+        // 3. Texte (TextOptionsOverlay)
+        if (TextOptionsLayout != null)
+        {
+            TextOptionsLayout.Orientation = isPortrait ? StackOrientation.Vertical : StackOrientation.Horizontal;
+        }
+        if (TextOptionsSeparator != null)
+        {
+            TextOptionsSeparator.IsVisible = !isPortrait;
+        }
+
+        // 4. Stickers (StickerPickerOverlay)
+        if (StickerPickerOverlay != null)
+        {
+            if (isPortrait)
+            {
+                StickerPickerOverlay.MaximumHeightRequest = Math.Min(350, height * 0.55);
+            }
+            else
+            {
+                StickerPickerOverlay.MaximumHeightRequest = Math.Min(250, height * 0.75);
+            }
+        }
+    }
+
     protected override void OnSizeAllocated(double width, double height)
     {
         base.OnSizeAllocated(width, height);
         if (width > 0 && height > 0)
         {
+            UpdateAnnotationOverlaysLayout(width, height);
+
             if (_score?.Type == ScoreType.PDF && PdfService.IsNativePdfSupported)
             {
                 bool isLandscape = width > height;
@@ -3456,6 +3507,7 @@ public partial class ViewerPage : ContentPage
             }
             RenderAnnotations();
 
+            UpdateAnnotationOverlaysLayout(this.Width, this.Height);
             HighlightOptionsOverlay.TranslationY = AnnotationBar.TranslationY;
             _isDrawMode = false;
             DrawOptionsOverlay.IsVisible = false;
@@ -3682,6 +3734,7 @@ public partial class ViewerPage : ContentPage
             }
             RenderAnnotations();
 
+            UpdateAnnotationOverlaysLayout(this.Width, this.Height);
             DrawOptionsOverlay.TranslationY = AnnotationBar.TranslationY;
             _isHighlightMode = false;
             HighlightOptionsOverlay.IsVisible = false;
@@ -3866,6 +3919,7 @@ public partial class ViewerPage : ContentPage
         TextOptionsOverlay.IsVisible = _isTextMode;
         if (_isTextMode)
         {
+            UpdateAnnotationOverlaysLayout(this.Width, this.Height);
             TextOptionsOverlay.TranslationY = AnnotationBar.TranslationY;
             _isHighlightMode = false;
             HighlightOptionsOverlay.IsVisible = false;
@@ -4038,6 +4092,7 @@ public partial class ViewerPage : ContentPage
         StickerPickerOverlay.IsVisible = !StickerPickerOverlay.IsVisible;
         if (StickerPickerOverlay.IsVisible)
         {
+            UpdateAnnotationOverlaysLayout(this.Width, this.Height);
             StickerPickerOverlay.TranslationY = AnnotationBar.TranslationY;
             if (StickerCategoriesCollection.ItemsSource == null || StickerCategoriesCollection.SelectedItem == null || StickersCollection?.ItemsSource == null)
             {
