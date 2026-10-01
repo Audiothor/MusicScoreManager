@@ -40,7 +40,8 @@ graph TD
 
 ## 🧭 Quick Access to Guides
 
-- [🚀 Chapter 1: Description & Installation](guide/installation.en.md)
+- [🚀 Quick Start Guide (Get Started in 5 Minutes)](guide/quickstart.en.md)
+- [📦 Chapter 1: Description & Installation](guide/installation.en.md)
 - [🎵 Scores Menu Guide](guide/scores.en.md)
 - [📖 Viewer & Stage Mode Guide](guide/viewer.en.md)
 - [📋 Setlists Menu Guide](guide/setlists.en.md)

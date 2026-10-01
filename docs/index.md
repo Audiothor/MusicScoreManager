@@ -20,6 +20,7 @@ Elle est multiplateforme (Android / Windows).
 
 ## Table des matières
 
+- [🚀 Démarrage Rapide (Prise en main en 5 minutes)](guide/quickstart.md)
 - [Description, prérequis et installation](guide/installation.md)
 - [Guide général de l'application](guide/viewer.md)
 - [Partitions](guide/scores.md)

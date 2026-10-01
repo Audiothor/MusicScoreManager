@@ -6,7 +6,7 @@
              BackgroundColor="#121212"
              Title="{Binding [Settings_Help], Source={x:Static services:LocalizationService.Instance}}">
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, Auto, *">
         <!-- Header avec bouton Retour -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="10" BackgroundColor="#1E1E1E">
             <Button Grid.Column="0" 
@@ -25,8 +25,39 @@
                    Margin="0,0,80,0" />
         </Grid>
 
+        <!-- Bandeau Démarrage Rapide Interactif -->
+        <Border Grid.Row="1" 
+                BackgroundColor="#182230" 
+                Stroke="#007ACC" 
+                StrokeThickness="1.2" 
+                Margin="12,10,12,6" 
+                Padding="12,10">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="12" VerticalOptions="Center">
+                <Label Text="🚀" FontSize="26" VerticalOptions="Center" />
+                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                    <Label Text="{Binding [Help_QuickStart_Title], Source={x:Static services:LocalizationService.Instance}}" 
+                           TextColor="White" FontAttributes="Bold" FontSize="14" />
+                    <Label Text="{Binding [Help_QuickStart_Desc], Source={x:Static services:LocalizationService.Instance}}" 
+                           TextColor="#00B0FF" FontSize="11" />
+                </VerticalStackLayout>
+                <Button Grid.Column="2" 
+                        Text="{Binding [Help_QuickStart_Button], Source={x:Static services:LocalizationService.Instance}}" 
+                        BackgroundColor="#007ACC" 
+                        TextColor="White" 
+                        FontAttributes="Bold" 
+                        FontSize="12" 
+                        HeightRequest="36" 
+                        Padding="14,0" 
+                        CornerRadius="8" 
+                        Clicked="OnQuickStartClicked" />
+            </Grid>
+        </Border>
+
         <!-- WebView affichant le guide HTML local -->
-        <WebView Grid.Row="1" x:Name="HelpWebView" BackgroundColor="#121212" Navigating="OnHelpWebViewNavigating" />
+        <WebView Grid.Row="2" x:Name="HelpWebView" BackgroundColor="#121212" Navigating="OnHelpWebViewNavigating" />
     </Grid>
 
 </ContentPage>

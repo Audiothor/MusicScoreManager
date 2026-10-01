@@ -56,6 +56,23 @@ public partial class HelpPage : ContentPage
         }
     }
 
+    private async void OnQuickStartClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            string lang = LocalizationService.Instance.CurrentLanguage;
+            string url = (lang == "fr") 
+                ? "https://audiothor.github.io/MusicScoreManager/guide/quickstart/" 
+                : "https://audiothor.github.io/MusicScoreManager/en/guide/quickstart/";
+            await Launcher.Default.OpenAsync(new Uri(url));
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[HelpPage] Error opening quick start: {ex.Message}");
+        }
+    }
+
+
     private async void OnHelpWebViewNavigating(object sender, WebNavigatingEventArgs e)
     {
         if (!string.IsNullOrEmpty(e.Url) && (e.Url.StartsWith("http://") || e.Url.StartsWith("https://")))
