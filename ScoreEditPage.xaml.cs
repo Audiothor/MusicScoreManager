@@ -54,6 +54,22 @@ public partial class ScoreEditPage : ContentPage
         // 5. Métronome
         MetronomeSwitch.IsToggled = _score.ShowMetronome;
         MetronomeSoundSwitch.IsToggled = _score.HasMetronomeSound;
+        int volPercent = (int)Math.Round(_score.MetronomeVolume * 100);
+        MetronomeVolumeSlider.Value = Math.Clamp(volPercent, 5, 100);
+        MetronomeVolumeLabel.Text = $"{(int)MetronomeVolumeSlider.Value}%";
+        MetronomeVolumeLayout.Opacity = _score.HasMetronomeSound ? 1.0 : 0.4;
+        MetronomeVolumeSlider.IsEnabled = _score.HasMetronomeSound;
+
+        MetronomeSoundSwitch.Toggled += (s, e) =>
+        {
+            MetronomeVolumeLayout.Opacity = e.Value ? 1.0 : 0.4;
+            MetronomeVolumeSlider.IsEnabled = e.Value;
+        };
+
+        MetronomeVolumeSlider.ValueChanged += (s, e) =>
+        {
+            MetronomeVolumeLabel.Text = $"{(int)e.NewValue}%";
+        };
 
         // 6. Audio
         AudioPlayerSwitch.IsToggled = _score.ShowAudioPlayer;
@@ -640,6 +656,7 @@ public partial class ScoreEditPage : ContentPage
         // Métronome
         _score.ShowMetronome = MetronomeSwitch.IsToggled;
         _score.HasMetronomeSound = MetronomeSoundSwitch.IsToggled;
+        _score.MetronomeVolume = MetronomeVolumeSlider.Value / 100.0;
         
         // Audio
         _score.ShowAudioPlayer = AudioPlayerSwitch.IsToggled;

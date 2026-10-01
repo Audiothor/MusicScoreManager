@@ -710,9 +710,18 @@
 
                     <BoxView HeightRequest="1" Color="#444444" Margin="0,5" />
 
-                    <Grid ColumnDefinitions="*, Auto" Margin="5,0">
-                        <Label Text="{Binding [Viewer_Menu_ShowMetronome], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
-                        <Switch Grid.Column="1" x:Name="MenuMetronomeSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnMenuMetronomeToggled" />
+                    <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="6" Margin="5,0">
+                        <Label Grid.Column="0" Text="{Binding [Viewer_Menu_ShowMetronome], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
+                        <Button Grid.Column="1" 
+                                Text="⚙️" 
+                                BackgroundColor="Transparent" 
+                                Padding="0" 
+                                WidthRequest="32" 
+                                HeightRequest="32" 
+                                FontSize="14" 
+                                VerticalOptions="Center"
+                                Clicked="OnMetronomeSettingsButtonClicked" />
+                        <Switch Grid.Column="2" x:Name="MenuMetronomeSwitch" OnColor="#007ACC" Scale="0.8" VerticalOptions="Center" Toggled="OnMenuMetronomeToggled" />
                     </Grid>
 
                     <Grid ColumnDefinitions="*, Auto" Margin="5,0">
@@ -845,6 +854,179 @@
                         <VerticalStackLayout x:Name="SetlistProgressStack" Spacing="6" />
                     </ScrollView>
                 </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Modale Moderne des Paramètres du Métronome -->
+        <Grid x:Name="MetronomeSettingsModal"
+              IsVisible="False"
+              ZIndex="1000"
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill">
+            <!-- Arrière-plan semi-transparent -->
+            <BoxView BackgroundColor="#80000000"
+                     HorizontalOptions="Fill"
+                     VerticalOptions="Fill">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnCloseMetronomeSettingsModalClicked" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+
+            <!-- Boîte de dialogue moderne et épurée -->
+            <Border HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    WidthRequest="390"
+                    MaximumWidthRequest="430"
+                    Margin="20"
+                    Padding="20"
+                    BackgroundColor="#1C2331"
+                    Stroke="#007ACC"
+                    StrokeThickness="1.5">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="#000000" Offset="0,10" Radius="25" Opacity="0.85" />
+                </Border.Shadow>
+
+                <VerticalStackLayout Spacing="16">
+                    <!-- Entête : Titre & Bouton Fermer -->
+                    <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+                        <Label Grid.Column="0" Text="⏱️" FontSize="22" VerticalOptions="Center" Margin="0,0,8,0" />
+                        <Label Grid.Column="1" 
+                               Text="Paramètres du Métronome" 
+                               TextColor="White" 
+                               FontAttributes="Bold" 
+                               FontSize="17" 
+                               VerticalOptions="Center" />
+                        <Button Grid.Column="2" 
+                                Text="✕" 
+                                BackgroundColor="#2D3748" 
+                                TextColor="#CBD5E0" 
+                                FontSize="13" 
+                                FontAttributes="Bold"
+                                WidthRequest="32" 
+                                HeightRequest="32" 
+                                CornerRadius="16"
+                                Padding="0"
+                                VerticalOptions="Center"
+                                Clicked="OnCloseMetronomeSettingsModalClicked" />
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="#2D3748" />
+
+                    <!-- Section TEMPO (BPM) -->
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="TEMPO (BPM)" TextColor="#90CDF4" FontSize="11" FontAttributes="Bold" CharacterSpacing="1" />
+                        
+                        <!-- Badge BPM dynamique & Tap Tempo -->
+                        <Grid ColumnDefinitions="*, Auto" ColumnSpacing="12" VerticalOptions="Center">
+                            <Border BackgroundColor="#0F172A" Stroke="#334155" StrokeThickness="1" Padding="12,6">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12" />
+                                </Border.StrokeShape>
+                                <Label x:Name="ModalMetronomeBpmLabel" 
+                                       Text="120 BPM" 
+                                       TextColor="#00B0FF" 
+                                       FontSize="24" 
+                                       FontAttributes="Bold" 
+                                       HorizontalTextAlignment="Center" 
+                                       VerticalTextAlignment="Center" />
+                            </Border>
+
+                            <Button Grid.Column="1" 
+                                    x:Name="ModalTapTempoButton"
+                                    Text="👆 Tap Tempo" 
+                                    BackgroundColor="#2563EB" 
+                                    TextColor="White" 
+                                    FontAttributes="Bold" 
+                                    FontSize="12" 
+                                    HeightRequest="44"
+                                    Padding="14,0"
+                                    CornerRadius="10"
+                                    Clicked="OnModalTapTempoClicked" />
+                        </Grid>
+
+                        <!-- Boutons d'ajustement rapide -->
+                        <Grid ColumnDefinitions="*, *, *, *" ColumnSpacing="8">
+                            <Button Grid.Column="0" Text="- 5" BackgroundColor="#2D3748" TextColor="White" FontAttributes="Bold" FontSize="12" HeightRequest="36" CornerRadius="8" Padding="0" Clicked="OnModalBpmMinus5Clicked" />
+                            <Button Grid.Column="1" Text="- 1" BackgroundColor="#2D3748" TextColor="White" FontAttributes="Bold" FontSize="12" HeightRequest="36" CornerRadius="8" Padding="0" Clicked="OnModalBpmMinus1Clicked" />
+                            <Button Grid.Column="2" Text="+ 1" BackgroundColor="#2D3748" TextColor="White" FontAttributes="Bold" FontSize="12" HeightRequest="36" CornerRadius="8" Padding="0" Clicked="OnModalBpmPlus1Clicked" />
+                            <Button Grid.Column="3" Text="+ 5" BackgroundColor="#2D3748" TextColor="White" FontAttributes="Bold" FontSize="12" HeightRequest="36" CornerRadius="8" Padding="0" Clicked="OnModalBpmPlus5Clicked" />
+                        </Grid>
+
+                        <!-- Slider continu -->
+                        <Slider x:Name="ModalMetronomeBpmSlider"
+                                Minimum="40" 
+                                Maximum="250" 
+                                Value="120"
+                                MinimumTrackColor="#007ACC" 
+                                MaximumTrackColor="#334155" 
+                                ThumbColor="#00B0FF"
+                                ValueChanged="OnModalBpmSliderValueChanged" />
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" Color="#2D3748" />
+
+                    <!-- Section SON & VOLUME -->
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="SON &amp; VOLUME" TextColor="#90CDF4" FontSize="11" FontAttributes="Bold" CharacterSpacing="1" />
+                        
+                        <!-- Toggle Son activé -->
+                        <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+                            <Label Text="🔊" FontSize="18" VerticalOptions="Center" Margin="0,0,8,0" />
+                            <Label Grid.Column="1" Text="Son du métronome" TextColor="White" FontSize="14" VerticalOptions="Center" />
+                            <Switch Grid.Column="2" 
+                                    x:Name="ModalMetronomeSoundSwitch" 
+                                    OnColor="#007ACC" 
+                                    ThumbColor="White" 
+                                    Toggled="OnModalMetronomeSoundToggled" />
+                        </Grid>
+
+                        <!-- Contrôle du Volume -->
+                        <VerticalStackLayout x:Name="ModalVolumeLayout" Spacing="6">
+                            <Grid ColumnDefinitions="Auto, *, Auto">
+                                <Label Grid.Column="0" Text="🔈" FontSize="14" TextColor="#A0AEC0" VerticalOptions="Center" Margin="0,0,6,0" />
+                                <Label Grid.Column="1" Text="Volume sonore" TextColor="#CBD5E0" FontSize="13" VerticalOptions="Center" />
+                                <Label Grid.Column="2" x:Name="ModalVolumeLabel" Text="100%" TextColor="#00B0FF" FontAttributes="Bold" FontSize="14" VerticalOptions="Center" />
+                            </Grid>
+                            
+                            <Slider x:Name="ModalMetronomeVolumeSlider"
+                                    Minimum="5"
+                                    Maximum="100"
+                                    Value="100"
+                                    MinimumTrackColor="#007ACC"
+                                    MaximumTrackColor="#334155"
+                                    ThumbColor="#00B0FF"
+                                    ValueChanged="OnModalVolumeSliderValueChanged"
+                                    DragCompleted="OnModalVolumeSliderDragCompleted" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" Color="#2D3748" />
+
+                    <!-- Section AFFICHAGE VISUEL -->
+                    <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+                        <Label Text="💡" FontSize="18" VerticalOptions="Center" Margin="0,0,8,0" />
+                        <Label Grid.Column="1" Text="Afficher le métronome visuel (LED)" TextColor="White" FontSize="14" VerticalOptions="Center" />
+                        <Switch Grid.Column="2" 
+                                x:Name="ModalMetronomeVisualSwitch" 
+                                OnColor="#007ACC" 
+                                ThumbColor="White" 
+                                Toggled="OnModalMetronomeVisualToggled" />
+                    </Grid>
+
+                    <!-- Bouton Valider / Fermer -->
+                    <Button Text="Terminer" 
+                            BackgroundColor="#007ACC" 
+                            TextColor="White" 
+                            FontAttributes="Bold" 
+                            FontSize="14" 
+                            HeightRequest="44" 
+                            CornerRadius="10" 
+                            Margin="0,4,0,0"
+                            Clicked="OnCloseMetronomeSettingsModalClicked" />
+                </VerticalStackLayout>
             </Border>
         </Grid>
 
