@@ -57,6 +57,10 @@ public partial class ScoresPage : ContentPage
         _currentSort = Preferences.Default.Get("DefaultScoreSort", "DateDesc");
 
         _importService.ConversionStateChanged += OnConversionStateChanged;
+        _importService.ConfirmDialogHandler = ShowModernConfirmDialogAsync;
+        _importService.ActionSheetDialogHandler = ShowModernChoiceDialogAsync;
+        _importService.PromptDialogHandler = ShowModernPromptDialogAsync;
+        _importService.AlertHandler = ShowModernAlertDialogAsync;
 
         WifiDevicesListView.ItemsSource = _discoveredDevices;
         _cachedShowScrollTop = Preferences.Default.Get("ShowScrollTop", true);
@@ -1072,10 +1076,7 @@ public partial class ScoresPage : ContentPage
             }
             await LoadScoresAsync(string.Empty);
 
-            string msg = scores.Count == 1
-                ? $"La partition \"{scores[0].Title}\" a été importée et est disponible dans votre bibliothèque."
-                : $"{scores.Count} partitions ont été importées et sont disponibles dans votre bibliothèque.";
-            await DisplayAlertAsync("Import terminé", msg, "OK");
+            await ShowModernImportSuccessAsync(scores);
         }
     }
 
@@ -1639,4 +1640,443 @@ public partial class ScoresPage : ContentPage
             });
         }
     }
+
+    #region Modern Import Dialogs
+
+    private TaskCompletionSource<bool>? _modalTcsBool;
+    private TaskCompletionSource<string?>? _modalTcsString;
+    private Models.Score? _lastImportedScore;
+
+    private async Task AnimateModalOpenAsync()
+    {
+        ModernImportModalOverlay.IsVisible = true;
+        ModernImportModalOverlay.Opacity = 0;
+        ModernImportModalCard.Scale = 0.88;
+        await Task.WhenAll(
+            ModernImportModalOverlay.FadeTo(1, 180, Easing.CubicOut),
+            ModernImportModalCard.ScaleTo(1.0, 180, Easing.CubicOut)
+        );
+    }
+
+    private async Task AnimateModalCloseAsync()
+    {
+        await Task.WhenAll(
+            ModernImportModalOverlay.FadeTo(0, 140, Easing.CubicIn),
+            ModernImportModalCard.ScaleTo(0.9, 140, Easing.CubicIn)
+        );
+        ModernImportModalOverlay.IsVisible = false;
+    }
+
+    private async void OnModernModalBackgroundTapped(object? sender, EventArgs e)
+    {
+        _modalTcsBool?.TrySetResult(false);
+        _modalTcsBool = null;
+        _modalTcsString?.TrySetResult(null);
+        _modalTcsString = null;
+
+        await AnimateModalCloseAsync();
+    }
+
+    private Task ShowModernImportSuccessAsync(List<Models.Score> scores)
+    {
+        if (scores == null || !scores.Any()) return Task.CompletedTask;
+
+        var tcs = new TaskCompletionSource<bool>();
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            ModernModalIconLabel.Text = "✓";
+            ModernModalIconLabel.TextColor = Color.FromArgb("#2ECC71");
+            ModernModalIconHalo.Stroke = Color.FromArgb("#2ECC71");
+            ModernModalIconHalo.BackgroundColor = Color.FromArgb("#182ECC71");
+            ModernModalTitleLabel.Text = "Importation réussie !";
+
+            ModernModalBadgeBorder.IsVisible = true;
+            ModernModalInputWrapper.IsVisible = false;
+            ModernModalButtonsLayout.Clear();
+
+            if (scores.Count == 1)
+            {
+                var singleScore = scores[0];
+                _lastImportedScore = singleScore;
+
+                ModernModalBadgeLabel.Text = "1 partition ajoutée";
+                ModernModalBadgeBorder.Stroke = Color.FromArgb("#1E88E5");
+                ModernModalBadgeBorder.BackgroundColor = Color.FromArgb("#132B45");
+                ModernModalBadgeLabel.TextColor = Color.FromArgb("#4FC3F7");
+
+                ModernModalContentContainer.Clear();
+                var titleLbl = new Label
+                {
+                    Text = singleScore.Title,
+                    TextColor = Colors.White,
+                    FontAttributes = FontAttributes.Bold,
+                    FontSize = 15,
+                    HorizontalTextAlignment = TextAlignment.Center,
+                    HorizontalOptions = LayoutOptions.Center
+                };
+                ModernModalContentContainer.Add(titleLbl);
+
+                string pageInfo = singleScore.PageCount > 0 ? $"📄 {singleScore.PageCount} page(s)" : "📄 Format PDF";
+                var pageLbl = new Label
+                {
+                    Text = pageInfo,
+                    TextColor = Color.FromArgb("#AAAAAA"),
+                    FontSize = 12,
+                    HorizontalTextAlignment = TextAlignment.Center,
+                    HorizontalOptions = LayoutOptions.Center
+                };
+                ModernModalContentContainer.Add(pageLbl);
+
+                ModernModalHintLabel.Text = "Disponible immédiatement dans votre bibliothèque";
+
+                var openBtn = new Button
+                {
+                    Text = "🎵 Ouvrir la partition",
+                    BackgroundColor = Color.FromArgb("#007ACC"),
+                    TextColor = Colors.White,
+                    FontAttributes = FontAttributes.Bold,
+                    FontSize = 14,
+                    HeightRequest = 44,
+                    CornerRadius = 12
+                };
+                openBtn.Clicked += async (s, ev) =>
+                {
+                    await AnimateModalCloseAsync();
+                    tcs.TrySetResult(true);
+                    if (_lastImportedScore != null)
+                    {
+                        await Navigation.PushAsync(new ViewerPage(_lastImportedScore));
+                    }
+                };
+                ModernModalButtonsLayout.Add(openBtn);
+
+                var closeBtn = new Button
+                {
+                    Text = "Fermer",
+                    BackgroundColor = Color.FromArgb("#2D303B"),
+                    TextColor = Color.FromArgb("#DDDDDD"),
+                    FontSize = 13,
+                    HeightRequest = 38,
+                    CornerRadius = 10
+                };
+                closeBtn.Clicked += async (s, ev) =>
+                {
+                    await AnimateModalCloseAsync();
+                    tcs.TrySetResult(true);
+                };
+                ModernModalButtonsLayout.Add(closeBtn);
+            }
+            else
+            {
+                _lastImportedScore = null;
+                ModernModalBadgeLabel.Text = $"{scores.Count} partitions ajoutées";
+                ModernModalBadgeBorder.Stroke = Color.FromArgb("#2ECC71");
+                ModernModalBadgeBorder.BackgroundColor = Color.FromArgb("#142E1F");
+                ModernModalBadgeLabel.TextColor = Color.FromArgb("#58D68D");
+
+                ModernModalContentContainer.Clear();
+                foreach (var sc in scores.Take(8))
+                {
+                    var row = new HorizontalStackLayout { Spacing = 6, HorizontalOptions = LayoutOptions.Center };
+                    row.Add(new Label { Text = "•", TextColor = Color.FromArgb("#00B0FF"), FontSize = 13 });
+                    row.Add(new Label { Text = sc.Title, TextColor = Color.FromArgb("#E0E0E0"), FontSize = 13, LineBreakMode = LineBreakMode.TailTruncation, MaxLines = 1 });
+                    ModernModalContentContainer.Add(row);
+                }
+                if (scores.Count > 8)
+                {
+                    ModernModalContentContainer.Add(new Label
+                    {
+                        Text = $"... et {scores.Count - 8} autre(s)",
+                        TextColor = Color.FromArgb("#888888"),
+                        FontSize = 11,
+                        FontAttributes = FontAttributes.Italic,
+                        HorizontalOptions = LayoutOptions.Center
+                    });
+                }
+
+                ModernModalHintLabel.Text = "Disponibles immédiatement dans votre bibliothèque";
+
+                var okBtn = new Button
+                {
+                    Text = "✓ Voir la bibliothèque",
+                    BackgroundColor = Color.FromArgb("#007ACC"),
+                    TextColor = Colors.White,
+                    FontAttributes = FontAttributes.Bold,
+                    FontSize = 14,
+                    HeightRequest = 44,
+                    CornerRadius = 12
+                };
+                okBtn.Clicked += async (s, ev) =>
+                {
+                    await AnimateModalCloseAsync();
+                    tcs.TrySetResult(true);
+                };
+                ModernModalButtonsLayout.Add(okBtn);
+            }
+
+            await AnimateModalOpenAsync();
+        });
+
+        return tcs.Task;
+    }
+
+    private Task<bool> ShowModernConfirmDialogAsync(string title, string message, string accept, string cancel)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+        _modalTcsBool = tcs;
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            ModernModalIconLabel.Text = "📑";
+            ModernModalIconLabel.TextColor = Color.FromArgb("#00B0FF");
+            ModernModalIconHalo.Stroke = Color.FromArgb("#00B0FF");
+            ModernModalIconHalo.BackgroundColor = Color.FromArgb("#1500B0FF");
+            ModernModalTitleLabel.Text = title;
+
+            ModernModalBadgeBorder.IsVisible = false;
+            ModernModalInputWrapper.IsVisible = false;
+            ModernModalHintLabel.Text = string.Empty;
+
+            ModernModalContentContainer.Clear();
+            ModernModalContentContainer.Add(new Label
+            {
+                Text = message,
+                TextColor = Color.FromArgb("#E2E8F0"),
+                FontSize = 13,
+                HorizontalTextAlignment = TextAlignment.Center,
+                HorizontalOptions = LayoutOptions.Center,
+                LineBreakMode = LineBreakMode.WordWrap
+            });
+
+            ModernModalButtonsLayout.Clear();
+
+            var acceptBtn = new Button
+            {
+                Text = accept,
+                BackgroundColor = Color.FromArgb("#007ACC"),
+                TextColor = Colors.White,
+                FontAttributes = FontAttributes.Bold,
+                FontSize = 14,
+                HeightRequest = 44,
+                CornerRadius = 12
+            };
+            acceptBtn.Clicked += async (s, ev) =>
+            {
+                await AnimateModalCloseAsync();
+                tcs.TrySetResult(true);
+            };
+            ModernModalButtonsLayout.Add(acceptBtn);
+
+            var cancelBtn = new Button
+            {
+                Text = cancel,
+                BackgroundColor = Color.FromArgb("#2D303B"),
+                TextColor = Color.FromArgb("#DDDDDD"),
+                FontSize = 13,
+                HeightRequest = 38,
+                CornerRadius = 10
+            };
+            cancelBtn.Clicked += async (s, ev) =>
+            {
+                await AnimateModalCloseAsync();
+                tcs.TrySetResult(false);
+            };
+            ModernModalButtonsLayout.Add(cancelBtn);
+
+            await AnimateModalOpenAsync();
+        });
+
+        return tcs.Task;
+    }
+
+    private Task<string?> ShowModernChoiceDialogAsync(string title, string cancel, string[] options)
+    {
+        var tcs = new TaskCompletionSource<string?>();
+        _modalTcsString = tcs;
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            ModernModalIconLabel.Text = "📁";
+            ModernModalIconLabel.TextColor = Color.FromArgb("#00B0FF");
+            ModernModalIconHalo.Stroke = Color.FromArgb("#00B0FF");
+            ModernModalIconHalo.BackgroundColor = Color.FromArgb("#1500B0FF");
+            ModernModalTitleLabel.Text = title;
+
+            ModernModalBadgeBorder.IsVisible = false;
+            ModernModalInputWrapper.IsVisible = false;
+            ModernModalContentContainer.Clear();
+            ModernModalHintLabel.Text = "Choisissez le mode de traitement :";
+
+            ModernModalButtonsLayout.Clear();
+
+            foreach (var opt in options)
+            {
+                var optBtn = new Button
+                {
+                    Text = opt,
+                    BackgroundColor = opt.Contains("Conseillé") ? Color.FromArgb("#007ACC") : Color.FromArgb("#282B36"),
+                    TextColor = Colors.White,
+                    FontAttributes = opt.Contains("Conseillé") ? FontAttributes.Bold : FontAttributes.None,
+                    FontSize = 13,
+                    HeightRequest = 42,
+                    CornerRadius = 10
+                };
+                optBtn.Clicked += async (s, ev) =>
+                {
+                    await AnimateModalCloseAsync();
+                    tcs.TrySetResult(opt);
+                };
+                ModernModalButtonsLayout.Add(optBtn);
+            }
+
+            var cancelBtn = new Button
+            {
+                Text = cancel,
+                BackgroundColor = Color.FromArgb("#1E2028"),
+                TextColor = Color.FromArgb("#AAAAAA"),
+                FontSize = 12,
+                HeightRequest = 36,
+                CornerRadius = 8
+            };
+            cancelBtn.Clicked += async (s, ev) =>
+            {
+                await AnimateModalCloseAsync();
+                tcs.TrySetResult(cancel);
+            };
+            ModernModalButtonsLayout.Add(cancelBtn);
+
+            await AnimateModalOpenAsync();
+        });
+
+        return tcs.Task;
+    }
+
+    private Task<string?> ShowModernPromptDialogAsync(string title, string message, string defaultVal)
+    {
+        var tcs = new TaskCompletionSource<string?>();
+        _modalTcsString = tcs;
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            ModernModalIconLabel.Text = "✎";
+            ModernModalIconLabel.TextColor = Color.FromArgb("#00B0FF");
+            ModernModalIconHalo.Stroke = Color.FromArgb("#00B0FF");
+            ModernModalIconHalo.BackgroundColor = Color.FromArgb("#1500B0FF");
+            ModernModalTitleLabel.Text = title;
+
+            ModernModalBadgeBorder.IsVisible = false;
+            ModernModalContentContainer.Clear();
+            ModernModalContentContainer.Add(new Label
+            {
+                Text = message,
+                TextColor = Color.FromArgb("#CCCCCC"),
+                FontSize = 13,
+                HorizontalTextAlignment = TextAlignment.Center,
+                HorizontalOptions = LayoutOptions.Center
+            });
+
+            ModernModalHintLabel.Text = string.Empty;
+
+            ModernModalInputWrapper.IsVisible = true;
+            ModernModalEntry.Text = defaultVal;
+            ModernModalEntry.Focus();
+
+            ModernModalButtonsLayout.Clear();
+
+            var okBtn = new Button
+            {
+                Text = "Créer la partition",
+                BackgroundColor = Color.FromArgb("#007ACC"),
+                TextColor = Colors.White,
+                FontAttributes = FontAttributes.Bold,
+                FontSize = 14,
+                HeightRequest = 44,
+                CornerRadius = 12
+            };
+            okBtn.Clicked += async (s, ev) =>
+            {
+                string text = ModernModalEntry.Text;
+                await AnimateModalCloseAsync();
+                tcs.TrySetResult(string.IsNullOrWhiteSpace(text) ? defaultVal : text.Trim());
+            };
+            ModernModalButtonsLayout.Add(okBtn);
+
+            var cancelBtn = new Button
+            {
+                Text = "Annuler",
+                BackgroundColor = Color.FromArgb("#2D303B"),
+                TextColor = Color.FromArgb("#DDDDDD"),
+                FontSize = 13,
+                HeightRequest = 38,
+                CornerRadius = 10
+            };
+            cancelBtn.Clicked += async (s, ev) =>
+            {
+                await AnimateModalCloseAsync();
+                tcs.TrySetResult(null);
+            };
+            ModernModalButtonsLayout.Add(cancelBtn);
+
+            await AnimateModalOpenAsync();
+        });
+
+        return tcs.Task;
+    }
+
+    private Task ShowModernAlertDialogAsync(string title, string message)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            bool isError = title.Contains("Erreur", StringComparison.OrdinalIgnoreCase) || title.Contains("Impossible", StringComparison.OrdinalIgnoreCase);
+
+            ModernModalIconLabel.Text = isError ? "✕" : "ℹ";
+            ModernModalIconLabel.TextColor = isError ? Color.FromArgb("#E53935") : Color.FromArgb("#00B0FF");
+            ModernModalIconHalo.Stroke = isError ? Color.FromArgb("#E53935") : Color.FromArgb("#00B0FF");
+            ModernModalIconHalo.BackgroundColor = isError ? Color.FromArgb("#20E53935") : Color.FromArgb("#1500B0FF");
+            ModernModalTitleLabel.Text = title;
+
+            ModernModalBadgeBorder.IsVisible = false;
+            ModernModalInputWrapper.IsVisible = false;
+            ModernModalContentContainer.Clear();
+            ModernModalContentContainer.Add(new Label
+            {
+                Text = message,
+                TextColor = Color.FromArgb("#E2E8F0"),
+                FontSize = 13,
+                HorizontalTextAlignment = TextAlignment.Center,
+                HorizontalOptions = LayoutOptions.Center,
+                LineBreakMode = LineBreakMode.WordWrap
+            });
+
+            ModernModalHintLabel.Text = string.Empty;
+
+            ModernModalButtonsLayout.Clear();
+
+            var okBtn = new Button
+            {
+                Text = "OK",
+                BackgroundColor = isError ? Color.FromArgb("#C62828") : Color.FromArgb("#007ACC"),
+                TextColor = Colors.White,
+                FontAttributes = FontAttributes.Bold,
+                FontSize = 14,
+                HeightRequest = 42,
+                CornerRadius = 10
+            };
+            okBtn.Clicked += async (s, ev) =>
+            {
+                await AnimateModalCloseAsync();
+                tcs.TrySetResult(true);
+            };
+            ModernModalButtonsLayout.Add(okBtn);
+
+            await AnimateModalOpenAsync();
+        });
+
+        return tcs.Task;
+    }
+
+    #endregion
 }

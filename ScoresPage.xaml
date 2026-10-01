@@ -947,6 +947,143 @@
                 </VerticalStackLayout>
             </Border>
         </ContentView>
+
+        <!-- Modal Moderne : Message Box & Dialogue d'Importation -->
+        <ContentView x:Name="ModernImportModalOverlay" 
+                     Grid.RowSpan="3"
+                     IsVisible="False" 
+                     BackgroundColor="#CC000000" 
+                     InputTransparent="False"
+                     ZIndex="1200"
+                     Opacity="0">
+            <ContentView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnModernModalBackgroundTapped" />
+            </ContentView.GestureRecognizers>
+            <Border x:Name="ModernImportModalCard"
+                    BackgroundColor="#1C1D24" 
+                    Stroke="#2B3A4E"
+                    StrokeThickness="1.5"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" 
+                    WidthRequest="340"
+                    MaximumWidthRequest="380"
+                    Padding="22">
+                <Border.Shadow>
+                    <Shadow Brush="#007ACC" Offset="0,4" Radius="24" Opacity="0.35" />
+                </Border.Shadow>
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20" />
+                </Border.StrokeShape>
+                <Border.GestureRecognizers>
+                    <!-- Bloquer la propagation du tap au fond noir -->
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="15" HorizontalOptions="Fill">
+                    
+                    <!-- En-tête : Badge circulaire avec halo -->
+                    <Grid HorizontalOptions="Center" WidthRequest="68" HeightRequest="68">
+                        <Border x:Name="ModernModalIconHalo"
+                                BackgroundColor="#152ECC71"
+                                Stroke="#2ECC71"
+                                StrokeThickness="1.5"
+                                WidthRequest="68"
+                                HeightRequest="68"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="34" />
+                            </Border.StrokeShape>
+                        </Border>
+                        <Label x:Name="ModernModalIconLabel"
+                               Text="✓"
+                               TextColor="#2ECC71"
+                               FontSize="30"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- Titre du dialogue -->
+                    <Label x:Name="ModernModalTitleLabel"
+                           Text="Importation réussie"
+                           TextColor="White"
+                           FontAttributes="Bold"
+                           FontSize="18"
+                           HorizontalTextAlignment="Center"
+                           HorizontalOptions="Center" />
+
+                    <!-- Conteneur Carte de détails / Contenu -->
+                    <Border BackgroundColor="#242630"
+                            Stroke="#36394A"
+                            StrokeThickness="1"
+                            Padding="14,12"
+                            HorizontalOptions="Fill">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="14" />
+                        </Border.StrokeShape>
+                        <VerticalStackLayout Spacing="8">
+                            <!-- Badge / Pill récapitulatif -->
+                            <Border x:Name="ModernModalBadgeBorder"
+                                    BackgroundColor="#132B45"
+                                    Stroke="#1E88E5"
+                                    StrokeThickness="1"
+                                    Padding="10,3"
+                                    HorizontalOptions="Center">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12" />
+                                </Border.StrokeShape>
+                                <Label x:Name="ModernModalBadgeLabel"
+                                       Text="1 partition importée"
+                                       TextColor="#4FC3F7"
+                                       FontSize="11"
+                                       FontAttributes="Bold" />
+                            </Border>
+
+                            <!-- Message ou Liste des partitions -->
+                            <ScrollView MaximumHeightRequest="150" HorizontalScrollBarVisibility="Never">
+                                <VerticalStackLayout x:Name="ModernModalContentContainer" Spacing="6" HorizontalOptions="Fill">
+                                    <Label x:Name="ModernModalMessageLabel"
+                                           Text="Détail de l'import"
+                                           TextColor="#E2E8F0"
+                                           FontSize="13"
+                                           HorizontalTextAlignment="Center"
+                                           HorizontalOptions="Center"
+                                           LineBreakMode="WordWrap" />
+                                </VerticalStackLayout>
+                            </ScrollView>
+
+                            <!-- Sous-texte optionnel d'indication -->
+                            <Label x:Name="ModernModalHintLabel"
+                                   Text="Disponible immédiatement dans votre bibliothèque"
+                                   TextColor="#8A92A6"
+                                   FontSize="11"
+                                   HorizontalTextAlignment="Center"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Zone de saisie (utilisée pour le prompt de titre) -->
+                    <Border x:Name="ModernModalInputWrapper"
+                            IsVisible="False"
+                            BackgroundColor="#15171E"
+                            Stroke="#007ACC"
+                            StrokeThickness="1.5"
+                            Padding="10,2">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <Entry x:Name="ModernModalEntry"
+                               TextColor="White"
+                               PlaceholderColor="#666677"
+                               FontSize="14"
+                               ClearButtonVisibility="WhileEditing" />
+                    </Border>
+
+                    <!-- Zone des boutons d'action (dynamique) -->
+                    <VerticalStackLayout x:Name="ModernModalButtonsLayout" Spacing="8" Margin="0,2,0,0" />
+                </VerticalStackLayout>
+            </Border>
+        </ContentView>
     </Grid>
 
 </ContentPage>
