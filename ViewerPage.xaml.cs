@@ -1843,17 +1843,43 @@ public partial class ViewerPage : ContentPage
             screenHeight = this.Height > 0 ? this.Height : DeviceDisplay.MainDisplayInfo.Height / (DeviceDisplay.MainDisplayInfo.Density > 0 ? DeviceDisplay.MainDisplayInfo.Density : 1);
         }
 
-        if (screenHeight > 0 && screenHeight < 560)
+        // Hauteur naturelle compacte requise par le contenu du menu
+        double naturalContentHeight = 490;
+        try
         {
-            CentralMenuOverlay.MaximumHeightRequest = Math.Max(260, screenHeight - 60);
+            if (CentralMenuContentStack != null)
+            {
+                var measured = CentralMenuContentStack.Measure(320, double.PositiveInfinity);
+                if (measured.Height > 100)
+                {
+                    naturalContentHeight = measured.Height + 28;
+                }
+            }
+        }
+        catch { }
+
+        // Si l'écran est trop petit pour afficher le menu en entier (ex: écran paysage de smartphone)
+        if (screenHeight > 0 && screenHeight < (naturalContentHeight + 40))
+        {
+            double constrainedHeight = Math.Max(240, screenHeight - 40);
+            CentralMenuOverlay.HeightRequest = constrainedHeight;
+            CentralMenuOverlay.MaximumHeightRequest = constrainedHeight;
             if (CentralMenuScrollView != null)
+            {
+                CentralMenuScrollView.HeightRequest = constrainedHeight - 24;
                 CentralMenuScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Default;
+            }
         }
         else
         {
-            CentralMenuOverlay.MaximumHeightRequest = double.PositiveInfinity;
+            // Écran de taille suffisante : boîte ultra-compacte ajustée pile au contenu, sans aucun ascenseur !
+            CentralMenuOverlay.HeightRequest = naturalContentHeight;
+            CentralMenuOverlay.MaximumHeightRequest = naturalContentHeight;
             if (CentralMenuScrollView != null)
+            {
+                CentralMenuScrollView.HeightRequest = naturalContentHeight - 24;
                 CentralMenuScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Never;
+            }
         }
     }
 
