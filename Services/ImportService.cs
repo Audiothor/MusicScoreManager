@@ -366,59 +366,47 @@ namespace MusicScoreManager.Services
             {
                 string savedMode = _settingsService.DefaultScoreImportMode; // "Copy", "Link", "Ask"
 
-                string optCopySingle = savedMode == "Copy"
-                    ? "Copier vers la bibliothèque (Par défaut)"
-                    : "Copier vers la bibliothèque (Conseillé)";
-                string optLinkSingle = savedMode == "Link"
-                    ? "Lier le fichier original (Par défaut)"
-                    : "Lier le fichier original (Externe)";
-
-                string optCopyMulti = savedMode == "Copy"
-                    ? "Copier tous les fichiers vers la bibliothèque (Par défaut)"
-                    : "Copier tous les fichiers vers la bibliothèque (Conseillé)";
-                string optLinkMulti = savedMode == "Link"
-                    ? "Lier tous les fichiers originaux (Par défaut)"
-                    : "Lier tous les fichiers originaux (Externe)";
-
-                if (linkableExternalFiles.Count == 1)
+                if (savedMode == "Link")
                 {
-                    string firstOpt = savedMode == "Link" ? optLinkSingle : optCopySingle;
-                    string secondOpt = savedMode == "Link" ? optCopySingle : optLinkSingle;
+                    // Mode Liaison directe sans message intempestif
+                    globalAction = linkableExternalFiles.Count > 1
+                        ? "Lier tous les fichiers originaux (Externe)"
+                        : "Lier le fichier original (Externe)";
+                }
+                else if (savedMode == "Ask")
+                {
+                    // Mode interactif : solliciter le choix de l'utilisateur
+                    if (linkableExternalFiles.Count == 1)
+                    {
+                        globalAction = await Shell.Current.DisplayActionSheetAsync(
+                            "Organisation de la bibliothèque",
+                            "Annuler",
+                            null,
+                            "Copier vers la bibliothèque (Conseillé)",
+                            "Lier le fichier original (Externe)");
+                    }
+                    else
+                    {
+                        globalAction = await Shell.Current.DisplayActionSheetAsync(
+                            $"Organisation de la bibliothèque ({linkableExternalFiles.Count} fichiers)",
+                            "Annuler",
+                            null,
+                            "Copier tous les fichiers vers la bibliothèque (Conseillé)",
+                            "Lier tous les fichiers originaux (Externe)",
+                            "Choisir au cas par cas");
+                    }
 
-                    globalAction = await Shell.Current.DisplayActionSheetAsync(
-                        "Organisation de la bibliothèque",
-                        "Annuler",
-                        null,
-                        firstOpt,
-                        secondOpt);
+                    if (globalAction == "Annuler" || globalAction == null)
+                    {
+                        return imported;
+                    }
                 }
                 else
                 {
-                    string firstOpt = savedMode == "Link" ? optLinkMulti : optCopyMulti;
-                    string secondOpt = savedMode == "Link" ? optCopyMulti : optLinkMulti;
-
-                    globalAction = await Shell.Current.DisplayActionSheetAsync(
-                        $"Organisation de la bibliothèque ({linkableExternalFiles.Count} fichiers)",
-                        "Annuler",
-                        null,
-                        firstOpt,
-                        secondOpt,
-                        "Choisir au cas par cas");
-                }
-
-                if (globalAction == "Annuler" || globalAction == null)
-                {
-                    return imported;
-                }
-
-                // Mémoriser le choix de l'utilisateur pour les prochains imports
-                if (globalAction.StartsWith("Copier"))
-                {
-                    _settingsService.DefaultScoreImportMode = "Copy";
-                }
-                else if (globalAction.StartsWith("Lier"))
-                {
-                    _settingsService.DefaultScoreImportMode = "Link";
+                    // Mode "Copy" (valeur par défaut recommandée) : copie directe automatique
+                    globalAction = linkableExternalFiles.Count > 1
+                        ? "Copier tous les fichiers vers la bibliothèque (Conseillé)"
+                        : "Copier vers la bibliothèque (Conseillé)";
                 }
             }
 
@@ -458,25 +446,12 @@ namespace MusicScoreManager.Services
 
                         if (canLink && globalAction == "Choisir au cas par cas")
                         {
-                            string curMode = _settingsService.DefaultScoreImportMode;
-                            string optC = curMode == "Copy"
-                                ? "Copier vers la bibliothèque (Par défaut)"
-                                : "Copier vers la bibliothèque (Conseillé)";
-                            string optL = curMode == "Link"
-                                ? "Lier le fichier original (Par défaut)"
-                                : "Lier le fichier original (Externe)";
-
                             fileAction = await Shell.Current.DisplayActionSheetAsync(
                                 $"Fichier : {rawFileName}",
                                 "Passer ce fichier",
                                 null,
-                                curMode == "Link" ? optL : optC,
-                                curMode == "Link" ? optC : optL);
-
-                            if (fileAction != null && fileAction.StartsWith("Copier"))
-                                _settingsService.DefaultScoreImportMode = "Copy";
-                            else if (fileAction != null && fileAction.StartsWith("Lier"))
-                                _settingsService.DefaultScoreImportMode = "Link";
+                                "Copier vers la bibliothèque (Conseillé)",
+                                "Lier le fichier original (Externe)");
                         }
 
                         // Si le fichier vient de Google Drive / Cloud ou que l'action est Copier
