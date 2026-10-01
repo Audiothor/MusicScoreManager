@@ -198,15 +198,14 @@
             </VerticalStackLayout>
         </Border>
 
-        <!-- Sélecteur de Stickers et Réglages (Drawer Unique) -->
+        <!-- Sélecteur de Stickers et Réglages (Drawer Unique Adaptatif) -->
         <Border x:Name="StickerPickerOverlay"
                 IsVisible="False"
                 VerticalOptions="End"
                 HorizontalOptions="Fill"
                 BackgroundColor="#EE000000"
-                HeightRequest="270"
                 Margin="10,0,10,45"
-                Padding="10"
+                Padding="10,8"
                 StrokeThickness="1"
                 Stroke="#444444"
                 ZIndex="25">
@@ -214,93 +213,96 @@
                 <RoundRectangle CornerRadius="10" />
             </Border.StrokeShape>
             
-            <VerticalStackLayout Spacing="8">
-                <!-- Réglages Stickers Fusionnés -->
-                <Grid RowDefinitions="Auto, Auto, Auto" RowSpacing="8" Margin="0,0,0,5">
+            <ScrollView x:Name="StickerPickerScrollView" VerticalScrollBarVisibility="Never" Orientation="Vertical">
+                <VerticalStackLayout Spacing="8">
                     <!-- Header : Titre et Bouton Fermer -->
-                    <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                    <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,2">
                         <Label Grid.Column="0" Text="Réglages des stickers" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
                         <Button Grid.Column="1" Text="✕" TextColor="#FF5555" BackgroundColor="Transparent" FontSize="18" FontAttributes="Bold" Padding="0" WidthRequest="32" HeightRequest="32" VerticalOptions="Center" HorizontalOptions="Center" Clicked="OnCloseStickerPickerClicked" />
                     </Grid>
-                    <!-- Ligne 1: Couleurs Texte et Fond -->
-                    <Grid Grid.Row="1" ColumnDefinitions="Auto, *, Auto, *" ColumnSpacing="6" VerticalOptions="Center">
+
+                    <!-- Ligne Couleurs Texte : Défilement fluide -->
+                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
                         <Label Grid.Column="0" Text="Texte:" TextColor="White" VerticalOptions="Center" FontSize="11" FontAttributes="Bold" />
                         <ScrollView Grid.Column="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never" VerticalOptions="Center">
-                            <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
                                 <!-- Rouge (défaut) -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#FF0000" Stroke="#666666" StrokeThickness="1">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#FF0000" Stroke="#666666" StrokeThickness="1">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Red"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                                 <!-- Blanc -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#FFFFFF" Stroke="#666666" StrokeThickness="1">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#FFFFFF" Stroke="#666666" StrokeThickness="1">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="White"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                                 <!-- Noir -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#000000" Stroke="#888888" StrokeThickness="1.5">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#000000" Stroke="#888888" StrokeThickness="1.5">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Black"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                                 <!-- Bleu -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#007ACC" Stroke="#666666" StrokeThickness="1">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#007ACC" Stroke="#666666" StrokeThickness="1">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Blue"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                                 <!-- Jaune -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#FFD600" Stroke="#666666" StrokeThickness="1">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#FFD600" Stroke="#666666" StrokeThickness="1">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Yellow"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                                 <!-- Vert -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#2ECC71" Stroke="#666666" StrokeThickness="1">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#2ECC71" Stroke="#666666" StrokeThickness="1">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Green"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                                 <!-- Orange -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#FF9800" Stroke="#666666" StrokeThickness="1">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#FF9800" Stroke="#666666" StrokeThickness="1">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerColorTapped" CommandParameter="Orange"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                             </HorizontalStackLayout>
                         </ScrollView>
+                    </Grid>
 
-                        <Label Grid.Column="2" Text="Fond:" TextColor="White" VerticalOptions="Center" FontSize="11" FontAttributes="Bold" />
-                        <ScrollView Grid.Column="3" Orientation="Horizontal" HorizontalScrollBarVisibility="Never" VerticalOptions="Center">
-                            <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                    <!-- Ligne Couleurs Fond : Défilement fluide -->
+                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
+                        <Label Grid.Column="0" Text="Fond:" TextColor="White" VerticalOptions="Center" FontSize="11" FontAttributes="Bold" />
+                        <ScrollView Grid.Column="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never" VerticalOptions="Center">
+                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
                                 <!-- Noir (défaut) -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#000000" Stroke="#888888" StrokeThickness="1.5">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#000000" Stroke="#888888" StrokeThickness="1.5">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Black"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                                 <!-- Transparent -->
-                                <Grid WidthRequest="20" HeightRequest="20" VerticalOptions="Center" HorizontalOptions="Center">
+                                <Grid WidthRequest="22" HeightRequest="22" VerticalOptions="Center" HorizontalOptions="Center">
                                     <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Transparent"/></Grid.GestureRecognizers>
-                                    <Ellipse WidthRequest="20" HeightRequest="20" Fill="Transparent" Stroke="#888888" StrokeThickness="1" />
+                                    <Ellipse WidthRequest="22" HeightRequest="22" Fill="Transparent" Stroke="#888888" StrokeThickness="1" />
                                     <Label Text="∅" TextColor="#AAAAAA" FontSize="12" HorizontalOptions="Center" VerticalOptions="Center" InputTransparent="True" />
                                 </Grid>
                                 <!-- Gris Foncé -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#333333" Stroke="#666666" StrokeThickness="1">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#333333" Stroke="#666666" StrokeThickness="1">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="DarkGray"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                                 <!-- Ivoire -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#FFFFE0" Stroke="#666666" StrokeThickness="1">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#FFFFE0" Stroke="#666666" StrokeThickness="1">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Ivory"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                                 <!-- Rouge -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#FF0000" Stroke="#666666" StrokeThickness="1">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#FF0000" Stroke="#666666" StrokeThickness="1">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Red"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                                 <!-- Jaune -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#FFD600" Stroke="#666666" StrokeThickness="1">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#FFD600" Stroke="#666666" StrokeThickness="1">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Yellow"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                                 <!-- Vert -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#2ECC71" Stroke="#666666" StrokeThickness="1">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#2ECC71" Stroke="#666666" StrokeThickness="1">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Green"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                                 <!-- Bleu -->
-                                <Ellipse WidthRequest="20" HeightRequest="20" Fill="#007ACC" Stroke="#666666" StrokeThickness="1">
+                                <Ellipse WidthRequest="22" HeightRequest="22" Fill="#007ACC" Stroke="#666666" StrokeThickness="1">
                                     <Ellipse.GestureRecognizers><TapGestureRecognizer Tapped="OnStickerBgColorTapped" CommandParameter="Blue"/></Ellipse.GestureRecognizers>
                                 </Ellipse>
                             </HorizontalStackLayout>
                         </ScrollView>
                     </Grid>
 
-                    <!-- Ligne 2: Taille Slider large et tactile -->
-                    <Grid Grid.Row="2" ColumnDefinitions="Auto, *" ColumnSpacing="10" VerticalOptions="Center">
+                    <!-- Ligne 3: Taille Slider large et tactile -->
+                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="10" VerticalOptions="Center">
                         <Label Grid.Column="0" Text="Taille:" TextColor="White" VerticalOptions="Center" FontSize="13" FontAttributes="Bold" />
                         <Slider Grid.Column="1" x:Name="StickerSizeSlider" 
                                 Minimum="0.5" Maximum="3.0" Value="1.0" 
@@ -309,78 +311,78 @@
                                 VerticalOptions="Center" HorizontalOptions="FillAndExpand" 
                                 ValueChanged="OnStickerSizeChanged" />
                     </Grid>
-                </Grid>
 
-                <BoxView HeightRequest="1" Color="#444444" />
+                    <BoxView HeightRequest="1" Color="#444444" />
 
-                <!-- Catégories -->
-                <CollectionView x:Name="StickerCategoriesCollection" 
-                                HeightRequest="40"
-                                Margin="4,0"
-                                SelectionMode="Single"
-                                SelectionChanged="OnStickerCategoryChanged">
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Border BackgroundColor="#2D2D35" 
-                                    Padding="14,6" 
-                                    Stroke="#444444"
-                                    StrokeThickness="1">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="16" />
-                                </Border.StrokeShape>
-                                <Label Text="{Binding DisplayName}" 
-                                       FontSize="13"
-                                       FontAttributes="Bold"
-                                       TextColor="White"
-                                       VerticalTextAlignment="Center"
-                                       HorizontalTextAlignment="Center" />
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                    <!-- Catégories -->
+                    <CollectionView x:Name="StickerCategoriesCollection" 
+                                    HeightRequest="40"
+                                    Margin="4,0"
+                                    SelectionMode="Single"
+                                    SelectionChanged="OnStickerCategoryChanged">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="#2D2D35" 
+                                        Padding="14,6" 
+                                        Stroke="#444444"
+                                        StrokeThickness="1">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="16" />
+                                    </Border.StrokeShape>
+                                    <Label Text="{Binding DisplayName}" 
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="White"
+                                           VerticalTextAlignment="Center"
+                                           HorizontalTextAlignment="Center" />
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
 
-                <BoxView HeightRequest="1" Color="#444444" />
+                    <BoxView HeightRequest="1" Color="#444444" />
 
-                <!-- Stickers de la catégorie -->
-                <CollectionView x:Name="StickersCollection" 
-                                HeightRequest="65"
-                                Margin="4,0"
-                                SelectionMode="Single"
-                                SelectionChanged="OnStickerSelected"
-                                HorizontalOptions="Fill">
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Border x:Name="StickerBorder"
-                                    Margin="2,2" 
-                                    BackgroundColor="{Binding BackgroundColor}" 
-                                    Padding="14,6"
-                                    StrokeShape="RoundRectangle 8"
-                                    Stroke="{Binding BorderColor}"
-                                    StrokeThickness="{Binding BorderThickness}">
-                                <Border.GestureRecognizers>
-                                    <DragGestureRecognizer DragStarting="OnStickerDragStarting" />
-                                </Border.GestureRecognizers>
-                                <Label Text="{Binding Text}" 
-                                       TextColor="{Binding Color}" 
-                                       FontSize="{Binding Scale, Converter={StaticResource ScaleToFontSizeConverter}}" 
-                                       FontAttributes="Bold"
-                                       LineBreakMode="NoWrap"
-                                       VerticalOptions="Center"
-                                       HorizontalOptions="Center"
-                                       VerticalTextAlignment="Center"
-                                       HorizontalTextAlignment="Center"
-                                       InputTransparent="True" />
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </VerticalStackLayout>
+                    <!-- Stickers de la catégorie -->
+                    <CollectionView x:Name="StickersCollection" 
+                                    HeightRequest="65"
+                                    Margin="4,0"
+                                    SelectionMode="Single"
+                                    SelectionChanged="OnStickerSelected"
+                                    HorizontalOptions="Fill">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border x:Name="StickerBorder"
+                                        Margin="2,2" 
+                                        BackgroundColor="{Binding BackgroundColor}" 
+                                        Padding="14,6"
+                                        StrokeShape="RoundRectangle 8"
+                                        Stroke="{Binding BorderColor}"
+                                        StrokeThickness="{Binding BorderThickness}">
+                                    <Border.GestureRecognizers>
+                                        <DragGestureRecognizer DragStarting="OnStickerDragStarting" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="{Binding Text}" 
+                                           TextColor="{Binding Color}" 
+                                           FontSize="{Binding Scale, Converter={StaticResource ScaleToFontSizeConverter}}" 
+                                           FontAttributes="Bold"
+                                           LineBreakMode="NoWrap"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"
+                                           VerticalTextAlignment="Center"
+                                           HorizontalTextAlignment="Center"
+                                           InputTransparent="True" />
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </ScrollView>
         </Border>
 
         <!-- Panneau d'options de surlignage (Stabilo) -->
@@ -392,53 +394,52 @@
                 BackgroundColor="#EE1E1E24"
                 Stroke="#44FFFFFF"
                 StrokeThickness="1"
-                Padding="10,6"
+                Padding="8,5"
                 ZIndex="25">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
-            <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+            <StackLayout x:Name="HighlightOptionsLayout" Orientation="Horizontal" Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
                 <!-- Pastilles de couleurs (Jaune par défaut, Vert, Bleu, Rouge/Rose) -->
-                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                <HorizontalStackLayout Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
                     <!-- Jaune (défaut) -->
-                    <Border x:Name="HighlightYellowBtn" BackgroundColor="#FFFF00" WidthRequest="26" HeightRequest="26" Stroke="White" StrokeThickness="3">
-                        <Border.StrokeShape><RoundRectangle CornerRadius="13" /></Border.StrokeShape>
+                    <Border x:Name="HighlightYellowBtn" BackgroundColor="#FFFF00" WidthRequest="24" HeightRequest="24" Stroke="White" StrokeThickness="3">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="12" /></Border.StrokeShape>
                         <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnHighlightColorSelected" CommandParameter="#FFFF00" /></Border.GestureRecognizers>
                     </Border>
                     <!-- Vert -->
-                    <Border x:Name="HighlightGreenBtn" BackgroundColor="#00E676" WidthRequest="26" HeightRequest="26" Stroke="Transparent" StrokeThickness="2">
-                        <Border.StrokeShape><RoundRectangle CornerRadius="13" /></Border.StrokeShape>
+                    <Border x:Name="HighlightGreenBtn" BackgroundColor="#00E676" WidthRequest="24" HeightRequest="24" Stroke="Transparent" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="12" /></Border.StrokeShape>
                         <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnHighlightColorSelected" CommandParameter="#00E676" /></Border.GestureRecognizers>
                     </Border>
                     <!-- Bleu -->
-                    <Border x:Name="HighlightBlueBtn" BackgroundColor="#00B0FF" WidthRequest="26" HeightRequest="26" Stroke="Transparent" StrokeThickness="2">
-                        <Border.StrokeShape><RoundRectangle CornerRadius="13" /></Border.StrokeShape>
+                    <Border x:Name="HighlightBlueBtn" BackgroundColor="#00B0FF" WidthRequest="24" HeightRequest="24" Stroke="Transparent" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="12" /></Border.StrokeShape>
                         <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnHighlightColorSelected" CommandParameter="#00B0FF" /></Border.GestureRecognizers>
                     </Border>
                     <!-- Rouge/Rose -->
-                    <Border x:Name="HighlightRedBtn" BackgroundColor="#FF4081" WidthRequest="26" HeightRequest="26" Stroke="Transparent" StrokeThickness="2">
-                        <Border.StrokeShape><RoundRectangle CornerRadius="13" /></Border.StrokeShape>
+                    <Border x:Name="HighlightRedBtn" BackgroundColor="#FF4081" WidthRequest="24" HeightRequest="24" Stroke="Transparent" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="12" /></Border.StrokeShape>
                         <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnHighlightColorSelected" CommandParameter="#FF4081" /></Border.GestureRecognizers>
                     </Border>
                 </HorizontalStackLayout>
 
-                <!-- Séparateur vertical -->
-                <BoxView WidthRequest="1" HeightRequest="22" Color="#44FFFFFF" VerticalOptions="Center" />
+                <!-- Séparateur vertical (visible en paysage) -->
+                <BoxView x:Name="HighlightOptionsSeparator" WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
 
-                <!-- Choix de largeur de stabilo -->
-                <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
-                    <Label Text="Taille :" TextColor="#CCCCCC" FontSize="11" VerticalOptions="Center" />
+                <!-- Choix de largeur de stabilo + Bouton fermer -->
+                <HorizontalStackLayout Spacing="4" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Label Text="Taille:" TextColor="#CCCCCC" FontSize="11" VerticalOptions="Center" />
                     <!-- Bouton Fin (5mm) -->
-                    <Button x:Name="HighlightSizeSmallBtn" Text="5mm" BackgroundColor="#333333" TextColor="White" FontSize="11" HeightRequest="28" Padding="6,0" CornerRadius="6" Clicked="OnHighlightSizeSelected" CommandParameter="15" />
+                    <Button x:Name="HighlightSizeSmallBtn" Text="5mm" BackgroundColor="#333333" TextColor="White" FontSize="11" HeightRequest="26" Padding="6,0" CornerRadius="5" Clicked="OnHighlightSizeSelected" CommandParameter="15" />
                     <!-- Bouton Moyen (10mm - Défaut) -->
-                    <Button x:Name="HighlightSizeMediumBtn" Text="10mm" BackgroundColor="#007ACC" TextColor="White" FontSize="11" HeightRequest="28" Padding="6,0" CornerRadius="6" FontAttributes="Bold" Clicked="OnHighlightSizeSelected" CommandParameter="30" />
+                    <Button x:Name="HighlightSizeMediumBtn" Text="10mm" BackgroundColor="#007ACC" TextColor="White" FontSize="11" HeightRequest="26" Padding="6,0" CornerRadius="5" FontAttributes="Bold" Clicked="OnHighlightSizeSelected" CommandParameter="30" />
                     <!-- Bouton Large (18mm) -->
-                    <Button x:Name="HighlightSizeLargeBtn" Text="18mm" BackgroundColor="#333333" TextColor="White" FontSize="11" HeightRequest="28" Padding="6,0" CornerRadius="6" Clicked="OnHighlightSizeSelected" CommandParameter="50" />
+                    <Button x:Name="HighlightSizeLargeBtn" Text="18mm" BackgroundColor="#333333" TextColor="White" FontSize="11" HeightRequest="26" Padding="6,0" CornerRadius="5" Clicked="OnHighlightSizeSelected" CommandParameter="50" />
+                    <!-- Bouton fermer le panneau -->
+                    <Button Text="✕" BackgroundColor="Transparent" TextColor="#AAAAAA" FontSize="14" HeightRequest="26" WidthRequest="22" Padding="0" Clicked="OnCloseHighlightOptionsClicked" VerticalOptions="Center" Margin="3,0,0,0" />
                 </HorizontalStackLayout>
-
-                <!-- Bouton fermer le panneau -->
-                <Button Text="✕" BackgroundColor="Transparent" TextColor="#AAAAAA" FontSize="15" HeightRequest="28" WidthRequest="26" Padding="0" Clicked="OnCloseHighlightOptionsClicked" VerticalOptions="Center" />
-            </HorizontalStackLayout>
+            </StackLayout>
         </Border>
 
         <!-- Panneau d'options de dessin (Crayon) -->
@@ -455,9 +456,9 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
-            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+            <StackLayout x:Name="DrawOptionsLayout" Orientation="Horizontal" Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
                 <!-- Pastilles de couleurs (Noir par défaut, Rouge, Bleu, Vert, Jaune, Blanc) -->
-                <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                <HorizontalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="Center">
                     <!-- Noir (défaut) -->
                     <Border x:Name="DrawBlackBtn" BackgroundColor="#000000" WidthRequest="22" HeightRequest="22" Stroke="White" StrokeThickness="2">
                         <Border.StrokeShape><RoundRectangle CornerRadius="11" /></Border.StrokeShape>
@@ -490,21 +491,20 @@
                     </Border>
                 </HorizontalStackLayout>
 
-                <!-- Séparateur vertical -->
-                <BoxView WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
+                <!-- Séparateur vertical (visible en paysage) -->
+                <BoxView x:Name="DrawOptionsSeparator" WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
 
-                <!-- Choix de largeur de crayon (1mm, 2mm, 3mm, 4mm, 5mm) -->
-                <HorizontalStackLayout Spacing="3" VerticalOptions="Center">
+                <!-- Choix de largeur de crayon (1mm, 2mm, 3mm, 4mm, 5mm) + Bouton fermer -->
+                <HorizontalStackLayout Spacing="3" VerticalOptions="Center" HorizontalOptions="Center">
                     <Button x:Name="DrawSize1Btn" Text="1mm" MinimumWidthRequest="0" WidthRequest="32" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnDrawSizeSelected" CommandParameter="3" />
                     <Button x:Name="DrawSize2Btn" Text="2mm" MinimumWidthRequest="0" WidthRequest="32" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnDrawSizeSelected" CommandParameter="6" />
                     <Button x:Name="DrawSize3Btn" Text="3mm" MinimumWidthRequest="0" WidthRequest="32" BackgroundColor="#007ACC" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" FontAttributes="Bold" Clicked="OnDrawSizeSelected" CommandParameter="9" />
                     <Button x:Name="DrawSize4Btn" Text="4mm" MinimumWidthRequest="0" WidthRequest="32" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnDrawSizeSelected" CommandParameter="12" />
                     <Button x:Name="DrawSize5Btn" Text="5mm" MinimumWidthRequest="0" WidthRequest="32" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnDrawSizeSelected" CommandParameter="15" />
+                    <!-- Bouton fermer le panneau -->
+                    <Button Text="✕" BackgroundColor="Transparent" TextColor="#AAAAAA" FontSize="14" HeightRequest="26" WidthRequest="22" Padding="0" Clicked="OnCloseDrawOptionsClicked" VerticalOptions="Center" Margin="3,0,0,0" />
                 </HorizontalStackLayout>
-
-                <!-- Bouton fermer le panneau -->
-                <Button Text="✕" BackgroundColor="Transparent" TextColor="#AAAAAA" FontSize="14" HeightRequest="26" WidthRequest="22" Padding="0" Clicked="OnCloseDrawOptionsClicked" VerticalOptions="Center" />
-            </HorizontalStackLayout>
+            </StackLayout>
         </Border>
 
         <!-- Panneau d'options de Texte (T) -->
@@ -521,9 +521,9 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
-            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+            <StackLayout x:Name="TextOptionsLayout" Orientation="Horizontal" Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
                 <!-- Pastilles de couleurs (Noir par défaut, Rouge, Bleu, Vert, Jaune, Blanc) -->
-                <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                <HorizontalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="Center">
                     <!-- Noir (défaut) -->
                     <Border x:Name="TextBlackBtn" BackgroundColor="#000000" WidthRequest="22" HeightRequest="22" Stroke="White" StrokeThickness="2">
                         <Border.StrokeShape><RoundRectangle CornerRadius="11" /></Border.StrokeShape>
@@ -556,22 +556,21 @@
                     </Border>
                 </HorizontalStackLayout>
 
-                <!-- Séparateur vertical -->
-                <BoxView WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
+                <!-- Séparateur vertical (visible en paysage) -->
+                <BoxView x:Name="TextOptionsSeparator" WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
 
-                <!-- Choix de taille en pixel (8, 10, 12, 14, 16, 18) -->
-                <HorizontalStackLayout Spacing="2" VerticalOptions="Center">
+                <!-- Choix de taille en pixel (8, 10, 12, 14, 16, 18) + Bouton fermer -->
+                <HorizontalStackLayout Spacing="2" VerticalOptions="Center" HorizontalOptions="Center">
                     <Button x:Name="TextSize8Btn" Text="8" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="8" />
                     <Button x:Name="TextSize10Btn" Text="10" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="10" />
                     <Button x:Name="TextSize12Btn" Text="12" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="12" />
                     <Button x:Name="TextSize14Btn" Text="14" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#007ACC" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" FontAttributes="Bold" Clicked="OnTextSizeSelected" CommandParameter="14" />
                     <Button x:Name="TextSize16Btn" Text="16" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="16" />
                     <Button x:Name="TextSize18Btn" Text="18" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="18" />
+                    <!-- Bouton fermer le panneau -->
+                    <Button Text="✕" BackgroundColor="Transparent" TextColor="#AAAAAA" FontSize="14" HeightRequest="26" WidthRequest="22" Padding="0" Clicked="OnCloseTextOptionsClicked" VerticalOptions="Center" Margin="3,0,0,0" />
                 </HorizontalStackLayout>
-
-                <!-- Bouton fermer le panneau -->
-                <Button Text="✕" BackgroundColor="Transparent" TextColor="#AAAAAA" FontSize="14" HeightRequest="26" WidthRequest="22" Padding="0" Clicked="OnCloseTextOptionsClicked" VerticalOptions="Center" />
-            </HorizontalStackLayout>
+            </StackLayout>
         </Border>
 
         <!-- Barre d'Annotations (Bas) -->
@@ -586,24 +585,26 @@
             <Border.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
             </Border.GestureRecognizers>
-            <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto, Auto, Auto, Auto, Auto, Auto" Padding="8,0">
-                <Button Grid.Column="0" x:Name="HighlightBtn" Text="🖌" BackgroundColor="Transparent" TextColor="#FFD700" Clicked="OnAnnotationHighlightClicked" FontSize="18" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                <Button Grid.Column="1" x:Name="TextAnnotationBtn" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="16" FontAttributes="Bold" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                <Button Grid.Column="2" x:Name="DrawBtn" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                <Button Grid.Column="3" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                
-                <BoxView Grid.Column="4" Color="Transparent" />
-                
-                <!-- Boutons Undo et Redo -->
-                <Button Grid.Column="5" x:Name="UndoBtn" Text="↩" BackgroundColor="Transparent" TextColor="White" Clicked="OnUndoAnnotationClicked" FontSize="18" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" />
-                <Button Grid.Column="6" x:Name="RedoBtn" Text="↪" BackgroundColor="Transparent" TextColor="White" Clicked="OnRedoAnnotationClicked" FontSize="18" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" />
+            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HorizontalOptions="Fill">
+                <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto, Auto, Auto, Auto, Auto, Auto" ColumnSpacing="2" Padding="6,0" MinimumWidthRequest="340">
+                    <Button Grid.Column="0" x:Name="HighlightBtn" Text="🖌" BackgroundColor="Transparent" TextColor="#FFD700" Clicked="OnAnnotationHighlightClicked" FontSize="18" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                    <Button Grid.Column="1" x:Name="TextAnnotationBtn" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="16" FontAttributes="Bold" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                    <Button Grid.Column="2" x:Name="DrawBtn" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="16" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                    <Button Grid.Column="3" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="16" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                    
+                    <BoxView Grid.Column="4" Color="Transparent" />
+                    
+                    <!-- Boutons Undo et Redo -->
+                    <Button Grid.Column="5" x:Name="UndoBtn" Text="↩" BackgroundColor="Transparent" TextColor="White" Clicked="OnUndoAnnotationClicked" FontSize="18" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" />
+                    <Button Grid.Column="6" x:Name="RedoBtn" Text="↪" BackgroundColor="Transparent" TextColor="White" Clicked="OnRedoAnnotationClicked" FontSize="18" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" />
 
-                <!-- Bouton Reset Nettoyage complet -->
-                <Button Grid.Column="7" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="18" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                <Button Grid.Column="8" x:Name="LockUnlockBtn" Text="🔒" BackgroundColor="#D32F2F" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="16" Padding="0" WidthRequest="40" HeightRequest="34" CornerRadius="6" VerticalOptions="Center" HorizontalOptions="Center" />
-                <Button Grid.Column="9" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="16" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                <Button Grid.Column="10" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="18" FontAttributes="Bold" WidthRequest="38" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-            </Grid>
+                    <!-- Bouton Reset Nettoyage complet -->
+                    <Button Grid.Column="7" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="18" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                    <Button Grid.Column="8" x:Name="LockUnlockBtn" Text="🔒" BackgroundColor="#D32F2F" TextColor="White" Clicked="OnLockUnlockClicked" FontSize="16" Padding="0" WidthRequest="36" HeightRequest="34" CornerRadius="6" VerticalOptions="Center" HorizontalOptions="Center" />
+                    <Button Grid.Column="9" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="16" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                    <Button Grid.Column="10" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="18" FontAttributes="Bold" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                </Grid>
+            </ScrollView>
         </Border>
 
         <!-- Indicateur de page (tout en bas, cliquable pour changement de page direct) -->
