@@ -15,8 +15,8 @@ L'application **Music Score Manager**, développée par **Audiothor**, est conç
 
 ### 2. Autorisations Requises et Justification
 - **Stockage / Fichiers & Médias** : Utilisé exclusivement pour vous permettre d'importer, lire et afficher vos partitions (PDF, images) et associer vos fichiers audio locaux.
-- **Wi-Fi Direct & Réseau Local P2P** : Utilisé exclusivement pour la fonctionnalité d'échange direct de partitions de pair à pair (Wi-Fi Direct) et de diffusion par QR Code entre musiciens à proximité. Aucune donnée n'est transmise via Internet ou à des serveurs tiers.
-- **Position & Appareils à proximité** : Requis par Android pour la détection Wi-Fi Direct locale. Votre position géographique n'est jamais suivie ni enregistrée.
+- **Réseau Local P2P** : Utilisé exclusivement pour la fonctionnalité d'échange direct de partitions en réseau local / point d'accès et de diffusion par QR Code entre musiciens à proximité. Aucune donnée n'est transmise via Internet ou à des serveurs tiers.
+- **Aucune géolocalisation** : L'application n'utilise ni ne demande aucune autorisation de localisation (`LOCATION`).
 - **Appareil photo (Caméra)** : Utilisé exclusivement et optionnellement pour scanner les QR Codes de partage de groupe local.
 - **Audio** : Utilisé exclusivement pour la restitution sonore du métronome et du lecteur audio intégré.
 
