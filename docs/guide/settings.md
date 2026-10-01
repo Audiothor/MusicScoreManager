@@ -137,5 +137,5 @@ La page fournit les informations légales et techniques :
 - Numéro de version dynamique.
 - Auteur
 - Licence libre **GNU General Public License v3.0 (GPLv3)**.
-- Liste exhaustive des frameworks tiers utilisés (.NET MAUI, CommunityToolkit, SQLite, Mozilla PDF.js, SkiaSharp, ZXing).
+- Liste exhaustive des frameworks tiers utilisés (.NET MAUI, CommunityToolkit, SQLite, Mozilla PDF.js, SkiaSharp).
 - Liens directs vers le code source GitHub et la Politique de Confidentialité.
