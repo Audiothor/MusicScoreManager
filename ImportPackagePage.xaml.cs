@@ -38,14 +38,16 @@ public partial class ImportPackagePage : ContentPage
             if (result != null)
             {
                 ImportStatusSection.IsVisible = true;
-                ImportStatusLabel.Text = $"Importation de '{result.FileName}' en cours...";
+                string fileName = !string.IsNullOrWhiteSpace(result.FileName) ? result.FileName : "paquet";
+                ImportStatusLabel.Text = $"Importation de '{fileName}' en cours...";
 
-                bool success = await _exportImportService.ImportPackageFromFileAsync(result.FullPath);
+                using var stream = await result.OpenReadAsync();
+                bool success = await _exportImportService.ImportPackageFromStreamAsync(stream);
                 ImportStatusSection.IsVisible = false;
 
                 if (success)
                 {
-                    await DisplayAlertAsync("Import réussi", $"Le paquet '{result.FileName}' a été importé avec succès !", "OK");
+                    await DisplayAlertAsync("Import réussi", $"Le paquet '{fileName}' a été importé avec succès !", "OK");
                 }
                 else
                 {
