@@ -1,37 +1,41 @@
-# 🚀 Guide de Démarrage Rapide (Prise en main en 5 minutes)
+# Music Score Manager
 
-Bienvenue dans **Music Score Manager** ! Ce guide vous accompagne pas à pas pour installer vos premières partitions, organiser votre bibliothèque et être prêt à jouer sur scène ou en répétition en seulement quelques minutes.
+## Guide de Démarrage Rapide (Prise en main en 5 minutes)
+
+Bienvenue dans **Music Score Manager** ! Ce guide vous accompagne pas à pas pour installer, importer vos premières partitions et être prêt à jouer sur scène ou en répétition en seulement quelques minutes.
 
 ---
 
-## ⚡ En un coup d'œil : Les 5 étapes indispensables
+## En un coup d'œil : Les 5 étapes indispensables
 
-```
-[ 1. Importer ] ➔ [ 2. Organiser ] ➔ [ 3. Visualiser ] ➔ [ 4. Annoter ] ➔ [ 5. Setlist Live ]
-    Partitions          Étiquettes         Plein écran        Stylet/Stickers       Concert
-```
+1. Importer des partitions
+2. Organiser les étiquettes
+3. Visualiser la partition
+4. Ajouter des annotations
+5. Créer un SetList Live et le dérouler
 
 ---
 
 ## Étape 1 : Importer vos premières partitions
 
-Dès l'ouverture de l'application, rendez-vous dans le menu **Partitions** (icône `🎼` dans la barre de navigation).
+Dès l'ouverture de l'application, rendez-vous dans le menu **Partitions** (dans la barre de navigation).
 
-1. Appuyez sur le bouton vert **`+`** situé en haut à droite.
-2. Le sélecteur de fichiers s'ouvre : sélectionnez un ou plusieurs fichiers **PDF** ou **Images** (JPEG, PNG).
-3. **Deux modes d'importation sont proposés :**
-   - **Copier dans l'application (Mode local recommandé) :** Vos partitions sont dupliquées dans le stockage sécurisé de l'application. C'est la solution à privilégier : vos partitions restent 100% disponibles hors-ligne, même si vous déplacez ou supprimez les fichiers originaux. Music Score Manager gère sans problème des centaines de partitions localement.
-   - **Lier au fichier source sans copier :** L'application référence l'emplacement d'origine. Cette solution nécessite de conserver l'accès au fichier source.
-4. **Cas d'un fichier PDF :**
-   - Le fichier est instantanément ajouté à votre bibliothèque.
+1. Appuyez sur le bouton **`+`** situé en haut à droite.
+2. Le sélecteur de fichiers s'ouvre : sélectionnez un ou plusieurs fichiers **PDF** ou **Images** (JPEG, PNG) de type partitions.
+3. **Vous avez 2 possibilités d'import de partitions :**
+   - **recopier dans l'application (donc en mode local)** votre/vos partitions sélectionnées. C'est cette solution qui est à privilégier !
+   - **vous baser sur votre fichier source sans le recopier dans l'application.** Cette solution n'est PAS recommandée car en cas de déplacement il vous faudra toujours un accès externe à vos partitions.
+   Music Score Manager peut gérer sans problème plusieurs centaines de partitions localement.
+4. **Cas d'un fichier PDF** :
+   - Le fichier est immédiatement intégré à votre bibliothèque.
    - Une fenêtre moderne s'affiche avec le bouton **`🎵 Ouvrir la partition`** pour la jouer immédiatement !
-5. **Cas de photos ou d'images :**
-   - L'application vous propose de les convertir automatiquement au format PDF.
-   - Si vous sélectionnez plusieurs photos (ex: les différentes pages d'un morceau prises avec votre appareil photo), l'application vous propose de les **fusionner en 1 seule partition PDF multi-pages**.
-6. Vos partitions s'affichent dans la liste : il vous suffit de cliquer sur l'une d'elles pour l'ouvrir.
+5. **Cas de photos ou images** :
+   - L'application vous propose de les convertir automatiquement en format PDF.
+   - Si vous sélectionnez plusieurs photos (ex: les différentes pages d'un morceau prises en photo), l'application vous propose de les **fusionner en 1 seule partition PDF multi-pages**.
+6. Votre/vos partitions sont listées et accessibles dans le menu Partitions, il vous suffit de cliquer dessus pour que la partition s'ouvre.
 
 > [!TIP]
-> **Conseil de stockage** : Choisissez systématiquement la copie locale. Vos partitions restent accessibles à tout moment en répétition ou en concert sans jamais dépendre d'Internet ou du Cloud.
+> **Conseil de stockage** : Par défaut, l'application copie les fichiers dans son stockage local sécurisé. Vos partitions restent accessibles à 100% hors-ligne, sans jamais dépendre d'Internet ni d'un réseau Cloud.
 
 ---
 
@@ -39,99 +43,89 @@ Dès l'ouverture de l'application, rendez-vous dans le menu **Partitions** (icô
 
 Pour retrouver vos morceaux instantanément parmi des centaines de partitions :
 
-1. **Créer vos étiquettes :** Rendez-vous dans **Paramètres > Paramètres Partitions > Organisation > Gérer la liste des étiquettes**. Attribuez un nom et une couleur personnalisée (ex: *Chant*, *Piano*, *Jazz*, *Concert Noël*, *Répétition*).
-2. **Assigner des étiquettes à une partition :**
-   - Dans le menu **Partitions**, appuyez sur les **trois petits points `⋮`** sur une partition, puis choisissez **`Éditer`**.
-   - Cochez une ou plusieurs étiquettes (une partition peut comporter autant d'étiquettes que souhaité).
-   - N'oubliez pas d'enregistrer !
-3. **Filtrer en un clic :** Utilisez la barre de recherche en haut de la bibliothèque pour filtrer par **Titre**, **Compositeur**, ou en touchant une ou plusieurs **Étiquettes** dans le bandeau de filtre.
+1. Vous pouvez créer vos propres étiquettes avec leur couleur personnalisée via le menu **Paramètres > Paramètres Partitions > Organisation > Gérer la liste des étiquettes** : attribuez une classification et une couleur pour pouvoir l'assigner à vos partitions.
+   Une partition peut bien entendu avoir plusieurs étiquettes !
+2. Pour assigner une ou plusieurs étiquettes à une partition, éditez-la : dans **Partitions**, appuyez sur les **trois petits points `⋮`** sur une partition, puis choisissez **`Éditer`**.
+3. Attribuez une ou plusieurs étiquettes de couleur que vous avez créées précédemment (ex: *Chant*, *Piano*, *Jazz*, *Concert Noël*, *Répétition*).
+   Vous pouvez définir plein de fonctionnalités à votre partition.
+   N'oubliez pas de sauvegarder !
+4. Utilisez la barre de recherche en haut pour filtrer instantanément par **Titre**, **Compositeur** ou en touchant une ou plusieurs **Étiquettes**.
 
 ---
 
-## Étape 3 : Utiliser le Visualiseur de Partitions (Scène & Répétition)
+## Étape 3 : Utiliser le Visualiseur de Partitions
 
 Touchez simplement une partition dans la liste pour lancer le **Visualiseur plein écran**.
 
-- **Tourner les pages :**
-  - **Tactile :** Touchez le tiers droit de l'écran pour avancer (page suivante), le tiers gauche pour reculer (page précédente).
-  - **Glissement :** Balayez l'écran vers la gauche ou la droite.
-  - **Pédalier sans fil :** Appairez votre pédale Bluetooth (AirTurn, PageFlip, Donner, etc.). Les tournes de page fonctionnent directement sans configuration préalable !
-- **Afficher / Masquer les commandes :**
-  - **Double-clic au centre de l'écran :** Fait apparaître le menu d'actions rapides (zoom, paramètres d'affichage, retour à l'accueil).
-  - **Toucher en bas de l'écran :** Fait apparaître la boîte à outils complète d'annotations.
-- **Widgets de scène intégrés :**
-  - **Métronome :** Accessible en haut à droite (fixe).
-  - **Lecteur Audio :** Accessible en haut à gauche (déplaçable / amovible).
-  - **Dérouleur de Setlist :** En haut au centre pour visualiser l'enchaînement des morceaux en direct.
-- **Quitter la partition :** Double-cliquez au centre de l'écran puis sélectionnez **`Retour à l'accueil`**.
+- **Tourner les pages** :
+  - **Glissement** : Balayez le tiers droit de l'écran pour avancer (page suivante), le tiers gauche pour reculer (page précédente).
+
+- **Pédalier sans fil** : Appairez votre pédale Bluetooth (AirTurn, PageFlip, Donner, etc.). Les tournes de page fonctionnent directement sans configuration préalable !
+
+- **Afficher / Masquer les commandes** :
+  - Touchez le **centre** de l'écran par double clic pour faire apparaître le menu d'actions rapides
+  - Touchez le bas de l'écran pour faire apparaître le menu des annotations
+  - Sur cette même page il est possible d'afficher le métronome (il sera en haut à droite, fixe), un lecteur audio (en haut à gauche, amovible), et dans le cas d'une lecture de Setlist, le statut du déroulement (en haut au centre)
+- **Quitter la partition en cours** : allez dans le menu central (double clic) et choisir "Retour à l'accueil"
 
 ---
 
 ## Étape 4 : Annoter la Partition (Crayon, Surligneur, Textes & Stickers)
 
-En mode lecture de partition, touchez le bas de l'écran pour déployer la palette d'annotations :
+En mode lecture de partition, touchez le bas de l'écran pour déployer la boîte à outils :
 
-- **🖌️ Surligneur (Stabilo) :** Mettez en valeur des mesures avec des couleurs translucides (jaune, vert, rose, bleu, orange) en trait fin ou large.
-- **✎ Crayon :** Dessinez des annotations à main levée, des doigtés ou des liaisons (taille et couleur au choix).
-- **T Texte :** Insérez des indications textuelles bien lisibles directement sur la portée.
-- **❏ Stickers Musicaux :** Accédez à plus de 100 symboles classés par catégories (Nuances *p*, *f*, *crescendo*, respirations, doigtés, reprises *D.C.*, *Coda*...). Glissez-les où vous voulez ou touchez deux fois pour positionner au-dessus de la portée.
-  - *Astuce :* Dans **Paramètres > Paramètres Annotations**, vous pouvez composer votre liste de **Stickers Favoris** pour y accéder immédiatement.
-- **Suppression & Déplacement :** Toute annotation peut être sélectionnée, redimensionnée, déplacée ou supprimée.
-- **↩ Undo / ↪ Redo :** Annulez ou rétablissez vos tracés en un instant.
+- **🖌️ Surligneur (Stabilo)** : Mettez en valeur des mesures avec des couleurs translucides (jaune, vert, rose, bleu, orange) en trait fin ou large.
+- **✎ Crayon** : Écrivez des annotations à main levée, des doigtés, dessins ou des liaisons (taille et couleur au choix).
+- **T Texte** : Insérez des notes textuelles bien lisibles directement sur la portée.
+- **❏ Stickers Musicaux** : Accédez à plus de 100 symboles classés par catégories (Nuances *p*, *f*, *crescendo*, respirations, doigtés, reprises *D.C.*, *Coda*...). Glissez-les où vous voulez sur la partition ou cliquez 2 fois pour qu'il se positionne au-dessus de la partition.
+  En allant dans le menu Paramètres > Paramètres Annotations vous pouvez créer vos stickers Favoris que vous retrouverez dans les annotations de stickers/Favoris.
+- **↩ Undo / ↪ Redo** : Annulez ou rétablissez vos modifications à tout moment.
+- Toute annotation peut être supprimée ou déplacée.
 
 > [!TIP]
-> **Sécurité Verrouillage (Anti-erreur sur scène)** : Un petit cadenas protège vos annotations. En **vert**, les annotations sont modifiables. En **rouge**, la page est verrouillée et protégée contre toute fausse manipulation tactile pendant que vous jouez.
+> **Verrouillage** : Par sécurité un petit verrou empêche de faire des erreurs de manipulations d'annotations. En vert les modifications sont possibles. La barre fermée ou le cadenas en rouge empêche toute modification.
 
 ---
 
-## Étape 5 : Créer une Setlist pour une Répétition ou un Concert
+## Étape 5 : Créer une SetList pour une Répétition ou un Concert
 
-Ne cherchez plus vos partitions une par une entre deux morceaux sur scène : préparez votre programme !
+Ne cherchez plus vos morceaux un par un entre deux morceaux sur scène : préparez votre programme !
 
-1. Allez dans l'onglet **Setlists** (icône `📋`).
-2. Touchez le bouton **`+`** en haut à droite, nommez votre setlist (ex: *Concert Salle Pleyel - 15 Décembre*) et validez.
+1. Allez dans l'onglet **Setlists**
+2. Touchez en haut à droite **`+`**, donnez-lui un nom (ex: *Concert Electro au Château*) et validez.
 3. Touchez **`+ Ajouter`** pour piocher vos morceaux dans votre bibliothèque.
 4. Réorganisez l'ordre des morceaux simplement par **glisser-déposer**.
-5. N'oubliez pas d'enregistrer vos modifications.
-6. **Lancer le concert :** Touchez le morceau désiré dans la setlist (ou le premier). Le visualiseur s'ouvre. À la dernière page d'un morceau, la tourne de page suivante bascule automatiquement sur le morceau suivant !
-7. Le **bandeau dérouleur** en haut au centre vous indique en permanence le morceau en cours et les titres à venir.
+5. Pour toute modification, n'oubliez pas de sauvegarder !
+6. Touchez une de vos partitions de cette liste pour démarrer à cet endroit votre concert ou allez dans l'onglet **SetLists** et cliquez sur le concert que vous désirez : le visualiseur s'ouvre sur le premier morceau. À la fin de la dernière page de la partition, on passe automatiquement au morceau suivant suivant les paramètres de Setlist que vous avez sélectionnés !
+7. Le volet dérouleur de setlist vous permet de visualiser à tout moment les morceaux à venir (tout en haut au centre).
 
 ---
 
-## Étape 6 : Outils Pratiques Intégrés
+## Étape 6 : Outils Pratiques Intégrés (Métronome & Lecteur Audio)
 
-Directement depuis le visualiseur ou via l'onglet **Outils** :
+Directement depuis le visualiseur de partition (ou dans l'édition de partition) :
 
-- **⏱️ Métronome Intégré :**
-  - Réglez le tempo au BPM près ou via le bouton Tap Tempo.
-  - Choisissez entre un clic audio précis ou un flash visuel clignotant sans son (idéal en live).
-- **🎵 Lecteur Audio d'Accompagnement :**
+- **Métronome Intégré** :
+  - Ajustez le tempo (BPM).
+  - Choisissez entre un son discret ou un signal visuel clignotant sans son (idéal en concert).
+- **Lecteur Audio d'Accompagnement** :
   - Associez un fichier audio (MP3, WAV, AAC, FLAC) à une partition pour répéter avec la bande-son ou la maquette.
-  - Commandes Play/Pause et retour au début directement accessibles sans quitter la partition des yeux.
-- **📡 Transfert Wi-Fi Direct P2P :**
-  - Partagez instantanément une partition ou une setlist entière avec toutes ses annotations à vos collègues musiciens en coulisses, de tablette à tablette, **sans aucune connexion Internet ni routeur Wi-Fi** !
-- **Gestion des Doublons :**
-  - Détectez et nettoyez automatiquement les partitions en double dans votre bibliothèque.
-- **Sauvegardes & Restauration :**
-  - Sauvegardez l'ensemble de votre bibliothèque, annotations et setlists en un seul fichier d'archive.
-- **Assemblage & Organisation PDF :**
-  - Réorganisez l'ordre des pages, supprimez des pages blanches ou assemblez plusieurs partitions en un seul document.
+  - Contrôlez la lecture (Play / Pause, retour au début) directement depuis le visualiseur de partition.
+
+et plein d'autres...
+
+Dans l'onglet **Outils** vous trouverez de nombreux utilitaires pour vous aider :
+
+- **Partage entre musiciens** : Utilisez le menu **Wi-Fi Direct P2P** pour transmettre une setlist complète avec annotations à une personne ou même à vos collègues musiciens en coulisses, très rapidement, même sans connexion Internet !
+- **Importer des fichiers** (qui comprennent déjà des annotations que vous ou que quelqu'un vous a exportées).
+- **Gestion des doublons**, pratique quand on a plusieurs centaines de partitions.
+- **Sauvegardes**.
+- **Assemblages et organisation internes de vos partitions** (vous pouvez redéfinir le sens et l'ordre de vos pages PDF !).
+
+Dans l'onglet **Paramètres** vous trouverez plein d'options de personnalisation de l'application pour tous les menus.
 
 ---
 
-## 💡 Raccourcis & Gestes Essentiels sur Scène
+## En savoir plus
 
-| Action | Geste / Raccourci |
-| :--- | :--- |
-| **Page Suivante** | Tiers droit de l'écran, Flèche droite `→`, Barre d'espace, ou Pédale droite |
-| **Page Précédente** | Tiers gauche de l'écran, Flèche gauche `←`, ou Pédale gauche |
-| **Menu Rapide** | Double-clic au centre de l'écran |
-| **Barre d'Annotations** | Toucher le bas de l'écran |
-| **Écran toujours allumé** | L'écran reste actif automatiquement pendant toute la lecture de vos partitions |
-| **Partage instantané** | Menu **Outils > Wi-Fi Direct P2P** pour synchroniser votre groupe en quelques secondes |
-
----
-
-## 📚 En savoir plus
-
-Pour découvrir l'ensemble des fonctionnalités détaillées (édition complète des métadonnées, configuration avancée des pédales MIDI, filtres et options audio), consultez la [Documentation Complète Officielle](../index.md).
+Pour découvrir l'ensemble des fonctionnalités avancées (assemblage de PDF, édition des métadonnées, configuration fine des pédaliers MIDI, sauvegardes automatiques), et plein d'autres détails, consultez le [Guide Complet](../index.md).
