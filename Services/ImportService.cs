@@ -11,6 +11,35 @@ namespace MusicScoreManager.Services
 
         public event Action<bool, string?>? ConversionStateChanged;
 
+        public Func<string, string, string, string, Task<bool>>? ConfirmDialogHandler { get; set; }
+        public Func<string, string, string[], Task<string?>>? ActionSheetDialogHandler { get; set; }
+        public Func<string, string, string, Task<string?>>? PromptDialogHandler { get; set; }
+        public Func<string, string, Task>? AlertHandler { get; set; }
+
+        private async Task<bool> ShowConfirmAsync(string title, string message, string accept, string cancel)
+        {
+            if (ConfirmDialogHandler != null) return await ConfirmDialogHandler(title, message, accept, cancel);
+            return await Shell.Current.DisplayAlertAsync(title, message, accept, cancel);
+        }
+
+        private async Task<string?> ShowActionSheetAsync(string title, string cancel, params string[] options)
+        {
+            if (ActionSheetDialogHandler != null) return await ActionSheetDialogHandler(title, cancel, options);
+            return await Shell.Current.DisplayActionSheetAsync(title, cancel, null, options);
+        }
+
+        private async Task<string?> ShowPromptAsync(string title, string message, string initialValue, string accept = "Créer", string cancel = "Annuler")
+        {
+            if (PromptDialogHandler != null) return await PromptDialogHandler(title, message, initialValue);
+            return await Shell.Current.DisplayPromptAsync(title, message, accept: accept, cancel: cancel, initialValue: initialValue);
+        }
+
+        private async Task ShowAlertAsync(string title, string message, string cancel = "OK")
+        {
+            if (AlertHandler != null) await AlertHandler(title, message);
+            else await Shell.Current.DisplayAlertAsync(title, message, cancel);
+        }
+
         public ImportService(DatabaseService databaseService, PdfService? pdfService = null)
         {
             _databaseService = databaseService;
@@ -88,7 +117,7 @@ namespace MusicScoreManager.Services
                         ? $"Le fichier sélectionné est une image :\n• {fileListStr}\n\nIl va être converti au format PDF pour être intégré à votre bibliothèque.\n\nSouhaitez-vous continuer ?"
                         : $"Les {imageFiles.Count} fichiers sélectionnés sont des images :\n• {fileListStr}\n\nIls vont être convertis au format PDF pour être intégrés à votre bibliothèque.\n\nSouhaitez-vous continuer ?";
 
-                    bool acceptConversion = await Shell.Current.DisplayAlertAsync(
+                    bool acceptConversion = await ShowConfirmAsync(
                         alertTitle,
                         alertMessage,
                         "Continuer",
@@ -104,10 +133,9 @@ namespace MusicScoreManager.Services
                 // Cas 1 : Plusieurs images acceptées -> Proposer de fusionner en un unique PDF ou partitions individuelles
                 if (imageFiles.Count > 1)
                 {
-                    string action = await Shell.Current.DisplayActionSheetAsync(
+                    string? action = await ShowActionSheetAsync(
                         $"Sélection de {imageFiles.Count} images",
                         "Annuler",
-                        null,
                         "📑 Fusionner en 1 seule partition PDF multi-pages (Conseillé)",
                         "📄 Convertir en partitions individuelles (PDF)");
 
@@ -124,12 +152,12 @@ namespace MusicScoreManager.Services
                         if (string.IsNullOrEmpty(suggestedTitle)) suggestedTitle = firstFileName;
                         if (string.IsNullOrWhiteSpace(suggestedTitle)) suggestedTitle = "Partition";
 
-                        string? inputTitle = await Shell.Current.DisplayPromptAsync(
+                        string? inputTitle = await ShowPromptAsync(
                             "Titre de la partition",
                             "Entrez le titre de la nouvelle partition PDF :",
-                            initialValue: suggestedTitle,
-                            accept: "Créer",
-                            cancel: "Annuler");
+                            suggestedTitle,
+                            "Créer",
+                            "Annuler");
 
                         if (inputTitle != null) // non annulé
                         {
@@ -176,7 +204,7 @@ namespace MusicScoreManager.Services
                             catch (Exception ex)
                             {
                                 System.Diagnostics.Debug.WriteLine($"[ImportService] Erreur fusion images : {ex.Message}");
-                                await Shell.Current.DisplayAlertAsync("Erreur de conversion", $"Impossible de créer la partition PDF : {ex.Message}", "OK");
+                                await ShowAlertAsync("Erreur de conversion", $"Impossible de créer la partition PDF : {ex.Message}");
                             }
                             finally
                             {
@@ -212,7 +240,7 @@ namespace MusicScoreManager.Services
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[ImportService] Erreur lors de l'import : {ex.Message}");
-                await Shell.Current.DisplayAlertAsync("Erreur d'import", $"Une erreur est survenue lors de l'import : {ex.Message}", "OK");
+                await ShowAlertAsync("Erreur d'import", $"Une erreur est survenue lors de l'import : {ex.Message}");
             }
 
             return importedScores;
@@ -279,7 +307,7 @@ namespace MusicScoreManager.Services
                     catch (Exception ex)
                     {
                         System.Diagnostics.Debug.WriteLine($"[ImportService] Erreur conversion image {img.FileName} : {ex.Message}");
-                        await Shell.Current.DisplayAlertAsync("Erreur de conversion", $"Impossible de convertir {Path.GetFileName(img.FileName ?? "l'image")} en PDF : {ex.Message}", "OK");
+                        await ShowAlertAsync("Erreur de conversion", $"Impossible de convertir {Path.GetFileName(img.FileName ?? "l'image")} en PDF : {ex.Message}");
                     }
                     finally
                     {
@@ -378,19 +406,17 @@ namespace MusicScoreManager.Services
                     // Mode interactif : solliciter le choix de l'utilisateur
                     if (linkableExternalFiles.Count == 1)
                     {
-                        globalAction = await Shell.Current.DisplayActionSheetAsync(
+                        globalAction = await ShowActionSheetAsync(
                             "Organisation de la bibliothèque",
                             "Annuler",
-                            null,
                             "Copier vers la bibliothèque (Conseillé)",
                             "Lier le fichier original (Externe)");
                     }
                     else
                     {
-                        globalAction = await Shell.Current.DisplayActionSheetAsync(
+                        globalAction = await ShowActionSheetAsync(
                             $"Organisation de la bibliothèque ({linkableExternalFiles.Count} fichiers)",
                             "Annuler",
-                            null,
                             "Copier tous les fichiers vers la bibliothèque (Conseillé)",
                             "Lier tous les fichiers originaux (Externe)",
                             "Choisir au cas par cas");
@@ -446,10 +472,9 @@ namespace MusicScoreManager.Services
 
                         if (canLink && globalAction == "Choisir au cas par cas")
                         {
-                            fileAction = await Shell.Current.DisplayActionSheetAsync(
+                            fileAction = await ShowActionSheetAsync(
                                 $"Fichier : {rawFileName}",
                                 "Passer ce fichier",
-                                null,
                                 "Copier vers la bibliothèque (Conseillé)",
                                 "Lier le fichier original (Externe)");
                         }
