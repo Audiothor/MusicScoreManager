@@ -153,15 +153,18 @@ public partial class PdfAssemblerPage : ContentPage
             };
 
             var result = await FilePicker.Default.PickAsync(options);
-            if (result == null || string.IsNullOrEmpty(result.FullPath)) return;
+            if (result == null) return;
 
-            PdfLoadingLabel.Text = $"⏳ Extraction des pages de '{result.FileName}'...";
+            string fileName = !string.IsNullOrWhiteSpace(result.FileName) ? result.FileName : "Partition.pdf";
+            PdfLoadingLabel.Text = $"⏳ Extraction des pages de '{fileName}'...";
             PdfLoadingOverlay.IsVisible = true;
 
             ClearPdfAssemblerData();
             _editingScore = null;
 
-            var tempPdfPath = Path.Combine(FileSystem.CacheDirectory, $"{Guid.NewGuid()}_{result.FileName}");
+            var safeExt = Path.GetExtension(fileName);
+            if (string.IsNullOrWhiteSpace(safeExt)) safeExt = ".pdf";
+            var tempPdfPath = Path.Combine(FileSystem.CacheDirectory, $"{Guid.NewGuid()}{safeExt}");
             using (var src = await result.OpenReadAsync())
             using (var dst = File.Create(tempPdfPath))
             {
@@ -309,12 +312,15 @@ public partial class PdfAssemblerPage : ContentPage
             };
 
             var result = await FilePicker.Default.PickAsync(options);
-            if (result == null || string.IsNullOrEmpty(result.FullPath)) return;
+            if (result == null) return;
 
+            string fileName = !string.IsNullOrWhiteSpace(result.FileName) ? result.FileName : "Partition.pdf";
             PdfLoadingLabel.Text = "⏳ Extraction des pages du PDF...";
             PdfLoadingOverlay.IsVisible = true;
 
-            var tempPdfPath = Path.Combine(FileSystem.CacheDirectory, $"{Guid.NewGuid()}_{result.FileName}");
+            var safeExt = Path.GetExtension(fileName);
+            if (string.IsNullOrWhiteSpace(safeExt)) safeExt = ".pdf";
+            var tempPdfPath = Path.Combine(FileSystem.CacheDirectory, $"{Guid.NewGuid()}{safeExt}");
             using (var src = await result.OpenReadAsync())
             using (var dst = File.Create(tempPdfPath))
             {
@@ -326,7 +332,7 @@ public partial class PdfAssemblerPage : ContentPage
 
             foreach (var item in extracted)
             {
-                item.DisplayName = $"{result.FileName} - {item.DisplayName}";
+                item.DisplayName = $"{fileName} - {item.DisplayName}";
                 _pdfPages.Add(item);
             }
 

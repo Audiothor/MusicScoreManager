@@ -66,8 +66,8 @@ namespace MusicScoreManager.Services
                 var validResults = results.Where(r => r != null && (!string.IsNullOrEmpty(r.FullPath) || !string.IsNullOrEmpty(r.FileName))).Cast<FileResult>().ToList();
                 if (!validResults.Any()) return importedScores;
 
-                var imageFiles = validResults.Where(r => IsImageFile(r.FileName ?? r.FullPath)).ToList();
-                var pdfFiles = validResults.Where(r => IsPdfFile(r.FileName ?? r.FullPath)).ToList();
+                var imageFiles = validResults.Where(r => IsImageFile(r)).ToList();
+                var pdfFiles = validResults.Where(r => IsPdfFile(r)).ToList();
 
                 // Information conviviale pour les fichiers de type image
                 if (imageFiles.Any())
@@ -295,6 +295,20 @@ namespace MusicScoreManager.Services
             return results;
         }
 
+        private static bool CanBeLinkedExternally(FileResult fileResult)
+        {
+            if (string.IsNullOrWhiteSpace(fileResult.FullPath)) return false;
+            if (fileResult.FullPath.StartsWith("content:", StringComparison.OrdinalIgnoreCase)) return false;
+            if (!File.Exists(fileResult.FullPath)) return false;
+
+            // Fichier situé dans un répertoire temporaire ou de cache de l'application ou d'un fournisseur cloud
+            string cacheDir = FileSystem.CacheDirectory;
+            if (!string.IsNullOrEmpty(cacheDir) && fileResult.FullPath.StartsWith(cacheDir, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            return true;
+        }
+
         private async Task<List<Score>> ProcessPdfFilesAsync(List<FileResult> pdfFiles, string rootDir)
         {
             var imported = new List<Score>();
@@ -303,44 +317,54 @@ namespace MusicScoreManager.Services
             foreach (var result in pdfFiles)
             {
                 var fullPath = result.FullPath;
-                bool isAlreadyInRoot = !string.IsNullOrEmpty(rootDir) && fullPath.StartsWith(rootDir, StringComparison.OrdinalIgnoreCase);
+                bool isAlreadyInRoot = !string.IsNullOrEmpty(rootDir) 
+                    && !string.IsNullOrEmpty(fullPath) 
+                    && fullPath.StartsWith(rootDir, StringComparison.OrdinalIgnoreCase);
 
                 if (!isAlreadyInRoot)
                 {
                     try
                     {
-                        var fileInfoSource = new FileInfo(fullPath);
-                        long sourceLength = fileInfoSource.Length;
-                        string targetFileName = result.FileName ?? Path.GetFileName(fullPath);
-
-                        string directPath = Path.Combine(rootDir, targetFileName);
-                        if (File.Exists(directPath) && new FileInfo(directPath).Length == sourceLength)
+                        if (!string.IsNullOrEmpty(fullPath) && File.Exists(fullPath))
                         {
-                            isAlreadyInRoot = true;
-                            filesToProcess.Add((new FileResult(directPath), true));
-                            continue;
-                        }
+                            var fileInfoSource = new FileInfo(fullPath);
+                            long sourceLength = fileInfoSource.Length;
+                            string targetFileName = result.FileName ?? Path.GetFileName(fullPath);
 
-                        string? foundPath = FindFileRecursively(rootDir, targetFileName, sourceLength);
-                        if (foundPath != null)
-                        {
-                            isAlreadyInRoot = true;
-                            filesToProcess.Add((new FileResult(foundPath), true));
-                            continue;
+                            string directPath = Path.Combine(rootDir, targetFileName);
+                            if (File.Exists(directPath) && new FileInfo(directPath).Length == sourceLength)
+                            {
+                                isAlreadyInRoot = true;
+                                filesToProcess.Add((new FileResult(directPath), true));
+                                continue;
+                            }
+
+                            string? foundPath = FindFileRecursively(rootDir, targetFileName, sourceLength);
+                            if (foundPath != null)
+                            {
+                                isAlreadyInRoot = true;
+                                filesToProcess.Add((new FileResult(foundPath), true));
+                                continue;
+                            }
                         }
                     }
-                    catch { /* Ignore */ }
+                    catch { /* Ignore les fichiers virtuels/cloud non présents directement sur disque */ }
                 }
 
                 filesToProcess.Add((result, isAlreadyInRoot));
             }
 
-            var externalFiles = filesToProcess.Where(f => !f.AlreadyInRoot).ToList();
+            // Les fichiers provenant de Google Drive ou d'autres services cloud (content://, cache, ou flux distant)
+            // n'ont pas de chemin local permanent : ils doivent obligatoirement être copiés dans la bibliothèque.
+            var linkableExternalFiles = filesToProcess
+                .Where(f => !f.AlreadyInRoot && CanBeLinkedExternally(f.File))
+                .ToList();
+
             string? globalAction = null;
 
-            if (externalFiles.Count > 0)
+            if (linkableExternalFiles.Count > 0)
             {
-                if (externalFiles.Count == 1)
+                if (linkableExternalFiles.Count == 1)
                 {
                     globalAction = await Shell.Current.DisplayActionSheetAsync(
                         "Organisation de la bibliothèque",
@@ -352,7 +376,7 @@ namespace MusicScoreManager.Services
                 else
                 {
                     globalAction = await Shell.Current.DisplayActionSheetAsync(
-                        $"Organisation de la bibliothèque ({externalFiles.Count} fichiers)",
+                        $"Organisation de la bibliothèque ({linkableExternalFiles.Count} fichiers)",
                         "Annuler",
                         null,
                         "Copier tous les fichiers vers la bibliothèque (Conseillé)",
@@ -366,78 +390,141 @@ namespace MusicScoreManager.Services
                 }
             }
 
-            for (int i = 0; i < filesToProcess.Count; i++)
+            try
             {
-                var (fileResult, isAlreadyInRoot) = filesToProcess[i];
-                string finalStoredPath;
-
-                if (isAlreadyInRoot)
+                for (int i = 0; i < filesToProcess.Count; i++)
                 {
-                    finalStoredPath = _settingsService.GetRelativePath(fileResult.FullPath);
-                }
-                else
-                {
-                    string? fileAction = globalAction;
+                    var (fileResult, isAlreadyInRoot) = filesToProcess[i];
+                    string finalStoredPath;
 
-                    if (globalAction == "Choisir au cas par cas")
+                    // Nom de fichier et titre nettoyés et sécurisés pour les flux cloud (Google Drive, etc.)
+                    string rawFileName = !string.IsNullOrWhiteSpace(fileResult.FileName)
+                        ? fileResult.FileName
+                        : Path.GetFileName(fileResult.FullPath ?? "");
+
+                    if (string.IsNullOrWhiteSpace(rawFileName))
+                        rawFileName = "Partition.pdf";
+
+                    string rawTitle = Path.GetFileNameWithoutExtension(rawFileName);
+                    if (string.IsNullOrWhiteSpace(rawTitle))
+                        rawTitle = "Partition";
+
+                    string ext = Path.GetExtension(rawFileName);
+                    if (string.IsNullOrWhiteSpace(ext) || !ext.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
                     {
-                        fileAction = await Shell.Current.DisplayActionSheetAsync(
-                            $"Fichier : {fileResult.FileName}",
-                            "Passer ce fichier",
-                            null,
-                            "Copier vers la bibliothèque (Conseillé)",
-                            "Lier le fichier original (Externe)");
+                        ext = ".pdf";
                     }
 
-                    if (fileAction == "Copier vers la bibliothèque (Conseillé)" || fileAction == "Copier tous les fichiers vers la bibliothèque (Conseillé)")
+                    if (isAlreadyInRoot && !string.IsNullOrEmpty(fileResult.FullPath))
                     {
-                        var sanitizedFileName = SanitizeFileName(Path.GetFileNameWithoutExtension(fileResult.FileName)) + Path.GetExtension(fileResult.FileName);
-                        var localFilePath = GetUniqueFilePath(rootDir, Path.GetFileNameWithoutExtension(sanitizedFileName), Path.GetExtension(sanitizedFileName));
-
-                        using var stream = await fileResult.OpenReadAsync();
-                        using var fileStream = File.Create(localFilePath);
-                        await stream.CopyToAsync(fileStream);
-
-                        finalStoredPath = _settingsService.GetRelativePath(localFilePath);
-                    }
-                    else if (fileAction == "Lier le fichier original (Externe)" || fileAction == "Lier tous les fichiers originaux (Externe)")
-                    {
-                        finalStoredPath = fileResult.FullPath;
+                        finalStoredPath = _settingsService.GetRelativePath(fileResult.FullPath);
                     }
                     else
                     {
-                        continue;
+                        bool canLink = CanBeLinkedExternally(fileResult);
+                        string? fileAction = globalAction;
+
+                        if (canLink && globalAction == "Choisir au cas par cas")
+                        {
+                            fileAction = await Shell.Current.DisplayActionSheetAsync(
+                                $"Fichier : {rawFileName}",
+                                "Passer ce fichier",
+                                null,
+                                "Copier vers la bibliothèque (Conseillé)",
+                                "Lier le fichier original (Externe)");
+                        }
+
+                        // Si le fichier vient de Google Drive / Cloud ou que l'action est Copier
+                        if (!canLink || fileAction == "Copier vers la bibliothèque (Conseillé)" || fileAction == "Copier tous les fichiers vers la bibliothèque (Conseillé)" || string.IsNullOrEmpty(fileAction))
+                        {
+                            ConversionStateChanged?.Invoke(true, filesToProcess.Count > 1
+                                ? $"Importation ({i + 1}/{filesToProcess.Count}) :\n\"{rawTitle}\"..."
+                                : $"Importation en cours :\n\"{rawTitle}\"...");
+
+                            var sanitizedBase = SanitizeFileName(rawTitle);
+                            if (string.IsNullOrWhiteSpace(sanitizedBase)) sanitizedBase = "Partition";
+                            var localFilePath = GetUniqueFilePath(rootDir, sanitizedBase, ext);
+
+                            // Téléchargement sécurisé via fichier temporaire pour éviter tout fichier corrompu à 0 octet
+                            var tempPath = Path.Combine(FileSystem.CacheDirectory, $"{Guid.NewGuid()}.tmp");
+                            try
+                            {
+                                using (var stream = await fileResult.OpenReadAsync())
+                                using (var fileStream = File.Create(tempPath))
+                                {
+                                    await stream.CopyToAsync(fileStream);
+                                }
+
+                                if (File.Exists(tempPath) && new FileInfo(tempPath).Length > 0)
+                                {
+                                    File.Move(tempPath, localFilePath);
+                                    finalStoredPath = _settingsService.GetRelativePath(localFilePath);
+                                }
+                                else
+                                {
+                                    throw new IOException($"Le flux téléchargé pour '{rawTitle}' est vide ou inaccessible.");
+                                }
+                            }
+                            finally
+                            {
+                                try { if (File.Exists(tempPath)) File.Delete(tempPath); } catch { }
+                            }
+                        }
+                        else if (canLink && (fileAction == "Lier le fichier original (Externe)" || fileAction == "Lier tous les fichiers originaux (Externe)"))
+                        {
+                            finalStoredPath = fileResult.FullPath!;
+                        }
+                        else
+                        {
+                            continue;
+                        }
                     }
+
+                    int pageCount = await _pdfService.GetPdfPageCountAsync(_settingsService.GetAbsolutePath(finalStoredPath));
+
+                    var score = new Score
+                    {
+                        Title = rawTitle,
+                        FilePath = finalStoredPath,
+                        Type = ScoreType.PDF,
+                        DateAdded = DateTime.Now,
+                        PageCount = pageCount > 0 ? pageCount : 1
+                    };
+
+                    await _databaseService.SaveScoreAsync(score);
+                    imported.Add(score);
                 }
-
-                int pageCount = await _pdfService.GetPdfPageCountAsync(_settingsService.GetAbsolutePath(finalStoredPath));
-
-                var score = new Score
-                {
-                    Title = Path.GetFileNameWithoutExtension(fileResult.FileName ?? fileResult.FullPath),
-                    FilePath = finalStoredPath,
-                    Type = ScoreType.PDF,
-                    DateAdded = DateTime.Now,
-                    PageCount = pageCount > 0 ? pageCount : 1
-                };
-
-                await _databaseService.SaveScoreAsync(score);
-                imported.Add(score);
+            }
+            finally
+            {
+                ConversionStateChanged?.Invoke(false, null);
             }
 
             return imported;
         }
 
-        private static bool IsImageFile(string path)
+        private static bool IsImageFile(FileResult result)
         {
-            var ext = Path.GetExtension(path)?.ToLowerInvariant() ?? "";
+            if (result == null) return false;
+            if (!string.IsNullOrEmpty(result.ContentType) && result.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                return true;
+            var name = result.FileName ?? result.FullPath ?? "";
+            var ext = Path.GetExtension(name)?.ToLowerInvariant() ?? "";
             return ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".webp" || ext == ".bmp" || ext == ".gif";
         }
 
-        private static bool IsPdfFile(string path)
+        private static bool IsPdfFile(FileResult result)
         {
-            var ext = Path.GetExtension(path)?.ToLowerInvariant() ?? "";
-            return ext == ".pdf";
+            if (result == null) return false;
+            if (!string.IsNullOrEmpty(result.ContentType) && result.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase))
+                return true;
+            var name = result.FileName ?? result.FullPath ?? "";
+            var ext = Path.GetExtension(name)?.ToLowerInvariant() ?? "";
+            if (ext == ".pdf") return true;
+
+            // Si ce n'est pas une image et que l'extension est absente ou générique (fichiers Google Drive sans extension explicite),
+            // on traite comme un PDF sélectionné dans le picker
+            return !IsImageFile(result);
         }
 
         private static string SanitizeFileName(string name)

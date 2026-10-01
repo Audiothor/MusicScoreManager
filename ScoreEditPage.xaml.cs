@@ -428,15 +428,21 @@ public partial class ScoreEditPage : ContentPage
                 if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
 
                 string finalStoredPath;
-                bool isAlreadyInRoot = result.FullPath.StartsWith(rootDir, StringComparison.OrdinalIgnoreCase);
+                string rawFullPath = result.FullPath ?? "";
+                string fileName = !string.IsNullOrWhiteSpace(result.FileName) ? result.FileName : Path.GetFileName(rawFullPath);
+                if (string.IsNullOrWhiteSpace(fileName)) fileName = "audio.mp3";
 
-                if (!isAlreadyInRoot)
+                bool isAlreadyInRoot = !string.IsNullOrEmpty(rootDir) 
+                    && !string.IsNullOrEmpty(rawFullPath) 
+                    && rawFullPath.StartsWith(rootDir, StringComparison.OrdinalIgnoreCase);
+
+                if (!isAlreadyInRoot && !string.IsNullOrEmpty(rawFullPath) && File.Exists(rawFullPath))
                 {
                     try 
                     {
-                        var fileInfoSource = new FileInfo(result.FullPath);
+                        var fileInfoSource = new FileInfo(rawFullPath);
                         long sourceLength = fileInfoSource.Length;
-                        string targetFileName = result.FileName;
+                        string targetFileName = fileName;
 
                         string directPath = Path.Combine(rootDir, targetFileName);
                         if (File.Exists(directPath) && new FileInfo(directPath).Length == sourceLength)
@@ -458,19 +464,33 @@ public partial class ScoreEditPage : ContentPage
                     catch { /* Ignore */ }
                 }
 
-                if (isAlreadyInRoot)
+                if (isAlreadyInRoot && !string.IsNullOrEmpty(result.FullPath))
                 {
                     finalStoredPath = _settingsService.GetRelativePath(result.FullPath, isAudio: true);
                 }
                 else
                 {
-                    string? action = await this.DisplayActionSheetAsync("Fichier audio externe", "Annuler", null, 
-                        "Copier vers la bibliothèque Audio", 
-                        "Lier le fichier original (Externe)");
+                    bool canLink = !string.IsNullOrWhiteSpace(result.FullPath) 
+                        && !result.FullPath.StartsWith("content:", StringComparison.OrdinalIgnoreCase) 
+                        && File.Exists(result.FullPath)
+                        && (string.IsNullOrEmpty(FileSystem.CacheDirectory) || !result.FullPath.StartsWith(FileSystem.CacheDirectory, StringComparison.OrdinalIgnoreCase));
+
+                    string? action = null;
+                    if (canLink)
+                    {
+                        action = await this.DisplayActionSheetAsync("Fichier audio externe", "Annuler", null, 
+                            "Copier vers la bibliothèque Audio", 
+                            "Lier le fichier original (Externe)");
+                    }
+                    else
+                    {
+                        // Fichier cloud (Google Drive, etc.) : copie directe obligatoire dans la bibliothèque
+                        action = "Copier vers la bibliothèque Audio";
+                    }
 
                     if (action == "Copier vers la bibliothèque Audio")
                     {
-                        var sanitizedFileName = result.FileName.Replace(" ", "_");
+                        var sanitizedFileName = fileName.Replace(" ", "_");
                         var localFilePath = Path.Combine(rootDir, sanitizedFileName);
                         
                         if (File.Exists(localFilePath))
@@ -486,9 +506,9 @@ public partial class ScoreEditPage : ContentPage
                         
                         finalStoredPath = _settingsService.GetRelativePath(localFilePath, isAudio: true);
                     }
-                    else if (action == "Lier le fichier original (Externe)")
+                    else if (action == "Lier le fichier original (Externe)" && canLink)
                     {
-                        finalStoredPath = result.FullPath;
+                        finalStoredPath = result.FullPath!;
                     }
                     else
                     {
@@ -499,7 +519,7 @@ public partial class ScoreEditPage : ContentPage
                 _score.AudioFiles.Add(new ScoreAudioFile
                 {
                     ScoreId = _score.Id,
-                    FileName = result.FileName,
+                    FileName = fileName,
                     FilePath = finalStoredPath,
                     IsSelected = _score.AudioFiles.Count == 0
                 });

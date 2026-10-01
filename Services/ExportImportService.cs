@@ -333,11 +333,19 @@ namespace MusicScoreManager.Services
 
         public async Task<bool> ImportPackageFromFileAsync(string filePath)
         {
+            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
+                return false;
+
+            using var zipStream = File.OpenRead(filePath);
+            return await ImportPackageFromStreamAsync(zipStream);
+        }
+
+        public async Task<bool> ImportPackageFromStreamAsync(Stream zipStream)
+        {
             try
             {
                 var payloads = new List<WifiFilePayload>();
-                using (var zipStream = File.OpenRead(filePath))
-                using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Read))
+                using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Read, leaveOpen: true))
                 {
                     foreach (var entry in archive.Entries)
                     {
@@ -356,7 +364,7 @@ namespace MusicScoreManager.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"[ExportImportService] Error importing archive: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"[ExportImportService] Error importing archive stream: {ex.Message}");
                 return false;
             }
         }
