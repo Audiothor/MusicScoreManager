@@ -26,6 +26,17 @@ namespace MusicScoreManager.Services
             set => Preferences.Set(ExportsRootKey, value);
         }
 
+        private const string DefaultScoreImportModeKey = "DefaultScoreImportMode";
+
+        /// <summary>
+        /// Mode d'importation par défaut : "Copy" (Local - Conseillé), "Link" (Externe), ou "Ask" (Toujours demander).
+        /// </summary>
+        public string DefaultScoreImportMode
+        {
+            get => Preferences.Get(DefaultScoreImportModeKey, "Copy");
+            set => Preferences.Set(DefaultScoreImportModeKey, value);
+        }
+
         private const string ActiveStickerCategoriesKey = "ActiveStickerCategories";
 
         public static readonly List<string> AllStickerCategories = new()
