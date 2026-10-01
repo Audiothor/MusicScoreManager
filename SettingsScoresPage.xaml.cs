@@ -35,6 +35,22 @@ public partial class SettingsScoresPage : ContentPage
             _ => 0
         };
 
+        DefaultImportModePicker.ItemsSource = new List<string>
+        {
+            loc.GetString("Import_Mode_Copy", "Copier dans la bibliothèque (Local - Conseillé)"),
+            loc.GetString("Import_Mode_Link", "Lier le fichier original (Externe)"),
+            loc.GetString("Import_Mode_Ask", "Toujours demander à chaque import")
+        };
+
+        string defaultImportMode = Preferences.Default.Get("DefaultScoreImportMode", "Copy");
+        DefaultImportModePicker.SelectedIndex = defaultImportMode switch
+        {
+            "Copy" => 0,
+            "Link" => 1,
+            "Ask" => 2,
+            _ => 0
+        };
+
         ComposerEmptyFirstSwitch.IsToggled = Preferences.Default.Get("ComposerSortEmptyFirst", false);
 
         InitSubtitleOptions();
@@ -378,6 +394,18 @@ public partial class SettingsScoresPage : ContentPage
             _ => "DateDesc"
         };
         Preferences.Default.Set("DefaultScoreSort", value);
+    }
+
+    private void OnDefaultImportModeChanged(object sender, EventArgs e)
+    {
+        string value = DefaultImportModePicker.SelectedIndex switch
+        {
+            0 => "Copy",
+            1 => "Link",
+            2 => "Ask",
+            _ => "Copy"
+        };
+        Preferences.Default.Set("DefaultScoreImportMode", value);
     }
 
     private void OnComposerEmptyFirstToggled(object sender, ToggledEventArgs e)
