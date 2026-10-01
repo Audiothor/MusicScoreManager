@@ -36,24 +36,9 @@ namespace MusicScoreManager.Services
         private string _groupBroadcastTitle = string.Empty;
         private int _groupClientsServed = 0;
 
-        public async Task<bool> InitializeAsync()
+        public Task<bool> InitializeAsync()
         {
-            try
-            {
-#if ANDROID
-                // Vérification et demande des permissions nécessaires sur Android
-                var locStatus = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
-                if (locStatus != PermissionStatus.Granted)
-                {
-                    locStatus = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
-                }
-#endif
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return Task.FromResult(true);
         }
 
         public async Task StartScanningAsync()
