@@ -37,8 +37,8 @@ public partial class SettingsScoresPage : ContentPage
 
         DefaultImportModePicker.ItemsSource = new List<string>
         {
-            loc.GetString("Import_Mode_Copy", "Copier dans la bibliothèque (Local - Conseillé)"),
-            loc.GetString("Import_Mode_Link", "Lier le fichier original (Externe)"),
+            loc.GetString("Import_Mode_Copy", "Copier directement dans la bibliothèque (Local - Conseillé)"),
+            loc.GetString("Import_Mode_Link", "Lier directement le fichier original (Externe)"),
             loc.GetString("Import_Mode_Ask", "Toujours demander à chaque import")
         };
 
