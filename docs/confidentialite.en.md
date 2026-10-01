@@ -16,8 +16,7 @@
 ### 2. Device Permissions & Purpose
 - **Storage / Files & Media**: Used strictly to allow you to select, open, render, and manage your sheet music files and local audio tracks.
 - **Local P2P Network**: Used exclusively for the optional peer-to-peer and QR Code wireless sharing feature between nearby devices on local Wi-Fi or hotspot. No data is sent over the internet or to external servers.
-- **Zero Location Tracking**: The application does not use, request, or require any location (`LOCATION`) permissions.
-- **Camera**: Used strictly and optionally to scan QR codes when joining a local group broadcast.
+- **Zero Location Tracking & Zero Camera Access**: The application does not use, request, or require any location (`LOCATION`) or camera (`CAMERA`) permissions.
 - **Audio**: Used exclusively to play local audio accompaniment and metronome click/pre-count audio during practice and live performances.
 
 ### 3. Third-Party Services & Ads

@@ -592,7 +592,6 @@ Affichage de la version installée, présentation du projet Open Source, mention
 | **Moteur de Rendu PDF** | **Mozilla PDF.js** | Intégration WebView avec off-screen double-buffering |
 | **Moteur Audio** | `Plugin.Maui.Audio` & `CommunityToolkit.Maui.MediaElement` | Décodage et lecture matérielle |
 | **Métronome** | Moteur propriétaire C# thread-safe + `SoundPool` Android | Latence 0 ms, synchronisation microseconde |
-| **Scanner & Codes-Barres** | `ZXing.Net.Maui` | Décodage instantané de QR Codes en mode caméra |
 | **Transfert Sans Fil** | Sockets TCP / UDP P2P binaire & Mini-serveur HTTP local | Streaming direct sans connexion Internet |
 | **Licence Logicielle** | **GNU General Public License v3.0 (GPLv3)** | Logiciel Libre et Open Source |
 
@@ -602,8 +601,8 @@ Affichage de la version installée, présentation du projet Open Source, mention
 L'application ne sollicite que les permissions strictement indispensables à ses fonctionnalités musicales :
 - **Gestion du stockage externe (`MANAGE_EXTERNAL_STORAGE` / `READ_MEDIA_*`)** : Permet de lire, créer, assembler et exporter vos fichiers de partitions et pistes audio dans des dossiers accessibles par câble USB.
 - **Bluetooth & Détection d'appareils à proximité (`BLUETOOTH_CONNECT`, `BLUETOOTH_SCAN`, `NEARBY_WIFI_DEVICES`)** : Indispensable pour communiquer avec les pédaliers sans fil et détecter les autres tablettes lors des échanges Wi-Fi Direct.
-- **Accès Caméra (`CAMERA`)** : Uniquement sollicité lors du scan du QR Code d'un chef de pupitre pour rejoindre une diffusion de groupe.
 - **Réseau Local (`INTERNET`, `ACCESS_NETWORK_STATE`, `ACCESS_WIFI_STATE`)** : Utilisé exclusivement pour la liaison socket locale Wi-Fi Direct P2P et le mini-serveur temporaire de partage de groupe. **Aucune donnée ne transite par Internet.**
+- **Zéro accès caméra & Zéro géolocalisation** : L'application n'utilise pas la caméra (`CAMERA`) et n'utilise aucune localisation (`LOCATION`).
 
 ---
 
