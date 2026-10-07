@@ -26,6 +26,19 @@ public partial class AboutPage : ContentPage
         }
     }
 
+    private async void OnDiscordClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            Uri uri = new Uri("https://discord.gg/EtZf8VyMz");
+            await Launcher.Default.OpenAsync(uri);
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync("Erreur", $"Impossible d'ouvrir le lien : {ex.Message}", "OK");
+        }
+    }
+
     private async void OnPrivacyPolicyClicked(object sender, EventArgs e)
     {
         try

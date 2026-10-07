@@ -126,6 +126,13 @@ In the **Settings** tab you will find plenty of customization options for the ap
 
 ---
 
+## Community & Support
+
+Have a question, feature request, or need help with your pedal / hardware setup?  
+Join our **[Audiothor Discord Server](https://discord.gg/EtZf8VyMz)** to connect directly with the developer and other musicians!
+
+---
+
 ## Learn More
 
 To discover all the advanced features (PDF assembly, metadata editing, fine-tuning of MIDI foot controllers, automatic backups), and many other details, check out the [Full Guide](../index.en.md).

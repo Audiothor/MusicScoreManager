@@ -15,6 +15,7 @@
 4. [Chapitre 4 : Outils — Boîte à Utilitaires Avancés](#chapitre-4--outils--boîte-à-utilitaires-avancés)
 5. [Chapitre 5 : Paramètres — Personnalisation & Préférences](#chapitre-5--paramètres--personnalisation--préférences)
 6. [Chapitre 6 : Détails Techniques, Confidentialité, Droits & Liens GitHub](#chapitre-6--détails-techniques-confidentialité-droits--liens-github)
+7. [Remerciements / Contributeurs](#remerciements--contributeurs)
 
 ---
 
@@ -645,8 +646,15 @@ Consultez le fichier complet [LICENSE](LICENSE) pour les termes légaux exhausti
 
 - 🌐 **Dépôt Officiel GitHub** : [https://github.com/Audiothor/MusicScoreManager](https://github.com/Audiothor/MusicScoreManager)
 - 📖 **Documentation en Ligne (MkDocs / GitHub Pages)** : [https://audiothor.github.io/MusicScoreManager/](https://audiothor.github.io/MusicScoreManager/)
+- 💬 **Communauté Discord (Entraide, Bugs & Suggestions)** : [https://discord.gg/EtZf8VyMz](https://discord.gg/EtZf8VyMz)
 - 🐞 **Signalement de Bugs & Suggestions d'Évolutions** : [GitHub Issues](https://github.com/Audiothor/MusicScoreManager/issues)
 - 📦 **Téléchargement des Versions Officielles (Releases)** : [GitHub Releases](https://github.com/Audiothor/MusicScoreManager/releases)
+
+---
+
+## Remerciements / Contributeurs
+- [Audiothor](https://github.com/audiothor) — Développeur principal
+- **Gemini** — Assistance au développement, architecture et refactorisation du code
 
 ---
 

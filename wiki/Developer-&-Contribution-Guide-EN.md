@@ -115,3 +115,11 @@ Outputs are generated inside `bin/Release/net10.0-android36.0/publish/`.
 2. **Performance Integrity**: No blocking I/O calls on the UI thread (`MainThread`). Sheet music page turns must strictly remain under 50 ms.
 3. **Zero-Tracking Policy**: Contributions containing tracking, analytics, or advertisement SDKs will not be accepted.
 4. **Submission**: Open your Pull Request on [GitHub](https://github.com/Audiothor/MusicScoreManager/pulls) with clear details and real-hardware test results.
+
+---
+
+## 7. Acknowledgments & Contributors
+
+- [Audiothor](https://github.com/audiothor) — Lead Developer
+- **Gemini** — AI development assistance, architecture, and code refactoring
+

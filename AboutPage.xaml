@@ -117,6 +117,15 @@
                         HeightRequest="50"
                         Clicked="OnGitHubClicked" />
 
+                <Button Text="{Binding [About_Discord_Button], Source={x:Static services:LocalizationService.Instance}}"
+                        BackgroundColor="#2C2C2C"
+                        TextColor="#5865F2"
+                        FontSize="13"
+                        FontAttributes="Bold"
+                        CornerRadius="10"
+                        HeightRequest="50"
+                        Clicked="OnDiscordClicked" />
+
                 <Button Text="{Binding [About_Privacy_Policy_Button], Source={x:Static services:LocalizationService.Instance}}"
                         BackgroundColor="#2C2C2C"
                         TextColor="#2ECC71"

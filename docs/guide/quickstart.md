@@ -140,6 +140,13 @@ Dans l'onglet Paramètres vous trouverez plein d'options de personnalisation de 
 
 ---
 
+## Communauté & Entraide
+
+Une question, une idée ou un problème avec votre matériel ?  
+Rejoignez notre **[Serveur Discord Audiothor](https://discord.gg/EtZf8VyMz)** pour échanger avec le développeur et d'autres musiciens !
+
+---
+
 ## En savoir plus
 
 Pour découvrir l'ensemble des fonctionnalités avancées (assemblage de PDF, édition des métadonnées, configuration fine des pédaliers MIDI, sauvegardes automatiques), et plein d'autres détails, consultez le [Guide Complet](index.md).

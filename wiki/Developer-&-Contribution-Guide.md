@@ -115,3 +115,11 @@ Les livrables générés se situent dans `bin/Release/net10.0-android36.0/publis
 2. **Respect des performances** : Aucun appel réseau bloquant sur le thread UI (`MainThread`). Les tournes de pages du visualiseur doivent impérativement rester sous le seuil de 50 ms.
 3. **Respect de la vie privée** : L'application n'acceptera aucune contribution intégrant un SDK de pistage, de télémétrie ou de publicité.
 4. **Soumission** : Ouvrez votre Pull Request sur [GitHub](https://github.com/Audiothor/MusicScoreManager/pulls) avec une description claire des modifications apportées et des tests effectués sur matériel réel.
+
+---
+
+## 7. Remerciements / Contributeurs
+
+- [Audiothor](https://github.com/audiothor) — Développeur principal
+- **Gemini** — Assistance au développement, architecture et refactorisation du code
+
