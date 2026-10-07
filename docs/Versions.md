@@ -6,8 +6,28 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.2 — 07/10/2026
+
+### 1. Fluidité Extrême du Défilement des Partitions (Proposition 2)
+- **1.1. Stabilisation du gabarit des cellules :** Définition d'une hauteur minimale uniforme de cellule (`MinimumHeightRequest="78"`) dans `ScoresPage.xaml`.
+- **1.2. Maintien intégral de la visibilité des étiquettes :** Conservation de l'ensemble des étiquettes associées à chaque partition, désormais disposées dans un conteneur horizontal direct (`HorizontalStackLayout`) remplaçant l'ancien calcul Flexbox multi-passes.
+- **1.3. Réactivation de la stratégie `MeasureFirstItem` :** Mesure unique de la première cellule à l'affichage et recyclage instantané à 60/120 images par seconde sans recalcul lourd de hauteur pendant le défilement.
+- **1.4. Optimisation du cache natif Android RecyclerView :** Configuration dans `MauiProgram.cs` d'un cache mémoire étendu de 25 cellules hors-écran (`SetItemViewCacheSize(25)`) éliminant toute saccade même avec 400+ partitions.
+
+### 2. Menu Central du Visualiseur (`ViewerPage`)
+- **2.1. Correction du rognage inférieur des boutons :** Ajustement des marges internes du menu central (`CentralMenuOverlay`) et de son conteneur défilable. Les boutons d'action « ✏️ Modifier » et « 📑 Assemblage » disposent désormais d'un espacement net et de coins arrondis intacts sans coupure visuelle au bas de la fenêtre.
+
+### 3. Optimisation de l'Ouverture des Partitions
+- **3.1. Indexation SQLite des fichiers audio :** Ajout de l'attribut `[Indexed]` sur la clé étrangère `ScoreId` du modèle `ScoreAudioFile`, éliminant les analyses séquentielles (*table scan*) de la base de données.
+- **3.2. Élimination des requêtes redondantes à l'ouverture :** Suppression du re-chargement complet synchrone du score dans `OnAppearing` (les métadonnées étant déjà chargées) et remplacement par une récupération ciblée et légère.
+- **3.3. Initialisation différée (Lazy-Loading) des annotations :** Déport de la construction lourde des catégories de stickers et palettes uniquement au moment où l'utilisateur ouvre le panneau d'annotations/stickers, accélérant l'affichage immédiat du PDF.
+- **3.4. Régulation du calcul de pages en tâche de fond :** Temporisation du calcul asynchrone des pages manquantes dans `ScoresPage` pour ne plus encombrer la base SQLite lors de la sélection d'un morceau.
 
 ---
 

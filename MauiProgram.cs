@@ -97,6 +97,17 @@ public static class MauiProgram
 #endif
 		});
 
+		// Configuration CollectionView pour Android (fluidité maximale du défilement avec 400+ partitions)
+#if ANDROID
+		Microsoft.Maui.Controls.Handlers.Items.CollectionViewHandler.Mapper.AppendToMapping("OptimizedRecyclerView", (handler, view) =>
+		{
+			if (handler.PlatformView is AndroidX.RecyclerView.Widget.RecyclerView rv)
+			{
+				rv.SetItemViewCacheSize(25);
+			}
+		});
+#endif
+
 		return builder.Build();
 	}
 }

@@ -75,7 +75,7 @@
 
         <Grid Grid.Row="2" Margin="15,0,5,0">
             <CollectionView x:Name="ScoresCollectionView"
-                            ItemSizingStrategy="MeasureAllItems"
+                            ItemSizingStrategy="MeasureFirstItem"
                             SelectionMode="Single"
                             SelectionChanged="OnScoreSelected"
                             Scrolled="OnScoresScrolled"
@@ -88,7 +88,8 @@
                     <Border Stroke="#333333" 
                             StrokeThickness="1" 
                             BackgroundColor="#1E1E1E" 
-                            Padding="10">
+                            Padding="10"
+                            MinimumHeightRequest="78">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
@@ -157,30 +158,30 @@
                                    Text="{Binding DisplaySubtitle}" 
                                    FontSize="12" 
                                    TextColor="#888888" 
-                                   Margin="0,0,0,10"/>
+                                   Margin="0,2,0,6"/>
                                    
-                            <FlexLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-                                        BindableLayout.ItemsSource="{Binding AppliedTags}"
-                                        IsVisible="{Binding HasTags}"
-                                        Wrap="Wrap"
-                                        Direction="Row">
+                            <HorizontalStackLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                                                   BindableLayout.ItemsSource="{Binding AppliedTags}"
+                                                   IsVisible="{Binding HasTags}"
+                                                   Spacing="5">
                                 <BindableLayout.ItemTemplate>
                                     <DataTemplate x:DataType="models:Tag">
                                         <Border BackgroundColor="{Binding ColorHex}"
                                                 StrokeThickness="0"
-                                                Padding="8,4,5,4"
-                                                Margin="0,0,5,5">
+                                                Padding="8,2"
+                                                HeightRequest="22">
                                             <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="12" />
+                                                <RoundRectangle CornerRadius="11" />
                                             </Border.StrokeShape>
-                                            <Label Text="{Binding Name, StringFormat='{0}  '}" 
+                                            <Label Text="{Binding Name}" 
                                                    TextColor="White" 
-                                                   FontSize="12" 
-                                                   FontAttributes="Bold" />
+                                                   FontSize="11" 
+                                                   FontAttributes="Bold"
+                                                   VerticalOptions="Center" />
                                         </Border>
                                     </DataTemplate>
                                 </BindableLayout.ItemTemplate>
-                            </FlexLayout>
+                            </HorizontalStackLayout>
                         </Grid>
                     </Border>
                 </DataTemplate>
