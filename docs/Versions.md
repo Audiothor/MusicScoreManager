@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.5.0 — 07/10/2026](#v250--07102026)
 - [v2.4.9 — 07/10/2026](#v249--07102026)
 - [v2.4.8 — 01/10/2026](#v248--01102026)
 - [v2.4.7 — 28/09/2026](#v247--28092026)
@@ -40,6 +41,47 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.0.1 — 11/09/2026](#v201--11092026)
 - [v2.0.0 — 10/09/2026](#v200--10092026)
 - [v1.9.8.0 — 08/09/2026](#v1980--08092026)
+
+---
+
+## v2.5.0 — 07/10/2026
+
+### 1. Refonte Complète de la Gestion des Profils de Pédales Bluetooth & Événements MIDI
+- **1.1. Suppression des anciennes sections :** Suppression totale de l'ancien panneau de diagnostic/testeur et de l'accordéon des raccourcis dans les paramètres principaux afin de clarifier l'interface.
+- **1.2. Maintien intégral de la sécurité scénique :** Conservation du chapitre « Sécurité scène & sensibilité » avec protection anti-double saut de page paramétrable (300 à 800 ms) et réglage précis du seuil d'appui long.
+- **1.3. Gestion universelle et ouverte des profils :**
+  - Maintien des préréglages constructeurs (PageFlip Dragonfly, Firefly, Butterfly, AirTurn Duo/Quad 500, Donner, Joyo, Harley Benton, iRig BlueTurn, Coda STOMP, etc.).
+  - **Modification sans restriction :** L'utilisateur peut désormais modifier directement n'importe quel profil de base constructeur sans devoir obligatoirement créer un clone.
+  - **Champ Description & Commentaires :** Ajout pour chaque profil d'un espace pour consigner les astuces de réglage matériel (ex: commutateur REPEAT sur OFF, sélection du Mode 3 pour PageFlip Dragonfly).
+  - Création de profil en 1 clic demandant le nom et basculant instantanément vers l'écran d'édition.
+  - Suppression de profil personnalisé et possibilité de restaurer l'ensemble des profils d'usine par défaut.
+
+### 2. Édition Granulaire des Pédales et Boutons (`PedalProfileEditPage`)
+- **2.1. Trois opérations intuitives :**
+  - **Ajouter une pédale / bouton :** Demande du libellé personnalisé (ex: « Pédale gauche », « Bouton 1 »), puis transition directe vers la page de configuration.
+  - **Éditer une pédale :** Ajustement des paramètres du bouton sélectionné via une page dédiée.
+  - **Supprimer une pédale :** Suppression directe du bouton du profil sélectionné.
+- **2.2. Vue récapitulative élégante :** Cartes stylisées affichant le rôle, le badge de signal capté, le type d'appui (Simple vs Long) et l'action assignée.
+
+### 3. Page de Configuration d'un Bouton (`PedalButtonConfigPage`)
+- **3.1. Nom / rôle :** Édition du libellé personnalisé.
+- **3.2. Détection automatique du signal en direct :** Écoute active Bluetooth HID et MIDI affichant en direct le code brut (Hex/Décimal) et le nom de touche, avec flash visuel vert de confirmation.
+- **3.3. Type d'appui :** Choix clair entre « ⚡ Appui simple » et « ⏱️ Appui long ».
+- **3.4. 13 Actions Scéniques Strictes :**
+  1. *Page précédente*
+  2. *Page suivante*
+  3. *Aller au début du morceau*
+  4. *Aller à la fin du morceau*
+  5. *Aller au marqueur précédent*
+  6. *Aller au marqueur suivant*
+  7. *Aller au début du morceau précédent du setlist*
+  8. *Aller au début du morceau suivant du setlist*
+  9. *Ouvrir le menu de liste de morceaux de la setlist (top drawer)*
+  10. *Activer le mode nuit (implémentation future)*
+  11. *Zoom +*
+  12. *Zoom -*
+  13. *Afficher / retirer les annotations*
+- **3.5. Prise en charge dans le visualiseur :** Câblage complet des actions dans `ViewerPage` (zoom par palier, masquage des traits d'annotations, contrôle du tiroir setlist).
 
 ---
 
