@@ -8,6 +8,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/"/>
     </url>
     <url>
+        <loc>https://audiothor.github.io/MusicScoreManager/Versions/</loc>
+        <lastmod>2026-10-07</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/Versions/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/Versions/"/>
+    </url>
+    <url>
         <loc>https://audiothor.github.io/MusicScoreManager/confidentialite/</loc>
         <lastmod>2026-10-07</lastmod>
         <changefreq>daily</changefreq>
@@ -97,6 +104,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/"/>
         <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/"/>
+    </url>
+    <url>
+        <loc>https://audiothor.github.io/MusicScoreManager/en/Versions/</loc>
+        <lastmod>2026-10-07</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://audiothor.github.io/MusicScoreManager/en/Versions/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://audiothor.github.io/MusicScoreManager/Versions/"/>
     </url>
     <url>
         <loc>https://audiothor.github.io/MusicScoreManager/en/confidentialite/</loc>
