@@ -165,8 +165,24 @@ namespace MusicScoreManager.Models
             }
         }
 
+        private List<Tag> _appliedTags = new List<Tag>();
         [Ignore]
-        public List<Tag> AppliedTags { get; set; } = new List<Tag>();
+        public List<Tag> AppliedTags
+        {
+            get => _appliedTags;
+            set
+            {
+                if (_appliedTags != value)
+                {
+                    _appliedTags = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(HasTags));
+                }
+            }
+        }
+
+        [Ignore]
+        public bool HasTags => _appliedTags != null && _appliedTags.Count > 0;
 
         [Ignore]
         public List<ScoreAudioFile> AudioFiles { get; set; } = new List<ScoreAudioFile>();

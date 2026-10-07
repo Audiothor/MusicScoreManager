@@ -99,6 +99,32 @@
             </VerticalStackLayout>
         </Border>
 
+        <!-- Marqueur de page discret et moderne (Haut Gauche) -->
+        <Border x:Name="PageBookmarkBadge"
+                IsVisible="False"
+                HorizontalOptions="Start"
+                VerticalOptions="Start"
+                Margin="14,14,0,0"
+                Padding="8,5"
+                BackgroundColor="#DD121824"
+                Stroke="#00E5FF"
+                StrokeThickness="1.5"
+                ZIndex="45">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+            <Border.Shadow>
+                <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.75" />
+            </Border.Shadow>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnPageBookmarkBadgeTapped" />
+            </Border.GestureRecognizers>
+            <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                <Label Text="🔖" FontSize="13" VerticalOptions="Center" />
+                <Label x:Name="PageBookmarkBadgeLabel" Text="A" TextColor="#00E5FF" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </Border>
+
         <!-- Overlay LECTEUR AUDIO Flottant & Amovible (Haut Gauche - Opposé du métronome) -->
         <Border x:Name="AudioPlayerOverlay" 
                 IsVisible="False"
@@ -663,105 +689,248 @@
             </Border>
         </Grid>
 
-        <!-- Menu Central Moderne, Compact et Défilable sur Téléphone -->
+        <!-- Menu Central Moderne, Épuré et Convivial avec Accès Immédiat Accueil & Fermer -->
         <Border x:Name="CentralMenuOverlay" 
                 IsVisible="False" 
-                BackgroundColor="#F51A1A1A" 
+                BackgroundColor="#F414141B" 
                 VerticalOptions="Center" 
                 HorizontalOptions="Center" 
-                Padding="16,12"
-                WidthRequest="320"
-                StrokeThickness="1"
-                Stroke="#555555"
+                Padding="16,14"
+                WidthRequest="340"
+                StrokeThickness="1.5"
+                Stroke="#007ACC"
                 ZIndex="1000">
             <Border.StrokeShape>
-                <RoundRectangle CornerRadius="18" />
+                <RoundRectangle CornerRadius="20" />
             </Border.StrokeShape>
-            <ScrollView x:Name="CentralMenuScrollView" VerticalScrollBarVisibility="Never" Orientation="Vertical">
-                <VerticalStackLayout x:Name="CentralMenuContentStack" Spacing="8" Padding="0,2,4,2">
-                    <Label x:Name="MenuTitleLabel" FontSize="15" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" Margin="0,0,0,4" />
-                    
-                    <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
-                        <Button Grid.Column="0" x:Name="RotateBtn" Text="↻ Rotation (+90°)" 
-                                BackgroundColor="#333333" TextColor="White" FontSize="13" CornerRadius="10" HeightRequest="40" Clicked="OnRotateClicked" />
-                        <Button Grid.Column="1" Text="📄 Page" 
-                                BackgroundColor="#333333" TextColor="White" FontSize="13" CornerRadius="10" HeightRequest="40" Clicked="OnGoToPageClicked" />
-                    </Grid>
-
-                    <!-- Rétablir la taille d'origine (Zoom Reset) -->
-                    <Button Text="{Binding [Viewer_Menu_ResetZoom], Source={x:Static services:LocalizationService.Instance}}" 
-                            BackgroundColor="#2C3E50" 
+            <Border.Shadow>
+                <Shadow Brush="#000000" Offset="0,10" Radius="25" Opacity="0.85" />
+            </Border.Shadow>
+            
+            <VerticalStackLayout Spacing="10">
+                <!-- Barre d'En-tête Fixe : Accueil Rapide, Titre du Morceau, Fermer Rapide -->
+                <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+                    <!-- Bouton Retour Accueil Prioritaire -->
+                    <Button Grid.Column="0" 
+                            Text="🏠 Accueil" 
+                            ToolTipProperties.Text="{Binding [Viewer_Home], Source={x:Static services:LocalizationService.Instance}}"
+                            BackgroundColor="#D32F2F" 
                             TextColor="White" 
-                            FontSize="13" 
-                            CornerRadius="10" 
-                            HeightRequest="40" 
-                            Clicked="OnResetZoomClicked" />
-
-                    <!-- Option de portée de rotation -->
-                    <Grid ColumnDefinitions="*, Auto" Margin="5,0">
-                        <Label x:Name="RotationScopeLabel" Text="{Binding [Viewer_Rotate_Page_Only], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="12" VerticalOptions="Center" />
-                        <Switch Grid.Column="1" x:Name="RotateAllPagesSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnRotateAllPagesToggled" />
-                    </Grid>
-
-                    <Grid ColumnDefinitions="*, Auto" Margin="5,0">
-                        <Label Text="{Binding [Viewer_Remember_Rotation], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
-                        <Switch Grid.Column="1" x:Name="SaveRotationSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnSaveRotationToggled" />
-                    </Grid>
-
-                    <BoxView HeightRequest="1" Color="#444444" Margin="0,5" />
-
-                    <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="6" Margin="5,0">
-                        <Label Grid.Column="0" Text="{Binding [Viewer_Menu_ShowMetronome], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
-                        <Button Grid.Column="1" 
-                                Text="⚙️" 
-                                BackgroundColor="Transparent" 
-                                Padding="0" 
-                                WidthRequest="32" 
-                                HeightRequest="32" 
-                                FontSize="14" 
-                                VerticalOptions="Center"
-                                Clicked="OnMetronomeSettingsButtonClicked" />
-                        <Switch Grid.Column="2" x:Name="MenuMetronomeSwitch" OnColor="#007ACC" Scale="0.8" VerticalOptions="Center" Toggled="OnMenuMetronomeToggled" />
-                    </Grid>
-
-                    <Grid ColumnDefinitions="*, Auto" Margin="5,0">
-                        <Label Text="{Binding [Viewer_Menu_ShowAudio], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
-                        <Switch Grid.Column="1" x:Name="MenuAudioSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnMenuAudioToggled" />
-                    </Grid>
-
-                    <Grid ColumnDefinitions="*, Auto" Margin="5,0">
-                        <Label Text="{Binding [Viewer_Menu_ShowAnnotations], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" />
-                        <Switch Grid.Column="1" x:Name="MenuAnnotationsSwitch" OnColor="#007ACC" Scale="0.8" Toggled="OnMenuAnnotationsToggled" />
-                    </Grid>
-
-                    <BoxView HeightRequest="1" Color="#444444" Margin="0,5" />
-
-                    <Button x:Name="MenuModifyAssemblyButton"
-                            Text="{Binding [Viewer_Menu_ModifyAssembly], Source={x:Static services:LocalizationService.Instance}}" 
-                            BackgroundColor="#2C3E50" 
-                            TextColor="White" 
-                            FontSize="13" 
-                            CornerRadius="10" 
-                            HeightRequest="40"
-                            Clicked="OnMenuModifyAssemblyClicked" />
-
-                    <Button Text="{Binding [Viewer_Edit_Score], Source={x:Static services:LocalizationService.Instance}}" 
-                            BackgroundColor="#007ACC" TextColor="White" 
-                            FontAttributes="Bold" CornerRadius="10" HeightRequest="45"
-                            Clicked="OnEditScoreClicked" />
-
-                    <Button Text="{Binding [Viewer_Home], Source={x:Static services:LocalizationService.Instance}}" 
-                            BackgroundColor="#E74C3C" TextColor="White" 
-                            FontAttributes="Bold" CornerRadius="10" HeightRequest="45"
+                            FontAttributes="Bold" 
+                            FontSize="12" 
+                            HeightRequest="36" 
+                            Padding="10,0" 
+                            CornerRadius="8" 
                             Clicked="OnBackClicked" />
-                    
-                    <Button Text="{Binding [Common_Close], Source={x:Static services:LocalizationService.Instance}}" 
-                            BackgroundColor="Transparent" TextColor="#AAAAAA" 
-                            FontSize="13" HeightRequest="35"
+
+                    <!-- Titre de la partition -->
+                    <Label Grid.Column="1" 
+                           x:Name="MenuTitleLabel" 
+                           FontSize="14" 
+                           FontAttributes="Bold" 
+                           TextColor="White" 
+                           HorizontalTextAlignment="Center" 
+                           VerticalTextAlignment="Center"
+                           LineBreakMode="TailTruncation" 
+                           Margin="6,0" />
+
+                    <!-- Bouton Fermer Prioritaire -->
+                    <Button Grid.Column="2" 
+                            Text="✕" 
+                            ToolTipProperties.Text="{Binding [Common_Close], Source={x:Static services:LocalizationService.Instance}}"
+                            BackgroundColor="#33FFFFFF" 
+                            TextColor="White" 
+                            FontSize="14" 
+                            FontAttributes="Bold" 
+                            HeightRequest="36" 
+                            WidthRequest="36" 
+                            Padding="0" 
+                            CornerRadius="18" 
                             Clicked="OnCloseMenuClicked" />
-                </VerticalStackLayout>
-            </ScrollView>
+                </Grid>
+
+                <!-- Contenu défilable si écran réduit -->
+                <ScrollView x:Name="CentralMenuScrollView" VerticalScrollBarVisibility="Never" Orientation="Vertical">
+                    <VerticalStackLayout x:Name="CentralMenuContentStack" Spacing="8" Padding="0,2,2,2">
+
+                        <!-- Section 1 : 🔖 Marqueur de Page (Signet) -->
+                        <Border BackgroundColor="#1E1E28" Stroke="#2A2A3A" StrokeThickness="1" Padding="12,10">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="8">
+                                <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+                                    <Label Grid.Column="0" Text="🔖" FontSize="16" VerticalOptions="Center" Margin="0,0,6,0" />
+                                    <Label Grid.Column="1" x:Name="MenuBookmarkStatusLabel" Text="Marqueur sur cette page" TextColor="White" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+                                    <Switch Grid.Column="2" x:Name="MenuBookmarkSwitch" OnColor="#00E5FF" ThumbColor="White" Scale="0.8" VerticalOptions="Center" Toggled="OnMenuBookmarkToggled" />
+                                </Grid>
+                                <!-- Rangée Navigation entre marqueurs -->
+                                <Grid x:Name="MenuBookmarkNavRow" ColumnDefinitions="*, *" ColumnSpacing="8">
+                                    <Button Grid.Column="0" x:Name="MenuPrevBookmarkBtn" Text="⏮ Précédent" BackgroundColor="#2D2D38" TextColor="#00E5FF" FontSize="12" HeightRequest="34" CornerRadius="8" Padding="0" Clicked="OnMenuPrevBookmarkClicked" />
+                                    <Button Grid.Column="1" x:Name="MenuNextBookmarkBtn" Text="Suivant ⏭" BackgroundColor="#2D2D38" TextColor="#00E5FF" FontSize="12" HeightRequest="34" CornerRadius="8" Padding="0" Clicked="OnMenuNextBookmarkClicked" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Section 2 : 👁️ Affichage, Rotation & Zoom -->
+                        <Border BackgroundColor="#1E1E28" Stroke="#2A2A3A" StrokeThickness="1" Padding="12,10">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="8">
+                                <Grid ColumnDefinitions="*, *, *" ColumnSpacing="6">
+                                    <Button Grid.Column="0" x:Name="RotateBtn" Text="↻ Rotation" BackgroundColor="#2D2D38" TextColor="White" FontSize="12" HeightRequest="36" CornerRadius="8" Padding="0" Clicked="OnRotateClicked" />
+                                    <Button Grid.Column="1" Text="🔍 100%" ToolTipProperties.Text="{Binding [Viewer_Menu_ResetZoom], Source={x:Static services:LocalizationService.Instance}}" BackgroundColor="#2D2D38" TextColor="White" FontSize="12" HeightRequest="36" CornerRadius="8" Padding="0" Clicked="OnResetZoomClicked" />
+                                    <Button Grid.Column="2" Text="📄 Page" BackgroundColor="#2D2D38" TextColor="White" FontSize="12" HeightRequest="36" CornerRadius="8" Padding="0" Clicked="OnGoToPageClicked" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*, Auto" Margin="2,0">
+                                    <Label x:Name="RotationScopeLabel" Text="{Binding [Viewer_Rotate_Page_Only], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="11" VerticalOptions="Center" />
+                                    <Switch Grid.Column="1" x:Name="RotateAllPagesSwitch" OnColor="#007ACC" Scale="0.75" Toggled="OnRotateAllPagesToggled" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*, Auto" Margin="2,0">
+                                    <Label Text="{Binding [Viewer_Remember_Rotation], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="11" VerticalOptions="Center" />
+                                    <Switch Grid.Column="1" x:Name="SaveRotationSwitch" OnColor="#007ACC" Scale="0.75" Toggled="OnSaveRotationToggled" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Section 3 : 🎵 Outils (Métronome, Audio, Annotations) -->
+                        <Border BackgroundColor="#1E1E28" Stroke="#2A2A3A" StrokeThickness="1" Padding="12,10">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="6">
+                                <Grid ColumnDefinitions="Auto, *, Auto, Auto" ColumnSpacing="6" VerticalOptions="Center">
+                                    <Label Grid.Column="0" Text="⏱️" FontSize="14" VerticalOptions="Center" />
+                                    <Label Grid.Column="1" Text="{Binding [Viewer_Menu_ShowMetronome], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="12" VerticalOptions="Center" />
+                                    <Button Grid.Column="2" Text="⚙️" BackgroundColor="Transparent" Padding="0" WidthRequest="28" HeightRequest="28" FontSize="13" VerticalOptions="Center" Clicked="OnMetronomeSettingsButtonClicked" />
+                                    <Switch Grid.Column="3" x:Name="MenuMetronomeSwitch" OnColor="#007ACC" Scale="0.75" VerticalOptions="Center" Toggled="OnMenuMetronomeToggled" />
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="6" VerticalOptions="Center">
+                                    <Label Grid.Column="0" Text="🎧" FontSize="14" VerticalOptions="Center" />
+                                    <Label Grid.Column="1" Text="{Binding [Viewer_Menu_ShowAudio], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="12" VerticalOptions="Center" />
+                                    <Switch Grid.Column="2" x:Name="MenuAudioSwitch" OnColor="#007ACC" Scale="0.75" VerticalOptions="Center" Toggled="OnMenuAudioToggled" />
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="6" VerticalOptions="Center">
+                                    <Label Grid.Column="0" Text="✏️" FontSize="14" VerticalOptions="Center" />
+                                    <Label Grid.Column="1" Text="{Binding [Viewer_Menu_ShowAnnotations], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="12" VerticalOptions="Center" />
+                                    <Switch Grid.Column="2" x:Name="MenuAnnotationsSwitch" OnColor="#007ACC" Scale="0.75" VerticalOptions="Center" Toggled="OnMenuAnnotationsToggled" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Section 4 : 🛠️ Actions Partition -->
+                        <Grid ColumnDefinitions="*, *" ColumnSpacing="8" Margin="0,2">
+                            <Button Grid.Column="0" Text="✏️ Modifier" ToolTipProperties.Text="{Binding [Viewer_Edit_Score], Source={x:Static services:LocalizationService.Instance}}" BackgroundColor="#007ACC" TextColor="White" FontSize="12" FontAttributes="Bold" CornerRadius="10" HeightRequest="38" Clicked="OnEditScoreClicked" />
+                            <Button Grid.Column="1" x:Name="MenuModifyAssemblyButton" Text="📑 Assemblage" ToolTipProperties.Text="{Binding [Viewer_Menu_ModifyAssembly], Source={x:Static services:LocalizationService.Instance}}" BackgroundColor="#34495E" TextColor="White" FontSize="12" CornerRadius="10" HeightRequest="38" Clicked="OnMenuModifyAssemblyClicked" />
+                        </Grid>
+
+                        <!-- Bouton Fermer Additionnel en Bas -->
+                        <Button Text="{Binding [Common_Close], Source={x:Static services:LocalizationService.Instance}}" 
+                                BackgroundColor="#252530" TextColor="#AAAAAA" 
+                                FontSize="12" CornerRadius="10" HeightRequest="36" Margin="0,2,0,0"
+                                Clicked="OnCloseMenuClicked" />
+                    </VerticalStackLayout>
+                </ScrollView>
+            </VerticalStackLayout>
         </Border>
+
+        <!-- Boîte de Dialogue Moderne du Marqueur de Page -->
+        <Grid x:Name="BookmarkModal"
+              IsVisible="False"
+              ZIndex="1100"
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill">
+            <!-- Arrière-plan semi-transparent -->
+            <BoxView BackgroundColor="#80000000"
+                     HorizontalOptions="Fill"
+                     VerticalOptions="Fill">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnCloseBookmarkModalClicked" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+
+            <Border HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    WidthRequest="340"
+                    MaximumWidthRequest="380"
+                    Margin="20"
+                    Padding="18,16"
+                    BackgroundColor="#1A202C"
+                    Stroke="#00E5FF"
+                    StrokeThickness="1.5">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="18" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="#000000" Offset="0,8" Radius="20" Opacity="0.85" />
+                </Border.Shadow>
+
+                <VerticalStackLayout Spacing="14">
+                    <!-- Entête : Titre, Page & Fermer -->
+                    <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+                        <Label Grid.Column="0" Text="🔖" FontSize="20" VerticalOptions="Center" Margin="0,0,6,0" />
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Marqueur de page" TextColor="White" FontAttributes="Bold" FontSize="15" />
+                            <Label x:Name="BookmarkModalPageLabel" Text="Page 1" TextColor="#90CDF4" FontSize="11" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="2" Text="✕" 
+                                BackgroundColor="#2D3748" TextColor="#CBD5E0" 
+                                FontSize="13" FontAttributes="Bold"
+                                WidthRequest="30" HeightRequest="30" CornerRadius="15" Padding="0"
+                                VerticalOptions="Center" Clicked="OnCloseBookmarkModalClicked" />
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="#2D3748" />
+
+                    <!-- Section Renommer (Max 3 caractères, unique) -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="NOM DU MARQUEUR (1-3 CARACTÈRES)" TextColor="#90CDF4" FontSize="10" FontAttributes="Bold" CharacterSpacing="1" />
+                        <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
+                            <Entry x:Name="BookmarkNameEntry" 
+                                   MaxLength="3" 
+                                   TextColor="White" 
+                                   BackgroundColor="#0F172A" 
+                                   FontSize="15" 
+                                   FontAttributes="Bold" 
+                                   HeightRequest="40" 
+                                   HorizontalTextAlignment="Center" />
+                            <Button Grid.Column="1" 
+                                    Text="Renommer" 
+                                    BackgroundColor="#007ACC" 
+                                    TextColor="White" 
+                                    FontAttributes="Bold" 
+                                    FontSize="12" 
+                                    HeightRequest="40" 
+                                    Padding="14,0" 
+                                    CornerRadius="8" 
+                                    Clicked="OnRenameBookmarkClicked" />
+                        </Grid>
+                        <Label x:Name="BookmarkErrorLabel" Text="" TextColor="#FF5252" FontSize="11" IsVisible="False" />
+                    </VerticalStackLayout>
+
+                    <!-- Section Navigation Précédent / Suivant -->
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="8">
+                        <Button Grid.Column="0" x:Name="ModalPrevBookmarkBtn" Text="⏮ Précédent" BackgroundColor="#2D3748" TextColor="White" FontSize="12" HeightRequest="36" CornerRadius="8" Clicked="OnModalPrevBookmarkClicked" />
+                        <Button Grid.Column="1" x:Name="ModalNextBookmarkBtn" Text="Suivant ⏭" BackgroundColor="#2D3748" TextColor="White" FontSize="12" HeightRequest="36" CornerRadius="8" Clicked="OnModalNextBookmarkClicked" />
+                    </Grid>
+
+                    <!-- Liste rapide de tous les marqueurs pour saut direct -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="TOUS LES MARQUEURS DE CETTE PARTITION" TextColor="#A0AEC0" FontSize="10" FontAttributes="Bold" CharacterSpacing="1" />
+                        <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HeightRequest="36">
+                            <HorizontalStackLayout x:Name="BookmarkChipsContainer" Spacing="6" VerticalOptions="Center" />
+                        </ScrollView>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" Color="#2D3748" />
+
+                    <!-- Bouton Supprimer le marqueur -->
+                    <Button Text="🗑️ Supprimer ce marqueur" 
+                            BackgroundColor="#5A1E1E" 
+                            TextColor="#FF8A80" 
+                            FontAttributes="Bold" 
+                            FontSize="12" 
+                            HeightRequest="36" 
+                            CornerRadius="8" 
+                            Clicked="OnDeleteBookmarkClicked" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
 
         <!-- Zone tactile transparente du haut au centre pour ouvrir le déroulement de la setlist -->
         <ContentView x:Name="TopSetlistTouchBar"

@@ -25,7 +25,9 @@ namespace MusicScoreManager.Models
         UndoAnnotation = 16,
         RedoAnnotation = 17,
         OpenQuickMenu = 18,
-        CloseViewer = 19
+        CloseViewer = 19,
+        NextBookmark = 20,
+        PreviousBookmark = 21
     }
 
     public enum PedalInputType

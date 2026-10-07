@@ -53,6 +53,8 @@ public partial class ViewerPage : ContentPage
     private List<Annotation> _annotations = new();
     private bool _isAnnotationsLocked = true;
     private AbsoluteLayout ActiveAnnotationsContainer => AnnotationsContainer;
+    private List<ScoreBookmark> _bookmarks = new();
+    private bool _isUpdatingBookmarkMenu = false;
 
     private bool _isTwoPagesMode = false;
     private int _leftPageNumber = 1;
@@ -290,6 +292,7 @@ public partial class ViewerPage : ContentPage
         _ = Task.Run(async () => {
             InitializeMetronome();
             await LoadAnnotationsAsync();
+            await LoadBookmarksAsync();
             await InitializeAnnotationUI(force: true);
 
             try
@@ -1057,6 +1060,8 @@ public partial class ViewerPage : ContentPage
         {
             PageIndicator.IsVisible = false;
         }
+
+        UpdateBookmarkIndicator();
     }
 
     private readonly object _metronomeLock = new();
@@ -1958,6 +1963,7 @@ public partial class ViewerPage : ContentPage
         }
 
         UpdateRotateButtonText();
+        UpdateMenuBookmarkState();
         UpdateCentralMenuSize(this.Height);
         CentralMenuOverlay.IsVisible = true;
         ImageContainer.InputTransparent = true; // Empêche l'image de bloquer les clics sur le menu !
@@ -1972,16 +1978,17 @@ public partial class ViewerPage : ContentPage
             screenHeight = this.Height > 0 ? this.Height : DeviceDisplay.MainDisplayInfo.Height / (DeviceDisplay.MainDisplayInfo.Density > 0 ? DeviceDisplay.MainDisplayInfo.Density : 1);
         }
 
-        // Hauteur naturelle compacte requise par le contenu du menu
-        double naturalContentHeight = 490;
+        // Hauteur naturelle compacte requise par le contenu du menu + en-tête fixe
+        double headerAndPadding = 75;
+        double naturalContentHeight = 440;
         try
         {
             if (CentralMenuContentStack != null)
             {
-                var measured = CentralMenuContentStack.Measure(320, double.PositiveInfinity);
+                var measured = CentralMenuContentStack.Measure(340, double.PositiveInfinity);
                 if (measured.Height > 100)
                 {
-                    naturalContentHeight = measured.Height + 28;
+                    naturalContentHeight = measured.Height + headerAndPadding;
                 }
             }
         }
@@ -1990,12 +1997,12 @@ public partial class ViewerPage : ContentPage
         // Si l'écran est trop petit pour afficher le menu en entier (ex: écran paysage de smartphone)
         if (screenHeight > 0 && screenHeight < (naturalContentHeight + 40))
         {
-            double constrainedHeight = Math.Max(240, screenHeight - 40);
+            double constrainedHeight = Math.Max(260, screenHeight - 40);
             CentralMenuOverlay.HeightRequest = constrainedHeight;
             CentralMenuOverlay.MaximumHeightRequest = constrainedHeight;
             if (CentralMenuScrollView != null)
             {
-                CentralMenuScrollView.HeightRequest = constrainedHeight - 24;
+                CentralMenuScrollView.HeightRequest = Math.Max(180, constrainedHeight - headerAndPadding);
                 CentralMenuScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Default;
             }
         }
@@ -2006,7 +2013,7 @@ public partial class ViewerPage : ContentPage
             CentralMenuOverlay.MaximumHeightRequest = naturalContentHeight;
             if (CentralMenuScrollView != null)
             {
-                CentralMenuScrollView.HeightRequest = naturalContentHeight - 24;
+                CentralMenuScrollView.HeightRequest = Math.Max(200, naturalContentHeight - headerAndPadding);
                 CentralMenuScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Never;
             }
         }
@@ -2808,6 +2815,14 @@ public partial class ViewerPage : ContentPage
                 case PedalAction.CloseViewer:
                     await Navigation.PopAsync();
                     break;
+
+                case PedalAction.NextBookmark:
+                    await GoToNextBookmarkAsync();
+                    break;
+
+                case PedalAction.PreviousBookmark:
+                    await GoToPreviousBookmarkAsync();
+                    break;
             }
         }
         catch (Exception ex)
@@ -2952,6 +2967,7 @@ public partial class ViewerPage : ContentPage
 
         await LoadPageRotationsAsync();
         await LoadAnnotationsAsync();
+        await LoadBookmarksAsync();
         InitializeAudio(forceReload: true);
         InitializeMetronome();
 
@@ -5720,6 +5736,342 @@ public partial class ViewerPage : ContentPage
             });
         }
     }
+
+    #region Bookmarks / Marqueurs de page
+
+    private async Task LoadBookmarksAsync()
+    {
+        try
+        {
+            _bookmarks = await _databaseService.GetBookmarksForScoreAsync(_score.Id);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                UpdateBookmarkIndicator();
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur chargement marqueurs: {ex.Message}");
+        }
+    }
+
+    private void UpdateBookmarkIndicator()
+    {
+        if (PageBookmarkBadge == null || PageBookmarkBadgeLabel == null) return;
+
+        var currentBm = _bookmarks.FirstOrDefault(b => b.PageNumber == _currentPage);
+        if (currentBm != null)
+        {
+            PageBookmarkBadge.IsVisible = true;
+            PageBookmarkBadgeLabel.Text = currentBm.Name;
+        }
+        else
+        {
+            PageBookmarkBadge.IsVisible = false;
+        }
+
+        if (CentralMenuOverlay != null && CentralMenuOverlay.IsVisible)
+        {
+            UpdateMenuBookmarkState();
+        }
+    }
+
+    private string GetNextAvailableBookmarkName()
+    {
+        var usedNames = _bookmarks.Select(b => b.Name.Trim().ToUpperInvariant()).ToHashSet();
+        for (char c = 'A'; c <= 'Z'; c++)
+        {
+            string name = c.ToString();
+            if (!usedNames.Contains(name))
+                return name;
+        }
+        for (int i = 1; i <= 99; i++)
+        {
+            string name = $"M{i}";
+            if (!usedNames.Contains(name))
+                return name;
+        }
+        return "BM";
+    }
+
+    private async Task GoToNextBookmarkAsync()
+    {
+        if (_bookmarks == null || _bookmarks.Count == 0) return;
+        var sorted = _bookmarks.OrderBy(b => b.PageNumber).ToList();
+        var next = sorted.FirstOrDefault(b => b.PageNumber > _currentPage);
+        if (next != null)
+        {
+            await GoToPage(next.PageNumber);
+        }
+        else
+        {
+            // Boucler au tout premier marqueur
+            await GoToPage(sorted.First().PageNumber);
+        }
+    }
+
+    private async Task GoToPreviousBookmarkAsync()
+    {
+        if (_bookmarks == null || _bookmarks.Count == 0) return;
+        var sorted = _bookmarks.OrderBy(b => b.PageNumber).ToList();
+        var prev = sorted.LastOrDefault(b => b.PageNumber < _currentPage);
+        if (prev != null)
+        {
+            await GoToPage(prev.PageNumber);
+        }
+        else
+        {
+            // Boucler au tout dernier marqueur
+            await GoToPage(sorted.Last().PageNumber);
+        }
+    }
+
+    private void UpdateMenuBookmarkState()
+    {
+        if (MenuBookmarkSwitch == null) return;
+        _isUpdatingBookmarkMenu = true;
+        try
+        {
+            var currentBm = _bookmarks.FirstOrDefault(b => b.PageNumber == _currentPage);
+            MenuBookmarkSwitch.IsToggled = (currentBm != null);
+            if (MenuBookmarkStatusLabel != null)
+            {
+                MenuBookmarkStatusLabel.Text = currentBm != null
+                    ? $"Marqueur '{currentBm.Name}' (Page {_currentPage})"
+                    : $"Marqueur sur la page {_currentPage}";
+            }
+
+            bool hasOtherBookmarks = _bookmarks.Count > 1 || (_bookmarks.Count == 1 && currentBm == null);
+            if (MenuBookmarkNavRow != null)
+            {
+                MenuBookmarkNavRow.IsVisible = _bookmarks.Count > 0;
+            }
+            if (MenuPrevBookmarkBtn != null)
+            {
+                MenuPrevBookmarkBtn.IsEnabled = hasOtherBookmarks;
+            }
+            if (MenuNextBookmarkBtn != null)
+            {
+                MenuNextBookmarkBtn.IsEnabled = hasOtherBookmarks;
+            }
+        }
+        finally
+        {
+            _isUpdatingBookmarkMenu = false;
+        }
+    }
+
+    private async void OnMenuBookmarkToggled(object sender, ToggledEventArgs e)
+    {
+        if (_isUpdatingBookmarkMenu) return;
+
+        var currentBm = _bookmarks.FirstOrDefault(b => b.PageNumber == _currentPage);
+        if (e.Value && currentBm == null)
+        {
+            string nextName = GetNextAvailableBookmarkName();
+            var newBm = new ScoreBookmark
+            {
+                ScoreId = _score.Id,
+                PageNumber = _currentPage,
+                Name = nextName
+            };
+            await _databaseService.SaveBookmarkAsync(newBm);
+            _bookmarks = await _databaseService.GetBookmarksForScoreAsync(_score.Id);
+            UpdateBookmarkIndicator();
+            UpdateMenuBookmarkState();
+        }
+        else if (!e.Value && currentBm != null)
+        {
+            await _databaseService.DeleteBookmarkAsync(currentBm);
+            _bookmarks = await _databaseService.GetBookmarksForScoreAsync(_score.Id);
+            UpdateBookmarkIndicator();
+            UpdateMenuBookmarkState();
+        }
+    }
+
+    private async void OnMenuPrevBookmarkClicked(object sender, EventArgs e)
+    {
+        await GoToPreviousBookmarkAsync();
+        UpdateMenuBookmarkState();
+    }
+
+    private async void OnMenuNextBookmarkClicked(object sender, EventArgs e)
+    {
+        await GoToNextBookmarkAsync();
+        UpdateMenuBookmarkState();
+    }
+
+    private void OnPageBookmarkBadgeTapped(object sender, EventArgs e)
+    {
+        OpenBookmarkModal();
+    }
+
+    private void OpenBookmarkModal()
+    {
+        var currentBm = _bookmarks.FirstOrDefault(b => b.PageNumber == _currentPage);
+        if (BookmarkModalPageLabel != null)
+        {
+            BookmarkModalPageLabel.Text = $"Page {_currentPage} / {_maxPages}";
+        }
+        if (BookmarkNameEntry != null)
+        {
+            BookmarkNameEntry.Text = currentBm?.Name ?? "";
+        }
+        if (BookmarkErrorLabel != null)
+        {
+            BookmarkErrorLabel.IsVisible = false;
+        }
+        UpdateBookmarkModalChips();
+
+        bool hasOtherBookmarks = _bookmarks.Count > 1 || (_bookmarks.Count == 1 && currentBm == null);
+        if (ModalPrevBookmarkBtn != null)
+        {
+            ModalPrevBookmarkBtn.IsEnabled = hasOtherBookmarks;
+        }
+        if (ModalNextBookmarkBtn != null)
+        {
+            ModalNextBookmarkBtn.IsEnabled = hasOtherBookmarks;
+        }
+
+        if (BookmarkModal != null)
+        {
+            BookmarkModal.IsVisible = true;
+        }
+        ImageContainer.InputTransparent = true;
+        ZoomLayout.InputTransparent = true;
+        BottomTouchBar.IsVisible = false;
+    }
+
+    private void OnCloseBookmarkModalClicked(object sender, EventArgs e)
+    {
+        if (BookmarkModal != null)
+        {
+            BookmarkModal.IsVisible = false;
+        }
+        ImageContainer.InputTransparent = false;
+        ZoomLayout.InputTransparent = false;
+        BottomTouchBar.IsVisible = !AnnotationBar.IsVisible;
+    }
+
+    private void UpdateBookmarkModalChips()
+    {
+        if (BookmarkChipsContainer == null) return;
+        BookmarkChipsContainer.Children.Clear();
+        var sorted = _bookmarks.OrderBy(b => b.PageNumber).ToList();
+        if (!sorted.Any())
+        {
+            BookmarkChipsContainer.Children.Add(new Label
+            {
+                Text = "Aucun marqueur défini",
+                TextColor = Color.FromArgb("#888888"),
+                FontSize = 12,
+                VerticalOptions = LayoutOptions.Center
+            });
+            return;
+        }
+
+        foreach (var bm in sorted)
+        {
+            bool isCurrent = bm.PageNumber == _currentPage;
+            var border = new Border
+            {
+                BackgroundColor = isCurrent ? Color.FromArgb("#007ACC") : Color.FromArgb("#2D2D38"),
+                Stroke = isCurrent ? Colors.White : Color.FromArgb("#444455"),
+                StrokeThickness = 1,
+                Padding = new Thickness(10, 4),
+                Margin = new Thickness(0, 0, 4, 0),
+                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 10 }
+            };
+            var label = new Label
+            {
+                Text = $"🔖 {bm.Name} (p.{bm.PageNumber})",
+                TextColor = isCurrent ? Colors.White : Color.FromArgb("#00E5FF"),
+                FontAttributes = FontAttributes.Bold,
+                FontSize = 12,
+                VerticalOptions = LayoutOptions.Center
+            };
+            border.Content = label;
+            var tap = new TapGestureRecognizer();
+            tap.Tapped += async (s, args) =>
+            {
+                OnCloseBookmarkModalClicked(this, EventArgs.Empty);
+                await GoToPage(bm.PageNumber);
+            };
+            border.GestureRecognizers.Add(tap);
+            BookmarkChipsContainer.Children.Add(border);
+        }
+    }
+
+    private async void OnRenameBookmarkClicked(object sender, EventArgs e)
+    {
+        var currentBm = _bookmarks.FirstOrDefault(b => b.PageNumber == _currentPage);
+        if (currentBm == null) return;
+
+        string newName = BookmarkNameEntry?.Text?.Trim().ToUpperInvariant() ?? "";
+        if (string.IsNullOrWhiteSpace(newName))
+        {
+            if (BookmarkErrorLabel != null)
+            {
+                BookmarkErrorLabel.Text = "Le nom ne peut pas être vide.";
+                BookmarkErrorLabel.IsVisible = true;
+            }
+            return;
+        }
+        if (newName.Length > 3)
+        {
+            if (BookmarkErrorLabel != null)
+            {
+                BookmarkErrorLabel.Text = "3 caractères maximum (ex: A, B, C1...).";
+                BookmarkErrorLabel.IsVisible = true;
+            }
+            return;
+        }
+        if (_bookmarks.Any(b => b.Id != currentBm.Id && b.Name.Equals(newName, StringComparison.OrdinalIgnoreCase)))
+        {
+            if (BookmarkErrorLabel != null)
+            {
+                BookmarkErrorLabel.Text = $"Le marqueur '{newName}' existe déjà sur cette partition.";
+                BookmarkErrorLabel.IsVisible = true;
+            }
+            return;
+        }
+
+        currentBm.Name = newName;
+        await _databaseService.SaveBookmarkAsync(currentBm);
+        _bookmarks = await _databaseService.GetBookmarksForScoreAsync(_score.Id);
+        if (BookmarkErrorLabel != null)
+        {
+            BookmarkErrorLabel.IsVisible = false;
+        }
+        UpdateBookmarkIndicator();
+        UpdateBookmarkModalChips();
+    }
+
+    private async void OnDeleteBookmarkClicked(object sender, EventArgs e)
+    {
+        var currentBm = _bookmarks.FirstOrDefault(b => b.PageNumber == _currentPage);
+        if (currentBm != null)
+        {
+            await _databaseService.DeleteBookmarkAsync(currentBm);
+            _bookmarks = await _databaseService.GetBookmarksForScoreAsync(_score.Id);
+            UpdateBookmarkIndicator();
+        }
+        OnCloseBookmarkModalClicked(this, EventArgs.Empty);
+    }
+
+    private async void OnModalPrevBookmarkClicked(object sender, EventArgs e)
+    {
+        await GoToPreviousBookmarkAsync();
+        OpenBookmarkModal();
+    }
+
+    private async void OnModalNextBookmarkClicked(object sender, EventArgs e)
+    {
+        await GoToNextBookmarkAsync();
+        OpenBookmarkModal();
+    }
+
+    #endregion
 
     #endregion
 

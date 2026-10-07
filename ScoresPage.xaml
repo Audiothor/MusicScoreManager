@@ -75,7 +75,7 @@
 
         <Grid Grid.Row="2" Margin="15,0,5,0">
             <CollectionView x:Name="ScoresCollectionView"
-                            ItemSizingStrategy="MeasureFirstItem"
+                            ItemSizingStrategy="MeasureAllItems"
                             SelectionMode="Single"
                             SelectionChanged="OnScoreSelected"
                             Scrolled="OnScoresScrolled"
@@ -161,6 +161,7 @@
                                    
                             <FlexLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
                                         BindableLayout.ItemsSource="{Binding AppliedTags}"
+                                        IsVisible="{Binding HasTags}"
                                         Wrap="Wrap"
                                         Direction="Row">
                                 <BindableLayout.ItemTemplate>

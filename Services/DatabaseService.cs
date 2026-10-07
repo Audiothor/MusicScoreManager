@@ -83,6 +83,7 @@ namespace MusicScoreManager.Services
                     await db.CreateTableAsync<Annotation>();
                     await db.CreateTableAsync<FavoriteSticker>();
                     await db.CreateTableAsync<ScorePageRotation>();
+                    await db.CreateTableAsync<ScoreBookmark>();
                     
                     _database = db;
                 });
@@ -199,6 +200,7 @@ namespace MusicScoreManager.Services
             await _database!.Table<ScoreTag>().Where(st => st.ScoreId == score.Id).DeleteAsync();
             await _database!.Table<ScorePageRotation>().Where(pr => pr.ScoreId == score.Id).DeleteAsync();
             await _database!.Table<Annotation>().Where(a => a.ScoreId == score.Id).DeleteAsync();
+            await _database!.Table<ScoreBookmark>().Where(b => b.ScoreId == score.Id).DeleteAsync();
             return await _database!.DeleteAsync(score);
         }
 
@@ -688,6 +690,45 @@ namespace MusicScoreManager.Services
         {
             await Init();
             return await _database!.Table<Annotation>().Where(a => a.ScoreId == scoreId).DeleteAsync();
+        }
+
+        #endregion
+
+        #region Bookmarks / Marqueurs
+
+        public async Task<List<ScoreBookmark>> GetBookmarksForScoreAsync(int scoreId)
+        {
+            await Init();
+            return await _database!.Table<ScoreBookmark>()
+                                  .Where(b => b.ScoreId == scoreId)
+                                  .OrderBy(b => b.PageNumber)
+                                  .ThenBy(b => b.Name)
+                                  .ToListAsync();
+        }
+
+        public async Task<int> SaveBookmarkAsync(ScoreBookmark bookmark)
+        {
+            await Init();
+            if (bookmark.Id != 0)
+            {
+                return await _database!.UpdateAsync(bookmark);
+            }
+            else
+            {
+                return await _database!.InsertAsync(bookmark);
+            }
+        }
+
+        public async Task<int> DeleteBookmarkAsync(ScoreBookmark bookmark)
+        {
+            await Init();
+            return await _database!.DeleteAsync(bookmark);
+        }
+
+        public async Task<int> DeleteAllBookmarksForScoreAsync(int scoreId)
+        {
+            await Init();
+            return await _database!.Table<ScoreBookmark>().Where(b => b.ScoreId == scoreId).DeleteAsync();
         }
 
         #endregion
