@@ -871,6 +871,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v252-07102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.2 — 07/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.2 — 07/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ultra-smooth-scores-scrolling-proposition-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Ultra-Smooth Scores Scrolling (Proposition 2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-central-quick-menu-polish-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Central Quick Menu Polish (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-score-opening-latency-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Score Opening Latency Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v251-07102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2001,6 +2051,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v252-07102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.2 — 07/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.2 — 07/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ultra-smooth-scores-scrolling-proposition-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Ultra-Smooth Scores Scrolling (Proposition 2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-central-quick-menu-polish-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Central Quick Menu Polish (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-score-opening-latency-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Score Opening Latency Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v251-07102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3110,8 +3210,29 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v252-07102026">v2.5.2 — 07/10/2026</h2>
+<h3 id="1-ultra-smooth-scores-scrolling-proposition-2">1. Ultra-Smooth Scores Scrolling (Proposition 2)</h3>
+<ul>
+<li><strong>1.1. Stabilized cell dimensions:</strong> Set a uniform minimum cell height (<code>MinimumHeightRequest="78"</code>) in <code>ScoresPage.xaml</code>.</li>
+<li><strong>1.2. Complete tag visibility preserved:</strong> All assigned tags remain visible, rendered with a lightweight native <code>HorizontalStackLayout</code> replacing the heavy multi-pass Flexbox engine.</li>
+<li><strong>1.3. Re-enabled <code>MeasureFirstItem</code> strategy:</strong> Measures the first item once on launch and instantly recycles subsequent items at 60/120 fps without continuous height recomputations during scrolling.</li>
+<li><strong>1.4. Native Android RecyclerView cache tuning:</strong> Configured a 25-item offscreen cache (<code>SetItemViewCacheSize(25)</code>) in <code>MauiProgram.cs</code> eliminating all scroll stutter even with 400+ scores.</li>
+</ul>
+<h3 id="2-central-quick-menu-polish-viewerpage">2. Central Quick Menu Polish (<code>ViewerPage</code>)</h3>
+<ul>
+<li><strong>2.1. Fixed bottom button clipping:</strong> Adjusted internal padding and margins in <code>CentralMenuOverlay</code> and its scroll container. "✏️ Edit" and "📑 Assembly" action buttons now display complete rounded corners and ample bottom padding.</li>
+</ul>
+<h3 id="3-score-opening-latency-optimization">3. Score Opening Latency Optimization</h3>
+<ul>
+<li><strong>3.1. SQLite Indexing on Audio Files:</strong> Added <code>[Indexed]</code> on <code>ScoreId</code> foreign key in <code>ScoreAudioFile</code>, eliminating full table scans.</li>
+<li><strong>3.2. Removed redundant score re-fetching:</strong> Stopped synchronous full database re-fetching in <code>OnAppearing</code> (since score metadata is already available), replacing it with targeted lightweight audio retrieval.</li>
+<li><strong>3.3. Lazy Loading for Annotations UI:</strong> Deferred heavy sticker category and palette building until the user actually opens the annotation/sticker tools, speeding up initial PDF display.</li>
+<li><strong>3.4. Background Page Count Throttling:</strong> Throttled asynchronous missing page count calculations in <code>ScoresPage</code> to prevent SQLite connection starvation when selecting a score.</li>
 </ul>
 <hr />
 <h2 id="v251-07102026">v2.5.1 — 07/10/2026</h2>
