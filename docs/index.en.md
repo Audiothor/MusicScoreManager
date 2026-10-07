@@ -49,3 +49,9 @@ graph TD
 - [⚙️ Settings Menu Guide](guide/settings.en.md)
 - [🚪 Quit Menu Guide](guide/quit.en.md)
 - [🔒 Privacy Policy & Legal Notice](confidentialite.en.md)
+
+---
+
+## 💬 Community & Support
+
+Join the **[Audiothor Discord Server](https://discord.gg/EtZf8VyMz)** to get help, report issues, discuss foot pedal hardware compatibility, and request new features!

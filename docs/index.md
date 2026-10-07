@@ -30,5 +30,13 @@ Elle est multiplateforme (Android / Windows).
 - [Quitter](guide/quit.md)
 - [Politique de Confidentialité & Mentions Légales](confidentialite.md)
 
+---
+
+## 💬 Communauté & Support
+
+Rejoignez le **[Serveur Discord Audiothor](https://discord.gg/EtZf8VyMz)** pour échanger des astuces, poser vos questions, discuter de vos modèles de pédaliers Bluetooth et suggérer de nouvelles fonctionnalités !
+
+---
+
 *Music Score Manager est Open source avec un code totalement transparent et disponible sous Github.
 Music Score Manager est développé en France.*
