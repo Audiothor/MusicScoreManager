@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MusicScoreManager.Models"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
+             x:Class="MusicScoreManager.PedalButtonConfigPage"
+             BackgroundColor="#121212"
+             Title="Configuration de la pédale">
+
+    <Grid RowDefinitions="Auto, *">
+        <!-- En-tête -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Padding="12,10" BackgroundColor="#1E1E1E">
+            <Button Grid.Column="0" 
+                    Text="‹ Annuler" 
+                    BackgroundColor="Transparent" 
+                    TextColor="#007ACC" 
+                    FontAttributes="Bold" 
+                    Clicked="OnCancelClicked" />
+
+            <Label Grid.Column="1" 
+                   Text="Configuration de la pédale" 
+                   TextColor="White" 
+                   FontSize="17" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center" />
+
+            <Button Grid.Column="2" 
+                    Text="💾 Valider" 
+                    BackgroundColor="#007ACC" 
+                    TextColor="White" 
+                    FontAttributes="Bold" 
+                    FontSize="13"
+                    Padding="14,6"
+                    CornerRadius="8"
+                    Clicked="OnSaveClicked" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="18" Padding="16">
+
+                <!-- A. NOM DU BOUTON / PÉDALE -->
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="a. Nom du bouton ou de la pédale" TextColor="#007ACC" FontSize="15" FontAttributes="Bold" />
+                        <Label Text="Donnez un nom explicite (ex: Pédale gauche, Footswitch 1, Bouton central...)" TextColor="#888888" FontSize="12" />
+                        <Border Stroke="#444444" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="12,0" Margin="0,4,0,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Entry x:Name="ButtonLabelEntry" 
+                                   TextColor="White" 
+                                   FontSize="15" 
+                                   Placeholder="Ex: Pédale de gauche" 
+                                   PlaceholderColor="#777777" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- B. DÉTECTION DU SIGNAL (Bluetooth / MIDI) -->
+                <Border x:Name="SignalBorderCard" Stroke="#007ACC" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label Text="b. Détection automatique du signal" TextColor="#007ACC" FontSize="15" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Border Grid.Column="1" x:Name="ListeningBadge" Stroke="#4CAF50" StrokeThickness="1" BackgroundColor="#1B3820" Padding="8,3">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12" />
+                                </Border.StrokeShape>
+                                <Label x:Name="ListeningLabel" Text="🟢 En écoute..." TextColor="#81C784" FontSize="11" FontAttributes="Bold" />
+                            </Border>
+                        </Grid>
+
+                        <Label Text="Actionnez maintenant la pédale physique ou la commande MIDI à enregistrer :" TextColor="#CCCCCC" FontSize="13" />
+
+                        <!-- Zone d'affichage de la touche capturée -->
+                        <Border x:Name="DetectedKeyBox" Stroke="#444444" StrokeThickness="1" BackgroundColor="#252525" Padding="14">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="6">
+                                <Grid ColumnDefinitions="*, Auto">
+                                    <Label x:Name="DetectedKeyLabel" 
+                                           Text="Appuyez sur une pédale..." 
+                                           TextColor="#4FC3F7" 
+                                           FontSize="18" 
+                                           FontAttributes="Bold" />
+                                    <Label Grid.Column="1" 
+                                           x:Name="DetectedSourceLabel" 
+                                           Text="Bluetooth HID / MIDI" 
+                                           TextColor="#888888" 
+                                           FontSize="12" 
+                                           VerticalOptions="Center" />
+                                </Grid>
+                                <Label x:Name="DetectedDetailsLabel" 
+                                       Text="Code : Non détecté" 
+                                       TextColor="#AAAAAA" 
+                                       FontSize="13" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Option manuelle de secours pour tester sans pédale branchée -->
+                        <Grid ColumnDefinitions="*, Auto" Margin="0,2,0,0">
+                            <Label Text="Ou sélectionner une touche standard manuellement :" TextColor="#888888" FontSize="12" VerticalOptions="Center" />
+                            <Border Grid.Column="1" Stroke="#444444" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="8,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="6" />
+                                </Border.StrokeShape>
+                                <Picker x:Name="ManualKeyPicker" 
+                                        TextColor="#CCCCCC" 
+                                        Title="Touche manuelle..." 
+                                        TitleColor="#777777" 
+                                        FontSize="12" 
+                                        SelectedIndexChanged="OnManualKeyPickerChanged" />
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- C. TYPE D'APPUI (Simple vs Long) -->
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="c. Type d'appui" TextColor="#007ACC" FontSize="15" FontAttributes="Bold" />
+                        <Label Text="Choisissez si l'action doit être déclenchée sur un appui court ou maintenu :" TextColor="#888888" FontSize="12" />
+
+                        <Grid ColumnDefinitions="*, *" ColumnSpacing="12">
+                            <!-- Option Appui simple -->
+                            <Button Grid.Column="0" 
+                                    x:Name="SimplePressBtn"
+                                    Text="⚡ Appui simple" 
+                                    BackgroundColor="#007ACC" 
+                                    TextColor="White" 
+                                    FontAttributes="Bold" 
+                                    HeightRequest="46" 
+                                    CornerRadius="8" 
+                                    Clicked="OnSimplePressSelected" />
+
+                            <!-- Option Appui long -->
+                            <Button Grid.Column="1" 
+                                    x:Name="LongPressBtn"
+                                    Text="⏱️ Appui long" 
+                                    BackgroundColor="#2A2A2A" 
+                                    TextColor="#888888" 
+                                    BorderColor="#444444" 
+                                    BorderWidth="1" 
+                                    FontAttributes="Bold" 
+                                    HeightRequest="46" 
+                                    CornerRadius="8" 
+                                    Clicked="OnLongPressSelected" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- D. ASSIGNATION DE L'ACTION (13 choix stricts) -->
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="d. Assigner une action" TextColor="#007ACC" FontSize="15" FontAttributes="Bold" />
+                        <Label Text="Sélectionnez l'action à exécuter lorsque cette pédale est activée :" TextColor="#888888" FontSize="12" />
+
+                        <Border Stroke="#444444" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="12,2">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Picker x:Name="ActionPicker" 
+                                    TextColor="#81C784" 
+                                    FontSize="15" 
+                                    FontAttributes="Bold" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Bouton final Enregistrer -->
+                <Button Text="💾 Enregistrer cette pédale" 
+                        BackgroundColor="#007ACC" 
+                        TextColor="White" 
+                        FontAttributes="Bold" 
+                        HeightRequest="48" 
+                        CornerRadius="10" 
+                        Margin="0,10,0,20"
+                        Clicked="OnSaveClicked" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

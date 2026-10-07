@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:MusicScoreManager.Models"
+             xmlns:local="clr-namespace:MusicScoreManager"
+             xmlns:services="clr-namespace:MusicScoreManager.Services"
+             x:Class="MusicScoreManager.PedalProfileEditPage"
+             BackgroundColor="#121212"
+             Title="Édition du profil">
+
+    <Grid RowDefinitions="Auto, *">
+        <!-- En-tête -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Padding="12,10" BackgroundColor="#1E1E1E">
+            <Button Grid.Column="0" 
+                    Text="‹ Retour" 
+                    BackgroundColor="Transparent" 
+                    TextColor="#007ACC" 
+                    FontAttributes="Bold" 
+                    Clicked="OnBackClicked" />
+
+            <Label Grid.Column="1" 
+                   Text="Éditer le profil de pédale" 
+                   TextColor="White" 
+                   FontSize="17" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center" />
+
+            <Button Grid.Column="2" 
+                    Text="💾 Sauvegarder" 
+                    BackgroundColor="#007ACC" 
+                    TextColor="White" 
+                    FontAttributes="Bold" 
+                    FontSize="13"
+                    Padding="12,6"
+                    CornerRadius="8"
+                    Clicked="OnSaveProfileClicked" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20" Padding="16">
+
+                <!-- CARTE 1 : Informations générales du profil -->
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="14">
+                        <Label Text="Informations du profil" TextColor="#007ACC" FontSize="16" FontAttributes="Bold" />
+
+                        <!-- Nom du profil -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Nom du profil" TextColor="#CCCCCC" FontSize="13" FontAttributes="Bold" />
+                            <Border Stroke="#444444" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="10,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Entry x:Name="ProfileNameEntry" 
+                                       TextColor="White" 
+                                       FontSize="15" 
+                                       Placeholder="Ex: PageFlip Dragonfly, Ma Pédale..." 
+                                       PlaceholderColor="#777777" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <!-- Description & Commentaires libres -->
+                        <VerticalStackLayout Spacing="6">
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Text="Description &amp; Conseils d'utilisation" TextColor="#CCCCCC" FontSize="13" FontAttributes="Bold" />
+                                <Label Grid.Column="1" Text="(Visible dans la liste)" TextColor="#777777" FontSize="11" />
+                            </Grid>
+                            <Border Stroke="#444444" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="10,8">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Editor x:Name="ProfileDescEditor" 
+                                        TextColor="White" 
+                                        FontSize="13" 
+                                        AutoSize="TextChanges" 
+                                        MinimumHeightRequest="75"
+                                        Placeholder="Ajoutez vos remarques, le mode sélectionné sur la pédale (ex: Mode 3, REPEAT OFF, etc.)..." 
+                                        PlaceholderColor="#777777" />
+                            </Border>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- CARTE 2 : Boutons & Pédales configurés -->
+                <Border Stroke="#333333" StrokeThickness="1" BackgroundColor="#1E1E1E" Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="16">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                <Label Text="Pédales &amp; Boutons configurés" TextColor="#007ACC" FontSize="16" FontAttributes="Bold" />
+                                <Label x:Name="ButtonsCountLabel" Text="0 action(s) configurée(s)" TextColor="#888888" FontSize="12" />
+                            </VerticalStackLayout>
+
+                            <Button Grid.Column="1" 
+                                    Text="➕ Ajouter une pédale" 
+                                    BackgroundColor="#2E7D32" 
+                                    TextColor="White" 
+                                    FontAttributes="Bold" 
+                                    FontSize="13" 
+                                    Padding="12,6" 
+                                    CornerRadius="8" 
+                                    HeightRequest="40"
+                                    Clicked="OnAddButtonBindingClicked" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="#2E2E2E" Margin="0,2" />
+
+                        <!-- Message si aucun bouton -->
+                        <Label x:Name="EmptyBindingsLabel" 
+                               Text="Aucune pédale ou bouton configuré pour ce profil.&#10;Touchez « ➕ Ajouter une pédale » pour en créer une." 
+                               TextColor="#888888" 
+                               FontSize="13" 
+                               HorizontalTextAlignment="Center" 
+                               Margin="0,20" 
+                               IsVisible="False" />
+
+                        <!-- Liste dynamique des boutons/pédales -->
+                        <VerticalStackLayout x:Name="BindingsListLayout" Spacing="10" />
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Bouton Enregistrer au bas également -->
+                <Button Text="💾 Enregistrer les modifications du profil" 
+                        BackgroundColor="#007ACC" 
+                        TextColor="White" 
+                        FontAttributes="Bold" 
+                        HeightRequest="48" 
+                        CornerRadius="10" 
+                        Margin="0,10,0,20"
+                        Clicked="OnSaveProfileClicked" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

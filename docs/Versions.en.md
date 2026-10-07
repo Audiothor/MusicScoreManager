@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.5.0 — 07/10/2026](#v250--07102026)
 - [v2.4.9 — 07/10/2026](#v249--07102026)
 - [v2.4.8 — 01/10/2026](#v248--01102026)
 - [v2.4.7 — 28/09/2026](#v247--28092026)
@@ -40,6 +41,47 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.0.1 — 11/09/2026](#v201--11092026)
 - [v2.0.0 — 10/09/2026](#v200--10092026)
 - [v1.9.8.0 — 08/09/2026](#v1980--08092026)
+
+---
+
+## v2.5.0 — 07/10/2026
+
+### 1. Complete Redesign of Bluetooth Pedals & MIDI Events Management
+- **1.1. Removal of deprecated sections:** Completely eliminated the legacy diagnostic tester and accordion shortcuts list from the main settings to streamline the UI.
+- **1.2. Preserved Stage Safety:** Kept the "Stage Security & Sensitivity" section intact with anti-double page turn cooldown (300 to 800 ms) and long press threshold slider.
+- **1.3. Universal Profile System:**
+  - Preserved and enhanced all factory presets (PageFlip Dragonfly, Firefly, Butterfly, AirTurn Duo/Quad 500, Donner, Joyo, Harley Benton, iRig BlueTurn, Coda STOMP, etc.).
+  - **Unrestricted Customization:** Users can directly modify built-in hardware presets without being required to create a new profile.
+  - **Profile Description & Comments:** Added custom description field for hardware notes and physical switch advice (e.g., REPEAT OFF switch, Mode 3 on PageFlip Dragonfly).
+  - 1-click profile creation prompting for a name and transitioning immediately to edit mode.
+  - Profile deletion and factory defaults restoration.
+
+### 2. Granular Pedal & Button Management (`PedalProfileEditPage`)
+- **2.1. Three intuitive operations:**
+  - **Add pedal / button:** Prompts for custom label (e.g., "Left Pedal", "Button 1"), then opens configuration page.
+  - **Edit pedal:** Edit selected button parameters via dedicated configuration page.
+  - **Delete pedal:** Directly remove button binding from profile.
+- **2.2. Polished Summary Cards:** Displays button label, captured signal badge, press type badge (Simple vs Long), and mapped action.
+
+### 3. Dedicated Pedal Button Configuration (`PedalButtonConfigPage`)
+- **3.1. Button Label:** Custom name / role entry.
+- **3.2. Live Signal Auto-Detection:** Real-time Bluetooth HID and MIDI listener capturing raw code (Hex/Dec) and key name with green flash confirmation.
+- **3.3. Press Type Selection:** Seamless choice between "⚡ Simple Press" and "⏱️ Long Press".
+- **3.4. 13 Strict Stage Actions:**
+  1. *Previous page*
+  2. *Next page*
+  3. *Go to beginning of piece*
+  4. *Go to end of piece*
+  5. *Previous bookmark*
+  6. *Next bookmark*
+  7. *Go to beginning of previous setlist song*
+  8. *Go to beginning of next setlist song*
+  9. *Open setlist songs menu (top drawer)*
+  10. *Toggle night mode (future implementation)*
+  11. *Zoom +*
+  12. *Zoom -*
+  13. *Toggle annotations visibility*
+- **3.5. Viewer Execution:** Full wiring of all new actions in `ViewerPage` (step zoom, toggle annotations drawing, setlist drawer toggle).
 
 ---
 

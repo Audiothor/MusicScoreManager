@@ -14,7 +14,7 @@ namespace MusicScoreManager.Services
         public static PedalMidiService Instance => _instance.Value;
 
         private const string ActiveProfileIdKey = "MSM_ActivePedalProfileId";
-        private const string CustomProfilesKey = "MSM_CustomPedalProfiles_Json";
+        private const string AllProfilesKey = "MSM_AllPedalProfiles_Json_v250";
         private const string LongPressThresholdKey = "MSM_PedalLongPressThresholdMs";
         private const string IsPedalEnabledKey = "MSM_PedalServiceEnabled";
         private const string BlockFastTurnKey = "MSM_PedalBlockFastTurn";
@@ -73,10 +73,38 @@ namespace MusicScoreManager.Services
         {
             InitializeProfiles();
             string savedActiveId = Preferences.Get(ActiveProfileIdKey, "preset_standard");
-            _activeProfile = Profiles.FirstOrDefault(p => p.Id == savedActiveId) ?? Profiles.First();
+            _activeProfile = Profiles.FirstOrDefault(p => p.Id == savedActiveId) ?? Profiles.FirstOrDefault() ?? CreateCustomProfile("Standard");
         }
 
         public void InitializeProfiles()
+        {
+            Profiles = new List<PedalProfile>();
+
+            // 1. Tenter de charger les profils sauvegardés par l'utilisateur (incluant les modifications sur les profils d'usine)
+            string json = Preferences.Get(AllProfilesKey, string.Empty);
+            if (!string.IsNullOrWhiteSpace(json))
+            {
+                try
+                {
+                    var savedList = JsonSerializer.Deserialize<List<PedalProfile>>(json);
+                    if (savedList != null && savedList.Count > 0)
+                    {
+                        Profiles = savedList;
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[PedalMidiService] Erreur désérialisation profils v250: {ex.Message}");
+                }
+            }
+
+            // 2. Si aucune sauvegarde n'existe, initialiser les profils d'usine
+            BuildDefaultFactoryProfiles();
+            SaveProfiles();
+        }
+
+        public void BuildDefaultFactoryProfiles()
         {
             Profiles = new List<PedalProfile>();
 
@@ -85,25 +113,21 @@ namespace MusicScoreManager.Services
             {
                 Id = "preset_standard",
                 Name = "Standard (Flèches / Page Up-Down / Espace)",
-                Description = "Compatible avec toutes les pédales standards et claviers Bluetooth (PageUp, PageDown, Flèches, Espace, Entrée).",
+                Description = "Compatible avec toutes les pédales standards et claviers Bluetooth (PageUp, PageDown, Flèches, Espace, Entrée). Idéal pour les configurations universelles.",
                 IsBuiltIn = true,
                 Bindings = new List<PedalBinding>
                 {
-                    new() { KeyName = "PageDown", KeyCode = 93, Action = PedalAction.NextPage, LongPressAction = PedalAction.NextScore, Description = "Page suivante (Long: Morceau suivant)" },
-                    new() { KeyName = "PageUp", KeyCode = 92, Action = PedalAction.PreviousPage, LongPressAction = PedalAction.PreviousScore, Description = "Page précédente (Long: Morceau précédent)" },
-                    new() { KeyName = "ArrowRight", KeyCode = 22, Action = PedalAction.NextPage, LongPressAction = PedalAction.NextScore, Description = "Page suivante" },
-                    new() { KeyName = "ArrowLeft", KeyCode = 21, Action = PedalAction.PreviousPage, LongPressAction = PedalAction.PreviousScore, Description = "Page précédente" },
-                    new() { KeyName = "ArrowDown", KeyCode = 20, Action = PedalAction.ScrollDown, Description = "Défiler vers le bas" },
-                    new() { KeyName = "ArrowUp", KeyCode = 19, Action = PedalAction.ScrollUp, Description = "Défiler vers le haut" },
-                    new() { KeyName = "Space", KeyCode = 62, Action = PedalAction.NextPage, Description = "Page suivante" },
-                    new() { KeyName = "Return", KeyCode = 66, Action = PedalAction.NextPage, Description = "Page suivante" },
-                    new() { KeyName = "Backspace", KeyCode = 67, Action = PedalAction.PreviousPage, Description = "Page précédente" },
-                    new() { KeyName = "Home", KeyCode = 122, Action = PedalAction.FirstPage, Description = "Première page" },
-                    new() { KeyName = "End", KeyCode = 123, Action = PedalAction.LastPage, Description = "Dernière page" },
-                    // Support MIDI de base
-                    new() { InputType = PedalInputType.MidiCC, KeyCode = 64, KeyName = "MIDI CC 64 (Sustain)", Action = PedalAction.NextPage, LongPressAction = PedalAction.NextScore, Description = "Pédale forte / Sustain" },
-                    new() { InputType = PedalInputType.MidiCC, KeyCode = 66, KeyName = "MIDI CC 66 (Sostenuto)", Action = PedalAction.PreviousPage, LongPressAction = PedalAction.PreviousScore, Description = "Pédale tonale / Sostenuto" },
-                    new() { InputType = PedalInputType.MidiCC, KeyCode = 67, KeyName = "MIDI CC 67 (Soft)", Action = PedalAction.ToggleMetronome, Description = "Pédale douce / Soft" }
+                    new() { ButtonLabel = "Pédale Droite (Page suivante)", KeyName = "PageDown", KeyCode = 93, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Page suivante" },
+                    new() { ButtonLabel = "Pédale Gauche (Page précédente)", KeyName = "PageUp", KeyCode = 92, PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Page précédente" },
+                    new() { ButtonLabel = "Flèche Droite", KeyName = "ArrowRight", KeyCode = 22, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Page suivante" },
+                    new() { ButtonLabel = "Flèche Gauche", KeyName = "ArrowLeft", KeyCode = 21, PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Page précédente" },
+                    new() { ButtonLabel = "Flèche Bas", KeyName = "ArrowDown", KeyCode = 20, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Page suivante" },
+                    new() { ButtonLabel = "Flèche Haut", KeyName = "ArrowUp", KeyCode = 19, PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Page précédente" },
+                    new() { ButtonLabel = "Barre Espace", KeyName = "Space", KeyCode = 62, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Page suivante" },
+                    new() { ButtonLabel = "Touche Entrée", KeyName = "Return", KeyCode = 66, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Page suivante" },
+                    new() { ButtonLabel = "Pédale Sustain MIDI (CC 64)", InputType = PedalInputType.MidiCC, KeyCode = 64, KeyName = "MIDI CC 64 (Sustain)", PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Pédale forte / Sustain" },
+                    new() { ButtonLabel = "Pédale Sostenuto MIDI (CC 66)", InputType = PedalInputType.MidiCC, KeyCode = 66, KeyName = "MIDI CC 66 (Sostenuto)", PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Pédale tonale / Sostenuto" },
+                    new() { ButtonLabel = "Pédale Soft MIDI (CC 67)", InputType = PedalInputType.MidiCC, KeyCode = 67, KeyName = "MIDI CC 67 (Soft)", PressType = PedalPressType.Simple, Action = PedalAction.NextBookmark, Description = "Marqueur suivant" }
                 }
             });
 
@@ -112,16 +136,14 @@ namespace MusicScoreManager.Services
             {
                 Id = "preset_pageflip_dragonfly",
                 Name = "PageFlip Dragonfly (4 Pédales)",
-                Description = "Profil optimisé pour les 4 pédales du PageFlip Dragonfly (Tourne-page + Métronome + Audio).",
+                Description = "Configuration pour le pédalier PageFlip Dragonfly à 4 commutateurs. Réglage physique recommandé : commutateur REPEAT sur OFF et sélecteur sur Mode 3 (PageDown / PageUp) pour les deux grandes pédales principales. Les switches auxiliaires externes sont configurés pour les sauts de marqueurs ou le début/fin de morceau.",
                 IsBuiltIn = true,
                 Bindings = new List<PedalBinding>
                 {
-                    new() { KeyName = "PageDown", KeyCode = 93, Action = PedalAction.NextPage, LongPressAction = PedalAction.NextScore, Description = "Pédale Droite Principale" },
-                    new() { KeyName = "PageUp", KeyCode = 92, Action = PedalAction.PreviousPage, LongPressAction = PedalAction.PreviousScore, Description = "Pédale Gauche Principale" },
-                    new() { KeyName = "F3", KeyCode = 133, Action = PedalAction.ToggleMetronome, Description = "Pédale Auxiliaire 1 (Métronome)" },
-                    new() { KeyName = "F4", KeyCode = 134, Action = PedalAction.ToggleAudio, Description = "Pédale Auxiliaire 2 (Piste Audio)" },
-                    new() { KeyName = "ArrowRight", KeyCode = 22, Action = PedalAction.NextPage, Description = "Mode Flèches Droite" },
-                    new() { KeyName = "ArrowLeft", KeyCode = 21, Action = PedalAction.PreviousPage, Description = "Mode Flèches Gauche" }
+                    new() { ButtonLabel = "Pédale Droite Principale", KeyName = "PageDown", KeyCode = 93, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Tourner la page suivante" },
+                    new() { ButtonLabel = "Pédale Gauche Principale", KeyName = "PageUp", KeyCode = 92, PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Tourner la page précédente" },
+                    new() { ButtonLabel = "Pédale Auxiliaire Droite", KeyName = "F4", KeyCode = 134, PressType = PedalPressType.Simple, Action = PedalAction.NextBookmark, Description = "Aller au marqueur suivant" },
+                    new() { ButtonLabel = "Pédale Auxiliaire Gauche", KeyName = "F3", KeyCode = 133, PressType = PedalPressType.Simple, Action = PedalAction.PreviousBookmark, Description = "Aller au marqueur précédent" }
                 }
             });
 
@@ -130,16 +152,12 @@ namespace MusicScoreManager.Services
             {
                 Id = "preset_pageflip_firefly",
                 Name = "PageFlip Firefly & Butterfly",
-                Description = "Profil complet pour PageFlip Firefly (avec prises jack auxiliaires) et Butterfly.",
+                Description = "Pédaliers PageFlip Firefly et Butterfly à 2 pédales. Réglage physique recommandé : sélecteur sur Mode 3 (PageDown / PageUp) et commutateur REPEAT sur OFF pour éviter les doubles tournes involontaires.",
                 IsBuiltIn = true,
                 Bindings = new List<PedalBinding>
                 {
-                    new() { KeyName = "PageDown", KeyCode = 93, Action = PedalAction.NextPage, LongPressAction = PedalAction.NextScore, Description = "Pédale Droite (Page suiv / Morceau suiv)" },
-                    new() { KeyName = "PageUp", KeyCode = 92, Action = PedalAction.PreviousPage, LongPressAction = PedalAction.PreviousScore, Description = "Pédale Gauche (Page préc / Morceau préc)" },
-                    new() { KeyName = "ArrowDown", KeyCode = 20, Action = PedalAction.ScrollDown, Description = "Pédale Auxiliaire Bas" },
-                    new() { KeyName = "ArrowUp", KeyCode = 19, Action = PedalAction.ScrollUp, Description = "Pédale Auxiliaire Haut" },
-                    new() { KeyName = "ArrowRight", KeyCode = 22, Action = PedalAction.NextPage, Description = "Mode 3 (Flèche Droite)" },
-                    new() { KeyName = "ArrowLeft", KeyCode = 21, Action = PedalAction.PreviousPage, Description = "Mode 3 (Flèche Gauche)" }
+                    new() { ButtonLabel = "Pédale Droite", KeyName = "PageDown", KeyCode = 93, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Page suivante" },
+                    new() { ButtonLabel = "Pédale Gauche", KeyName = "PageUp", KeyCode = 92, PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Page précédente" }
                 }
             });
 
@@ -148,186 +166,147 @@ namespace MusicScoreManager.Services
             {
                 Id = "preset_airturn_duo",
                 Name = "AirTurn Duo 500 / PEDpro",
-                Description = "Support des modes AirTurn (Mode 3 PageUp/Down, Mode 2 Flèches, Mode 1 Flèches verticales).",
+                Description = "Pédaliers Bluetooth AirTurn à 2 commutateurs silencieux. Réglage physique recommandé : Mode 3 (PageDown / PageUp) ou Mode 2 (Flèches gauche / droite). Fonctionne avec tous les appareils via Bluetooth BLE.",
                 IsBuiltIn = true,
                 Bindings = new List<PedalBinding>
                 {
-                    new() { KeyName = "PageDown", KeyCode = 93, Action = PedalAction.NextPage, LongPressAction = PedalAction.NextScore, Description = "Switch 2 (Mode 3)" },
-                    new() { KeyName = "PageUp", KeyCode = 92, Action = PedalAction.PreviousPage, LongPressAction = PedalAction.PreviousScore, Description = "Switch 1 (Mode 3)" },
-                    new() { KeyName = "ArrowRight", KeyCode = 22, Action = PedalAction.NextPage, LongPressAction = PedalAction.NextScore, Description = "Switch 2 (Mode 2)" },
-                    new() { KeyName = "ArrowLeft", KeyCode = 21, Action = PedalAction.PreviousPage, LongPressAction = PedalAction.PreviousScore, Description = "Switch 1 (Mode 2)" },
-                    new() { KeyName = "ArrowDown", KeyCode = 20, Action = PedalAction.ScrollDown, Description = "Switch 2 (Mode 1)" },
-                    new() { KeyName = "ArrowUp", KeyCode = 19, Action = PedalAction.ScrollUp, Description = "Switch 1 (Mode 1)" }
+                    new() { ButtonLabel = "Pédale Droite (Switch 2)", KeyName = "PageDown", KeyCode = 93, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Page suivante" },
+                    new() { ButtonLabel = "Pédale Gauche (Switch 1)", KeyName = "PageUp", KeyCode = 92, PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Page précédente" }
                 }
             });
 
-            // 5. AirTurn Quad 500 (4 Boutons)
+            // 5. AirTurn Quad 500 (4 Pédales)
             Profiles.Add(new PedalProfile
             {
                 Id = "preset_airturn_quad",
                 Name = "AirTurn Quad 500 (4 Pédales)",
-                Description = "Configuration pour les 4 switches du pédalier AirTurn Quad 500.",
+                Description = "Pédalier AirTurn à 4 commutateurs. Réglage recommandé : Mode 3. Pédales 1 & 3 pour tourner les pages, pédales 2 & 4 pour naviguer entre les marqueurs de la partition ou les morceaux.",
                 IsBuiltIn = true,
                 Bindings = new List<PedalBinding>
                 {
-                    new() { KeyName = "PageDown", KeyCode = 93, Action = PedalAction.NextPage, Description = "Switch 2 (Page suivante)" },
-                    new() { KeyName = "PageUp", KeyCode = 92, Action = PedalAction.PreviousPage, Description = "Switch 1 (Page précédente)" },
-                    new() { KeyName = "Digit1", KeyCode = 8, Action = PedalAction.ToggleMetronome, Description = "Switch 3 (Métronome On/Off)" },
-                    new() { KeyName = "Digit2", KeyCode = 9, Action = PedalAction.ToggleAudio, Description = "Switch 4 (Lecture Audio)" },
-                    new() { KeyName = "ArrowUp", KeyCode = 19, Action = PedalAction.ToggleAnnotationsLock, Description = "Mode Flèches Haut (Cadenas)" },
-                    new() { KeyName = "ArrowDown", KeyCode = 20, Action = PedalAction.OpenPageJump, Description = "Mode Flèches Bas (Saut Page)" }
+                    new() { ButtonLabel = "Pédale 3 (Droite Principale)", KeyName = "PageDown", KeyCode = 93, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Page suivante" },
+                    new() { ButtonLabel = "Pédale 1 (Gauche Principale)", KeyName = "PageUp", KeyCode = 92, PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Page précédente" },
+                    new() { ButtonLabel = "Pédale 4 (Auxiliaire Droite)", KeyName = "ArrowRight", KeyCode = 22, PressType = PedalPressType.Simple, Action = PedalAction.NextBookmark, Description = "Marqueur suivant" },
+                    new() { ButtonLabel = "Pédale 2 (Auxiliaire Gauche)", KeyName = "ArrowLeft", KeyCode = 21, PressType = PedalPressType.Simple, Action = PedalAction.PreviousBookmark, Description = "Marqueur précédent" }
                 }
             });
 
-            // 6. Joyo JSP-01
+            // 6. Donner Wireless Page Turner
             Profiles.Add(new PedalProfile
             {
-                Id = "preset_joyo_jsp01",
-                Name = "Joyo JSP-01 Wireless Page Turner",
-                Description = "Pédalier sans fil Joyo JSP-01 (Modes PageUp/Down et Flèches).",
-                IsBuiltIn = true,
-                Bindings = new List<PedalBinding>
-                {
-                    new() { KeyName = "PageDown", KeyCode = 93, Action = PedalAction.NextPage, LongPressAction = PedalAction.NextScore, Description = "Pédale Droite (Page suivante)" },
-                    new() { KeyName = "PageUp", KeyCode = 92, Action = PedalAction.PreviousPage, LongPressAction = PedalAction.PreviousScore, Description = "Pédale Gauche (Page précédente)" },
-                    new() { KeyName = "ArrowRight", KeyCode = 22, Action = PedalAction.NextPage, Description = "Mode 2 Droite" },
-                    new() { KeyName = "ArrowLeft", KeyCode = 21, Action = PedalAction.PreviousPage, Description = "Mode 2 Gauche" }
-                }
-            });
-
-            // 7. Thomann / Harley Benton PageTurn Pedal
-            Profiles.Add(new PedalProfile
-            {
-                Id = "preset_thomann_pageturn",
-                Name = "Thomann / Harley Benton PageTurn",
-                Description = "Pédale Bluetooth Thomann / Harley Benton (5 modes de bascule).",
-                IsBuiltIn = true,
-                Bindings = new List<PedalBinding>
-                {
-                    new() { KeyName = "PageDown", KeyCode = 93, Action = PedalAction.NextPage, LongPressAction = PedalAction.NextScore, Description = "Mode 1 Droite (PageDown)" },
-                    new() { KeyName = "PageUp", KeyCode = 92, Action = PedalAction.PreviousPage, LongPressAction = PedalAction.PreviousScore, Description = "Mode 1 Gauche (PageUp)" },
-                    new() { KeyName = "ArrowRight", KeyCode = 22, Action = PedalAction.NextPage, Description = "Mode 2 Droite (Flèche)" },
-                    new() { KeyName = "ArrowLeft", KeyCode = 21, Action = PedalAction.PreviousPage, Description = "Mode 2 Gauche (Flèche)" },
-                    new() { KeyName = "ArrowDown", KeyCode = 20, Action = PedalAction.ScrollDown, Description = "Mode 3 Bas" },
-                    new() { KeyName = "ArrowUp", KeyCode = 19, Action = PedalAction.ScrollUp, Description = "Mode 3 Haut" }
-                }
-            });
-
-            // 8. Donner Wireless Page Turner
-            Profiles.Add(new PedalProfile
-            {
-                Id = "preset_donner_turner",
+                Id = "preset_donner",
                 Name = "Donner Wireless Page Turner",
-                Description = "Pédalier Donner 5 modes (PageUp/Down, Flèches, Espace/Entrée).",
+                Description = "Pédale sans fil Donner à double pédalier. Réglage physique recommandé : commutateur arrière sur Mode 1 (PageDown / PageUp) ou Mode 2 (Flèches horizontales).",
                 IsBuiltIn = true,
                 Bindings = new List<PedalBinding>
                 {
-                    new() { KeyName = "PageDown", KeyCode = 93, Action = PedalAction.NextPage, LongPressAction = PedalAction.NextScore, Description = "Pédale Droite (PageDown)" },
-                    new() { KeyName = "PageUp", KeyCode = 92, Action = PedalAction.PreviousPage, LongPressAction = PedalAction.PreviousScore, Description = "Pédale Gauche (PageUp)" },
-                    new() { KeyName = "ArrowRight", KeyCode = 22, Action = PedalAction.NextPage, Description = "Pédale Droite (Flèche)" },
-                    new() { KeyName = "ArrowLeft", KeyCode = 21, Action = PedalAction.PreviousPage, Description = "Pédale Gauche (Flèche)" },
-                    new() { KeyName = "Space", KeyCode = 62, Action = PedalAction.NextPage, Description = "Mode Espace / Entrée" },
-                    new() { KeyName = "Return", KeyCode = 66, Action = PedalAction.NextPage, Description = "Mode Espace / Entrée" }
+                    new() { ButtonLabel = "Pédale Droite", KeyName = "PageDown", KeyCode = 93, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Page suivante" },
+                    new() { ButtonLabel = "Pédale Gauche", KeyName = "PageUp", KeyCode = 92, PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Page précédente" }
                 }
             });
 
-            // 9. iRig BlueTurn
+            // 7. Joyo JSP-01 Wireless Page Turner
+            Profiles.Add(new PedalProfile
+            {
+                Id = "preset_joyo",
+                Name = "Joyo JSP-01 Wireless Page Turner",
+                Description = "Pédale sans fil Joyo JSP-01. Réglage recommandé : commutateur sur Mode 1 (Flèches) ou Mode 2 (PageUp/PageDown). Veiller à désactiver la répétition continue.",
+                IsBuiltIn = true,
+                Bindings = new List<PedalBinding>
+                {
+                    new() { ButtonLabel = "Pédale Droite", KeyName = "ArrowRight", KeyCode = 22, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Page suivante" },
+                    new() { ButtonLabel = "Pédale Gauche", KeyName = "ArrowLeft", KeyCode = 21, PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Page précédente" }
+                }
+            });
+
+            // 8. Thomann / Harley Benton PageTurn
+            Profiles.Add(new PedalProfile
+            {
+                Id = "preset_harley_benton",
+                Name = "Thomann / Harley Benton PageTurn",
+                Description = "Pédale 2 commutateurs Harley Benton PageTurn. Réglage physique : sélecteur sur Mode 1 (Flèches) ou Mode 2 (PageUp/PageDown).",
+                IsBuiltIn = true,
+                Bindings = new List<PedalBinding>
+                {
+                    new() { ButtonLabel = "Pédale Droite", KeyName = "ArrowRight", KeyCode = 22, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Page suivante" },
+                    new() { ButtonLabel = "Pédale Gauche", KeyName = "ArrowLeft", KeyCode = 21, PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Page précédente" }
+                }
+            });
+
+            // 9. IK Multimedia iRig BlueTurn
             Profiles.Add(new PedalProfile
             {
                 Id = "preset_irig_blueturn",
                 Name = "IK Multimedia iRig BlueTurn",
-                Description = "Pédalier compact rétroéclairé iRig BlueTurn (Modes PageUp/Down, ArrowUp/Down, ArrowLeft/Right).",
+                Description = "Pédalier compact et rétroéclairé iRig BlueTurn à 2 touches silencieuses. Réglage recommandé : Mode 1 (PageUp / PageDown) ou Mode 2 (Flèches).",
                 IsBuiltIn = true,
                 Bindings = new List<PedalBinding>
                 {
-                    new() { KeyName = "PageDown", KeyCode = 93, Action = PedalAction.NextPage, LongPressAction = PedalAction.NextScore, Description = "Bouton Droit (Mode 1)" },
-                    new() { KeyName = "PageUp", KeyCode = 92, Action = PedalAction.PreviousPage, LongPressAction = PedalAction.PreviousScore, Description = "Bouton Gauche (Mode 1)" },
-                    new() { KeyName = "ArrowDown", KeyCode = 20, Action = PedalAction.NextPage, Description = "Bouton Droit (Mode 2)" },
-                    new() { KeyName = "ArrowUp", KeyCode = 19, Action = PedalAction.PreviousPage, Description = "Bouton Gauche (Mode 2)" },
-                    new() { KeyName = "ArrowRight", KeyCode = 22, Action = PedalAction.NextPage, Description = "Bouton Droit (Mode 3)" },
-                    new() { KeyName = "ArrowLeft", KeyCode = 21, Action = PedalAction.PreviousPage, Description = "Bouton Gauche (Mode 3)" }
+                    new() { ButtonLabel = "Bouton Droit (PageDown)", KeyName = "PageDown", KeyCode = 93, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Page suivante" },
+                    new() { ButtonLabel = "Bouton Gauche (PageUp)", KeyName = "PageUp", KeyCode = 92, PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Page précédente" }
                 }
             });
 
-            // 10. Coda Music Stomp
+            // 10. Coda Music Technologies STOMP
             Profiles.Add(new PedalProfile
             {
                 Id = "preset_coda_stomp",
                 Name = "Coda Music Technologies STOMP",
-                Description = "Pédalier en aluminium ultra-robuste STOMP (Modes Page, Flèches et Audio).",
+                Description = "Pédalier ultra-robuste STOMP en boîtier aluminium massif. Réglage matériel recommandé : sélecteur de mode sur Mode 1 (PageUp / PageDown) pour une réactivité instantanée sur scène.",
                 IsBuiltIn = true,
                 Bindings = new List<PedalBinding>
                 {
-                    new() { KeyName = "PageDown", KeyCode = 93, Action = PedalAction.NextPage, LongPressAction = PedalAction.NextScore, Description = "Footswitch Droit (Mode 1)" },
-                    new() { KeyName = "PageUp", KeyCode = 92, Action = PedalAction.PreviousPage, LongPressAction = PedalAction.PreviousScore, Description = "Footswitch Gauche (Mode 1)" },
-                    new() { KeyName = "ArrowRight", KeyCode = 22, Action = PedalAction.NextPage, Description = "Footswitch Droit (Mode 2)" },
-                    new() { KeyName = "ArrowLeft", KeyCode = 21, Action = PedalAction.PreviousPage, Description = "Footswitch Gauche (Mode 2)" },
-                    new() { KeyName = "ArrowDown", KeyCode = 20, Action = PedalAction.ScrollDown, Description = "Footswitch Droit (Mode 3)" },
-                    new() { KeyName = "ArrowUp", KeyCode = 19, Action = PedalAction.ScrollUp, Description = "Footswitch Gauche (Mode 3)" }
+                    new() { ButtonLabel = "Footswitch Droit", KeyName = "PageDown", KeyCode = 93, PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Page suivante" },
+                    new() { ButtonLabel = "Footswitch Gauche", KeyName = "PageUp", KeyCode = 92, PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Page précédente" }
                 }
             });
 
-            // 11. Contrôleur MIDI Pro (USB / Bluetooth)
+            // 11. Contrôleur MIDI Avancé (USB / Bluetooth)
             Profiles.Add(new PedalProfile
             {
                 Id = "preset_midi_controller",
                 Name = "Contrôleur MIDI Avancé (USB / Bluetooth)",
-                Description = "Pédaliers et claviers MIDI (Pédales Sustain/CC 64, Sostenuto/CC 66, Notes C1-F1, Program Change).",
+                Description = "Pédaliers et claviers maîtres MIDI. Assignations par défaut : Pédale Sustain (CC 64) = Page suivante, Pédale Sostenuto (CC 66) = Page précédente, Pédale Soft (CC 67) = Marqueur suivant.",
                 IsBuiltIn = true,
                 Bindings = new List<PedalBinding>
                 {
-                    new() { InputType = PedalInputType.MidiCC, KeyCode = 64, KeyName = "MIDI CC 64 (Sustain)", Action = PedalAction.NextPage, LongPressAction = PedalAction.NextScore, Description = "Pédale Sustain (CC 64)" },
-                    new() { InputType = PedalInputType.MidiCC, KeyCode = 66, KeyName = "MIDI CC 66 (Sostenuto)", Action = PedalAction.PreviousPage, LongPressAction = PedalAction.PreviousScore, Description = "Pédale Sostenuto (CC 66)" },
-                    new() { InputType = PedalInputType.MidiCC, KeyCode = 67, KeyName = "MIDI CC 67 (Soft Pedal)", Action = PedalAction.ToggleMetronome, Description = "Pédale Soft (CC 67)" },
-                    new() { InputType = PedalInputType.MidiCC, KeyCode = 80, KeyName = "MIDI CC 80 (General 1)", Action = PedalAction.ToggleAudio, Description = "Bouton Général MIDI CC 80" },
-                    new() { InputType = PedalInputType.MidiNote, KeyCode = 36, KeyName = "MIDI Note 36 (C1)", Action = PedalAction.PreviousPage, Description = "Note C1 (Page précédente)" },
-                    new() { InputType = PedalInputType.MidiNote, KeyCode = 38, KeyName = "MIDI Note 38 (D1)", Action = PedalAction.NextPage, Description = "Note D1 (Page suivante)" },
-                    new() { InputType = PedalInputType.MidiNote, KeyCode = 40, KeyName = "MIDI Note 40 (E1)", Action = PedalAction.ToggleAudio, Description = "Note E1 (Piste Audio)" },
-                    new() { InputType = PedalInputType.MidiNote, KeyCode = 41, KeyName = "MIDI Note 41 (F1)", Action = PedalAction.ToggleMetronome, Description = "Note F1 (Métronome)" },
-                    new() { InputType = PedalInputType.MidiProgramChange, KeyCode = 1, KeyName = "MIDI PC + (Morceau +)", Action = PedalAction.NextScore, Description = "Program Change Suivant" },
-                    new() { InputType = PedalInputType.MidiProgramChange, KeyCode = 0, KeyName = "MIDI PC - (Morceau -)", Action = PedalAction.PreviousScore, Description = "Program Change Précédent" }
+                    new() { ButtonLabel = "Pédale Sustain (CC 64)", InputType = PedalInputType.MidiCC, KeyCode = 64, KeyName = "MIDI CC 64 (Sustain)", PressType = PedalPressType.Simple, Action = PedalAction.NextPage, Description = "Pédale Sustain (CC 64)" },
+                    new() { ButtonLabel = "Pédale Sostenuto (CC 66)", InputType = PedalInputType.MidiCC, KeyCode = 66, KeyName = "MIDI CC 66 (Sostenuto)", PressType = PedalPressType.Simple, Action = PedalAction.PreviousPage, Description = "Pédale Sostenuto (CC 66)" },
+                    new() { ButtonLabel = "Pédale Soft (CC 67)", InputType = PedalInputType.MidiCC, KeyCode = 67, KeyName = "MIDI CC 67 (Soft)", PressType = PedalPressType.Simple, Action = PedalAction.NextBookmark, Description = "Pédale Soft (CC 67)" }
                 }
             });
-
-            // Charger les profils personnalisés enregistrés par l'utilisateur
-            LoadCustomProfiles();
         }
 
-        private void LoadCustomProfiles()
+        public void SaveProfiles()
         {
             try
             {
-                string json = Preferences.Get(CustomProfilesKey, string.Empty);
-                if (!string.IsNullOrWhiteSpace(json))
-                {
-                    var customList = JsonSerializer.Deserialize<List<PedalProfile>>(json);
-                    if (customList != null)
-                    {
-                        foreach (var cp in customList)
-                        {
-                            cp.IsBuiltIn = false;
-                            Profiles.Add(cp);
-                        }
-                    }
-                }
+                string json = JsonSerializer.Serialize(Profiles);
+                Preferences.Set(AllProfilesKey, json);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[PedalMidiService] Erreur lors du chargement des profils custom: {ex.Message}");
+                Debug.WriteLine($"[PedalMidiService] Erreur lors de la sauvegarde des profils: {ex.Message}");
             }
         }
 
-        public void SaveCustomProfiles()
+        public void SaveProfile(PedalProfile profile)
         {
-            try
+            if (profile == null) return;
+            var index = Profiles.FindIndex(p => p.Id == profile.Id);
+            if (index >= 0)
             {
-                var customList = Profiles.Where(p => !p.IsBuiltIn).ToList();
-                string json = JsonSerializer.Serialize(customList);
-                Preferences.Set(CustomProfilesKey, json);
+                Profiles[index] = profile;
             }
-            catch (Exception ex)
+            else
             {
-                Debug.WriteLine($"[PedalMidiService] Erreur lors de la sauvegarde des profils custom: {ex.Message}");
+                Profiles.Add(profile);
+            }
+            SaveProfiles();
+            if (ActiveProfile?.Id == profile.Id)
+            {
+                _activeProfile = profile;
+                ActiveProfileChanged?.Invoke();
             }
         }
 
@@ -335,14 +314,14 @@ namespace MusicScoreManager.Services
         {
             var profile = new PedalProfile
             {
-                Id = "custom_" + Guid.NewGuid().ToString("N")[..8],
-                Name = name,
-                Description = description,
+                Id = "profile_" + Guid.NewGuid().ToString("N")[..8],
+                Name = string.IsNullOrWhiteSpace(name) ? "Nouveau Profil" : name.Trim(),
+                Description = description.Trim(),
                 IsBuiltIn = false,
                 Bindings = new List<PedalBinding>()
             };
 
-            // Copier par défaut les raccourcis du profil standard
+            // Copier les boutons du profil standard par défaut pour offrir une base de travail prête à l'emploi
             var standard = Profiles.FirstOrDefault(p => p.Id == "preset_standard");
             if (standard != null)
             {
@@ -353,23 +332,34 @@ namespace MusicScoreManager.Services
             }
 
             Profiles.Add(profile);
-            SaveCustomProfiles();
+            SaveProfiles();
             ActiveProfile = profile;
             return profile;
         }
 
-        public void DeleteCustomProfile(string profileId)
+        public void DeleteProfile(string profileId)
         {
-            var p = Profiles.FirstOrDefault(x => x.Id == profileId && !x.IsBuiltIn);
+            var p = Profiles.FirstOrDefault(x => x.Id == profileId);
             if (p != null)
             {
                 Profiles.Remove(p);
-                SaveCustomProfiles();
-                if (ActiveProfile.Id == profileId)
+                if (Profiles.Count == 0)
+                {
+                    BuildDefaultFactoryProfiles();
+                }
+                SaveProfiles();
+                if (ActiveProfile?.Id == profileId)
                 {
                     ActiveProfile = Profiles.First();
                 }
             }
+        }
+
+        public void ResetToFactoryDefaults()
+        {
+            BuildDefaultFactoryProfiles();
+            SaveProfiles();
+            ActiveProfile = Profiles.First();
         }
 
         #region Traitement des Événements Clavier / Bluetooth HID
@@ -382,13 +372,11 @@ namespace MusicScoreManager.Services
 
             lock (_lock)
             {
-                // Si la touche est déjà enfoncée, c'est une répétition automatique (repeat), on ignore
                 if (_activeKeyDowns.ContainsKey(rawKeyCode))
                 {
                     return true;
                 }
 
-                // Démarrer un timer pour la détection de pression longue (Long Press)
                 var timer = new System.Threading.Timer(OnLongPressTimerFired, rawKeyCode, LongPressThresholdMs, System.Threading.Timeout.Infinite);
                 _activeKeyDowns[rawKeyCode] = (DateTime.Now, timer);
             }
@@ -417,23 +405,69 @@ namespace MusicScoreManager.Services
                 }
             }
 
-            // Trouver le binding correspondant dans le profil actif
-            var binding = FindBinding(PedalInputType.KeyboardKey, rawKeyCode, standardKeyName);
+            // Trouver le binding correspondant dans le profil actif en respectant le type d'appui
+            PedalBinding? binding = null;
             PedalAction action = PedalAction.None;
 
-            if (binding != null)
+            if (ActiveProfile?.Bindings != null)
             {
-                if (wasLongPress && binding.LongPressAction != PedalAction.None)
+                if (wasLongPress)
                 {
-                    action = binding.LongPressAction;
+                    // 1. Chercher un binding configuré pour appui long
+                    binding = ActiveProfile.Bindings.FirstOrDefault(b =>
+                        b.InputType == PedalInputType.KeyboardKey &&
+                        (b.KeyCode == rawKeyCode || string.Equals(b.KeyName, standardKeyName, StringComparison.OrdinalIgnoreCase)) &&
+                        b.PressType == PedalPressType.Long &&
+                        b.Action != PedalAction.None);
+
+                    if (binding != null)
+                    {
+                        action = binding.Action;
+                    }
+                    else
+                    {
+                        // 2. Fallback rétro-compatible sur LongPressAction si présent
+                        var fallback = ActiveProfile.Bindings.FirstOrDefault(b =>
+                            b.InputType == PedalInputType.KeyboardKey &&
+                            (b.KeyCode == rawKeyCode || string.Equals(b.KeyName, standardKeyName, StringComparison.OrdinalIgnoreCase)) &&
+                            b.LongPressAction != PedalAction.None);
+                        if (fallback != null)
+                        {
+                            binding = fallback;
+                            action = fallback.LongPressAction;
+                        }
+                    }
                 }
-                else
+
+                if (action == PedalAction.None)
                 {
-                    action = binding.Action;
+                    // Appui simple : chercher un binding configuré en appui simple
+                    binding = ActiveProfile.Bindings.FirstOrDefault(b =>
+                        b.InputType == PedalInputType.KeyboardKey &&
+                        (b.KeyCode == rawKeyCode || string.Equals(b.KeyName, standardKeyName, StringComparison.OrdinalIgnoreCase)) &&
+                        b.PressType == PedalPressType.Simple &&
+                        b.Action != PedalAction.None);
+
+                    if (binding != null)
+                    {
+                        action = binding.Action;
+                    }
+                    else
+                    {
+                        // Fallback générique
+                        binding = ActiveProfile.Bindings.FirstOrDefault(b =>
+                            b.InputType == PedalInputType.KeyboardKey &&
+                            (b.KeyCode == rawKeyCode || string.Equals(b.KeyName, standardKeyName, StringComparison.OrdinalIgnoreCase)) &&
+                            b.Action != PedalAction.None);
+                        if (binding != null)
+                        {
+                            action = binding.Action;
+                        }
+                    }
                 }
             }
 
-            // Émettre l'événement brut pour le moniteur/testeur
+            // Émettre l'événement brut pour les pages d'apprentissage/écoute
             var rawEvent = new PedalRawEvent
             {
                 Timestamp = DateTime.Now,
@@ -466,10 +500,13 @@ namespace MusicScoreManager.Services
                     if (_activeKeyDowns.TryGetValue(rawKeyCode, out var pressInfo))
                     {
                         string standardKeyName = NormalizeKeyName(rawKeyCode);
-                        var binding = FindBinding(PedalInputType.KeyboardKey, rawKeyCode, standardKeyName);
-                        if (binding != null && binding.LongPressAction != PedalAction.None)
+                        var binding = ActiveProfile?.Bindings?.FirstOrDefault(b =>
+                            b.InputType == PedalInputType.KeyboardKey &&
+                            (b.KeyCode == rawKeyCode || string.Equals(b.KeyName, standardKeyName, StringComparison.OrdinalIgnoreCase)) &&
+                            (b.PressType == PedalPressType.Long || b.LongPressAction != PedalAction.None));
+
+                        if (binding != null)
                         {
-                            // Émettre notification temps réel
                             var rawEvent = new PedalRawEvent
                             {
                                 Timestamp = DateTime.Now,
@@ -478,7 +515,7 @@ namespace MusicScoreManager.Services
                                 KeyName = standardKeyName,
                                 Value = 1,
                                 IsLongPress = true,
-                                MatchedAction = binding.LongPressAction,
+                                MatchedAction = binding.PressType == PedalPressType.Long ? binding.Action : binding.LongPressAction,
                                 Source = "Bluetooth HID (Long Press)"
                             };
                             RawEventReceived?.Invoke(rawEvent);
@@ -496,13 +533,11 @@ namespace MusicScoreManager.Services
         {
             if (!IsEnabled) return;
 
-            // En MIDI, pour NoteOn, la vélocité 0 correspond à NoteOff.
             if (inputType == PedalInputType.MidiNote && value == 0)
             {
                 return;
             }
 
-            // Pour CC (Control Change), si valeur < 64, c'est généralement un relâchement de pédale (Pedal Release)
             if (inputType == PedalInputType.MidiCC && value < 64)
             {
                 return;
@@ -516,7 +551,11 @@ namespace MusicScoreManager.Services
                 _ => $"MIDI {code}"
             };
 
-            var binding = FindBinding(inputType, code, name);
+            PedalBinding? binding = ActiveProfile?.Bindings?.FirstOrDefault(b =>
+                b.InputType == inputType &&
+                b.KeyCode == code &&
+                b.Action != PedalAction.None);
+
             PedalAction action = binding?.Action ?? PedalAction.None;
 
             var rawEvent = new PedalRawEvent
@@ -540,24 +579,6 @@ namespace MusicScoreManager.Services
         }
 
         #endregion
-
-        private PedalBinding? FindBinding(PedalInputType inputType, int code, string keyName)
-        {
-            if (ActiveProfile?.Bindings == null) return null;
-
-            // 1. Chercher par correspondance exacte de type et code
-            var binding = ActiveProfile.Bindings.FirstOrDefault(b => b.InputType == inputType && b.KeyCode == code);
-            if (binding != null) return binding;
-
-            // 2. Chercher par nom normalisé pour le clavier (très utile entre Android et Windows)
-            if (inputType == PedalInputType.KeyboardKey && !string.IsNullOrWhiteSpace(keyName))
-            {
-                binding = ActiveProfile.Bindings.FirstOrDefault(b => b.InputType == PedalInputType.KeyboardKey &&
-                    string.Equals(b.KeyName, keyName, StringComparison.OrdinalIgnoreCase));
-            }
-
-            return binding;
-        }
 
         public void TriggerAction(PedalAction action)
         {
@@ -593,34 +614,37 @@ namespace MusicScoreManager.Services
 
         #region Helpers de conversion et normalisation
 
+        public static string GetActionDisplayName(PedalAction action) => PedalActionHelper.GetActionDisplayName(action);
+
         public static string NormalizeKeyName(int rawKeyCode)
         {
-            // Android Keycodes
             switch (rawKeyCode)
             {
-                case 93: case 34: return "PageDown";
-                case 92: case 33: return "PageUp";
-                case 22: case 39: return "ArrowRight";
-                case 21: case 37: return "ArrowLeft";
-                case 20: case 40: return "ArrowDown";
-                case 19: case 38: return "ArrowUp";
-                case 62: case 32: return "Space";
-                case 66: case 13: return "Return";
+                case 92: return "PageUp";
+                case 93: return "PageDown";
+                case 19: return "ArrowUp";
+                case 20: return "ArrowDown";
+                case 21: return "ArrowLeft";
+                case 22: return "ArrowRight";
+                case 62: return "Space";
+                case 66: return "Return";
                 case 67: return "Backspace";
-                case 8: return "Digit1 / Backspace";
-                case 111: case 27: return "Escape";
-                case 122: case 36: return "Home";
-                case 123: case 35: return "End";
-                case 49:  return "Digit1";
-                case 9: case 50:  return "Digit2";
-                case 10: case 51: return "Digit3";
-                case 11: case 52: return "Digit4";
+                case 122: return "Home";
+                case 123: return "End";
                 case 133: case 114: return "F3";
                 case 134: case 115: return "F4";
                 case 135: case 116: return "F5";
                 case 136: case 117: return "F6";
                 case 137: case 118: return "F7";
                 case 138: case 119: return "F8";
+                case 33: return "PageUp";
+                case 34: return "PageDown";
+                case 37: return "ArrowLeft";
+                case 38: return "ArrowUp";
+                case 39: return "ArrowRight";
+                case 40: return "ArrowDown";
+                case 32: return "Space";
+                case 13: return "Return";
                 default:
                     if (rawKeyCode >= 29 && rawKeyCode <= 54) // Android A-Z
                         return ((char)('A' + (rawKeyCode - 29))).ToString();
@@ -628,36 +652,6 @@ namespace MusicScoreManager.Services
                         return ((char)rawKeyCode).ToString();
                     return $"Key_{rawKeyCode}";
             }
-        }
-
-        public static string GetActionDisplayName(PedalAction action)
-        {
-            return action switch
-            {
-                PedalAction.None => "Aucune action",
-                PedalAction.NextPage => "➡️ Tourner à la page suivante",
-                PedalAction.PreviousPage => "⬅️ Tourner à la page précédente",
-                PedalAction.ScrollDown => "⬇️ Défiler vers le bas",
-                PedalAction.ScrollUp => "⬆️ Défiler vers le haut",
-                PedalAction.FirstPage => "⏮️ Aller au début (1ère page)",
-                PedalAction.LastPage => "⏭️ Aller à la fin (Dernière page)",
-                PedalAction.NextScore => "📑 Morceau suivant (Setlist)",
-                PedalAction.PreviousScore => "📑 Morceau précédent (Setlist)",
-                PedalAction.ToggleMetronome => "⏱️ Démarrer / Arrêter le métronome",
-                PedalAction.ToggleMetronomeSound => "🔇 Activer / Couper le son du métronome",
-                PedalAction.ToggleAudio => "🎵 Lecture / Pause de la piste audio",
-                PedalAction.RestartAudio => "🔁 Recommencer la piste audio",
-                PedalAction.ResetZoom => "🔍 Rétablir le zoom à 100%",
-                PedalAction.OpenPageJump => "🔢 Ouvrir le saut direct de page",
-                PedalAction.ToggleAnnotationsLock => "🔒 Verrouiller / Déverrouiller annotations",
-                PedalAction.UndoAnnotation => "↩️ Annuler la dernière annotation",
-                PedalAction.RedoAnnotation => "↪️ Rétablir l'annotation",
-                PedalAction.OpenQuickMenu => "📋 Ouvrir le menu central",
-                PedalAction.CloseViewer => "🚪 Fermer le lecteur / Retour",
-                PedalAction.NextBookmark => "🔖 Marqueur suivant",
-                PedalAction.PreviousBookmark => "🔖 Marqueur précédent",
-                _ => action.ToString()
-            };
         }
 
         public static string GetMidiNoteName(int noteNumber)
@@ -680,6 +674,8 @@ namespace MusicScoreManager.Services
                 11 => "Expression",
                 65 => "Portamento On/Off",
                 68 => "Legato",
+                80 => "General 1",
+                81 => "General 2",
                 _ => $"CC {ccNumber}"
             };
         }

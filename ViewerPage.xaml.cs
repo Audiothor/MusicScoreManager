@@ -900,6 +900,7 @@ public partial class ViewerPage : ContentPage
     private double _panStartX = 0;
     private double _panStartY = 0;
     private bool _isPinching = false;
+    private bool _isZoomed = false;
 
     private void OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
     {
@@ -2823,12 +2824,91 @@ public partial class ViewerPage : ContentPage
                 case PedalAction.PreviousBookmark:
                     await GoToPreviousBookmarkAsync();
                     break;
+
+                case PedalAction.OpenSetlistDrawer:
+                    ToggleSetlistProgressOverlay();
+                    break;
+
+                case PedalAction.ToggleNightMode:
+                    await DisplayAlert("Mode Nuit", "L'activation du mode nuit sera disponible dans une prochaine mise à jour.", "OK");
+                    break;
+
+                case PedalAction.ZoomIn:
+                    await ZoomInAsync();
+                    break;
+
+                case PedalAction.ZoomOut:
+                    await ZoomOutAsync();
+                    break;
+
+                case PedalAction.ToggleAnnotationsVisibility:
+                    await ToggleAnnotationsVisibilityAsync();
+                    break;
             }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur action pédale/MIDI ({action}): {ex.Message}");
         }
+    }
+
+    private async Task ZoomInAsync()
+    {
+        try
+        {
+            double targetScale = Math.Min(3.5, ZoomLayout.Scale + 0.25);
+            currentScale = targetScale;
+            _isZoomed = targetScale > 1.05;
+            await ZoomLayout.ScaleTo(targetScale, 180, Easing.CubicOut);
+        }
+        catch { }
+    }
+
+    private async Task ZoomOutAsync()
+    {
+        try
+        {
+            double targetScale = Math.Max(1.0, ZoomLayout.Scale - 0.25);
+            currentScale = targetScale;
+            _isZoomed = targetScale > 1.05;
+            if (targetScale <= 1.05)
+            {
+                _ = ZoomLayout.TranslateTo(0, 0, 180, Easing.CubicOut);
+            }
+            await ZoomLayout.ScaleTo(targetScale, 180, Easing.CubicOut);
+        }
+        catch { }
+    }
+
+    private async Task ToggleAnnotationsVisibilityAsync()
+    {
+        try
+        {
+            _score.ShowAnnotations = !_score.ShowAnnotations;
+            if (MenuAnnotationsSwitch != null)
+            {
+                MenuAnnotationsSwitch.IsToggled = _score.ShowAnnotations;
+            }
+            ApplyAnnotationsVisibility(_score.ShowAnnotations);
+            await _databaseService.SaveScoreAsync(_score);
+        }
+        catch { }
+    }
+
+    private void ToggleSetlistProgressOverlay()
+    {
+        try
+        {
+            if (SetlistProgressModal != null && SetlistProgressModal.IsVisible)
+            {
+                HideSetlistProgressOverlay();
+            }
+            else if (_setlistScores != null && _setlistScores.Count > 0)
+            {
+                ShowSetlistProgressOverlay();
+            }
+        }
+        catch { }
     }
 
     private bool _isSwitchingScore = false;
