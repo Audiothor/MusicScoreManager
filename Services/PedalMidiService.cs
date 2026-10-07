@@ -654,6 +654,8 @@ namespace MusicScoreManager.Services
                 PedalAction.RedoAnnotation => "↪️ Rétablir l'annotation",
                 PedalAction.OpenQuickMenu => "📋 Ouvrir le menu central",
                 PedalAction.CloseViewer => "🚪 Fermer le lecteur / Retour",
+                PedalAction.NextBookmark => "🔖 Marqueur suivant",
+                PedalAction.PreviousBookmark => "🔖 Marqueur précédent",
                 _ => action.ToString()
             };
         }

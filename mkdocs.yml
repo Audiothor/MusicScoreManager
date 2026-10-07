@@ -73,6 +73,7 @@ plugins:
             Menu Quitter: Quit Menu
             À propos & Confidentialité: About & Privacy
             Politique de confidentialité: Privacy Policy
+            Historique des Versions: Version History
 
 markdown_extensions:
   - admonition
@@ -102,3 +103,4 @@ nav:
       - Menu Quitter: guide/quit.md
   - À propos & Confidentialité:
       - Politique de confidentialité: confidentialite.md
+  - Historique des Versions: Versions.md
