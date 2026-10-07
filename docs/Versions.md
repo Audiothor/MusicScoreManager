@@ -6,7 +6,27 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.1 — 07/10/2026
+
+### 1. Ergonomie du Menu Central du Visualiseur (`ViewerPage`)
+- **1.1. Suppression du bouton redondant « Fermer » :** Retrait du bouton en bas du menu rapide central, la fermeture s'effectuant de manière immédiate via la croix `✕` de l'en-tête supérieur.
+- **1.2. Épuration de la ligne Métronome :** Retrait de l'icône roue crantée `⚙️` située entre « Afficher métronome » et l'interrupteur On/Off pour une disposition harmonieuse et parfaitement alignée avec les lignes Audio et Annotations.
+
+### 2. Lisibilité de la Barre de Navigation Inférieure (`AppShell`)
+- **2.1. Agrandissement des caractères :** Légère augmentation de la taille de police et renforcement des intitulés du menu principal (*Partitions*, *Setlists*, *Outils*, *Paramètres*, *Quitter*) pour un meilleur confort de lecture sur scène.
+
+### 3. Correctif d'État du Surlignage Stabilo
+- **3.1. Réinitialisation complète à la fermeture :** Correction du problème où la fermeture de la palette d'options du stabilo via sa croix laissait l'outil actif en arrière-plan, obligeant l'utilisateur à cliquer deux fois sur l'icône stabilo pour la rouvrir. La fermeture de la boîte désactive désormais proprement le mode et réinitialise l'état visuel du bouton.
+- **3.2. Uniformisation :** Application du même comportement aux palettes du crayon et du texte.
+
+---
+
+## v2.5.0 — 07/10/2026
 - [v2.4.9 — 07/10/2026](#v249--07102026)
 - [v2.4.8 — 01/10/2026](#v248--01102026)
 - [v2.4.7 — 28/09/2026](#v247--28092026)

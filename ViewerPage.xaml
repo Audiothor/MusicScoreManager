@@ -794,11 +794,10 @@
                         <Border BackgroundColor="#1E1E28" Stroke="#2A2A3A" StrokeThickness="1" Padding="12,10">
                             <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
                             <VerticalStackLayout Spacing="6">
-                                <Grid ColumnDefinitions="Auto, *, Auto, Auto" ColumnSpacing="6" VerticalOptions="Center">
+                                <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="6" VerticalOptions="Center">
                                     <Label Grid.Column="0" Text="⏱️" FontSize="14" VerticalOptions="Center" />
                                     <Label Grid.Column="1" Text="{Binding [Viewer_Menu_ShowMetronome], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="12" VerticalOptions="Center" />
-                                    <Button Grid.Column="2" Text="⚙️" BackgroundColor="Transparent" Padding="0" WidthRequest="28" HeightRequest="28" FontSize="13" VerticalOptions="Center" Clicked="OnMetronomeSettingsButtonClicked" />
-                                    <Switch Grid.Column="3" x:Name="MenuMetronomeSwitch" OnColor="#007ACC" Scale="0.75" VerticalOptions="Center" Toggled="OnMenuMetronomeToggled" />
+                                    <Switch Grid.Column="2" x:Name="MenuMetronomeSwitch" OnColor="#007ACC" Scale="0.75" VerticalOptions="Center" Toggled="OnMenuMetronomeToggled" />
                                 </Grid>
                                 <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="6" VerticalOptions="Center">
                                     <Label Grid.Column="0" Text="🎧" FontSize="14" VerticalOptions="Center" />
@@ -818,12 +817,6 @@
                             <Button Grid.Column="0" Text="✏️ Modifier" ToolTipProperties.Text="{Binding [Viewer_Edit_Score], Source={x:Static services:LocalizationService.Instance}}" BackgroundColor="#007ACC" TextColor="White" FontSize="12" FontAttributes="Bold" CornerRadius="10" HeightRequest="38" Clicked="OnEditScoreClicked" />
                             <Button Grid.Column="1" x:Name="MenuModifyAssemblyButton" Text="📑 Assemblage" ToolTipProperties.Text="{Binding [Viewer_Menu_ModifyAssembly], Source={x:Static services:LocalizationService.Instance}}" BackgroundColor="#34495E" TextColor="White" FontSize="12" CornerRadius="10" HeightRequest="38" Clicked="OnMenuModifyAssemblyClicked" />
                         </Grid>
-
-                        <!-- Bouton Fermer Additionnel en Bas -->
-                        <Button Text="{Binding [Common_Close], Source={x:Static services:LocalizationService.Instance}}" 
-                                BackgroundColor="#252530" TextColor="#AAAAAA" 
-                                FontSize="12" CornerRadius="10" HeightRequest="36" Margin="0,2,0,0"
-                                Clicked="OnCloseMenuClicked" />
                     </VerticalStackLayout>
                 </ScrollView>
             </VerticalStackLayout>

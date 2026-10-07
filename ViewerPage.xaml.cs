@@ -3797,6 +3797,8 @@ public partial class ViewerPage : ContentPage
     private void OnCloseHighlightOptionsClicked(object sender, EventArgs e)
     {
         HighlightOptionsOverlay.IsVisible = false;
+        _isHighlightMode = false;
+        HighlightBtn.BackgroundColor = Colors.Transparent;
     }
 
     private void OnHighlightPointerPressed(object? sender, PointerEventArgs e)
@@ -4036,6 +4038,8 @@ public partial class ViewerPage : ContentPage
     private void OnCloseDrawOptionsClicked(object sender, EventArgs e)
     {
         DrawOptionsOverlay.IsVisible = false;
+        _isDrawMode = false;
+        DrawBtn.BackgroundColor = Colors.Transparent;
     }
 
     private void StartLiveDrawStroke(Point pt)
@@ -4246,6 +4250,8 @@ public partial class ViewerPage : ContentPage
     private void OnCloseTextOptionsClicked(object sender, EventArgs e)
     {
         TextOptionsOverlay.IsVisible = false;
+        _isTextMode = false;
+        TextAnnotationBtn.BackgroundColor = Colors.Transparent;
     }
 
     private bool _isPromptingText = false;
