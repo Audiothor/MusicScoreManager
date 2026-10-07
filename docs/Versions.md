@@ -16,6 +16,30 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.4.2 — 17/09/2026](#v242--17092026)
 - [v2.4.1 — 16/09/2026](#v241--16092026)
 - [v2.4.0 — 14/09/2026](#v240--14092026)
+- [v2.3.0 — 30/09/2026](#v230--30092026)
+- [v2.2.2 — 29/09/2026](#v222--29092026)
+- [v2.2.1 — 29/09/2026](#v221--29092026)
+- [v2.2.0 — 29/09/2026](#v220--29092026)
+- [v2.1.13 — 29/09/2026](#v2113--29092026)
+- [v2.1.12 — 25/09/2026](#v2112--25092026)
+- [v2.1.11 — 22/09/2026](#v2111--22092026)
+- [v2.1.10 — 22/09/2026](#v2110--22092026)
+- [v2.1.9 — 22/09/2026](#v219--22092026)
+- [v2.1.8 — 20/09/2026](#v218--20092026)
+- [v2.1.7 — 20/09/2026](#v217--20092026)
+- [v2.1.6 — 19/09/2026](#v216--19092026)
+- [v2.1.5 — 18/09/2026](#v215--18092026)
+- [v2.1.4 — 18/09/2026](#v214--18092026)
+- [v2.1.3 — 18/09/2026](#v213--18092026)
+- [v2.1.2 — 17/09/2026](#v212--17092026)
+- [v2.1.1 — 17/09/2026](#v211--17092026)
+- [v2.1.0 — 17/09/2026](#v210--17092026)
+- [v2.0.4 — 13/09/2026](#v204--13092026)
+- [v2.0.3 — 13/09/2026](#v203--13092026)
+- [v2.0.2 — 12/09/2026](#v202--12092026)
+- [v2.0.1 — 11/09/2026](#v201--11092026)
+- [v2.0.0 — 10/09/2026](#v200--10092026)
+- [v1.9.8.0 — 08/09/2026](#v1980--08092026)
 
 ---
 
@@ -111,3 +135,207 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 ### 1. Refonte mobile et annotations
 - **1.1.** Support complet des annotations crayon, stabilo et stickers.
 - **1.2.** Double-tap pour actions rapides et bascule des numéros de page.
+
+---
+
+## v2.3.0 — 30/09/2026
+
+### 1. Ordonnancement personnalisé des stickers favoris
+- **1.1.** **Réorganisation libre des stickers favoris :** Ajout de la réorganisation personnalisée des stickers favoris dans la page des paramètres d'annotations (`SettingsAnnotationsPage`).
+- **1.2.** **Contrôles dédiés :** Boutons Monter / Descendre et poignées de réordonnancement pour agencer ses symboles musicaux préférés exactement selon ses habitudes de jeu.
+- **1.3.** **Persistance du tri :** Enregistrement de l'ordre d'affichage dans la base de données locale (`FavoriteSticker.OrderIndex`) appliqué instantanément dans la palette du visualiseur.
+- **1.4.** **Ressources Google Play Store :** Intégration des visuels promotionnels officiels (icône haute résolution, image vedette 1024x500 et captures d'écran des 8 fonctionnalités clés).
+
+---
+
+## v2.2.2 — 29/09/2026
+
+### 1. Vélocité de l'index alphabétique et remontée haut de page
+- **1.1.** **Navigation instantanée A-Z :** Optimisation du calcul de défilement de l'index alphabétique latéral pour un alignement au pixel près sur la première partition correspondante.
+- **1.2.** **Bouton flottant retour en haut (FAB) :** Défilement fluide et immédiat vers le début de la bibliothèque sans latence ni à-coups graphiques.
+
+---
+
+## v2.2.1 — 29/09/2026
+
+### 1. Correctifs de réactivité de l'index alphabétique
+- **1.1.** **Suppression des micro-sauts :** Correction du repositionnement instable lors d'un tap rapide sur les lettres extrêmes (A, W, Z).
+- **1.2.** **Amélioration du ciblage :** Prise en compte immédiate des partitions accentuées et des caractères spéciaux dans le calcul d'indexation.
+
+---
+
+## v2.2.0 — 29/09/2026
+
+### 1. Fluidité absolue sur bibliothèques volumineuses (300+ partitions)
+- **1.1.** **Virtualisation haute performance :** Rendu ultrarapide de la liste des partitions sans ralentissement de l'interface même avec des centaines de partitions enregistrées.
+- **1.2.** **Bandeau d'index alphabétique latéral A-Z :** Barre de navigation alphabétique tactile sur le côté droit de l'écran pour atteindre directement la section souhaitée par simple toucher ou glissement.
+- **1.3.** **Bouton flottant de retour en haut :** Apparition dynamique d'un bouton flottant élégant dès que la liste est défilée pour remonter instantanément au sommet.
+- **1.4.** **Configuration dans les réglages :** Option dédiée dans les paramètres des partitions pour activer ou masquer l'index alphabétique selon les préférences de l'utilisateur.
+
+---
+
+## v2.1.13 — 29/09/2026
+
+### 1. Précision du surlignage et élimination des traces tactiles
+- **1.1.** **Tracé du stabilo :** Correction du rendu des traits de surlignage pour préserver la netteté et la transparence optimale au-dessus des portées musicales.
+- **1.2.** **Suppression des artefacts tactiles :** Élimination définitive des micro-points résiduels causés par les contacts d'appui court lors de l'activation des outils de dessin.
+
+---
+
+## v2.1.12 — 25/09/2026
+
+### 1. Gestion avancée et tri configurable des Setlists
+- **1.1.** **Tri par défaut personnalisable :** Ajout d'une option de tri par défaut des setlists dans les paramètres (par nom alphabétique, par date d'événement ou par date de création).
+- **1.2.** **Relégation automatique des setlists terminées :** Option permettant de basculer automatiquement les concerts et répétitions passés en fin de liste pour conserver les programmes à venir au premier plan.
+- **1.3.** **Distingo visuel clair :** Mise en valeur des setlists actives et atténuation des programmes archivés.
+
+---
+
+## v2.1.11 — 22/09/2026
+
+### 1. Harmonisation multilingue et stabilité générale
+- **1.1.** **Correction des libellés multilingues :** Traduction intégrale des dialogues de sauvegarde, d'échange Wi-Fi Direct, de gestion des sauvegardes et des modules de pédales dans les 8 langues prises en charge.
+- **1.2.** **Stabilité du moteur de rendu :** Robustesse renforcée lors du basculement rapide entre différentes partitions.
+
+---
+
+## v2.1.10 — 22/09/2026
+
+### 1. Optimisation mémoire et performances
+- **1.1.** **Gestion du cache RAM :** Libération optimisée des images et des flux mémoires lors de longues répétitions ou concerts.
+- **1.2.** **Stabilité applicative :** Traitement des exceptions potentielles lors des transitions d'écrans.
+
+---
+
+## v2.1.9 — 22/09/2026
+
+### 1. Internationalisation multilingue intégrale (i18n)
+- **1.1.** **8 langues supportées :** Déploiement complet des traductions natives en Français 🇫🇷, Anglais 🇬🇧, Allemand 🇩🇪, Espagnol 🇪🇸, Italien 🇮🇹, Polonais 🇵🇱, Néerlandais 🇳🇱 et Portugais 🇵🇹.
+- **1.2.** **Couverture exhaustive :** Traduction intégrale des menus, réglages d'application, catégories de stickers musicaux, dialogues d'importation et page À propos.
+- **1.3.** **Application instantanée :** Changement de langue à chaud dans les paramètres avec rafraîchissement immédiat de l'interface utilisateur.
+
+---
+
+## v2.1.8 — 20/09/2026
+
+### 1. Maintien de l'écran allumé pendant le jeu
+- **1.1.** **Option « Garder l'écran allumé » (Keep Screen Awake) :** Empêche la mise en veille automatique de la tablette ou de l'écran pendant la consultation d'une partition.
+- **1.2.** **Renommage du menu Organisation :** Clarification des intitulés des menus de paramètres pour une navigation plus intuitive.
+
+---
+
+## v2.1.7 — 20/09/2026
+
+### 1. Centralisation de la gestion des étiquettes
+- **1.1.** **Module Étiquettes dans Outils :** Regroupement de la création, du renommage, de la colorimétrie et de la suppression des étiquettes dans le menu Outils.
+- **1.2.** **Raccourci direct depuis les réglages de partition :** Accès immédiat à la gestion globale des étiquettes sans quitter le contexte de personnalisation de la partition.
+
+---
+
+## v2.1.6 — 19/09/2026
+
+### 1. Calque dynamique d'annotations On/Off
+- **1.1.** **Bascule instantanée d'affichage :** Ajout d'une option d'affichage/masquage rapide des annotations dans le menu central du visualiseur pour afficher la partition vierge ou annotée en un clic.
+- **1.2.** **Contrôle dans la fiche partition :** Possibilité de choisir si les annotations sont visibles par défaut pour chaque partition individuellement.
+
+---
+
+## v2.1.5 — 18/09/2026
+
+### 1. Pré-roll audio et décompte synchronisé
+- **1.1.** **Décompte rythmique de haute précision :** Métronome visuel et sonore synchronisé (1 à 4 mesures paramétrables) avant le départ de la bande audio d'accompagnement.
+- **1.2.** **Répétition systématique à la reprise :** Réactivation automatique du pré-roll lors de la reprise après une pause pour un calage musical parfait en répétition.
+
+---
+
+## v2.1.4 — 18/09/2026
+
+### 1. Lecteur audio flottant et repositionnable
+- **1.1.** **Mini-lecteur audio flottant :** Lecteur de bande-son d'accompagnement draggable n'obstruant pas la lecture de la partition.
+- **1.2.** **Démarrage automatique configurable :** Option permettant de charger et démarrer automatiquement la piste audio dès l'ouverture de la partition.
+- **1.3.** **Contrôle réactif dans le menu :** Bascule directe de l'état audio depuis le panneau central.
+
+---
+
+## v2.1.3 — 18/09/2026
+
+### 1. Navigation sécurisée vers l'atelier PDF
+- **1.1.** **Élimination des conditions de course :** Routage Shell MAUI fiabilisé lors de l'ouverture de l'assembleur et découpeur PDF depuis le visualiseur et les fiches partitions.
+
+---
+
+## v2.1.2 — 17/09/2026
+
+### 1. Protection anti-tourne rapide et réglages pédales ergonomiques
+- **1.1.** **Protection anti-double tourne (Cooldown) :** Temporisation paramétrable (anti-rebond de 200 ms à 1000 ms) empêchant les sauts involontaires de multiples pages lors d'un appui nerveux sur la pédale.
+- **1.2.** **Accordéon repliable pour raccourcis :** Interface épurée dans les réglages de pédale avec sections repliables par fonction.
+
+---
+
+## v2.1.1 — 17/09/2026
+
+### 1. Sous-titres dynamiques personnalisables
+- **1.1.** **Sous-titres réorganisables par glisser-déposer :** Choix libre des éléments affichés sous le titre de la partition (compositeur, tonalité, tempo, étiquettes, nombre total de pages).
+- **1.2.** **Optimisation du mode paysage :** Présentation ajustée des métadonnées pour éviter tout chevauchement en affichage horizontal.
+
+---
+
+## v2.1.0 — 17/09/2026
+
+### 1. Moteur de rendu PDF natif ultra-rapide
+- **1.1.** **Moteur natif matériel :** Intégration directe d'Android `PdfRenderer` et de Windows `Windows.Data.Pdf` pour un temps de chargement des pages divisé par trois.
+- **1.2.** **Mode double page en paysage :** Affichage simultané de deux pages côte à côte en orientation horizontale avec pagination synchronisée.
+- **1.3.** **Mise en cache RAM dynamique :** Préchargement intelligent des pages adjacentes pour une tourne instantanée à 0 ms de délai perçu.
+
+---
+
+## v2.0.4 — 13/09/2026
+
+### 1. Importation d'images sécurisée et améliorations setlists
+- **1.1.** **Modale bloquante de conversion d'images en PDF :** Dialogue clair guidant l'utilisateur pour convertir les photos et captures de partitions en PDF avant intégration.
+- **1.2.** **Filtrage multi-étiquettes :** Recherche croisée par étiquettes lors de l'ajout de partitions à une setlist.
+- **1.3.** **Autorisation des doublons dans une setlist :** Possibilité d'intégrer plusieurs fois le même morceau dans un programme (rappels, interludes).
+
+---
+
+## v2.0.3 — 13/09/2026
+
+### 1. Fiabilisation de la conversion Image en PDF
+- **1.1.** **Gestion sécurisée des chemins temporaires :** Résolution des erreurs d'accès lors de la conversion d'images issues d'applications tierces ou de galeries photos.
+- **1.2.** **Messages conviviaux :** Reformulation des alertes d'importation avec explications claires et rassurantes.
+
+---
+
+## v2.0.2 — 12/09/2026
+
+### 1. Détection et proposition de conversion automatique d'images
+- **1.1.** Détection proactive des formats graphiques (PNG, JPEG, WebP) à l'importation avec proposition immédiate de conversion en document PDF vectoriel standardisé.
+
+---
+
+## v2.0.1 — 11/09/2026
+
+### 1. Améliorations du tiroir de setlist en direct
+- **1.1.** **Colorimétrie d'avancement :** Distinction visuelle nette entre les morceaux déjà joués, le morceau actuellement en cours et les morceaux restants à jouer.
+- **1.2.** **Recentrage automatique :** Défilement automatique du bandeau pour maintenir la partition en cours au centre de l'écran.
+- **1.3.** **Bascule de l'overlay :** Option pour afficher ou masquer le bandeau de progression selon les besoins scéniques.
+
+---
+
+## v2.0.0 — 10/09/2026
+
+### 1. Refonte majeure de l'expérience scénique (Setlist Live Mode)
+- **1.1.** **Bandeau déroulant de setlist en direct (Live Progress Drawer) :** Tiroir supérieur rétractable dans le visualiseur permettant de voir l'ensemble du set musical sans interrompre la lecture.
+- **1.2.** **Navigation tactile directe :** Saut instantané d'un morceau à l'autre d'un simple toucher sur le bandeau pendant le concert ou la répétition.
+
+---
+
+## v1.9.8.0 — 08/09/2026
+
+### 1. Support complet des Pédales Bluetooth et Contrôleurs MIDI
+- **1.1.** **Moniteur d'événements en direct (Live Monitor) :** Affichage en temps réel des frappes de pédalier (touches clavier Bluetooth) et des messages MIDI (Control Change, Program Change, Note On) pour faciliter la configuration.
+- **1.2.** **Profils matériels préconfigurés :** Profils prêts à l'emploi pour AirTurn (Duo 500, QUAD 500, PEDpro), PageFlip (Firefly, Butterfly, Dragonfly), Coda STOMP, Donner, Joyo, Harley Benton, iRig BlueTurn et claviers standards.
+- **1.3.** **Gestion des profils personnalisés :** Création, duplication, renommage et suppression de profils sur-mesure adaptés à tout matériel.
+- **1.4.** **Double action Appui Court / Appui Long :** Configuration indépendante de deux actions distinctes par pédale, avec réglette de sensibilité réglable (200 ms à 1000 ms).
+- **1.5.** **Palette complète d'actions musicales :** Tourne de page suivante/précédente, morceau suivant/précédent de setlist, métronome On/Off, lecture/pause audio, zoom 100%, saut direct de page, menu central et verrouillage des annotations.
+
