@@ -6,7 +6,27 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.1 — 07/10/2026
+
+### 1. Central Quick Menu Polish (`ViewerPage`)
+- **1.1. Removed redundant bottom "Close" button:** The modal already features an instant close cross `✕` in the top header.
+- **1.2. Cleaner Metronome Row:** Removed the gear icon `⚙️` between "Show Metronome" and the On/Off switch for a streamlined, uniform layout matching the Audio and Annotations rows.
+
+### 2. Improved Bottom Navigation Tab Bar Readability (`AppShell`)
+- **2.1. Increased font size & contrast:** Slightly enlarged text size and bold emphasis for main tab labels (*Scores*, *Setlists*, *Tools*, *Settings*, *Quit*) for higher stage legibility.
+
+### 3. Highlighter (Stabilo) Mode State Fix
+- **3.1. Clean reset on modal close:** Fixed an issue where closing the highlighter options palette with the `✕` cross left the tool internally active, requiring the user to tap the highlighter icon twice to re-open it. Closing the overlay now cleanly resets the mode and toolbar button state.
+- **3.2. Consistency:** Applied the same clean reset to draw and text option palettes.
+
+---
+
+## v2.5.0 — 07/10/2026
 - [v2.4.9 — 07/10/2026](#v249--07102026)
 - [v2.4.8 — 01/10/2026](#v248--01102026)
 - [v2.4.7 — 28/09/2026](#v247--28092026)
