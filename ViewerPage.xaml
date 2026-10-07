@@ -695,7 +695,7 @@
                 BackgroundColor="#F414141B" 
                 VerticalOptions="Center" 
                 HorizontalOptions="Center" 
-                Padding="16,14"
+                Padding="16,14,16,18"
                 WidthRequest="340"
                 StrokeThickness="1.5"
                 Stroke="#007ACC"
@@ -730,7 +730,7 @@
                            FontAttributes="Bold" 
                            TextColor="White" 
                            HorizontalTextAlignment="Center" 
-                           VerticalTextAlignment="Center"
+                           VerticalTextAlignment="Center" 
                            LineBreakMode="TailTruncation" 
                            Margin="6,0" />
 
@@ -751,7 +751,7 @@
 
                 <!-- Contenu défilable si écran réduit -->
                 <ScrollView x:Name="CentralMenuScrollView" VerticalScrollBarVisibility="Never" Orientation="Vertical">
-                    <VerticalStackLayout x:Name="CentralMenuContentStack" Spacing="8" Padding="0,2,2,2">
+                    <VerticalStackLayout x:Name="CentralMenuContentStack" Spacing="8" Padding="0,2,2,10">
 
                         <!-- Section 1 : 🔖 Marqueur de Page (Signet) -->
                         <Border BackgroundColor="#1E1E28" Stroke="#2A2A3A" StrokeThickness="1" Padding="12,10">
@@ -813,7 +813,7 @@
                         </Border>
 
                         <!-- Section 4 : 🛠️ Actions Partition -->
-                        <Grid ColumnDefinitions="*, *" ColumnSpacing="8" Margin="0,2">
+                        <Grid ColumnDefinitions="*, *" ColumnSpacing="8" Margin="0,4,0,4">
                             <Button Grid.Column="0" Text="✏️ Modifier" ToolTipProperties.Text="{Binding [Viewer_Edit_Score], Source={x:Static services:LocalizationService.Instance}}" BackgroundColor="#007ACC" TextColor="White" FontSize="12" FontAttributes="Bold" CornerRadius="10" HeightRequest="38" Clicked="OnEditScoreClicked" />
                             <Button Grid.Column="1" x:Name="MenuModifyAssemblyButton" Text="📑 Assemblage" ToolTipProperties.Text="{Binding [Viewer_Menu_ModifyAssembly], Source={x:Static services:LocalizationService.Instance}}" BackgroundColor="#34495E" TextColor="White" FontSize="12" CornerRadius="10" HeightRequest="38" Clicked="OnMenuModifyAssemblyClicked" />
                         </Grid>

@@ -7,6 +7,7 @@ namespace MusicScoreManager.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        [Indexed]
         public int ScoreId { get; set; }
 
         public string FileName { get; set; } = string.Empty;

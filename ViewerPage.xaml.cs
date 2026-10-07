@@ -288,24 +288,26 @@ public partial class ViewerPage : ContentPage
         // 1. Démarrer immédiatement le chargement de la partition et des rotations sans délai
         _ = LoadPageAndContentImmediatelyAsync();
 
-        // 2. Initialiser le métronome, l'audio et les annotations en tâche de fond
+        // 2. Initialiser le métronome, l'audio et les annotations en tâche de fond (chargement optimisé)
         _ = Task.Run(async () => {
             InitializeMetronome();
             await LoadAnnotationsAsync();
             await LoadBookmarksAsync();
-            await InitializeAnnotationUI(force: true);
 
             try
             {
-                var refreshedScore = await _databaseService.GetScoreAsync(_score.Id);
-                if (refreshedScore != null)
+                if (_score.AudioFiles == null || _score.AudioFiles.Count == 0)
                 {
-                    _score = refreshedScore;
+                    var audioFiles = await _databaseService.GetAudioFilesForScoreAsync(_score.Id);
+                    if (audioFiles != null && audioFiles.Count > 0)
+                    {
+                        _score.AudioFiles = audioFiles;
+                    }
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur rafraîchissement score: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur rafraîchissement audio: {ex.Message}");
             }
 
             InitializeAudio(forceReload: true);

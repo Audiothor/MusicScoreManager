@@ -257,6 +257,12 @@ namespace MusicScoreManager.Services
             return await _database!.DeleteAsync(audioFile);
         }
 
+        public async Task<List<ScoreAudioFile>> GetAudioFilesForScoreAsync(int scoreId)
+        {
+            await Init();
+            return await _database!.Table<ScoreAudioFile>().Where(af => af.ScoreId == scoreId).ToListAsync();
+        }
+
         public async Task SetSelectedAudioFileAsync(int scoreId, int audioFileId)
         {
             await Init();

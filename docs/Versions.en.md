@@ -6,8 +6,28 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.2 — 07/10/2026
+
+### 1. Ultra-Smooth Scores Scrolling (Proposition 2)
+- **1.1. Stabilized cell dimensions:** Set a uniform minimum cell height (`MinimumHeightRequest="78"`) in `ScoresPage.xaml`.
+- **1.2. Complete tag visibility preserved:** All assigned tags remain visible, rendered with a lightweight native `HorizontalStackLayout` replacing the heavy multi-pass Flexbox engine.
+- **1.3. Re-enabled `MeasureFirstItem` strategy:** Measures the first item once on launch and instantly recycles subsequent items at 60/120 fps without continuous height recomputations during scrolling.
+- **1.4. Native Android RecyclerView cache tuning:** Configured a 25-item offscreen cache (`SetItemViewCacheSize(25)`) in `MauiProgram.cs` eliminating all scroll stutter even with 400+ scores.
+
+### 2. Central Quick Menu Polish (`ViewerPage`)
+- **2.1. Fixed bottom button clipping:** Adjusted internal padding and margins in `CentralMenuOverlay` and its scroll container. "✏️ Edit" and "📑 Assembly" action buttons now display complete rounded corners and ample bottom padding.
+
+### 3. Score Opening Latency Optimization
+- **3.1. SQLite Indexing on Audio Files:** Added `[Indexed]` on `ScoreId` foreign key in `ScoreAudioFile`, eliminating full table scans.
+- **3.2. Removed redundant score re-fetching:** Stopped synchronous full database re-fetching in `OnAppearing` (since score metadata is already available), replacing it with targeted lightweight audio retrieval.
+- **3.3. Lazy Loading for Annotations UI:** Deferred heavy sticker category and palette building until the user actually opens the annotation/sticker tools, speeding up initial PDF display.
+- **3.4. Background Page Count Throttling:** Throttled asynchronous missing page count calculations in `ScoresPage` to prevent SQLite connection starvation when selecting a score.
 
 ---
 

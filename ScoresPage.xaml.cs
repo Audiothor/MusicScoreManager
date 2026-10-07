@@ -277,7 +277,7 @@ public partial class ScoresPage : ContentPage
             UpdateAlphabeticalIndexVisibility();
         });
 
-        // Calcul asynchrone des nombres de pages manquants en arrière-plan
+        // Calcul asynchrone des nombres de pages manquants en arrière-plan (temporisé pour libérer SQLite)
         var missingPageScores = scores.Where(s => s.PageCount <= 0).ToList();
         if (missingPageScores.Count > 0)
         {
@@ -285,21 +285,26 @@ public partial class ScoresPage : ContentPage
             {
                 foreach (var score in missingPageScores)
                 {
-                    if (score.Type == ScoreType.Image)
+                    try
                     {
-                        score.PageCount = 1;
-                        _ = _databaseService.SaveScoreAsync(score);
-                    }
-                    else if (score.Type == ScoreType.PDF)
-                    {
-                        string fullPath = _settingsService.GetAbsolutePath(score.FilePath);
-                        if (File.Exists(fullPath))
+                        if (score.Type == ScoreType.Image)
                         {
-                            int cnt = await _pdfService.GetPdfPageCountAsync(fullPath);
-                            score.PageCount = cnt > 0 ? cnt : 1;
-                            _ = _databaseService.SaveScoreAsync(score);
+                            score.PageCount = 1;
+                            await _databaseService.SaveScoreAsync(score);
                         }
+                        else if (score.Type == ScoreType.PDF)
+                        {
+                            string fullPath = _settingsService.GetAbsolutePath(score.FilePath);
+                            if (File.Exists(fullPath))
+                            {
+                                int cnt = await _pdfService.GetPdfPageCountAsync(fullPath);
+                                score.PageCount = cnt > 0 ? cnt : 1;
+                                await _databaseService.SaveScoreAsync(score);
+                            }
+                        }
+                        await Task.Delay(40);
                     }
+                    catch { }
                 }
             });
         }
