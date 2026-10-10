@@ -13,6 +13,15 @@ public partial class SetlistEditPage : ContentPage
     private bool _isLoaded = false;
     private bool _isLocked = false;
 
+    private List<PedalProfileOption> _pedalProfileOptions = new();
+
+    private class PedalProfileOption
+    {
+        public string? Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+    }
+
     public SetlistEditPage(Setlist setlist, DatabaseService databaseService)
     {
         InitializeComponent();
@@ -34,8 +43,85 @@ public partial class SetlistEditPage : ContentPage
 
         ContinuousSwitch.IsToggled = _setlist.IsContinuousReading;
         _isLocked = _setlist.IsLocked;
+        PopulatePedalProfiles();
         UpdateLockUI(false); // Initial load, don't show alert
         PopulateStatusChips();
+    }
+
+    private void PopulatePedalProfiles()
+    {
+        var pedalService = PedalMidiService.Instance;
+        pedalService.InitializeProfiles();
+
+        var defaultProfile = pedalService.DefaultProfile;
+        string defaultProfileName = defaultProfile?.Name ?? "Standard";
+
+        string defaultLabel = string.Format(
+            Services.LocalizationService.Instance.GetString("Setlist_Pedal_Profile_Default", "Par défaut (Paramètres : {0})"),
+            defaultProfileName);
+
+        _pedalProfileOptions.Clear();
+        _pedalProfileOptions.Add(new PedalProfileOption
+        {
+            Id = null,
+            Title = defaultLabel,
+            Description = string.Format(
+                Services.LocalizationService.Instance.GetString("Setlist_Pedal_Profile_Note_Default", "💡 Utilise le profil actif par défaut configuré dans les paramètres généraux ({0})."),
+                defaultProfileName)
+        });
+
+        foreach (var profile in pedalService.Profiles)
+        {
+            _pedalProfileOptions.Add(new PedalProfileOption
+            {
+                Id = profile.Id,
+                Title = profile.Name,
+                Description = Services.LocalizationService.Instance.GetString("Setlist_Pedal_Profile_Note_Custom", "💡 Ce profil spécifique remplacera le profil par défaut lors de la lecture des partitions de cette setlist.")
+            });
+        }
+
+        PedalProfilePicker.ItemsSource = _pedalProfileOptions.Select(o => o.Title).ToList();
+
+        int selectedIndex = 0;
+        if (!string.IsNullOrEmpty(_setlist.PedalProfileId))
+        {
+            int idx = _pedalProfileOptions.FindIndex(o => o.Id == _setlist.PedalProfileId);
+            if (idx >= 0)
+            {
+                selectedIndex = idx;
+            }
+        }
+
+        PedalProfilePicker.SelectedIndex = selectedIndex;
+        UpdatePedalProfileNote();
+    }
+
+    private void OnPedalProfilePickerChanged(object? sender, EventArgs e)
+    {
+        UpdatePedalProfileNote();
+    }
+
+    private void UpdatePedalProfileNote()
+    {
+        int selectedIndex = PedalProfilePicker.SelectedIndex;
+        if (selectedIndex >= 0 && selectedIndex < _pedalProfileOptions.Count)
+        {
+            PedalProfileNoteLabel.Text = _pedalProfileOptions[selectedIndex].Description;
+            PedalProfileNoteLabel.IsVisible = !string.IsNullOrEmpty(PedalProfileNoteLabel.Text);
+        }
+        else
+        {
+            PedalProfileNoteLabel.IsVisible = false;
+        }
+    }
+
+    private void ApplySelectedPedalProfile()
+    {
+        int selectedIndex = PedalProfilePicker.SelectedIndex;
+        if (selectedIndex >= 0 && selectedIndex < _pedalProfileOptions.Count)
+        {
+            _setlist.PedalProfileId = _pedalProfileOptions[selectedIndex].Id;
+        }
     }
 
     private async void OnLockTapped(object sender, EventArgs e)
@@ -59,6 +145,7 @@ public partial class SetlistEditPage : ContentPage
         StatusStack.IsEnabled = !_isLocked;
         StatusStack.Opacity = _isLocked ? 0.5 : 1.0;
         ContinuousSwitch.IsEnabled = !_isLocked;
+        PedalProfilePicker.IsEnabled = !_isLocked;
         AddScoreButton.IsVisible = !_isLocked;
         DeleteSetlistButton.IsVisible = !_isLocked;
 
@@ -148,11 +235,14 @@ public partial class SetlistEditPage : ContentPage
             var allScores = _orderedScores.Select(os => os.Score).ToList();
             int index = _orderedScores.IndexOf(orderedScore);
             
+            ApplySelectedPedalProfile();
+
             await Navigation.PushAsync(new ViewerPage(
                 orderedScore.Score, 
                 allScores, 
                 index, 
-                ContinuousSwitch.IsToggled));
+                ContinuousSwitch.IsToggled,
+                _setlist));
         }
     }
 
@@ -265,6 +355,7 @@ public partial class SetlistEditPage : ContentPage
         _setlist.ConcertTime = ConcertTimePicker.Time;
         _setlist.IsContinuousReading = ContinuousSwitch.IsToggled;
         _setlist.IsLocked = _isLocked;
+        ApplySelectedPedalProfile();
 
         await _databaseService.SaveSetlistAsync(_setlist);
         await _databaseService.UpdateSetlistScoresAsync(_setlist.Id, _orderedScores.Select(os => os.Score.Id).ToList());

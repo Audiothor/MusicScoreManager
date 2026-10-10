@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>2.5.2</ApplicationDisplayVersion>
-		<ApplicationVersion>20502</ApplicationVersion>
-		<!-- Version actuelle : v2.5.2 "Optimisation fluidité du défilement, menu central et ouverture rapide des partitions" -->
+		<ApplicationDisplayVersion>2.5.4</ApplicationDisplayVersion>
+		<ApplicationVersion>20504</ApplicationVersion>
+		<!-- Version actuelle : v2.5.4 "Profils de pédales par setlist et profil actif par défaut" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v2.5.2
+# Music Score Manager v2.5.4
 > **Le gestionnaire & visualiseur professionnel de partitions musicales pour répétitions, pupitres et concerts en direct.**
 
 ---
@@ -347,6 +347,7 @@ graph TD
   - Glisser-déposer tactile sur les morceaux.
   - Numérotation séquentielle automatique (1, 2, 3...).
   - Bouton Retirer (`✕`) pour enlever un morceau de la setlist.
+- **Profil de Pédale par Setlist (v2.5.4)** : Sous l'option « Mode continu », choisissez un profil de pédale Bluetooth/MIDI dédié à cette setlist. Par défaut, le profil configuré dans les paramètres généraux s'applique. Si un profil spécifique est choisi, il est automatiquement appliqué et sauvegardé pour cette setlist, gouvernant toutes les interactions au pied durant sa lecture.
 - **Indicateurs d'Intégrité & Cache** : Témoin en direct (⚡) garantissant que tous les fichiers PDF de la liste sont disponibles en cache rapide.
 
 ---

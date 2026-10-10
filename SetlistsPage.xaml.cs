@@ -263,7 +263,7 @@ public partial class SetlistsPage : ContentPage
             return;
         }
 
-        await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading));
+        await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading, setlist));
     }
 
     private async void OnMenuEditSetlistClicked(object sender, EventArgs e)

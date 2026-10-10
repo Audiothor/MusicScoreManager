@@ -50,7 +50,8 @@ namespace MusicScoreManager.Services
                 ConcertTime = setlist.ConcertTime,
                 Status = setlist.Status,
                 IsLocked = setlist.IsLocked,
-                IsContinuousReading = setlist.IsContinuousReading
+                IsContinuousReading = setlist.IsContinuousReading,
+                PedalProfileId = setlist.PedalProfileId
             };
 
             var setlistScores = await _databaseService.GetScoresForSetlistAsync(setlist.Id);
@@ -494,7 +495,8 @@ namespace MusicScoreManager.Services
                 ConcertTime = setlistMeta.ConcertTime,
                 Status = setlistMeta.Status,
                 IsLocked = setlistMeta.IsLocked,
-                IsContinuousReading = setlistMeta.IsContinuousReading
+                IsContinuousReading = setlistMeta.IsContinuousReading,
+                PedalProfileId = setlistMeta.PedalProfileId
             };
 
             await _databaseService.SaveSetlistAsync(newSetlist);

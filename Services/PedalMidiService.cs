@@ -55,9 +55,13 @@ namespace MusicScoreManager.Services
         public List<PedalProfile> Profiles { get; private set; } = new();
 
         private PedalProfile _activeProfile;
+
+        /// <summary>
+        /// Profil de pédale actif actuellement utilisé (renvoie le profil de substitution/surchargé s'il existe, sinon le profil par défaut).
+        /// </summary>
         public PedalProfile ActiveProfile
         {
-            get => _activeProfile;
+            get => _overrideProfile ?? _activeProfile;
             set
             {
                 if (value != null && _activeProfile?.Id != value.Id)
@@ -66,6 +70,46 @@ namespace MusicScoreManager.Services
                     Preferences.Set(ActiveProfileIdKey, value.Id);
                     ActiveProfileChanged?.Invoke();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Profil de pédale configuré par défaut dans les paramètres généraux de l'application.
+        /// </summary>
+        public PedalProfile DefaultProfile
+        {
+            get => _activeProfile;
+            set => ActiveProfile = value;
+        }
+
+        private PedalProfile? _overrideProfile;
+
+        /// <summary>
+        /// Profil de pédale spécifique surchargé temporairement (ex: pendant la lecture d'une setlist avec profil dédié).
+        /// </summary>
+        public PedalProfile? OverrideProfile => _overrideProfile;
+
+        /// <summary>
+        /// Applique un profil de pédale spécifique en substitution temporaire du profil par défaut (ex: lors de l'ouverture d'une setlist).
+        /// </summary>
+        public void SetOverrideProfile(PedalProfile? profile)
+        {
+            if (_overrideProfile?.Id != profile?.Id)
+            {
+                _overrideProfile = profile;
+                ActiveProfileChanged?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// Supprime le profil de substitution et rétablit le profil par défaut des paramètres.
+        /// </summary>
+        public void ClearOverrideProfile()
+        {
+            if (_overrideProfile != null)
+            {
+                _overrideProfile = null;
+                ActiveProfileChanged?.Invoke();
             }
         }
 
@@ -303,11 +347,15 @@ namespace MusicScoreManager.Services
                 Profiles.Add(profile);
             }
             SaveProfiles();
-            if (ActiveProfile?.Id == profile.Id)
+            if (_activeProfile?.Id == profile.Id)
             {
                 _activeProfile = profile;
-                ActiveProfileChanged?.Invoke();
             }
+            if (_overrideProfile?.Id == profile.Id)
+            {
+                _overrideProfile = profile;
+            }
+            ActiveProfileChanged?.Invoke();
         }
 
         public PedalProfile CreateCustomProfile(string name, string description = "")
@@ -348,6 +396,10 @@ namespace MusicScoreManager.Services
                     BuildDefaultFactoryProfiles();
                 }
                 SaveProfiles();
+                if (_overrideProfile?.Id == profileId)
+                {
+                    _overrideProfile = null;
+                }
                 if (ActiveProfile?.Id == profileId)
                 {
                     ActiveProfile = Profiles.First();
