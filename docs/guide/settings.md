@@ -48,6 +48,8 @@ La page configure la lecture des concerts :
 
 - **Lecture en continu par défaut (Switch On/Off)** :
   - Définit si toute nouvelle setlist créée doit automatiquement enchaîner sur le morceau suivant lorsqu'on tourne la dernière page d'un morceau.
+- **Profil de pédale spécifique par setlist** :
+  - Dans l'éditeur de chaque setlist, vous pouvez choisir un profil de pédale dédié (qui surchargera le profil par défaut lors de la lecture des partitions de cette setlist).
 - **Retour à la setlist en fin de partition** :
   - Si la lecture en continu est désactivée, tourner la page sur la dernière page du morceau quitte le visualiseur pour vous ramener automatiquement à la liste de la setlist.
 - **Afficher le déroulement de la setlist (Switch On/Off)** :
@@ -74,9 +76,10 @@ La page est divisée en deux chapitres clairs :
 
 La page permet la configuration précise de très nombreuses pédales pour commander des actions sur les partitions et donc assurer le contrôle mains-libres complet et de manière ergonomique :
 
-- **Profil de Pédale Actif (En tête de page)** :
+- **Profil de Pédale Actif par Défaut (En tête de page)** :
   
   - Sélection rapide parmi de nombreux profils d'usine préconfigurés : *Standard*, *PageFlip Dragonfly / Firefly / Butterfly*, *AirTurn Duo / Quad*, *Joyo*, *Thomann / Harley Benton*, *Donner Wireless*, *IK Multimedia iRig*, *Coda STOMP*, *Contrôleur MIDI Avancé (USB / Bluetooth)*.
+  - Ce profil est le profil actif par défaut de l'application. Il s'applique à toutes les partitions, sauf si un profil particulier est expressément assigné à une setlist dans son éditeur.
   - Création de profils personnalisés et suppression en 1 clic.
 
 - **Sécurité Scène & Protection Anti-Double Saut de Page** :

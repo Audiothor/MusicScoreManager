@@ -6,9 +6,33 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.5.4 — 10/10/2026](#v254--10102026)
+- [v2.5.3 — 09/10/2026](#v253--09102026)
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.4 — 10/10/2026
+
+### 1. Profils de Pédales Dédiés par Setlist (`SetlistEditPage`, `ViewerPage`)
+- **1.1. Sélecteur de profil dans l'éditeur de setlist :** Ajout d'une nouvelle option située sous « Mode continu » dans `SetlistEditPage`. Elle affiche par défaut le profil actif des paramètres généraux. L'utilisateur peut sélectionner n'importe quel profil configuré (profils d'usine ou personnalisés) et enregistrer ce choix pour la setlist.
+- **1.2. Application prioritaire en lecture de concert :** Lors de la lecture des partitions de cette setlist (`ViewerPage`), le profil choisi pour cette setlist est automatiquement appliqué en substitution du profil par défaut. Toutes les interactions au pied ou commandes MIDI s'adaptent ainsi sur mesure au répertoire joué.
+- **1.3. Restauration automatique du profil par défaut :** À la fermeture du visualiseur de partitions, le profil de substitution est immédiatement libéré et le profil par défaut configuré dans les paramètres redevient actif.
+- **1.4. Persistance et synchronisation :** Sauvegarde transparente dans la base de données SQLite via le champ `PedalProfileId`, prise en charge lors de la duplication de setlists, des exports/imports (.msmsetlist) et des transferts Wi-Fi Direct.
+
+### 2. Clarté des Paramètres Pédales & MIDI (`SettingsPedalsPage`)
+- **2.1. Intitulé explicite :** Renommage de l'en-tête « Profil de pédale actif » en « Profil de pédale actif par défaut » pour expliciter qu'il s'agit du comportement par défaut global de l'application.
+- **2.2. Traductions internationales :** Prise en charge intégrale dans les 8 langues de l'application (Français, Anglais, Allemand, Espagnol, Italien, Néerlandais, Polonais, Portugais).
+
+---
+
+## v2.5.3 — 09/10/2026
+
+### 1. Précision du Positionnement des Annotations en Mode Paysage 2 Pages (`ViewerPage`)
+- **1.1. Correction du calcul de projection de coordonnées (`PageToScreen` / `ScreenToPage`) :** Correction du calcul de la largeur relative unitaire (`pageWRel`) par page qui était faussé en mode 2 pages (lors d'une dernière page impaire sans page droite ou lors d'asymétries). Chaque page d'une planche double dispose désormais systématiquement d'un gabarit de 50% de la planche (`_canvasWRel / 2.0`), garantissant un alignement pixel-perfect au millimètre près des annotations créées en mode portrait lorsqu'on bascule la tablette en mode paysage 2 pages.
+- **1.2. Résolution des courses de dimensions lors de la rotation d'écran :** Synchronisation immédiate des dimensions réelles de l'écran dans `RenderPdfCurrentAsync` au moment d'appliquer les limites du canevas (`UpdateCanvasBounds`), éliminant tout décalage d'aspect ratio résiduel causé par l'ancienne orientation portrait.
 
 ---
 

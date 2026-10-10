@@ -84,6 +84,7 @@ namespace MusicScoreManager.Services
         public SetlistStatus Status { get; set; }
         public bool IsLocked { get; set; }
         public bool IsContinuousReading { get; set; }
+        public string? PedalProfileId { get; set; }
         public List<ScoreTransferMetadata> Scores { get; set; } = new();
     }
 

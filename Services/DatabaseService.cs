@@ -76,6 +76,11 @@ namespace MusicScoreManager.Services
                     }
                     catch { }
                     await db.CreateTableAsync<Setlist>();
+                    try
+                    {
+                        await db.ExecuteAsync("ALTER TABLE Setlists ADD COLUMN PedalProfileId TEXT;");
+                    }
+                    catch { }
                     await db.CreateTableAsync<SetlistScore>();
                     await db.CreateTableAsync<Tag>();
                     await db.CreateTableAsync<ScoreTag>();
@@ -317,7 +322,8 @@ namespace MusicScoreManager.Services
                 ConcertTime = original.ConcertTime,
                 Status = original.Status,
                 IsLocked = original.IsLocked,
-                IsContinuousReading = original.IsContinuousReading
+                IsContinuousReading = original.IsContinuousReading,
+                PedalProfileId = original.PedalProfileId
             };
             await _database!.InsertAsync(newSetlist);
 

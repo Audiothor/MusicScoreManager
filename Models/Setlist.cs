@@ -20,6 +20,11 @@ public class Setlist
     public bool IsContinuousReading { get; set; } = true;
     public bool IsLocked { get; set; } = false;
 
+    /// <summary>
+    /// Identifiant du profil de pédale spécifique assigné à cette setlist (null = utilise le profil actif par défaut des paramètres).
+    /// </summary>
+    public string? PedalProfileId { get; set; }
+
     [Ignore]
     public string StatusText => Status switch
     {

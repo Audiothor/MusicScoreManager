@@ -59,8 +59,9 @@ The [`SettingsAnnotationsPage`](file:///c:/Users/comme/Documents/GitHub/MusicSco
 
 The [`SettingsPedalsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SettingsPedalsPage.xaml) page delivers streamlined, robust hands-free stage control:
 
-- **Active Pedal Profile (Top of Page)**:
+- **Default Active Pedal Profile (Top of Page)**:
   - Quickly select factory pre-configured profiles: *Standard*, *PageFlip Dragonfly / Firefly / Butterfly*, *AirTurn Duo / Quad*, *Joyo*, *Thomann / Harley Benton*, *Donner Wireless*, *IK Multimedia iRig*, *Coda STOMP*, and *Advanced MIDI Controller*.
+  - This profile serves as the application's global default. It applies to all sheet music unless a specific profile is assigned to a setlist.
   - Create new custom profiles and delete with one tap.
 - **Stage Safety & Anti-Double Page Turn Protection**:
   - **« Block fast page turns » Toggle**: Prevents accidental multiple page jumps caused by foot switch contact bounce, OS key auto-repeat, or nervous double presses in concert.

@@ -6,9 +6,33 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.5.4 — 10/10/2026](#v254--10102026)
+- [v2.5.3 — 09/10/2026](#v253--09102026)
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.4 — 10/10/2026
+
+### 1. Dedicated Pedal Profiles per Setlist (`SetlistEditPage`, `ViewerPage`)
+- **1.1. Pedal Profile Picker in Setlist Editor:** Added a new option under "Continuous Mode" in `SetlistEditPage`. By default, it uses the active pedal profile configured in general settings. Users can choose any configured profile (built-in factory presets or custom profiles) and save this choice for the setlist.
+- **1.2. Priority Application During Performance Reading:** When reading scores from this setlist (`ViewerPage`), the specific profile configured for the setlist is automatically applied in place of the default profile. Foot pedal presses and MIDI triggers thus adapt directly to the specific repertoire.
+- **1.3. Automatic Default Restoration:** Upon leaving or closing the score viewer, the temporary override profile is immediately cleared and the general settings default pedal profile is restored.
+- **1.4. Seamless Database & Transfer Support:** Integrated persistent `PedalProfileId` field into the SQLite `Setlists` table (with automatic migration), full support in setlist duplication, package export/import (.msmsetlist), and Wi-Fi Direct sharing.
+
+### 2. Pedal & MIDI Settings Clarity (`SettingsPedalsPage`)
+- **2.1. Title Refinement:** Renamed "Active Pedal Profile" to "Default Active Pedal Profile" to clarify that this option represents the global baseline fallback profile when no specific profile is defined on a setlist.
+- **2.2. International Translations:** Fully localized across all 8 supported languages (French, English, German, Spanish, Italian, Dutch, Polish, Portuguese).
+
+---
+
+## v2.5.3 — 09/10/2026
+
+### 1. Accurate Annotation Alignment in 2-Page Landscape Mode (`ViewerPage`)
+- **1.1. Coordinate Projection Calculation Fix (`PageToScreen` / `ScreenToPage`):** Fixed relative single-page width calculation (`pageWRel`) which was distorted in 2-page mode when handling odd terminal pages or layout transitions. Each page of a two-page spread now strictly maps to 50% of the spread canvas (`_canvasWRel / 2.0`), guaranteeing millimeter-precise alignment of annotations made in portrait mode when turning the device to 2-page landscape mode.
+- **1.2. Orientation Change Race Condition Mitigation:** Synchronized actual layout dimensions immediately in `RenderPdfCurrentAsync` when computing canvas boundaries (`UpdateCanvasBounds`), eliminating any aspect-ratio mismatch and coordinate skew caused by stale portrait dimensions.
 
 ---
 

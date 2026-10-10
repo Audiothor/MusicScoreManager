@@ -54,7 +54,16 @@ Music Score Manager features a native MIDI event parser translating incoming har
 
 ---
 
-## 4. Crucial Android Tip: Restoring On-Screen Keyboard
+## 4. Dedicated Pedal Profiles per Setlist (v2.5.4)
+
+Music Score Manager allows assigning a custom pedal profile to each individual setlist:
+- **Default Profile vs Setlist Profile**: The profile chosen in *Settings > Pedal & MIDI* represents the **default active profile** applied across the library.
+- **Setlist Override**: When editing a setlist (under *Continuous Mode*), select a dedicated pedal profile (e.g., custom switches assigned to navigate setlist songs or markers).
+- **Automatic Priority**: Opening and playing scores in this setlist will automatically apply the dedicated profile. As soon as you exit the score viewer, your global settings default profile is instantly restored.
+
+---
+
+## 5. Crucial Android Tip: Restoring On-Screen Keyboard
 
 When a Bluetooth pedal is connected in **HID Keyboard Mode**, Android may assume a physical typing keyboard is connected and suppress the virtual keyboard:
 1. In Android settings, go to *System > Languages & Input > Physical Keyboard*.
@@ -63,7 +72,7 @@ When a Bluetooth pedal is connected in **HID Keyboard Mode**, Android may assume
 
 ---
 
-## 5. Tablet Recommendations for Music Stands
+## 6. Tablet Recommendations for Music Stands
 
 | Device Category | Display Size & Aspect Ratio | Sheet Music Readability | Battery Life |
 | :--- | :--- | :--- | :--- |

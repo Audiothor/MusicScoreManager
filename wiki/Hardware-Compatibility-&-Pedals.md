@@ -54,7 +54,16 @@ Music Score Manager intègre un parseur d'événements MIDI natif permettant de 
 
 ---
 
-## 4. Astuce Majeure Android : Masquer le Clavier Virtuel
+## 4. Profils de Pédales Dédiés par Setlist (v2.5.4)
+
+Music Score Manager permet d'associer un profil de pédale sur mesure à chaque setlist :
+- **Profil par Défaut vs Profil de Setlist** : Le profil configuré dans *Paramètres > Pédales & MIDI* constitue le **profil actif par défaut** appliqué à toutes les partitions.
+- **Surcharge par Setlist** : Lors de l'édition d'une setlist (sous l'option *Mode continu*), sélectionnez un profil spécifique (par exemple un profil avec des touches assignées au passage au morceau suivant de la setlist ou aux marqueurs).
+- **Application Automatique** : Lors de la lecture des partitions de cette setlist, ce profil particulier est appliqué en direct. Dès que vous quittez le visualiseur, le profil par défaut des paramètres généraux est automatiquement réactivé.
+
+---
+
+## 5. Astuce Majeure Android : Masquer le Clavier Virtuel
 
 Lorsqu'un pédalier Bluetooth fonctionne en **mode Clavier HID**, Android peut considérer qu'un clavier physique est branché et masquer le clavier virtuel à l'écran, ou au contraire afficher une barre de saisie inutile :
 1. Dans Android, allez dans *Paramètres > Système > Langues et saisie > Clavier physique*.
@@ -62,7 +71,7 @@ Lorsqu'un pédalier Bluetooth fonctionne en **mode Clavier HID**, Android peut c
 
 ---
 
-## 5. Recommandations de Tablettes pour le Pupitre
+## 6. Recommandations de Tablettes pour le Pupitre
 
 | Modèle / Gamme | Taille & Ratio | Confort de Lecture | Autonomie Scène |
 | :--- | :--- | :--- | :--- |

@@ -12,6 +12,7 @@ public partial class ViewerPage : ContentPage
 {
     private Score _score;
     private readonly List<Score>? _setlistScores;
+    private readonly Setlist? _setlist;
     private int _currentIndex = -1;
     private bool _isContinuous = true;
     private readonly DatabaseService _databaseService;
@@ -69,9 +70,9 @@ public partial class ViewerPage : ContentPage
     {
         if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
         {
-            double pageWRel = _hasRightPage ? (_canvasWRel / 2.0) : _canvasWRel;
+            double pageWRel = _canvasWRel / 2.0;
             double pageHRel = _canvasHRel;
-            double pageXStartRel = (_hasRightPage && pageNumber == _rightPageNumber)
+            double pageXStartRel = (pageNumber == _rightPageNumber)
                 ? (_canvasXRel + pageWRel)
                 : _canvasXRel;
 
@@ -96,7 +97,7 @@ public partial class ViewerPage : ContentPage
 
         if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
         {
-            double pageWRel = _hasRightPage ? (_canvasWRel / 2.0) : _canvasWRel;
+            double pageWRel = _canvasWRel / 2.0;
             double midXRel = _canvasXRel + pageWRel;
 
             if (_hasRightPage && relX >= midXRel)
@@ -129,8 +130,8 @@ public partial class ViewerPage : ContentPage
 
         if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
         {
-            double pageWRel = _hasRightPage ? (_canvasWRel / 2.0) : _canvasWRel;
-            double pageXStartRel = (_hasRightPage && targetPage == _rightPageNumber)
+            double pageWRel = _canvasWRel / 2.0;
+            double pageXStartRel = (targetPage == _rightPageNumber)
                 ? (_canvasXRel + pageWRel)
                 : _canvasXRel;
 
@@ -187,13 +188,14 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    public ViewerPage(Score score, List<Score>? setlistScores = null, int currentIndex = -1, bool isContinuous = true)
+    public ViewerPage(Score score, List<Score>? setlistScores = null, int currentIndex = -1, bool isContinuous = true, Setlist? setlist = null)
     {
         InitializeComponent();
         _score = score;
         _setlistScores = setlistScores;
         _currentIndex = currentIndex;
         _isContinuous = isContinuous;
+        _setlist = setlist;
         _databaseService = new DatabaseService();
         _settingsService = new SettingsService();
         _annotationService = new AnnotationService();
@@ -270,6 +272,17 @@ public partial class ViewerPage : ContentPage
 
         LockAnnotations();
         PedalMidiService.Instance.ActionTriggered += OnPedalActionTriggered;
+
+        // Application du profil de pédale spécifique de la setlist si configuré
+        if (_setlist != null && !string.IsNullOrEmpty(_setlist.PedalProfileId))
+        {
+            var customProfile = PedalMidiService.Instance.Profiles.FirstOrDefault(p => p.Id == _setlist.PedalProfileId);
+            if (customProfile != null)
+            {
+                PedalMidiService.Instance.SetOverrideProfile(customProfile);
+                System.Diagnostics.Debug.WriteLine($"[Viewer] Profil de pédale spécifique appliqué pour la setlist '{_setlist.Name}' : {customProfile.Name} ({customProfile.Id})");
+            }
+        }
 
         try
         {
@@ -772,7 +785,10 @@ public partial class ViewerPage : ContentPage
                 ScoreImage.Rotation = 0;
                 ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(rendered.ImageBytes));
 
-                UpdateCanvasBounds(containerW, containerH, rendered.Width, rendered.Height);
+                double finalW = (ActiveAnnotationsContainer?.Width > 0) ? ActiveAnnotationsContainer.Width : (this.Width > 0 ? this.Width : containerW);
+                double finalH = (ActiveAnnotationsContainer?.Height > 0) ? ActiveAnnotationsContainer.Height : (this.Height > 0 ? this.Height : containerH);
+
+                UpdateCanvasBounds(finalW, finalH, rendered.Width, rendered.Height);
 
                 _isScoreReady = true;
                 UpdatePageIndicator();
@@ -2639,6 +2655,7 @@ public partial class ViewerPage : ContentPage
         }
         catch { }
 
+        PedalMidiService.Instance.ClearOverrideProfile();
         PedalMidiService.Instance.ActionTriggered -= OnPedalActionTriggered;
         PdfService.ClearMemoryCache();
         CancelPreCount();
