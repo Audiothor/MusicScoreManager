@@ -871,6 +871,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v254-10102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.4 — 10/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.4 — 10/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-dedicated-pedal-profiles-per-setlist-setlisteditpage-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Dedicated Pedal Profiles per Setlist (SetlistEditPage, ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-pedal-midi-settings-clarity-settingspedalspage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Pedal &amp; MIDI Settings Clarity (SettingsPedalsPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v253-09102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.3 — 09/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.3 — 09/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-accurate-annotation-alignment-in-2-page-landscape-mode-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Accurate Annotation Alignment in 2-Page Landscape Mode (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v252-07102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2051,6 +2118,73 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v254-10102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.4 — 10/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.4 — 10/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-dedicated-pedal-profiles-per-setlist-setlisteditpage-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Dedicated Pedal Profiles per Setlist (SetlistEditPage, ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-pedal-midi-settings-clarity-settingspedalspage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Pedal &amp; MIDI Settings Clarity (SettingsPedalsPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v253-09102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.3 — 09/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.3 — 09/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-accurate-annotation-alignment-in-2-page-landscape-mode-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Accurate Annotation Alignment in 2-Page Landscape Mode (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v252-07102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3210,9 +3344,32 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v254--10102026">v2.5.4 — 10/10/2026</a></li>
+<li><a href="#v253--09102026">v2.5.3 — 09/10/2026</a></li>
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v254-10102026">v2.5.4 — 10/10/2026</h2>
+<h3 id="1-dedicated-pedal-profiles-per-setlist-setlisteditpage-viewerpage">1. Dedicated Pedal Profiles per Setlist (<code>SetlistEditPage</code>, <code>ViewerPage</code>)</h3>
+<ul>
+<li><strong>1.1. Pedal Profile Picker in Setlist Editor:</strong> Added a new option under "Continuous Mode" in <code>SetlistEditPage</code>. By default, it uses the active pedal profile configured in general settings. Users can choose any configured profile (built-in factory presets or custom profiles) and save this choice for the setlist.</li>
+<li><strong>1.2. Priority Application During Performance Reading:</strong> When reading scores from this setlist (<code>ViewerPage</code>), the specific profile configured for the setlist is automatically applied in place of the default profile. Foot pedal presses and MIDI triggers thus adapt directly to the specific repertoire.</li>
+<li><strong>1.3. Automatic Default Restoration:</strong> Upon leaving or closing the score viewer, the temporary override profile is immediately cleared and the general settings default pedal profile is restored.</li>
+<li><strong>1.4. Seamless Database &amp; Transfer Support:</strong> Integrated persistent <code>PedalProfileId</code> field into the SQLite <code>Setlists</code> table (with automatic migration), full support in setlist duplication, package export/import (.msmsetlist), and Wi-Fi Direct sharing.</li>
+</ul>
+<h3 id="2-pedal-midi-settings-clarity-settingspedalspage">2. Pedal &amp; MIDI Settings Clarity (<code>SettingsPedalsPage</code>)</h3>
+<ul>
+<li><strong>2.1. Title Refinement:</strong> Renamed "Active Pedal Profile" to "Default Active Pedal Profile" to clarify that this option represents the global baseline fallback profile when no specific profile is defined on a setlist.</li>
+<li><strong>2.2. International Translations:</strong> Fully localized across all 8 supported languages (French, English, German, Spanish, Italian, Dutch, Polish, Portuguese).</li>
+</ul>
+<hr />
+<h2 id="v253-09102026">v2.5.3 — 09/10/2026</h2>
+<h3 id="1-accurate-annotation-alignment-in-2-page-landscape-mode-viewerpage">1. Accurate Annotation Alignment in 2-Page Landscape Mode (<code>ViewerPage</code>)</h3>
+<ul>
+<li><strong>1.1. Coordinate Projection Calculation Fix (<code>PageToScreen</code> / <code>ScreenToPage</code>):</strong> Fixed relative single-page width calculation (<code>pageWRel</code>) which was distorted in 2-page mode when handling odd terminal pages or layout transitions. Each page of a two-page spread now strictly maps to 50% of the spread canvas (<code>_canvasWRel / 2.0</code>), guaranteeing millimeter-precise alignment of annotations made in portrait mode when turning the device to 2-page landscape mode.</li>
+<li><strong>1.2. Orientation Change Race Condition Mitigation:</strong> Synchronized actual layout dimensions immediately in <code>RenderPdfCurrentAsync</code> when computing canvas boundaries (<code>UpdateCanvasBounds</code>), eliminating any aspect-ratio mismatch and coordinate skew caused by stale portrait dimensions.</li>
 </ul>
 <hr />
 <h2 id="v252-07102026">v2.5.2 — 07/10/2026</h2>
