@@ -6,11 +6,21 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.5.5 — 11/10/2026](#v255--11102026)
 - [v2.5.4 — 10/10/2026](#v254--10102026)
 - [v2.5.3 — 09/10/2026](#v253--09102026)
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.5 — 11/10/2026
+
+### 1. Google Play Standards & Android 15 Compliance
+- **1.1. DEX Code Optimization & Obfuscation (R8):** Explicitly enabled code shrinking (`AndroidEnableCodeShrinking`) and the R8 compiler (`AndroidLinkTool=r8`) across Android Release builds (AAB/APK). Added a dedicated ProGuard/R8 configuration (`Platforms/Android/proguard.cfg`) preserving the .NET MAUI/Mono runtime, and automatically generating the `mapping.txt` obfuscation map (`AndroidCreateProguardMappingFile` / `AndroidEnableProguardMapping`), ensuring compliance well above the 25% obfuscation threshold required by Google Play Vitals.
+- **1.2. Modern Edge-to-Edge Display Support:** Native invocation of `AndroidX.Activity.EdgeToEdge.Enable(this)` in `MainActivity.OnCreate()`, ensuring comprehensive edge-to-edge support on Android 15 (SDK 35+) and reliable backwards compatibility across earlier versions.
+- **1.3. Deprecated Window Settings & APIs Cleanup:** Removed legacy opaque system bar configurations from `styles.xml`. Implemented transparent system bars (`android:statusBarColor` and `android:navigationBarColor` set to `@android:color/transparent`) with system contrast management (`windowLightStatusBar` and `windowLightNavigationBar`), conforming strictly to Android 15 windowing requirements.
 
 ---
 

@@ -17,6 +17,7 @@ public class MainActivity : MauiAppCompatActivity
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
+        AndroidX.Activity.EdgeToEdge.Enable(this);
         base.OnCreate(savedInstanceState);
         CheckStoragePermissions();
         InitMidiManager();

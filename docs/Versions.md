@@ -6,11 +6,21 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.5.5 — 11/10/2026](#v255--11102026)
 - [v2.5.4 — 10/10/2026](#v254--10102026)
 - [v2.5.3 — 09/10/2026](#v253--09102026)
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.5 — 11/10/2026
+
+### 1. Conformité aux Standards Google Play & Android 15
+- **1.1. Optimisation et Obscurcissement du code DEX (R8) :** Activation explicite du rétrécissement de code (`AndroidEnableCodeShrinking`) et du compilateur R8 (`AndroidLinkTool=r8`) pour tous les paquets Android Release (AAB/APK). Intégration d'un fichier de règles ProGuard/R8 dédié (`Platforms/Android/proguard.cfg`) protégeant le runtime .NET MAUI/Mono, et génération automatique de la table de correspondance `mapping.txt` (`AndroidCreateProguardMappingFile` / `AndroidEnableProguardMapping`), garantissant le dépassement du seuil de 25 % d'obscurcissement imposé par Google Play Vitals.
+- **1.2. Support de l'affichage Bord-à-Bord moderne (Edge-to-Edge) :** Appel natif de `AndroidX.Activity.EdgeToEdge.Enable(this)` dans `MainActivity.OnCreate()` assurant la compatibilité complète avec les exigences d'Android 15 (SDK 35+) et la rétrocompatibilité sur les versions antérieures.
+- **1.3. Élimination des paramètres et API de fenêtre dépréciés :** Suppression des définitions de couleurs opaques pour la barre d'état et la barre de navigation dans `styles.xml`. Définition de barres système transparentes (`android:statusBarColor` et `android:navigationBarColor` à `@android:color/transparent`) avec gestion dynamique du contraste (`windowLightStatusBar` et `windowLightNavigationBar`), répondant strictement aux directives de Google Play Console.
 
 ---
 
