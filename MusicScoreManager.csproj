@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>2.5.4</ApplicationDisplayVersion>
-		<ApplicationVersion>20504</ApplicationVersion>
-		<!-- Version actuelle : v2.5.4 "Profils de pédales par setlist et profil actif par défaut" -->
+		<ApplicationDisplayVersion>2.5.5</ApplicationDisplayVersion>
+		<ApplicationVersion>20505</ApplicationVersion>
+		<!-- Version actuelle : v2.5.5 "Conformité Google Play, affichage bord-à-bord Android 15 et optimisation R8 DEX" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		
@@ -35,6 +35,18 @@
 		<AndroidSigningKeyAlias>musicscoremanager</AndroidSigningKeyAlias>
 		<AndroidSigningKeyPass>MSM_Secured_KeyStore_2026_Audiothor!#</AndroidSigningKeyPass>
 	</PropertyGroup>
+
+	<!-- Optimisations et Obscurcissement R8 DEX pour Google Play (Seuil d'obscurcissement > 25%) -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		<AndroidEnableCodeShrinking>true</AndroidEnableCodeShrinking>
+		<AndroidLinkTool>r8</AndroidLinkTool>
+		<AndroidCreateProguardMappingFile>true</AndroidCreateProguardMappingFile>
+		<AndroidEnableProguardMapping>true</AndroidEnableProguardMapping>
+	</PropertyGroup>
+
+	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		<ProguardConfiguration Include="Platforms\Android\proguard.cfg" />
+	</ItemGroup>
 
 	<!-- Branding : Icône et Splash Screen -->
 	<ItemGroup>
