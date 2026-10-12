@@ -64,3 +64,6 @@ keystore_credentials.json
 
 # MkDocs
 site/
+
+# Play Store Assets
+PlayStore_Assets/
