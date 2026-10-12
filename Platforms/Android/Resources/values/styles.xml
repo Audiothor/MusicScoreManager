@@ -2,16 +2,14 @@
 <resources>
     <style name="Maui.MainTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">#007ACC</item>
-        <item name="colorPrimaryDark">#005999</item>
         <item name="colorAccent">#FFFFFF</item>
         <item name="colorControlActivated">#FFFFFF</item>
         <item name="colorControlNormal">#888888</item>
         <item name="android:colorControlActivated">#FFFFFF</item>
         <item name="android:colorControlNormal">#888888</item>
         <item name="android:colorAccent">#FFFFFF</item>
-        <!-- Support Bord-à-Bord moderne Android 15+ (Edge-to-Edge) -->
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <!-- Support Bord-à-Bord moderne Android 15+ (Edge-to-Edge sans paramètres obsolètes) -->
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>
         <item name="alertDialogTheme">@style/CustomAlertDialogTheme</item>

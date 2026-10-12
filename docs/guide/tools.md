@@ -33,9 +33,13 @@ L'**Atelier d'Assemblage PDF** est un studio complet de retouche et de compositi
 ## 2. Transfert Wi-Fi Direct (P2P) & Diffusion Groupe
 
 La page gère les échanges sans fil directs entre musiciens, **sans box internet ni routeur 4G/5G requis**.
-La manupulation sur 10s elle nécessite juste d'activer le wifi (sans internet nécessaire !)
+La manupulation sur nécessite juste d'activer le wifi (sans internet nécessaire !)
 
-### A. Échange Direct de Tablette à Tablette (P2P)
+
+
+#### A. Échange Direct de Tablette à Tablette (P2P)
+
+<u>CAS OU LES PERSONNES SONT SUR UN MEME RESEAU WIFI</u>
 
 1. **Le Destinataire** :
    - Ouvre **Outils > Transfert Wi-Fi Direct**, active le Wi-Fi de sa tablette et appuie sur **Recevoir**. Son appareil devient visible sur le réseau local ad-hoc.
@@ -44,7 +48,41 @@ La manupulation sur 10s elle nécessite juste d'activer le wifi (sans internet n
    - Choisit d'inclure ou non les annotations manuscrites et les pistes audio.
    - Sélectionne le destinataire dans la liste des appareils détectés. Le transfert binaire TCP s'exécute à très grande vitesse.
 
-### B. Mode Diffusion de Groupe par QR Code (Multi-Musiciens)
+
+
+<u>CAS OU LES PERSONNES NE SONT PAS SUR UN MEME RESEAU WIFI</u>
+
+#### 1. Créer le lien Wi-Fi entre les 2 tablettes
+
+1. **Sur la tablette 1 (n'importe laquelle des deux) :**
+   - Ouvrez les réglages Android / le volet supérieur de notifications.
+   - Activez le **« Point d'accès Wi-Fi »** (ou *Partage de connexion*).
+2. **Sur la tablette 2 :**
+   - Activez le **Wi-Fi** et connectez-vous au réseau Wi-Fi créé par la tablette 1. *(Les deux tablettes sont désormais reliées en réseau direct)*.
+
+---
+
+#### 2. Réaliser le transfert dans Music Score Manager
+
+1. **Sur la tablette qui reçoit :**
+   
+   - Ouvrez l'onglet **Outils** > **Transfert Wi-Fi Direct (P2P)**.
+   - Cliquez sur le gros bouton vert **« 🟢 Activer la Réception (Se rendre visible) »**.
+
+2. **Sur la tablette qui envoie :**
+   
+   - Sur la partition ou la setlist à partager, appuyez sur le menu **⋮** (3 points) > **« Envoyer en Wi-Fi Direct »** (ou cochez plusieurs partitions avec le bouton de sélection).
+   - L'autre tablette apparaît instantanément dans la liste des appareils détectés.
+   - Cliquez sur son nom pour lancer l'envoi.
+
+3. **Sur la tablette qui reçoit :**
+   
+   - Une boîte de dialogue apparaît : cliquez sur **« Accepter »**.
+   - Les partitions, annotations et pistes audio sont reçues et intégrées directement dans la bibliothèque en quelques secondes !
+
+
+
+#### B. Mode Diffusion de Groupe par QR Code (Multi-Musiciens)
 
 1. **L'émetteur** :
    - Active le **Mode Diffusion Groupe**. L'application démarre un point d'accès Wi-Fi sécurisé et un serveur local HTTP embarqué, puis affiche un **QR Code haute résolution** sur son écran.
@@ -86,7 +124,7 @@ La page inspecte votre répertoire de partitions pour libérer de l'espace de st
 
 ## 6. Gestion des Sauvegardes & Restauration
 
-La page [`BackupsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/BackupsPage.xaml) assure la pérennité totale de votre travail musical :
+La page assure la pérennité totale de votre travail musical :
 
 - **Sauvegarde manuelle immédiate** : créez un instantané horodaté de votre base de données SQLite (partitions, setlists, liaisons, annotations, tags, paramètres).
 - **Historique des sauvegardes** : liste détaillée des points de sauvegarde enregistrés sur votre appareil avec date, heure et poids.

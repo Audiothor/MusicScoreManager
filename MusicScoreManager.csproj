@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>2.5.5</ApplicationDisplayVersion>
-		<ApplicationVersion>20505</ApplicationVersion>
-		<!-- Version actuelle : v2.5.5 "Conformité Google Play, affichage bord-à-bord Android 15 et optimisation R8 DEX" -->
+		<ApplicationDisplayVersion>2.5.6</ApplicationDisplayVersion>
+		<ApplicationVersion>20506</ApplicationVersion>
+		<!-- Version actuelle : v2.5.6 "Conformité définitive Google Play, suppression des paramètres obsolètes et déblocage de l'obfuscation R8" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		
@@ -47,6 +47,14 @@
 	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
 		<ProguardConfiguration Include="Platforms\Android\proguard.cfg" />
 	</ItemGroup>
+
+	<!-- Déblocage de l'obfuscation R8 pour Google Play (retrait du fichier proguard_xamarin.cfg contenant -dontobfuscate) -->
+	<Target Name="_PurgeDontObfuscate" AfterTargets="_CalculateProguardConfigurationFiles" Condition="'$(Configuration)' == 'Release' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		<ItemGroup>
+			<_ProguardConfiguration Remove="%(Identity)" Condition="$([System.String]::Copy('%(Identity)').EndsWith('proguard_xamarin.cfg'))" />
+		</ItemGroup>
+		<Message Importance="high" Text="[Google Play R8] proguard_xamarin.cfg retiré des configurations R8. Fichiers actifs : @(_ProguardConfiguration)" />
+	</Target>
 
 	<!-- Branding : Icône et Splash Screen -->
 	<ItemGroup>

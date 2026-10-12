@@ -6,12 +6,23 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.5.6 — 12/10/2026](#v256--12102026)
 - [v2.5.5 — 11/10/2026](#v255--11102026)
 - [v2.5.4 — 10/10/2026](#v254--10102026)
 - [v2.5.3 — 09/10/2026](#v253--09102026)
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.6 — 12/10/2026
+
+### 1. Conformité Définitive Google Play Console & Android 15
+- **1.1. Obscurcissement R8 effectif (DEX Code Shrinking) :** Résolution de la directive `-dontobfuscate` injectée automatiquement par le SDK .NET pour Android (`proguard_xamarin.cfg`). Suppression programmée de cette directive au build MSBuild (`_EnableR8Obfuscation`) avant la compilation Dalvik/Dex, et configuration de règles R8 ciblées sur les bibliothèques AndroidX et Google Material (`allowobfuscation`, `allowoptimization`). Renommage effectif des classes et méthodes Java/Android dans le fichier de mapping, satisfaisant pleinement le seuil d'obscurcissement minimum exigé par Google Play Vitals (> 25 %).
+- **1.2. Élimination totale des attributs XML obsolètes :** Suppression complète des attributs `android:statusBarColor`, `android:navigationBarColor` et `colorPrimaryDark` de `styles.xml`. Sous Android 15 (SDK 35), l'affichage de bord à bord est ainsi appliqué de manière native et propre, sans conflit avec les analyseurs statiques du Play Store.
+- **1.3. Affichage Bord-à-Bord universel & gestion des découpes d'écran :** Configuration de `android:windowLayoutInDisplayCutoutMode` sur `shortEdges` dans le thème de l'application, garantissant que l'affichage s'étend de manière optimale sur tous les appareils équipés d'encoches, poinçons ou découpes d'écran, tout en préservant le confort de lecture des partitions.
+- **1.4. Génération des symboles de débogage natifs :** Emballage systématique de l'archive des symboles natifs (.so) non tronqués (`com.audiothor.musicscoremanager-v2.5.6-native-symbols.zip`) pour le téléversement sur Google Play Console et la résolution des rapports de plantages natifs/ANR.
 
 ---
 
