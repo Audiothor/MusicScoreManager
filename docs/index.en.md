@@ -48,6 +48,7 @@ graph TD
 - [🛠️ Tools Menu Guide](guide/tools.en.md)
 - [⚙️ Settings Menu Guide](guide/settings.en.md)
 - [🚪 Quit Menu Guide](guide/quit.en.md)
+- [❓ FAQ](guide/FAQ.en.md)
 - [🔒 Privacy Policy & Legal Notice](confidentialite.en.md)
 
 ---
