@@ -871,6 +871,62 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v256-12102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.6 — 12/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.6 — 12/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-conformite-definitive-google-play-console-android-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Conformité Définitive Google Play Console &amp; Android 15
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v255-11102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.5 — 11/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.5 — 11/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-conformite-aux-standards-google-play-android-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Conformité aux Standards Google Play &amp; Android 15
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v254-10102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2118,6 +2174,62 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v256-12102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.6 — 12/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.6 — 12/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-conformite-definitive-google-play-console-android-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Conformité Définitive Google Play Console &amp; Android 15
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v255-11102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.5 — 11/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.5 — 11/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-conformite-aux-standards-google-play-android-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Conformité aux Standards Google Play &amp; Android 15
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v254-10102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3344,11 +3456,30 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v256--12102026">v2.5.6 — 12/10/2026</a></li>
+<li><a href="#v255--11102026">v2.5.5 — 11/10/2026</a></li>
 <li><a href="#v254--10102026">v2.5.4 — 10/10/2026</a></li>
 <li><a href="#v253--09102026">v2.5.3 — 09/10/2026</a></li>
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v256-12102026">v2.5.6 — 12/10/2026</h2>
+<h3 id="1-conformite-definitive-google-play-console-android-15">1. Conformité Définitive Google Play Console &amp; Android 15</h3>
+<ul>
+<li><strong>1.1. Obscurcissement R8 effectif (DEX Code Shrinking) :</strong> Résolution de la directive <code>-dontobfuscate</code> injectée automatiquement par le SDK .NET pour Android (<code>proguard_xamarin.cfg</code>). Suppression programmée de cette directive au build MSBuild (<code>_EnableR8Obfuscation</code>) avant la compilation Dalvik/Dex, et configuration de règles R8 ciblées sur les bibliothèques AndroidX et Google Material (<code>allowobfuscation</code>, <code>allowoptimization</code>). Renommage effectif des classes et méthodes Java/Android dans le fichier de mapping, satisfaisant pleinement le seuil d'obscurcissement minimum exigé par Google Play Vitals (&gt; 25 %).</li>
+<li><strong>1.2. Élimination totale des attributs XML obsolètes :</strong> Suppression complète des attributs <code>android:statusBarColor</code>, <code>android:navigationBarColor</code> et <code>colorPrimaryDark</code> de <code>styles.xml</code>. Sous Android 15 (SDK 35), l'affichage de bord à bord est ainsi appliqué de manière native et propre, sans conflit avec les analyseurs statiques du Play Store.</li>
+<li><strong>1.3. Affichage Bord-à-Bord universel &amp; gestion des découpes d'écran :</strong> Configuration de <code>android:windowLayoutInDisplayCutoutMode</code> sur <code>shortEdges</code> dans le thème de l'application, garantissant que l'affichage s'étend de manière optimale sur tous les appareils équipés d'encoches, poinçons ou découpes d'écran, tout en préservant le confort de lecture des partitions.</li>
+<li><strong>1.4. Génération des symboles de débogage natifs :</strong> Emballage systématique de l'archive des symboles natifs (.so) non tronqués (<code>com.audiothor.musicscoremanager-v2.5.6-native-symbols.zip</code>) pour le téléversement sur Google Play Console et la résolution des rapports de plantages natifs/ANR.</li>
+</ul>
+<hr />
+<h2 id="v255-11102026">v2.5.5 — 11/10/2026</h2>
+<h3 id="1-conformite-aux-standards-google-play-android-15">1. Conformité aux Standards Google Play &amp; Android 15</h3>
+<ul>
+<li><strong>1.1. Optimisation et Obscurcissement du code DEX (R8) :</strong> Activation explicite du rétrécissement de code (<code>AndroidEnableCodeShrinking</code>) et du compilateur R8 (<code>AndroidLinkTool=r8</code>) pour tous les paquets Android Release (AAB/APK). Intégration d'un fichier de règles ProGuard/R8 dédié (<code>Platforms/Android/proguard.cfg</code>) protégeant le runtime .NET MAUI/Mono, et génération automatique de la table de correspondance <code>mapping.txt</code> (<code>AndroidCreateProguardMappingFile</code> / <code>AndroidEnableProguardMapping</code>), garantissant le dépassement du seuil de 25 % d'obscurcissement imposé par Google Play Vitals.</li>
+<li><strong>1.2. Support de l'affichage Bord-à-Bord moderne (Edge-to-Edge) :</strong> Appel natif de <code>AndroidX.Activity.EdgeToEdge.Enable(this)</code> dans <code>MainActivity.OnCreate()</code> assurant la compatibilité complète avec les exigences d'Android 15 (SDK 35+) et la rétrocompatibilité sur les versions antérieures.</li>
+<li><strong>1.3. Élimination des paramètres et API de fenêtre dépréciés :</strong> Suppression des définitions de couleurs opaques pour la barre d'état et la barre de navigation dans <code>styles.xml</code>. Définition de barres système transparentes (<code>android:statusBarColor</code> et <code>android:navigationBarColor</code> à <code>@android:color/transparent</code>) avec gestion dynamique du contraste (<code>windowLightStatusBar</code> et <code>windowLightNavigationBar</code>), répondant strictement aux directives de Google Play Console.</li>
 </ul>
 <hr />
 <h2 id="v254-10102026">v2.5.4 — 10/10/2026</h2>
