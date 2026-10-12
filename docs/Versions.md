@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.5.7 — 13/10/2026](#v257--13102026)
 - [v2.5.6 — 12/10/2026](#v256--12102026)
 - [v2.5.5 — 11/10/2026](#v255--11102026)
 - [v2.5.4 — 10/10/2026](#v254--10102026)
@@ -13,6 +14,15 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.7 — 13/10/2026
+
+### 1. Hotfix Stabilité Runtime & Restauration du Pont JNI
+- **1.1. Résolution définitive du crash au lancement :** Rétablissement de la politique de protection des classes Java/AndroidX (`-dontobfuscate` et conservation stricte de `androidx.**` et `com.google.android.material.**`). Le renommage des classes Java opéré en v2.5.6 rompait la résolution JNI native du runtime .NET MAUI, provoquant des erreurs fatales `ClassNotFoundException` à l'ouverture.
+- **1.2. Sécurisation du thème XML :** Restauration de l'attribut `colorPrimaryDark` sous `Maui.MainTheme` assurant l'initialisation sans faille des composants MaterialComponents.
+- **1.3. Préservation de l'optimisation DEX sans régression :** Maintien du code shrinking R8 (`AndroidEnableCodeShrinking`) pour réduire la taille du paquet tout en garantissant une stabilité d'exécution irréprochable sur l'ensemble des appareils Android.
 
 ---
 

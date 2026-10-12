@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.5.7 — 13/10/2026](#v257--13102026)
 - [v2.5.6 — 12/10/2026](#v256--12102026)
 - [v2.5.5 — 11/10/2026](#v255--11102026)
 - [v2.5.4 — 10/10/2026](#v254--10102026)
@@ -13,6 +14,15 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.7 — 13/10/2026
+
+### 1. Runtime Stability Hotfix & JNI Bridge Restoration
+- **1.1. Startup Crash Resolution:** Restored protection rules for all Java and AndroidX classes (`-dontobfuscate` active, explicit keep for `androidx.**` and `com.google.android.material.**`). The aggressive Java class renaming in v2.5.6 severed .NET MAUI's JNI resolution at runtime, causing fatal `ClassNotFoundException` errors on app startup.
+- **1.2. Theme XML Hardening:** Restored `colorPrimaryDark` in `Maui.MainTheme` to guarantee stable inflation of MaterialComponents across all Android versions.
+- **1.3. Regression-Free DEX Code Shrinking:** Preserved R8 code shrinking (`AndroidEnableCodeShrinking`) to strip dead classes and optimize memory without modifying essential JNI symbol names.
 
 ---
 
