@@ -6,12 +6,23 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.5.6 — 12/10/2026](#v256--12102026)
 - [v2.5.5 — 11/10/2026](#v255--11102026)
 - [v2.5.4 — 10/10/2026](#v254--10102026)
 - [v2.5.3 — 09/10/2026](#v253--09102026)
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.6 — 12/10/2026
+
+### 1. Definitive Google Play Console & Android 15 Compliance
+- **1.1. Effective R8 Obfuscation (DEX Code Shrinking):** Resolved the `-dontobfuscate` directive automatically injected by the .NET for Android SDK template (`proguard_xamarin.cfg`). Added an automated MSBuild build step (`_EnableR8Obfuscation`) to purge this flag prior to Dalvik/Dex compilation, combined with tailored R8 keep rules permitting class and member obfuscation on AndroidX and Google Material libraries (`allowobfuscation`, `allowoptimization`). Verified class renaming in `mapping.txt`, fulfilling Google Play Vitals' requirement (> 25% obfuscation threshold).
+- **1.2. Complete Removal of Deprecated Window XML Attributes:** Fully eliminated `android:statusBarColor`, `android:navigationBarColor`, and `colorPrimaryDark` attributes from `styles.xml`. On Android 15 (SDK 35), edge-to-edge rendering is applied natively without conflicting with Google Play Console static linters.
+- **1.3. Universal Edge-to-Edge Display & Display Cutout Handling:** Configured `android:windowLayoutInDisplayCutoutMode` to `shortEdges` in the application theme, ensuring seamless display coverage across notched, pinhole, and curved displays while preserving score reading comfort.
+- **1.4. Native Crash Symbols Packaging:** Standardized generation and archiving of unstripped native shared libraries (`.so`) in `com.audiothor.musicscoremanager-v2.5.6-native-symbols.zip` for direct upload to Google Play Console native crash / ANR symbol tables.
 
 ---
 

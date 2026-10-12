@@ -9,6 +9,7 @@ Cette application est **GRATUITE et SANS PUBLICITE**
 Elle ne nécessite pas internet, n'a aucun lien sur le Cloud.
 Elle est multiplateforme (Android / Windows).
 
+
 **Music Score Manager** a été conçue sur mesure pour les musiciens solistes, ensembles, chorales et orchestres avec les remarques de musiciens issus de conservatoires, harmonies, groupes de musique et autodidactes.
 
 **Music Score Manager gère** vos bibliothèques de partitions et vous permet de les lire en live et d'annoter, préparer une liste de déroulement pour un concert...etc..
@@ -20,7 +21,6 @@ Elle est multiplateforme (Android / Windows).
 
 ## Table des matières
 
-- [🚀 Démarrage Rapide (Prise en main en 5 minutes)](guide/quickstart.md)
 - [Description, prérequis et installation](guide/installation.md)
 - [Guide général de l'application](guide/viewer.md)
 - [Partitions](guide/scores.md)
@@ -28,15 +28,5 @@ Elle est multiplateforme (Android / Windows).
 - [Outils](guide/tools.md)
 - [Paramètres](guide/settings.md)
 - [Quitter](guide/quit.md)
+- [FAQ](guide/FAQ.md)
 - [Politique de Confidentialité & Mentions Légales](confidentialite.md)
-
----
-
-## 💬 Communauté & Support
-
-Rejoignez le **[Serveur Discord Audiothor](https://discord.gg/EtZf8VyMz)** pour échanger des astuces, poser vos questions, discuter de vos modèles de pédaliers Bluetooth et suggérer de nouvelles fonctionnalités !
-
----
-
-*Music Score Manager est Open source avec un code totalement transparent et disponible sous Github.
-Music Score Manager est développé en France.*
