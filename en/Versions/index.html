@@ -871,6 +871,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v257-13102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.7 — 13/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.7 — 13/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-runtime-stability-hotfix-jni-bridge-restoration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Runtime Stability Hotfix &amp; JNI Bridge Restoration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v256-12102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2174,6 +2202,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v257-13102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.7 — 13/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.7 — 13/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-runtime-stability-hotfix-jni-bridge-restoration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Runtime Stability Hotfix &amp; JNI Bridge Restoration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v256-12102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3456,6 +3512,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v257--13102026">v2.5.7 — 13/10/2026</a></li>
 <li><a href="#v256--12102026">v2.5.6 — 12/10/2026</a></li>
 <li><a href="#v255--11102026">v2.5.5 — 11/10/2026</a></li>
 <li><a href="#v254--10102026">v2.5.4 — 10/10/2026</a></li>
@@ -3463,6 +3520,14 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v257-13102026">v2.5.7 — 13/10/2026</h2>
+<h3 id="1-runtime-stability-hotfix-jni-bridge-restoration">1. Runtime Stability Hotfix &amp; JNI Bridge Restoration</h3>
+<ul>
+<li><strong>1.1. Startup Crash Resolution:</strong> Restored protection rules for all Java and AndroidX classes (<code>-dontobfuscate</code> active, explicit keep for <code>androidx.**</code> and <code>com.google.android.material.**</code>). The aggressive Java class renaming in v2.5.6 severed .NET MAUI's JNI resolution at runtime, causing fatal <code>ClassNotFoundException</code> errors on app startup.</li>
+<li><strong>1.2. Theme XML Hardening:</strong> Restored <code>colorPrimaryDark</code> in <code>Maui.MainTheme</code> to guarantee stable inflation of MaterialComponents across all Android versions.</li>
+<li><strong>1.3. Regression-Free DEX Code Shrinking:</strong> Preserved R8 code shrinking (<code>AndroidEnableCodeShrinking</code>) to strip dead classes and optimize memory without modifying essential JNI symbol names.</li>
 </ul>
 <hr />
 <h2 id="v256-12102026">v2.5.6 — 12/10/2026</h2>
