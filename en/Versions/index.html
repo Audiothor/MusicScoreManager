@@ -871,6 +871,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v258-13102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.8 — 13/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.8 — 13/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-android-15-edge-to-edge-compliance-deprecated-api-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Android 15 Edge-to-Edge Compliance &amp; Deprecated API Resolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v257-13102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2202,6 +2230,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v258-13102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.5.8 — 13/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.5.8 — 13/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-android-15-edge-to-edge-compliance-deprecated-api-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Android 15 Edge-to-Edge Compliance &amp; Deprecated API Resolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v257-13102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3512,6 +3568,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v258--13102026">v2.5.8 — 13/10/2026</a></li>
 <li><a href="#v257--13102026">v2.5.7 — 13/10/2026</a></li>
 <li><a href="#v256--12102026">v2.5.6 — 12/10/2026</a></li>
 <li><a href="#v255--11102026">v2.5.5 — 11/10/2026</a></li>
@@ -3520,6 +3577,16 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v258-13102026">v2.5.8 — 13/10/2026</h2>
+<h3 id="1-android-15-edge-to-edge-compliance-deprecated-api-resolution">1. Android 15 Edge-to-Edge Compliance &amp; Deprecated API Resolution</h3>
+<ul>
+<li><strong>1.1. Dedicated Android 15 Theme (<code>values-v35/styles.xml</code>):</strong> Strict alignment with Android 15 guidelines with zero deprecated window color attributes, and native cutout display support (<code>android:windowLayoutInDisplayCutoutMode</code> set to <code>always</code>).</li>
+<li><strong>1.2. Removal of Deprecated Window Attributes:</strong> Fully eliminated obsolete XML attributes <code>android:windowLightStatusBar</code> and <code>android:windowLightNavigationBar</code> across all themes.</li>
+<li><strong>1.3. Clean Dependency Graph (0 Warnings, 0 Errors):</strong> Maintained broad backwards compatibility (minSdkVersion 21.0 / Android 5.0+) while resolving all NuGet transitive constraint warnings.</li>
+<li><strong>1.4. R8 Removal of Deprecated Calls:</strong> Enforced <code>-assumenosideeffects</code> rules on <code>Window.setStatusBarColor</code> and <code>Window.setNavigationBarColor</code> to strip deprecated calls from DEX bytecode.</li>
+<li><strong>1.5. Absolute Runtime Stability Maintained:</strong> Fully preserved the JNI bridge (.NET MAUI / Mono) with <code>-dontobfuscate</code> active, guaranteeing flawless, crash-free app startup.</li>
 </ul>
 <hr />
 <h2 id="v257-13102026">v2.5.7 — 13/10/2026</h2>
