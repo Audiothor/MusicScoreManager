@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.5.8 — 13/10/2026](#v258--13102026)
 - [v2.5.7 — 13/10/2026](#v257--13102026)
 - [v2.5.6 — 12/10/2026](#v256--12102026)
 - [v2.5.5 — 11/10/2026](#v255--11102026)
@@ -14,6 +15,17 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.8 — 13/10/2026
+
+### 1. Conformité Android 15 Edge-to-Edge & Résolution des API Obsolètes
+- **1.1. Thème dédié Android 15 (`values-v35/styles.xml`) :** Conformité stricte aux directives Android 15 sans aucun paramètre de couleur de fenêtre obsolète, et prise en charge des découpes d'écran (`android:windowLayoutInDisplayCutoutMode` fixé sur `always`).
+- **1.2. Suppression des paramètres de fenêtres obsolètes :** Élimination définitive des attributs XML dépréciés `android:windowLightStatusBar` et `android:windowLightNavigationBar` qui déclenchaient l'avertissement de l'analyseur statique Google Play Console.
+- **1.3. Élimination complète des avertissements de dépendances (0 avertissement, 0 erreur) :** Rétablissement de la compatibilité ascendante complète (minSdkVersion 21.0 / Android 5.0+) avec résolution des conflits de versions transitive NuGet.
+- **1.4. Élimination par R8 des appels obsolètes :** Règle `-assumenosideeffects` sur `Window.setStatusBarColor` et `Window.setNavigationBarColor` pour épurer les appels obsolètes dans le bytecode DEX.
+- **1.5. Maintien absolu de la stabilité runtime :** Préservation intégrale du pont JNI (.NET MAUI / Mono) avec `-dontobfuscate` actif, empêchant tout plantage à l'ouverture de l'application.
 
 ---
 

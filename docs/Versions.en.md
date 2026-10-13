@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.5.8 — 13/10/2026](#v258--13102026)
 - [v2.5.7 — 13/10/2026](#v257--13102026)
 - [v2.5.6 — 12/10/2026](#v256--12102026)
 - [v2.5.5 — 11/10/2026](#v255--11102026)
@@ -14,6 +15,17 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.5.8 — 13/10/2026
+
+### 1. Android 15 Edge-to-Edge Compliance & Deprecated API Resolution
+- **1.1. Dedicated Android 15 Theme (`values-v35/styles.xml`):** Strict alignment with Android 15 guidelines with zero deprecated window color attributes, and native cutout display support (`android:windowLayoutInDisplayCutoutMode` set to `always`).
+- **1.2. Removal of Deprecated Window Attributes:** Fully eliminated obsolete XML attributes `android:windowLightStatusBar` and `android:windowLightNavigationBar` across all themes.
+- **1.3. Clean Dependency Graph (0 Warnings, 0 Errors):** Maintained broad backwards compatibility (minSdkVersion 21.0 / Android 5.0+) while resolving all NuGet transitive constraint warnings.
+- **1.4. R8 Removal of Deprecated Calls:** Enforced `-assumenosideeffects` rules on `Window.setStatusBarColor` and `Window.setNavigationBarColor` to strip deprecated calls from DEX bytecode.
+- **1.5. Absolute Runtime Stability Maintained:** Fully preserved the JNI bridge (.NET MAUI / Mono) with `-dontobfuscate` active, guaranteeing flawless, crash-free app startup.
 
 ---
 

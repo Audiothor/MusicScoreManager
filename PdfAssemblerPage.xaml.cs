@@ -399,7 +399,7 @@ public partial class PdfAssemblerPage : ContentPage
                 var item = new PdfPageItem
                 {
                     ImagePath = tempPath,
-                    DisplayName = res.FileName,
+                    DisplayName = res.FileName ?? string.Empty,
                     ThumbnailSource = ImageSource.FromFile(tempPath),
                     PageNumber = _pdfPages.Count + 1,
                     Rotation = 0

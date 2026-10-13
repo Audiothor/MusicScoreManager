@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>2.5.7</ApplicationDisplayVersion>
-		<ApplicationVersion>20507</ApplicationVersion>
-		<!-- Version actuelle : v2.5.7 "Hotfix stabilité runtime - restauration du pont JNI et du thème sécurisé" -->
+		<ApplicationDisplayVersion>2.5.8</ApplicationDisplayVersion>
+		<ApplicationVersion>20508</ApplicationVersion>
+		<!-- Version actuelle : v2.5.8 "Conformité Android 15 Edge-to-Edge & mise à jour Material/Activity" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		
@@ -81,6 +81,4 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
-
-
 </Project>
