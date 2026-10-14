@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.6.3 — 15/10/2026](#v263--15102026)
 - [v2.6.2 — 14/10/2026](#v262--14102026)
 - [v2.6.1 — 14/10/2026](#v261--14102026)
 - [v2.6.0 — 14/10/2026](#v260--14102026)
@@ -18,6 +19,30 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.6.3 — 15/10/2026
+
+### 1. Accordeur : Étalonnage du Diapason (Fréquence de Référence A4)
+- **1.1. Sélecteur de diapason instantané :** Ajout de 4 options d'accordage de référence :
+  - `440 Hz` : Standard international de concert (par défaut).
+  - `442 Hz` : Fréquence d'orchestre symphonique et ensembles modernes.
+  - `415 Hz` : Tempérament et accordage musique baroque (demi-ton inférieur).
+  - `432 Hz` : Fréquence alternative & acoustique naturelle (Verdi).
+- **1.2. Recalcul automatique du tempérament égal :** Le changement de fréquence de référence ajuste immédiatement la fréquence cible de toutes les cordes et notes, ainsi que le signal sonore de référence généré.
+
+### 2. Mode Chromatique Universel : Choix Manuel de la Note et de l'Octave
+- **2.1. Sélection de note ou détection automatique :** En mode Chromatique, l'utilisateur peut laisser le mode `[Auto]` ou choisir manuellement la note souhaitée parmi les 12 demi-tons (Do, Do♯, Ré, Ré♯, Mi, Fa, Fa♯, Sol, Sol♯, La, La♯, Si).
+- **2.2. Sélecteur d'octaves (1 à 7) :** En sélection manuelle d'une note chromatique, une rangée d'octaves (1 à 7) s'affiche pour verrouiller la hauteur exacte (par ex. Do 5 à 523.25 Hz pour vérifier son instrument).
+- **2.3. Diapason sonore synchronisé :** La touche de lecture audio joue le son sinusoïdal pur à la fréquence exacte de la note et de l'octave sélectionnées.
+
+### 3. Jauge Visuelle Tricolore & Guidage Intuitif
+- **3.1. Précision visuelle en 3 zones distinctes :**
+  - 🟢 **Vert (≤ 4 cents) :** « PARFAIT ! Accordé » avec graduation lumineuse centrale.
+  - 🟠 **Orange (5 à 15 cents) :** Accordage proche nécessitant un ajustement fin (« ▲ Un peu trop bas - Monter légèrement » ou « ▼ Un peu trop haut - Descendre légèrement »).
+  - 🔴 **Rouge (> 15 cents) :** Écart notable (« ▲ Trop bas - Tendre / Monter » ou « ▼ Trop haut - Descendre / Desserrer »).
+- **3.2. Clarté et feedback immédiat sur scène :** L'aiguille et le rail dynamique 5-zones offrent un guidage instinctif d'un coup d'œil sans quitter des yeux son instrument.
 
 ---
 

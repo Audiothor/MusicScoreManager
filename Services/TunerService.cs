@@ -59,6 +59,7 @@ namespace MusicScoreManager.Services
 
         private const int SampleRate = 44100;
         private const int BufferSize = 4096;
+        public double A4Frequency { get; set; } = 440.0;
 
         public List<TunerInstrument> Instruments { get; } = new();
 
@@ -415,12 +416,12 @@ namespace MusicScoreManager.Services
                 return;
             }
 
-            // 4. Calcul de la note MIDI la plus proche et de la déviation en cents
-            // MIDI 69 = A4 = 440 Hz
-            double midiNumber = 69.0 + 12.0 * Math.Log2(frequency / 440.0);
+            // 4. Calcul de la note MIDI la plus proche et de la déviation en cents selon A4Frequency
+            double a4Ref = A4Frequency > 100.0 ? A4Frequency : 440.0;
+            double midiNumber = 69.0 + 12.0 * Math.Log2(frequency / a4Ref);
             int nearestMidi = (int)Math.Round(midiNumber);
             double cents = (midiNumber - nearestMidi) * 100.0;
-            double targetFreq = 440.0 * Math.Pow(2.0, (nearestMidi - 69.0) / 12.0);
+            double targetFreq = a4Ref * Math.Pow(2.0, (nearestMidi - 69.0) / 12.0);
 
             string[] noteNames = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
             string[] solfegeNames = { "Do", "Do#", "Ré", "Ré#", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "La#", "Si" };
@@ -442,6 +443,26 @@ namespace MusicScoreManager.Services
                 Amplitude = rms,
                 HasSignal = true
             });
+        }
+
+        public static TuningNote CreateChromaticNote(int noteIndex, int octave, double a4Ref = 440.0)
+        {
+            string[] noteNames = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+            string[] solfegeNames = { "Do", "Do#", "Ré", "Ré#", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "La#", "Si" };
+
+            noteIndex = (noteIndex % 12 + 12) % 12;
+            int midiNote = (octave + 1) * 12 + noteIndex;
+            double refFreq = a4Ref > 100.0 ? a4Ref : 440.0;
+            double freq = refFreq * Math.Pow(2.0, (midiNote - 69.0) / 12.0);
+
+            return new TuningNote
+            {
+                NoteName = $"{noteNames[noteIndex]}{octave}",
+                Solfege = $"{solfegeNames[noteIndex]}{octave}",
+                StringLabel = $"{solfegeNames[noteIndex]}",
+                MidiNote = midiNote,
+                Frequency = Math.Round(freq, 2)
+            };
         }
 
         public string GenerateReferenceToneWav(double frequencyHz, double durationSec = 1.8)

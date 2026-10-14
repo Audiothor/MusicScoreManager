@@ -6315,6 +6315,9 @@ public partial class ViewerPage : ContentPage
     private TunerInstrument? _currentTunerInstrument;
     private TuningNote? _selectedTunerNote;
     private readonly List<Button> _tunerNoteButtons = new();
+    private readonly List<Button> _tunerOctaveButtons = new();
+    private int _selectedChromaticNoteIndex = -1; // -1 = Auto
+    private int _selectedChromaticOctave = 4;     // Octave par défaut (4)
 
     private void OnCloseTunerClicked(object sender, EventArgs e)
     {
@@ -6332,6 +6335,7 @@ public partial class ViewerPage : ContentPage
         _isTunerInitialized = true;
 
         TunerService.Instance.PitchDetected += OnTunerPitchDetected;
+        UpdateTunerA4ButtonsUI();
 
         if (TunerInstrumentPicker != null)
         {
@@ -6339,6 +6343,33 @@ public partial class ViewerPage : ContentPage
             TunerInstrumentPicker.SelectedIndex = 0;
             _currentTunerInstrument = TunerService.Instance.Instruments[0];
             PopulateTunerNotesUI(_currentTunerInstrument);
+        }
+    }
+
+    private void OnTunerA4RefClicked(object sender, EventArgs e)
+    {
+        if (sender is Button btn && btn.CommandParameter is string param && double.TryParse(param, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double freq))
+        {
+            TunerService.Instance.A4Frequency = freq;
+            UpdateTunerA4ButtonsUI();
+
+            if (_selectedTunerNote != null && _currentTunerInstrument != null && _currentTunerInstrument.IsChromatic && _selectedChromaticNoteIndex >= 0)
+            {
+                _selectedTunerNote = TunerService.CreateChromaticNote(_selectedChromaticNoteIndex, _selectedChromaticOctave, freq);
+            }
+        }
+    }
+
+    private void UpdateTunerA4ButtonsUI()
+    {
+        double currentA4 = TunerService.Instance.A4Frequency;
+        var buttons = new[] { (TunerA440Btn, 440.0), (TunerA442Btn, 442.0), (TunerA415Btn, 415.0), (TunerA432Btn, 432.0) };
+        foreach (var (b, f) in buttons)
+        {
+            if (b == null) continue;
+            bool active = Math.Abs(currentA4 - f) < 0.1;
+            b.BackgroundColor = active ? Color.FromArgb("#007ACC") : Color.FromArgb("#252535");
+            b.TextColor = active ? Colors.White : Color.FromArgb("#CCCCCC");
         }
     }
 
@@ -6350,6 +6381,7 @@ public partial class ViewerPage : ContentPage
         {
             _currentTunerInstrument = TunerService.Instance.Instruments[idx];
             _selectedTunerNote = null;
+            _selectedChromaticNoteIndex = -1;
             PopulateTunerNotesUI(_currentTunerInstrument);
         }
     }
@@ -6378,37 +6410,148 @@ public partial class ViewerPage : ContentPage
         autoBtn.Clicked += (s, e) =>
         {
             _selectedTunerNote = null;
+            _selectedChromaticNoteIndex = -1;
+            if (TunerOctavesLayout != null) TunerOctavesLayout.IsVisible = false;
             UpdateTunerNoteSelectionButtons();
         };
         TunerNotesLayout.Children.Add(autoBtn);
         _tunerNoteButtons.Add(autoBtn);
 
-        // Boutons pour chaque corde / note de l'instrument
-        foreach (var note in instrument.Notes)
+        if (instrument.IsChromatic)
         {
-            var noteBtn = new Button
+            // En mode chromatique : afficher les 12 demi-tons Do à Si
+            string[] solfeges = { "Do", "Do#", "Ré", "Ré#", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "La#", "Si" };
+            string[] anglo = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+
+            for (int i = 0; i < 12; i++)
             {
-                Text = $"{note.NoteName} ({note.Solfege})",
+                int noteIdx = i;
+                var noteBtn = new Button
+                {
+                    Text = $"{solfeges[noteIdx]} ({anglo[noteIdx]})",
+                    FontSize = 11,
+                    FontAttributes = FontAttributes.Bold,
+                    TextColor = Colors.White,
+                    BackgroundColor = Color.FromArgb("#252535"),
+                    BorderColor = Color.FromArgb("#444455"),
+                    BorderWidth = 1,
+                    CornerRadius = 14,
+                    HeightRequest = 32,
+                    Padding = new Thickness(10, 0),
+                    Margin = new Thickness(2, 0)
+                };
+                noteBtn.Clicked += (s, e) =>
+                {
+                    _selectedChromaticNoteIndex = noteIdx;
+                    _selectedTunerNote = TunerService.CreateChromaticNote(_selectedChromaticNoteIndex, _selectedChromaticOctave, TunerService.Instance.A4Frequency);
+                    PopulateTunerOctavesUI();
+                    UpdateTunerNoteSelectionButtons();
+                };
+                TunerNotesLayout.Children.Add(noteBtn);
+                _tunerNoteButtons.Add(noteBtn);
+            }
+
+            if (TunerOctavesLayout != null)
+            {
+                TunerOctavesLayout.IsVisible = (_selectedTunerNote != null);
+                if (_selectedTunerNote != null) PopulateTunerOctavesUI();
+            }
+        }
+        else
+        {
+            if (TunerOctavesLayout != null) TunerOctavesLayout.IsVisible = false;
+
+            // Boutons pour chaque corde / note de l'instrument
+            foreach (var note in instrument.Notes)
+            {
+                var noteBtn = new Button
+                {
+                    Text = $"{note.NoteName} ({note.Solfege})",
+                    FontSize = 11,
+                    FontAttributes = FontAttributes.Bold,
+                    TextColor = Colors.White,
+                    BackgroundColor = Color.FromArgb("#252535"),
+                    BorderColor = Color.FromArgb("#444455"),
+                    BorderWidth = 1,
+                    CornerRadius = 14,
+                    HeightRequest = 32,
+                    Padding = new Thickness(10, 0),
+                    Margin = new Thickness(2, 0)
+                };
+                noteBtn.Clicked += (s, e) =>
+                {
+                    _selectedTunerNote = note;
+                    UpdateTunerNoteSelectionButtons();
+                };
+                TunerNotesLayout.Children.Add(noteBtn);
+                _tunerNoteButtons.Add(noteBtn);
+            }
+        }
+
+        UpdateTunerNoteSelectionButtons();
+    }
+
+    private void PopulateTunerOctavesUI()
+    {
+        if (TunerOctavesLayout == null) return;
+        TunerOctavesLayout.Children.Clear();
+        _tunerOctaveButtons.Clear();
+        TunerOctavesLayout.IsVisible = true;
+
+        var label = new Label
+        {
+            Text = "Hauteur :",
+            TextColor = Color.FromArgb("#AAAAAA"),
+            FontSize = 11,
+            FontAttributes = FontAttributes.Bold,
+            VerticalOptions = LayoutOptions.Center,
+            Margin = new Thickness(0, 0, 4, 0)
+        };
+        TunerOctavesLayout.Children.Add(label);
+
+        for (int oct = 1; oct <= 7; oct++)
+        {
+            int octaveNum = oct;
+            bool isSelected = (_selectedChromaticOctave == octaveNum);
+            var octBtn = new Button
+            {
+                Text = $"{octaveNum}",
                 FontSize = 11,
                 FontAttributes = FontAttributes.Bold,
-                TextColor = Colors.White,
-                BackgroundColor = Color.FromArgb("#252535"),
-                BorderColor = Color.FromArgb("#444455"),
+                TextColor = isSelected ? Colors.White : Color.FromArgb("#CCCCCC"),
+                BackgroundColor = isSelected ? Color.FromArgb("#007ACC") : Color.FromArgb("#252535"),
+                BorderColor = isSelected ? Color.FromArgb("#3399FF") : Color.FromArgb("#444455"),
                 BorderWidth = 1,
-                CornerRadius = 14,
-                HeightRequest = 32,
-                Padding = new Thickness(10, 0),
-                Margin = new Thickness(2, 0)
+                CornerRadius = 12,
+                HeightRequest = 26,
+                WidthRequest = 32,
+                Padding = new Thickness(0),
+                Margin = new Thickness(1, 0)
             };
-            noteBtn.Clicked += (s, e) =>
+            octBtn.Clicked += (s, e) =>
             {
-                _selectedTunerNote = note;
-                UpdateTunerNoteSelectionButtons();
+                _selectedChromaticOctave = octaveNum;
+                if (_selectedChromaticNoteIndex >= 0)
+                {
+                    _selectedTunerNote = TunerService.CreateChromaticNote(_selectedChromaticNoteIndex, _selectedChromaticOctave, TunerService.Instance.A4Frequency);
+                }
+                UpdateTunerOctavesButtonsUI();
             };
-            TunerNotesLayout.Children.Add(noteBtn);
-            _tunerNoteButtons.Add(noteBtn);
+            TunerOctavesLayout.Children.Add(octBtn);
+            _tunerOctaveButtons.Add(octBtn);
         }
-        UpdateTunerNoteSelectionButtons();
+    }
+
+    private void UpdateTunerOctavesButtonsUI()
+    {
+        for (int i = 0; i < _tunerOctaveButtons.Count; i++)
+        {
+            int oct = i + 1;
+            bool isSelected = (_selectedChromaticOctave == oct);
+            _tunerOctaveButtons[i].BackgroundColor = isSelected ? Color.FromArgb("#007ACC") : Color.FromArgb("#252535");
+            _tunerOctaveButtons[i].BorderColor = isSelected ? Color.FromArgb("#3399FF") : Color.FromArgb("#444455");
+            _tunerOctaveButtons[i].TextColor = isSelected ? Colors.White : Color.FromArgb("#CCCCCC");
+        }
     }
 
     private void UpdateTunerNoteSelectionButtons()
@@ -6419,14 +6562,28 @@ public partial class ViewerPage : ContentPage
         _tunerNoteButtons[0].BackgroundColor = isAuto ? Color.FromArgb("#007ACC") : Color.FromArgb("#252535");
         _tunerNoteButtons[0].BorderColor = isAuto ? Color.FromArgb("#3399FF") : Color.FromArgb("#444455");
 
-        for (int i = 0; i < _currentTunerInstrument.Notes.Count; i++)
+        if (_currentTunerInstrument.IsChromatic)
         {
-            int btnIdx = i + 1;
-            if (btnIdx >= _tunerNoteButtons.Count) break;
-            var note = _currentTunerInstrument.Notes[i];
-            bool isSelected = (_selectedTunerNote == note);
-            _tunerNoteButtons[btnIdx].BackgroundColor = isSelected ? Color.FromArgb("#007ACC") : Color.FromArgb("#252535");
-            _tunerNoteButtons[btnIdx].BorderColor = isSelected ? Color.FromArgb("#3399FF") : Color.FromArgb("#444455");
+            for (int i = 0; i < 12; i++)
+            {
+                int btnIdx = i + 1;
+                if (btnIdx >= _tunerNoteButtons.Count) break;
+                bool isSelected = (!isAuto && _selectedChromaticNoteIndex == i);
+                _tunerNoteButtons[btnIdx].BackgroundColor = isSelected ? Color.FromArgb("#007ACC") : Color.FromArgb("#252535");
+                _tunerNoteButtons[btnIdx].BorderColor = isSelected ? Color.FromArgb("#3399FF") : Color.FromArgb("#444455");
+            }
+        }
+        else
+        {
+            for (int i = 0; i < _currentTunerInstrument.Notes.Count; i++)
+            {
+                int btnIdx = i + 1;
+                if (btnIdx >= _tunerNoteButtons.Count) break;
+                var note = _currentTunerInstrument.Notes[i];
+                bool isSelected = (_selectedTunerNote == note);
+                _tunerNoteButtons[btnIdx].BackgroundColor = isSelected ? Color.FromArgb("#007ACC") : Color.FromArgb("#252535");
+                _tunerNoteButtons[btnIdx].BorderColor = isSelected ? Color.FromArgb("#3399FF") : Color.FromArgb("#444455");
+            }
         }
     }
 
@@ -6519,14 +6676,12 @@ public partial class ViewerPage : ContentPage
             double cents = result.Cents;
             string noteName = result.NoteName;
             string solfege = result.SolfegeName;
-            int octave = result.Octave;
             double targetFreq = result.TargetFrequency;
 
             if (_selectedTunerNote != null)
             {
                 noteName = _selectedTunerNote.NoteName;
                 solfege = _selectedTunerNote.Solfege;
-                octave = (_selectedTunerNote.MidiNote / 12) - 1;
                 targetFreq = _selectedTunerNote.Frequency;
                 if (result.Frequency > 10.0 && targetFreq > 10.0)
                 {
@@ -6537,11 +6692,11 @@ public partial class ViewerPage : ContentPage
 
             if (TunerNoteLabel != null)
             {
-                TunerNoteLabel.Text = $"{noteName}{octave}";
+                TunerNoteLabel.Text = $"{noteName}";
             }
             if (TunerSolfegeLabel != null)
             {
-                TunerSolfegeLabel.Text = solfege;
+                TunerSolfegeLabel.Text = $"{solfege} (Cible : {targetFreq:F1} Hz)";
             }
             if (TunerFreqLabel != null)
             {
@@ -6556,26 +6711,39 @@ public partial class ViewerPage : ContentPage
                 TunerNeedle.TranslationX = needleOffset;
             }
 
-            bool inTune = Math.Abs(cents) <= 4.0;
+            // Paliers 3 couleurs : Vert (<= 4 cents), Orange (5 à 15 cents), Rouge (> 15 cents) avec direction claire
+            double absCents = Math.Abs(cents);
             if (TunerStatusLabel != null)
             {
-                if (inTune)
+                if (absCents <= 4.0)
                 {
-                    TunerStatusLabel.Text = "PARFAIT ! Accordé";
+                    TunerStatusLabel.Text = "✓ PARFAIT ! Accordé";
                     TunerStatusLabel.TextColor = Color.FromArgb("#00E676");
                     if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#00E676");
                 }
+                else if (cents < -15.0)
+                {
+                    TunerStatusLabel.Text = $"▲ Trop bas ({cents:F0} cents) — Tendre / Monter";
+                    TunerStatusLabel.TextColor = Color.FromArgb("#FF3D00");
+                    if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#FF3D00");
+                }
                 else if (cents < -4.0)
                 {
-                    TunerStatusLabel.Text = $"Trop bas ({cents:F0} cents) - Tendre";
-                    TunerStatusLabel.TextColor = Color.FromArgb("#FF8800");
-                    if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#FF8800");
+                    TunerStatusLabel.Text = $"▲ Un peu trop bas ({cents:F0} cents) — Monter légèrement";
+                    TunerStatusLabel.TextColor = Color.FromArgb("#FF9800");
+                    if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#FF9800");
+                }
+                else if (cents > 15.0)
+                {
+                    TunerStatusLabel.Text = $"▼ Trop haut (+{cents:F0} cents) — Desserrer / Descendre";
+                    TunerStatusLabel.TextColor = Color.FromArgb("#FF3D00");
+                    if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#FF3D00");
                 }
                 else
                 {
-                    TunerStatusLabel.Text = $"Trop haut (+{cents:F0} cents) - Desserrer";
-                    TunerStatusLabel.TextColor = Color.FromArgb("#FF5252");
-                    if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#FF5252");
+                    TunerStatusLabel.Text = $"▼ Un peu trop haut (+{cents:F0} cents) — Descendre légèrement";
+                    TunerStatusLabel.TextColor = Color.FromArgb("#FF9800");
+                    if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#FF9800");
                 }
             }
         });
@@ -6585,7 +6753,8 @@ public partial class ViewerPage : ContentPage
     {
         try
         {
-            double freq = _selectedTunerNote?.Frequency ?? 440.0;
+            double a4Ref = TunerService.Instance.A4Frequency > 100.0 ? TunerService.Instance.A4Frequency : 440.0;
+            double freq = _selectedTunerNote?.Frequency ?? a4Ref;
             string wavPath = TunerService.Instance.GenerateReferenceToneWav(freq);
             if (TunerTonePlayer != null)
             {
