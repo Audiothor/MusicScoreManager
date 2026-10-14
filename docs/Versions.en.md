@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.6.1 — 14/10/2026](#v261--14102026)
 - [v2.6.0 — 14/10/2026](#v260--14102026)
 - [v2.5.8 — 13/10/2026](#v258--13102026)
 - [v2.5.7 — 13/10/2026](#v257--13102026)
@@ -16,6 +17,23 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.6.1 — 14/10/2026
+
+### 1. Tools Hub: Clarity & Page Numbers
+- **1.1. Accurate Annotations Tile Renaming:** Changed "Annotations Bar" to "Annotations" across all 8 supported languages, clarifying that it toggles annotation drawing visibility on the score rather than the editing toolbar.
+- **1.2. Interactive "Page Numbers" Tile:** Added a 4th action tile with a `📄` icon and dynamic `ON` / `OFF` status badge to quickly toggle the bottom-right page counter on or off.
+
+### 2. Draggable Floating Metronome
+- **2.1. Free Drag-and-Drop Positioning:** The metronome overlay can now be dragged anywhere across the screen via touch gestures (`PanGestureRecognizer`).
+- **2.2. Smart Tap vs. Drag Differentiation:** A simple tap opens the tempo/volume modal, while panning smoothly glides the overlay without inadvertently opening settings.
+- **2.3. Tactile Grip & High Contrast:** Includes a subtle `⠿` grip handle, a fine border, and a soft drop shadow ensuring readability over both light and dark scores.
+
+### 3. Score Settings: Global Toolbox Icon Display Toggle
+- **3.1. New Display Preference:** Added the "Show toolbox icon (top-right)" toggle in **Settings > Score Settings > Display** (disabled by default).
+- **3.2. Permanent Hotspot Access:** Even when the visual icon is hidden for minimal aesthetics, the secret touch hotspot in the top-right corner remains fully functional.
 
 ---
 

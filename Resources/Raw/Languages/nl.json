@@ -630,5 +630,8 @@
   "Viewer_Tools_Drawer_Title": "Gereedschapskist",
   "Viewer_Tools_Metronome": "Metronoom",
   "Viewer_Tools_Audio": "Audiospeler",
-  "Viewer_Tools_Annotations": "Annotatiebalk"
+  "Viewer_Tools_Annotations": "Annotaties",
+  "Viewer_Tools_Page_Number": "Paginanummers",
+  "Settings_Scores_Show_Tools_Button": "Gereedschapskistpictogram weergeven (rechtsboven)",
+  "Settings_Scores_Show_Tools_Button_Desc": "Toont de 🛠️-knop rechtsboven. Het aanraakgebied blijft actief, zelfs indien verborgen"
 }

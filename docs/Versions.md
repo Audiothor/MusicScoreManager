@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.6.1 — 14/10/2026](#v261--14102026)
 - [v2.6.0 — 14/10/2026](#v260--14102026)
 - [v2.5.8 — 13/10/2026](#v258--13102026)
 - [v2.5.7 — 13/10/2026](#v257--13102026)
@@ -16,6 +17,23 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.6.1 — 14/10/2026
+
+### 1. Boîte à Outils : Clarté & Numéros de Page
+- **1.1. Renommage précis de la tuile Annotations :** Remplacement de « Barre d'annotations » par « Annotations » dans les 8 langues prises en charge, clarifiant qu'il s'agit du contrôle d'affichage des annotations sur la partition.
+- **1.2. Ajout de la tuile interactive « Numéros de page » :** 4e tuile d'action dans le tiroir d'outils avec icône `📄` et badge synchronisé (`ON` / `OFF`) pour masquer ou afficher à la volée le compteur de page en bas à droite.
+
+### 2. Métronome Flottant Déplaçable
+- **2.1. Glisser-déposer libre du métronome :** La vignette du métronome peut désormais être déplacée n'importe où sur l'écran pendant le jeu via glisser-déposer (`PanGestureRecognizer`).
+- **2.2. Détection intelligente Tap vs Drag :** Un tap court continue d'ouvrir immédiatement le panneau de réglage du tempo et volume, tandis qu'un glissement déplace l'encadré sans déclencher l'ouverture involontaire de la modale.
+- **2.3. Poignée tactile et contraste renforcé :** Intégration d'un témoin de déplacement `⠿`, d'une bordure fine et d'une ombre douce garantissant une parfaite visibilité sur partitions blanches ou sombres.
+
+### 3. Paramètres Partitions : Option Globale d'Affichage de l'Icône Outils
+- **3.1. Nouveau réglage dans Affichage :** Ajout de l'interrupteur « Afficher l'icône de boîte à outils (haut-droite) » dans **Paramètres > Paramètres partitions > Affichage** (désactivé par défaut).
+- **3.2. Préservation permanente de l'accès tactile :** Même lorsque l'icône visuelle est masquée pour épurer la partition, la zone tactile du coin supérieur droit reste 100% opérationnelle pour ouvrir le tiroir d'outils à tout moment.
 
 ---
 

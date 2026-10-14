@@ -16,6 +16,8 @@ The [`SettingsScoresPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreMan
   - Customize and reorder the information shown under each title in the library using interactive **drag-and-drop** or ▲ / ▼ buttons (*Date added*, *Composer*, *Page count*), with individual checkboxes and real-time live preview.
 - **Current Page Number Display (Toggle On/Off)**:
   - Show or hide the bottom-right page index badge (e.g., *Page 3 / 12*).
+- **Show Toolbox Icon Top-Right (Toggle On/Off, default Off)**:
+  - Displays or hides the visual `[ 🛠️ ]` button in the top-right corner. The secret touch hotspot opening the drawer remains active regardless of this setting.
 - **2-Page Landscape Display (Toggle On/Off)**:
   - Enables side-by-side dual page reading on horizontal tablets with complete geometric annotation projection.
 - **Keep Screen Awake While Reading (Toggle On/Off)**:

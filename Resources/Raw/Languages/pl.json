@@ -630,5 +630,8 @@
   "Viewer_Tools_Drawer_Title": "Przybornik",
   "Viewer_Tools_Metronome": "Metronom",
   "Viewer_Tools_Audio": "Odtwarzacz audio",
-  "Viewer_Tools_Annotations": "Pasek adnotacji"
+  "Viewer_Tools_Annotations": "Adnotacje",
+  "Viewer_Tools_Page_Number": "Numery stron",
+  "Settings_Scores_Show_Tools_Button": "Pokaż ikonę przybornika (w prawym górnym rogu)",
+  "Settings_Scores_Show_Tools_Button_Desc": "Wyświetla przycisk 🛠️ w prawym górnym rogu. Strefa dotykowa pozostaje aktywna nawet po ukryciu"
 }

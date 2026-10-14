@@ -25,6 +25,10 @@ AFFICHAGE
   
   - Affiche ou masque la pastille discrète indiquant la page en cours (ex : *Page 3 / 12*) en bas à droite de l'écran pendant le jeu.
 
+- **Afficher l'icône de boîte à outils haut-droite (Switch On/Off, par défaut Off)** :
+  
+  - Affiche ou masque l'icône visuelle `[ 🛠️ ]` dans le coin supérieur droit. La zone tactile secrète d'ouverture du tiroir reste toujours active quel que soit ce réglage.
+
 - **Affichage 2 pages en mode paysage (Switch On/Off)** :
   
   - Sur tablette ou écran large orienté à l'horizontale, affiche deux pages juxtaposées avec synchronisation géométrique des annotations et adaptation d'échelle.
