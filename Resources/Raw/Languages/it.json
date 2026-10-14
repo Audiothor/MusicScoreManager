@@ -633,5 +633,6 @@
   "Viewer_Tools_Annotations": "Annotazioni",
   "Viewer_Tools_Page_Number": "Numeri di pagina",
   "Settings_Scores_Show_Tools_Button": "Mostra icona cassetta degli attrezzi (in alto a destra)",
-  "Settings_Scores_Show_Tools_Button_Desc": "Mostra il pulsante 🛠️ in alto a destra. L'area tattile rimane attiva anche se nascosta"
+  "Settings_Scores_Show_Tools_Button_Desc": "Mostra il pulsante 🛠️ in alto a destra. L'area tattile rimane attiva anche se nascosta",
+  "Viewer_Tools_Tuner": "Accordatore"
 }

@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.6.2 — 14/10/2026](#v262--14102026)
 - [v2.6.1 — 14/10/2026](#v261--14102026)
 - [v2.6.0 — 14/10/2026](#v260--14102026)
 - [v2.5.8 — 13/10/2026](#v258--13102026)
@@ -17,6 +18,23 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.6.2 — 14/10/2026
+
+### 1. Annotation Bar: Streamlined UX & Padlock Removal
+- **1.1. Padlock Removal:** Opening the annotation toolbar directly activates editing mode, while dismissing it via the close `✕` button automatically re-locks and safeguards all annotations against accidental touches.
+- **1.2. Clutter-Free Toolbar:** Removing the padlock icon frees up horizontal space and simplifies the annotation experience for performing musicians.
+
+### 2. Built-in Multi-Instrument Tuner
+- **2.1. Dedicated Tools Hub Tile:** 5th interactive tile with a `🎛️` icon and live `ON` / `OFF` status badge in the floating tools drawer.
+- **2.2. Support for 9 Instrument Tunings:** Universal Chromatic Tuner, Guitar (E A D G B E), 4-string Bass (E A D G), 5-string Bass (B E A D G), Violin (G D A E), Viola (C G D A), Cello (C G D A), Double Bass (E A D G), and Ukulele (G C E A).
+- **2.3. Ergonomic String Selection & Auto-Detect:** Quick-tap pill buttons for targeted string tuning or automatic pitch identification.
+- **2.4. Real-Time Pitch Detection:** Autocorrelation pitch algorithm calculating fundamental frequency $F_0$, cent deviation ($-50$ to $+50$), note name and solfège (Do to Si), octave, and live tuning advice (Tighten / Loosen / Perfect).
+- **2.5. Explicit Microphone Control:** High-visibility toggle button ensures microphone access is only engaged when desired.
+- **2.6. Reference Tone Generator:** Plays a smooth synthesized reference sine wave matching the target note's exact frequency.
+- **2.7. Instant Dismiss:** Top-right `✕` button immediately closes the tuner and returns to the score without interrupting rehearsals or concerts.
 
 ---
 

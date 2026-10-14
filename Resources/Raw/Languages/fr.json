@@ -636,5 +636,6 @@
   "Viewer_Tools_Annotations": "Annotations",
   "Viewer_Tools_Page_Number": "Numéros de page",
   "Settings_Scores_Show_Tools_Button": "Afficher l'icône de boîte à outils (haut-droite)",
-  "Settings_Scores_Show_Tools_Button_Desc": "Affiche le bouton 🛠️ en haut à droite. La zone tactile reste active même masqué"
+  "Settings_Scores_Show_Tools_Button_Desc": "Affiche le bouton 🛠️ en haut à droite. La zone tactile reste active même masqué",
+  "Viewer_Tools_Tuner": "Accordeur"
 }

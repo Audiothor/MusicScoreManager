@@ -633,5 +633,6 @@
   "Viewer_Tools_Annotations": "Anmerkungen",
   "Viewer_Tools_Page_Number": "Seitennummern",
   "Settings_Scores_Show_Tools_Button": "Werkzeugkasten-Symbol anzeigen (oben rechts)",
-  "Settings_Scores_Show_Tools_Button_Desc": "Zeigt die 🛠️ Schaltfläche oben rechts an. Die Touch-Zone bleibt auch im ausgeblendeten Zustand aktiv"
+  "Settings_Scores_Show_Tools_Button_Desc": "Zeigt die 🛠️ Schaltfläche oben rechts an. Die Touch-Zone bleibt auch im ausgeblendeten Zustand aktiv",
+  "Viewer_Tools_Tuner": "Stimmgerät"
 }

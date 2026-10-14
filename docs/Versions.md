@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.6.2 — 14/10/2026](#v262--14102026)
 - [v2.6.1 — 14/10/2026](#v261--14102026)
 - [v2.6.0 — 14/10/2026](#v260--14102026)
 - [v2.5.8 — 13/10/2026](#v258--13102026)
@@ -17,6 +18,23 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.6.2 — 14/10/2026
+
+### 1. Barre d'Annotations : Ergonomie Épurée & Suppression du Cadenas
+- **1.1. Suppression du cadenas de verrouillage/déverrouillage :** La distinction manuelle verrouillé/déverrouillé est désormais inutile : l'ouverture de la barre d'annotations active directement le mode édition, et sa fermeture par la croix `✕` reverrouille et protège automatiquement les annotations contre les touches involontaires.
+- **1.2. Gain d'espace et lisibilité :** La suppression du bouton cadenas aère la barre d'outils d'annotation au bas de l'écran, évitant toute confusion chez le musicien.
+
+### 2. Accordeur Multi-Instruments Intégré (« Tuner »)
+- **2.1. Nouvel outil accessible depuis le tiroir d'outils :** 5e tuile interactive avec icône `🎛️` et badge d'état (`ON` / `OFF`) dans la boîte à outils.
+- **2.2. Prise en charge de 9 accordages d'instruments :** Accordeur Chromatique Universel, Guitare (E A D G B E), Basse 4 cordes (E A D G), Basse 5 cordes (B E A D G), Violon (G D A E), Alto (C G D A), Violoncelle (C G D A), Contrebasse (E A D G) et Ukulélé (G C E A).
+- **2.3. Sélection ergonomique de la note ou détection automatique :** Boutons-pilules tactiles pour sélectionner la corde cible souhaitée ou laisser l'algorithme détecter automatiquement la note jouée.
+- **2.4. Détection de hauteur en temps réel de haute précision :** Algorithme par autocorrélation calculant la fréquence fondamentale $F_0$, l'écart en cents ($-50$ à $+50$), la note et solfège (Do à Si), l'octave et le conseil d'accordage (Tendre / Desserrer / Parfait).
+- **2.5. Contrôle du microphone explicite & sécurisé :** Bouton d'activation/désactivation du micro bien visible pour garantir l'intimité et n'écouter que lorsque nécessaire.
+- **2.6. Diapason sonore de référence :** Bouton pour écouter une onde sinusoïdale de référence synthétisée à la fréquence exacte de la note sélectionnée.
+- **2.7. Fermeture instantanée :** Bouton `✕` en haut à droite permettant de fermer immédiatement l'accordeur et de revenir instantanément à la partition sans interrompre le jeu.
 
 ---
 

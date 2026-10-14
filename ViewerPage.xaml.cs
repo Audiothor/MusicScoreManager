@@ -159,11 +159,6 @@ public partial class ViewerPage : ContentPage
     private void UnlockAnnotations()
     {
         _isAnnotationsLocked = false;
-        if (LockUnlockBtn != null)
-        {
-            LockUnlockBtn.Text = "🔓";
-            LockUnlockBtn.BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#2E7D32");
-        }
         if (ActiveAnnotationsContainer != null)
         {
             ActiveAnnotationsContainer.InputTransparent = false;
@@ -177,11 +172,6 @@ public partial class ViewerPage : ContentPage
     private void LockAnnotations()
     {
         _isAnnotationsLocked = true;
-        if (LockUnlockBtn != null)
-        {
-            LockUnlockBtn.Text = "🔒";
-            LockUnlockBtn.BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#D32F2F");
-        }
         if (ActiveAnnotationsContainer != null)
         {
             ActiveAnnotationsContainer.InputTransparent = true;
@@ -1990,8 +1980,31 @@ public partial class ViewerPage : ContentPage
         {
             DrawerPageNumberStatusLabel.Text = isPageNumberOn ? "ON" : "OFF";
             DrawerPageNumberBadge.BackgroundColor = isPageNumberOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444444");
-            DrawerPageNumberTile.Stroke = isPageNumberOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444455");
         }
+
+        bool isTunerOn = TunerOverlay != null && TunerOverlay.IsVisible;
+        if (DrawerTunerStatusLabel != null && DrawerTunerBadge != null && DrawerTunerTile != null)
+        {
+            DrawerTunerStatusLabel.Text = isTunerOn ? "ON" : "OFF";
+            DrawerTunerBadge.BackgroundColor = isTunerOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444444");
+            DrawerTunerTile.Stroke = isTunerOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444455");
+        }
+    }
+
+    private void OnDrawerTunerTapped(object sender, EventArgs e)
+    {
+        if (TunerOverlay == null) return;
+        bool newState = !TunerOverlay.IsVisible;
+        TunerOverlay.IsVisible = newState;
+        if (newState)
+        {
+            InitTunerUIIfNeeded();
+        }
+        else
+        {
+            StopTunerListening();
+        }
+        UpdateToolsDrawerUI();
     }
 
     private async void OnDrawerMetronomeTapped(object sender, EventArgs e)
@@ -2793,6 +2806,12 @@ public partial class ViewerPage : ContentPage
         PdfService.ClearMemoryCache();
         CancelPreCount();
 
+        try
+        {
+            StopTunerListening();
+        }
+        catch { }
+
         // Nettoyage asynchrone non-bloquant pour une fermeture de page instantanée (< 50ms)
         _ = Task.Run(() =>
         {
@@ -3392,6 +3411,7 @@ public partial class ViewerPage : ContentPage
         }
         else
         {
+            UnlockAnnotations();
             AnnotationsContainer.InputTransparent = false;
             AnnotationsContainer.Opacity = 1;
             AnnotationsContainer.IsVisible = true;
@@ -5231,28 +5251,6 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private void OnLockUnlockClicked(object? sender, EventArgs e)
-    {
-        if (_isAnnotationsLocked)
-        {
-            UnlockAnnotations();
-        }
-        else
-        {
-            LockAnnotations();
-            _selectedAnnotation = null;
-            _isHighlightMode = false;
-            _isDrawMode = false;
-            _isTextMode = false;
-            HighlightOptionsOverlay.IsVisible = false;
-            DrawOptionsOverlay.IsVisible = false;
-            TextOptionsOverlay.IsVisible = false;
-            HighlightBtn.BackgroundColor = Colors.Transparent;
-            DrawBtn.BackgroundColor = Colors.Transparent;
-            TextAnnotationBtn.BackgroundColor = Colors.Transparent;
-        }
-        RenderAnnotations();
-    }
 
     private Annotation? FindAnnotationAtPoint(double x, double y, double containerW, double containerH)
     {
@@ -6307,6 +6305,299 @@ public partial class ViewerPage : ContentPage
     {
         await GoToNextBookmarkAsync();
         OpenBookmarkModal();
+    }
+
+    #endregion
+
+    #region Tuner (Accordeur)
+
+    private bool _isTunerInitialized = false;
+    private TunerInstrument? _currentTunerInstrument;
+    private TuningNote? _selectedTunerNote;
+    private readonly List<Button> _tunerNoteButtons = new();
+
+    private void OnCloseTunerClicked(object sender, EventArgs e)
+    {
+        if (TunerOverlay != null)
+        {
+            TunerOverlay.IsVisible = false;
+        }
+        StopTunerListening();
+        UpdateToolsDrawerUI();
+    }
+
+    private void InitTunerUIIfNeeded()
+    {
+        if (_isTunerInitialized) return;
+        _isTunerInitialized = true;
+
+        TunerService.Instance.PitchDetected += OnTunerPitchDetected;
+
+        if (TunerInstrumentPicker != null)
+        {
+            TunerInstrumentPicker.ItemsSource = TunerService.Instance.Instruments.Select(i => i.Name).ToList();
+            TunerInstrumentPicker.SelectedIndex = 0;
+            _currentTunerInstrument = TunerService.Instance.Instruments[0];
+            PopulateTunerNotesUI(_currentTunerInstrument);
+        }
+    }
+
+    private void OnTunerInstrumentChanged(object? sender, EventArgs e)
+    {
+        if (TunerInstrumentPicker == null || TunerInstrumentPicker.SelectedIndex < 0) return;
+        int idx = TunerInstrumentPicker.SelectedIndex;
+        if (idx >= 0 && idx < TunerService.Instance.Instruments.Count)
+        {
+            _currentTunerInstrument = TunerService.Instance.Instruments[idx];
+            _selectedTunerNote = null;
+            PopulateTunerNotesUI(_currentTunerInstrument);
+        }
+    }
+
+    private void PopulateTunerNotesUI(TunerInstrument instrument)
+    {
+        if (TunerNotesLayout == null) return;
+        TunerNotesLayout.Children.Clear();
+        _tunerNoteButtons.Clear();
+
+        // Bouton "Auto"
+        var autoBtn = new Button
+        {
+            Text = "Auto",
+            FontSize = 11,
+            FontAttributes = FontAttributes.Bold,
+            TextColor = Colors.White,
+            BackgroundColor = _selectedTunerNote == null ? Color.FromArgb("#007ACC") : Color.FromArgb("#252535"),
+            BorderColor = _selectedTunerNote == null ? Color.FromArgb("#3399FF") : Color.FromArgb("#444455"),
+            BorderWidth = 1,
+            CornerRadius = 14,
+            HeightRequest = 32,
+            Padding = new Thickness(12, 0),
+            Margin = new Thickness(2, 0)
+        };
+        autoBtn.Clicked += (s, e) =>
+        {
+            _selectedTunerNote = null;
+            UpdateTunerNoteSelectionButtons();
+        };
+        TunerNotesLayout.Children.Add(autoBtn);
+        _tunerNoteButtons.Add(autoBtn);
+
+        // Boutons pour chaque corde / note de l'instrument
+        foreach (var note in instrument.Notes)
+        {
+            var noteBtn = new Button
+            {
+                Text = $"{note.NoteName} ({note.Solfege})",
+                FontSize = 11,
+                FontAttributes = FontAttributes.Bold,
+                TextColor = Colors.White,
+                BackgroundColor = Color.FromArgb("#252535"),
+                BorderColor = Color.FromArgb("#444455"),
+                BorderWidth = 1,
+                CornerRadius = 14,
+                HeightRequest = 32,
+                Padding = new Thickness(10, 0),
+                Margin = new Thickness(2, 0)
+            };
+            noteBtn.Clicked += (s, e) =>
+            {
+                _selectedTunerNote = note;
+                UpdateTunerNoteSelectionButtons();
+            };
+            TunerNotesLayout.Children.Add(noteBtn);
+            _tunerNoteButtons.Add(noteBtn);
+        }
+        UpdateTunerNoteSelectionButtons();
+    }
+
+    private void UpdateTunerNoteSelectionButtons()
+    {
+        if (_currentTunerInstrument == null || _tunerNoteButtons.Count == 0) return;
+
+        bool isAuto = (_selectedTunerNote == null);
+        _tunerNoteButtons[0].BackgroundColor = isAuto ? Color.FromArgb("#007ACC") : Color.FromArgb("#252535");
+        _tunerNoteButtons[0].BorderColor = isAuto ? Color.FromArgb("#3399FF") : Color.FromArgb("#444455");
+
+        for (int i = 0; i < _currentTunerInstrument.Notes.Count; i++)
+        {
+            int btnIdx = i + 1;
+            if (btnIdx >= _tunerNoteButtons.Count) break;
+            var note = _currentTunerInstrument.Notes[i];
+            bool isSelected = (_selectedTunerNote == note);
+            _tunerNoteButtons[btnIdx].BackgroundColor = isSelected ? Color.FromArgb("#007ACC") : Color.FromArgb("#252535");
+            _tunerNoteButtons[btnIdx].BorderColor = isSelected ? Color.FromArgb("#3399FF") : Color.FromArgb("#444455");
+        }
+    }
+
+    private async void OnTunerMicClicked(object sender, EventArgs e)
+    {
+        if (TunerService.Instance.IsListening)
+        {
+            StopTunerListening();
+        }
+        else
+        {
+            await StartTunerListeningAsync();
+        }
+    }
+
+    private async Task StartTunerListeningAsync()
+    {
+        try
+        {
+            var status = await Permissions.CheckStatusAsync<Permissions.Microphone>();
+            if (status != PermissionStatus.Granted)
+            {
+                status = await Permissions.RequestAsync<Permissions.Microphone>();
+            }
+
+            if (status != PermissionStatus.Granted)
+            {
+                await DisplayAlert("Microphone", "La permission microphone est nécessaire pour utiliser l'accordeur.", "OK");
+                return;
+            }
+
+            await TunerService.Instance.StartListeningAsync();
+            UpdateTunerMicButtonUI(true);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[Tuner] StartListeningAsync error: {ex.Message}");
+        }
+    }
+
+    private void StopTunerListening()
+    {
+        TunerService.Instance.StopListening();
+        UpdateTunerMicButtonUI(false);
+        ResetTunerDisplay();
+    }
+
+    private void UpdateTunerMicButtonUI(bool isListening)
+    {
+        if (TunerMicButton != null)
+        {
+            TunerMicButton.Text = isListening ? "🔴 Arrêter l'écoute" : "🎙️ Activer le micro";
+            TunerMicButton.BackgroundColor = isListening ? Color.FromArgb("#A32828") : Color.FromArgb("#252535");
+        }
+    }
+
+    private void ResetTunerDisplay()
+    {
+        if (TunerNoteLabel != null) TunerNoteLabel.Text = "--";
+        if (TunerSolfegeLabel != null) TunerSolfegeLabel.Text = "Jouez une note ou activez le micro";
+        if (TunerFreqLabel != null) TunerFreqLabel.Text = "-- Hz";
+        if (TunerNeedle != null)
+        {
+            TunerNeedle.TranslationX = 0;
+            TunerNeedle.Color = Colors.White;
+        }
+        if (TunerStatusLabel != null)
+        {
+            TunerStatusLabel.Text = "En attente du signal sonore...";
+            TunerStatusLabel.TextColor = Color.FromArgb("#888899");
+        }
+    }
+
+    private void OnTunerPitchDetected(object? sender, PitchDetectedEventArgs result)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            if (TunerOverlay == null || !TunerOverlay.IsVisible) return;
+
+            if (!result.HasSignal)
+            {
+                if (TunerStatusLabel != null)
+                {
+                    TunerStatusLabel.Text = "En attente du signal sonore...";
+                    TunerStatusLabel.TextColor = Color.FromArgb("#888899");
+                }
+                return;
+            }
+
+            double cents = result.Cents;
+            string noteName = result.NoteName;
+            string solfege = result.SolfegeName;
+            int octave = result.Octave;
+            double targetFreq = result.TargetFrequency;
+
+            if (_selectedTunerNote != null)
+            {
+                noteName = _selectedTunerNote.NoteName;
+                solfege = _selectedTunerNote.Solfege;
+                octave = (_selectedTunerNote.MidiNote / 12) - 1;
+                targetFreq = _selectedTunerNote.Frequency;
+                if (result.Frequency > 10.0 && targetFreq > 10.0)
+                {
+                    cents = 1200.0 * Math.Log2(result.Frequency / targetFreq);
+                    cents = Math.Clamp(cents, -50.0, 50.0);
+                }
+            }
+
+            if (TunerNoteLabel != null)
+            {
+                TunerNoteLabel.Text = $"{noteName}{octave}";
+            }
+            if (TunerSolfegeLabel != null)
+            {
+                TunerSolfegeLabel.Text = solfege;
+            }
+            if (TunerFreqLabel != null)
+            {
+                TunerFreqLabel.Text = $"{result.Frequency:F1} Hz";
+            }
+
+            // Aiguille : max translation +/- 120 px
+            double needleOffset = (cents / 50.0) * 120.0;
+            needleOffset = Math.Clamp(needleOffset, -120.0, 120.0);
+            if (TunerNeedle != null)
+            {
+                TunerNeedle.TranslationX = needleOffset;
+            }
+
+            bool inTune = Math.Abs(cents) <= 4.0;
+            if (TunerStatusLabel != null)
+            {
+                if (inTune)
+                {
+                    TunerStatusLabel.Text = "PARFAIT ! Accordé";
+                    TunerStatusLabel.TextColor = Color.FromArgb("#00E676");
+                    if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#00E676");
+                }
+                else if (cents < -4.0)
+                {
+                    TunerStatusLabel.Text = $"Trop bas ({cents:F0} cents) - Tendre";
+                    TunerStatusLabel.TextColor = Color.FromArgb("#FF8800");
+                    if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#FF8800");
+                }
+                else
+                {
+                    TunerStatusLabel.Text = $"Trop haut (+{cents:F0} cents) - Desserrer";
+                    TunerStatusLabel.TextColor = Color.FromArgb("#FF5252");
+                    if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#FF5252");
+                }
+            }
+        });
+    }
+
+    private void OnTunerPlayRefClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            double freq = _selectedTunerNote?.Frequency ?? 440.0;
+            string wavPath = TunerService.Instance.GenerateReferenceToneWav(freq);
+            if (TunerTonePlayer != null)
+            {
+                TunerTonePlayer.Stop();
+                TunerTonePlayer.Source = MediaSource.FromFile(wavPath);
+                TunerTonePlayer.Play();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[Tuner] OnTunerPlayRefClicked error: {ex.Message}");
+        }
     }
 
     #endregion

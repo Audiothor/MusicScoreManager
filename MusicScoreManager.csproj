@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>2.6.1</ApplicationDisplayVersion>
-		<ApplicationVersion>20601</ApplicationVersion>
-		<!-- Version actuelle : v2.6.1 "Boîte à outils enrichie (Annotations, Numéros de page), métronome déplaçable, paramètre global d'affichage boîte à outils" -->
+		<ApplicationDisplayVersion>2.6.2</ApplicationDisplayVersion>
+		<ApplicationVersion>20602</ApplicationVersion>
+		<!-- Version actuelle : v2.6.2 "Accordeur multi-instruments intégré, ergonomie de la barre d'annotations épurée (suppression du cadenas)" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

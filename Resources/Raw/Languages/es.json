@@ -633,5 +633,6 @@
   "Viewer_Tools_Annotations": "Anotaciones",
   "Viewer_Tools_Page_Number": "Números de página",
   "Settings_Scores_Show_Tools_Button": "Mostrar icono de caja de herramientas (arriba a la derecha)",
-  "Settings_Scores_Show_Tools_Button_Desc": "Muestra el botón 🛠️ en la esquina superior derecha. La zona táctil permanece activa incluso oculta"
+  "Settings_Scores_Show_Tools_Button_Desc": "Muestra el botón 🛠️ en la esquina superior derecha. La zona táctil permanece activa incluso oculta",
+  "Viewer_Tools_Tuner": "Afinador"
 }
