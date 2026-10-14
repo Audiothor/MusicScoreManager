@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.6.3 — 15/10/2026](#v263--15102026)
 - [v2.6.2 — 14/10/2026](#v262--14102026)
 - [v2.6.1 — 14/10/2026](#v261--14102026)
 - [v2.6.0 — 14/10/2026](#v260--14102026)
@@ -18,6 +19,30 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.6.3 — 15/10/2026
+
+### 1. Advanced Tuner: A4 Pitch Calibration
+- **1.1. Quick Reference Frequency Selector:** Added 4 A4 reference pitch options above the gauge:
+  - `440 Hz`: International standard concert pitch (default).
+  - `442 Hz`: Symphony orchestra & modern ensemble frequency.
+  - `415 Hz`: Baroque temperament & historical performance (half-step lower).
+  - `432 Hz`: Alternative acoustic & Verdi tuning.
+- **1.2. Dynamic Equal Temperament Recalculation:** Changing the reference frequency instantly updates target frequencies across all notes and strings, as well as the audio reference tone generator.
+
+### 2. Universal Chromatic Mode: Manual Note & Octave Selection
+- **2.1. Note Selection or Auto-Detection:** In Chromatic mode, users can leave `[Auto]` active or pick any of the 12 chromatic semitones (C, C♯, D, D♯, E, F, F♯, G, G♯, A, A♯, B).
+- **2.2. Octave Selector (1 to 7):** When a specific chromatic note is picked, an octave bar (1 to 7) appears to lock in the exact target register (e.g. C5 at 523.25 Hz to verify instrument accuracy).
+- **2.3. Synchronized Reference Tone:** The audio playback button synthesizes a pure sine wave at the exact frequency of the selected note and octave.
+
+### 3. Visual 3-Color Gauge & Direction Advice
+- **3.1. Precision Visual Feedback across 3 Distinct Zones:**
+  - 🟢 **Green (≤ 4 cents):** "PERFECT! In Tune" with illuminated center mark.
+  - 🟠 **Orange (5 to 15 cents):** Close pitch requiring fine adjustment ("▲ Slightly Flat - Tune Up" / "▼ Slightly Sharp - Tune Down").
+  - 🔴 **Red (> 15 cents):** Noticeable deviation ("▲ Flat - Tighten / Tune Up" / "▼ Sharp - Loosen / Tune Down").
+- **3.2. Stage Clarity & Immediate Reading:** The dynamic 5-zone track and moving needle provide instant, glanceable tuning advice under stage conditions.
 
 ---
 

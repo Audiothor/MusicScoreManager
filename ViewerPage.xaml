@@ -1429,6 +1429,17 @@
 
                 <BoxView HeightRequest="1" Color="#333344" />
 
+                <!-- Sélection Fréquence de référence (Diapason A4) -->
+                <Grid ColumnDefinitions="Auto, *" ColumnSpacing="6" VerticalOptions="Center">
+                    <Label Text="Diapason:" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
+                    <Grid ColumnDefinitions="*, *, *, *" ColumnSpacing="4">
+                        <Button x:Name="TunerA440Btn" Text="440" ToolTipProperties.Text="440 Hz (Standard international)" FontSize="11" FontAttributes="Bold" HeightRequest="28" Padding="0" CornerRadius="6" BackgroundColor="#007ACC" TextColor="White" Clicked="OnTunerA4RefClicked" CommandParameter="440" />
+                        <Button x:Name="TunerA442Btn" Text="442" ToolTipProperties.Text="442 Hz (Orchestre symphonique)" FontSize="11" FontAttributes="Bold" HeightRequest="28" Padding="0" CornerRadius="6" BackgroundColor="#252535" TextColor="#CCCCCC" Clicked="OnTunerA4RefClicked" CommandParameter="442" />
+                        <Button x:Name="TunerA415Btn" Text="415" ToolTipProperties.Text="415 Hz (Musique baroque)" FontSize="11" FontAttributes="Bold" HeightRequest="28" Padding="0" CornerRadius="6" BackgroundColor="#252535" TextColor="#CCCCCC" Clicked="OnTunerA4RefClicked" CommandParameter="415" />
+                        <Button x:Name="TunerA432Btn" Text="432" ToolTipProperties.Text="432 Hz (Alternative / Verdi)" FontSize="11" FontAttributes="Bold" HeightRequest="28" Padding="0" CornerRadius="6" BackgroundColor="#252535" TextColor="#CCCCCC" Clicked="OnTunerA4RefClicked" CommandParameter="432" />
+                    </Grid>
+                </Grid>
+
                 <!-- Bouton activation/désactivation microphone -->
                 <Button x:Name="TunerMicButton"
                         Text="🎙️ Activer le micro"
@@ -1456,6 +1467,9 @@
                     <HorizontalStackLayout x:Name="TunerNotesLayout" Spacing="6" HorizontalOptions="Center" />
                 </ScrollView>
 
+                <!-- Rangée des octaves (pour le mode chromatique quand une note est choisie) -->
+                <HorizontalStackLayout x:Name="TunerOctavesLayout" Spacing="5" HorizontalOptions="Center" IsVisible="False" />
+
                 <!-- Affichage central de la note et fréquence -->
                 <Border BackgroundColor="#12131C" Stroke="#2D2F3F" StrokeThickness="1" Padding="14,10">
                     <Border.StrokeShape>
@@ -1467,29 +1481,34 @@
                         <Label x:Name="TunerSolfegeLabel" Text="Jouez une note ou activez le micro" TextColor="#00B4D8" FontSize="13" HorizontalTextAlignment="Center" />
                         <Label x:Name="TunerFreqLabel" Text="-- Hz" TextColor="#888899" FontSize="12" HorizontalTextAlignment="Center" Margin="0,2,0,0" />
 
-                        <!-- Jauge visuelle d'accordage (-50 à +50 cents) -->
-                        <VerticalStackLayout Spacing="3" Margin="0,8,0,0">
-                            <!-- Barre de graduation -->
+                        <!-- Jauge visuelle d'accordage (-50 à +50 cents) avec paliers de couleurs -->
+                        <VerticalStackLayout Spacing="3" Margin="0,6,0,0">
+                            <!-- Barre de graduation avec guidance claire -->
                             <Grid ColumnDefinitions="*, *, *" HeightRequest="16" Margin="4,0">
-                                <Label Grid.Column="0" Text="♭ Trop bas" FontSize="9" TextColor="#FF8800" HorizontalTextAlignment="Start" />
-                                <Label Grid.Column="1" Text="●" FontSize="10" TextColor="#00E676" HorizontalTextAlignment="Center" />
-                                <Label Grid.Column="2" Text="Trop haut ♯" FontSize="9" TextColor="#FF5252" HorizontalTextAlignment="End" />
+                                <Label Grid.Column="0" Text="◀ TROP BAS" FontSize="9" TextColor="#FF3D00" HorizontalTextAlignment="Start" FontAttributes="Bold" />
+                                <Label Grid.Column="1" Text="● ACCORDÉ" FontSize="9" TextColor="#00E676" HorizontalTextAlignment="Center" FontAttributes="Bold" />
+                                <Label Grid.Column="2" Text="TROP HAUT ▶" FontSize="9" TextColor="#FF3D00" HorizontalTextAlignment="End" FontAttributes="Bold" />
                             </Grid>
 
-                            <!-- Piste et Aiguille -->
+                            <!-- Piste et Aiguille avec fond à 3 couleurs : rouge - orange - vert - orange - rouge -->
                             <Grid HeightRequest="14" VerticalOptions="Center">
-                                <!-- Fond de jauge avec zone verte au centre -->
                                 <Border BackgroundColor="#222432" StrokeThickness="0" HeightRequest="6" VerticalOptions="Center">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="3" />
                                     </Border.StrokeShape>
+                                    <Grid ColumnDefinitions="*, *, *, *, *">
+                                        <BoxView Grid.Column="0" Color="#44FF3D00" />
+                                        <BoxView Grid.Column="1" Color="#44FF9800" />
+                                        <BoxView Grid.Column="2" Color="#00E676" />
+                                        <BoxView Grid.Column="3" Color="#44FF9800" />
+                                        <BoxView Grid.Column="4" Color="#44FF3D00" />
+                                    </Grid>
                                 </Border>
-                                <BoxView HorizontalOptions="Center" WidthRequest="24" HeightRequest="6" Color="#00E676" CornerRadius="3" VerticalOptions="Center" />
                                 <!-- Curseur / Aiguille -->
                                 <BoxView x:Name="TunerNeedle" HorizontalOptions="Center" WidthRequest="10" HeightRequest="14" Color="White" CornerRadius="5" VerticalOptions="Center" TranslationX="0" />
                             </Grid>
 
-                            <!-- Statut textuel d'accordage -->
+                            <!-- Statut textuel d'accordage avec direction à suivre -->
                             <Label x:Name="TunerStatusLabel" Text="En attente du signal sonore..." TextColor="#888899" FontSize="11" HorizontalTextAlignment="Center" FontAttributes="Bold" Margin="0,2,0,0" />
                         </VerticalStackLayout>
                     </VerticalStackLayout>
