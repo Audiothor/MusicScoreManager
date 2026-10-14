@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.6.4 — 15/10/2026](#v264--15102026)
 - [v2.6.3 — 15/10/2026](#v263--15102026)
 - [v2.6.2 — 14/10/2026](#v262--14102026)
 - [v2.6.1 — 14/10/2026](#v261--14102026)
@@ -19,6 +20,25 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.6.4 — 15/10/2026
+
+### 1. Accordeur Amovible & Déplaçable
+- **1.1. Boîte flottante déplaçable :** Ajout d'une poignée de déplacement tactile (`⠿ Déplacer`) et du support panoramique complet (`PanGestureRecognizer`) permettant de repositionner librement l'accordeur n'importe où sur l'écran pour ne pas masquer la partition pendant l'accordage.
+- **1.2. Isolation tactile complète (Anti Pass-Through) :** Élimination définitive des interactions accidentelles avec la partition sous-jacente (les clics simples et doubles à l'intérieur de la boîte sont interceptés et n'ouvrent plus le menu central ni ne tournent les pages).
+
+### 2. Étalonnage du Diapason (Fréquences de Référence)
+- **2.1. Correction de sélection :** Résolution du bug de conversion de paramètre : l'ensemble des 4 fréquences de référence (`440 Hz`, `442 Hz`, `415 Hz`, `432 Hz`) sont désormais toutes sélectionnables instantanément avec retour visuel d'activation immédiat.
+- **2.2. Synchronisation en temps réel :** Le changement de fréquence de référence recalcule à la volée la hauteur de toutes les notes cibles et le son généré par le diapason audio.
+
+### 3. Hauteur de Note & Mode Chromatique Universel
+- **3.1. Affichage explicite de la hauteur d'octave :** En mode Chromatique, le sélecteur d'octaves (1 à 7) est toujours accessible et chaque note affiche sa hauteur réelle (par ex. `Do 5 (C5)` ou `Do 3 (C3)`).
+- **3.2. Feedback visuel et tonal instantané :** Dès la sélection d'une note ou d'une octave, l'écran affiche immédiatement la note cible (`C5`), son nom complet (`Do 5`) et sa fréquence précise (`523.3 Hz`), et le bouton audio synthétise la tonalité exacte correspondante.
+
+### 4. Mise en Conformité Politique de Confidentialité
+- **4.1. Déclaration du Microphone (`RECORD_AUDIO`) :** Formalisation claire dans la politique de confidentialité (versions française et anglaise) : le flux microphone est traité strictement en mémoire vive locale (RAM) pour le calcul de hauteur fondamentale ($F_0$), avec zéro enregistrement sur disque et zéro transmission réseau.
 
 ---
 

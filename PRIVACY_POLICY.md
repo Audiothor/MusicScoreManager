@@ -1,6 +1,6 @@
 # Politique de Confidentialité / Privacy Policy
 
-*Dernière mise à jour : 2 septembre 2026 / Last updated: September 2, 2026*
+*Dernière mise à jour : 15 octobre 2026 / Last updated: October 15, 2026*
 
 ---
 
@@ -18,8 +18,9 @@ L'application **Music Score Manager**, développée par **Audiothor**, est conç
 L'application peut demander les autorisations suivantes uniquement pour son fonctionnement technique :
 - **Stockage / Fichiers & Médias (`READ_EXTERNAL_STORAGE`, `MANAGE_EXTERNAL_STORAGE`)** : Utilisé exclusivement pour vous permettre d'importer, lire et afficher vos partitions (PDF, images) et associer vos fichiers audio locaux.
 - **Réseau Local P2P (`ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`, `ACCESS_NETWORK_STATE`, `INTERNET`)** : Utilisé exclusivement pour la fonctionnalité d'échange direct de partitions en réseau local / point d'accès et de diffusion par QR Code entre musiciens à proximité. Aucune donnée n'est transmise via Internet ou à des serveurs tiers distants.
+- **Microphone (`RECORD_AUDIO`)** : Utilisé exclusivement et ponctuellement pour l'outil d'accordeur intégré (« Tuner »). Le flux audio capté par le microphone est analysé en temps réel dans la mémoire vive volatile de l'appareil par un algorithme d'autocorrélation pour déterminer la hauteur des notes jouées ($F_0$). **Aucun enregistrement audio n'est conservé, écrit sur le stockage, téléversé ou transmis via le réseau.** L'accès au microphone n'est actif que lorsque vous cliquez explicitement sur le bouton « Activer le micro » et s'arrête instantanément dès la fermeture de l'accordeur ou la désactivation manuelle.
 - **Aucune géolocalisation ni accès caméra** : L'application n'utilise, ne demande et n'a accès à aucune autorisation de localisation (`LOCATION`) ni d'appareil photo (`CAMERA`).
-- **Audio / Service en avant-plan** : Utilisé exclusivement pour la restitution sonore du métronome et du lecteur audio intégré lors de vos répétitions et concerts.
+- **Audio / Service en avant-plan** : Utilisé exclusivement pour la restitution sonore du métronome, du générateur de tonalité de référence (diapason) et du lecteur audio intégré lors de vos répétitions et concerts.
 
 ### 4. Services Tiers et Publicités
 - **Aucun traceur publicitaire** : L'application ne contient aucune publicité.
@@ -51,8 +52,9 @@ Pour toute question concernant cette politique de confidentialité ou l'applicat
 The application may request the following permissions solely for its core features:
 - **Storage / Files & Media (`READ_EXTERNAL_STORAGE`, `MANAGE_EXTERNAL_STORAGE`)**: Used strictly to allow you to select, open, render, and manage your sheet music files (PDF/Images) and local audio tracks.
 - **Local P2P Network (`ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`, `ACCESS_NETWORK_STATE`, `INTERNET`)**: Used exclusively for the optional peer-to-peer and QR Code wireless sharing feature between nearby devices on local Wi-Fi or hotspot. No data is sent over the internet or to any remote servers.
+- **Microphone (`RECORD_AUDIO`)**: Used exclusively on-demand for the built-in Tuner tool. The incoming audio stream is processed in real time in volatile system memory (RAM) via an autocorrelation pitch-detection algorithm to determine the fundamental pitch ($F_0$) of your instrument. **No audio is ever recorded, written to disk, uploaded, or transmitted across any network.** Microphone access is engaged strictly when you tap "Turn on Microphone" and terminates immediately when closed or stopped.
 - **Zero Location Tracking & Zero Camera Access**: The application does not use, request, or require any location (`LOCATION`) or camera (`CAMERA`) permissions.
-- **Audio Playback**: Used exclusively to play local audio accompaniment and metronome click/pre-count audio during practice and live performances.
+- **Audio Playback**: Used exclusively to play local audio accompaniment, reference tones, and metronome click/pre-count audio during practice and live performances.
 
 ### 4. Third-Party Services & Advertising
 - **No Advertisements**: The application is 100% ad-free.

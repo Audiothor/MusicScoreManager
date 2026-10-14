@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.6.4 — 15/10/2026](#v264--15102026)
 - [v2.6.3 — 15/10/2026](#v263--15102026)
 - [v2.6.2 — 14/10/2026](#v262--14102026)
 - [v2.6.1 — 14/10/2026](#v261--14102026)
@@ -19,6 +20,25 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.6.4 — 15/10/2026
+
+### 1. Draggable Tuner Box & Touch Isolation
+- **1.1. Freehand Repositioning:** Added a drag handle grip (`⠿ Move`) and complete pan gesture support (`PanGestureRecognizer`) allowing musicians to effortlessly reposition the tuner anywhere across the score during rehearsals.
+- **1.2. Complete Touch Isolation (Anti Pass-Through):** Single and double taps within the tuner box are absorbed, preventing accidental sheet turns or central menu triggers while interacting with tuner controls.
+
+### 2. A4 Reference Frequency Calibration
+- **2.1. Seamless Pitch Switching:** Resolved command parameter parsing to ensure all 4 reference pitches (`440 Hz`, `442 Hz`, `415 Hz`, `432 Hz`) switch instantly with clear active visual styling.
+- **2.2. Real-Time Pitch Recalculation:** Changing the reference frequency immediately recalculates all target note frequencies, cent deviations, and synthesized audio reference tones.
+
+### 3. Note Register & Enhanced Chromatic Octave Control
+- **3.1. Explicit Octave Height Display:** In Chromatic mode, the full 1 to 7 octave register selector is readily available, and each semitone button displays its concrete register (e.g., `Do 5 (C5)` or `Do 3 (C3)`).
+- **3.2. Instant Visual & Audible Confirmation:** Selecting any note or octave immediately populates target labels (`C5`), solfège (`Do 5`), exact frequency (`523.3 Hz`), and synchronizes the sine wave tone generator.
+
+### 4. Privacy Policy Update for Microphone Usage
+- **4.1. Explicit `RECORD_AUDIO` Declaration:** Formally updated the privacy policy (English & French) detailing that microphone audio is processed strictly in volatile memory (RAM) for real-time fundamental pitch ($F_0$) calculation, with zero recording to storage and zero network transmission.
 
 ---
 
