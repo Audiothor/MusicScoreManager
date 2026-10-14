@@ -1398,16 +1398,16 @@
             </VerticalStackLayout>
         </Border>
 
-        <!-- Overlay ACCORDEUR Flottant (Centré) -->
+        <!-- Overlay ACCORDEUR Flottant (Centré & Déplaçable) -->
         <Border x:Name="TunerOverlay"
                 IsVisible="False"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
-                WidthRequest="350"
+                WidthRequest="360"
                 BackgroundColor="#F4181926"
                 Stroke="#007ACC"
                 StrokeThickness="1.5"
-                Padding="16,14"
+                Padding="16,12"
                 ZIndex="1200">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="14" />
@@ -1415,15 +1415,28 @@
             <Border.Shadow>
                 <Shadow Brush="#000000" Offset="0,6" Radius="18" Opacity="0.85" />
             </Border.Shadow>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnTunerBoxTapped" NumberOfTapsRequired="1" />
+                <TapGestureRecognizer Tapped="OnTunerBoxTapped" NumberOfTapsRequired="2" />
+                <PanGestureRecognizer PanUpdated="OnTunerPanUpdated" />
+            </Border.GestureRecognizers>
 
-            <VerticalStackLayout Spacing="10">
-                <!-- Header : Titre & Bouton Fermer (✕) -->
-                <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+            <VerticalStackLayout Spacing="8">
+                <!-- Header : Titre, Poignée de Déplacement & Bouton Fermer (✕) -->
+                <Grid ColumnDefinitions="Auto, Auto, *, Auto" VerticalOptions="Center" Padding="0,0,0,4">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTunerBoxTapped" />
+                        <PanGestureRecognizer PanUpdated="OnTunerPanUpdated" />
+                    </Grid.GestureRecognizers>
                     <Label Grid.Column="0" Text="🎛️" FontSize="18" VerticalOptions="Center" Margin="0,0,6,0" />
                     <Label Grid.Column="1" Text="{Binding [Viewer_Tools_Tuner], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="White" FontSize="15" FontAttributes="Bold" VerticalOptions="Center" />
-                    <Button Grid.Column="2" Text="✕" TextColor="#AAAAAA" BackgroundColor="Transparent" 
-                            FontSize="14" Padding="0" WidthRequest="28" HeightRequest="28" 
+                    <HorizontalStackLayout Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center" Spacing="4">
+                        <Label Text="⠿" TextColor="#007ACC" FontSize="13" VerticalOptions="Center" />
+                        <Label Text="Déplacer" TextColor="#8888AA" FontSize="10" FontAttributes="Italic" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <Button Grid.Column="3" Text="✕" TextColor="#AAAAAA" BackgroundColor="Transparent" 
+                            FontSize="15" FontAttributes="Bold" Padding="0" WidthRequest="32" HeightRequest="32" 
                             Clicked="OnCloseTunerClicked" />
                 </Grid>
 
@@ -1447,7 +1460,7 @@
                         TextColor="White"
                         FontAttributes="Bold"
                         FontSize="13"
-                        HeightRequest="38"
+                        HeightRequest="36"
                         CornerRadius="8"
                         Clicked="OnTunerMicClicked" />
 
@@ -1464,11 +1477,16 @@
 
                 <!-- Rangée des cordes / notes de l'instrument -->
                 <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-                    <HorizontalStackLayout x:Name="TunerNotesLayout" Spacing="6" HorizontalOptions="Center" />
+                    <HorizontalStackLayout x:Name="TunerNotesLayout" Spacing="5" HorizontalOptions="Center" />
                 </ScrollView>
 
-                <!-- Rangée des octaves (pour le mode chromatique quand une note est choisie) -->
-                <HorizontalStackLayout x:Name="TunerOctavesLayout" Spacing="5" HorizontalOptions="Center" IsVisible="False" />
+                <!-- Sélecteur d'octaves (Hauteur de note 1 à 7) pour le mode Chromatique -->
+                <Grid x:Name="TunerOctavesContainer" ColumnDefinitions="Auto, *" ColumnSpacing="6" VerticalOptions="Center" IsVisible="False">
+                    <Label Text="Hauteur :" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
+                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                        <HorizontalStackLayout x:Name="TunerOctavesLayout" Spacing="4" VerticalOptions="Center" />
+                    </ScrollView>
+                </Grid>
 
                 <!-- Affichage central de la note et fréquence -->
                 <Border BackgroundColor="#12131C" Stroke="#2D2F3F" StrokeThickness="1" Padding="14,10">
