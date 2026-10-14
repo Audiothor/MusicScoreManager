@@ -636,5 +636,6 @@
   "Viewer_Tools_Annotations": "Annotations",
   "Viewer_Tools_Page_Number": "Page numbers",
   "Settings_Scores_Show_Tools_Button": "Show toolbox icon (top-right)",
-  "Settings_Scores_Show_Tools_Button_Desc": "Displays the 🛠️ button in the top-right corner. The touch zone remains active even when hidden"
+  "Settings_Scores_Show_Tools_Button_Desc": "Displays the 🛠️ button in the top-right corner. The touch zone remains active even when hidden",
+  "Viewer_Tools_Tuner": "Tuner"
 }

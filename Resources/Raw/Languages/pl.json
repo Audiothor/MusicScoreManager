@@ -633,5 +633,6 @@
   "Viewer_Tools_Annotations": "Adnotacje",
   "Viewer_Tools_Page_Number": "Numery stron",
   "Settings_Scores_Show_Tools_Button": "Pokaż ikonę przybornika (w prawym górnym rogu)",
-  "Settings_Scores_Show_Tools_Button_Desc": "Wyświetla przycisk 🛠️ w prawym górnym rogu. Strefa dotykowa pozostaje aktywna nawet po ukryciu"
+  "Settings_Scores_Show_Tools_Button_Desc": "Wyświetla przycisk 🛠️ w prawym górnym rogu. Strefa dotykowa pozostaje aktywna nawet po ukryciu",
+  "Viewer_Tools_Tuner": "Tuner"
 }
