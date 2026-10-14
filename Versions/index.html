@@ -871,6 +871,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v261-14102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.6.1 — 14/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.6.1 — 14/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-boite-a-outils-clarte-numeros-de-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Boîte à Outils : Clarté &amp; Numéros de Page
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-metronome-flottant-deplacable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Métronome Flottant Déplaçable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-parametres-partitions-option-globale-daffichage-de-licone-outils" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Paramètres Partitions : Option Globale d'Affichage de l'Icône Outils
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v260-14102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2258,6 +2308,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v261-14102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.6.1 — 14/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.6.1 — 14/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-boite-a-outils-clarte-numeros-de-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Boîte à Outils : Clarté &amp; Numéros de Page
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-metronome-flottant-deplacable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Métronome Flottant Déplaçable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-parametres-partitions-option-globale-daffichage-de-licone-outils" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Paramètres Partitions : Option Globale d'Affichage de l'Icône Outils
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v260-14102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3624,6 +3724,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v261--14102026">v2.6.1 — 14/10/2026</a></li>
 <li><a href="#v260--14102026">v2.6.0 — 14/10/2026</a></li>
 <li><a href="#v258--13102026">v2.5.8 — 13/10/2026</a></li>
 <li><a href="#v257--13102026">v2.5.7 — 13/10/2026</a></li>
@@ -3634,6 +3735,24 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v261-14102026">v2.6.1 — 14/10/2026</h2>
+<h3 id="1-boite-a-outils-clarte-numeros-de-page">1. Boîte à Outils : Clarté &amp; Numéros de Page</h3>
+<ul>
+<li><strong>1.1. Renommage précis de la tuile Annotations :</strong> Remplacement de « Barre d'annotations » par « Annotations » dans les 8 langues prises en charge, clarifiant qu'il s'agit du contrôle d'affichage des annotations sur la partition.</li>
+<li><strong>1.2. Ajout de la tuile interactive « Numéros de page » :</strong> 4e tuile d'action dans le tiroir d'outils avec icône <code>📄</code> et badge synchronisé (<code>ON</code> / <code>OFF</code>) pour masquer ou afficher à la volée le compteur de page en bas à droite.</li>
+</ul>
+<h3 id="2-metronome-flottant-deplacable">2. Métronome Flottant Déplaçable</h3>
+<ul>
+<li><strong>2.1. Glisser-déposer libre du métronome :</strong> La vignette du métronome peut désormais être déplacée n'importe où sur l'écran pendant le jeu via glisser-déposer (<code>PanGestureRecognizer</code>).</li>
+<li><strong>2.2. Détection intelligente Tap vs Drag :</strong> Un tap court continue d'ouvrir immédiatement le panneau de réglage du tempo et volume, tandis qu'un glissement déplace l'encadré sans déclencher l'ouverture involontaire de la modale.</li>
+<li><strong>2.3. Poignée tactile et contraste renforcé :</strong> Intégration d'un témoin de déplacement <code>⠿</code>, d'une bordure fine et d'une ombre douce garantissant une parfaite visibilité sur partitions blanches ou sombres.</li>
+</ul>
+<h3 id="3-parametres-partitions-option-globale-daffichage-de-licone-outils">3. Paramètres Partitions : Option Globale d'Affichage de l'Icône Outils</h3>
+<ul>
+<li><strong>3.1. Nouveau réglage dans Affichage :</strong> Ajout de l'interrupteur « Afficher l'icône de boîte à outils (haut-droite) » dans <strong>Paramètres &gt; Paramètres partitions &gt; Affichage</strong> (désactivé par défaut).</li>
+<li><strong>3.2. Préservation permanente de l'accès tactile :</strong> Même lorsque l'icône visuelle est masquée pour épurer la partition, la zone tactile du coin supérieur droit reste 100% opérationnelle pour ouvrir le tiroir d'outils à tout moment.</li>
 </ul>
 <hr />
 <h2 id="v260-14102026">v2.6.0 — 14/10/2026</h2>
