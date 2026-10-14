@@ -256,7 +256,7 @@
   "Scores_Total": "Noten insgesamt",
   "Search_Placeholder": "Noten, Komponist, Tag suchen...",
   "Setlist_Add_Score": "Noten hinzufügen",
-  "Setlist_Concert_Date": "Konzertdatum",
+  "Setlist_Concert_Date": "Konzert: {0:dd/MM/yyyy}",
   "Setlist_Concert_Time": "Konzertuhrzeit",
   "Setlist_Continuous_Mode": "Fortlaufender Modus (automatisch weiter)",
   "Setlist_Edit_Add": "+ Hinzufügen",
@@ -601,7 +601,6 @@
   "Wifi_Listening_Visible": "🟢 Lauschen (Sichtbar)",
   "Wifi_Idle_Status": "⚫ Ruhezustand",
   "Common_All": "Alle",
-  "Setlist_Concert_Date": "Konzert: {0:dd/MM/yyyy}",
   "Setlist_Concert_Date_Time": "Konzert: {0:dd/MM/yyyy} um {1:hh\\:mm}",
   "Setlist_Created_On": "Erstellt am {0:dd/MM/yyyy}",
   "Setlist_Sort_ConcertDateAsc": "Konzertdatum (Nächste zuerst)",
@@ -626,5 +625,10 @@
   "Settings_Confirm_Quit_Prompt": "Möchten Sie die Anwendung wirklich beenden?",
   "Help_Online_Doc_Title": "Offizielle vollständige Dokumentation",
   "Help_Online_Doc_Desc": "Das vollständige Handbuch, Tutorials und Neuheiten online ansehen",
-  "Help_Online_Doc_Btn": "Öffnen"
+  "Help_Online_Doc_Btn": "Öffnen",
+  "Score_Edit_Tools_Button_Show": "Werkzeugkasten-Schaltfläche anzeigen (oben rechts)",
+  "Viewer_Tools_Drawer_Title": "Werkzeugkasten",
+  "Viewer_Tools_Metronome": "Metronom",
+  "Viewer_Tools_Audio": "Audioplayer",
+  "Viewer_Tools_Annotations": "Anmerkungsleiste"
 }

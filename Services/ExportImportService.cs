@@ -85,6 +85,7 @@ namespace MusicScoreManager.Services
                 ShowAudioPlayer = score.ShowAudioPlayer,
                 PreCountMeasures = score.PreCountMeasures,
                 ShowAnnotations = score.ShowAnnotations,
+                ShowToolsButton = score.ShowToolsButton,
                 Tags = tags.Select(t => t.Name).ToList(),
                 TagColors = tags.Select(t => t.ColorHex).ToList(),
                 Annotations = annotations.Select(a => new AnnotationMetadata
@@ -415,6 +416,7 @@ namespace MusicScoreManager.Services
                             ShowAudioPlayer = scoreMeta.ShowAudioPlayer,
                             PreCountMeasures = scoreMeta.PreCountMeasures,
                             ShowAnnotations = scoreMeta.ShowAnnotations,
+                            ShowToolsButton = scoreMeta.ShowToolsButton,
                             DateAdded = DateTime.Now
                         };
 
@@ -542,6 +544,7 @@ namespace MusicScoreManager.Services
                         ShowAudioPlayer = scoreMeta.ShowAudioPlayer,
                         PreCountMeasures = scoreMeta.PreCountMeasures,
                         ShowAnnotations = scoreMeta.ShowAnnotations,
+                        ShowToolsButton = scoreMeta.ShowToolsButton,
                         DateAdded = DateTime.Now
                     };
 

@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.6.0 — 14/10/2026](#v260--14102026)
 - [v2.5.8 — 13/10/2026](#v258--13102026)
 - [v2.5.7 — 13/10/2026](#v257--13102026)
 - [v2.5.6 — 12/10/2026](#v256--12102026)
@@ -15,6 +16,18 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.6.0 — 14/10/2026
+
+### 1. Boîte à Outils (« Tools Hub ») & Tiroir d'Actions Flottant
+- **1.1. Nouveau tiroir flottant ergonomique :** Regroupement des 3 outils principaux (Métronome, Lecteur audio, Annotations) dans un popover moderne avec fond flouté, ombre douce et fermeture instantanée au clic extérieur.
+- **1.2. Tuiles d'activation interactive avec état en temps réel :** Chaque outil dispose d'une tuile cliquable avec indicateur coloré et badge d'état (`ON` / `OFF`) synchronisé instantanément avec la partition.
+- **1.3. Zone tactile dédiée coin haut-droit :** Réservation d'une zone tactile permanente (70×55 px) dans l'angle supérieur droit ouvrant immédiatement la boîte à outils sur tout type de document (PDF natif ou Image, zoomé ou non).
+- **1.4. Option d'affichage du bouton `[ 🛠️ ]` :** Nouveau paramètre par partition (`ShowToolsButton`) permettant d'afficher ou masquer l'icône visuelle sans jamais désactiver la zone tactile secrète.
+- **1.5. Réorganisation spatiale de la partition :** Déplacement du métronome en haut à gauche et du lecteur audio en haut à droite pour une lisibilité optimale et un équilibre visuel parfait.
+- **1.6. Épuration du menu central :** Retrait de la section 3 (interrupteurs d'outils) et compactage de la hauteur du menu central pour une navigation plus légère et directe.
 
 ---
 

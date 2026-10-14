@@ -54,6 +54,9 @@ namespace MusicScoreManager.Models
         // Page Number
         public bool ShowPageNumber { get; set; } = true;
 
+        // Tools Hub Button
+        public bool ShowToolsButton { get; set; } = false;
+
         [Ignore]
         public bool IsFileMissing { get; set; }
 

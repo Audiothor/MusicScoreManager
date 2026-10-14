@@ -256,7 +256,7 @@
   "Scores_Total": "Total scores",
   "Search_Placeholder": "Search score, composer, tag...",
   "Setlist_Add_Score": "Add scores",
-  "Setlist_Concert_Date": "Concert Date",
+  "Setlist_Concert_Date": "Concert: {0:dd/MM/yyyy}",
   "Setlist_Concert_Time": "Concert Time",
   "Setlist_Continuous_Mode": "Continuous mode (auto-next)",
   "Setlist_Edit_Add": "+ Add",
@@ -604,7 +604,6 @@
   "Wifi_Listening_Visible": "🟢 Listening (Visible)",
   "Wifi_Idle_Status": "⚫ Idle",
   "Common_All": "All",
-  "Setlist_Concert_Date": "Concert: {0:dd/MM/yyyy}",
   "Setlist_Concert_Date_Time": "Concert: {0:dd/MM/yyyy} at {1:hh\\:mm}",
   "Setlist_Created_On": "Created on {0:dd/MM/yyyy}",
   "Setlist_Sort_ConcertDateAsc": "Concert date (Upcoming first)",
@@ -629,5 +628,10 @@
   "Settings_Confirm_Quit_Prompt": "Are you sure you want to quit the application?",
   "Help_Online_Doc_Title": "Official Full Documentation",
   "Help_Online_Doc_Desc": "Read the complete online manual, tutorials, and latest features",
-  "Help_Online_Doc_Btn": "View Online"
+  "Help_Online_Doc_Btn": "View Online",
+  "Score_Edit_Tools_Button_Show": "Show Tools Hub button (top right corner)",
+  "Viewer_Tools_Drawer_Title": "Tools Hub",
+  "Viewer_Tools_Metronome": "Metronome",
+  "Viewer_Tools_Audio": "Audio Player",
+  "Viewer_Tools_Annotations": "Annotations Bar"
 }
