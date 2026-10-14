@@ -630,5 +630,8 @@
   "Viewer_Tools_Drawer_Title": "Werkzeugkasten",
   "Viewer_Tools_Metronome": "Metronom",
   "Viewer_Tools_Audio": "Audioplayer",
-  "Viewer_Tools_Annotations": "Anmerkungsleiste"
+  "Viewer_Tools_Annotations": "Anmerkungen",
+  "Viewer_Tools_Page_Number": "Seitennummern",
+  "Settings_Scores_Show_Tools_Button": "Werkzeugkasten-Symbol anzeigen (oben rechts)",
+  "Settings_Scores_Show_Tools_Button_Desc": "Zeigt die 🛠️ Schaltfläche oben rechts an. Die Touch-Zone bleibt auch im ausgeblendeten Zustand aktiv"
 }

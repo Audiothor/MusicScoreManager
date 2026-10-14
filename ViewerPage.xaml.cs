@@ -1323,8 +1323,57 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private double _metronomeXBase = 0;
+    private double _metronomeYBase = 0;
+    private bool _isDraggingMetronome = false;
+    private DateTime _lastMetronomeDragTime = DateTime.MinValue;
+
+    private void OnMetronomePanUpdated(object? sender, PanUpdatedEventArgs e)
+    {
+        switch (e.StatusType)
+        {
+            case GestureStatus.Started:
+                _metronomeXBase = MetronomeOverlay.TranslationX;
+                _metronomeYBase = MetronomeOverlay.TranslationY;
+                _isDraggingMetronome = false;
+                break;
+            case GestureStatus.Running:
+                if (Math.Abs(e.TotalX) > 5 || Math.Abs(e.TotalY) > 5)
+                {
+                    _isDraggingMetronome = true;
+                    _lastMetronomeDragTime = DateTime.UtcNow;
+                }
+                double newX = _metronomeXBase + e.TotalX;
+                double newY = _metronomeYBase + e.TotalY;
+                if (this.Width > 0 && this.Height > 0)
+                {
+                    double w = MetronomeOverlay.Width > 0 ? MetronomeOverlay.Width : 70;
+                    double h = MetronomeOverlay.Height > 0 ? MetronomeOverlay.Height : 50;
+                    double minX = -10;
+                    double maxX = Math.Max(minX, this.Width - w - 10);
+                    double minY = -5;
+                    double maxY = Math.Max(minY, this.Height - h - 10);
+                    newX = Math.Clamp(newX, minX, maxX);
+                    newY = Math.Clamp(newY, minY, maxY);
+                }
+                MetronomeOverlay.TranslationX = newX;
+                MetronomeOverlay.TranslationY = newY;
+                break;
+            case GestureStatus.Completed:
+            case GestureStatus.Canceled:
+                if (_isDraggingMetronome)
+                {
+                    _lastMetronomeDragTime = DateTime.UtcNow;
+                }
+                _isDraggingMetronome = false;
+                break;
+        }
+    }
+
     private void OnMetronomeOverlayTapped(object sender, EventArgs e)
     {
+        if ((DateTime.UtcNow - _lastMetronomeDragTime).TotalMilliseconds < 350)
+            return;
         OpenMetronomeSettingsModal();
     }
 
@@ -1901,9 +1950,9 @@ public partial class ViewerPage : ContentPage
 
     private void UpdateToolsDrawerUI()
     {
-        if (ToolsIconButton != null && _score != null)
+        if (ToolsIconButton != null)
         {
-            ToolsIconButton.IsVisible = _score.ShowToolsButton;
+            ToolsIconButton.IsVisible = (_score?.ShowToolsButton ?? false) || Preferences.Default.Get("ShowToolsButton", false);
         }
 
         if (DrawerMetronomeTile == null) return;
@@ -1935,6 +1984,14 @@ public partial class ViewerPage : ContentPage
         DrawerAnnotationsStatusLabel.Text = isAnnotationsOn ? "ON" : "OFF";
         DrawerAnnotationsBadge.BackgroundColor = isAnnotationsOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444444");
         DrawerAnnotationsTile.Stroke = isAnnotationsOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444455");
+
+        bool isPageNumberOn = _score?.ShowPageNumber == true && Preferences.Default.Get("ShowPageNumber", true);
+        if (DrawerPageNumberStatusLabel != null && DrawerPageNumberBadge != null && DrawerPageNumberTile != null)
+        {
+            DrawerPageNumberStatusLabel.Text = isPageNumberOn ? "ON" : "OFF";
+            DrawerPageNumberBadge.BackgroundColor = isPageNumberOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444444");
+            DrawerPageNumberTile.Stroke = isPageNumberOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444455");
+        }
     }
 
     private async void OnDrawerMetronomeTapped(object sender, EventArgs e)
@@ -1989,6 +2046,21 @@ public partial class ViewerPage : ContentPage
         bool newState = !_score.ShowAnnotations;
         _score.ShowAnnotations = newState;
         ApplyAnnotationsVisibility(newState);
+
+        await _databaseService.SaveScoreAsync(_score);
+        UpdateToolsDrawerUI();
+    }
+
+    private async void OnDrawerPageNumberTapped(object sender, EventArgs e)
+    {
+        if (_score == null) return;
+        bool newState = !_score.ShowPageNumber;
+        _score.ShowPageNumber = newState;
+        if (newState && !Preferences.Default.Get("ShowPageNumber", true))
+        {
+            Preferences.Default.Set("ShowPageNumber", true);
+        }
+        UpdatePageIndicator();
 
         await _databaseService.SaveScoreAsync(_score);
         UpdateToolsDrawerUI();
@@ -2599,6 +2671,7 @@ public partial class ViewerPage : ContentPage
         {
             UpdatePageIndicator();
             await _databaseService.SaveScoreAsync(_score);
+            UpdateToolsDrawerUI();
         }
     }
 

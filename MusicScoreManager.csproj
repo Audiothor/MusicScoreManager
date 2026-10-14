@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>2.6.0</ApplicationDisplayVersion>
-		<ApplicationVersion>20600</ApplicationVersion>
-		<!-- Version actuelle : v2.6.0 "Boîte à outils ergonomique, tiroir d'actions et menu central épuré" -->
+		<ApplicationDisplayVersion>2.6.1</ApplicationDisplayVersion>
+		<ApplicationVersion>20601</ApplicationVersion>
+		<!-- Version actuelle : v2.6.1 "Boîte à outils enrichie (Annotations, Numéros de page), métronome déplaçable, paramètre global d'affichage boîte à outils" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

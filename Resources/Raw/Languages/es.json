@@ -630,5 +630,8 @@
   "Viewer_Tools_Drawer_Title": "Caja de herramientas",
   "Viewer_Tools_Metronome": "Metrónomo",
   "Viewer_Tools_Audio": "Reproductor de audio",
-  "Viewer_Tools_Annotations": "Barra de anotaciones"
+  "Viewer_Tools_Annotations": "Anotaciones",
+  "Viewer_Tools_Page_Number": "Números de página",
+  "Settings_Scores_Show_Tools_Button": "Mostrar icono de caja de herramientas (arriba a la derecha)",
+  "Settings_Scores_Show_Tools_Button_Desc": "Muestra el botón 🛠️ en la esquina superior derecha. La zona táctil permanece activa incluso oculta"
 }

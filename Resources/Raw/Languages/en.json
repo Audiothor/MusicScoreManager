@@ -633,5 +633,8 @@
   "Viewer_Tools_Drawer_Title": "Tools Hub",
   "Viewer_Tools_Metronome": "Metronome",
   "Viewer_Tools_Audio": "Audio Player",
-  "Viewer_Tools_Annotations": "Annotations Bar"
+  "Viewer_Tools_Annotations": "Annotations",
+  "Viewer_Tools_Page_Number": "Page numbers",
+  "Settings_Scores_Show_Tools_Button": "Show toolbox icon (top-right)",
+  "Settings_Scores_Show_Tools_Button_Desc": "Displays the 🛠️ button in the top-right corner. The touch zone remains active even when hidden"
 }
