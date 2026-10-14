@@ -256,7 +256,7 @@
   "Scores_Total": "Totaal partituren",
   "Search_Placeholder": "Zoek partituur, componist, label...",
   "Setlist_Add_Score": "Partituren toevoegen",
-  "Setlist_Concert_Date": "Concertdatum",
+  "Setlist_Concert_Date": "Concert: {0:dd/MM/yyyy}",
   "Setlist_Concert_Time": "Concerttijd",
   "Setlist_Continuous_Mode": "Continue modus (automatisch doorgaan)",
   "Setlist_Edit_Add": "+ Toevoegen",
@@ -601,7 +601,6 @@
   "Wifi_Listening_Visible": "🟢 Luisteren (Zichtbaar)",
   "Wifi_Idle_Status": "⚫ Stand-by",
   "Common_All": "Alles",
-  "Setlist_Concert_Date": "Concert: {0:dd/MM/yyyy}",
   "Setlist_Concert_Date_Time": "Concert: {0:dd/MM/yyyy} om {1:hh\\:mm}",
   "Setlist_Created_On": "Aangemaakt op {0:dd/MM/yyyy}",
   "Setlist_Sort_ConcertDateAsc": "Concertdatum (Eerstkomend eerst)",
@@ -626,5 +625,10 @@
   "Settings_Confirm_Quit_Prompt": "Weet u zeker dat u de applicatie wilt afsluiten?",
   "Help_Online_Doc_Title": "Officiële volledige documentatie",
   "Help_Online_Doc_Desc": "Bekijk de complete handleiding, tutorials en nieuwste functies online",
-  "Help_Online_Doc_Btn": "Bekijken"
+  "Help_Online_Doc_Btn": "Bekijken",
+  "Score_Edit_Tools_Button_Show": "Knop Gereedschapskist weergeven (rechtsboven)",
+  "Viewer_Tools_Drawer_Title": "Gereedschapskist",
+  "Viewer_Tools_Metronome": "Metronoom",
+  "Viewer_Tools_Audio": "Audiospeler",
+  "Viewer_Tools_Annotations": "Annotatiebalk"
 }

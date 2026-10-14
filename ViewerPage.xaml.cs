@@ -330,14 +330,7 @@ public partial class ViewerPage : ContentPage
                 Title = _score.Title;
                 if (MenuTitleLabel != null) MenuTitleLabel.Text = _score.Title;
                 if (MetronomeBpmLabel != null) MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
-                if (MenuMetronomeSwitch != null) MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
-                if (MenuAudioSwitch != null)
-                {
-                    bool hasAudio = _score.AudioFiles != null && _score.AudioFiles.Count > 0;
-                    MenuAudioSwitch.IsEnabled = hasAudio;
-                    MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
-                }
-                if (MenuAnnotationsSwitch != null) MenuAnnotationsSwitch.IsToggled = _score.ShowAnnotations;
+                UpdateToolsDrawerUI();
             });
         });
     }
@@ -438,11 +431,7 @@ public partial class ViewerPage : ContentPage
 
     private void SetupMenuUI()
     {
-        MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
-        bool hasAudio = _score.AudioFiles != null && _score.AudioFiles.Count > 0;
-        MenuAudioSwitch.IsEnabled = hasAudio;
-        MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
-        if (MenuAnnotationsSwitch != null) MenuAnnotationsSwitch.IsToggled = _score.ShowAnnotations;
+        UpdateToolsDrawerUI();
         SaveRotationSwitch.IsToggled = _score.IsRotationSaved;
         UpdateRotateButtonText();
     }
@@ -1451,10 +1440,7 @@ public partial class ViewerPage : ContentPage
     {
         _score.ShowMetronome = e.Value;
         MetronomeOverlay.IsVisible = e.Value;
-        if (MenuMetronomeSwitch != null)
-        {
-            MenuMetronomeSwitch.IsToggled = e.Value;
-        }
+        UpdateToolsDrawerUI();
 
         if (e.Value && !_isMetronomePlaying)
         {
@@ -1553,11 +1539,7 @@ public partial class ViewerPage : ContentPage
 
         MainThread.BeginInvokeOnMainThread(() =>
         {
-            if (MenuAudioSwitch != null)
-            {
-                MenuAudioSwitch.IsEnabled = hasAudio;
-                MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
-            }
+            UpdateToolsDrawerUI();
 
             AudioPlayerOverlay.IsVisible = _score.ShowAudioPlayer && hasAudio;
 
@@ -1828,7 +1810,7 @@ public partial class ViewerPage : ContentPage
     {
         CancelPreCount();
         AudioPlayerOverlay.IsVisible = false;
-        if (MenuAudioSwitch != null) MenuAudioSwitch.IsToggled = false;
+        UpdateToolsDrawerUI();
         _score.ShowAudioPlayer = false;
         _ = _databaseService.SaveScoreAsync(_score);
     }
@@ -1886,12 +1868,83 @@ public partial class ViewerPage : ContentPage
         AudioPlayer.SeekTo(TimeSpan.FromSeconds(AudioSlider.Value));
     }
 
-    private async void OnMenuMetronomeToggled(object sender, ToggledEventArgs e)
+    private void OnToggleToolsDrawerTapped(object sender, EventArgs e)
     {
-        _score.ShowMetronome = e.Value;
-        MetronomeOverlay.IsVisible = e.Value;
+        bool willBeVisible = !(ToolsDrawerOverlay?.IsVisible ?? false);
+        SetToolsDrawerVisibility(willBeVisible);
+    }
 
-        if (e.Value)
+    private void OnCloseToolsDrawerClicked(object sender, EventArgs e)
+    {
+        SetToolsDrawerVisibility(false);
+    }
+
+    private void SetToolsDrawerVisibility(bool isVisible)
+    {
+        if (ToolsDrawerOverlay == null) return;
+
+        UpdateToolsDrawerUI();
+        ToolsDrawerOverlay.IsVisible = isVisible;
+        if (ToolsDrawerBackdrop != null)
+        {
+            ToolsDrawerBackdrop.IsVisible = isVisible;
+        }
+
+        if (isVisible)
+        {
+            if (CentralMenuOverlay != null && CentralMenuOverlay.IsVisible)
+            {
+                OnCloseMenuClicked(this, EventArgs.Empty);
+            }
+        }
+    }
+
+    private void UpdateToolsDrawerUI()
+    {
+        if (ToolsIconButton != null && _score != null)
+        {
+            ToolsIconButton.IsVisible = _score.ShowToolsButton;
+        }
+
+        if (DrawerMetronomeTile == null) return;
+
+        bool isMetronomeOn = _score?.ShowMetronome == true || (MetronomeOverlay != null && MetronomeOverlay.IsVisible);
+        DrawerMetronomeStatusLabel.Text = isMetronomeOn ? "ON" : "OFF";
+        DrawerMetronomeBadge.BackgroundColor = isMetronomeOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444444");
+        DrawerMetronomeTile.Stroke = isMetronomeOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444455");
+
+        bool hasAudio = _selectedAudioFile != null || (_score?.AudioFiles != null && _score.AudioFiles.Count > 0);
+        bool isAudioOn = _score?.ShowAudioPlayer == true && (AudioPlayerOverlay != null && AudioPlayerOverlay.IsVisible);
+        
+        if (!hasAudio)
+        {
+            DrawerAudioStatusLabel.Text = "-";
+            DrawerAudioBadge.BackgroundColor = Color.FromArgb("#333333");
+            DrawerAudioTile.Opacity = 0.5;
+            DrawerAudioTile.Stroke = Color.FromArgb("#333333");
+        }
+        else
+        {
+            DrawerAudioTile.Opacity = 1.0;
+            DrawerAudioStatusLabel.Text = isAudioOn ? "ON" : "OFF";
+            DrawerAudioBadge.BackgroundColor = isAudioOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444444");
+            DrawerAudioTile.Stroke = isAudioOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444455");
+        }
+
+        bool isAnnotationsOn = _score?.ShowAnnotations == true || (AnnotationBar != null && AnnotationBar.IsVisible);
+        DrawerAnnotationsStatusLabel.Text = isAnnotationsOn ? "ON" : "OFF";
+        DrawerAnnotationsBadge.BackgroundColor = isAnnotationsOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444444");
+        DrawerAnnotationsTile.Stroke = isAnnotationsOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444455");
+    }
+
+    private async void OnDrawerMetronomeTapped(object sender, EventArgs e)
+    {
+        if (_score == null) return;
+        bool newState = !_score.ShowMetronome;
+        _score.ShowMetronome = newState;
+        MetronomeOverlay.IsVisible = newState;
+
+        if (newState)
         {
             StartMetronome();
         }
@@ -1901,12 +1954,19 @@ public partial class ViewerPage : ContentPage
         }
 
         await _databaseService.SaveScoreAsync(_score);
+        UpdateToolsDrawerUI();
     }
 
-    private async void OnMenuAudioToggled(object sender, ToggledEventArgs e)
+    private async void OnDrawerAudioTapped(object sender, EventArgs e)
     {
-        _score.ShowAudioPlayer = e.Value;
-        if (e.Value)
+        if (_score == null) return;
+        bool hasAudio = _selectedAudioFile != null || (_score.AudioFiles != null && _score.AudioFiles.Count > 0);
+        if (!hasAudio) return;
+
+        bool newState = !_score.ShowAudioPlayer;
+        _score.ShowAudioPlayer = newState;
+
+        if (newState)
         {
             if (_selectedAudioFile == null || AudioPlayer.Source == null)
             {
@@ -1918,14 +1978,20 @@ public partial class ViewerPage : ContentPage
         {
             AudioPlayerOverlay.IsVisible = false;
         }
+
         await _databaseService.SaveScoreAsync(_score);
+        UpdateToolsDrawerUI();
     }
 
-    private async void OnMenuAnnotationsToggled(object sender, ToggledEventArgs e)
+    private async void OnDrawerAnnotationsTapped(object sender, EventArgs e)
     {
-        _score.ShowAnnotations = e.Value;
-        ApplyAnnotationsVisibility(e.Value);
+        if (_score == null) return;
+        bool newState = !_score.ShowAnnotations;
+        _score.ShowAnnotations = newState;
+        ApplyAnnotationsVisibility(newState);
+
         await _databaseService.SaveScoreAsync(_score);
+        UpdateToolsDrawerUI();
     }
 
     private void ApplyAnnotationsVisibility(bool isVisible)
@@ -1966,20 +2032,7 @@ public partial class ViewerPage : ContentPage
         MenuTitleLabel.Text = _score.Title;
         MenuModifyAssemblyButton.IsVisible = (_score.Type == ScoreType.PDF);
 
-        bool hasAudio = _score.AudioFiles != null && _score.AudioFiles.Count > 0;
-        if (hasAudio && (_selectedAudioFile == null || AudioPlayer.Source == null))
-        {
-            InitializeAudio(forceReload: true);
-        }
-        if (MenuAudioSwitch != null)
-        {
-            MenuAudioSwitch.IsEnabled = hasAudio;
-            MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
-        }
-        if (MenuAnnotationsSwitch != null)
-        {
-            MenuAnnotationsSwitch.IsToggled = _score.ShowAnnotations;
-        }
+        SetToolsDrawerVisibility(false);
 
         UpdateRotateButtonText();
         UpdateMenuBookmarkState();
@@ -1999,7 +2052,7 @@ public partial class ViewerPage : ContentPage
 
         // Hauteur naturelle compacte requise par le contenu du menu + en-tête fixe
         double headerAndPadding = 75;
-        double naturalContentHeight = 440;
+        double naturalContentHeight = 300;
         try
         {
             if (CentralMenuContentStack != null)
@@ -2371,6 +2424,13 @@ public partial class ViewerPage : ContentPage
 
             RenderAnnotations();
             PageIndicator.Margin = new Thickness(0, 0, 10, 2);
+            return;
+        }
+
+        // Zone en haut à droite (les 60px du haut et 20% droite) : Boîte à outils
+        if (y < 65 && x > width * 0.8)
+        {
+            OnToggleToolsDrawerTapped(this, EventArgs.Empty);
             return;
         }
 
@@ -2904,10 +2964,7 @@ public partial class ViewerPage : ContentPage
         try
         {
             _score.ShowAnnotations = !_score.ShowAnnotations;
-            if (MenuAnnotationsSwitch != null)
-            {
-                MenuAnnotationsSwitch.IsToggled = _score.ShowAnnotations;
-            }
+            UpdateToolsDrawerUI();
             ApplyAnnotationsVisibility(_score.ShowAnnotations);
             await _databaseService.SaveScoreAsync(_score);
         }
@@ -3049,18 +3106,11 @@ public partial class ViewerPage : ContentPage
         Title = _score.Title;
         if (MenuTitleLabel != null) MenuTitleLabel.Text = _score.Title;
         if (MetronomeBpmLabel != null) MetronomeBpmLabel.Text = $"{_score.BPM} BPM";
-        if (MenuMetronomeSwitch != null) MenuMetronomeSwitch.IsToggled = _score.ShowMetronome;
-        if (MenuAudioSwitch != null)
-        {
-            bool hasAudio = _score.AudioFiles != null && _score.AudioFiles.Count > 0;
-            MenuAudioSwitch.IsEnabled = hasAudio;
-            MenuAudioSwitch.IsToggled = _score.ShowAudioPlayer && hasAudio;
-        }
         if (AnnotationBar != null && AnnotationBar.IsVisible)
         {
             _score.ShowAnnotations = true;
         }
-        if (MenuAnnotationsSwitch != null) MenuAnnotationsSwitch.IsToggled = _score.ShowAnnotations;
+        UpdateToolsDrawerUI();
 
         _currentRotation = _score.IsRotationSaved ? _score.Rotation : 0;
 
@@ -3231,10 +3281,12 @@ public partial class ViewerPage : ContentPage
         if (AnnotationBar.IsVisible && !_score.ShowAnnotations)
         {
             _score.ShowAnnotations = true;
-            if (MenuAnnotationsSwitch != null) MenuAnnotationsSwitch.IsToggled = true;
+            UpdateToolsDrawerUI();
             ApplyAnnotationsVisibility(true);
             _ = _databaseService.SaveScoreAsync(_score);
         }
+
+        UpdateToolsDrawerUI();
 
         if (!AnnotationBar.IsVisible)
         {
@@ -3613,6 +3665,14 @@ public partial class ViewerPage : ContentPage
                                 RenderAnnotations();
                             });
                         }
+                        args.Handled = true;
+                        return;
+                    }
+
+                    // Zone haute droite (15% haut, > 80% largeur) -> Boîte à outils (Tiroir)
+                    if (_touchDownY < height * 0.15 && _touchDownX > width * 0.80)
+                    {
+                        MainThread.BeginInvokeOnMainThread(() => OnToggleToolsDrawerTapped(this, EventArgs.Empty));
                         args.Handled = true;
                         return;
                     }

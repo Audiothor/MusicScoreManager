@@ -256,7 +256,7 @@
   "Scores_Total": "Total partituras",
   "Search_Placeholder": "Buscar partitura, compositor, etiqueta...",
   "Setlist_Add_Score": "Añadir partituras",
-  "Setlist_Concert_Date": "Fecha del concierto",
+  "Setlist_Concert_Date": "Concierto: {0:dd/MM/yyyy}",
   "Setlist_Concert_Time": "Hora del concierto",
   "Setlist_Continuous_Mode": "Modo continuo (avance automático)",
   "Setlist_Edit_Add": "+ Añadir",
@@ -601,7 +601,6 @@
   "Wifi_Listening_Visible": "🟢 Escuchando (Visible)",
   "Wifi_Idle_Status": "⚫ En espera",
   "Common_All": "Todos",
-  "Setlist_Concert_Date": "Concierto: {0:dd/MM/yyyy}",
   "Setlist_Concert_Date_Time": "Concierto: {0:dd/MM/yyyy} a las {1:hh\\:mm}",
   "Setlist_Created_On": "Creada el {0:dd/MM/yyyy}",
   "Setlist_Sort_ConcertDateAsc": "Fecha del concierto (Próximo primero)",
@@ -626,5 +625,10 @@
   "Settings_Confirm_Quit_Prompt": "¿Realmente desea salir de la aplicación?",
   "Help_Online_Doc_Title": "Documentación oficial completa",
   "Help_Online_Doc_Desc": "Consulte la guía completa, tutoriales y novedades en línea",
-  "Help_Online_Doc_Btn": "Ver en línea"
+  "Help_Online_Doc_Btn": "Ver en línea",
+  "Score_Edit_Tools_Button_Show": "Mostrar botón Caja de herramientas (esquina superior derecha)",
+  "Viewer_Tools_Drawer_Title": "Caja de herramientas",
+  "Viewer_Tools_Metronome": "Metrónomo",
+  "Viewer_Tools_Audio": "Reproductor de audio",
+  "Viewer_Tools_Annotations": "Barra de anotaciones"
 }

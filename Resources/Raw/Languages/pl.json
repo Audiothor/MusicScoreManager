@@ -256,7 +256,7 @@
   "Scores_Total": "Łącznie nut",
   "Search_Placeholder": "Szukaj nut, kompozytora, etykiety...",
   "Setlist_Add_Score": "Dodaj utwory",
-  "Setlist_Concert_Date": "Data koncertu",
+  "Setlist_Concert_Date": "Koncert: {0:dd/MM/yyyy}",
   "Setlist_Concert_Time": "Godzina koncertu",
   "Setlist_Continuous_Mode": "Tryb ciągły (automatyczne przejście)",
   "Setlist_Edit_Add": "+ Dodaj",
@@ -601,7 +601,6 @@
   "Wifi_Listening_Visible": "🟢 Nasłuchiwanie (Widoczny)",
   "Wifi_Idle_Status": "⚫ W gotowości",
   "Common_All": "Wszystkie",
-  "Setlist_Concert_Date": "Koncert: {0:dd/MM/yyyy}",
   "Setlist_Concert_Date_Time": "Koncert: {0:dd/MM/yyyy} o {1:hh\\:mm}",
   "Setlist_Created_On": "Utworzono {0:dd/MM/yyyy}",
   "Setlist_Sort_ConcertDateAsc": "Data koncertu (Najbliższy najpierw)",
@@ -626,5 +625,10 @@
   "Settings_Confirm_Quit_Prompt": "Czy na pewno chcesz zamknąć aplikację?",
   "Help_Online_Doc_Title": "Oficjalna pełna dokumentacja",
   "Help_Online_Doc_Desc": "Zapoznaj się z kompletnym podręcznikiem, samouczkami i nowościami online",
-  "Help_Online_Doc_Btn": "Otwórz"
+  "Help_Online_Doc_Btn": "Otwórz",
+  "Score_Edit_Tools_Button_Show": "Pokaż przycisk Przybornika (prawy górny róg)",
+  "Viewer_Tools_Drawer_Title": "Przybornik",
+  "Viewer_Tools_Metronome": "Metronom",
+  "Viewer_Tools_Audio": "Odtwarzacz audio",
+  "Viewer_Tools_Annotations": "Pasek adnotacji"
 }

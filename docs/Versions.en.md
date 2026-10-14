@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.6.0 — 14/10/2026](#v260--14102026)
 - [v2.5.8 — 13/10/2026](#v258--13102026)
 - [v2.5.7 — 13/10/2026](#v257--13102026)
 - [v2.5.6 — 12/10/2026](#v256--12102026)
@@ -15,6 +16,18 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.6.0 — 14/10/2026
+
+### 1. Tools Hub & Floating Action Drawer
+- **1.1. Ergonomic Floating Drawer:** Reorganized primary tools (Metronome, Audio Player, Annotations) into a modern popover overlay with glassmorphic background, subtle drop shadow, and dismiss-on-outside-click behavior.
+- **1.2. Interactive Activation Tiles with Real-Time State:** Each tool has a dedicated interactive tile with distinct visual indicators and live `ON` / `OFF` badges synchronized with the active score.
+- **1.3. Dedicated Top-Right Touch Hotspot:** Permanent touch area (70×55 px) in the top-right corner to open the tools drawer instantly across all score viewports (native PDF or Images, whether zoomed or not).
+- **1.4. Optional `[ 🛠️ ]` Button Display:** Per-score setting (`ShowToolsButton`) to show or hide the visual tool icon without ever disabling the top-right secret touch hotspot.
+- **1.5. Balanced Score Screen Layout:** Relocated metronome overlay to the top-left corner and audio player to the top-right corner for clean, uncluttered reading.
+- **1.6. Streamlined Central Menu:** Removed section 3 (tool switches) from the central menu, reducing dialog height and making core score management faster and lighter.
 
 ---
 
