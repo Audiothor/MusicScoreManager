@@ -1,12 +1,6 @@
-
-
 # FAQ
 
 ### Music Score Manager
-
-
-
-
 
 - *Pourquoi avoir développé Music Score Manager ?*
 
@@ -17,20 +11,15 @@ Ayant d'abord développé l'application dans un cadre familial, plusieurs person
 Je ne cherche ni à concurrencer ni à remplacer, juste à proposer une alternative à ce qui peut exister.
 Le language de programmation et le type de plate-forme utilisé (.NET C# & .NET MAUI) me permettent de le rendre disponible pour Android et Windows.
 
-
-
 - *Pourquoi le rendre complètement gratuit et sans publicité ?*
 
 Le public ciblé s'adresse aux amateurs de musiques, professeurs d'écoles de musique, élèves, qui réalisent des concerts ou pas, qui animent des soirées, festivals, fêtes de la musique, animation de messes de mariages, offices religieux...
 Music Score Manager est là pour aider et donc, dans la philosophie de l'application qui est née d'un besoin familial, il n'était pas possible éthiquement de réaliser du profit sur un public qui ne l'utilise pas de manière professionelle.
- 
 
 - *Pourquoi rendre les sources du programme accessibles ?*
 
 Le développement ayant été réalisé dans un language que j'utilise depuis longtemps, mais parfois ne parvenant pas à générer certaines parties de code, je me suis fait aider de l'IA (Je ne m'en cache pas).
 De ce fait il me parait tout à fait normal d'être complètement transparent avec mon code et de le partager avec tous sur Github.
-
-
 
 - Dans quelles langues Music Score Manager est accessible ?
 
@@ -38,8 +27,6 @@ Français, Anglais, Allemand, Italien, Polonais, Espagnol, Néerlandais, Portuga
 Pour changer de langue, aller dans le menu "Paramètres" puis "Paramètres de l'application" et vous pouvez choisir votre langue.
 Si il y a des erreurs de traduction, merci de me le signaler (ci dessous)
 Si vous souhaitez ajouter d'autres langues, merci de me contacter.(ci dessous)
-
-
 
 - *J'ai des bugs dans le logiciel et j'aimerais les faire partager. Comment faire ?*
 
@@ -51,8 +38,6 @@ Anglais : https://discord.gg/hJNSFgW5h
 ou sur Github :
 [https://github.com/Audiothor/MusicScoreManager/issues]()
 
-
-
 - *J'ai des propositions d'améliorations. Comment les partager ?*
 
 L'idéal est de mettre un message sur Discord :
@@ -62,14 +47,7 @@ Anglais : https://discord.gg/kCHGh4yjY
 ou sur Github :
 [https://github.com/Audiothor/MusicScoreManager/issues]() (*feature request*)
 
-
-
 - *Qui a développé ce logiciel ?*
 
-L'application a été développée en France, en Franche-Comté, par un informaticien qui est passionné de musique.
-
-
-
-
-
-
+Le projet a commencé début 2026 et une première version est sortie début juin 2026.
+L'application a été développée en France, par un informaticien qui est passionné de musique.
