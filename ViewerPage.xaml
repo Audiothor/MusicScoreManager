@@ -1496,7 +1496,7 @@
                 <!-- Sélection Fréquence de référence (Diapason A4) en choix déroulant -->
                 <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
                     <Label Grid.Column="0" Text="Diapason :" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
-                    <Border Grid.Column="1" BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="8,1">
+                    <Border Grid.Column="1" BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="8,2" MinimumHeightRequest="38">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="6" />
                         </Border.StrokeShape>
@@ -1504,7 +1504,7 @@
                                 TextColor="White"
                                 TitleColor="#888899"
                                 FontSize="12"
-                                HeightRequest="32"
+                                VerticalOptions="Center"
                                 SelectedIndexChanged="OnTunerA4PickerChanged" />
                     </Border>
                 </Grid>
@@ -1521,7 +1521,7 @@
                         Clicked="OnTunerMicClicked" />
 
                 <!-- Sélecteur d'instrument -->
-                <Border BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="10,2">
+                <Border BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="10,2" MinimumHeightRequest="38">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="8" />
                     </Border.StrokeShape>
@@ -1534,7 +1534,7 @@
                 <!-- Sélecteur de Note de référence en choix déroulant -->
                 <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
                     <Label Grid.Column="0" Text="Note ref. :" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
-                    <Border Grid.Column="1" BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="8,1">
+                    <Border Grid.Column="1" BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="8,2" MinimumHeightRequest="38">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="6" />
                         </Border.StrokeShape>
@@ -1542,7 +1542,7 @@
                                 TextColor="White"
                                 TitleColor="#888899"
                                 FontSize="12"
-                                HeightRequest="32"
+                                VerticalOptions="Center"
                                 SelectedIndexChanged="OnTunerNotePickerChanged" />
                     </Border>
                 </Grid>
@@ -1550,7 +1550,7 @@
                 <!-- Sélecteur d'octave (Hauteur de note 1 à 7) en choix déroulant (par défaut 4) -->
                 <Grid x:Name="TunerOctavesContainer" ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
                     <Label Grid.Column="0" Text="Hauteur :" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
-                    <Border Grid.Column="1" BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="8,1">
+                    <Border Grid.Column="1" BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="8,2" MinimumHeightRequest="38">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="6" />
                         </Border.StrokeShape>
@@ -1558,7 +1558,7 @@
                                 TextColor="White"
                                 TitleColor="#888899"
                                 FontSize="12"
-                                HeightRequest="32"
+                                VerticalOptions="Center"
                                 SelectedIndexChanged="OnTunerOctavePickerChanged" />
                     </Border>
                 </Grid>

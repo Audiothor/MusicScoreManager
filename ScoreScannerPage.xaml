@@ -77,17 +77,17 @@
                         </Grid>
 
                         <!-- Filtre d'amélioration -->
-                        <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
+                        <Grid ColumnDefinitions="Auto, *" ColumnSpacing="10" VerticalOptions="Center">
                             <Label Grid.Column="0" Text="{Binding [ScoreScanner_Filter_Label], Source={x:Static services:LocalizationService.Instance}}" 
-                                   TextColor="#AAAAAA" FontSize="12" FontAttributes="Bold" VerticalOptions="Center" />
-                            <Border Grid.Column="1" BackgroundColor="#141418" Stroke="#3A3A4C" StrokeThickness="1" Padding="8,0" HeightRequest="34">
+                                   TextColor="#AAAAAA" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Border Grid.Column="1" BackgroundColor="#141418" Stroke="#3A3A4C" StrokeThickness="1" Padding="10,2" MinimumHeightRequest="44">
                                 <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="6" />
+                                    <RoundRectangle CornerRadius="8" />
                                 </Border.StrokeShape>
                                 <Picker x:Name="EnhancementFilterPicker"
                                         TextColor="White"
                                         TitleColor="#888899"
-                                        FontSize="12"
+                                        FontSize="13"
                                         VerticalOptions="Center"
                                         SelectedIndexChanged="OnEnhancementFilterChanged" />
                             </Border>
