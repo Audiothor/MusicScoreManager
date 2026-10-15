@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.6.5 — 15/10/2026](#v265--15102026)
 - [v2.6.4 — 15/10/2026](#v264--15102026)
 - [v2.6.3 — 15/10/2026](#v263--15102026)
 - [v2.6.2 — 14/10/2026](#v262--14102026)
@@ -20,6 +21,14 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.6.5 — 15/10/2026
+
+### 1. Accordeur : Correction de la Grille d'Étalonnage du Diapason (A4)
+- **1.1. Restauration de l'affichage des 4 fréquences :** Attribution explicite des colonnes de grille (`Grid.Column="0"` à `"3"`) et du conteneur parent (`Grid.Column="1"`). Les 4 options de diapason (`440 Hz`, `442 Hz`, `415 Hz` et `432 Hz`) sont désormais parfaitement visibles et alignées horizontalement à droite du libellé « Diapason : », sans aucune superposition.
+- **1.2. Alignement du sélecteur d'octaves (Hauteur) :** Décalage propre du défilement des boutons d'octave en `Grid.Column="1"` pour éliminer tout chevauchement avec le libellé « Hauteur : ».
 
 ---
 
