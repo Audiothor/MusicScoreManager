@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.7.1 — 15/10/2026](#v271--15102026)
 - [v2.7.0 — 15/10/2026](#v270--15102026)
 - [v2.6.5 — 15/10/2026](#v265--15102026)
 - [v2.6.4 — 15/10/2026](#v264--15102026)
@@ -22,6 +23,14 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.7.1 — 15/10/2026
+
+### 1. Sheet Music Scanner: Rendering Mode Label Truncation Fix
+- **1.1. Eliminated Vertical Text Clipping:** Removed the restrictive `HeightRequest="34"` constraint on the container border and applied proper breathing room (`Padding="10,2"`, `MinimumHeightRequest="44"`). The complete rendering filter label ("*Optimized B&W Score (High Contrast)*") now renders cleanly in full with all letter ascenders and descenders visible without cropping.
+- **1.2. Tuner Dropdowns Padding & Height Optimization:** Adjusted minimum height constraints across the reference frequency (A4), target note, and register octave pickers to ensure flawless readability across all screen densities and DPI scaling factors.
 
 ---
 

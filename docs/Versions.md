@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.7.1 — 15/10/2026](#v271--15102026)
 - [v2.7.0 — 15/10/2026](#v270--15102026)
 - [v2.6.5 — 15/10/2026](#v265--15102026)
 - [v2.6.4 — 15/10/2026](#v264--15102026)
@@ -22,6 +23,14 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.7.1 — 15/10/2026
+
+### 1. Scanner de Partitions : Correction de l'Affichage du Mode de Rendu
+- **1.1. Suppression de la troncature verticale du texte :** Élimination de la contrainte fixe de hauteur (`HeightRequest="34"`) et application d'un espacement vertical adéquat (`Padding="10,2"`, `MinimumHeightRequest="44"`). Le libellé complet du mode sélectionné (« *Partition N&B optimisée (Haut contraste)* ») s'affiche désormais intégralement avec toutes ses hampes et jambages sans aucun rognage.
+- **1.2. Optimisation des listes déroulantes de l'accordeur :** Harmonisation des contraintes de hauteur minimale sur les sélecteurs de diapason, de note de référence et de hauteur d'octave pour garantir un affichage textuel parfait sur tous les ratios d'écran et densités DPI.
 
 ---
 
