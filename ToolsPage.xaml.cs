@@ -80,6 +80,11 @@ public partial class ToolsPage : ContentPage
         await Navigation.PushAsync(page);
     }
 
+    private async void OnToolsScoreScannerTapped(object? sender, TappedEventArgs e)
+    {
+        await Navigation.PushAsync(new ScoreScannerPage(_databaseService, _pdfService));
+    }
+
     private async void OnToolsPdfAssemblerTapped(object? sender, TappedEventArgs e)
     {
         await Navigation.PushAsync(new PdfAssemblerPage(_databaseService, _pdfService));

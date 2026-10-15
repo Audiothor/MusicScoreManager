@@ -70,6 +70,7 @@ namespace MusicScoreManager.Services
         public int PreCountMeasures { get; set; }
         public bool ShowAnnotations { get; set; } = true;
         public bool ShowToolsButton { get; set; }
+        public bool ShowScoreTitle { get; set; }
         public List<string> Tags { get; set; } = new();
         public List<string> TagColors { get; set; } = new();
         public List<AnnotationMetadata> Annotations { get; set; } = new();

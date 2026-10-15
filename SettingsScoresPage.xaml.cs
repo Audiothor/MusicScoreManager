@@ -61,6 +61,7 @@ public partial class SettingsScoresPage : ContentPage
         ShowScrollTopSwitch.IsToggled = Preferences.Default.Get("ShowScrollTop", true);
         ShowPageNumberSwitch.IsToggled = Preferences.Default.Get("ShowPageNumber", true);
         ShowToolsButtonSwitch.IsToggled = Preferences.Default.Get("ShowToolsButton", false);
+        ShowScoreTitleSwitch.IsToggled = Preferences.Default.Get("ShowScoreTitle", false);
         TwoPagesLandscapeSwitch.IsToggled = Preferences.Default.Get("TwoPagesLandscape", true);
         KeepScreenOnSwitch.IsToggled = Preferences.Default.Get("KeepScreenOn", true);
         PageNumberSizeSlider.Value = Preferences.Default.Get("PageNumberSize", 20.0);
@@ -432,6 +433,11 @@ public partial class SettingsScoresPage : ContentPage
     private void OnShowToolsButtonToggled(object sender, ToggledEventArgs e)
     {
         Preferences.Default.Set("ShowToolsButton", e.Value);
+    }
+
+    private void OnShowScoreTitleToggled(object sender, ToggledEventArgs e)
+    {
+        Preferences.Default.Set("ShowScoreTitle", e.Value);
     }
 
     private void OnTwoPagesLandscapeToggled(object sender, ToggledEventArgs e)

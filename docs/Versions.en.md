@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.7.0 — 15/10/2026](#v270--15102026)
 - [v2.6.5 — 15/10/2026](#v265--15102026)
 - [v2.6.4 — 15/10/2026](#v264--15102026)
 - [v2.6.3 — 15/10/2026](#v263--15102026)
@@ -21,6 +22,33 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.7.0 — 15/10/2026
+
+### 1. Sheet Music Photo Scanner (Tools Tab)
+- **1.1. Full-Featured Integrated Scanning Module (`ScoreScannerPage`):** Take photos of physical sheet music directly using the camera or import images from the photo gallery/storage to immediately assemble and convert multi-page PDF scores.
+- **1.2. Contrast Filter & Score Enhancement:** Real-time image processing (Optimized B&W Score mode that bleaches yellowed/shadowed paper backgrounds and sharpens musical staves for maximum readability, Grayscale mode, or Original Color).
+- **1.3. Page-Level Tools:** Individual 90° clockwise page rotation, reordering via move up/down, and single-page deletion.
+- **1.4. Direct Library Integration:** Title and composer entry, instant PDF compilation, SQLite storage, and prompt to immediately open the score in the sheet music viewer.
+
+### 2. Tuner: Dropdown Selectors (ViewerPage)
+- **2.1. Dropdown A4 Reference Pitch:** Replaced button row with a clean dropdown picker (`Picker`) offering 440 Hz (International Standard, default), 442 Hz (Symphonic Orchestra), 415 Hz (Baroque Music), and 432 Hz (Alternative Frequency).
+- **2.2. Dropdown Reference Note:** Replaced horizontal buttons with a dropdown picker ("Auto Detection" by default, followed by all chromatic notes or instrument strings).
+- **2.3. Dropdown Register (Octave):** Smooth dropdown picker (octaves 1 to 7, octave 4 selected by default).
+
+### 3. Display Score Title at Top of Screen (ViewerPage)
+- **3.1. Global Option in Settings:** Added "Show score title at the top" toggle switch under Sheet Music Settings (`SettingsScoresPage`, disabled by default).
+- **3.2. Instant Control in Tools Drawer:** Added "Score Title" tile in the top-right tools drawer (`ViewerPage`) to toggle score title visibility on the fly for the current piece.
+- **3.3. Discreet Floating Banner:** Displays centered at the top of the viewer with a semi-transparent dark pill background and sharp text without obstructing score reading.
+
+### 4. Settings Menu Streamlining
+- **4.1. Removed "Organization" Sub-menu:** Cleaned up intermediate section under Sheet Music Settings.
+- **4.2. Direct Tag Management Access:** Moved "Manage tag list" directly to the root `SettingsPage`, immediately beneath "Sheet Music Settings".
+
+### 5. Tag Design Harmonization
+- **5.1. Unified Pill Badge Design in Tag Management (`TagsPage`):** Tags in the management screen now share the exact same rounded pill badge appearance (custom colors, bold white text) as the tags shown next to score titles in the library list.
 
 ---
 

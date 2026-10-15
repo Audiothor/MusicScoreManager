@@ -13,6 +13,11 @@ public partial class SettingsPage : ContentPage
         await Navigation.PushAsync(new SettingsScoresPage());
     }
 
+    private async void OnManageTagsTapped(object sender, TappedEventArgs e)
+    {
+        await Navigation.PushAsync(new TagsPage());
+    }
+
     private async void OnSettingsSetlistsTapped(object sender, TappedEventArgs e)
     {
         await Navigation.PushAsync(new SettingsSetlistsPage());
