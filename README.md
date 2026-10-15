@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v2.6.5
+# Music Score Manager v2.7.0
 > **Le gestionnaire & visualiseur professionnel de partitions musicales pour répétitions, pupitres et concerts en direct.**
 
 ---
@@ -369,19 +369,30 @@ En mode lecture de setlist, l'application offre une vue d'ensemble du concert :
 
 ## Chapitre 4 : Outils — Boîte à Utilitaires Avancés
 
-L'onglet **Outils** regroupe 6 modules autonomes pensés pour simplifier la vie numérique du musicien, chacun accessible via une page dédiée avec bouton de retour `← Retour`.
+L'onglet **Outils** regroupe 7 modules autonomes pensés pour simplifier la vie numérique du musicien, chacun accessible via une page dédiée avec bouton de retour `← Retour`.
 
 ```mermaid
 graph TD
-    T[Onglet Outils] --> T1[1. Créateur & Assemblage PDF]
-    T --> T2[2. Transfert Wi-Fi Direct P2P & QR Code]
-    T --> T3[3. Gestion des Étiquettes]
-    T --> T4[4. Imports de Paquets & Setlists]
-    T --> T5[5. Gestion des Doublons SHA-256]
-    T --> T6[6. Gestion des Sauvegardes]
+    T[Onglet Outils] --> T0[1. Scanner de Partitions Papier via Photo]
+    T --> T1[2. Créateur & Assemblage PDF]
+    T --> T2[3. Transfert Wi-Fi Direct P2P & QR Code]
+    T --> T3[4. Gestion des Étiquettes]
+    T --> T4[5. Imports de Paquets & Setlists]
+    T --> T5[6. Gestion des Doublons SHA-256]
+    T --> T6[7. Gestion des Sauvegardes]
 ```
 
-### 4.1 Créateur & Assemblage PDF (`PdfAssemblerPage`)
+### 4.1 Scanner de Partitions Papier via Photo (`ScoreScannerPage` — v2.7.0)
+Numérisez instantanément vos feuilles de musique papier physiques directement depuis l'application :
+- **Capture Caméra Haute Définition ou Galerie** : Prenez des clichés page par page de vos partitions ou importez des photos déjà prises depuis votre stockage.
+- **Filtres d'Optimisation de Partitions** :
+  - *Partition N&B optimisée* : Algorithme intelligent blanchissant le papier jauni/ombragé et noircissant les portées et les notes pour un rendu professionnel ultra-net.
+  - *Niveaux de gris* : Idéal pour conserver les nuances douces ou annotations au crayon.
+  - *Couleur originale* : Pour préserver les annotations de couleur vives.
+- **Outils par Page** : Rotation 90° individuelle, réorganisation par montée/descente, suppression ciblée.
+- **Génération & Intégration Directe** : Conversion automatique en document PDF multipages, enregistrement dans la bibliothèque SQLite avec titre et compositeur, et ouverture directe dans le visualiseur.
+
+### 4.2 Créateur & Assemblage PDF (`PdfAssemblerPage`)
 Cet atelier complet résout tous les problèmes d'agencement de vos partitions sans nécessiter d'ordinateur ni de logiciel externe :
 - **Sources de Documents** :
   - 📸 *Créer depuis des photos/scans* pris avec l'appareil ou stockés en galerie.

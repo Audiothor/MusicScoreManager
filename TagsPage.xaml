@@ -71,22 +71,31 @@
                         <Border Stroke="#333333" 
                                 StrokeThickness="1" 
                                 BackgroundColor="#1E1E1E" 
-                                Padding="15">
+                                Padding="14,12">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="10" />
                             </Border.StrokeShape>
-                            <Grid ColumnDefinitions="Auto, *">
-                                <BoxView Grid.Column="0"
-                                         Color="{Binding ColorHex}"
-                                         WidthRequest="15"
-                                         HeightRequest="15"
-                                         CornerRadius="7.5"
-                                         VerticalOptions="Center"
-                                         Margin="0,0,15,0" />
-                                <Label Grid.Column="1"
-                                       Text="{Binding Name}" 
-                                       FontSize="16" 
-                                       TextColor="White" 
+                            <Grid ColumnDefinitions="Auto, *, Auto">
+                                <!-- Badge Étiquette avec le même design que la liste des partitions -->
+                                <Border Grid.Column="0"
+                                        BackgroundColor="{Binding ColorHex}"
+                                        StrokeThickness="0"
+                                        Padding="12,5"
+                                        VerticalOptions="Center">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12" />
+                                    </Border.StrokeShape>
+                                    <Label Text="{Binding Name}" 
+                                           TextColor="White" 
+                                           FontSize="13" 
+                                           FontAttributes="Bold"
+                                           VerticalOptions="Center" />
+                                </Border>
+
+                                <Label Grid.Column="2"
+                                       Text="›" 
+                                       TextColor="#666666" 
+                                       FontSize="20" 
                                        VerticalOptions="Center" />
                             </Grid>
                         </Border>

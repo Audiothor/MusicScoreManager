@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.7.0 — 15/10/2026](#v270--15102026)
 - [v2.6.5 — 15/10/2026](#v265--15102026)
 - [v2.6.4 — 15/10/2026](#v264--15102026)
 - [v2.6.3 — 15/10/2026](#v263--15102026)
@@ -21,6 +22,33 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.7.0 — 15/10/2026
+
+### 1. Scanner de Partitions Papier via Photo (Onglet Outils)
+- **1.1. Module complet de numérisation embarqué (`ScoreScannerPage`) :** Permet de photographier directement des partitions physiques avec l'appareil photo ou d'importer des images de la galerie/stockage pour les convertir immédiatement en partitions PDF multi-pages.
+- **1.2. Filtre de contraste et nettoyage de partition :** Traitement d'image en temps réel (Mode « Partition N&B optimisée » blanchissant les fonds de papier jaunis ou ombragés et noircissant les portées pour une netteté de lecture maximale, Niveaux de gris, ou Couleur originale).
+- **1.3. Outils par page :** Rotation individuelle à 90°, réorganisation par montée/descente des pages et suppression ciblée.
+- **1.4. Intégration directe en bibliothèque :** Saisie du titre et du compositeur, conversion PDF instantanée, enregistrement en base SQLite et invite d'ouverture directe dans le lecteur de partitions.
+
+### 2. Accordeur : Choix Déroulants Ergonomiques (ViewerPage)
+- **2.1. Sélection déroulante du diapason :** Remplacement de la rangée de boutons par un sélecteur déroulant (`Picker`) proposant 440 Hz (Standard international, par défaut), 442 Hz (Orchestre symphonique), 415 Hz (Musique baroque) et 432 Hz (Fréquence alternative).
+- **2.2. Sélection déroulante de la note de référence :** Remplacement des boutons horizontaux par une liste déroulante claire (« Détection auto » par défaut, puis toutes les notes de la gamme chromatique ou cordes de l'instrument).
+- **2.3. Sélection déroulante de la hauteur (octave) :** Choix déroulant fluide (hauteurs 1 à 7, hauteur 4 sélectionnée par défaut).
+
+### 3. Affichage du Titre de la Partition en Haut de l'Écran (ViewerPage)
+- **3.1. Option globale dans les Paramètres :** Ajout de l'interrupteur « Afficher le titre de la partition tout en haut » dans les paramètres de partitions (`SettingsScoresPage`, désactivé par défaut).
+- **3.2. Contrôle instantané dans la Boîte à outils :** Ajout de la tuile « Titre de partition » dans le tiroir d'outils haut-droit (`ViewerPage`) permettant d'activer ou désactiver l'affichage du titre en direct pour la partition en cours.
+- **3.3. Bandeau discret et élégant :** Affichage centré en haut de l'écran avec fond semi-transparent et texte net sans gêner la lecture de la partition.
+
+### 4. Simplification de l'Arborescence des Paramètres
+- **4.1. Suppression du sous-menu « Organisation » :** Élimination de la section intermédiaire dans les Paramètres Partitions.
+- **4.2. Accès direct aux Étiquettes :** Déplacement de « Gérer la liste des étiquettes » directement sur la page racine des Paramètres (`SettingsPage`), immédiatement sous « Paramètres Partitions ».
+
+### 5. Harmonisation Graphique des Étiquettes
+- **5.1. Design pilule unifié dans la Gestion des étiquettes (`TagsPage`) :** Les étiquettes dans la liste de gestion adoptent exactement le même design sous forme de badges arrondis colorés que ceux affichés à côté des titres dans la bibliothèque des partitions.
 
 ---
 

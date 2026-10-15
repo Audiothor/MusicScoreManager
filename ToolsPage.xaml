@@ -30,7 +30,22 @@
                     </Border.StrokeShape>
                     
                     <VerticalStackLayout>
-                        <!-- 1. Créateur & Assemblage de partitions PDF -->
+                        <!-- 1. Scanner de partitions papier via photo -->
+                        <Grid Padding="15" BackgroundColor="Transparent" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnToolsScoreScannerTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Grid.Column="0" Text="📸" FontSize="24" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="{Binding [Tools_ScoreScanner_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label Text="{Binding [Tools_ScoreScanner_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="#333333" />
+
+                        <!-- 2. Créateur & Assemblage de partitions PDF -->
                         <Grid Padding="15" BackgroundColor="Transparent" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="14">
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnToolsPdfAssemblerTapped" />

@@ -57,6 +57,9 @@ namespace MusicScoreManager.Models
         // Tools Hub Button
         public bool ShowToolsButton { get; set; } = false;
 
+        // Titre de partition en haut
+        public bool ShowScoreTitle { get; set; } = false;
+
         [Ignore]
         public bool IsFileMissing { get; set; }
 

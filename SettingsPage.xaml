@@ -39,6 +39,17 @@
                         </Grid>
                         
                         <BoxView HeightRequest="1" Color="#333333" />
+
+                        <!-- Gérer la liste des étiquettes -->
+                        <Grid Padding="15" BackgroundColor="Transparent">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnManageTagsTapped" />
+                            </Grid.GestureRecognizers>
+                            <Label Text="{Binding [Settings_Scores_Manage_Tags], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="16" VerticalOptions="Center" />
+                            <Label Text="›" TextColor="#888888" FontSize="20" HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
+                        
+                        <BoxView HeightRequest="1" Color="#333333" />
                         
                         <Grid Padding="15" BackgroundColor="Transparent">
                             <Grid.GestureRecognizers>

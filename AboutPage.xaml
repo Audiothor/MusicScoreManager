@@ -41,7 +41,7 @@
                            FontAttributes="Bold" 
                            HorizontalOptions="Center" />
                     <Label x:Name="VersionLabel" 
-                           Text="v2.6.5" 
+                           Text="v2.7.0" 
                            TextColor="#007ACC" 
                            FontSize="14" 
                            FontAttributes="Bold"

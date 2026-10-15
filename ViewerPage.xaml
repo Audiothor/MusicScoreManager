@@ -1192,6 +1192,32 @@
             </ContentView.GestureRecognizers>
         </ContentView>
 
+        <!-- Bandeau Titre de la partition tout en haut -->
+        <Border x:Name="TopScoreTitleBar"
+                IsVisible="False"
+                HorizontalOptions="Center"
+                VerticalOptions="Start"
+                Margin="0,8,0,0"
+                BackgroundColor="#C012131C"
+                Stroke="#553A3A4C"
+                StrokeThickness="1"
+                Padding="16,5"
+                InputTransparent="True"
+                ZIndex="45">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12" />
+            </Border.StrokeShape>
+            <Border.Shadow>
+                <Shadow Brush="#000000" Offset="0,2" Radius="6" Opacity="0.7" />
+            </Border.Shadow>
+            <Label x:Name="TopScoreTitleLabel"
+                   Text=""
+                   TextColor="White"
+                   FontSize="13"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center" />
+        </Border>
+
         <!-- Zone Outils / Boîte à outils (Haut-Droite) -->
         <!-- Bouton visuel 🛠️ (affiché selon ShowToolsButton) -->
         <Border x:Name="ToolsIconButton"
@@ -1395,6 +1421,31 @@
                         </Border>
                     </Grid>
                 </Border>
+
+                <!-- Tuile 6 : Titre de la partition en haut -->
+                <Border x:Name="DrawerScoreTitleTile"
+                        BackgroundColor="#252532"
+                        Stroke="#444455"
+                        StrokeThickness="1"
+                        Padding="10,8">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="8" />
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnDrawerScoreTitleTapped" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+                        <Label Grid.Column="0" Text="🏷️" FontSize="16" VerticalOptions="Center" Margin="0,0,8,0" />
+                        <Label Grid.Column="1" Text="{Binding [Viewer_Tools_Score_Title], Source={x:Static services:LocalizationService.Instance}}" 
+                               TextColor="White" FontSize="12" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Border Grid.Column="2" x:Name="DrawerScoreTitleBadge" BackgroundColor="#444444" Padding="6,2">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="4" />
+                            </Border.StrokeShape>
+                            <Label x:Name="DrawerScoreTitleStatusLabel" Text="OFF" TextColor="#CCCCCC" FontSize="10" FontAttributes="Bold" />
+                        </Border>
+                    </Grid>
+                </Border>
             </VerticalStackLayout>
         </Border>
 
@@ -1442,15 +1493,20 @@
 
                 <BoxView HeightRequest="1" Color="#333344" />
 
-                <!-- Sélection Fréquence de référence (Diapason A4) -->
+                <!-- Sélection Fréquence de référence (Diapason A4) en choix déroulant -->
                 <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
                     <Label Grid.Column="0" Text="Diapason :" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
-                    <Grid Grid.Column="1" ColumnDefinitions="*, *, *, *" ColumnSpacing="4">
-                        <Button Grid.Column="0" x:Name="TunerA440Btn" Text="440" ToolTipProperties.Text="440 Hz (Standard international)" FontSize="11" FontAttributes="Bold" HeightRequest="28" Padding="0" CornerRadius="6" BackgroundColor="#007ACC" TextColor="White" Clicked="OnTunerA4RefClicked" CommandParameter="440" />
-                        <Button Grid.Column="1" x:Name="TunerA442Btn" Text="442" ToolTipProperties.Text="442 Hz (Orchestre symphonique)" FontSize="11" FontAttributes="Bold" HeightRequest="28" Padding="0" CornerRadius="6" BackgroundColor="#252535" TextColor="#CCCCCC" Clicked="OnTunerA4RefClicked" CommandParameter="442" />
-                        <Button Grid.Column="2" x:Name="TunerA415Btn" Text="415" ToolTipProperties.Text="415 Hz (Musique baroque)" FontSize="11" FontAttributes="Bold" HeightRequest="28" Padding="0" CornerRadius="6" BackgroundColor="#252535" TextColor="#CCCCCC" Clicked="OnTunerA4RefClicked" CommandParameter="415" />
-                        <Button Grid.Column="3" x:Name="TunerA432Btn" Text="432" ToolTipProperties.Text="432 Hz (Alternative / Verdi)" FontSize="11" FontAttributes="Bold" HeightRequest="28" Padding="0" CornerRadius="6" BackgroundColor="#252535" TextColor="#CCCCCC" Clicked="OnTunerA4RefClicked" CommandParameter="432" />
-                    </Grid>
+                    <Border Grid.Column="1" BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="8,1">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="6" />
+                        </Border.StrokeShape>
+                        <Picker x:Name="TunerA4Picker"
+                                TextColor="White"
+                                TitleColor="#888899"
+                                FontSize="12"
+                                HeightRequest="32"
+                                SelectedIndexChanged="OnTunerA4PickerChanged" />
+                    </Border>
                 </Grid>
 
                 <!-- Bouton activation/désactivation microphone -->
@@ -1475,17 +1531,36 @@
                             SelectedIndexChanged="OnTunerInstrumentChanged" />
                 </Border>
 
-                <!-- Rangée des cordes / notes de l'instrument -->
-                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-                    <HorizontalStackLayout x:Name="TunerNotesLayout" Spacing="5" HorizontalOptions="Center" />
-                </ScrollView>
+                <!-- Sélecteur de Note de référence en choix déroulant -->
+                <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
+                    <Label Grid.Column="0" Text="Note ref. :" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
+                    <Border Grid.Column="1" BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="8,1">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="6" />
+                        </Border.StrokeShape>
+                        <Picker x:Name="TunerNotePicker"
+                                TextColor="White"
+                                TitleColor="#888899"
+                                FontSize="12"
+                                HeightRequest="32"
+                                SelectedIndexChanged="OnTunerNotePickerChanged" />
+                    </Border>
+                </Grid>
 
-                <!-- Sélecteur d'octaves (Hauteur de note 1 à 7) pour le mode Chromatique -->
-                <Grid x:Name="TunerOctavesContainer" ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center" IsVisible="False">
+                <!-- Sélecteur d'octave (Hauteur de note 1 à 7) en choix déroulant (par défaut 4) -->
+                <Grid x:Name="TunerOctavesContainer" ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
                     <Label Grid.Column="0" Text="Hauteur :" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
-                    <ScrollView Grid.Column="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-                        <HorizontalStackLayout x:Name="TunerOctavesLayout" Spacing="4" VerticalOptions="Center" />
-                    </ScrollView>
+                    <Border Grid.Column="1" BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="8,1">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="6" />
+                        </Border.StrokeShape>
+                        <Picker x:Name="TunerOctavePicker"
+                                TextColor="White"
+                                TitleColor="#888899"
+                                FontSize="12"
+                                HeightRequest="32"
+                                SelectedIndexChanged="OnTunerOctavePickerChanged" />
+                    </Border>
                 </Grid>
 
                 <!-- Affichage central de la note et fréquence -->
