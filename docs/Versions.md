@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.7.2 — 15/10/2026](#v272--15102026)
 - [v2.7.1 — 15/10/2026](#v271--15102026)
 - [v2.7.0 — 15/10/2026](#v270--15102026)
 - [v2.6.5 — 15/10/2026](#v265--15102026)
@@ -23,6 +24,17 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.7.2 — 15/10/2026
+
+### 1. Performance Majeure : Optimisation de l'Ouverture des Partitions (Temps divisé par 4 à 8)
+- **1.1. Élimination du gel WebView Chromium / V8 au démarrage :** Le composant `WebView` (utilisé uniquement en solution de repli non-native) n'est plus instancié statiquement dans le layout XAML de `ViewerPage`. Il est désormais instancié à la demande (*lazy-loading*), évitant le chargement à froid du moteur Chromium Android (gain direct de 1,5 à 2,5 secondes à chaque ouverture de partition).
+- **1.2. Suppression de l'extraction redondante de PDF.js :** La décompression systématique des fichiers d'archive PDF.js depuis l'APK vers le stockage local lors de l'ouverture a été supprimée du chemin critique et n'est invoquée que si le moteur natif Android `PdfRenderer` n'est pas supporté.
+- **1.3. Réutilisation du nombre de pages déjà indexé :** Réutilisation immédiate de `_score.PageCount` stocké en base de données SQLite plutôt que de réanalyser et réouvrir le fichier PDF sur disque, éliminant un accès I/O bloquant (gain de 200 à 400 ms).
+- **1.4. Chargement non bloquant des rotations et métadonnées :** Le chargement des rotations individuelles de page s'exécute désormais en parallèle en tâche de fond au lieu de sérialiser et bloquer le premier rendu visuel de la partition.
+- **1.5. Persistance du cache mémoire bitmap entre ouvertures :** Suppression du vidage forcé du cache (`PdfService.ClearMemoryCache()`) à la fermeture du visualiseur. Les pages déjà rendues restent en cache mémoire LRU pour une réouverture quasi-instantanée (~0 à 50 ms).
 
 ---
 

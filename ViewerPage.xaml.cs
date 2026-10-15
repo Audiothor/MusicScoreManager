@@ -43,6 +43,25 @@ public partial class ViewerPage : ContentPage
     private bool _isDraggingAudioSlider = false;
     private ScoreAudioFile? _selectedAudioFile;
     private string _pdfFilePath = "current.pdf";
+    private WebView? PdfWebView;
+
+    private WebView EnsurePdfWebViewCreated()
+    {
+        if (PdfWebView == null)
+        {
+            PdfWebView = new WebView
+            {
+                IsVisible = false,
+                BackgroundColor = Colors.Black,
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Fill
+            };
+            PdfWebView.Navigated += OnPdfWebViewNavigated;
+            PdfWebView.Navigating += OnPdfWebViewNavigating;
+            ZoomLayout.Children.Insert(0, PdfWebView);
+        }
+        return PdfWebView;
+    }
 
     private readonly AnnotationService _annotationService;
     private readonly PdfService _pdfService = new();
@@ -328,13 +347,12 @@ public partial class ViewerPage : ContentPage
 
     private async Task LoadPageAndContentImmediatelyAsync()
     {
-        var rotationsTask = LoadPageRotationsAsync();
-        if (DeviceInfo.Platform == DevicePlatform.Android)
-        {
-            await EnsurePdfJsReadyAsync();
-        }
-        await rotationsTask;
+        // 1. Lancement asynchrone des rotations de pages en arrière-plan sans bloquer
+        _ = LoadPageRotationsAsync();
+
+        // 2. Rendu immédiat et direct de la partition
         LoadContentAsync();
+        await Task.CompletedTask;
     }
 
     private async Task LoadPageRotationsAsync()
@@ -544,7 +562,7 @@ public partial class ViewerPage : ContentPage
                     ScoreImage.Source = ImageSource.FromFile(fullPath);
                     ScoreImage.Rotation = _currentRotation;
                     ScoreImage.IsVisible = true;
-                    PdfWebView.IsVisible = false;
+                    if (PdfWebView != null) PdfWebView.IsVisible = false;
                     ImageContainer.IsVisible = true;
                     AnnotationsContainer.IsVisible = _score.ShowAnnotations;
                     _currentPage = 1;
@@ -572,7 +590,7 @@ public partial class ViewerPage : ContentPage
                         ActiveAnnotationsContainer.Opacity = 0;
                         ActiveAnnotationsContainer.Children.Clear();
                     }
-                    PdfWebView.IsVisible = false;
+                    if (PdfWebView != null) PdfWebView.IsVisible = false;
                     ScoreImage.IsVisible = true;
                     ImageContainer.IsVisible = true;
                     AnnotationsContainer.IsVisible = _score.ShowAnnotations;
@@ -589,7 +607,8 @@ public partial class ViewerPage : ContentPage
                         ActiveAnnotationsContainer.Children.Clear();
                     }
                     ScoreImage.IsVisible = false;
-                    PdfWebView.IsVisible = true;
+                    var webView = EnsurePdfWebViewCreated();
+                    webView.IsVisible = true;
                     ImageContainer.IsVisible = true;
                     AnnotationsContainer.IsVisible = _score.ShowAnnotations;
 
@@ -611,11 +630,11 @@ public partial class ViewerPage : ContentPage
 
                         System.Diagnostics.Debug.WriteLine($"[Viewer] WebView Source finale: {pdfJsUrl}");
                         _pdfFilePath = finalFilePath; 
-                        PdfWebView.Source = new UrlWebViewSource { Url = pdfJsUrl };
+                        webView.Source = new UrlWebViewSource { Url = pdfJsUrl };
                     }
                     else
                     {
-                        PdfWebView.Source = fullPath;
+                        webView.Source = fullPath;
                     }
                 }
             }
@@ -684,14 +703,14 @@ public partial class ViewerPage : ContentPage
 
             _isScoreReady = false;
 
-            if (_maxPages <= 1)
+            if (_score.PageCount > 0)
+            {
+                _maxPages = _score.PageCount;
+            }
+            else if (_maxPages <= 1)
             {
                 _maxPages = await _pdfService.GetPdfPageCountAsync(fullPath);
                 if (_maxPages < 1) _maxPages = 1;
-            }
-
-            if (_score.PageCount != _maxPages)
-            {
                 _score.PageCount = _maxPages;
                 _ = _databaseService.SaveScoreAsync(_score);
             }
@@ -875,7 +894,7 @@ public partial class ViewerPage : ContentPage
                 try
                 {
                     string json = System.Text.Json.JsonSerializer.Serialize(_pageRotations);
-                    await PdfWebView.EvaluateJavaScriptAsync($"setPageRotationsMap({json})");
+                    if (PdfWebView != null) await PdfWebView.EvaluateJavaScriptAsync($"setPageRotationsMap({json})");
                 }
                 catch { }
             }
@@ -884,7 +903,7 @@ public partial class ViewerPage : ContentPage
             {
                 string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
                 string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
-                await PdfWebView.EvaluateJavaScriptAsync($"setGestures('{nextGesture}', '{prevGesture}')");
+                if (PdfWebView != null) await PdfWebView.EvaluateJavaScriptAsync($"setGestures('{nextGesture}', '{prevGesture}')");
             }
             catch { }
 
@@ -2265,7 +2284,7 @@ public partial class ViewerPage : ContentPage
             }
             else
             {
-                await PdfWebView.EvaluateJavaScriptAsync($"setRotation({nextRot}, {applyToAll.ToString().ToLowerInvariant()})");
+                if (PdfWebView != null) await PdfWebView.EvaluateJavaScriptAsync($"setRotation({nextRot}, {applyToAll.ToString().ToLowerInvariant()})");
             }
         }
 
@@ -2351,7 +2370,7 @@ public partial class ViewerPage : ContentPage
         await ZoomLayout.ScaleTo(1.0, 250, Easing.CubicOut);
 
         // Réinitialiser le scroll / zoom du visual viewport WebView
-        if (_score.Type == ScoreType.PDF && PdfWebView.IsVisible)
+        if (_score.Type == ScoreType.PDF && PdfWebView != null && PdfWebView.IsVisible)
         {
             _ = PdfWebView.EvaluateJavaScriptAsync("if (window.visualViewport) { window.scrollTo(0, 0); }");
         }
@@ -2400,7 +2419,7 @@ public partial class ViewerPage : ContentPage
                     }
                 }
             }
-            else if (DeviceInfo.Platform == DevicePlatform.Android && PdfWebView.IsVisible)
+            else if (DeviceInfo.Platform == DevicePlatform.Android && PdfWebView != null && PdfWebView.IsVisible)
             {
                 await PdfWebView.EvaluateJavaScriptAsync("prevPage();");
             }
@@ -2453,7 +2472,7 @@ public partial class ViewerPage : ContentPage
                     }
                 }
             }
-            else if (DeviceInfo.Platform == DevicePlatform.Android && PdfWebView.IsVisible)
+            else if (DeviceInfo.Platform == DevicePlatform.Android && PdfWebView != null && PdfWebView.IsVisible)
             {
                 await PdfWebView.EvaluateJavaScriptAsync("nextPage();");
             }
@@ -2736,7 +2755,7 @@ public partial class ViewerPage : ContentPage
                 {
                     _isScoreReady = false;
                     RenderAnnotations();
-                    await PdfWebView.EvaluateJavaScriptAsync($"goToPage({pageNum})");
+                    if (PdfWebView != null) await PdfWebView.EvaluateJavaScriptAsync($"goToPage({pageNum})");
                 }
             }
             UpdatePageIndicator();
@@ -2836,7 +2855,7 @@ public partial class ViewerPage : ContentPage
 
         PedalMidiService.Instance.ClearOverrideProfile();
         PedalMidiService.Instance.ActionTriggered -= OnPedalActionTriggered;
-        PdfService.ClearMemoryCache();
+        // Laisser le cache mémoire actif (plafonné à 12 pages) pour un rendu instantané à 0ms en réouverture
         CancelPreCount();
 
         try
@@ -2891,14 +2910,14 @@ public partial class ViewerPage : ContentPage
                     break;
 
                 case PedalAction.ScrollDown:
-                    if (_score.Type == ScoreType.PDF && PdfWebView.IsVisible)
+                    if (_score.Type == ScoreType.PDF && PdfWebView != null && PdfWebView.IsVisible)
                     {
                         _ = PdfWebView.EvaluateJavaScriptAsync("window.scrollBy({ top: window.innerHeight * 0.5, behavior: 'smooth' });");
                     }
                     break;
 
                 case PedalAction.ScrollUp:
-                    if (_score.Type == ScoreType.PDF && PdfWebView.IsVisible)
+                    if (_score.Type == ScoreType.PDF && PdfWebView != null && PdfWebView.IsVisible)
                     {
                         _ = PdfWebView.EvaluateJavaScriptAsync("window.scrollBy({ top: -window.innerHeight * 0.5, behavior: 'smooth' });");
                     }
@@ -3254,11 +3273,11 @@ public partial class ViewerPage : ContentPage
 
         if (_score.Type == ScoreType.PDF && PdfService.IsNativePdfSupported)
         {
-            _maxPages = await _pdfService.GetPdfPageCountAsync(fullPath);
+            _maxPages = _score.PageCount > 0 ? _score.PageCount : await _pdfService.GetPdfPageCountAsync(fullPath);
             int targetPage = toLastPage ? _maxPages : 1;
             await RenderPdfCurrentAsync(targetPage);
         }
-        else if (_score.Type == ScoreType.PDF && PdfWebView.IsVisible)
+        else if (_score.Type == ScoreType.PDF && PdfWebView != null && PdfWebView.IsVisible)
         {
             // Transition fluide ultra-rapide dans le canvas existant sans rechargement de WebView
             string finalFilePath = fullPath.StartsWith("/") ? $"file://{fullPath}" : $"file:///{fullPath}";
@@ -3318,7 +3337,8 @@ public partial class ViewerPage : ContentPage
                                 {
                                     try
                                     {
-                                        await PdfWebView.EvaluateJavaScriptAsync($"preloadPdf('{finalNextPath}');");
+                                        if (PdfWebView != null)
+                                            await PdfWebView.EvaluateJavaScriptAsync($"preloadPdf('{finalNextPath}');");
                                     }
                                     catch { }
                                 });
@@ -3353,7 +3373,8 @@ public partial class ViewerPage : ContentPage
                                 {
                                     try
                                     {
-                                        await PdfWebView.EvaluateJavaScriptAsync($"preloadPdf('{finalPrevPath}');");
+                                        if (PdfWebView != null)
+                                            await PdfWebView.EvaluateJavaScriptAsync($"preloadPdf('{finalPrevPath}');");
                                     }
                                     catch { }
                                 });

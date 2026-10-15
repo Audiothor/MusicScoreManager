@@ -41,14 +41,7 @@
                   HorizontalOptions="Fill"
                   VerticalOptions="Fill">
 
-                <!-- Le PDF -->
-                <WebView x:Name="PdfWebView" 
-                         IsVisible="False" 
-                         BackgroundColor="Black"
-                         HorizontalOptions="Fill"
-                         VerticalOptions="Fill"
-                         Navigated="OnPdfWebViewNavigated"
-                         Navigating="OnPdfWebViewNavigating" />
+                <!-- Le PDF (instancié paresseusement en C# uniquement si repli non-natif requis) -->
 
                 <!-- L'image -->
                 <Image x:Name="ScoreImage" 
