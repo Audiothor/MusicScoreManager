@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.6.5 — 15/10/2026](#v265--15102026)
 - [v2.6.4 — 15/10/2026](#v264--15102026)
 - [v2.6.3 — 15/10/2026](#v263--15102026)
 - [v2.6.2 — 14/10/2026](#v262--14102026)
@@ -20,6 +21,14 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.6.5 — 15/10/2026
+
+### 1. Tuner: Calibration Grid & Octave Selector Alignment Fix
+- **1.1. Restored Visibility for All 4 Pitch Options:** Added explicit `Grid.Column="0"` to `"3"` for buttons and `Grid.Column="1"` for the subgrid. All 4 reference frequencies (`440 Hz`, `442 Hz`, `415 Hz`, and `432 Hz`) are now perfectly visible, aligned side-by-side to the right of the "Diapason :" label without any overlapping.
+- **1.2. Octave Height Selector Alignment:** Adjusted the octave scroll container to `Grid.Column="1"` to avoid overlapping the "Hauteur :" label.
 
 ---
 
