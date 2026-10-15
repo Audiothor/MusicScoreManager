@@ -871,6 +871,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v272-15102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.7.2 — 15/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.7.2 — 15/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-major-performance-optimization-sheet-music-open-time-4x-to-8x-faster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Major Performance Optimization: Sheet Music Open Time (4x to 8x Faster)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v271-15102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2586,6 +2614,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v272-15102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.7.2 — 15/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.7.2 — 15/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-major-performance-optimization-sheet-music-open-time-4x-to-8x-faster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Major Performance Optimization: Sheet Music Open Time (4x to 8x Faster)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v271-15102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4280,6 +4336,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v272--15102026">v2.7.2 — 15/10/2026</a></li>
 <li><a href="#v271--15102026">v2.7.1 — 15/10/2026</a></li>
 <li><a href="#v270--15102026">v2.7.0 — 15/10/2026</a></li>
 <li><a href="#v265--15102026">v2.6.5 — 15/10/2026</a></li>
@@ -4297,6 +4354,16 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v272-15102026">v2.7.2 — 15/10/2026</h2>
+<h3 id="1-major-performance-optimization-sheet-music-open-time-4x-to-8x-faster">1. Major Performance Optimization: Sheet Music Open Time (4x to 8x Faster)</h3>
+<ul>
+<li><strong>1.1. Eliminated Cold Chromium/V8 WebView Startup Delay:</strong> The <code>WebView</code> component (used solely as a non-native fallback) is no longer statically instantiated in <code>ViewerPage</code> XAML layout. It is now lazy-loaded on demand, completely preventing Android Chromium engine cold initialization (saving 1.5 to 2.5 seconds per score opening).</li>
+<li><strong>1.2. Bypassed Redundant PDF.js Asset Extraction:</strong> Deprecated extraction of bundled PDF.js archives from APK to local cache during native score opening. PDF.js is now only unpacked if the native Android <code>PdfRenderer</code> is unavailable.</li>
+<li><strong>1.3. Reused Pre-indexed Page Count from SQLite:</strong> Immediate reuse of <code>_score.PageCount</code> stored in SQLite rather than reopening and parsing the PDF file on disk, eliminating redundant blocking disk I/O (saving 200 to 400 ms).</li>
+<li><strong>1.4. Non-blocking Parallel Loading of Page Rotations &amp; Metadata:</strong> Individual page rotation preferences are now loaded in a background task instead of serializing and blocking the initial score view rendering.</li>
+<li><strong>1.5. In-Memory Render Cache Persistence Across Score Navigation:</strong> Removed forced memory cache clearing (<code>PdfService.ClearMemoryCache()</code>) in <code>OnDisappearing()</code>. Rendered score pages stay in the LRU memory cache for instant (~0 to 50 ms) score reopening.</li>
 </ul>
 <hr />
 <h2 id="v271-15102026">v2.7.1 — 15/10/2026</h2>

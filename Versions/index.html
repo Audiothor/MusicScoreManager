@@ -871,6 +871,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v272-15102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.7.2 — 15/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.7.2 — 15/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-performance-majeure-optimisation-de-louverture-des-partitions-temps-divise-par-4-a-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Performance Majeure : Optimisation de l'Ouverture des Partitions (Temps divisé par 4 à 8)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v271-15102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2586,6 +2614,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v272-15102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.7.2 — 15/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.7.2 — 15/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-performance-majeure-optimisation-de-louverture-des-partitions-temps-divise-par-4-a-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Performance Majeure : Optimisation de l'Ouverture des Partitions (Temps divisé par 4 à 8)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v271-15102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4280,6 +4336,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v272--15102026">v2.7.2 — 15/10/2026</a></li>
 <li><a href="#v271--15102026">v2.7.1 — 15/10/2026</a></li>
 <li><a href="#v270--15102026">v2.7.0 — 15/10/2026</a></li>
 <li><a href="#v265--15102026">v2.6.5 — 15/10/2026</a></li>
@@ -4297,6 +4354,16 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v272-15102026">v2.7.2 — 15/10/2026</h2>
+<h3 id="1-performance-majeure-optimisation-de-louverture-des-partitions-temps-divise-par-4-a-8">1. Performance Majeure : Optimisation de l'Ouverture des Partitions (Temps divisé par 4 à 8)</h3>
+<ul>
+<li><strong>1.1. Élimination du gel WebView Chromium / V8 au démarrage :</strong> Le composant <code>WebView</code> (utilisé uniquement en solution de repli non-native) n'est plus instancié statiquement dans le layout XAML de <code>ViewerPage</code>. Il est désormais instancié à la demande (<em>lazy-loading</em>), évitant le chargement à froid du moteur Chromium Android (gain direct de 1,5 à 2,5 secondes à chaque ouverture de partition).</li>
+<li><strong>1.2. Suppression de l'extraction redondante de PDF.js :</strong> La décompression systématique des fichiers d'archive PDF.js depuis l'APK vers le stockage local lors de l'ouverture a été supprimée du chemin critique et n'est invoquée que si le moteur natif Android <code>PdfRenderer</code> n'est pas supporté.</li>
+<li><strong>1.3. Réutilisation du nombre de pages déjà indexé :</strong> Réutilisation immédiate de <code>_score.PageCount</code> stocké en base de données SQLite plutôt que de réanalyser et réouvrir le fichier PDF sur disque, éliminant un accès I/O bloquant (gain de 200 à 400 ms).</li>
+<li><strong>1.4. Chargement non bloquant des rotations et métadonnées :</strong> Le chargement des rotations individuelles de page s'exécute désormais en parallèle en tâche de fond au lieu de sérialiser et bloquer le premier rendu visuel de la partition.</li>
+<li><strong>1.5. Persistance du cache mémoire bitmap entre ouvertures :</strong> Suppression du vidage forcé du cache (<code>PdfService.ClearMemoryCache()</code>) à la fermeture du visualiseur. Les pages déjà rendues restent en cache mémoire LRU pour une réouverture quasi-instantanée (~0 à 50 ms).</li>
 </ul>
 <hr />
 <h2 id="v271-15102026">v2.7.1 — 15/10/2026</h2>
