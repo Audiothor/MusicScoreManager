@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.8.0 — 16/10/2026](#v280--16102026)
 - [v2.7.2 — 15/10/2026](#v272--15102026)
 - [v2.7.1 — 15/10/2026](#v271--15102026)
 - [v2.7.0 — 15/10/2026](#v270--15102026)
@@ -24,6 +25,30 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.8.0 — 16/10/2026
+
+### 1. Compatibilité Totale Smartphones (Sans Aucun Impact sur l'Expérience Tablette)
+- **1.1. Architecture Adaptative Non Invasive via `OnIdiom` :** Utilisation systématique du mécanisme natif .NET MAUI `OnIdiom` (`Phone` vs `Tablet`) pour appliquer des ajustements ergonomiques ciblés sur smartphones sans altérer d'un seul pixel les dimensions, marges, polices et dispositions sur tablettes.
+- **1.2. Barre d'outils d'annotation en mode portrait mobile :**
+  - Restructuration complète de la barre d'annotations en grille à deux colonnes (`Grid ColumnDefinitions="*, Auto"`).
+  - Découplage du bouton de fermeture `✕` dans une colonne fixe ancrée à droite : la croix de fermeture reste toujours immédiatement visible et cliquable sur tout smartphone, quelle que soit la largeur d'écran.
+  - Réduction proportionnelle des boutons d'outils (`28x32` sur smartphone vs `34x36` sur tablette) et réorganisation adaptative des palettes de surlignage, dessin et texte en 2 rangées compactes (`Orientation="{OnIdiom Phone=Vertical, Tablet=Horizontal}"`).
+- **1.3. En-tête et barre de recherche (`ScoresPage` & `SetlistsPage`) :**
+  - Boutons d'action réduits à `38x38` sur smartphone (`50x50` sur tablette) avec espacement et marges condensés, restituant plus de 80 pixels de largeur à la barre de recherche (`SearchBar`).
+- **1.4. Affichage multi-lignes des étiquettes (Tags) :**
+  - Remplacement du conteneur rigide `HorizontalStackLayout` par un `FlexLayout` avec retour à la ligne automatique (`Wrap="Wrap"`). Les tags s'enroulent harmonieusement sur plusieurs lignes sur petits écrans au lieu d'être coupés horizontalement.
+- **1.5. Index alphabétique latéral (Fast-Scroller) :**
+  - Ajustement de la largeur (`22px` sur smartphone vs `28px` sur tablette) et de la marge droite de la liste de partitions, éliminant tout chevauchement avec le texte ou les miniatures.
+- **1.6. Boîtes de dialogue, overlays et cartes d'action responsives :**
+  - Remplacement des largeurs fixes par des conteneurs fluides (`HorizontalOptions="{OnIdiom Phone=Fill, Tablet=Center}"`, `WidthRequest="{OnIdiom Tablet=350/360/380}"`, marges latérales adaptatives `16px`).
+  - Suppression des hauteurs rigides (`HeightRequest`) sur les boutons d'action des boîtes de dialogue au profit de `MinimumHeightRequest` et de marges internes respirantes, permettant le retour à la ligne naturel de textes d'actions longs sans troncature ni ellipse.
+
+### 2. Bibliothèque de Partitions : Fiabilité du Renommage & Réactivité
+- **2.1. Notification de changement de propriétés (INotifyPropertyChanged) :** Ajout des notifications `OnPropertyChanged` sur les propriétés `Title` et `Composer` du modèle `Score`, garantissant la mise à jour visuelle instantanée dans les listes lors d'un renommage.
+- **2.2. Gestion du filtre de recherche actif lors du renommage :** Réinitialisation sécurisée du filtre de recherche si le nouveau titre ou compositeur ne correspond plus aux critères de recherche saisis, empêchant la partition de disparaître mystérieusement après renommage.
 
 ---
 
