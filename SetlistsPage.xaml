@@ -7,7 +7,7 @@
              BackgroundColor="#121212">
 
     <Grid RowDefinitions="Auto, Auto, *">
-        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto" Margin="15,15,15,15" ColumnSpacing="10">
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto" Margin="{OnIdiom Phone='10,10,10,10', Tablet='15,15,15,15'}" ColumnSpacing="{OnIdiom Phone=6, Tablet=10}">
             <SearchBar Grid.Column="0"
                        x:Name="SearchSetlistBar"
                        Placeholder="{Binding [Setlist_Search_Placeholder], Source={x:Static services:LocalizationService.Instance}}"
@@ -18,22 +18,22 @@
             
             <Button Grid.Column="1"
                     Text="⇅"
-                    FontSize="20"
+                    FontSize="{OnIdiom Phone=16, Tablet=20}"
                     FontAttributes="Bold"
-                    WidthRequest="50"
-                    HeightRequest="50"
-                    CornerRadius="25"
+                    WidthRequest="{OnIdiom Phone=38, Tablet=50}"
+                    HeightRequest="{OnIdiom Phone=38, Tablet=50}"
+                    CornerRadius="{OnIdiom Phone=19, Tablet=25}"
                     BackgroundColor="#333333"
                     TextColor="White"
                     Clicked="OnSortClicked" />
 
             <Button Grid.Column="2"
                     Text="+"
-                    FontSize="24"
+                    FontSize="{OnIdiom Phone=20, Tablet=24}"
                     FontAttributes="Bold"
-                    WidthRequest="50"
-                    HeightRequest="50"
-                    CornerRadius="25"
+                    WidthRequest="{OnIdiom Phone=38, Tablet=50}"
+                    HeightRequest="{OnIdiom Phone=38, Tablet=50}"
+                    CornerRadius="{OnIdiom Phone=19, Tablet=25}"
                     BackgroundColor="#007ACC"
                     TextColor="White"
                     Clicked="OnAddSetlistClicked" />
@@ -152,9 +152,11 @@
                     Stroke="#3A3A3A"
                     StrokeThickness="1" 
                     VerticalOptions="Center" 
-                    HorizontalOptions="Center" 
-                    WidthRequest="350"
-                    Padding="20"
+                    HorizontalOptions="{OnIdiom Phone=Fill, Tablet=Center}" 
+                    WidthRequest="{OnIdiom Tablet=350}"
+                    MaximumWidthRequest="{OnIdiom Phone=360, Tablet=380}"
+                    Margin="{OnIdiom Phone='16,10', Tablet='0'}"
+                    Padding="{OnIdiom Phone='16,14', Tablet='20'}"
                     Shadow="{Shadow Brush=Black, Offset='0,10', Radius=25, Opacity=0.6}">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="20" />
@@ -272,9 +274,11 @@
                     Stroke="#3A3A3A"
                     StrokeThickness="1"
                     VerticalOptions="Center" 
-                    HorizontalOptions="Center" 
-                    WidthRequest="350"
-                    Padding="20"
+                    HorizontalOptions="{OnIdiom Phone=Fill, Tablet=Center}" 
+                    WidthRequest="{OnIdiom Tablet=350}"
+                    MaximumWidthRequest="{OnIdiom Phone=360, Tablet=380}"
+                    Margin="{OnIdiom Phone='16,10', Tablet='0'}"
+                    Padding="{OnIdiom Phone='16,14', Tablet='20'}"
                     Shadow="{Shadow Brush=Black, Offset='0,10', Radius=25, Opacity=0.6}">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="20" />
@@ -340,10 +344,12 @@
                     Stroke="#333333"
                     StrokeThickness="1"
                     VerticalOptions="Center" 
-                    HorizontalOptions="Center" 
-                    WidthRequest="380"
-                    HeightRequest="650"
-                    Padding="20">
+                    HorizontalOptions="{OnIdiom Phone=Fill, Tablet=Center}" 
+                    WidthRequest="{OnIdiom Tablet=380}"
+                    MaximumWidthRequest="{OnIdiom Phone=380, Tablet=420}"
+                    MaximumHeightRequest="{OnIdiom Phone=600, Tablet=650}"
+                    Margin="{OnIdiom Phone='14,10', Tablet='0'}"
+                    Padding="{OnIdiom Phone='16,12', Tablet='20'}">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="15" />
                 </Border.StrokeShape>

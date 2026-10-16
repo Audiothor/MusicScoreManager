@@ -15,9 +15,33 @@ namespace MusicScoreManager.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        public string Title { get; set; } = string.Empty;
+        private string _title = string.Empty;
+        public string Title
+        {
+            get => _title;
+            set
+            {
+                if (_title != value)
+                {
+                    _title = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         
-        public string Composer { get; set; } = string.Empty;
+        private string _composer = string.Empty;
+        public string Composer
+        {
+            get => _composer;
+            set
+            {
+                if (_composer != value)
+                {
+                    _composer = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public MusicalKey Key { get; set; } = MusicalKey.None;
 

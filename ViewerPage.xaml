@@ -428,7 +428,7 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
-            <StackLayout x:Name="HighlightOptionsLayout" Orientation="Horizontal" Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
+            <StackLayout x:Name="HighlightOptionsLayout" Orientation="{OnIdiom Phone=Vertical, Tablet=Horizontal}" Spacing="{OnIdiom Phone=4, Tablet=6}" VerticalOptions="Center" HorizontalOptions="Center">
                 <!-- Pastilles de couleurs (Jaune par défaut, Vert, Bleu, Rouge/Rose) -->
                 <HorizontalStackLayout Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
                     <!-- Jaune (défaut) -->
@@ -454,7 +454,7 @@
                 </HorizontalStackLayout>
 
                 <!-- Séparateur vertical (visible en paysage) -->
-                <BoxView x:Name="HighlightOptionsSeparator" WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
+                <BoxView x:Name="HighlightOptionsSeparator" IsVisible="{OnIdiom Phone=False, Tablet=True}" WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
 
                 <!-- Choix de largeur de stabilo + Bouton fermer -->
                 <HorizontalStackLayout Spacing="4" VerticalOptions="Center" HorizontalOptions="Center">
@@ -485,7 +485,7 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
-            <StackLayout x:Name="DrawOptionsLayout" Orientation="Horizontal" Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
+            <StackLayout x:Name="DrawOptionsLayout" Orientation="{OnIdiom Phone=Vertical, Tablet=Horizontal}" Spacing="{OnIdiom Phone=4, Tablet=6}" VerticalOptions="Center" HorizontalOptions="Center">
                 <!-- Pastilles de couleurs (Noir par défaut, Rouge, Bleu, Vert, Jaune, Blanc) -->
                 <HorizontalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="Center">
                     <!-- Noir (défaut) -->
@@ -521,7 +521,7 @@
                 </HorizontalStackLayout>
 
                 <!-- Séparateur vertical (visible en paysage) -->
-                <BoxView x:Name="DrawOptionsSeparator" WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
+                <BoxView x:Name="DrawOptionsSeparator" IsVisible="{OnIdiom Phone=False, Tablet=True}" WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
 
                 <!-- Choix de largeur de crayon (1mm, 2mm, 3mm, 4mm, 5mm) + Bouton fermer -->
                 <HorizontalStackLayout Spacing="3" VerticalOptions="Center" HorizontalOptions="Center">
@@ -550,7 +550,7 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
-            <StackLayout x:Name="TextOptionsLayout" Orientation="Horizontal" Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
+            <StackLayout x:Name="TextOptionsLayout" Orientation="{OnIdiom Phone=Vertical, Tablet=Horizontal}" Spacing="{OnIdiom Phone=4, Tablet=6}" VerticalOptions="Center" HorizontalOptions="Center">
                 <!-- Pastilles de couleurs (Noir par défaut, Rouge, Bleu, Vert, Jaune, Blanc) -->
                 <HorizontalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="Center">
                     <!-- Noir (défaut) -->
@@ -586,7 +586,7 @@
                 </HorizontalStackLayout>
 
                 <!-- Séparateur vertical (visible en paysage) -->
-                <BoxView x:Name="TextOptionsSeparator" WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
+                <BoxView x:Name="TextOptionsSeparator" IsVisible="{OnIdiom Phone=False, Tablet=True}" WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
 
                 <!-- Choix de taille en pixel (8, 10, 12, 14, 16, 18) + Bouton fermer -->
                 <HorizontalStackLayout Spacing="2" VerticalOptions="Center" HorizontalOptions="Center">
@@ -607,32 +607,35 @@
                 VerticalOptions="End"
                 HorizontalOptions="Fill"
                 BackgroundColor="#80000000"
-                HeightRequest="45"
+                HeightRequest="{OnIdiom Phone=42, Tablet=45}"
                 StrokeThickness="0"
                 IsVisible="False"
                 ZIndex="20">
             <Border.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
             </Border.GestureRecognizers>
-            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HorizontalOptions="Fill">
-                <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto, Auto, Auto, Auto, Auto" ColumnSpacing="2" Padding="6,0" MinimumWidthRequest="340">
-                    <Button Grid.Column="0" x:Name="HighlightBtn" Text="🖌" BackgroundColor="Transparent" TextColor="#FFD700" Clicked="OnAnnotationHighlightClicked" FontSize="18" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                    <Button Grid.Column="1" x:Name="TextAnnotationBtn" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="16" FontAttributes="Bold" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                    <Button Grid.Column="2" x:Name="DrawBtn" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="16" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                    <Button Grid.Column="3" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="16" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                    
-                    <BoxView Grid.Column="4" Color="Transparent" />
-                    
-                    <!-- Boutons Undo et Redo -->
-                    <Button Grid.Column="5" x:Name="UndoBtn" Text="↩" BackgroundColor="Transparent" TextColor="White" Clicked="OnUndoAnnotationClicked" FontSize="18" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" />
-                    <Button Grid.Column="6" x:Name="RedoBtn" Text="↪" BackgroundColor="Transparent" TextColor="White" Clicked="OnRedoAnnotationClicked" FontSize="18" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" />
+            <Grid ColumnDefinitions="*, Auto" HorizontalOptions="Fill" VerticalOptions="Center">
+                <ScrollView Grid.Column="0" Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HorizontalOptions="Fill">
+                    <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto, Auto, Auto, Auto" ColumnSpacing="{OnIdiom Phone=1, Tablet=2}" Padding="{OnIdiom Phone='4,0', Tablet='6,0'}" MinimumWidthRequest="{OnIdiom Phone=0, Tablet=300}">
+                        <Button Grid.Column="0" x:Name="HighlightBtn" Text="🖌" BackgroundColor="Transparent" TextColor="#FFD700" Clicked="OnAnnotationHighlightClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                        <Button Grid.Column="1" x:Name="TextAnnotationBtn" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" FontAttributes="Bold" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                        <Button Grid.Column="2" x:Name="DrawBtn" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                        <Button Grid.Column="3" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                        
+                        <BoxView Grid.Column="4" Color="Transparent" />
+                        
+                        <!-- Boutons Undo et Redo -->
+                        <Button Grid.Column="5" x:Name="UndoBtn" Text="↩" BackgroundColor="Transparent" TextColor="White" Clicked="OnUndoAnnotationClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" />
+                        <Button Grid.Column="6" x:Name="RedoBtn" Text="↪" BackgroundColor="Transparent" TextColor="White" Clicked="OnRedoAnnotationClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" />
 
-                    <!-- Bouton Reset Nettoyage complet -->
-                    <Button Grid.Column="7" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="18" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                    <Button Grid.Column="8" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="16" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                    <Button Grid.Column="9" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="18" FontAttributes="Bold" WidthRequest="34" HeightRequest="36" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                </Grid>
-            </ScrollView>
+                        <!-- Bouton Reset Nettoyage complet -->
+                        <Button Grid.Column="7" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                        <Button Grid.Column="8" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                    </Grid>
+                </ScrollView>
+                <!-- Bouton Croix Fermer (toujours fixe et visible à droite sur Phone comme sur Tablette) -->
+                <Button Grid.Column="1" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" FontAttributes="Bold" WidthRequest="{OnIdiom Phone=32, Tablet=36}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" Margin="{OnIdiom Phone='0,0,4,0', Tablet='0,0,6,0'}" VerticalOptions="Center" HorizontalOptions="Center" />
+            </Grid>
         </Border>
 
         <!-- Indicateur de page (tout en bas, cliquable pour changement de page direct) -->
@@ -698,7 +701,8 @@
                 VerticalOptions="Center" 
                 HorizontalOptions="Center" 
                 Padding="16,14,16,18"
-                WidthRequest="340"
+                WidthRequest="{OnIdiom Phone=330, Tablet=340}"
+                Margin="{OnIdiom Phone='15,0', Tablet='0'}"
                 StrokeThickness="1.5"
                 Stroke="#007ACC"
                 ZIndex="1000">

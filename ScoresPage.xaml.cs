@@ -1346,9 +1346,29 @@ public partial class ScoresPage : ContentPage
             string newTitle = await DisplayPromptAsync(promptTitle, promptMsg, ok, cancel, initialValue: _selectedScoreForMenu.Title);
             if (!string.IsNullOrWhiteSpace(newTitle))
             {
-                _selectedScoreForMenu.Title = newTitle.Trim();
-                await _databaseService.SaveScoreAsync(_selectedScoreForMenu);
-                await LoadScoresAsync(SearchScoreBar.Text);
+                string trimmed = newTitle.Trim();
+                if (trimmed != _selectedScoreForMenu.Title)
+                {
+                    try
+                    {
+                        _selectedScoreForMenu.Title = trimmed;
+                        await _databaseService.SaveScoreAsync(_selectedScoreForMenu);
+                        
+                        // Si une recherche est active et ne correspond plus au nouveau titre/compositeur, vider la recherche pour que la partition reste visible
+                        string currentSearch = SearchScoreBar.Text?.Trim() ?? string.Empty;
+                        if (!string.IsNullOrEmpty(currentSearch) && 
+                            !_selectedScoreForMenu.Title.Contains(currentSearch, StringComparison.OrdinalIgnoreCase) && 
+                            !_selectedScoreForMenu.Composer.Contains(currentSearch, StringComparison.OrdinalIgnoreCase))
+                        {
+                            SearchScoreBar.Text = string.Empty;
+                        }
+                        await LoadScoresAsync(SearchScoreBar.Text ?? string.Empty);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[ScoresPage] Error renaming score: {ex.Message}");
+                    }
+                }
             }
         }
     }
@@ -1863,7 +1883,8 @@ public partial class ScoresPage : ContentPage
                 TextColor = Colors.White,
                 FontAttributes = FontAttributes.Bold,
                 FontSize = 14,
-                HeightRequest = 44,
+                MinimumHeightRequest = 44,
+                Padding = new Thickness(14, 8),
                 CornerRadius = 12
             };
             acceptBtn.Clicked += async (s, ev) =>
@@ -1879,7 +1900,8 @@ public partial class ScoresPage : ContentPage
                 BackgroundColor = Color.FromArgb("#2D303B"),
                 TextColor = Color.FromArgb("#DDDDDD"),
                 FontSize = 13,
-                HeightRequest = 38,
+                MinimumHeightRequest = 38,
+                Padding = new Thickness(14, 6),
                 CornerRadius = 10
             };
             cancelBtn.Clicked += async (s, ev) =>
@@ -1924,7 +1946,8 @@ public partial class ScoresPage : ContentPage
                     TextColor = Colors.White,
                     FontAttributes = opt.Contains("Conseillé") ? FontAttributes.Bold : FontAttributes.None,
                     FontSize = 13,
-                    HeightRequest = 42,
+                    MinimumHeightRequest = 42,
+                    Padding = new Thickness(14, 8),
                     CornerRadius = 10
                 };
                 optBtn.Clicked += async (s, ev) =>
@@ -1941,7 +1964,8 @@ public partial class ScoresPage : ContentPage
                 BackgroundColor = Color.FromArgb("#1E2028"),
                 TextColor = Color.FromArgb("#AAAAAA"),
                 FontSize = 12,
-                HeightRequest = 36,
+                MinimumHeightRequest = 36,
+                Padding = new Thickness(14, 6),
                 CornerRadius = 8
             };
             cancelBtn.Clicked += async (s, ev) =>

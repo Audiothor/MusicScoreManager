@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.8.0 — 16/10/2026](#v280--16102026)
 - [v2.7.2 — 15/10/2026](#v272--15102026)
 - [v2.7.1 — 15/10/2026](#v271--15102026)
 - [v2.7.0 — 15/10/2026](#v270--15102026)
@@ -24,6 +25,30 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.8.0 — 16/10/2026
+
+### 1. Full Smartphone Compatibility (Zero Regressions / Zero Impact on Tablet Experience)
+- **1.1. Non-Invasive Responsive Architecture via `OnIdiom`:** Systematic adoption of .NET MAUI's `OnIdiom` (`Phone` vs `Tablet`) to deliver targeted UI/UX optimizations on smartphones without modifying any dimensions, margins, font sizes, or layout alignments on tablets.
+- **1.2. Annotation Toolbar in Mobile Portrait Orientation:**
+  - Full restructuring of the annotation toolbar into a two-column layout (`Grid ColumnDefinitions="*, Auto"`).
+  - Decoupled the `✕` close button into an outer, fixed right-aligned column: close button is always immediately visible and clickable on any phone width without requiring toolbar scrolling.
+  - Sized tool buttons proportionally (`28x32` on phone vs `34x36` on tablet) and organized highlight, draw, and text palette overlays into compact 2-row palettes (`Orientation="{OnIdiom Phone=Vertical, Tablet=Horizontal}"`).
+- **1.3. Screen Headers & Search Bar (`ScoresPage` & `SetlistsPage`):**
+  - Compacted header buttons to `38x38` on smartphones (`50x50` on tablet) with streamlined margins and spacing, restoring over 80 pixels of horizontal width to the `SearchBar`.
+- **1.4. Multi-Line Tag Chip Wrapping:**
+  - Replaced rigid `HorizontalStackLayout` with an auto-wrapping `FlexLayout` (`Wrap="Wrap"`). Tag chips flow naturally onto multiple rows on small screens without horizontal clipping.
+- **1.5. Lateral Alphabetical Fast-Scroller:**
+  - Adjusted width (`22px` on phone vs `28px` on tablet) and score list right-margin, eliminating overlay conflicts with score text or thumbnails.
+- **1.6. Responsive Modals, Overlays & Action Cards:**
+  - Replaced fixed widths with fluid responsive cards (`HorizontalOptions="{OnIdiom Phone=Fill, Tablet=Center}"`, `WidthRequest="{OnIdiom Tablet=350/360/380}"`, adaptive `16px` margins).
+  - Replaced fixed `HeightRequest` on modal dialog buttons with `MinimumHeightRequest` and breathing vertical padding, enabling natural word-wrapping for long action labels without ellipses or truncation.
+
+### 2. Sheet Music Library: Rename Reliability & Reactivity
+- **2.1. Property Change Notifications (INotifyPropertyChanged):** Added `OnPropertyChanged` notifications to `Title` and `Composer` on the `Score` model, ensuring instantaneous visual updates in collection views upon renaming.
+- **2.2. Search Filter Synchronization on Rename:** Safely resets the active search query if the updated score title or composer no longer satisfies the filter term, preventing the score from disappearing unexpectedly after rename.
 
 ---
 
