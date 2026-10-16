@@ -871,6 +871,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v280-16102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.8.0 — 16/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.8.0 — 16/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-compatibilite-totale-smartphones-sans-aucun-impact-sur-lexperience-tablette" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Compatibilité Totale Smartphones (Sans Aucun Impact sur l'Expérience Tablette)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-bibliotheque-de-partitions-fiabilite-du-renommage-reactivite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Bibliothèque de Partitions : Fiabilité du Renommage &amp; Réactivité
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v272-15102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2614,6 +2653,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v280-16102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v2.8.0 — 16/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.8.0 — 16/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-compatibilite-totale-smartphones-sans-aucun-impact-sur-lexperience-tablette" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Compatibilité Totale Smartphones (Sans Aucun Impact sur l'Expérience Tablette)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-bibliotheque-de-partitions-fiabilite-du-renommage-reactivite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Bibliothèque de Partitions : Fiabilité du Renommage &amp; Réactivité
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v272-15102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4336,6 +4414,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v280--16102026">v2.8.0 — 16/10/2026</a></li>
 <li><a href="#v272--15102026">v2.7.2 — 15/10/2026</a></li>
 <li><a href="#v271--15102026">v2.7.1 — 15/10/2026</a></li>
 <li><a href="#v270--15102026">v2.7.0 — 15/10/2026</a></li>
@@ -4354,6 +4433,30 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v280-16102026">v2.8.0 — 16/10/2026</h2>
+<h3 id="1-compatibilite-totale-smartphones-sans-aucun-impact-sur-lexperience-tablette">1. Compatibilité Totale Smartphones (Sans Aucun Impact sur l'Expérience Tablette)</h3>
+<ul>
+<li><strong>1.1. Architecture Adaptative Non Invasive via <code>OnIdiom</code> :</strong> Utilisation systématique du mécanisme natif .NET MAUI <code>OnIdiom</code> (<code>Phone</code> vs <code>Tablet</code>) pour appliquer des ajustements ergonomiques ciblés sur smartphones sans altérer d'un seul pixel les dimensions, marges, polices et dispositions sur tablettes.</li>
+<li><strong>1.2. Barre d'outils d'annotation en mode portrait mobile :</strong></li>
+<li>Restructuration complète de la barre d'annotations en grille à deux colonnes (<code>Grid ColumnDefinitions="*, Auto"</code>).</li>
+<li>Découplage du bouton de fermeture <code>✕</code> dans une colonne fixe ancrée à droite : la croix de fermeture reste toujours immédiatement visible et cliquable sur tout smartphone, quelle que soit la largeur d'écran.</li>
+<li>Réduction proportionnelle des boutons d'outils (<code>28x32</code> sur smartphone vs <code>34x36</code> sur tablette) et réorganisation adaptative des palettes de surlignage, dessin et texte en 2 rangées compactes (<code>Orientation="{OnIdiom Phone=Vertical, Tablet=Horizontal}"</code>).</li>
+<li><strong>1.3. En-tête et barre de recherche (<code>ScoresPage</code> &amp; <code>SetlistsPage</code>) :</strong></li>
+<li>Boutons d'action réduits à <code>38x38</code> sur smartphone (<code>50x50</code> sur tablette) avec espacement et marges condensés, restituant plus de 80 pixels de largeur à la barre de recherche (<code>SearchBar</code>).</li>
+<li><strong>1.4. Affichage multi-lignes des étiquettes (Tags) :</strong></li>
+<li>Remplacement du conteneur rigide <code>HorizontalStackLayout</code> par un <code>FlexLayout</code> avec retour à la ligne automatique (<code>Wrap="Wrap"</code>). Les tags s'enroulent harmonieusement sur plusieurs lignes sur petits écrans au lieu d'être coupés horizontalement.</li>
+<li><strong>1.5. Index alphabétique latéral (Fast-Scroller) :</strong></li>
+<li>Ajustement de la largeur (<code>22px</code> sur smartphone vs <code>28px</code> sur tablette) et de la marge droite de la liste de partitions, éliminant tout chevauchement avec le texte ou les miniatures.</li>
+<li><strong>1.6. Boîtes de dialogue, overlays et cartes d'action responsives :</strong></li>
+<li>Remplacement des largeurs fixes par des conteneurs fluides (<code>HorizontalOptions="{OnIdiom Phone=Fill, Tablet=Center}"</code>, <code>WidthRequest="{OnIdiom Tablet=350/360/380}"</code>, marges latérales adaptatives <code>16px</code>).</li>
+<li>Suppression des hauteurs rigides (<code>HeightRequest</code>) sur les boutons d'action des boîtes de dialogue au profit de <code>MinimumHeightRequest</code> et de marges internes respirantes, permettant le retour à la ligne naturel de textes d'actions longs sans troncature ni ellipse.</li>
+</ul>
+<h3 id="2-bibliotheque-de-partitions-fiabilite-du-renommage-reactivite">2. Bibliothèque de Partitions : Fiabilité du Renommage &amp; Réactivité</h3>
+<ul>
+<li><strong>2.1. Notification de changement de propriétés (INotifyPropertyChanged) :</strong> Ajout des notifications <code>OnPropertyChanged</code> sur les propriétés <code>Title</code> et <code>Composer</code> du modèle <code>Score</code>, garantissant la mise à jour visuelle instantanée dans les listes lors d'un renommage.</li>
+<li><strong>2.2. Gestion du filtre de recherche actif lors du renommage :</strong> Réinitialisation sécurisée du filtre de recherche si le nouveau titre ou compositeur ne correspond plus aux critères de recherche saisis, empêchant la partition de disparaître mystérieusement après renommage.</li>
 </ul>
 <hr />
 <h2 id="v272-15102026">v2.7.2 — 15/10/2026</h2>
