@@ -4,22 +4,33 @@
 
 - *Pourquoi avoir développé Music Score Manager ?*
 
-Il y a déjà de très bons logiciels de visualisation de partitions qui existent sur Google Play et sur l'App Store Apple. (Il en existe moins pour Windows).
+Il y a déjà de très bons logiciels de visualisation de partitions qui existent sur Google Play et sur l'App Store Apple. (Il en existe peu pour Windows).
 Le projet est né d'un besoin au sein de conservatoires de musique de pouvoir utiliser des logiciels gratuits pour les élèves et les professeurs pour ceux qui ont la possibilité d'avoir une tablette. Le projet a été poussé par de nombreux instrumentistes qui faisaient des auditions ou des représentations lors de concerts d'harmonies municipales.
-Ayant d'abord développé l'application dans un cadre familial, plusieurs personnes m'ont demandé de la rendre accessible et m'ont fait des commentaires sur leurs besoins. L'application s'est enrichie et afin d'en faire bénéficier un plus grand nombre, à présent je le mets à disposition de manière officielle.
+Ayant d'abord développé l'application dans un cadre familial, plusieurs personnes m'ont demandé de la rendre accessible et m'ont fait des commentaires sur leurs besoins. L'application s'est enrichie et afin d'en faire bénéficier un plus grand nombre, à présent je la mets à disposition de manière officielle.
 
 Je ne cherche ni à concurrencer ni à remplacer, juste à proposer une alternative à ce qui peut exister.
-Le language de programmation et le type de plate-forme utilisé (.NET C# & .NET MAUI) me permettent de le rendre disponible pour Android et Windows.
+Le language de programmation et le type de plate-forme utilisé (.NET C# & .NET MAUI) me permettent de la rendre disponible pour Android et Windows.
+
+
+- *Pourquoi ne mettre à disposition l'application sur iPad ou Mac ?*
+
+Je pourrais compiler l'application car mon code le permet. Cependant un Mac équipé de Xcode est obligatoire pour compiler l'application pour iPad.
+Je ne dispose pas de cet ordinateur.
+Peut-être à l'avenir quelqu'un pourrait le faire via mes sources et le mettre sur l'App Store d'Apple.
+
+
 
 - *Pourquoi le rendre complètement gratuit et sans publicité ?*
 
 Le public ciblé s'adresse aux amateurs de musiques, professeurs d'écoles de musique, élèves, qui réalisent des concerts ou pas, qui animent des soirées, festivals, fêtes de la musique, animation de messes de mariages, offices religieux...
 Music Score Manager est là pour aider et donc, dans la philosophie de l'application qui est née d'un besoin familial, il n'était pas possible éthiquement de réaliser du profit sur un public qui ne l'utilise pas de manière professionelle.
 
+
 - *Pourquoi rendre les sources du programme accessibles ?*
 
 Le développement ayant été réalisé dans un language que j'utilise depuis longtemps, mais parfois ne parvenant pas à générer certaines parties de code, je me suis fait aider de l'IA (Je ne m'en cache pas).
 De ce fait il me parait tout à fait normal d'être complètement transparent avec mon code et de le partager avec tous sur Github.
+
 
 - Dans quelles langues Music Score Manager est accessible ?
 
@@ -28,7 +39,8 @@ Pour changer de langue, aller dans le menu "Paramètres" puis "Paramètres de l'
 Si il y a des erreurs de traduction, merci de me le signaler (ci dessous)
 Si vous souhaitez ajouter d'autres langues, merci de me contacter.(ci dessous)
 
-- *J'ai des bugs dans le logiciel et j'aimerais les faire partager. Comment faire ?*
+
+- *J'ai des bugs dans le logiciel et j'aimerais les faire partager pour que cela soit corrigé. Comment faire ?*
 
 Tout d'abord je m'en excuse ; il est possible qu'il y ait des bugs malgré les tests...
 L'idéal est de mettre un message sur Discord :
@@ -37,6 +49,7 @@ Anglais : https://discord.gg/hJNSFgW5h
 
 ou sur Github :
 [https://github.com/Audiothor/MusicScoreManager/issues]()
+
 
 - *J'ai des propositions d'améliorations. Comment les partager ?*
 
@@ -47,7 +60,8 @@ Anglais : https://discord.gg/kCHGh4yjY
 ou sur Github :
 [https://github.com/Audiothor/MusicScoreManager/issues]() (*feature request*)
 
+
 - *Qui a développé ce logiciel ?*
 
-Le projet a commencé début 2026 et une première version est sortie début juin 2026.
+Le projet a commencé début 2026 et une première version partagée dans mon entourage proche est sortie début juin 2026.
 L'application a été développée en France, par un informaticien qui est passionné de musique.

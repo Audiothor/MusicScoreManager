@@ -36,7 +36,7 @@ Dès l'ouverture de l'application, rendez-vous dans le menu **Partitions** (dans
 5. **Cas de photos ou images** :
    - L'application vous propose de les convertir automatiquement en format PDF.
    - Si vous sélectionnez plusieurs photos (ex: les différentes pages d'un morceau prises en photo), l'application vous propose de les **fusionner en 1 seule partition PDF multi-pages**.
-6. Votre/vos partitions sont listées et accessibles dans le menu Partitions, il vous suffit de cliquer dessus poru que la partition s'ouvre.
+6. Votre/vos partitions sont listées et accessibles dans le menu Partitions, il vous suffit de cliquer dessus pour que la partition s'ouvre.
 
 > [!TIP]
 > **Conseil de stockage** : Par défaut, l'application copie les fichiers dans son stockage local sécurisé. Vos partitions restent accessibles à 100% hors-ligne, sans jamais dépendre d'Internet ni d'un réseau Cloud.
@@ -47,13 +47,13 @@ Dès l'ouverture de l'application, rendez-vous dans le menu **Partitions** (dans
 
 Pour retrouver vos morceaux instantanément parmi des centaines de partitions :
 
-1. Vous pouvez créer vos propres étiquettes avec leur couleur personnalisée via le menu **Paramètres > Paramètres Partitions > Organisation > Gérer la lsite des étiquette** : attribuez une classification et une couleur pour pouvoir l'assigner à vos partitions.
+1. Vous pouvez créer vos propres étiquettes avec leur couleur personnalisée via le menu **Paramètres >  Gérer la liste des étiquettes** : attribuez une classification et une couleur pour pouvoir l'assigner à vos partitions.
    Une partition peut bien entendu avoir plusieurs étiquettes !
-2. Pour assigner une ou plusieurs étiquettes à une partitions, editez là : dans **Partitions**, appuyez sur les **trois petits points `⋮`** sur une partition, puis choisissez **`Éditer`**.
+2. Pour assigner une ou plusieurs étiquettes à une partitions, éditez là : dans **Partitions**, appuyez sur les **trois petits points `⋮`** sur une partition, puis choisissez **`Éditer la partition`**.
 3. Attribuez une ou plusieurs étiquettes de couleur que vous avez créés précédement (ex: *Chant*, *Piano*, *Jazz*, *Concert Noël*, *Répétition*).
-   Vous pouvez défini plein de fonctionnalités à votre partition.
+   Vous pouvez définir plein de fonctionnalités à votre partition.
    N'oubliez pas de sauvegarder !
-4. Utilisez la barre de recherche en haut pour filtrer instantanément par **Titre**, **Compositeur** ou en touchant une ou plusieurs **Étiquettes**.
+4. Utilisez la barre de recherche en haut pour filtrer instantanément par **Titre**, **Compositeur** ou en sélectionnant la recherche par **Étiquettes** ou **Trier**
 
 ---
 
@@ -62,14 +62,18 @@ Pour retrouver vos morceaux instantanément parmi des centaines de partitions :
 Touchez simplement une partition dans la liste pour lancer le **Visualiseur plein écran**.
 
 - **Tourner les pages** :
+  
   - **Glissement** : Balayez le tiers droit de l'écran pour avancer (page suivante), le tiers gauche pour reculer (page précédente).
 
-- **Pédalier sans fil** : Appairez votre pédale Bluetooth (AirTurn, PageFlip, Donner, etc.). Les tournes de page fonctionnent directement sans configuration préalable !
+- **Pédalier sans fil** : Appairez votre pédale Bluetooth (AirTurn, PageFlip, Donner, etc.). Tourner les pages fonctionne directement sans configuration préalable. Toutefois si votre pédale ne répond pas comme vous le souhaitez, vous pouvez la configurer complètement par rapport aux actions que vous désirez !
 
 - **Afficher / Masquer les commandes** :
+  
   - Touchez le **centre** de l'écran par double clic pour faire apparaître le menu d'actions rapides
-  - Touchez le bas de l'acran pour faire apparaitre le menu des annotations
+  - Touchez le **bas** de l'écran pour faire apparaitre le menu des annotations
+  - Touchez en **haut à droite** de l'écran pour faire apparaitre la boîte à outils pour les affichage d'ptions ou de fonctionnalités multiples !
   - Sur cette même page il est possible d'afficher le métronome (il sera en haut à droite, fixe), un lecteur audio (en haut à gauche (amovible), et dans le cas d'une lecture de Setlist, le status du déroulement (en haut au centre)
+
 - **Quitter la partition en cours** : allez dans le menu central (double clic) et choisir "Retour à l'accueil"
 
 ---
@@ -86,8 +90,7 @@ En mode lecture de partition touchez le bas de l'écran pour déployer la boîte
 - **↩ Undo / ↪ Redo** : Annulez ou rétablissez vos modifications à tout moment.
 - Toute annotation peut être supprimée ou déplacée
 
-[!TIP]
-**Verouillage** : Par sécurité un petit verrou empeche de faire des erreurs de manipulations d'annotations. En vert les modifications sont possibles. La barre fermée ou le cadenas en rouge empèche toute modification.
+
 
 ---
 
@@ -101,13 +104,13 @@ Ne cherchez plus vos morceaux un par un entre deux morceaux sur scène : prépar
 4. Réorganisez l'ordre des morceaux simplement par **glisser-déposer**.
 5. Pour toute modifications, n'oubliez pas de sauvegarder !
 6. Touchez une de vos partitions de cette liste pour démarrer à ce endroit votre concert ou allez dans l'onglet **SetLists** et cliquez sur le concert que vous désirez : le visualiseur s'ouvre sur le premier morceau. À la fin de la dernière page de la partition, on passe automatiquement au morceau suivant suivant les paramètres de Setlist que vous avez sélectionnés !
-7. Le volet dérouleur de setlist vous permet de visualiser à tout moment les morceaux à venir. (tout en haut au centre)
+7. Le volet dérouleur de setlist vous permet de visualiser à tout moment les morceaux à venir. (cliquer **tout en haut au centre**)
 
 ---
 
-## Étape 6 : Outils Pratiques Intégrés (Métronome & Lecteur Audio)
+## Étape 6 : Outils Pratiques Intégrés (Métronome, Lecteur Audio...)
 
-Directement depuis le visualiseur de partition (ou dans l'édition de partition) :
+Directement depuis le visualiseur de partition via l'appel de la boîte à outils (ou dans l'édition de partition) :
 
 - **Métronome Intégré**:
   - Ajustez le tempo (BPM) .
@@ -116,11 +119,12 @@ Directement depuis le visualiseur de partition (ou dans l'édition de partition)
   - Associez un fichier audio (MP3, WAV, AAC, FLAC) à une partition pour répéter avec la bande-son ou la maquette.
   - Contrôlez la lecture (Play / Pause, retour au début) directement depuis le visualiseur de partition
 
-et plein d'autes...
-
+et plein d'autres...
 
 
 Dans l'onglet **Outils** vous trouverez de nombreux utilitaires pour vous aider :
+
+- Scanner de partition papier : prenez une photo, nommez votre partition et elle est directement intégrée en pdf dans l'application !
 
 - Partage entre musiciens : Utilisez le menu **Wi-Fi Direct P2P** pour transmettre une setlist complète avec annotations à une personne ou même à vos collègues musiciens en coulisses, très rapidement, même sans connexion Internet !
 
@@ -132,11 +136,11 @@ Dans l'onglet **Outils** vous trouverez de nombreux utilitaires pour vous aider 
 
 - Assemblages et organisation internes de vos partitions (vous pouvez redéfinir le sens et l'ordre de vos pages pdf !!!)
 
+- etc...
+
 
 
 Dans l'onglet Paramètres vous trouverez plein d'options de personnalisation de l'application pour tous les menus
-
-
 
 ---
 
@@ -150,3 +154,9 @@ Rejoignez notre **[Serveur Discord Audiothor](https://discord.gg/EtZf8VyMz)** po
 ## En savoir plus
 
 Pour découvrir l'ensemble des fonctionnalités avancées (assemblage de PDF, édition des métadonnées, configuration fine des pédaliers MIDI, sauvegardes automatiques), et plein d'autres détails, consultez le [Guide Complet](index.md).
+
+---
+
+## FAQ
+
+Vous vous posez des questions globales sur l'application, lisez le [FAQ](FAQ.md).
