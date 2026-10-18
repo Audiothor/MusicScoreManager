@@ -82,7 +82,7 @@
                 BackgroundColor="#D01E1E28"
                 Stroke="#444455"
                 StrokeThickness="1"
-                ZIndex="25">
+                ZIndex="1005">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10" />
             </Border.StrokeShape>
@@ -139,7 +139,7 @@
                 StrokeThickness="1"
                 Stroke="#444444"
                 WidthRequest="265"
-                ZIndex="20">
+                ZIndex="1005">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
@@ -610,19 +610,44 @@
                 HeightRequest="{OnIdiom Phone=42, Tablet=45}"
                 StrokeThickness="0"
                 IsVisible="False"
-                ZIndex="20">
+                ZIndex="1005">
             <Border.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
             </Border.GestureRecognizers>
-            <Grid ColumnDefinitions="*, Auto" HorizontalOptions="Fill" VerticalOptions="Center">
-                <ScrollView Grid.Column="0" Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HorizontalOptions="Fill">
-                    <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto, Auto, Auto, Auto" ColumnSpacing="{OnIdiom Phone=1, Tablet=2}" Padding="{OnIdiom Phone='4,0', Tablet='6,0'}" MinimumWidthRequest="{OnIdiom Phone=0, Tablet=300}">
+            <Grid ColumnDefinitions="Auto, *, Auto" HorizontalOptions="Fill" VerticalOptions="Center">
+                <!-- Poignée de déplacement vertical de la barre (PanGestureRecognizer dédié insensible au ScrollView) -->
+                <Border Grid.Column="0"
+                        WidthRequest="{OnIdiom Phone=34, Tablet=38}"
+                        HeightRequest="{OnIdiom Phone=36, Tablet=40}"
+                        BackgroundColor="Transparent"
+                        StrokeThickness="0"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        ToolTipProperties.Text="Déplacer la barre d'annotation">
+                    <Border.GestureRecognizers>
+                        <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
+                    </Border.GestureRecognizers>
+                    <Label Text="⠿" 
+                           TextColor="#AAAAAA" 
+                           FontSize="{OnIdiom Phone=16, Tablet=18}" 
+                           HorizontalOptions="Center" 
+                           VerticalOptions="Center" />
+                </Border>
+
+                <!-- Zone d'outils défilable horizontalement sur petits écrans -->
+                <ScrollView Grid.Column="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HorizontalOptions="Fill">
+                    <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto, Auto, Auto, Auto" ColumnSpacing="{OnIdiom Phone=1, Tablet=2}" Padding="{OnIdiom Phone='2,0', Tablet='4,0'}" MinimumWidthRequest="{OnIdiom Phone=0, Tablet=300}">
                         <Button Grid.Column="0" x:Name="HighlightBtn" Text="🖌" BackgroundColor="Transparent" TextColor="#FFD700" Clicked="OnAnnotationHighlightClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
                         <Button Grid.Column="1" x:Name="TextAnnotationBtn" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" FontAttributes="Bold" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
                         <Button Grid.Column="2" x:Name="DrawBtn" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
                         <Button Grid.Column="3" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
                         
-                        <BoxView Grid.Column="4" Color="Transparent" />
+                        <!-- Zone vide centrale permettant également de déplacer la barre -->
+                        <BoxView Grid.Column="4" Color="Transparent">
+                            <BoxView.GestureRecognizers>
+                                <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
+                            </BoxView.GestureRecognizers>
+                        </BoxView>
                         
                         <!-- Boutons Undo et Redo -->
                         <Button Grid.Column="5" x:Name="UndoBtn" Text="↩" BackgroundColor="Transparent" TextColor="White" Clicked="OnUndoAnnotationClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" />
@@ -634,7 +659,7 @@
                     </Grid>
                 </ScrollView>
                 <!-- Bouton Croix Fermer (toujours fixe et visible à droite sur Phone comme sur Tablette) -->
-                <Button Grid.Column="1" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" FontAttributes="Bold" WidthRequest="{OnIdiom Phone=32, Tablet=36}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" Margin="{OnIdiom Phone='0,0,4,0', Tablet='0,0,6,0'}" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="2" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" FontAttributes="Bold" WidthRequest="{OnIdiom Phone=32, Tablet=36}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" Margin="{OnIdiom Phone='0,0,4,0', Tablet='0,0,6,0'}" VerticalOptions="Center" HorizontalOptions="Center" />
             </Grid>
         </Border>
 
@@ -1200,7 +1225,7 @@
                 StrokeThickness="1"
                 Padding="16,5"
                 InputTransparent="True"
-                ZIndex="45">
+                ZIndex="1005">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
@@ -1244,7 +1269,7 @@
                      WidthRequest="70"
                      HeightRequest="55"
                      BackgroundColor="Transparent"
-                     ZIndex="500">
+                     ZIndex="1110">
             <ContentView.GestureRecognizers>
                 <TapGestureRecognizer Tapped="OnToggleToolsDrawerTapped" />
             </ContentView.GestureRecognizers>
@@ -1262,7 +1287,7 @@
             </BoxView.GestureRecognizers>
         </BoxView>
 
-        <!-- TIROIR / BOÎTE À OUTILS (Popover Haut-Droite) -->
+        <!-- TIROIR / BOÎTE À OUTILS (Popover Haut-Droite - au-dessus de tous les affichages) -->
         <Border x:Name="ToolsDrawerOverlay"
                 IsVisible="False"
                 HorizontalOptions="End"
@@ -1273,7 +1298,7 @@
                 Stroke="#007ACC"
                 StrokeThickness="1.5"
                 Padding="12,10"
-                ZIndex="1000">
+                ZIndex="1100">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>

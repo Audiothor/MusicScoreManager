@@ -620,6 +620,8 @@
   "Viewer_GoToPage_Title": "Gehe zu Seite",
   "Viewer_ShowPageNumber_Label": "Seitenzahlen anzeigen",
   "Settings_App_Behavior": "App-Verhalten",
+  "Settings_Show_Quit_Menu_Title": "Menü „Beenden“ anzeigen",
+  "Settings_Show_Quit_Menu_Desc": "Blendet die Registerkarte „Beenden“ in der Hauptnavigationsleiste ein oder aus (standardmäßig aktiviert)",
   "Settings_Confirm_Quit_Title": "Anwendung beenden",
   "Settings_Confirm_Quit_Desc": "Vor dem Schließen der Anwendung um Bestätigung bitten",
   "Settings_Confirm_Quit_Prompt": "Möchten Sie die Anwendung wirklich beenden?",

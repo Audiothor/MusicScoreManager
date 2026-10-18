@@ -623,6 +623,8 @@
   "Viewer_GoToPage_Title": "Aller à la page",
   "Viewer_ShowPageNumber_Label": "Afficher les numéros de page",
   "Settings_App_Behavior": "Comportement de l'application",
+  "Settings_Show_Quit_Menu_Title": "Afficher le menu « Quitter »",
+  "Settings_Show_Quit_Menu_Desc": "Affiche ou masque l'onglet Quitter dans la barre de navigation principale (activé par défaut)",
   "Settings_Confirm_Quit_Title": "Quitter l'application",
   "Settings_Confirm_Quit_Desc": "Demander confirmation avant de fermer l'application",
   "Settings_Confirm_Quit_Prompt": "Voulez-vous vraiment quitter l'application ?",

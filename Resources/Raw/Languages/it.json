@@ -620,6 +620,8 @@
   "Viewer_GoToPage_Title": "Vai alla pagina",
   "Viewer_ShowPageNumber_Label": "Mostra i numeri di pagina",
   "Settings_App_Behavior": "Comportamento dell'applicazione",
+  "Settings_Show_Quit_Menu_Title": "Mostra menu «Esci»",
+  "Settings_Show_Quit_Menu_Desc": "Mostra o nasconde la scheda Esci nella barra di navigazione principale (abilitato per impostazione predefinita)",
   "Settings_Confirm_Quit_Title": "Esci dall'applicazione",
   "Settings_Confirm_Quit_Desc": "Chiedi conferma prima di chiudere l'applicazione",
   "Settings_Confirm_Quit_Prompt": "Vuoi davvero uscire dall'applicazione?",

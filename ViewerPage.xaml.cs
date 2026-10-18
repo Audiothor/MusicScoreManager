@@ -2010,7 +2010,7 @@ public partial class ViewerPage : ContentPage
             DrawerTunerTile.Stroke = isTunerOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444455");
         }
 
-        bool isTitleOn = (_score?.ShowScoreTitle == true) || Preferences.Default.Get("ShowScoreTitle", false);
+        bool isTitleOn = TopScoreTitleBar != null && TopScoreTitleBar.IsVisible;
         if (DrawerScoreTitleStatusLabel != null && DrawerScoreTitleBadge != null && DrawerScoreTitleTile != null)
         {
             DrawerScoreTitleStatusLabel.Text = isTitleOn ? "ON" : "OFF";
@@ -2110,9 +2110,13 @@ public partial class ViewerPage : ContentPage
     private async void OnDrawerScoreTitleTapped(object sender, EventArgs e)
     {
         if (_score == null) return;
-        bool currentEffective = (_score.ShowScoreTitle) || Preferences.Default.Get("ShowScoreTitle", false);
-        bool newState = !currentEffective;
+        bool isCurrentlyVisible = TopScoreTitleBar != null && TopScoreTitleBar.IsVisible;
+        bool newState = !isCurrentlyVisible;
         _score.ShowScoreTitle = newState;
+        if (!newState && Preferences.Default.Get("ShowScoreTitle", false))
+        {
+            Preferences.Default.Set("ShowScoreTitle", false);
+        }
         UpdateTopScoreTitleUI();
 
         await _databaseService.SaveScoreAsync(_score);

@@ -620,6 +620,8 @@
   "Viewer_GoToPage_Title": "Ga naar pagina",
   "Viewer_ShowPageNumber_Label": "Paginanummers weergeven",
   "Settings_App_Behavior": "Gedrag van de applicatie",
+  "Settings_Show_Quit_Menu_Title": "Menu «Afsluiten» weergeven",
+  "Settings_Show_Quit_Menu_Desc": "Toont of verbergt het tabblad Afsluiten in de hoofdnavigatiebalk (standaard ingeschakeld)",
   "Settings_Confirm_Quit_Title": "Applicatie afsluiten",
   "Settings_Confirm_Quit_Desc": "Om bevestiging vragen voor het afsluiten van de applicatie",
   "Settings_Confirm_Quit_Prompt": "Weet u zeker dat u de applicatie wilt afsluiten?",

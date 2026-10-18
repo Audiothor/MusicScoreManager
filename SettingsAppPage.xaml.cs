@@ -43,7 +43,14 @@ public partial class SettingsAppPage : ContentPage
         UpdateSelectedLanguageLabel(currentLang);
         UpdateCheckmarks(currentLang);
 
+        ShowQuitMenuSwitch.IsToggled = Preferences.Default.Get("ShowQuitMenu", true);
         ConfirmBeforeQuitSwitch.IsToggled = Preferences.Default.Get("ConfirmBeforeQuit", false);
+    }
+
+    private void OnShowQuitMenuToggled(object sender, ToggledEventArgs e)
+    {
+        Preferences.Default.Set("ShowQuitMenu", e.Value);
+        (Shell.Current as AppShell)?.UpdateQuitTabVisibility();
     }
 
     private void OnConfirmBeforeQuitToggled(object sender, ToggledEventArgs e)
