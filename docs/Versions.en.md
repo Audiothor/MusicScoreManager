@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.8.3 — 18/10/2026](#v283--18102026)
 - [v2.8.2 — 18/10/2026](#v282--18102026)
 - [v2.8.1 — 18/10/2026](#v281--18102026)
 - [v2.8.0 — 16/10/2026](#v280--16102026)
@@ -27,6 +28,14 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.8.3 — 18/10/2026
+
+### 1. Major Fix for Truncated Score Tags in Library
+- **1.1. Adaptive `MeasureAllItems` collection strategy:** Replaced `ItemSizingStrategy="MeasureFirstItem"` with `MeasureAllItems` on the library's `CollectionView`. Previously, when the first score in the list had no tags, MAUI locked every item's height to the first item's reduced height (78px), squishing tags into flat lines without text.
+- **1.2. Dynamic score card sizing:** Cards now dynamically adapt their height according to whether tags are present and the number of title lines, ensuring full visibility of tag badges, background colors, and labels.
 
 ---
 
