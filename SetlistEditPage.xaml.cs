@@ -46,6 +46,13 @@ public partial class SetlistEditPage : ContentPage
         PopulatePedalProfiles();
         UpdateLockUI(false); // Initial load, don't show alert
         PopulateStatusChips();
+        AdvancedOptionsChevron.Text = AdvancedOptionsLayout.IsVisible ? "▲" : "▼";
+    }
+
+    private void OnToggleAdvancedOptionsClicked(object? sender, EventArgs e)
+    {
+        AdvancedOptionsLayout.IsVisible = !AdvancedOptionsLayout.IsVisible;
+        AdvancedOptionsChevron.Text = AdvancedOptionsLayout.IsVisible ? "▲" : "▼";
     }
 
     private void PopulatePedalProfiles()
@@ -190,8 +197,8 @@ public partial class SetlistEditPage : ContentPage
             BackgroundColor = isSelected ? Color.FromArgb(colorHex) : Color.FromArgb("#1E1E1E"),
             Stroke = Color.FromArgb(colorHex),
             StrokeThickness = 1,
-            Padding = new Thickness(15, 5),
-            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 15 }
+            Padding = new Thickness(10, 4),
+            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 12 }
         };
 
         var loc = Services.LocalizationService.Instance;
@@ -207,8 +214,10 @@ public partial class SetlistEditPage : ContentPage
         {
             Text = statusLabel,
             TextColor = isSelected ? Colors.White : Color.FromArgb(colorHex),
-            FontSize = 12,
-            FontAttributes = FontAttributes.Bold
+            FontSize = 11,
+            FontAttributes = FontAttributes.Bold,
+            VerticalOptions = LayoutOptions.Center,
+            HorizontalOptions = LayoutOptions.Center
         };
 
         var tapGesture = new TapGestureRecognizer();
