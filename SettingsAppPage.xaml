@@ -68,20 +68,41 @@
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="10" />
                     </Border.StrokeShape>
-                    <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
-                        <Label Grid.Row="0" Grid.Column="0" 
-                               Text="{Binding [Settings_Confirm_Quit_Title], Source={x:Static services:LocalizationService.Instance}}" 
-                               TextColor="White" FontAttributes="Bold" FontSize="14" VerticalOptions="Center" />
-                        <Label Grid.Row="1" Grid.Column="0" 
-                               Text="{Binding [Settings_Confirm_Quit_Desc], Source={x:Static services:LocalizationService.Instance}}" 
-                               TextColor="#888888" FontSize="12" Margin="0,4,10,0" />
-                        <Switch Grid.RowSpan="2" Grid.Column="1" 
-                                x:Name="ConfirmBeforeQuitSwitch" 
-                                OnColor="#007ACC" 
-                                ThumbColor="White" 
-                                VerticalOptions="Center" 
-                                Toggled="OnConfirmBeforeQuitToggled" />
-                    </Grid>
+                    <VerticalStackLayout Spacing="14">
+                        <!-- Afficher ou masquer le menu Quitter -->
+                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
+                            <Label Grid.Row="0" Grid.Column="0" 
+                                   Text="{Binding [Settings_Show_Quit_Menu_Title], Source={x:Static services:LocalizationService.Instance}}" 
+                                   TextColor="White" FontAttributes="Bold" FontSize="14" VerticalOptions="Center" />
+                            <Label Grid.Row="1" Grid.Column="0" 
+                                   Text="{Binding [Settings_Show_Quit_Menu_Desc], Source={x:Static services:LocalizationService.Instance}}" 
+                                   TextColor="#888888" FontSize="12" Margin="0,4,10,0" />
+                            <Switch Grid.RowSpan="2" Grid.Column="1" 
+                                    x:Name="ShowQuitMenuSwitch" 
+                                    OnColor="#007ACC" 
+                                    ThumbColor="White" 
+                                    VerticalOptions="Center" 
+                                    Toggled="OnShowQuitMenuToggled" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="#2A2A2A" />
+
+                        <!-- Confirmer avant de quitter -->
+                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
+                            <Label Grid.Row="0" Grid.Column="0" 
+                                   Text="{Binding [Settings_Confirm_Quit_Title], Source={x:Static services:LocalizationService.Instance}}" 
+                                   TextColor="White" FontAttributes="Bold" FontSize="14" VerticalOptions="Center" />
+                            <Label Grid.Row="1" Grid.Column="0" 
+                                   Text="{Binding [Settings_Confirm_Quit_Desc], Source={x:Static services:LocalizationService.Instance}}" 
+                                   TextColor="#888888" FontSize="12" Margin="0,4,10,0" />
+                            <Switch Grid.RowSpan="2" Grid.Column="1" 
+                                    x:Name="ConfirmBeforeQuitSwitch" 
+                                    OnColor="#007ACC" 
+                                    ThumbColor="White" 
+                                    VerticalOptions="Center" 
+                                    Toggled="OnConfirmBeforeQuitToggled" />
+                        </Grid>
+                    </VerticalStackLayout>
                 </Border>
 
                 <!-- Section Bibliothèque -->

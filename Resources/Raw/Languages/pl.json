@@ -620,6 +620,8 @@
   "Viewer_GoToPage_Title": "Przejdź do strony",
   "Viewer_ShowPageNumber_Label": "Pokaż numery stron",
   "Settings_App_Behavior": "Zachowanie aplikacji",
+  "Settings_Show_Quit_Menu_Title": "Pokaż menu «Wyjdź»",
+  "Settings_Show_Quit_Menu_Desc": "Pokazuje lub ukrywa kartę Wyjdź na głównym pasku nawigacyjnym (domyślnie włączone)",
   "Settings_Confirm_Quit_Title": "Zamknij aplikację",
   "Settings_Confirm_Quit_Desc": "Zapytaj o potwierdzenie przed zamknięciem aplikacji",
   "Settings_Confirm_Quit_Prompt": "Czy na pewno chcesz zamknąć aplikację?",

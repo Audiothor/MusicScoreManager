@@ -160,21 +160,16 @@
                                    TextColor="#888888" 
                                    Margin="0,2,0,6"/>
                                    
-                            <FlexLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-                                        BindableLayout.ItemsSource="{Binding AppliedTags}"
-                                        IsVisible="{Binding HasTags}"
-                                        Wrap="Wrap"
-                                        Direction="Row"
-                                        AlignItems="Start"
-                                        AlignContent="Start"
-                                        Margin="0,2,0,0">
+                            <HorizontalStackLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                                                   BindableLayout.ItemsSource="{Binding AppliedTags}"
+                                                   IsVisible="{Binding HasTags}"
+                                                   Spacing="5">
                                 <BindableLayout.ItemTemplate>
                                     <DataTemplate x:DataType="models:Tag">
                                         <Border BackgroundColor="{Binding ColorHex}"
                                                 StrokeThickness="0"
                                                 Padding="8,2"
-                                                HeightRequest="22"
-                                                Margin="0,0,5,4">
+                                                HeightRequest="22">
                                             <Border.StrokeShape>
                                                 <RoundRectangle CornerRadius="11" />
                                             </Border.StrokeShape>
@@ -182,11 +177,12 @@
                                                    TextColor="White" 
                                                    FontSize="11" 
                                                    FontAttributes="Bold"
-                                                   VerticalOptions="Center" />
+                                                   VerticalOptions="Center"
+                                                   VerticalTextAlignment="Center" />
                                         </Border>
                                     </DataTemplate>
                                 </BindableLayout.ItemTemplate>
-                            </FlexLayout>
+                            </HorizontalStackLayout>
                         </Grid>
                     </Border>
                 </DataTemplate>

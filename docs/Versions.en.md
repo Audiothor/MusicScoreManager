@@ -6,6 +6,8 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.8.2 — 18/10/2026](#v282--18102026)
+- [v2.8.1 — 18/10/2026](#v281--18102026)
 - [v2.8.0 — 16/10/2026](#v280--16102026)
 - [v2.7.2 — 15/10/2026](#v272--15102026)
 - [v2.7.1 — 15/10/2026](#v271--15102026)
@@ -25,6 +27,31 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.8.2 — 18/10/2026
+
+### 1. Restored Vertical Mobility for Annotation Bar
+- **1.1. Dedicated drag handle `⠿` & gesture decoupling:** Added a tactile drag handle `⠿` at the leading edge of the annotation bar equipped with its own dedicated `PanGestureRecognizer`. Enables smooth, unrestricted vertical dragging without horizontal gesture interception from the tool scroll container.
+- **1.2. Redundant drag surfaces:** Central empty spacing and the border itself also preserve vertical panning within display boundaries.
+
+### 2. Tools Hub: Instant Dynamic Toggling & Layer Hierarchy
+- **2.1. Real-time dynamic visual feedback:** Toggling any feature on or off (top score title, metronome, audio player, tuner, page indicator, annotations) immediately updates live on screen without waiting for the tools drawer to close.
+- **2.2. Optimized layer ordering (Z-Index):** The tools drawer sits at the top foreground (`ZIndex="1100"`), while active tool components (`ZIndex="1005"`) render in front of the tap-outside backdrop (`ZIndex="998"`), ensuring immediate visibility.
+
+### 3. Settings: Configurable "Quit" Navigation Tab
+- **3.1. Navigation bar personalization:** Added an option under *Settings › Application Behavior* to toggle the visibility of the "Quit" tab in the main navigation bar (enabled by default).
+- **3.2. Android gesture integration:** Users who rely on native Android back gestures can streamline their bottom navigation bar while preserving a direct one-tap exit button for users who prefer it.
+
+---
+
+## v2.8.1 — 18/10/2026
+
+### 1. Fix for Score Tags Display in the Scores List
+- **1.1. Restored `HorizontalStackLayout` container in score item cells:** Resolved a known .NET MAUI Android measurement issue where `FlexLayout` inside `CollectionView` item templates and `Auto` grid rows collapsed vertically, crushing tags into thin 4px strips without visible text.
+- **1.2. Clean pill rendering and calibrated height:** Tags properly display with their standard 22px height, rounded corners, and centered text (`VerticalTextAlignment="Center"`).
+- **1.3. Harmonized score selection list:** Applied the same reliable layout structure to the score picker (`ScoreSelectionPage`).
 
 ---
 

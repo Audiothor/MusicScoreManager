@@ -6,6 +6,8 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.8.2 — 18/10/2026](#v282--18102026)
+- [v2.8.1 — 18/10/2026](#v281--18102026)
 - [v2.8.0 — 16/10/2026](#v280--16102026)
 - [v2.7.2 — 15/10/2026](#v272--15102026)
 - [v2.7.1 — 15/10/2026](#v271--15102026)
@@ -25,6 +27,31 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.8.2 — 18/10/2026
+
+### 1. Rétablissement du Déplacement Vertical de la Barre d'Annotation
+- **1.1. Poignée dédiée `⠿` et découplage tactile :** Ajout d'une poignée de déplacement tactile `⠿` en tête de la barre d'annotation avec son propre écouteur de geste `PanGestureRecognizer`. Elle permet de déplacer la barre de haut en bas sans aucun conflit de défilement horizontal avec le conteneur des outils d'annotation.
+- **1.2. Zones de glissement redondantes :** L'espace vide central et la bordure globale conservent également la capacité de glissement vertical dans les limites de l'écran.
+
+### 2. Boîte à Outils : Réactivité Immédiate et Hiérarchie des Plans d'Affichage
+- **2.1. Affichage dynamique en temps réel :** L'activation ou la désactivation de chaque outil (titre de la partition en haut, métronome, lecteur audio, accordeur, numéros de page, annotations) se reflète instantanément à l'écran sans attendre la fermeture de la boîte à outils.
+- **2.2. Priorité de calques (Z-Index) :** La boîte à outils s'affiche au premier plan (`ZIndex="1100"`), tandis que les éléments pilotés (`ZIndex="1005"`) se situent au-dessus du fond d'occlusion (`ZIndex="998"`), garantissant une visibilité en direct.
+
+### 3. Paramètres : Option d'Affichage du Menu « Quitter »
+- **3.1. Personnalisation de la barre de navigation :** Ajout d'un réglage dans *Paramètres › Comportement de l'application* permettant d'afficher ou masquer l'onglet « Quitter » dans la barre de navigation principale (activé par défaut).
+- **3.2. Adaptabilité gestuelle Android :** Les utilisateurs privilégiant la navigation gestuelle Android native peuvent ainsi épurer la barre d'onglets, tout en préservant le confort d'un bouton de fermeture direct pour ceux qui le souhaitent.
+
+---
+
+## v2.8.1 — 18/10/2026
+
+### 1. Correctif d'Affichage des Étiquettes (Tags) sur la Liste des Partitions
+- **1.1. Restauration du conteneur `HorizontalStackLayout` dans les cellules de partition :** Résolution d'un bogue de dimensionnement natif à .NET MAUI sur Android où le `FlexLayout` dans les cellules `CollectionView` / `Grid Auto` s'effondrait verticalement (écrasant les étiquettes en fines bandes de 4px sans texte visible).
+- **1.2. Rendu net et hauteur calibrée des pastilles :** Les étiquettes retrouvent leur hauteur standardisée (22px), leurs coins arrondis et leur libellé parfaitement centré verticalement (`VerticalTextAlignment="Center"`).
+- **1.3. Harmonisation sur la sélection des partitions :** Application de la même structure fiable sur la sélection des partitions (`ScoreSelectionPage`).
 
 ---
 

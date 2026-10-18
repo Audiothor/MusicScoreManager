@@ -6,7 +6,25 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
         UpdateTabTitles();
+        UpdateQuitTabVisibility();
         Services.LocalizationService.Instance.LanguageChanged += OnLanguageChanged;
+    }
+
+    public void UpdateQuitTabVisibility()
+    {
+        bool showQuit = Preferences.Default.Get("ShowQuitMenu", true);
+        if (TabQuit != null)
+        {
+            TabQuit.IsVisible = showQuit;
+            if (!showQuit && MainTabBar.Items.Contains(TabQuit))
+            {
+                MainTabBar.Items.Remove(TabQuit);
+            }
+            else if (showQuit && !MainTabBar.Items.Contains(TabQuit))
+            {
+                MainTabBar.Items.Add(TabQuit);
+            }
+        }
     }
 
     private void OnLanguageChanged(object? sender, EventArgs e)

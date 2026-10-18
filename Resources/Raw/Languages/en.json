@@ -623,6 +623,8 @@
   "Viewer_GoToPage_Title": "Go to page",
   "Viewer_ShowPageNumber_Label": "Show page numbers",
   "Settings_App_Behavior": "Application Behavior",
+  "Settings_Show_Quit_Menu_Title": "Show \"Quit\" menu",
+  "Settings_Show_Quit_Menu_Desc": "Shows or hides the Quit tab in the main navigation bar (enabled by default)",
   "Settings_Confirm_Quit_Title": "Quit Application",
   "Settings_Confirm_Quit_Desc": "Ask for confirmation before closing the application",
   "Settings_Confirm_Quit_Prompt": "Are you sure you want to quit the application?",

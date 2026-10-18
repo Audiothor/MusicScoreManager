@@ -83,26 +83,28 @@
                                 <Label Text="{Binding Score.Composer}" 
                                        TextColor="#AAAAAA" 
                                        FontSize="12" />
-                                <FlexLayout BindableLayout.ItemsSource="{Binding Score.AppliedTags}"
-                                            Wrap="Wrap"
-                                            Direction="Row">
+                                <HorizontalStackLayout BindableLayout.ItemsSource="{Binding Score.AppliedTags}"
+                                                       Spacing="4"
+                                                       Margin="0,2,0,0">
                                     <BindableLayout.ItemTemplate>
                                         <DataTemplate>
                                             <Border BackgroundColor="{Binding ColorHex}"
                                                     StrokeThickness="0"
                                                     Padding="6,2"
-                                                    Margin="0,2,4,0">
+                                                    HeightRequest="20">
                                                 <Border.StrokeShape>
                                                     <RoundRectangle CornerRadius="10" />
                                                 </Border.StrokeShape>
                                                 <Label Text="{Binding Name}" 
                                                        TextColor="White" 
                                                        FontSize="10" 
-                                                       FontAttributes="Bold" />
+                                                       FontAttributes="Bold"
+                                                       VerticalOptions="Center"
+                                                       VerticalTextAlignment="Center" />
                                             </Border>
                                         </DataTemplate>
                                     </BindableLayout.ItemTemplate>
-                                </FlexLayout>
+                                </HorizontalStackLayout>
                             </VerticalStackLayout>
                             
                             <CheckBox Grid.Column="1" 

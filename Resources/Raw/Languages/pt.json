@@ -620,6 +620,8 @@
   "Viewer_GoToPage_Title": "Ir para a página",
   "Viewer_ShowPageNumber_Label": "Mostrar números de página",
   "Settings_App_Behavior": "Comportamento da aplicação",
+  "Settings_Show_Quit_Menu_Title": "Mostrar menu «Sair»",
+  "Settings_Show_Quit_Menu_Desc": "Mostra ou oculta a aba Sair na barra de navegação principal (ativado por padrão)",
   "Settings_Confirm_Quit_Title": "Sair da aplicação",
   "Settings_Confirm_Quit_Desc": "Pedir confirmação antes de fechar a aplicação",
   "Settings_Confirm_Quit_Prompt": "Tem certeza de que deseja sair da aplicação?",
