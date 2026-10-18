@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.8.3 — 18/10/2026](#v283--18102026)
 - [v2.8.2 — 18/10/2026](#v282--18102026)
 - [v2.8.1 — 18/10/2026](#v281--18102026)
 - [v2.8.0 — 16/10/2026](#v280--16102026)
@@ -27,6 +28,14 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.8.3 — 18/10/2026
+
+### 1. Correctif Majeur d'Écrasement des Étiquettes de Partition (Tags)
+- **1.1. Stratégie de mesure de la liste `MeasureAllItems` :** Remplacement de `ItemSizingStrategy="MeasureFirstItem"` par `MeasureAllItems` sur la `CollectionView` de la bibliothèque. Auparavant, lorsqu'une partition en tête de liste n'avait pas d'étiquettes, la hauteur globale de toutes les cellules était verrouillée à 78px par Android/MAUI, rognant et écrasant les étiquettes des partitions suivantes.
+- **1.2. Hauteur de carte dynamique et adaptative :** Chaque cellule ajuste désormais librement sa hauteur en fonction de la présence d'étiquettes et du nombre de lignes du titre, assurant la visibilité intégrale des pastilles colorées et de leurs libellés.
 
 ---
 

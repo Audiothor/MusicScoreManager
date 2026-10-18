@@ -75,7 +75,7 @@
 
         <Grid Grid.Row="2" Margin="{OnIdiom Phone='10,0,5,0', Tablet='15,0,5,0'}">
             <CollectionView x:Name="ScoresCollectionView"
-                            ItemSizingStrategy="MeasureFirstItem"
+                            ItemSizingStrategy="MeasureAllItems"
                             SelectionMode="Single"
                             SelectionChanged="OnScoreSelected"
                             Scrolled="OnScoresScrolled"
@@ -88,8 +88,7 @@
                     <Border Stroke="#333333" 
                             StrokeThickness="1" 
                             BackgroundColor="#1E1E1E" 
-                            Padding="10"
-                            MinimumHeightRequest="78">
+                            Padding="10">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
