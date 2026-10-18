@@ -7,54 +7,53 @@
              Title="{Binding [Setlist_Menu_Edit], Source={x:Static services:LocalizationService.Instance}}"
              BackgroundColor="#121212">
 
-    <Grid RowDefinitions="Auto, *, Auto" Padding="15">
+    <Grid RowDefinitions="Auto, *, Auto" Padding="{OnIdiom Phone='10,8', Tablet='15'}">
         
         <!-- En-tête : Détails Setlist -->
-        <VerticalStackLayout Grid.Row="0" Spacing="15" Margin="0,0,0,20">
-            <Border Stroke="#333333" Padding="10" BackgroundColor="#1E1E1E">
+        <VerticalStackLayout Grid.Row="0" Spacing="{OnIdiom Phone=8, Tablet=12}" Margin="{OnIdiom Phone='0,0,0,8', Tablet='0,0,0,15'}">
+            <Border Stroke="#333333" Padding="{OnIdiom Phone='10,8', Tablet='12'}" BackgroundColor="#1E1E1E">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="{Binding [Setlist_Name], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
+                <VerticalStackLayout Spacing="{OnIdiom Phone=6, Tablet=10}">
+                    <!-- Nom de la Setlist -->
+                    <Label Text="{Binding [Setlist_Name], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="11" />
                     <Entry x:Name="NameEntry" 
                            Placeholder="Ex: Concert d'été" 
                            TextColor="White" 
-                           FontSize="18" 
+                           FontSize="{OnIdiom Phone=16, Tablet=18}" 
                            FontAttributes="Bold" />
                     
+                    <!-- Date et Heure -->
                     <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
                         <VerticalStackLayout Grid.Column="0">
-                            <Label Text="{Binding [Setlist_Concert_Date], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
-                            <DatePicker x:Name="ConcertDatePicker" TextColor="White" MinimumDate="2020-01-01" />
+                            <Label Text="{Binding [Setlist_Concert_Date_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="11" />
+                            <DatePicker x:Name="ConcertDatePicker" TextColor="White" MinimumDate="2020-01-01" FontSize="{OnIdiom Phone=13, Tablet=14}" />
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1">
-                            <Label Text="{Binding [Setlist_Concert_Time], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" />
-                            <TimePicker x:Name="ConcertTimePicker" TextColor="White" Format="HH:mm" />
+                            <Label Text="{Binding [Setlist_Concert_Time], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="11" />
+                            <TimePicker x:Name="ConcertTimePicker" TextColor="White" Format="HH:mm" FontSize="{OnIdiom Phone=13, Tablet=14}" />
                         </VerticalStackLayout>
                     </Grid>
 
-                    <Label Text="{Binding [Setlist_Status], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="12" Margin="0,5,0,0" />
-                    <Grid ColumnDefinitions="*, Auto, Auto" VerticalOptions="Center">
-                        <HorizontalStackLayout x:Name="StatusStack" Spacing="10" Grid.Column="0">
-                            <!-- Les chips seront générés dynamiquement dans le code-behind -->
-                        </HorizontalStackLayout>
-
-                        <!-- Indicateur de CACHE -->
-                        <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center" Margin="0,0,15,0">
-                            <Label x:Name="CacheStatusIcon" Text="⏳" FontSize="18" VerticalOptions="Center" />
-                            <Label x:Name="CacheStatusText" Text="Cache..." TextColor="#888888" FontSize="11" VerticalOptions="Center" />
-                        </HorizontalStackLayout>
-
-                        <Border Grid.Column="2" 
+                    <!-- Ligne Statut & Verrouillage -->
+                    <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center" Margin="0,2,0,0">
+                        <Label Grid.Column="0" 
+                               Text="{Binding [Setlist_Status], Source={x:Static services:LocalizationService.Instance}}" 
+                               TextColor="#888888" 
+                               FontSize="11" 
+                               VerticalOptions="Center" />
+                        
+                        <!-- Bouton Verrouillé / Déverrouillé -->
+                        <Border Grid.Column="1" 
                                 x:Name="LockBorder"
                                 BackgroundColor="#28A745"
-                                Padding="15,5"
+                                Padding="12,4"
                                 StrokeThickness="1"
                                 Stroke="#28A745"
                                 VerticalOptions="Center">
                             <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="15" />
+                                <RoundRectangle CornerRadius="14" />
                             </Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnLockTapped" />
@@ -62,51 +61,113 @@
                             <Label x:Name="LockIconLabel" 
                                    Text="{Binding [Setlist_Edit_Unlocked], Source={x:Static services:LocalizationService.Instance}}" 
                                    TextColor="White" 
-                                   FontSize="12" 
+                                   FontSize="11" 
                                    FontAttributes="Bold"
                                    HorizontalOptions="Center" 
                                    VerticalOptions="Center" />
                         </Border>
                     </Grid>
 
-                    <BoxView HeightRequest="1" Color="#333333" Margin="0,5" />
-
+                    <!-- Chips de Statut + Indicateur Prêt -->
                     <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
-                        <VerticalStackLayout Grid.Column="0">
-                            <Label Text="{Binding [Setlist_Continuous_Mode], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="14" FontAttributes="Bold" />
-                            <Label Text="{Binding [Setlist_Edit_Continuous_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="11" />
-                        </VerticalStackLayout>
-                        <Switch Grid.Column="1" x:Name="ContinuousSwitch" IsToggled="True" OnColor="#007ACC" ThumbColor="White" />
+                        <HorizontalStackLayout x:Name="StatusStack" Spacing="6" Grid.Column="0" VerticalOptions="Center">
+                            <!-- Les chips seront générés dynamiquement dans le code-behind -->
+                        </HorizontalStackLayout>
+
+                        <!-- Indicateur de CACHE -->
+                        <HorizontalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center" Margin="6,0,0,0">
+                            <Label x:Name="CacheStatusIcon" Text="⏳" FontSize="14" VerticalOptions="Center" />
+                            <Label x:Name="CacheStatusText" Text="Cache..." TextColor="#888888" FontSize="10" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
                     </Grid>
 
-                    <BoxView HeightRequest="1" Color="#333333" Margin="0,5" />
+                    <BoxView HeightRequest="1" Color="#2A2A2A" Margin="0,2" />
 
-                    <!-- Profil de pédales -->
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="{Binding [Setlist_Pedal_Profile], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="14" FontAttributes="Bold" />
-                        <Label Text="{Binding [Setlist_Pedal_Profile_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="11" />
-                        <Border Stroke="#444444" StrokeThickness="1" BackgroundColor="#2C2C2C" Padding="8,2">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
-                            <Picker x:Name="PedalProfilePicker" 
-                                    TextColor="White" 
-                                    TitleColor="#888888" 
-                                    FontSize="14" 
-                                    SelectedIndexChanged="OnPedalProfilePickerChanged" />
-                        </Border>
-                        <Label x:Name="PedalProfileNoteLabel" TextColor="#4FC3F7" FontSize="11" LineBreakMode="WordWrap" />
+                    <!-- Bouton Dépliant : Options Avancées -->
+                    <Grid ColumnDefinitions="*, Auto" Margin="0,1" Padding="0,3">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnToggleAdvancedOptionsClicked" />
+                        </Grid.GestureRecognizers>
+                        <HorizontalStackLayout Grid.Column="0" Spacing="6" VerticalOptions="Center">
+                            <Label Text="⚙️" FontSize="12" VerticalOptions="Center" />
+                            <Label Text="{Binding [Setlist_Edit_Advanced_Options], Source={x:Static services:LocalizationService.Instance}}" 
+                                   TextColor="#4FC3F7" 
+                                   FontSize="12" 
+                                   FontAttributes="Bold" 
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                        <Label Grid.Column="1" 
+                               x:Name="AdvancedOptionsChevron" 
+                               Text="▼" 
+                               TextColor="#4FC3F7" 
+                               FontSize="11" 
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- Zone Repliable des Options Avancées -->
+                    <VerticalStackLayout x:Name="AdvancedOptionsLayout" 
+                                         IsVisible="{OnIdiom Phone=False, Tablet=True}" 
+                                         Spacing="8" 
+                                         Margin="0,2,0,0">
+                        <!-- Mode continu -->
+                        <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                            <VerticalStackLayout Grid.Column="0">
+                                <Label Text="{Binding [Setlist_Continuous_Mode], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="13" FontAttributes="Bold" />
+                                <Label Text="{Binding [Setlist_Edit_Continuous_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="10" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" x:Name="ContinuousSwitch" IsToggled="True" OnColor="#007ACC" ThumbColor="White" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="#2A2A2A" Margin="0,2" />
+
+                        <!-- Profil de pédales -->
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding [Setlist_Pedal_Profile], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="13" FontAttributes="Bold" />
+                            <Label Text="{Binding [Setlist_Pedal_Profile_Desc], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="10" />
+                            <Border Stroke="#444444" StrokeThickness="1" BackgroundColor="#2C2C2C" Padding="8,2">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Picker x:Name="PedalProfilePicker" 
+                                        TextColor="White" 
+                                        TitleColor="#888888" 
+                                        FontSize="13" 
+                                        SelectedIndexChanged="OnPedalProfilePickerChanged" />
+                            </Border>
+                            <Label x:Name="PedalProfileNoteLabel" TextColor="#4FC3F7" FontSize="10" LineBreakMode="WordWrap" />
+                        </VerticalStackLayout>
+
+                        <!-- Bouton Supprimer la setlist -->
+                        <Button x:Name="DeleteSetlistButton"
+                                Text="{Binding [Setlist_Edit_Delete_Btn], Source={x:Static services:LocalizationService.Instance}}"
+                                BackgroundColor="Transparent"
+                                TextColor="#FF4444"
+                                BorderColor="#FF4444"
+                                BorderWidth="1"
+                                HeightRequest="38"
+                                FontSize="12"
+                                Margin="0,4,0,0"
+                                Clicked="OnDeleteSetlistClicked" />
                     </VerticalStackLayout>
                 </VerticalStackLayout>
             </Border>
 
-            <Grid ColumnDefinitions="*, Auto">
-                <Label Grid.Column="0" Text="{Binding [Setlist_Edit_Scores], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="20" FontAttributes="Bold" VerticalOptions="Center" />
+            <!-- Ligne Titre Partitions & Bouton Ajouter -->
+            <Grid ColumnDefinitions="*, Auto" Margin="2,4,2,0">
+                <Label Grid.Column="0" 
+                       Text="{Binding [Setlist_Edit_Scores], Source={x:Static services:LocalizationService.Instance}}" 
+                       TextColor="White" 
+                       FontSize="{OnIdiom Phone=17, Tablet=20}" 
+                       FontAttributes="Bold" 
+                       VerticalOptions="Center" />
                 <Button Grid.Column="1" 
                         x:Name="AddScoreButton"
                         Text="{Binding [Setlist_Edit_Add], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="#007ACC" 
                         TextColor="White" 
+                        FontSize="{OnIdiom Phone=12, Tablet=14}"
+                        HeightRequest="{OnIdiom Phone=34, Tablet=40}"
+                        CornerRadius="6"
                         Clicked="OnAddScoreClicked" />
             </Grid>
         </VerticalStackLayout>
@@ -214,30 +275,21 @@
             </CollectionView.EmptyView>
         </CollectionView>
 
-        <!-- Boutons d'action -->
-        <VerticalStackLayout Grid.Row="2" Spacing="10" Margin="0,15,0,0">
-            <Button x:Name="DeleteSetlistButton"
-                    Text="{Binding [Setlist_Edit_Delete_Btn], Source={x:Static services:LocalizationService.Instance}}"
-                    BackgroundColor="Transparent"
-                    TextColor="#FF4444"
-                    BorderColor="#FF4444"
-                    BorderWidth="1"
-                    HeightRequest="45"
-                    Clicked="OnDeleteSetlistClicked" />
-
-            <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
-                <Button Grid.Column="0" 
-                        Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}" 
-                        BackgroundColor="#333333" 
-                        TextColor="White" 
-                        Clicked="OnCancelClicked" />
-                <Button Grid.Column="1" 
-                        Text="{Binding [Common_Save], Source={x:Static services:LocalizationService.Instance}}" 
-                        BackgroundColor="#007ACC" 
-                        TextColor="White" 
-                        FontAttributes="Bold" 
-                        Clicked="OnSaveClicked" />
-            </Grid>
-        </VerticalStackLayout>
+        <!-- Boutons d'action (Annuler / Enregistrer) -->
+        <Grid Grid.Row="2" ColumnDefinitions="*, *" ColumnSpacing="12" Margin="{OnIdiom Phone='0,8,0,0', Tablet='0,12,0,0'}">
+            <Button Grid.Column="0" 
+                    Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}" 
+                    BackgroundColor="#333333" 
+                    TextColor="White" 
+                    HeightRequest="{OnIdiom Phone=40, Tablet=46}"
+                    Clicked="OnCancelClicked" />
+            <Button Grid.Column="1" 
+                    Text="{Binding [Common_Save], Source={x:Static services:LocalizationService.Instance}}" 
+                    BackgroundColor="#007ACC" 
+                    TextColor="White" 
+                    FontAttributes="Bold" 
+                    HeightRequest="{OnIdiom Phone=40, Tablet=46}"
+                    Clicked="OnSaveClicked" />
+        </Grid>
     </Grid>
 </ContentPage>

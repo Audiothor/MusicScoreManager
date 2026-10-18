@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v2.8.4 — 18/10/2026](#v284--18102026)
 - [v2.8.3 — 18/10/2026](#v283--18102026)
 - [v2.8.2 — 18/10/2026](#v282--18102026)
 - [v2.8.1 — 18/10/2026](#v281--18102026)
@@ -28,6 +29,21 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.8.4 — 18/10/2026
+
+### 1. Fix Context Menus on Smartphones (Vertical Line Glitch)
+- **1.1. `WidthRequest` mobile resolution:** Fixed `WidthRequest` attributes on popups and context menus (`ScoreMenuOverlay`, `SetlistMenuOverlay`, `DuplicateModal`, `TagsModal`, `MassActionsModal`, `PdfToolsModal`, `ModernImportModalCard`). Missing `Phone` value inside `OnIdiom` evaluated to `0.0`, drawing a 1px gray vertical line instead of displaying the modal card.
+- **1.2. Responsive modal width:** Set `Phone=-1` combined with `HorizontalOptions="Fill"`, `Margin="16,10"` and `MaximumWidthRequest="360"`, ensuring cards scale properly across all smartphone form factors.
+
+### 2. Setlist Editor Layout Overhaul (SetlistEditPage)
+- **2.1. Element overlap elimination:** Restructured the setlist edit layout so that components never collide or overlap, even on compact smartphone screens.
+- **2.2. Streamlined status and lock controls:** Placed the lock button (`UNLOCKED 🔓`) on the status header row, giving status chips their own dedicated row with properly scaled badge chips.
+- **2.3. Collapsible "Advanced options" section:** Moved secondary options (*Continuous mode*, *Pedal profile*, and *Delete Setlist*) into an accordion section collapsed by default on mobile, freeing up over 400px of height for the score list.
+- **2.4. Safe bottom action bar:** Removed the delete button from the bottom bar (now safely nested in advanced options), eliminating accidental taps and resolving the overlap with the "Scores" title and "+ Add" button.
+- **2.5. Date label formatting:** Replaced the unformatted literal string `{0:dd/MM/yyyy}` with the localized label "Concert date".
 
 ---
 

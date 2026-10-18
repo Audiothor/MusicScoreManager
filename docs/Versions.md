@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v2.8.4 — 18/10/2026](#v284--18102026)
 - [v2.8.3 — 18/10/2026](#v283--18102026)
 - [v2.8.2 — 18/10/2026](#v282--18102026)
 - [v2.8.1 — 18/10/2026](#v281--18102026)
@@ -28,6 +29,21 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v2.8.4 — 18/10/2026
+
+### 1. Correctif des Menus Contextuels Partitions et Setlists sur Smartphone (Trait Vertical)
+- **1.1. Résolution du bogue `WidthRequest` sur mobile :** Correction de la valeur `WidthRequest` dans les modales et menus contextuels (`ScoreMenuOverlay`, `SetlistMenuOverlay`, `DuplicateModal`, `TagsModal`, `MassActionsModal`, `PdfToolsModal`, `ModernImportModalCard`). L'absence de paramètre `Phone` dans `OnIdiom` provoquait une largeur nulle (`WidthRequest=0`), matérialisée à l'écran par un simple trait vertical gris de 1px sans boîte de dialogue.
+- **1.2. Largeur adaptative et fluide :** Définition explicite de `Phone=-1` couplé à `HorizontalOptions="Fill"`, `Margin="16,10"` et `MaximumWidthRequest="360"`, assurant un affichage centré et adapté à toutes les diagonales de smartphone.
+
+### 2. Refonte Responsive et Ergonomique de l'Édition de Setlist (SetlistEditPage)
+- **2.1. Élimination des chevauchements d'éléments :** Réorganisation de la fiche de setlist pour garantir que les contrôles ne se superposent jamais, même sur les écrans de smartphone compacts.
+- **2.2. Bandeau Statut et Verrouillage épuré :** Séparation du bouton de verrouillage (`DÉVERROUILLÉ 🔓`) sur la ligne d'en-tête du statut, et disposition des pastilles de statut sur leur propre ligne avec taille calibrée.
+- **2.3. Volet repliable « Options avancées » :** Déport des options secondaires (*Mode continu*, *Profil de pédale* et *Supprimer la setlist*) dans un accordéon replié par défaut sur mobile. Cela libère plus de 400px de hauteur pour la liste des partitions.
+- **2.4. Barre d'action inférieure sécurisée :** Retrait du bouton de suppression de la barre inférieure (désormais logé dans les options avancées), éliminant tout risque de fausse manipulation et toute collision avec le titre « Partitions » et le bouton « + Ajouter ».
+- **2.5. Correction du libellé de date :** Remplacement de la chaîne brute non formattée `{0:dd/MM/yyyy}` par l'intitulé localisé « Date du concert ».
 
 ---
 
