@@ -59,6 +59,7 @@ namespace MusicScoreManager.Services
     {
         public string Title { get; set; } = string.Empty;
         public string FileName { get; set; } = string.Empty;
+        public string Category { get; set; } = "Général";
         public ScoreType Type { get; set; }
         public int Rotation { get; set; }
         public bool IsRotationSaved { get; set; }

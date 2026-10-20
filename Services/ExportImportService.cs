@@ -75,6 +75,7 @@ namespace MusicScoreManager.Services
             {
                 Title = score.Title,
                 FileName = Path.GetFileName(score.FilePath),
+                Category = score.Category ?? "Général",
                 Type = score.Type,
                 Rotation = score.Rotation,
                 IsRotationSaved = score.IsRotationSaved,
@@ -387,7 +388,11 @@ namespace MusicScoreManager.Services
                 var scorePayload = payloads.FirstOrDefault(p => p.FileName == scoreMeta.FileName);
                 if (scorePayload != null)
                 {
-                    string targetFilePath = Path.Combine(scoresRootDir, scoreMeta.FileName);
+                    string cat = string.IsNullOrWhiteSpace(scoreMeta.Category) ? "Général" : scoreMeta.Category;
+                    string catDir = Path.Combine(scoresRootDir, cat);
+                    if (!Directory.Exists(catDir)) Directory.CreateDirectory(catDir);
+
+                    string targetFilePath = Path.Combine(catDir, scoreMeta.FileName);
                     if (!File.Exists(targetFilePath))
                     {
                         await File.WriteAllBytesAsync(targetFilePath, scorePayload.Data);
@@ -406,6 +411,7 @@ namespace MusicScoreManager.Services
                         scoreToUse = new Score
                         {
                             Title = scoreMeta.Title,
+                            Category = cat,
                             FilePath = _settingsService.GetRelativePath(targetFilePath),
                             Type = scoreMeta.Type,
                             Rotation = scoreMeta.Rotation,
@@ -526,7 +532,11 @@ namespace MusicScoreManager.Services
                 var scorePayload = payloads.FirstOrDefault(p => p.FileName == scoreMeta.FileName);
                 if (scorePayload != null)
                 {
-                    string targetFilePath = Path.Combine(scoresRootDir, scoreMeta.FileName);
+                    string cat = string.IsNullOrWhiteSpace(scoreMeta.Category) ? "Général" : scoreMeta.Category;
+                    string catDir = Path.Combine(scoresRootDir, cat);
+                    if (!Directory.Exists(catDir)) Directory.CreateDirectory(catDir);
+
+                    string targetFilePath = Path.Combine(catDir, scoreMeta.FileName);
                     if (!File.Exists(targetFilePath))
                     {
                         await File.WriteAllBytesAsync(targetFilePath, scorePayload.Data);
@@ -535,6 +545,7 @@ namespace MusicScoreManager.Services
                     var newScore = new Score
                     {
                         Title = scoreMeta.Title,
+                        Category = cat,
                         FilePath = _settingsService.GetRelativePath(targetFilePath),
                         Type = scoreMeta.Type,
                         Rotation = scoreMeta.Rotation,

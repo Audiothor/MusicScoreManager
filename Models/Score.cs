@@ -49,6 +49,22 @@ namespace MusicScoreManager.Models
 
         public string FilePath { get; set; } = string.Empty;
 
+        private string _category = "Général";
+        [Indexed]
+        public string Category
+        {
+            get => string.IsNullOrWhiteSpace(_category) ? "Général" : _category;
+            set
+            {
+                var val = string.IsNullOrWhiteSpace(value) ? "Général" : value.Trim();
+                if (_category != val)
+                {
+                    _category = val;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public ScoreType Type { get; set; }
 
         public DateTime DateAdded { get; set; }
@@ -172,6 +188,12 @@ namespace MusicScoreManager.Models
                         if (!string.IsNullOrWhiteSpace(dateStr))
                         {
                             parts.Add(dateStr);
+                        }
+                        break;
+                    case "Category":
+                        if (!string.IsNullOrWhiteSpace(Category))
+                        {
+                            parts.Add(Category);
                         }
                         break;
                 }
