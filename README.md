@@ -2,7 +2,7 @@
   <img src="Resources/Splash/app_splash_padded.png" width="400" />
 </p>
 
-# Music Score Manager v2.8.4
+# Music Score Manager v3.0.0
 > **Le gestionnaire & visualiseur professionnel de partitions musicales pour répétitions, pupitres et concerts en direct.**
 
 ---
@@ -125,6 +125,9 @@ graph TD
 
 ### 2.1 Barre d'Outils Supérieure & Actions Globales
 La barre supérieure met à votre disposition des outils instantanés :
+- **Bouton Bascule d'Affichage (`📁 / ☰`)** :
+  - **Vue Liste (📋)** : Affichage linéaire fluide de toutes les partitions avec défilement continu et tri personnalisé.
+  - **Vue Dossiers (📁)** : Regroupement par répertoires physiques/catégories (accordéon repliable/dépliable, comptage de partitions, gestion directe de dossiers).
 - **Barre de Recherche (`SearchBar`)** : Filtre en temps réel au fil de la frappe par titre du morceau, nom du compositeur ou nom du fichier.
 - **Bouton Filtrage par Étiquettes (`🏷️`)** :
   - Ouvre une modale interactive avec barre de recherche interne et tri des étiquettes (A-Z, Z-A, les plus utilisées, les moins utilisées).

@@ -29,6 +29,10 @@ public partial class ScoresPage : ContentPage
 
     private readonly ObservableCollection<WifiDeviceInfo> _discoveredDevices = new();
 
+    public ObservableCollection<ScoreCategoryGroup> CategoryGroups { get; } = new();
+    private bool _isFoldersView = false;
+    private List<Models.Score> _lastLoadedScores = new();
+
     public static readonly BindableProperty IsMultiSelectActiveProperty =
         BindableProperty.Create(nameof(IsMultiSelectActive), typeof(bool), typeof(ScoresPage), false, propertyChanged: OnIsMultiSelectActiveChanged);
 
@@ -66,6 +70,11 @@ public partial class ScoresPage : ContentPage
         _cachedShowScrollTop = Preferences.Default.Get("ShowScrollTop", true);
         _cachedShowAlphabeticalIndex = Preferences.Default.Get("ShowAlphabeticalIndex", true);
         BuildAlphabeticalIndex();
+
+        string defaultView = Preferences.Default.Get("DefaultScoresViewMode", "List");
+        string currentView = Preferences.Default.Get("ScoresViewMode", defaultView);
+        _isFoldersView = (currentView == "Folders");
+        UpdateViewModeUI();
     }
 
     public ScoresPage() : this(
@@ -84,6 +93,11 @@ public partial class ScoresPage : ContentPage
         _wifiService.DeviceDiscovered += OnWifiDeviceDiscovered;
         _wifiService.ScanFinished += OnWifiScanFinished;
         _wifiService.TransferProgressChanged += OnWifiTransferProgressChanged;
+
+        string defaultView = Preferences.Default.Get("DefaultScoresViewMode", "List");
+        string currentView = Preferences.Default.Get("ScoresViewMode", defaultView);
+        _isFoldersView = (currentView == "Folders");
+        UpdateViewModeUI();
 
         if (!_hasUserCustomSort)
         {
@@ -112,6 +126,9 @@ public partial class ScoresPage : ContentPage
                     score.PropertyChanged -= OnScorePropertyChanged;
                     score.PropertyChanged += OnScorePropertyChanged;
                 }
+
+                _lastLoadedScores = scores;
+                _ = RebuildCategoryGroupsAsync(scores, _selectedTagIds.Count > 0);
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
@@ -265,6 +282,9 @@ public partial class ScoresPage : ContentPage
             score.PropertyChanged -= OnScorePropertyChanged;
             score.PropertyChanged += OnScorePropertyChanged;
         }
+
+        _lastLoadedScores = scores;
+        _ = RebuildCategoryGroupsAsync(scores, !string.IsNullOrWhiteSpace(query) || _selectedTagIds.Count > 0);
 
         MainThread.BeginInvokeOnMainThread(() => {
             if (EmptyScoresLabel != null)
@@ -1253,6 +1273,246 @@ public partial class ScoresPage : ContentPage
         string successMsg = string.Format(LocalizationService.Instance.GetString("Alert_Score_Added_To_Setlist", "La partition '{0}' a été ajoutée en première place dans la setlist '{1}'."), score.Title, targetSetlist.Name);
         await DisplayAlertAsync(successTitle, successMsg, ok);
     }
+
+    #region View Mode & Categories (Vue Dossiers / Catégories)
+
+    private void UpdateViewModeUI()
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            if (ViewModeToggleButton != null)
+            {
+                ViewModeToggleButton.Text = _isFoldersView ? "☰" : "📁";
+                ToolTipProperties.SetText(ViewModeToggleButton, LocalizationService.Instance.GetString("Scores_View_Mode_Tooltip", "Basculer entre vue liste et vue dossiers"));
+            }
+
+            if (ScoresCollectionView != null)
+            {
+                ScoresCollectionView.IsVisible = !_isFoldersView;
+            }
+
+            if (CategoriesScrollView != null)
+            {
+                CategoriesScrollView.IsVisible = _isFoldersView;
+            }
+
+            if (_isFoldersView)
+            {
+                if (AlphabeticalIndexBorder != null) AlphabeticalIndexBorder.IsVisible = false;
+            }
+            else
+            {
+                UpdateAlphabeticalIndexVisibility();
+            }
+        });
+    }
+
+    private void OnToggleViewModeClicked(object? sender, EventArgs e)
+    {
+        _isFoldersView = !_isFoldersView;
+        Preferences.Default.Set("ScoresViewMode", _isFoldersView ? "Folders" : "List");
+        UpdateViewModeUI();
+        if (_isFoldersView)
+        {
+            _ = RebuildCategoryGroupsAsync(_lastLoadedScores, !string.IsNullOrWhiteSpace(SearchScoreBar?.Text) || _selectedTagIds.Count > 0);
+        }
+    }
+
+    private async Task RebuildCategoryGroupsAsync(List<Models.Score> scores, bool isFiltering)
+    {
+        try
+        {
+            var allCategories = await _databaseService.GetCategoriesAsync();
+            
+            var grouped = scores.GroupBy(s => string.IsNullOrWhiteSpace(s.Category) ? "Général" : s.Category.Trim(), StringComparer.OrdinalIgnoreCase)
+                                .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+
+            var targetCategories = isFiltering
+                ? grouped.Keys.OrderBy(c => c.Equals("Général", StringComparison.OrdinalIgnoreCase) ? 0 : 1).ThenBy(c => c, StringComparer.CurrentCultureIgnoreCase).ToList()
+                : allCategories;
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                CategoryGroups.Clear();
+                foreach (var catName in targetCategories)
+                {
+                    grouped.TryGetValue(catName, out var list);
+                    list ??= new List<Models.Score>();
+
+                    var group = new ScoreCategoryGroup
+                    {
+                        Name = catName,
+                        Scores = new ObservableCollection<Models.Score>(list),
+                        IsExpanded = true
+                    };
+                    CategoryGroups.Add(group);
+                }
+
+                int catCount = CategoryGroups.Count;
+                int scoreCount = scores.Count;
+                string foldersWord = catCount > 1 ? "dossiers" : "dossier";
+                string scoresWord = scoreCount > 1 ? "partitions" : "partition";
+                if (CategoriesSummaryLabel != null)
+                {
+                    CategoriesSummaryLabel.Text = $"📁 {catCount} {foldersWord} • {scoreCount} {scoresWord}";
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[ScoresPage] RebuildCategoryGroupsAsync error: {ex.Message}");
+        }
+    }
+
+    private void OnToggleExpandAllCategoriesClicked(object? sender, EventArgs e)
+    {
+        bool anyCollapsed = CategoryGroups.Any(g => !g.IsExpanded);
+        foreach (var g in CategoryGroups)
+        {
+            g.IsExpanded = anyCollapsed;
+        }
+        if (ExpandCollapseAllButton != null)
+        {
+            var loc = LocalizationService.Instance;
+            ExpandCollapseAllButton.Text = anyCollapsed
+                ? loc.GetString("Scores_Folders_Collapse_All", "Tout replier")
+                : loc.GetString("Scores_Folders_Expand_All", "Tout déplier");
+        }
+    }
+
+    private void OnCategoryHeaderTapped(object? sender, TappedEventArgs e)
+    {
+        if (e.Parameter is ScoreCategoryGroup group)
+        {
+            group.IsExpanded = !group.IsExpanded;
+        }
+    }
+
+    private async void OnCategoryOptionsClicked(object? sender, EventArgs e)
+    {
+        if (sender is Button btn && btn.CommandParameter is ScoreCategoryGroup group)
+        {
+            var loc = LocalizationService.Instance;
+            string cancel = loc.GetString("Common_Cancel", "Annuler");
+            string rename = loc.GetString("Score_Category_Rename_Title", "Renommer le dossier");
+            string delete = loc.GetString("Score_Category_Delete_Title", "Supprimer le dossier");
+
+            string? action;
+            if (string.Equals(group.Name, "Général", StringComparison.OrdinalIgnoreCase))
+            {
+                action = await DisplayActionSheetAsync(group.DisplayName, cancel, null, rename);
+            }
+            else
+            {
+                action = await DisplayActionSheetAsync(group.DisplayName, cancel, delete, rename);
+            }
+
+            if (action == rename)
+            {
+                string promptTitle = loc.GetString("Score_Category_Rename_Title", "Renommer le dossier");
+                string promptMsg = loc.GetString("Score_Category_New_Prompt", "Entrez le nouveau nom :");
+                string? newName = await DisplayPromptAsync(promptTitle, promptMsg, loc.GetString("Common_OK", "OK"), cancel, initialValue: group.Name);
+                if (!string.IsNullOrWhiteSpace(newName) && !string.Equals(newName.Trim(), group.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    await _databaseService.RenameCategoryAsync(group.Name, newName.Trim());
+                    await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
+                }
+            }
+            else if (action == delete)
+            {
+                string confirmMsg = string.Format(
+                    loc.GetString("Score_Category_Delete_Confirm", "Voulez-vous supprimer le dossier '{0}' ? Ses {1} partition(s) seront déplacées dans 'Général'."),
+                    group.Name, group.Count);
+
+                bool confirm = await DisplayAlertAsync(
+                    loc.GetString("Score_Category_Delete_Title", "Supprimer le dossier"),
+                    confirmMsg,
+                    loc.GetString("Common_Delete", "Supprimer"),
+                    cancel);
+
+                if (confirm)
+                {
+                    await _databaseService.DeleteCategoryAsync(group.Name, "Général");
+                    await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
+                }
+            }
+        }
+    }
+
+    private async void OnAddNewCategoryFromScoresPageClicked(object? sender, EventArgs e)
+    {
+        var loc = LocalizationService.Instance;
+        string title = loc.GetString("Score_Category_New_Title", "Nouveau dossier");
+        string prompt = loc.GetString("Score_Category_New_Prompt", "Entrez le nom du nouveau dossier / catégorie :");
+        string ok = loc.GetString("Common_OK", "OK");
+        string cancel = loc.GetString("Common_Cancel", "Annuler");
+
+        string? result = await DisplayPromptAsync(title, prompt, ok, cancel, placeholder: "Ex: Liturgie, Jazz...");
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+            string clean = result.Trim();
+            await _databaseService.CreateCategoryAsync(clean);
+            await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
+        }
+    }
+
+    private async void OnScoreCardTapped(object? sender, TappedEventArgs e)
+    {
+        if (e.Parameter is Models.Score score)
+        {
+            if (IsMultiSelectActive)
+            {
+                score.IsSelected = !score.IsSelected;
+                RecalculateSelectedCount();
+                return;
+            }
+
+            if (score.IsFileMissing)
+            {
+                await this.DisplayAlertAsync("Fichier manquant", "Le fichier de cette partition est introuvable. Veuillez vérifier votre répertoire de partitions dans les paramètres.", "OK");
+                return;
+            }
+
+            await Navigation.PushAsync(new ViewerPage(score));
+        }
+    }
+
+    private async void OnMenuChangeCategoryClicked(object sender, EventArgs e)
+    {
+        if (_selectedScoreForMenu == null) return;
+        var score = _selectedScoreForMenu;
+        ScoreMenuOverlay.IsVisible = false;
+
+        var loc = LocalizationService.Instance;
+        var categories = await _databaseService.GetCategoriesAsync();
+        string cancel = loc.GetString("Common_Cancel", "Annuler");
+        string newCatOption = loc.GetString("Score_Edit_New_Category_Btn", "+ Nouveau dossier");
+
+        var options = new List<string>(categories) { newCatOption };
+        string? selected = await DisplayActionSheetAsync(
+            $"{score.Title} - {loc.GetString("Score_Menu_Change_Category", "Changer de dossier / catégorie")}",
+            cancel,
+            null,
+            options.ToArray());
+
+        if (string.IsNullOrEmpty(selected) || selected == cancel) return;
+
+        string targetCategory = selected;
+        if (selected == newCatOption)
+        {
+            string title = loc.GetString("Score_Category_New_Title", "Nouveau dossier");
+            string prompt = loc.GetString("Score_Category_New_Prompt", "Entrez le nom du nouveau dossier / catégorie :");
+            string? result = await DisplayPromptAsync(title, prompt, loc.GetString("Common_OK", "OK"), cancel);
+            if (string.IsNullOrWhiteSpace(result)) return;
+            targetCategory = result.Trim();
+            await _databaseService.CreateCategoryAsync(targetCategory);
+        }
+
+        await _databaseService.MoveScoreToCategoryAsync(score, targetCategory);
+        await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
+    }
+
+    #endregion
 
     private void OnMenuExchangeClicked(object sender, EventArgs e)
     {

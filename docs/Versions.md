@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.0.0 — 21/10/2026](#v300--21102026)
 - [v2.8.4 — 18/10/2026](#v284--18102026)
 - [v2.8.3 — 18/10/2026](#v283--18102026)
 - [v2.8.2 — 18/10/2026](#v282--18102026)
@@ -29,6 +30,26 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.0.0 — 21/10/2026
+
+### 1. Système de Catégories & Organisation Physique par Répertoires
+- **1.1. Catégorisation de niveau 1 :** Introduction du concept de Catégorie (dossier thématique ou stylistique) en complémentarité totale avec les étiquettes multi-critères. Chaque partition est associée à une catégorie unique (par défaut "Général").
+- **1.2. Synchronisation physique sur le disque de stockage :** Les fichiers PDF/audio d'une partition sont automatiquement déplacés et stockés dans un sous-répertoire physique dédié portant le nom de la catégorie (`[ScoresRootDirectory]/[Catégorie]/[Fichier.pdf]`). Tout renommage, déplacement ou suppression de catégorie répercute les modifications physiques sur le disque sans aucune perte de données ni rupture de liens dans les setlists.
+- **1.3. Édition et attribution simplifiées :** Attribution directe de la catégorie lors de la création ou modification d'une partition (`ScoreEditPage`), avec création instantanée d'un nouveau dossier via dialogue contextuel, ainsi qu'une action rapide "Changer de dossier / catégorie" depuis le menu contextuel (⋮) de la bibliothèque.
+
+### 2. Double Mode d'Affichage dans la Bibliothèque (Vue Liste ⇄ Vue Dossiers)
+- **2.1. Bascule instantanée Vue Liste / Vue Dossiers :** Ajout d'un bouton de bascule dynamique dans la barre supérieure de la bibliothèque (`ScoresPage`) permettant d'alterner à tout moment entre la vue en liste classique et une vue par dossiers/catégories.
+- **2.2. Cartes d'accordéon et arborescence fluide :** En Vue Dossiers, les partitions sont regroupées par dossiers repliables/dépliables avec affichage du nombre de partitions, chevron d'état, boutons "Tout plier" / "Tout déplier", et création directe de catégorie.
+- **2.3. Gestion contextuelle des dossiers :** Menu contextuel propre à chaque dossier pour renommer, vider ou supprimer la catégorie (avec rapatriement automatique sécurisé des partitions dans la catégorie "Général").
+- **2.4. Préférence utilisateur configurable :** Possibilité de choisir le mode d'affichage par défaut (Vue Liste ou Vue Dossiers) dans les paramètres de partitions (`SettingsScoresPage`), mémorisée de façon persistante.
+
+### 3. Préservation de l'Écosystème & Compatibilité Totale
+- **3.1. Rétrocompatibilité ascendante :** Migration de base de données automatique et transparente à l'ouverture de l'application sans action requise de l'utilisateur.
+- **3.2. Import / Export & Sauvegardes :** Intégration de la catégorie dans les métadonnées d'export, les archives zip et les transferts Wi-Fi Direct entre musiciens.
+- **3.3. Internationalisation & Accessibilité :** Traduction intégrale des nouveaux libellés dans les 8 langues officielles de l'application (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`) et dimensionnement adaptatif pour smartphones et tablettes (`OnIdiom`).
 
 ---
 

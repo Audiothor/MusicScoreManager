@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.0.0 — 21/10/2026](#v300--21102026)
 - [v2.8.4 — 18/10/2026](#v284--18102026)
 - [v2.8.3 — 18/10/2026](#v283--18102026)
 - [v2.8.2 — 18/10/2026](#v282--18102026)
@@ -29,6 +30,26 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.0.0 — 21/10/2026
+
+### 1. Category System & Physical Storage Directories
+- **1.1. Level-1 categorization:** Introduced Categories (thematic or stylistic folders) perfectly complementing existing multi-tag classifications. Each score belongs to a unique category (defaulting to "General").
+- **1.2. Physical disk synchronization:** Score PDF and audio files are physically moved and kept in a dedicated subdirectory named after their category (`[ScoresRootDirectory]/[Category]/[File.pdf]`). Renaming, moving, or deleting categories reflects immediately on storage without losing any data or breaking setlist links.
+- **1.3. Streamlined editing and assignment:** Assign categories directly when creating or editing a score (`ScoreEditPage`), with instant new folder creation dialog, plus a quick "Change folder / category" action from the score context menu (⋮) in the library.
+
+### 2. Dual Library View Modes (List View ⇄ Folder View)
+- **2.1. Instant List / Folder toggle:** Added an interactive view toggle in the library header (`ScoresPage`) allowing seamless switching between classic flat List View and hierarchical Folder View.
+- **2.2. Accordion folder cards & intuitive navigation:** In Folder View, scores are grouped into collapsible accordion cards showing score counts, expand/collapse chevrons, "Expand All" / "Collapse All" global controls, and direct folder creation.
+- **2.3. Contextual folder management:** Dedicated folder context menu to rename, clear, or delete a category (safely returning orphaned scores to "General").
+- **2.4. Configurable user preference:** Set your preferred default view mode (List View or Folder View) in Score Settings (`SettingsScoresPage`), persistently remembered.
+
+### 3. Ecosystem Compatibility & Full Internationalization
+- **3.1. Seamless backward compatibility:** Automatic database schema migration on launch with zero user intervention required.
+- **3.2. Import / Export & Backup resilience:** Embedded category metadata in score export archives, zip packages, and Wi-Fi Direct peer-to-peer sharing.
+- **3.3. Localization & Responsive UI:** Fully localized across all 8 supported languages (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`) with responsive sizing for both phones and tablets (`OnIdiom`).
 
 ---
 

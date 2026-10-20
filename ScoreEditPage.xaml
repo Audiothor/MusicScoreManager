@@ -91,6 +91,34 @@
                            ClearButtonVisibility="WhileEditing" />
                 </VerticalStackLayout>
 
+                <!-- CATÉGORIE / DOSSIER -->
+                <VerticalStackLayout Spacing="6">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <Label Grid.Column="0" Text="{Binding [Score_Edit_Category], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Button Grid.Column="1"
+                                Text="{Binding [Score_Edit_New_Category_Btn], Source={x:Static services:LocalizationService.Instance}}"
+                                TextColor="#007ACC"
+                                BackgroundColor="Transparent"
+                                FontSize="12"
+                                FontAttributes="Bold"
+                                Padding="6,0"
+                                HeightRequest="32"
+                                Clicked="OnNewCategoryClicked" />
+                    </Grid>
+                    <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" HeightRequest="48" Padding="10,0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Picker x:Name="CategoryPicker" 
+                                TextColor="White" 
+                                BackgroundColor="Transparent" 
+                                Title="{Binding [Score_Edit_Category_Placeholder], Source={x:Static services:LocalizationService.Instance}}" 
+                                TitleColor="#777777" 
+                                FontSize="14"
+                                VerticalOptions="Center" />
+                    </Border>
+                </VerticalStackLayout>
+
                 <!-- Informations non modifiables du fichier (Taille, Modifié le, Ajouté le, Annotations) -->
                 <Border BackgroundColor="#1A1E24" Stroke="#2A303C" StrokeThickness="1" Padding="12,10">
                     <Border.StrokeShape>

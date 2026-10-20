@@ -258,6 +258,27 @@ public partial class ScoreEditPage : ContentPage
         RefreshAllTagsPickerUI();
         RefreshAudioFilesUI();
 
+        // Chargement des catégories
+        try
+        {
+            var categories = await _databaseService.GetCategoriesAsync();
+            CategoryPicker.Items.Clear();
+            foreach (var cat in categories)
+            {
+                CategoryPicker.Items.Add(cat);
+            }
+            string currentCat = string.IsNullOrWhiteSpace(_score.Category) ? "Général" : _score.Category;
+            if (!CategoryPicker.Items.Contains(currentCat))
+            {
+                CategoryPicker.Items.Add(currentCat);
+            }
+            CategoryPicker.SelectedItem = currentCat;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[ScoreEditPage] Error loading categories: {ex.Message}");
+        }
+
         // Chargement du statut des annotations
         try
         {
@@ -577,6 +598,27 @@ public partial class ScoreEditPage : ContentPage
         }
     }
 
+    private async void OnNewCategoryClicked(object? sender, EventArgs e)
+    {
+        var loc = LocalizationService.Instance;
+        string title = loc.GetString("Score_Category_New_Title", "Nouveau dossier");
+        string prompt = loc.GetString("Score_Category_New_Prompt", "Entrez le nom du nouveau dossier / catégorie :");
+        string ok = loc.GetString("Common_OK", "OK");
+        string cancel = loc.GetString("Common_Cancel", "Annuler");
+
+        string? result = await DisplayPromptAsync(title, prompt, ok, cancel, placeholder: "Ex: Liturgie, Jazz...");
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+            string clean = result.Trim();
+            if (!CategoryPicker.Items.Contains(clean))
+            {
+                CategoryPicker.Items.Add(clean);
+            }
+            CategoryPicker.SelectedItem = clean;
+            await _databaseService.CreateCategoryAsync(clean);
+        }
+    }
+
     private async Task<string?> CopyFileToLibrary(string sourcePath, bool isAudio)
     {
         try
@@ -587,7 +629,10 @@ public partial class ScoreEditPage : ContentPage
                 return null;
             }
 
-            var rootDir = isAudio ? _settingsService.AudioRootDirectory : _settingsService.ScoresRootDirectory;
+            string cat = CategoryPicker.SelectedItem as string ?? _score.Category;
+            if (string.IsNullOrWhiteSpace(cat)) cat = "Général";
+
+            var rootDir = isAudio ? _settingsService.AudioRootDirectory : Path.Combine(_settingsService.ScoresRootDirectory, cat);
             if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
 
             var fileName = Path.GetFileName(sourcePath).Replace(" ", "_");
@@ -630,6 +675,18 @@ public partial class ScoreEditPage : ContentPage
         _score.Title = TitleEntry.Text.Trim();
         _score.Composer = ComposerEntry.Text?.Trim() ?? string.Empty;
         _score.FilePath = PathEntry.Text?.Trim() ?? string.Empty;
+        
+        // Catégorie / Dossier physique
+        string selectedCat = CategoryPicker.SelectedItem as string ?? _score.Category;
+        if (string.IsNullOrWhiteSpace(selectedCat)) selectedCat = "Général";
+        if (!string.Equals(_score.Category, selectedCat, StringComparison.OrdinalIgnoreCase))
+        {
+            await _databaseService.MoveScoreToCategoryAsync(_score, selectedCat);
+        }
+        else
+        {
+            _score.Category = selectedCat;
+        }
         
         // Tempo
         if (int.TryParse(BpmEntry.Text, out int bpm))

@@ -9,7 +9,7 @@
 
     <Grid RowDefinitions="Auto, Auto, *">
 
-        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto, Auto, Auto" Margin="{OnIdiom Phone='10,10,10,6', Tablet='15,15,15,10'}" ColumnSpacing="{OnIdiom Phone=6, Tablet=10}">
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto, Auto, Auto, Auto, Auto" Margin="{OnIdiom Phone='10,10,10,6', Tablet='15,15,15,10'}" ColumnSpacing="{OnIdiom Phone=6, Tablet=10}">
             <SearchBar Grid.Column="0"
                        x:Name="SearchScoreBar"
                        Placeholder="{Binding [Scores_Search_Score_Placeholder], Source={x:Static services:LocalizationService.Instance}}"
@@ -19,6 +19,18 @@
                        TextChanged="OnSearchBarTextChanged" />
             
             <Button Grid.Column="1"
+                    x:Name="ViewModeToggleButton"
+                    Text="📁"
+                    ToolTipProperties.Text="{Binding [Scores_View_Mode_Tooltip], Source={x:Static services:LocalizationService.Instance}}"
+                    FontSize="{OnIdiom Phone=16, Tablet=20}"
+                    WidthRequest="{OnIdiom Phone=38, Tablet=50}"
+                    HeightRequest="{OnIdiom Phone=38, Tablet=50}"
+                    CornerRadius="{OnIdiom Phone=19, Tablet=25}"
+                    BackgroundColor="#333333"
+                    TextColor="White"
+                    Clicked="OnToggleViewModeClicked" />
+
+            <Button Grid.Column="2"
                     Text="🏷️"
                     ToolTipProperties.Text="{Binding [Scores_Filter_By_Tags_Title], Source={x:Static services:LocalizationService.Instance}}"
                     FontSize="{OnIdiom Phone=16, Tablet=20}"
@@ -29,7 +41,7 @@
                     TextColor="White"
                     Clicked="OnTagsFilterButtonClicked" />
             
-            <Button Grid.Column="2"
+            <Button Grid.Column="3"
                     Text="⇅"
                     FontSize="{OnIdiom Phone=16, Tablet=20}"
                     FontAttributes="Bold"
@@ -40,7 +52,7 @@
                     TextColor="White"
                     Clicked="OnSortClicked" />
 
-            <Button Grid.Column="3"
+            <Button Grid.Column="4"
                     x:Name="MultiSelectToggleButton"
                     Text="☑"
                     FontSize="{OnIdiom Phone=16, Tablet=20}"
@@ -52,7 +64,7 @@
                     TextColor="White"
                     Clicked="OnMultiSelectToggleClicked" />
 
-            <Button Grid.Column="4"
+            <Button Grid.Column="5"
                     Text="+"
                     FontSize="{OnIdiom Phone=20, Tablet=24}"
                     FontAttributes="Bold"
@@ -242,6 +254,242 @@
                    HorizontalOptions="Center"
                    VerticalOptions="Center" />
         </Border>
+
+        <!-- Vue Dossiers / Catégories -->
+        <ScrollView x:Name="CategoriesScrollView"
+                    Margin="{OnIdiom Phone='0,0,24,0', Tablet='0,0,28,0'}"
+                    IsVisible="False">
+            <VerticalStackLayout Spacing="12" Margin="0,0,0,30">
+                <!-- Barre d'outils des dossiers : Actions rapides -->
+                <Grid ColumnDefinitions="*, Auto, Auto" Margin="0,0,0,4" ColumnSpacing="8">
+                    <Label x:Name="CategoriesSummaryLabel"
+                           Text="Dossiers"
+                           TextColor="#AAAAAA"
+                           FontSize="13"
+                           FontAttributes="Bold"
+                           VerticalOptions="Center" />
+                    
+                    <Button Grid.Column="1"
+                            x:Name="ExpandCollapseAllButton"
+                            Text="{Binding [Scores_Folders_Collapse_All], Source={x:Static services:LocalizationService.Instance}}"
+                            TextColor="#007ACC"
+                            BackgroundColor="#1E1E1E"
+                            CornerRadius="8"
+                            FontSize="12"
+                            HeightRequest="32"
+                            Padding="10,0"
+                            Clicked="OnToggleExpandAllCategoriesClicked" />
+
+                    <Button Grid.Column="2"
+                            Text="{Binding [Score_Edit_New_Category_Btn], Source={x:Static services:LocalizationService.Instance}}"
+                            TextColor="White"
+                            BackgroundColor="#007ACC"
+                            CornerRadius="8"
+                            FontSize="12"
+                            FontAttributes="Bold"
+                            HeightRequest="32"
+                            Padding="10,0"
+                            Clicked="OnAddNewCategoryFromScoresPageClicked" />
+                </Grid>
+
+                <!-- Liste dynamique des dossiers -->
+                <VerticalStackLayout x:Name="CategoriesStackLayout"
+                                     Spacing="12"
+                                     BindableLayout.ItemsSource="{Binding Source={x:Reference ScoresPageRoot}, Path=CategoryGroups}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:ScoreCategoryGroup">
+                            <Border Stroke="#333333"
+                                    StrokeThickness="1"
+                                    BackgroundColor="#1A1A1E"
+                                    Padding="0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout Spacing="0">
+                                    <!-- En-tête cliquable du dossier -->
+                                    <Grid ColumnDefinitions="Auto, *, Auto, Auto"
+                                          Padding="14,12"
+                                          BackgroundColor="#222228"
+                                          ColumnSpacing="10">
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer CommandParameter="{Binding .}" Tapped="OnCategoryHeaderTapped" />
+                                        </Grid.GestureRecognizers>
+                                        <Label Grid.Column="0"
+                                               Text="{Binding FolderIcon}"
+                                               FontSize="20"
+                                               VerticalOptions="Center" />
+                                        
+                                        <HorizontalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="8">
+                                            <Label Text="{Binding DisplayName}"
+                                                   TextColor="White"
+                                                   FontAttributes="Bold"
+                                                   FontSize="16"
+                                                   VerticalOptions="Center"
+                                                   LineBreakMode="TailTruncation" />
+                                            <Border BackgroundColor="#2E303A"
+                                                    StrokeThickness="0"
+                                                    Padding="6,2"
+                                                    VerticalOptions="Center">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="8" />
+                                                </Border.StrokeShape>
+                                                <Label Text="{Binding FormattedCount}"
+                                                       TextColor="#A0A0B0"
+                                                       FontSize="11"
+                                                       FontAttributes="Bold" />
+                                            </Border>
+                                        </HorizontalStackLayout>
+
+                                        <Label Grid.Column="2"
+                                               Text="{Binding ExpandIcon}"
+                                               TextColor="#007ACC"
+                                               FontAttributes="Bold"
+                                               FontSize="14"
+                                               VerticalOptions="Center" />
+
+                                        <Button Grid.Column="3"
+                                                Text="⋮"
+                                                FontSize="22"
+                                                FontAttributes="Bold"
+                                                TextColor="White"
+                                                BackgroundColor="Transparent"
+                                                VerticalOptions="Center"
+                                                WidthRequest="36"
+                                                HeightRequest="36"
+                                                Padding="0"
+                                                CommandParameter="{Binding .}"
+                                                Clicked="OnCategoryOptionsClicked" />
+                                    </Grid>
+
+                                    <!-- Contenu dépliable : Partitions dans le dossier -->
+                                    <VerticalStackLayout IsVisible="{Binding IsExpanded}"
+                                                         Padding="10"
+                                                         Spacing="8">
+                                        <!-- Message si dossier vide -->
+                                        <Label Text="{Binding [Scores_Folders_Empty], Source={x:Static services:LocalizationService.Instance}}"
+                                               TextColor="#666666"
+                                               FontSize="12"
+                                               FontAttributes="Italic"
+                                               HorizontalOptions="Center"
+                                               Margin="0,6"
+                                               IsVisible="{Binding IsEmpty}" />
+
+                                        <!-- Cartes de partitions -->
+                                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Scores}" Spacing="8">
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate x:DataType="models:Score">
+                                                    <Border Stroke="#2E2E34"
+                                                            StrokeThickness="1"
+                                                            BackgroundColor="#1E1E22"
+                                                            Padding="10">
+                                                        <Border.StrokeShape>
+                                                            <RoundRectangle CornerRadius="10" />
+                                                        </Border.StrokeShape>
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer CommandParameter="{Binding .}" Tapped="OnScoreCardTapped" />
+                                                        </Border.GestureRecognizers>
+                                                        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="Auto, *, Auto">
+                                                            <CheckBox Grid.Column="0" Grid.RowSpan="3"
+                                                                      IsChecked="{Binding IsSelected}"
+                                                                      IsVisible="{Binding Source={x:Reference ScoresPageRoot}, Path=IsMultiSelectActive}"
+                                                                      VerticalOptions="Center"
+                                                                      Margin="0,0,10,0"
+                                                                      Color="#007ACC" />
+
+                                                            <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="5">
+                                                                <Label Text="⚠️" 
+                                                                       TextColor="Red" 
+                                                                       FontSize="16" 
+                                                                       VerticalOptions="Center"
+                                                                       IsVisible="{Binding IsFileMissing}" />
+                                                                <Label Text="🔗" 
+                                                                       TextColor="#007ACC" 
+                                                                       FontSize="16" 
+                                                                       VerticalOptions="Center"
+                                                                       IsVisible="{Binding IsExternal}" />
+                                                                <Label Text="{Binding Title}" 
+                                                                       TextColor="{Binding TitleColorHex}"
+                                                                       FontSize="15" 
+                                                                       FontAttributes="Bold" 
+                                                                       VerticalOptions="Center" 
+                                                                       LineBreakMode="TailTruncation"
+                                                                       MaxLines="2" />
+                                                            </HorizontalStackLayout>
+
+                                                            <HorizontalStackLayout Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" VerticalOptions="Center" Spacing="0">
+                                                                <Border IsVisible="{Binding IsFileMissing}"
+                                                                        BackgroundColor="#FF3B30"
+                                                                        StrokeThickness="0"
+                                                                        WidthRequest="22"
+                                                                        HeightRequest="22"
+                                                                        VerticalOptions="Center"
+                                                                        Margin="0,0,4,0">
+                                                                    <Border.StrokeShape>
+                                                                        <RoundRectangle CornerRadius="11" />
+                                                                    </Border.StrokeShape>
+                                                                    <Label Text="!" 
+                                                                           TextColor="White" 
+                                                                           FontAttributes="Bold" 
+                                                                           FontSize="14" 
+                                                                           HorizontalOptions="Center" 
+                                                                           VerticalOptions="Center"
+                                                                           Margin="0,-1,0,0" />
+                                                                </Border>
+
+                                                                <Button Text="⋮"
+                                                                        FontSize="24"
+                                                                        FontAttributes="Bold"
+                                                                        TextColor="White"
+                                                                        BackgroundColor="Transparent"
+                                                                        VerticalOptions="Center"
+                                                                        WidthRequest="40"
+                                                                        HeightRequest="40"
+                                                                        CommandParameter="{Binding .}"
+                                                                        Clicked="OnScoreOptionsClicked" />
+                                                            </HorizontalStackLayout>
+
+                                                            <Label Grid.Row="1" Grid.Column="1"
+                                                                   Text="{Binding DisplaySubtitle}" 
+                                                                   FontSize="12" 
+                                                                   TextColor="#888888" 
+                                                                   Margin="0,2,0,6"/>
+                                                                   
+                                                            <HorizontalStackLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                                                                                   BindableLayout.ItemsSource="{Binding AppliedTags}"
+                                                                                   IsVisible="{Binding HasTags}"
+                                                                                   Spacing="5">
+                                                                <BindableLayout.ItemTemplate>
+                                                                    <DataTemplate x:DataType="models:Tag">
+                                                                        <Border BackgroundColor="{Binding ColorHex}"
+                                                                                StrokeThickness="0"
+                                                                                Padding="8,2"
+                                                                                HeightRequest="22">
+                                                                            <Border.StrokeShape>
+                                                                                <RoundRectangle CornerRadius="11" />
+                                                                            </Border.StrokeShape>
+                                                                            <Label Text="{Binding Name}" 
+                                                                                   TextColor="White" 
+                                                                                   FontSize="11" 
+                                                                                   FontAttributes="Bold" 
+                                                                                   VerticalOptions="Center" 
+                                                                                   VerticalTextAlignment="Center" />
+                                                                        </Border>
+                                                                    </DataTemplate>
+                                                                </BindableLayout.ItemTemplate>
+                                                            </HorizontalStackLayout>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
+                                        </VerticalStackLayout>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
     </Grid>
 
         <!-- Overlay Menu Contextuel Partition Moderne & Ergonomique -->
@@ -328,6 +576,15 @@
                             CornerRadius="10" 
                             HeightRequest="44" 
                             Clicked="OnMenuAddToSetlistClicked" />
+
+                    <!-- Action : Changer de dossier / catégorie -->
+                    <Button Text="{Binding [Score_Menu_Change_Category], Source={x:Static services:LocalizationService.Instance}}" 
+                            BackgroundColor="#2A2A2A" 
+                            TextColor="White" 
+                            FontSize="14" 
+                            CornerRadius="10" 
+                            HeightRequest="44" 
+                            Clicked="OnMenuChangeCategoryClicked" />
 
                     <!-- Action : Modifier l'assemblage PDF (En dessous) -->
                     <Button x:Name="ScoreMenuModifyAssemblyButton"

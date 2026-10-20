@@ -85,6 +85,11 @@ namespace MusicScoreManager.Services
                         await db.ExecuteAsync("ALTER TABLE Score ADD COLUMN ShowScoreTitle INTEGER NOT NULL DEFAULT 0;");
                     }
                     catch { }
+                    try
+                    {
+                        await db.ExecuteAsync("ALTER TABLE Score ADD COLUMN Category TEXT NOT NULL DEFAULT 'Général';");
+                    }
+                    catch { }
                     await db.CreateTableAsync<Setlist>();
                     try
                     {
@@ -752,6 +757,263 @@ namespace MusicScoreManager.Services
             await Init();
             return await _database!.Table<ScoreBookmark>().Where(b => b.ScoreId == scoreId).DeleteAsync();
         }
+
+        #region Categories (Catégories / Répertoires)
+
+        public async Task<List<string>> GetCategoriesAsync()
+        {
+            await Init();
+            var categories = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Général" };
+
+            try
+            {
+                var dbCategories = await _database!.QueryAsync<Score>("SELECT DISTINCT Category FROM Score WHERE Category IS NOT NULL AND TRIM(Category) != ''");
+                foreach (var s in dbCategories)
+                {
+                    if (!string.IsNullOrWhiteSpace(s.Category))
+                    {
+                        categories.Add(s.Category.Trim());
+                    }
+                }
+            }
+            catch { }
+
+            try
+            {
+                string scoresRoot = _settingsService.ScoresRootDirectory;
+                if (Directory.Exists(scoresRoot))
+                {
+                    var dirs = Directory.GetDirectories(scoresRoot);
+                    foreach (var d in dirs)
+                    {
+                        var dirName = Path.GetFileName(d);
+                        if (!string.IsNullOrWhiteSpace(dirName) && !dirName.StartsWith("."))
+                        {
+                            categories.Add(dirName.Trim());
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            // Ordonner avec "Général" toujours en première position
+            var list = categories.OrderBy(c => c.Equals("Général", StringComparison.OrdinalIgnoreCase) ? 0 : 1)
+                                 .ThenBy(c => c, StringComparer.CurrentCultureIgnoreCase)
+                                 .ToList();
+            return list;
+        }
+
+        public async Task<bool> CreateCategoryAsync(string categoryName)
+        {
+            await Init();
+            string clean = SanitizeCategoryName(categoryName);
+            if (string.IsNullOrWhiteSpace(clean)) return false;
+
+            try
+            {
+                string path = Path.Combine(_settingsService.ScoresRootDirectory, clean);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RenameCategoryAsync(string oldName, string newName)
+        {
+            await Init();
+            if (string.IsNullOrWhiteSpace(oldName) || string.IsNullOrWhiteSpace(newName)) return false;
+            string cleanOld = oldName.Trim();
+            string cleanNew = SanitizeCategoryName(newName);
+            if (string.Equals(cleanOld, cleanNew, StringComparison.OrdinalIgnoreCase)) return true;
+
+            try
+            {
+                string scoresRoot = _settingsService.ScoresRootDirectory;
+                string oldDir = Path.Combine(scoresRoot, cleanOld);
+                string newDir = Path.Combine(scoresRoot, cleanNew);
+
+                if (!Directory.Exists(newDir))
+                {
+                    if (Directory.Exists(oldDir))
+                    {
+                        Directory.Move(oldDir, newDir);
+                    }
+                    else
+                    {
+                        Directory.CreateDirectory(newDir);
+                    }
+                }
+                else if (Directory.Exists(oldDir))
+                {
+                    // Déplacer les fichiers de oldDir vers newDir
+                    foreach (var file in Directory.GetFiles(oldDir))
+                    {
+                        string dest = Path.Combine(newDir, Path.GetFileName(file));
+                        if (!File.Exists(dest)) File.Move(file, dest);
+                    }
+                    try { Directory.Delete(oldDir, true); } catch { }
+                }
+
+                // Mettre à jour en base de données
+                var allScores = await _database!.Table<Score>().ToListAsync();
+                foreach (var score in allScores)
+                {
+                    if (string.Equals(score.Category, cleanOld, StringComparison.OrdinalIgnoreCase))
+                    {
+                        score.Category = cleanNew;
+
+                        // Mettre à jour FilePath si relatif et préfixé par l'ancien dossier
+                        if (!string.IsNullOrWhiteSpace(score.FilePath) && !Path.IsPathRooted(score.FilePath))
+                        {
+                            string norm = score.FilePath.Replace('\\', '/');
+                            if (norm.StartsWith(cleanOld + "/", StringComparison.OrdinalIgnoreCase))
+                            {
+                                score.FilePath = cleanNew + norm.Substring(cleanOld.Length);
+                            }
+                        }
+
+                        await _database.UpdateAsync(score);
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DatabaseService] RenameCategoryAsync error: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteCategoryAsync(string categoryName, string fallbackCategory = "Général")
+        {
+            await Init();
+            if (string.IsNullOrWhiteSpace(categoryName)) return false;
+            string cleanCat = categoryName.Trim();
+            string cleanFallback = string.IsNullOrWhiteSpace(fallbackCategory) ? "Général" : fallbackCategory.Trim();
+
+            if (string.Equals(cleanCat, "Général", StringComparison.OrdinalIgnoreCase))
+            {
+                // Ne pas supprimer le dossier racine / par défaut
+                return false;
+            }
+
+            try
+            {
+                string scoresRoot = _settingsService.ScoresRootDirectory;
+                string oldDir = Path.Combine(scoresRoot, cleanCat);
+                string targetDir = Path.Combine(scoresRoot, cleanFallback);
+                if (!Directory.Exists(targetDir)) Directory.CreateDirectory(targetDir);
+
+                // Déplacer les partitions en base de données vers le dossier de secours
+                var allScores = await _database!.Table<Score>().ToListAsync();
+                foreach (var score in allScores)
+                {
+                    if (string.Equals(score.Category, cleanCat, StringComparison.OrdinalIgnoreCase))
+                    {
+                        score.Category = cleanFallback;
+
+                        if (!string.IsNullOrWhiteSpace(score.FilePath) && !Path.IsPathRooted(score.FilePath))
+                        {
+                            string oldFullPath = _settingsService.GetAbsolutePath(score.FilePath);
+                            if (File.Exists(oldFullPath))
+                            {
+                                string fileName = Path.GetFileName(oldFullPath);
+                                string newFullPath = Path.Combine(targetDir, fileName);
+                                if (File.Exists(newFullPath) && !string.Equals(oldFullPath, newFullPath, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    string nameOnly = Path.GetFileNameWithoutExtension(fileName);
+                                    string ext = Path.GetExtension(fileName);
+                                    newFullPath = Path.Combine(targetDir, $"{nameOnly}_{DateTime.Now:yyyyMMddHHmmss}{ext}");
+                                }
+                                if (!File.Exists(newFullPath))
+                                {
+                                    File.Move(oldFullPath, newFullPath);
+                                }
+                                score.FilePath = _settingsService.GetRelativePath(newFullPath);
+                            }
+                        }
+
+                        await _database.UpdateAsync(score);
+                    }
+                }
+
+                // Supprimer le répertoire physique s'il existe
+                if (Directory.Exists(oldDir))
+                {
+                    try { Directory.Delete(oldDir, true); } catch { }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DatabaseService] DeleteCategoryAsync error: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> MoveScoreToCategoryAsync(Score score, string newCategory)
+        {
+            await Init();
+            if (score == null) return false;
+            string cleanCat = string.IsNullOrWhiteSpace(newCategory) ? "Général" : SanitizeCategoryName(newCategory);
+
+            try
+            {
+                if (!score.IsExternal && !string.IsNullOrWhiteSpace(score.FilePath))
+                {
+                    string oldFullPath = _settingsService.GetAbsolutePath(score.FilePath);
+                    if (File.Exists(oldFullPath))
+                    {
+                        string scoresRoot = _settingsService.ScoresRootDirectory;
+                        string targetDir = Path.Combine(scoresRoot, cleanCat);
+                        if (!Directory.Exists(targetDir)) Directory.CreateDirectory(targetDir);
+
+                        string fileName = Path.GetFileName(oldFullPath);
+                        string newFullPath = Path.Combine(targetDir, fileName);
+
+                        if (!string.Equals(oldFullPath, newFullPath, StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (File.Exists(newFullPath))
+                            {
+                                string nameOnly = Path.GetFileNameWithoutExtension(fileName);
+                                string ext = Path.GetExtension(fileName);
+                                newFullPath = Path.Combine(targetDir, $"{nameOnly}_{DateTime.Now:yyyyMMddHHmmss}{ext}");
+                            }
+
+                            File.Move(oldFullPath, newFullPath);
+                            score.FilePath = _settingsService.GetRelativePath(newFullPath);
+                        }
+                    }
+                }
+
+                score.Category = cleanCat;
+                await _database!.UpdateAsync(score);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DatabaseService] MoveScoreToCategoryAsync error: {ex.Message}");
+                return false;
+            }
+        }
+
+        private static string SanitizeCategoryName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return "Général";
+            var invalidChars = Path.GetInvalidFileNameChars();
+            var cleaned = new string(name.Trim().Where(c => !invalidChars.Contains(c) && c != '/' && c != '\\').ToArray());
+            return string.IsNullOrWhiteSpace(cleaned) ? "Général" : cleaned;
+        }
+
+        #endregion
 
         #endregion
     }

@@ -35,6 +35,15 @@ public partial class SettingsScoresPage : ContentPage
             _ => 0
         };
 
+        DefaultViewModePicker.ItemsSource = new List<string>
+        {
+            loc.GetString("Settings_Scores_View_Mode_List", "📋 Vue Liste"),
+            loc.GetString("Settings_Scores_View_Mode_Folders", "📁 Vue Dossiers")
+        };
+
+        string defaultViewMode = Preferences.Default.Get("DefaultScoresViewMode", "List");
+        DefaultViewModePicker.SelectedIndex = (defaultViewMode == "Folders") ? 1 : 0;
+
         DefaultImportModePicker.ItemsSource = new List<string>
         {
             loc.GetString("Import_Mode_Copy", "Copier directement dans la bibliothèque (Local - Conseillé)"),
@@ -396,6 +405,13 @@ public partial class SettingsScoresPage : ContentPage
             _ => "DateDesc"
         };
         Preferences.Default.Set("DefaultScoreSort", value);
+    }
+
+    private void OnDefaultViewModeChanged(object sender, EventArgs e)
+    {
+        string value = DefaultViewModePicker.SelectedIndex == 1 ? "Folders" : "List";
+        Preferences.Default.Set("DefaultScoresViewMode", value);
+        Preferences.Default.Set("ScoresViewMode", value);
     }
 
     private void OnDefaultImportModeChanged(object sender, EventArgs e)
