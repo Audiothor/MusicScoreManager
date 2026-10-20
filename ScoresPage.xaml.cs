@@ -31,6 +31,7 @@ public partial class ScoresPage : ContentPage
 
     public ObservableCollection<ScoreCategoryGroup> CategoryGroups { get; } = new();
     private bool _isFoldersView = false;
+    private string? _selectedCategory = null;
     private List<Models.Score> _lastLoadedScores = new();
 
     public static readonly BindableProperty IsMultiSelectActiveProperty =
@@ -128,7 +129,6 @@ public partial class ScoresPage : ContentPage
                 }
 
                 _lastLoadedScores = scores;
-                _ = RebuildCategoryGroupsAsync(scores, _selectedTagIds.Count > 0);
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
@@ -136,10 +136,7 @@ public partial class ScoresPage : ContentPage
                     {
                         EmptyScoresLabel.Text = LocalizationService.Instance.GetString("Scores_Empty", "Aucune partition trouvée.");
                     }
-                    ScoresCollectionView.ItemsSource = scores;
-                    RecalculateSelectedCount();
-                    UpdateAlphabeticalIndexMap(scores);
-                    UpdateAlphabeticalIndexVisibility();
+                    ApplyCurrentViewModeData(scores);
                 });
 
                 // Calcul asynchrone des nombres de pages manquants en arrière-plan sans bloquer l'affichage initial
@@ -284,17 +281,13 @@ public partial class ScoresPage : ContentPage
         }
 
         _lastLoadedScores = scores;
-        _ = RebuildCategoryGroupsAsync(scores, !string.IsNullOrWhiteSpace(query) || _selectedTagIds.Count > 0);
 
         MainThread.BeginInvokeOnMainThread(() => {
             if (EmptyScoresLabel != null)
             {
                 EmptyScoresLabel.Text = LocalizationService.Instance.GetString("Scores_Empty", "Aucune partition trouvée.");
             }
-            ScoresCollectionView.ItemsSource = scores;
-            RecalculateSelectedCount();
-            UpdateAlphabeticalIndexMap(scores);
-            UpdateAlphabeticalIndexVisibility();
+            ApplyCurrentViewModeData(scores);
         });
 
         // Calcul asynchrone des nombres de pages manquants en arrière-plan (temporisé pour libérer SQLite)
@@ -1286,22 +1279,28 @@ public partial class ScoresPage : ContentPage
                 ToolTipProperties.SetText(ViewModeToggleButton, LocalizationService.Instance.GetString("Scores_View_Mode_Tooltip", "Basculer entre vue liste et vue dossiers"));
             }
 
-            if (ScoresCollectionView != null)
-            {
-                ScoresCollectionView.IsVisible = !_isFoldersView;
-            }
-
-            if (CategoriesScrollView != null)
-            {
-                CategoriesScrollView.IsVisible = _isFoldersView;
-            }
-
             if (_isFoldersView)
             {
-                if (AlphabeticalIndexBorder != null) AlphabeticalIndexBorder.IsVisible = false;
+                if (_selectedCategory == null)
+                {
+                    if (FoldersOverviewView != null) FoldersOverviewView.IsVisible = true;
+                    if (CategoryBreadcrumbBar != null) CategoryBreadcrumbBar.IsVisible = false;
+                    if (ScoresCollectionView != null) ScoresCollectionView.IsVisible = false;
+                    if (AlphabeticalIndexBorder != null) AlphabeticalIndexBorder.IsVisible = false;
+                }
+                else
+                {
+                    if (FoldersOverviewView != null) FoldersOverviewView.IsVisible = false;
+                    if (CategoryBreadcrumbBar != null) CategoryBreadcrumbBar.IsVisible = true;
+                    if (ScoresCollectionView != null) ScoresCollectionView.IsVisible = true;
+                    UpdateAlphabeticalIndexVisibility();
+                }
             }
             else
             {
+                if (FoldersOverviewView != null) FoldersOverviewView.IsVisible = false;
+                if (CategoryBreadcrumbBar != null) CategoryBreadcrumbBar.IsVisible = false;
+                if (ScoresCollectionView != null) ScoresCollectionView.IsVisible = true;
                 UpdateAlphabeticalIndexVisibility();
             }
         });
@@ -1310,88 +1309,142 @@ public partial class ScoresPage : ContentPage
     private void OnToggleViewModeClicked(object? sender, EventArgs e)
     {
         _isFoldersView = !_isFoldersView;
+        _selectedCategory = null;
         Preferences.Default.Set("ScoresViewMode", _isFoldersView ? "Folders" : "List");
         UpdateViewModeUI();
-        if (_isFoldersView)
-        {
-            _ = RebuildCategoryGroupsAsync(_lastLoadedScores, !string.IsNullOrWhiteSpace(SearchScoreBar?.Text) || _selectedTagIds.Count > 0);
-        }
+        ApplyCurrentViewModeData(_lastLoadedScores);
     }
 
-    private async Task RebuildCategoryGroupsAsync(List<Models.Score> scores, bool isFiltering)
+    private void ApplyCurrentViewModeData(List<Models.Score> scores)
     {
-        try
+        if (_isFoldersView && _selectedCategory == null)
         {
-            var allCategories = await _databaseService.GetCategoriesAsync();
-            
-            var grouped = scores.GroupBy(s => string.IsNullOrWhiteSpace(s.Category) ? "Général" : s.Category.Trim(), StringComparer.OrdinalIgnoreCase)
-                                .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+            if (FoldersOverviewView != null) FoldersOverviewView.IsVisible = true;
+            if (CategoryBreadcrumbBar != null) CategoryBreadcrumbBar.IsVisible = false;
+            if (ScoresCollectionView != null) ScoresCollectionView.IsVisible = false;
+            if (AlphabeticalIndexBorder != null) AlphabeticalIndexBorder.IsVisible = false;
 
-            var targetCategories = isFiltering
-                ? grouped.Keys.OrderBy(c => c.Equals("Général", StringComparison.OrdinalIgnoreCase) ? 0 : 1).ThenBy(c => c, StringComparer.CurrentCultureIgnoreCase).ToList()
-                : allCategories;
+            PopulateFoldersOverview(scores);
+        }
+        else
+        {
+            if (FoldersOverviewView != null) FoldersOverviewView.IsVisible = false;
 
-            MainThread.BeginInvokeOnMainThread(() =>
+            List<Models.Score> displayScores;
+            if (_isFoldersView && _selectedCategory != null)
             {
-                CategoryGroups.Clear();
-                foreach (var catName in targetCategories)
+                if (CategoryBreadcrumbBar != null)
                 {
-                    grouped.TryGetValue(catName, out var list);
-                    list ??= new List<Models.Score>();
-
-                    var group = new ScoreCategoryGroup
+                    CategoryBreadcrumbBar.IsVisible = true;
+                    if (CurrentCategoryTitleLabel != null)
                     {
-                        Name = catName,
-                        Scores = new ObservableCollection<Models.Score>(list),
-                        IsExpanded = true
-                    };
-                    CategoryGroups.Add(group);
+                        var inCatScores = scores.Where(s => string.Equals(s.Category, _selectedCategory, StringComparison.OrdinalIgnoreCase)).ToList();
+                        int cnt = inCatScores.Count;
+                        string pWord = cnt > 1 
+                            ? LocalizationService.Instance.GetString("Scores_Count_Plural", "partitions") 
+                            : LocalizationService.Instance.GetString("Scores_Count_Single", "partition");
+                        CurrentCategoryTitleLabel.Text = $"📁 {_selectedCategory} ({cnt} {pWord})";
+                    }
                 }
+                displayScores = scores.Where(s => string.Equals(s.Category, _selectedCategory, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            else
+            {
+                if (CategoryBreadcrumbBar != null) CategoryBreadcrumbBar.IsVisible = false;
+                displayScores = scores;
+            }
 
-                int catCount = CategoryGroups.Count;
-                int scoreCount = scores.Count;
-                string foldersWord = catCount > 1 ? "dossiers" : "dossier";
-                string scoresWord = scoreCount > 1 ? "partitions" : "partition";
-                if (CategoriesSummaryLabel != null)
-                {
-                    CategoriesSummaryLabel.Text = $"📁 {catCount} {foldersWord} • {scoreCount} {scoresWord}";
-                }
-            });
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"[ScoresPage] RebuildCategoryGroupsAsync error: {ex.Message}");
+            if (ScoresCollectionView != null)
+            {
+                ScoresCollectionView.IsVisible = true;
+                ScoresCollectionView.ItemsSource = displayScores;
+            }
+            RecalculateSelectedCount();
+            UpdateAlphabeticalIndexMap(displayScores);
+            UpdateAlphabeticalIndexVisibility();
         }
     }
 
-    private void OnToggleExpandAllCategoriesClicked(object? sender, EventArgs e)
+    private void PopulateFoldersOverview(List<Models.Score> scores)
     {
-        bool anyCollapsed = CategoryGroups.Any(g => !g.IsExpanded);
-        foreach (var g in CategoryGroups)
+        var grouped = scores.GroupBy(s => string.IsNullOrWhiteSpace(s.Category) ? "Général" : s.Category.Trim(), StringComparer.OrdinalIgnoreCase)
+                            .ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
+
+        _ = Task.Run(async () =>
         {
-            g.IsExpanded = anyCollapsed;
-        }
-        if (ExpandCollapseAllButton != null)
-        {
-            var loc = LocalizationService.Instance;
-            ExpandCollapseAllButton.Text = anyCollapsed
-                ? loc.GetString("Scores_Folders_Collapse_All", "Tout replier")
-                : loc.GetString("Scores_Folders_Expand_All", "Tout déplier");
-        }
+            try
+            {
+                var allCategories = await _databaseService.GetCategoriesAsync();
+                var groups = new List<ScoreCategoryGroup>();
+
+                foreach (var cat in allCategories)
+                {
+                    grouped.TryGetValue(cat, out int count);
+                    groups.Add(new ScoreCategoryGroup
+                    {
+                        Name = cat,
+                        Count = count
+                    });
+                }
+
+                int totalFolders = groups.Count;
+                int totalScores = scores.Count;
+                string fWord = totalFolders > 1 ? "dossiers" : "dossier";
+                string sWord = totalScores > 1 ? "partitions" : "partition";
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    if (FoldersSummaryLabel != null)
+                    {
+                        FoldersSummaryLabel.Text = $"📁 {totalFolders} {fWord} • {totalScores} {sWord}";
+                    }
+                    if (FoldersCollectionView != null)
+                    {
+                        FoldersCollectionView.ItemsSource = groups;
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[ScoresPage] PopulateFoldersOverview error: {ex.Message}");
+            }
+        });
     }
 
-    private void OnCategoryHeaderTapped(object? sender, TappedEventArgs e)
+    private void OnCategoryCardTapped(object? sender, TappedEventArgs e)
     {
         if (e.Parameter is ScoreCategoryGroup group)
         {
-            group.IsExpanded = !group.IsExpanded;
+            _selectedCategory = group.Name;
+            UpdateViewModeUI();
+            ApplyCurrentViewModeData(_lastLoadedScores);
         }
+    }
+
+    private void OnBackToFoldersClicked(object? sender, EventArgs e)
+    {
+        _selectedCategory = null;
+        UpdateViewModeUI();
+        ApplyCurrentViewModeData(_lastLoadedScores);
+    }
+
+    private async void OnCurrentCategoryOptionsClicked(object? sender, EventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(_selectedCategory)) return;
+        var dummyGroup = new ScoreCategoryGroup { Name = _selectedCategory };
+        await HandleCategoryOptionsAsync(dummyGroup);
     }
 
     private async void OnCategoryOptionsClicked(object? sender, EventArgs e)
     {
         if (sender is Button btn && btn.CommandParameter is ScoreCategoryGroup group)
         {
+            await HandleCategoryOptionsAsync(group);
+        }
+    }
+
+    private async Task HandleCategoryOptionsAsync(ScoreCategoryGroup group)
+    {
             var loc = LocalizationService.Instance;
             string cancel = loc.GetString("Common_Cancel", "Annuler");
             string rename = loc.GetString("Score_Category_Rename_Title", "Renommer le dossier");
@@ -1410,11 +1463,16 @@ public partial class ScoresPage : ContentPage
             if (action == rename)
             {
                 string promptTitle = loc.GetString("Score_Category_Rename_Title", "Renommer le dossier");
-                string promptMsg = loc.GetString("Score_Category_New_Prompt", "Entrez le nouveau nom :");
+                string promptMsg = loc.GetString("Score_Category_Rename_Prompt", "Entrez le nouveau nom du dossier :");
                 string? newName = await DisplayPromptAsync(promptTitle, promptMsg, loc.GetString("Common_OK", "OK"), cancel, initialValue: group.Name);
                 if (!string.IsNullOrWhiteSpace(newName) && !string.Equals(newName.Trim(), group.Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    await _databaseService.RenameCategoryAsync(group.Name, newName.Trim());
+                    string cleanNew = newName.Trim();
+                    await _databaseService.RenameCategoryAsync(group.Name, cleanNew);
+                    if (string.Equals(_selectedCategory, group.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        _selectedCategory = cleanNew;
+                    }
                     await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
                 }
             }
@@ -1433,11 +1491,14 @@ public partial class ScoresPage : ContentPage
                 if (confirm)
                 {
                     await _databaseService.DeleteCategoryAsync(group.Name, "Général");
+                    if (string.Equals(_selectedCategory, group.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        _selectedCategory = null;
+                    }
                     await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
                 }
             }
         }
-    }
 
     private async void OnAddNewCategoryFromScoresPageClicked(object? sender, EventArgs e)
     {

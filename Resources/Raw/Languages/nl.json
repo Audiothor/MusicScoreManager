@@ -687,5 +687,6 @@
   "Settings_Scores_Default_View_Mode_Desc": "Kies of u partituren wilt weergeven als een doorlopende lijst of gegroepeerd per categoriemap.",
   "Settings_Scores_View_Mode_List": "📋 Lijstweergave",
   "Settings_Scores_View_Mode_Folders": "📁 Mappenweergave",
-  "Score_Menu_Change_Category": "Map / categorie wijzigen"
+  "Score_Menu_Change_Category": "Map / categorie wijzigen",
+  "Scores_Folders_All": "Alle mappen"
 }

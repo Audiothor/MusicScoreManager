@@ -687,5 +687,6 @@
   "Settings_Scores_Default_View_Mode_Desc": "Wybierz, czy wyświetlać nuty jako ciągłą listę, czy pogrupowane według folderów kategorii.",
   "Settings_Scores_View_Mode_List": "📋 Widok listy",
   "Settings_Scores_View_Mode_Folders": "📁 Widok folderów",
-  "Score_Menu_Change_Category": "Zmień folder / kategorię"
+  "Score_Menu_Change_Category": "Zmień folder / kategorię",
+  "Scores_Folders_All": "Wszystkie foldery"
 }
