@@ -690,5 +690,6 @@
   "Settings_Scores_Default_View_Mode_Desc": "Choose whether to display scores as a continuous list or grouped by category folders.",
   "Settings_Scores_View_Mode_List": "📋 List View",
   "Settings_Scores_View_Mode_Folders": "📁 Folders View",
-  "Score_Menu_Change_Category": "Change folder / category"
+  "Score_Menu_Change_Category": "Change folder / category",
+  "Scores_Folders_All": "All folders"
 }

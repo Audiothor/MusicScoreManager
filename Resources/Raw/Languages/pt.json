@@ -687,5 +687,6 @@
   "Settings_Scores_Default_View_Mode_Desc": "Escolha se deseja exibir as partituras como uma lista contínua ou agrupadas por pastas de categoria.",
   "Settings_Scores_View_Mode_List": "📋 Vista de Lista",
   "Settings_Scores_View_Mode_Folders": "📁 Vista de Pastas",
-  "Score_Menu_Change_Category": "Alterar pasta / categoria"
+  "Score_Menu_Change_Category": "Alterar pasta / categoria",
+  "Scores_Folders_All": "Todas as pastas"
 }

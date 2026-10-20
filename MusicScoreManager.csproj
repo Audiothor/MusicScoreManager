@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>3.0.0</ApplicationDisplayVersion>
-		<ApplicationVersion>30000</ApplicationVersion>
-		<!-- Version actuelle : v3.0.0 "Système de catégories & répertoires physiques avec double vue Liste / Dossiers" -->
+		<ApplicationDisplayVersion>3.0.1</ApplicationDisplayVersion>
+		<ApplicationVersion>30001</ApplicationVersion>
+		<!-- Version actuelle : v3.0.1 "Optimisation majeure des performances : virtualisation CollectionView et navigation fluide dans les dossiers" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

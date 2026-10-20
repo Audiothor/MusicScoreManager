@@ -690,5 +690,6 @@
   "Settings_Scores_Default_View_Mode_Desc": "Choisissez d'afficher les partitions sous forme de liste continue ou regroupées par dossiers de catégorie.",
   "Settings_Scores_View_Mode_List": "📋 Vue Liste",
   "Settings_Scores_View_Mode_Folders": "📁 Vue Dossiers",
-  "Score_Menu_Change_Category": "Changer de dossier / catégorie"
+  "Score_Menu_Change_Category": "Changer de dossier / catégorie",
+  "Scores_Folders_All": "Tous les dossiers"
 }

@@ -60,7 +60,21 @@ namespace MusicScoreManager.Models
             }
         }
 
-        public int Count => _scores?.Count ?? 0;
+        private int _scoreCount = 0;
+        public int Count
+        {
+            get => _scoreCount > 0 ? _scoreCount : (_scores?.Count ?? 0);
+            set
+            {
+                if (_scoreCount != value)
+                {
+                    _scoreCount = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(FormattedCount));
+                    OnPropertyChanged(nameof(IsEmpty));
+                }
+            }
+        }
         public bool IsEmpty => Count == 0;
 
         public string FormattedCount

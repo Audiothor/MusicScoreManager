@@ -687,5 +687,6 @@
   "Settings_Scores_Default_View_Mode_Desc": "Wählen Sie, ob Partituren als fortlaufende Liste oder nach Kategorieordnern gruppiert angezeigt werden sollen.",
   "Settings_Scores_View_Mode_List": "📋 Listenansicht",
   "Settings_Scores_View_Mode_Folders": "📁 Ordneransicht",
-  "Score_Menu_Change_Category": "Ordner / Kategorie ändern"
+  "Score_Menu_Change_Category": "Ordner / Kategorie ändern",
+  "Scores_Folders_All": "Alle Ordner"
 }
