@@ -871,6 +871,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v302-21102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.0.2 — 21/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.0.2 — 21/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-modern-folder-category-management-dialogs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Modern Folder &amp; Category Management Dialogs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-bulk-actions-context-aware-importing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Bulk Actions &amp; Context-Aware Importing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-settings-setlists-score-scanner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Settings, Setlists &amp; Score Scanner
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v301-21102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2876,6 +2926,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v302-21102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.0.2 — 21/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.0.2 — 21/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-modern-folder-category-management-dialogs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Modern Folder &amp; Category Management Dialogs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-bulk-actions-context-aware-importing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Bulk Actions &amp; Context-Aware Importing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-settings-setlists-score-scanner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Settings, Setlists &amp; Score Scanner
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v301-21102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4860,6 +4960,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v302--21102026">v3.0.2 — 21/10/2026</a></li>
 <li><a href="#v301--21102026">v3.0.1 — 21/10/2026</a></li>
 <li><a href="#v300--21102026">v3.0.0 — 21/10/2026</a></li>
 <li><a href="#v284--18102026">v2.8.4 — 18/10/2026</a></li>
@@ -4885,6 +4986,28 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v302-21102026">v3.0.2 — 21/10/2026</h2>
+<h3 id="1-modern-folder-category-management-dialogs">1. Modern Folder &amp; Category Management Dialogs</h3>
+<ul>
+<li><strong>1.1. Modern folder/category picker:</strong> Replaced plain Android action sheet with a dedicated modern modal card (<code>ModernCategoryModalOverlay</code>), featuring a glowing <code>📁</code> halo, active folder badge <code>✓ Current</code>, sleek scrollable list, and a prominent <code>[ ➕ New folder ]</code> button.</li>
+<li><strong>1.2. Modernized folder creation &amp; renaming:</strong> Replaced Android <code>DisplayPromptAsync</code> popups with customized dark modal prompts featuring autofocus and styled action buttons.</li>
+<li><strong>1.3. Context menu folder icon:</strong> Added a matching <code>📁</code> icon prefix in front of "Change folder / category" across all 8 supported languages in the 3-dots context menu (⋮).</li>
+</ul>
+<h3 id="2-bulk-actions-context-aware-importing">2. Bulk Actions &amp; Context-Aware Importing</h3>
+<ul>
+<li><strong>2.1. Bulk folder assignment:</strong> Added <code>📁 Folder</code> action in the multi-selection bar (<code>MultiSelectActionBar</code>), enabling 1-click reassignment of multiple selected scores to an existing or newly created folder.</li>
+<li><strong>2.2. Contextual direct import:</strong> Importing PDFs or images while viewing a category now places files directly into that category without manual sorting required. At root, imported scores default to "Général".</li>
+<li><strong>2.3. Neutral WiFi Direct &amp; import destination:</strong> Importing received <code>.msm</code> bundles or WiFi Direct scores now directs files to "Général", preventing pollution of the recipient's personal folder hierarchy with sender-specific categories.</li>
+</ul>
+<h3 id="3-settings-setlists-score-scanner">3. Settings, Setlists &amp; Score Scanner</h3>
+<ul>
+<li><strong>3.1. Category display in subtitle:</strong> Added option to show folder/category in score card subtitles with distinct badge formatting <code>📁 [FolderName]</code>, configurable in Score Settings.</li>
+<li><strong>3.2. Page count label fix:</strong> Corrected settings translation from "Current page number" to "Page count".</li>
+<li><strong>3.3. Fast setlist score picker &amp; folder filter:</strong> Boosted <code>ScoreSelectionPage</code> rendering performance (<code>ItemSizingStrategy="MeasureFirstItem"</code> and eliminated closure overhead) and added a folder filter button <code>[📁]</code> next to sort.</li>
+<li><strong>3.4. Score Scanner folder picker:</strong> Added category picker with quick category creation <code>[➕]</code> directly within the scanner metadata card before PDF generation.</li>
+<li><strong>3.5. Recursive duplicate scanning:</strong> Guaranteed duplicate detection across all category subdirectories with category tags displayed in results <code>📁 [Category] Path</code>.</li>
 </ul>
 <hr />
 <h2 id="v301-21102026">v3.0.1 — 21/10/2026</h2>
