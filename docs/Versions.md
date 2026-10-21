@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.0.2 — 21/10/2026](#v302--21102026)
 - [v3.0.1 — 21/10/2026](#v301--21102026)
 - [v3.0.0 — 21/10/2026](#v300--21102026)
 - [v2.8.4 — 18/10/2026](#v284--18102026)
@@ -31,6 +32,27 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.0.2 — 21/10/2026
+
+### 1. Modernisation des Boîtes de Dialogue de Gestion des Dossiers
+- **1.1. Sélecteur moderne de dossier / catégorie :** Remplacement de la liste d'action Android par une modale moderne premium (`ModernCategoryModalOverlay`), avec halo lumineux `📁`, affichage du dossier actuel avec badge `✓ Actuel`, liste scrollable élégante et bouton dédié `[ ➕ Nouveau dossier ]`.
+- **1.2. Renommage et création de dossier modernisés :** La boîte de dialogue native Android `DisplayPromptAsync` a été remplacée par la modale stylisée avec champ de saisie sombre, mise au point automatique et boutons ergonomiques.
+- **1.3. Icône dans le menu contextuel :** Ajout d'une icône `📁` harmonisée devant "Changer de dossier / catégorie" dans le menu contextuel (⋮) dans les 8 langues prises en charge.
+
+### 2. Actions Groupées & Importation Intelligente
+- **2.1. Déplacement groupé vers un dossier :** Ajout du bouton d'action groupée `📁 Dossier` dans la barre de sélection multiple (`MultiSelectActionBar`), permettant d'assigner ou de déplacer simultanément plusieurs dizaines de partitions vers un dossier existant ou nouveau.
+- **2.2. Importation contextuelle directe :** Lorsqu'un dossier / catégorie est ouvert lors de l'import (PDF ou images), les nouveaux fichiers y sont directement enregistrés sans étape intermédiaire. À la racine, ils sont dirigés vers la catégorie par défaut "Général".
+- **2.3. Réception WiFi Direct et Importation neutres :** Lors du partage WiFi Direct ou de l'import de paquets `.msm`, la catégorie personnelle de l'expéditeur n'est plus imposée au destinataire : les partitions reçues sont intégrées dans "Général" pour préserver l'organisation personnelle de chaque musicien.
+
+### 3. Paramètres, Setlists & Scanner de Partitions
+- **3.1. Affichage de la catégorie sous le titre :** Possibilité d'afficher le dossier / catégorie dans les informations sous le titre de la partition avec un badge distinctif `📁 [NomDossier]` (configurable dans les paramètres de partitions).
+- **3.2. Correction du libellé des pages :** Correction dans les paramètres de la mention "Affichage du numéro de la page actuelle" en "Nombre de pages".
+- **3.3. Ajout de partitions en Setlist accéléré & filtre par dossier :** Optimisation de la fluidité de la page de sélection de partitions (`ItemSizingStrategy="MeasureFirstItem"`, suppression des allocations de closures) et ajout d'un bouton de filtre par dossier `[📁]` à côté du bouton de tri.
+- **3.4. Scanner de partitions avec choix du dossier :** Intégration d'un sélecteur de catégorie (avec "Général" par défaut) et création à la volée `[➕]` directement dans la fiche d'information avant la génération du PDF.
+- **3.5. Détection récursive des doublons :** Vérification et analyse automatique des fichiers situés dans les sous-répertoires de catégories, avec affichage clair du dossier d'appartenance `📁 [Catégorie] Chemin`.
 
 ---
 

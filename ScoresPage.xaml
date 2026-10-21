@@ -744,7 +744,7 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
-            <Grid ColumnDefinitions="*, Auto, Auto, Auto, Auto" Padding="10,10" ColumnSpacing="6" VerticalOptions="Center">
+            <Grid ColumnDefinitions="*, Auto, Auto, Auto, Auto, Auto" Padding="10,10" ColumnSpacing="6" VerticalOptions="Center">
                 <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
                     <Label x:Name="SelectedCountLabel"
                            Text="0"
@@ -767,6 +767,14 @@
                         CornerRadius="8"
                         Clicked="OnBulkDeleteClicked" />
                 <Button Grid.Column="2"
+                        Text="{Binding [Scores_Bulk_Category], Source={x:Static services:LocalizationService.Instance}}"
+                        BackgroundColor="#007ACC"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        HeightRequest="42"
+                        CornerRadius="8"
+                        Clicked="OnBulkCategoryClicked" />
+                <Button Grid.Column="3"
                         Text="{Binding [Scores_Bulk_Tags], Source={x:Static services:LocalizationService.Instance}}"
                         BackgroundColor="#8E44AD"
                         TextColor="White"
@@ -774,7 +782,7 @@
                         HeightRequest="42"
                         CornerRadius="8"
                         Clicked="OnBulkTagsClicked" />
-                <Button Grid.Column="3"
+                <Button Grid.Column="4"
                         Text="{Binding [Scores_Bulk_Export], Source={x:Static services:LocalizationService.Instance}}"
                         BackgroundColor="#2ECC71"
                         TextColor="White"
@@ -782,7 +790,7 @@
                         HeightRequest="42"
                         CornerRadius="8"
                         Clicked="OnBulkExportClicked" />
-                <Button Grid.Column="4"
+                <Button Grid.Column="5"
                         Text="{Binding [Scores_Bulk_Send], Source={x:Static services:LocalizationService.Instance}}"
                         BackgroundColor="#007ACC"
                         TextColor="White"
@@ -1135,6 +1143,111 @@
                            FontSize="12" 
                            FontAttributes="Italic"
                            HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+        </ContentView>
+
+        <!-- Modal Moderne : Sélection de Dossier / Catégorie -->
+        <ContentView x:Name="ModernCategoryModalOverlay" 
+                     Grid.RowSpan="3"
+                     IsVisible="False" 
+                     BackgroundColor="#CC000000" 
+                     InputTransparent="False"
+                     ZIndex="1250"
+                     Opacity="0">
+            <ContentView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnCategoryModalCancelClicked" />
+            </ContentView.GestureRecognizers>
+            <Border x:Name="ModernCategoryModalCard"
+                    BackgroundColor="#1C1D24" 
+                    Stroke="#2B3A4E"
+                    StrokeThickness="1.5"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="{OnIdiom Phone=Fill, Tablet=Center}" 
+                    WidthRequest="{OnIdiom Phone=-1, Tablet=380}"
+                    MaximumWidthRequest="{OnIdiom Phone=400, Tablet=420}"
+                    Margin="{OnIdiom Phone='16,10', Tablet='0'}"
+                    Padding="{OnIdiom Phone='16,14', Tablet='20'}">
+                <Border.Shadow>
+                    <Shadow Brush="#007ACC" Offset="0,4" Radius="24" Opacity="0.35" />
+                </Border.Shadow>
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20" />
+                </Border.StrokeShape>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer /> <!-- Bloque la propagation -->
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="14" HorizontalOptions="Fill">
+                    
+                    <!-- En-tête : Badge circulaire 📁 -->
+                    <Grid HorizontalOptions="Center" WidthRequest="60" HeightRequest="60">
+                        <Border BackgroundColor="#1500B0FF"
+                                Stroke="#00B0FF"
+                                StrokeThickness="1.5"
+                                WidthRequest="60"
+                                HeightRequest="60"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="30" />
+                            </Border.StrokeShape>
+                        </Border>
+                        <Label Text="📁"
+                               FontSize="28"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- Titre & Sous-titre -->
+                    <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                        <Label x:Name="CategoryModalTitleLabel"
+                               Text="{Binding [Score_Category_Picker_Title], Source={x:Static services:LocalizationService.Instance}}"
+                               TextColor="White"
+                               FontAttributes="Bold"
+                               FontSize="17"
+                               HorizontalTextAlignment="Center" />
+                        <Label x:Name="CategoryModalSubtitleLabel"
+                               Text="Sélectionnez un dossier"
+                               TextColor="#8E8E9F"
+                               FontSize="12"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="TailTruncation"
+                               MaxLines="1" />
+                    </VerticalStackLayout>
+
+                    <!-- Liste scrollable des dossiers existants -->
+                    <Border BackgroundColor="#14151C"
+                            Stroke="#2A2C38"
+                            StrokeThickness="1"
+                            Padding="8"
+                            HorizontalOptions="Fill">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12" />
+                        </Border.StrokeShape>
+                        <ScrollView MaximumHeightRequest="240" HorizontalScrollBarVisibility="Never">
+                            <VerticalStackLayout x:Name="CategoryModalListContainer" Spacing="6" HorizontalOptions="Fill" />
+                        </ScrollView>
+                    </Border>
+
+                    <!-- Bouton Créer un Nouveau Dossier (Stylisé & bien distinct) -->
+                    <Button Text="{Binding [Score_Edit_New_Category_Btn], Source={x:Static services:LocalizationService.Instance}}"
+                            TextColor="#00B0FF"
+                            BackgroundColor="#132B45"
+                            BorderColor="#007ACC"
+                            BorderWidth="1"
+                            FontAttributes="Bold"
+                            FontSize="13"
+                            HeightRequest="42"
+                            CornerRadius="10"
+                            Clicked="OnCategoryModalCreateNewClicked" />
+
+                    <!-- Bouton Annuler -->
+                    <Button Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}"
+                            TextColor="#888888"
+                            BackgroundColor="Transparent"
+                            FontSize="13"
+                            HeightRequest="36"
+                            Clicked="OnCategoryModalCancelClicked" />
                 </VerticalStackLayout>
             </Border>
         </ContentView>

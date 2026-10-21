@@ -690,6 +690,12 @@
   "Settings_Scores_Default_View_Mode_Desc": "Choose whether to display scores as a continuous list or grouped by category folders.",
   "Settings_Scores_View_Mode_List": "📋 List View",
   "Settings_Scores_View_Mode_Folders": "📁 Folders View",
-  "Score_Menu_Change_Category": "Change folder / category",
-  "Scores_Folders_All": "All folders"
+  "Score_Menu_Change_Category": "📁  Change folder / category",
+  "Scores_Folders_All": "All folders",
+  "Settings_Scores_Subtitle_PageCount": "Page count",
+  "Settings_Scores_Subtitle_Category": "Folder / Category",
+  "Scores_Bulk_Category": "📁 Folder",
+  "Score_Category_Picker_Title": "Target folder",
+  "Score_Category_Current_Badge": "Current",
+  "Scores_Bulk_Move_Success": "{0} score(s) moved to '{1}'"
 }

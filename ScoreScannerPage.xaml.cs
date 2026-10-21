@@ -33,6 +33,48 @@ public partial class ScoreScannerPage : ContentPage
         UpdateUI();
     }
 
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await LoadCategoriesAsync();
+    }
+
+    private async Task LoadCategoriesAsync(string? preSelectCategory = null)
+    {
+        var categories = await _databaseService.GetCategoriesAsync();
+        ScoreCategoryPicker.ItemsSource = categories;
+
+        if (!string.IsNullOrEmpty(preSelectCategory) && categories.Contains(preSelectCategory))
+        {
+            ScoreCategoryPicker.SelectedItem = preSelectCategory;
+        }
+        else if (categories.Contains("Général"))
+        {
+            ScoreCategoryPicker.SelectedItem = "Général";
+        }
+        else if (categories.Any())
+        {
+            ScoreCategoryPicker.SelectedIndex = 0;
+        }
+    }
+
+    private async void OnAddNewCategoryInScannerClicked(object? sender, EventArgs e)
+    {
+        var loc = LocalizationService.Instance;
+        string title = loc.GetString("Score_Category_New_Title", "Nouveau dossier");
+        string prompt = loc.GetString("Score_Category_New_Prompt", "Entrez le nom du nouveau dossier / catégorie :");
+        string ok = loc.GetString("Common_OK", "OK");
+        string cancel = loc.GetString("Common_Cancel", "Annuler");
+
+        string? result = await DisplayPromptAsync(title, prompt, ok, cancel);
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+            string clean = result.Trim();
+            await _databaseService.CreateCategoryAsync(clean);
+            await LoadCategoriesAsync(clean);
+        }
+    }
+
     private void InitFilterPicker()
     {
         var loc = LocalizationService.Instance;
@@ -436,17 +478,23 @@ public partial class ScoreScannerPage : ContentPage
 
         try
         {
+            string selectedCategory = ScoreCategoryPicker.SelectedItem as string ?? "Général";
             var rootDir = _settingsService.ScoresRootDirectory;
             if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
+
+            var destDir = string.Equals(selectedCategory, "Général", StringComparison.OrdinalIgnoreCase)
+                ? rootDir
+                : Path.Combine(rootDir, selectedCategory);
+            if (!Directory.Exists(destDir)) Directory.CreateDirectory(destDir);
 
             var invalidChars = Path.GetInvalidFileNameChars();
             var cleanTitle = new string(title.Select(ch => invalidChars.Contains(ch) ? '_' : ch).ToArray()).Replace(" ", "_");
 
-            string localPdfPath = Path.Combine(rootDir, $"{cleanTitle}.pdf");
+            string localPdfPath = Path.Combine(destDir, $"{cleanTitle}.pdf");
             int counter = 1;
             while (File.Exists(localPdfPath))
             {
-                localPdfPath = Path.Combine(rootDir, $"{cleanTitle}_{counter}.pdf");
+                localPdfPath = Path.Combine(destDir, $"{cleanTitle}_{counter}.pdf");
                 counter++;
             }
 
@@ -461,6 +509,7 @@ public partial class ScoreScannerPage : ContentPage
             {
                 Title = title,
                 Composer = composer,
+                Category = selectedCategory,
                 FilePath = _settingsService.GetRelativePath(localPdfPath),
                 Type = ScoreType.PDF,
                 DateAdded = DateTime.Now,

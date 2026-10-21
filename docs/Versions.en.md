@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.0.2 — 21/10/2026](#v302--21102026)
 - [v3.0.1 — 21/10/2026](#v301--21102026)
 - [v3.0.0 — 21/10/2026](#v300--21102026)
 - [v2.8.4 — 18/10/2026](#v284--18102026)
@@ -31,6 +32,27 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.0.2 — 21/10/2026
+
+### 1. Modern Folder & Category Management Dialogs
+- **1.1. Modern folder/category picker:** Replaced plain Android action sheet with a dedicated modern modal card (`ModernCategoryModalOverlay`), featuring a glowing `📁` halo, active folder badge `✓ Current`, sleek scrollable list, and a prominent `[ ➕ New folder ]` button.
+- **1.2. Modernized folder creation & renaming:** Replaced Android `DisplayPromptAsync` popups with customized dark modal prompts featuring autofocus and styled action buttons.
+- **1.3. Context menu folder icon:** Added a matching `📁` icon prefix in front of "Change folder / category" across all 8 supported languages in the 3-dots context menu (⋮).
+
+### 2. Bulk Actions & Context-Aware Importing
+- **2.1. Bulk folder assignment:** Added `📁 Folder` action in the multi-selection bar (`MultiSelectActionBar`), enabling 1-click reassignment of multiple selected scores to an existing or newly created folder.
+- **2.2. Contextual direct import:** Importing PDFs or images while viewing a category now places files directly into that category without manual sorting required. At root, imported scores default to "Général".
+- **2.3. Neutral WiFi Direct & import destination:** Importing received `.msm` bundles or WiFi Direct scores now directs files to "Général", preventing pollution of the recipient's personal folder hierarchy with sender-specific categories.
+
+### 3. Settings, Setlists & Score Scanner
+- **3.1. Category display in subtitle:** Added option to show folder/category in score card subtitles with distinct badge formatting `📁 [FolderName]`, configurable in Score Settings.
+- **3.2. Page count label fix:** Corrected settings translation from "Current page number" to "Page count".
+- **3.3. Fast setlist score picker & folder filter:** Boosted `ScoreSelectionPage` rendering performance (`ItemSizingStrategy="MeasureFirstItem"` and eliminated closure overhead) and added a folder filter button `[📁]` next to sort.
+- **3.4. Score Scanner folder picker:** Added category picker with quick category creation `[➕]` directly within the scanner metadata card before PDF generation.
+- **3.5. Recursive duplicate scanning:** Guaranteed duplicate detection across all category subdirectories with category tags displayed in results `📁 [Category] Path`.
 
 ---
 

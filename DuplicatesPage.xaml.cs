@@ -56,6 +56,16 @@ public partial class DuplicatesPage : ContentPage
                 DuplicatesProgressLabel.Text = $"Analyse : {i + 1} / {total} ({score.Title})...";
 
                 string fullPath = _settingsService.GetAbsolutePath(score.FilePath);
+                if (!File.Exists(fullPath))
+                {
+                    string fileName = Path.GetFileName(score.FilePath);
+                    string? found = FindFileRecursively(_settingsService.ScoresRootDirectory, fileName);
+                    if (!string.IsNullOrEmpty(found) && File.Exists(found))
+                    {
+                        fullPath = found;
+                    }
+                }
+
                 if (File.Exists(fullPath))
                 {
                     try
@@ -155,7 +165,7 @@ public partial class DuplicatesPage : ContentPage
 
                     var pathLabel = new Label
                     {
-                        Text = $"📁 {score.FilePath}",
+                        Text = $"📁 [{score.Category}] {score.FilePath}",
                         TextColor = Color.FromArgb("#888888"),
                         FontSize = 11,
                         LineBreakMode = LineBreakMode.TailTruncation
@@ -240,5 +250,23 @@ public partial class DuplicatesPage : ContentPage
         if (bytes < 1024) return $"{bytes} o";
         if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} Ko";
         return $"{bytes / (1024.0 * 1024.0):F1} Mo";
+    }
+
+    private string? FindFileRecursively(string directory, string targetFileName)
+    {
+        try
+        {
+            if (!Directory.Exists(directory)) return null;
+            var direct = Path.Combine(directory, targetFileName);
+            if (File.Exists(direct)) return direct;
+
+            foreach (var subDir in Directory.GetDirectories(directory))
+            {
+                var match = FindFileRecursively(subDir, targetFileName);
+                if (match != null) return match;
+            }
+        }
+        catch { }
+        return null;
     }
 }

@@ -410,6 +410,38 @@ public partial class ScoresPage : ContentPage
         }
     }
 
+    private async void OnBulkCategoryClicked(object? sender, EventArgs e)
+    {
+        var selectedScores = _lastLoadedScores.Where(s => s.IsSelected).ToList();
+
+        var loc = LocalizationService.Instance;
+        if (!selectedScores.Any())
+        {
+            await DisplayAlertAsync(
+                loc.GetString("Scores_Bulk_No_Selection_Title", "Aucune sélection"),
+                loc.GetString("Scores_Bulk_No_Selection_Msg", "Veuillez sélectionner au moins une partition."),
+                loc.GetString("Common_OK", "OK"));
+            return;
+        }
+
+        string title = loc.GetString("Score_Category_Picker_Title", "Dossier de destination");
+        string subtitle = $"{selectedScores.Count} partition(s) sélectionnée(s)";
+
+        string? targetCategory = await ShowCategoryPickerModalAsync(title, subtitle, null);
+        if (string.IsNullOrEmpty(targetCategory)) return;
+
+        foreach (var score in selectedScores)
+        {
+            await _databaseService.MoveScoreToCategoryAsync(score, targetCategory);
+        }
+
+        IsMultiSelectActive = false;
+        await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
+
+        string successMsg = string.Format(loc.GetString("Scores_Bulk_Move_Success", "{0} partition(s) déplacée(s) dans '{1}'"), selectedScores.Count, targetCategory);
+        await ShowModernAlertDialogAsync("Déplacement effectué", successMsg);
+    }
+
     private readonly List<int> _bulkSelectedTagIds = new();
     private string _bulkTagSearchQuery = string.Empty;
 
@@ -1085,7 +1117,7 @@ public partial class ScoresPage : ContentPage
 
     private async void OnImportClicked(object sender, EventArgs e)
     {
-        var scores = await _importService.ImportScoresAsync();
+        var scores = await _importService.ImportScoresAsync(_selectedCategory);
         if (scores != null && scores.Any())
         {
             if (!string.IsNullOrEmpty(SearchScoreBar?.Text))
@@ -1464,7 +1496,8 @@ public partial class ScoresPage : ContentPage
             {
                 string promptTitle = loc.GetString("Score_Category_Rename_Title", "Renommer le dossier");
                 string promptMsg = loc.GetString("Score_Category_Rename_Prompt", "Entrez le nouveau nom du dossier :");
-                string? newName = await DisplayPromptAsync(promptTitle, promptMsg, loc.GetString("Common_OK", "OK"), cancel, initialValue: group.Name);
+                string ok = loc.GetString("Common_Save", "Enregistrer");
+                string? newName = await ShowModernPromptDialogAsync(promptTitle, promptMsg, group.Name, ok);
                 if (!string.IsNullOrWhiteSpace(newName) && !string.Equals(newName.Trim(), group.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     string cleanNew = newName.Trim();
@@ -1506,9 +1539,8 @@ public partial class ScoresPage : ContentPage
         string title = loc.GetString("Score_Category_New_Title", "Nouveau dossier");
         string prompt = loc.GetString("Score_Category_New_Prompt", "Entrez le nom du nouveau dossier / catégorie :");
         string ok = loc.GetString("Common_OK", "OK");
-        string cancel = loc.GetString("Common_Cancel", "Annuler");
 
-        string? result = await DisplayPromptAsync(title, prompt, ok, cancel, placeholder: "Ex: Liturgie, Jazz...");
+        string? result = await ShowModernPromptDialogAsync(title, prompt, string.Empty, ok);
         if (!string.IsNullOrWhiteSpace(result))
         {
             string clean = result.Trim();
@@ -1545,28 +1577,13 @@ public partial class ScoresPage : ContentPage
         ScoreMenuOverlay.IsVisible = false;
 
         var loc = LocalizationService.Instance;
-        var categories = await _databaseService.GetCategoriesAsync();
-        string cancel = loc.GetString("Common_Cancel", "Annuler");
-        string newCatOption = loc.GetString("Score_Edit_New_Category_Btn", "+ Nouveau dossier");
+        string title = loc.GetString("Score_Category_Picker_Title", "Dossier de destination");
+        string subtitle = $"{score.Title} ({score.Category})";
 
-        var options = new List<string>(categories) { newCatOption };
-        string? selected = await DisplayActionSheetAsync(
-            $"{score.Title} - {loc.GetString("Score_Menu_Change_Category", "Changer de dossier / catégorie")}",
-            cancel,
-            null,
-            options.ToArray());
-
-        if (string.IsNullOrEmpty(selected) || selected == cancel) return;
-
-        string targetCategory = selected;
-        if (selected == newCatOption)
+        string? targetCategory = await ShowCategoryPickerModalAsync(title, subtitle, score.Category);
+        if (string.IsNullOrEmpty(targetCategory) || string.Equals(targetCategory, score.Category, StringComparison.OrdinalIgnoreCase))
         {
-            string title = loc.GetString("Score_Category_New_Title", "Nouveau dossier");
-            string prompt = loc.GetString("Score_Category_New_Prompt", "Entrez le nom du nouveau dossier / catégorie :");
-            string? result = await DisplayPromptAsync(title, prompt, loc.GetString("Common_OK", "OK"), cancel);
-            if (string.IsNullOrWhiteSpace(result)) return;
-            targetCategory = result.Trim();
-            await _databaseService.CreateCategoryAsync(targetCategory);
+            return;
         }
 
         await _databaseService.MoveScoreToCategoryAsync(score, targetCategory);
@@ -2303,6 +2320,9 @@ public partial class ScoresPage : ContentPage
     }
 
     private Task<string?> ShowModernPromptDialogAsync(string title, string message, string defaultVal)
+        => ShowModernPromptDialogAsync(title, message, defaultVal, "OK");
+
+    private Task<string?> ShowModernPromptDialogAsync(string title, string message, string defaultVal, string confirmBtnText)
     {
         var tcs = new TaskCompletionSource<string?>();
         _modalTcsString = tcs;
@@ -2336,7 +2356,7 @@ public partial class ScoresPage : ContentPage
 
             var okBtn = new Button
             {
-                Text = "Créer la partition",
+                Text = confirmBtnText,
                 BackgroundColor = Color.FromArgb("#007ACC"),
                 TextColor = Colors.White,
                 FontAttributes = FontAttributes.Bold,
@@ -2426,6 +2446,156 @@ public partial class ScoresPage : ContentPage
         });
 
         return tcs.Task;
+    }
+
+    private TaskCompletionSource<string?>? _categoryModalTcs;
+
+    private Task<string?> ShowCategoryPickerModalAsync(string title, string subtitle, string? currentCategory)
+    {
+        var tcs = new TaskCompletionSource<string?>();
+        _categoryModalTcs = tcs;
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            CategoryModalTitleLabel.Text = title;
+            CategoryModalSubtitleLabel.Text = subtitle;
+            CategoryModalListContainer.Clear();
+
+            var categories = await _databaseService.GetCategoriesAsync();
+            var loc = LocalizationService.Instance;
+            string currentBadgeText = loc.GetString("Score_Category_Current_Badge", "Actuel");
+
+            foreach (var cat in categories)
+            {
+                bool isCurrent = string.Equals(cat, currentCategory, StringComparison.OrdinalIgnoreCase);
+
+                var itemBorder = new Border
+                {
+                    BackgroundColor = isCurrent ? Color.FromArgb("#19354F") : Color.FromArgb("#1E202B"),
+                    Stroke = isCurrent ? Color.FromArgb("#007ACC") : Color.FromArgb("#2C303E"),
+                    StrokeThickness = 1,
+                    Padding = new Thickness(12, 10),
+                    StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 10 },
+                    HorizontalOptions = LayoutOptions.Fill
+                };
+
+                var itemGrid = new Grid
+                {
+                    ColumnDefinitions = new ColumnDefinitionCollection
+                    {
+                        new ColumnDefinition(GridLength.Auto),
+                        new ColumnDefinition(GridLength.Star),
+                        new ColumnDefinition(GridLength.Auto)
+                    },
+                    ColumnSpacing = 10,
+                    VerticalOptions = LayoutOptions.Center
+                };
+
+                var iconLabel = new Label
+                {
+                    Text = "📁",
+                    FontSize = 16,
+                    VerticalOptions = LayoutOptions.Center
+                };
+                Grid.SetColumn(iconLabel, 0);
+
+                var nameLabel = new Label
+                {
+                    Text = cat,
+                    TextColor = isCurrent ? Colors.White : Color.FromArgb("#E0E0E0"),
+                    FontAttributes = isCurrent ? FontAttributes.Bold : FontAttributes.None,
+                    FontSize = 14,
+                    VerticalOptions = LayoutOptions.Center,
+                    LineBreakMode = LineBreakMode.TailTruncation
+                };
+                Grid.SetColumn(nameLabel, 1);
+
+                itemGrid.Add(iconLabel);
+                itemGrid.Add(nameLabel);
+
+                if (isCurrent)
+                {
+                    var badgeBorder = new Border
+                    {
+                        BackgroundColor = Color.FromArgb("#25007ACC"),
+                        Stroke = Color.FromArgb("#007ACC"),
+                        StrokeThickness = 1,
+                        Padding = new Thickness(6, 2),
+                        StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 6 },
+                        VerticalOptions = LayoutOptions.Center
+                    };
+                    badgeBorder.Content = new Label
+                    {
+                        Text = $"✓ {currentBadgeText}",
+                        TextColor = Color.FromArgb("#00B0FF"),
+                        FontSize = 10,
+                        FontAttributes = FontAttributes.Bold
+                    };
+                    Grid.SetColumn(badgeBorder, 2);
+                    itemGrid.Add(badgeBorder);
+                }
+
+                itemBorder.Content = itemGrid;
+
+                var capturedCat = cat;
+                var tap = new TapGestureRecognizer();
+                tap.Tapped += async (s, e) =>
+                {
+                    await HideCategoryModalAsync();
+                    tcs.TrySetResult(capturedCat);
+                };
+                itemBorder.GestureRecognizers.Add(tap);
+
+                CategoryModalListContainer.Add(itemBorder);
+            }
+
+            ModernCategoryModalOverlay.IsVisible = true;
+            ModernCategoryModalOverlay.Opacity = 0;
+            ModernCategoryModalCard.Scale = 0.9;
+            await Task.WhenAll(
+                ModernCategoryModalOverlay.FadeTo(1, 180, Easing.CubicOut),
+                ModernCategoryModalCard.ScaleTo(1.0, 180, Easing.CubicOut)
+            );
+        });
+
+        return tcs.Task;
+    }
+
+    private async Task HideCategoryModalAsync()
+    {
+        if (ModernCategoryModalOverlay == null || !ModernCategoryModalOverlay.IsVisible) return;
+        await Task.WhenAll(
+            ModernCategoryModalOverlay.FadeTo(0, 140, Easing.CubicIn),
+            ModernCategoryModalCard.ScaleTo(0.9, 140, Easing.CubicIn)
+        );
+        ModernCategoryModalOverlay.IsVisible = false;
+    }
+
+    private async void OnCategoryModalCancelClicked(object? sender, EventArgs e)
+    {
+        await HideCategoryModalAsync();
+        _categoryModalTcs?.TrySetResult(null);
+    }
+
+    private async void OnCategoryModalCreateNewClicked(object? sender, EventArgs e)
+    {
+        await HideCategoryModalAsync();
+        var loc = LocalizationService.Instance;
+        string title = loc.GetString("Score_Category_New_Title", "Nouveau dossier");
+        string prompt = loc.GetString("Score_Category_New_Prompt", "Entrez le nom du nouveau dossier / catégorie :");
+        string ok = loc.GetString("Common_OK", "OK");
+
+        string? newCat = await ShowModernPromptDialogAsync(title, prompt, string.Empty, ok);
+        if (!string.IsNullOrWhiteSpace(newCat))
+        {
+            string clean = newCat.Trim();
+            await _databaseService.CreateCategoryAsync(clean);
+            _categoryModalTcs?.TrySetResult(clean);
+        }
+        else
+        {
+            _categoryModalTcs?.TrySetResult(null);
+        }
     }
 
     #endregion

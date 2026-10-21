@@ -388,11 +388,9 @@ namespace MusicScoreManager.Services
                 var scorePayload = payloads.FirstOrDefault(p => p.FileName == scoreMeta.FileName);
                 if (scorePayload != null)
                 {
-                    string cat = string.IsNullOrWhiteSpace(scoreMeta.Category) ? "Général" : scoreMeta.Category;
-                    string catDir = Path.Combine(scoresRootDir, cat);
-                    if (!Directory.Exists(catDir)) Directory.CreateDirectory(catDir);
-
-                    string targetFilePath = Path.Combine(catDir, scoreMeta.FileName);
+                    // Ne pas imposer l'arborescence de l'expéditeur au destinataire : import dans Général
+                    string cat = "Général";
+                    string targetFilePath = Path.Combine(scoresRootDir, scoreMeta.FileName);
                     if (!File.Exists(targetFilePath))
                     {
                         await File.WriteAllBytesAsync(targetFilePath, scorePayload.Data);
@@ -532,11 +530,9 @@ namespace MusicScoreManager.Services
                 var scorePayload = payloads.FirstOrDefault(p => p.FileName == scoreMeta.FileName);
                 if (scorePayload != null)
                 {
-                    string cat = string.IsNullOrWhiteSpace(scoreMeta.Category) ? "Général" : scoreMeta.Category;
-                    string catDir = Path.Combine(scoresRootDir, cat);
-                    if (!Directory.Exists(catDir)) Directory.CreateDirectory(catDir);
-
-                    string targetFilePath = Path.Combine(catDir, scoreMeta.FileName);
+                    // Ne pas imposer l'arborescence de l'expéditeur au destinataire : import dans Général
+                    string cat = "Général";
+                    string targetFilePath = Path.Combine(scoresRootDir, scoreMeta.FileName);
                     if (!File.Exists(targetFilePath))
                     {
                         await File.WriteAllBytesAsync(targetFilePath, scorePayload.Data);

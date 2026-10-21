@@ -47,15 +47,16 @@ namespace MusicScoreManager.Services
             _pdfService = pdfService ?? new PdfService();
         }
 
-        public async Task<Score?> ImportScoreAsync()
+        public async Task<Score?> ImportScoreAsync(string? targetCategory = null)
         {
-            var results = await ImportScoresAsync();
+            var results = await ImportScoresAsync(targetCategory);
             return results.FirstOrDefault();
         }
 
-        public async Task<List<Score>> ImportScoresAsync()
+        public async Task<List<Score>> ImportScoresAsync(string? targetCategory = null)
         {
             var importedScores = new List<Score>();
+            string effectiveCategory = string.IsNullOrWhiteSpace(targetCategory) ? "Général" : targetCategory.Trim();
             try
             {
                 // Sur Android, FilePicker utilise le sélecteur système SAF qui n'exige pas de permission préalable.
@@ -88,6 +89,11 @@ namespace MusicScoreManager.Services
 
                 var rootDir = _settingsService.ScoresRootDirectory;
                 if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
+
+                var destDir = string.Equals(effectiveCategory, "Général", StringComparison.OrdinalIgnoreCase)
+                    ? rootDir
+                    : Path.Combine(rootDir, effectiveCategory);
+                if (!Directory.Exists(destDir)) Directory.CreateDirectory(destDir);
 
                 var cacheDir = FileSystem.CacheDirectory;
                 if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
@@ -185,13 +191,14 @@ namespace MusicScoreManager.Services
                                 }
 
                                 var sanitizedTitle = SanitizeFileName(finalTitle);
-                                var localPdfPath = GetUniqueFilePath(rootDir, sanitizedTitle, ".pdf");
+                                var localPdfPath = GetUniqueFilePath(destDir, sanitizedTitle, ".pdf");
 
                                 await _pdfService.ConvertImagesToPdfAsync(tempPaths, localPdfPath);
 
                                 var score = new Score
                                 {
                                     Title = finalTitle,
+                                    Category = effectiveCategory,
                                     FilePath = _settingsService.GetRelativePath(localPdfPath),
                                     Type = ScoreType.PDF,
                                     DateAdded = DateTime.Now,
@@ -219,21 +226,21 @@ namespace MusicScoreManager.Services
                     else
                     {
                         // Convertir individuellement chaque image en un PDF
-                        var converted = await ConvertAndImportIndividualImagesAsync(imageFiles, rootDir);
+                        var converted = await ConvertAndImportIndividualImagesAsync(imageFiles, destDir, effectiveCategory);
                         importedScores.AddRange(converted);
                     }
                 }
                 else if (imageFiles.Count == 1)
                 {
                     // 1 seule image acceptée -> conversion en PDF dans la bibliothèque
-                    var converted = await ConvertAndImportIndividualImagesAsync(imageFiles, rootDir);
+                    var converted = await ConvertAndImportIndividualImagesAsync(imageFiles, destDir, effectiveCategory);
                     importedScores.AddRange(converted);
                 }
 
                 // Traiter les éventuels fichiers PDF (qu'ils soient seuls ou accompagnés d'images)
                 if (pdfFiles.Any())
                 {
-                    var pdfImported = await ProcessPdfFilesAsync(pdfFiles, rootDir);
+                    var pdfImported = await ProcessPdfFilesAsync(pdfFiles, destDir, effectiveCategory);
                     importedScores.AddRange(pdfImported);
                 }
             }
@@ -246,7 +253,7 @@ namespace MusicScoreManager.Services
             return importedScores;
         }
 
-        private async Task<List<Score>> ConvertAndImportIndividualImagesAsync(List<FileResult> imageFiles, string rootDir)
+        private async Task<List<Score>> ConvertAndImportIndividualImagesAsync(List<FileResult> imageFiles, string destDir, string category)
         {
             var results = new List<Score>();
             var cacheDir = FileSystem.CacheDirectory;
@@ -288,13 +295,14 @@ namespace MusicScoreManager.Services
                         }
 
                         var sanitized = SanitizeFileName(rawName);
-                        var localPdfPath = GetUniqueFilePath(rootDir, sanitized, ".pdf");
+                        var localPdfPath = GetUniqueFilePath(destDir, sanitized, ".pdf");
 
                         await _pdfService.ConvertImagesToPdfAsync(new[] { tempPath }, localPdfPath);
 
                         var score = new Score
                         {
                             Title = rawName,
+                            Category = category,
                             FilePath = _settingsService.GetRelativePath(localPdfPath),
                             Type = ScoreType.PDF,
                             DateAdded = DateTime.Now,
@@ -337,10 +345,11 @@ namespace MusicScoreManager.Services
             return true;
         }
 
-        private async Task<List<Score>> ProcessPdfFilesAsync(List<FileResult> pdfFiles, string rootDir)
+        private async Task<List<Score>> ProcessPdfFilesAsync(List<FileResult> pdfFiles, string destDir, string category)
         {
             var imported = new List<Score>();
             var filesToProcess = new List<(FileResult File, bool AlreadyInRoot)>();
+            var rootDir = _settingsService.ScoresRootDirectory;
 
             foreach (var result in pdfFiles)
             {
@@ -488,7 +497,7 @@ namespace MusicScoreManager.Services
 
                             var sanitizedBase = SanitizeFileName(rawTitle);
                             if (string.IsNullOrWhiteSpace(sanitizedBase)) sanitizedBase = "Partition";
-                            var localFilePath = GetUniqueFilePath(rootDir, sanitizedBase, ext);
+                            var localFilePath = GetUniqueFilePath(destDir, sanitizedBase, ext);
 
                             // Téléchargement sécurisé via fichier temporaire pour éviter tout fichier corrompu à 0 octet
                             var tempPath = Path.Combine(FileSystem.CacheDirectory, $"{Guid.NewGuid()}.tmp");
@@ -530,6 +539,7 @@ namespace MusicScoreManager.Services
                     var score = new Score
                     {
                         Title = rawTitle,
+                        Category = category,
                         FilePath = finalStoredPath,
                         Type = ScoreType.PDF,
                         DateAdded = DateTime.Now,

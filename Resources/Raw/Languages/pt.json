@@ -687,6 +687,12 @@
   "Settings_Scores_Default_View_Mode_Desc": "Escolha se deseja exibir as partituras como uma lista contínua ou agrupadas por pastas de categoria.",
   "Settings_Scores_View_Mode_List": "📋 Vista de Lista",
   "Settings_Scores_View_Mode_Folders": "📁 Vista de Pastas",
-  "Score_Menu_Change_Category": "Alterar pasta / categoria",
-  "Scores_Folders_All": "Todas as pastas"
+  "Score_Menu_Change_Category": "📁  Alterar pasta / categoria",
+  "Scores_Folders_All": "Todas as pastas",
+  "Settings_Scores_Subtitle_PageCount": "Número de páginas",
+  "Settings_Scores_Subtitle_Category": "Pasta / Categoria",
+  "Scores_Bulk_Category": "📁 Pasta",
+  "Score_Category_Picker_Title": "Pasta de destino",
+  "Score_Category_Current_Badge": "Atual",
+  "Scores_Bulk_Move_Success": "{0} partitura(s) movida(s) para '{1}'"
 }

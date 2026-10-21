@@ -687,6 +687,12 @@
   "Settings_Scores_Default_View_Mode_Desc": "Kies of u partituren wilt weergeven als een doorlopende lijst of gegroepeerd per categoriemap.",
   "Settings_Scores_View_Mode_List": "📋 Lijstweergave",
   "Settings_Scores_View_Mode_Folders": "📁 Mappenweergave",
-  "Score_Menu_Change_Category": "Map / categorie wijzigen",
-  "Scores_Folders_All": "Alle mappen"
+  "Score_Menu_Change_Category": "📁  Map / categorie wijzigen",
+  "Scores_Folders_All": "Alle mappen",
+  "Settings_Scores_Subtitle_PageCount": "Aantal pagina's",
+  "Settings_Scores_Subtitle_Category": "Map / Categorie",
+  "Scores_Bulk_Category": "📁 Map",
+  "Score_Category_Picker_Title": "Doelmap",
+  "Score_Category_Current_Badge": "Huidig",
+  "Scores_Bulk_Move_Success": "{0} partitu(u)r(en) verplaatst naar '{1}'"
 }

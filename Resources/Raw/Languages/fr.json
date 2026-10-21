@@ -690,6 +690,12 @@
   "Settings_Scores_Default_View_Mode_Desc": "Choisissez d'afficher les partitions sous forme de liste continue ou regroupées par dossiers de catégorie.",
   "Settings_Scores_View_Mode_List": "📋 Vue Liste",
   "Settings_Scores_View_Mode_Folders": "📁 Vue Dossiers",
-  "Score_Menu_Change_Category": "Changer de dossier / catégorie",
-  "Scores_Folders_All": "Tous les dossiers"
+  "Score_Menu_Change_Category": "📁  Changer de dossier / catégorie",
+  "Scores_Folders_All": "Tous les dossiers",
+  "Settings_Scores_Subtitle_PageCount": "Nombre de pages",
+  "Settings_Scores_Subtitle_Category": "Dossier / Catégorie",
+  "Scores_Bulk_Category": "📁 Dossier",
+  "Score_Category_Picker_Title": "Dossier de destination",
+  "Score_Category_Current_Badge": "Actuel",
+  "Scores_Bulk_Move_Success": "{0} partition(s) déplacée(s) dans '{1}'"
 }
