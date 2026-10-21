@@ -129,8 +129,9 @@ public partial class SettingsScoresPage : ContentPage
         var allItems = new Dictionary<string, (string Title, string Icon)>
         {
             { "Composer", (loc.GetString("Score_Edit_Field_Composer", "Compositeur"), "🎵") },
-            { "PageCount", (loc.GetString("Settings_Scores_Show_Page_Number", "Nombre de pages"), "📄") },
-            { "DateAdded", (loc.GetString("Sort_DateAsc", "Date d'ajout"), "📅") }
+            { "PageCount", (loc.GetString("Settings_Scores_Subtitle_PageCount", "Nombre de pages"), "📄") },
+            { "DateAdded", (loc.GetString("Sort_DateAsc", "Date d'ajout"), "📅") },
+            { "Category", (loc.GetString("Settings_Scores_Subtitle_Category", "Dossier / Catégorie"), "📁") }
         };
 
         List<string> orderedKeys = new();

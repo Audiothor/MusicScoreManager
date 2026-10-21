@@ -193,7 +193,7 @@ namespace MusicScoreManager.Models
                     case "Category":
                         if (!string.IsNullOrWhiteSpace(Category))
                         {
-                            parts.Add(Category);
+                            parts.Add($"📁 {Category.Trim()}");
                         }
                         break;
                 }

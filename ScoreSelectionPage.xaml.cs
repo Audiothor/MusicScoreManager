@@ -15,6 +15,7 @@ public partial class ScoreSelectionPage : ContentPage
     private readonly HashSet<int> _selectedTagIds = new();
     private bool _matchAllTags = false;
     private string _currentSort = "TitleAsc";
+    private string? _selectedCategoryFilter = null;
 
     public TaskCompletionSource<IEnumerable<Score>> SelectionTask { get; } = new();
 
@@ -35,18 +36,11 @@ public partial class ScoreSelectionPage : ContentPage
         _allScores = await _databaseService.GetScoresAsync();
         _allTags = await _databaseService.GetTagsAsync();
 
-        // Initialiser la liste des scores sélectionnables
-        _selectableScores = _allScores.Select(s =>
+        // Initialiser la liste des scores sélectionnables de manière performante
+        _selectableScores = _allScores.Select(s => new SelectableScore
         {
-            var item = new SelectableScore { Score = s };
-            item.PropertyChanged += (sender, args) =>
-            {
-                if (args.PropertyName == nameof(SelectableScore.IsSelected))
-                {
-                    UpdateConfirmButtonText();
-                }
-            };
-            return item;
+            Score = s,
+            OnSelectionChanged = UpdateConfirmButtonText
         }).ToList();
 
         PopulateTags();
@@ -139,6 +133,11 @@ public partial class ScoreSelectionPage : ContentPage
                 (s.Score.Composer != null && s.Score.Composer.Contains(query, StringComparison.OrdinalIgnoreCase)));
         }
 
+        if (!string.IsNullOrEmpty(_selectedCategoryFilter))
+        {
+            filtered = filtered.Where(s => string.Equals(s.Score.Category, _selectedCategoryFilter, StringComparison.OrdinalIgnoreCase));
+        }
+
         if (_selectedTagIds.Count > 0)
         {
             if (_matchAllTags)
@@ -164,6 +163,32 @@ public partial class ScoreSelectionPage : ContentPage
         };
 
         ScoresCollectionView.ItemsSource = filtered.ToList();
+    }
+
+    private async void OnCategoryFilterClicked(object sender, EventArgs e)
+    {
+        var categories = await _databaseService.GetCategoriesAsync();
+        var options = new List<string> { "📁 Tous les dossiers (Toutes)" };
+        options.AddRange(categories.Select(c => $"📁 {c}"));
+
+        string action = await DisplayActionSheetAsync("Filtrer par dossier / catégorie", "Annuler", null, options.ToArray());
+        if (string.IsNullOrEmpty(action) || action == "Annuler") return;
+
+        if (action.Contains("Tous les dossiers"))
+        {
+            _selectedCategoryFilter = null;
+            CategoryFilterButton.BackgroundColor = Color.FromArgb("#333333");
+            CategoryFilterButton.TextColor = Colors.White;
+        }
+        else
+        {
+            string catName = action.Replace("📁", "").Trim();
+            _selectedCategoryFilter = catName;
+            CategoryFilterButton.BackgroundColor = Color.FromArgb("#007ACC");
+            CategoryFilterButton.TextColor = Colors.White;
+        }
+
+        FilterScores();
     }
 
     private async void OnSortClicked(object sender, EventArgs e)
@@ -250,10 +275,20 @@ public class SelectableScore : INotifyPropertyChanged
 {
     private bool _isSelected;
     public Score Score { get; set; } = null!;
+    public Action? OnSelectionChanged { get; set; }
+
     public bool IsSelected
     {
         get => _isSelected;
-        set { _isSelected = value; OnPropertyChanged(); }
+        set
+        {
+            if (_isSelected != value)
+            {
+                _isSelected = value;
+                OnPropertyChanged();
+                OnSelectionChanged?.Invoke();
+            }
+        }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

@@ -687,6 +687,12 @@
   "Settings_Scores_Default_View_Mode_Desc": "Wählen Sie, ob Partituren als fortlaufende Liste oder nach Kategorieordnern gruppiert angezeigt werden sollen.",
   "Settings_Scores_View_Mode_List": "📋 Listenansicht",
   "Settings_Scores_View_Mode_Folders": "📁 Ordneransicht",
-  "Score_Menu_Change_Category": "Ordner / Kategorie ändern",
-  "Scores_Folders_All": "Alle Ordner"
+  "Score_Menu_Change_Category": "📁  Ordner / Kategorie ändern",
+  "Scores_Folders_All": "Alle Ordner",
+  "Settings_Scores_Subtitle_PageCount": "Seitenanzahl",
+  "Settings_Scores_Subtitle_Category": "Ordner / Kategorie",
+  "Scores_Bulk_Category": "📁 Ordner",
+  "Score_Category_Picker_Title": "Zielordner",
+  "Score_Category_Current_Badge": "Aktuell",
+  "Scores_Bulk_Move_Success": "{0} Partitur(en) nach '{1}' verschoben"
 }

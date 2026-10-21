@@ -687,6 +687,12 @@
   "Settings_Scores_Default_View_Mode_Desc": "Scegli se visualizzare gli spartiti come elenco continuo o raggruppati per cartelle di categoria.",
   "Settings_Scores_View_Mode_List": "📋 Vista Elenco",
   "Settings_Scores_View_Mode_Folders": "📁 Vista Cartelle",
-  "Score_Menu_Change_Category": "Cambia cartella / categoria",
-  "Scores_Folders_All": "Tutte le cartelle"
+  "Score_Menu_Change_Category": "📁  Cambia cartella / categoria",
+  "Scores_Folders_All": "Tutte le cartelle",
+  "Settings_Scores_Subtitle_PageCount": "Numero di pagine",
+  "Settings_Scores_Subtitle_Category": "Cartella / Categoria",
+  "Scores_Bulk_Category": "📁 Cartella",
+  "Score_Category_Picker_Title": "Cartella di destinazione",
+  "Score_Category_Current_Badge": "Attuale",
+  "Scores_Bulk_Move_Success": "{0} spartito/i spostato/i in '{1}'"
 }

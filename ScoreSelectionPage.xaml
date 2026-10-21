@@ -9,8 +9,8 @@
 
     <Grid RowDefinitions="Auto, Auto, *, Auto">
         
-        <!-- Recherche et Tri -->
-        <Grid Grid.Row="0" Margin="15,15,15,8" ColumnDefinitions="*, Auto" ColumnSpacing="10">
+        <!-- Recherche, Dossier et Tri -->
+        <Grid Grid.Row="0" Margin="15,15,15,8" ColumnDefinitions="*, Auto, Auto" ColumnSpacing="8">
             <SearchBar Grid.Column="0"
                        x:Name="SearchScoreBar"
                        Placeholder="{Binding [Score_Selection_Placeholder], Source={x:Static services:LocalizationService.Instance}}"
@@ -20,13 +20,24 @@
                        TextChanged="OnSearchBarTextChanged" />
 
             <Button Grid.Column="1"
+                    x:Name="CategoryFilterButton"
+                    Text="📁"
+                    FontSize="18"
+                    WidthRequest="46"
+                    HeightRequest="46"
+                    CornerRadius="23"
+                    BackgroundColor="#333333"
+                    TextColor="White"
+                    Clicked="OnCategoryFilterClicked" />
+
+            <Button Grid.Column="2"
                     x:Name="SortButton"
                     Text="⇅"
                     FontSize="20"
                     FontAttributes="Bold"
-                    WidthRequest="50"
-                    HeightRequest="50"
-                    CornerRadius="25"
+                    WidthRequest="46"
+                    HeightRequest="46"
+                    CornerRadius="23"
                     BackgroundColor="#333333"
                     TextColor="White"
                     Clicked="OnSortClicked" />
@@ -41,7 +52,8 @@
         <CollectionView Grid.Row="2"
                         x:Name="ScoresCollectionView"
                         Margin="15,0"
-                        SelectionMode="None">
+                        SelectionMode="None"
+                        ItemSizingStrategy="MeasureFirstItem">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10" />
             </CollectionView.ItemsLayout>

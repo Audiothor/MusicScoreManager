@@ -687,6 +687,12 @@
   "Settings_Scores_Default_View_Mode_Desc": "Wybierz, czy wyświetlać nuty jako ciągłą listę, czy pogrupowane według folderów kategorii.",
   "Settings_Scores_View_Mode_List": "📋 Widok listy",
   "Settings_Scores_View_Mode_Folders": "📁 Widok folderów",
-  "Score_Menu_Change_Category": "Zmień folder / kategorię",
-  "Scores_Folders_All": "Wszystkie foldery"
+  "Score_Menu_Change_Category": "📁  Zmień folder / kategorię",
+  "Scores_Folders_All": "Wszystkie foldery",
+  "Settings_Scores_Subtitle_PageCount": "Liczba stron",
+  "Settings_Scores_Subtitle_Category": "Folder / Kategoria",
+  "Scores_Bulk_Category": "📁 Folder",
+  "Score_Category_Picker_Title": "Folder docelowy",
+  "Score_Category_Current_Badge": "Bieżący",
+  "Scores_Bulk_Move_Success": "Przeniesiono {0} partytur(ę/y) do '{1}'"
 }
