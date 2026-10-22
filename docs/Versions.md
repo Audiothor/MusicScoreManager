@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.0.3 — 22/10/2026](#v303--22102026)
 - [v3.0.2 — 21/10/2026](#v302--21102026)
 - [v3.0.1 — 21/10/2026](#v301--21102026)
 - [v3.0.0 — 21/10/2026](#v300--21102026)
@@ -32,6 +33,34 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.0.3 — 22/10/2026
+
+### 1. Refonte DSP Complète de l'Accordeur de la Boîte à Outils
+- **1.1. Intégration de l'algorithme YIN (Standard mondial de détection de pitch musical) :** Remplacement de l'autocorrélation simple par la fonction de différence au carré cumulée normalisée $d'(\tau)$ (de Cheveigné & Kawahara). L'accordeur recherche le premier creux périodique sous un seuil absolu ($\theta = 0.15$), éliminant les sauts d'octaves et les approximations d'amplitude.
+- **1.2. Pré-filtrage passe-bas à 2 pôles (1200 Hz) :** Élimination radicale du grésillement des anches d'instruments à vent, du souffle d'air et du bruit d'attaque de médiator sur les cordes sans altérer les notes fondamentales.
+- **1.3. Correction intelligente d'octave et de sous-harmoniques (Harmonic & Octave Correction) :** Résolution définitive du problème des instruments dont la fondamentale ($f_0$) est physiquement masquée par le 2ᵉ harmonique (octave) ou 3ᵉ harmonique (saxophone, cor d'harmonie, basson, hautbois, violoncelle, contrebasse). L'accordeur vérifie automatiquement $2\tau$ et $3\tau$ pour verrouiller la véritable note jouée par le musicien.
+- **1.4. Filtrage médian glissant (5 trames) :** Suppression intégrale des décrochages instantanés et des artefacts transitoires.
+- **1.5. Hystérésis de note & Lissage exponentiel (EMA) de l'aiguille :** Nécessite 2 trames consécutives concordantes avant tout changement de libellé de note, évitant tout papillonnement visuel. L'aiguille des cents bénéficie d'un lissage par moyenne mobile exponentielle ($\alpha = 0.45$) pour une fluidité absolue.
+- **1.6. Allocation mémoire zéro (Zero-Alloc DSP) :** Réutilisation de buffers fixes préalloués (`_filteredBuffer`, `_dBuffer`, `_dPrimeBuffer`), garantissant zéro ramasse-miettes (GC) et un affichage à 60 FPS constant.
+
+### 2. Élargissement Majeur du Sélecteur d'Instruments
+- **2.1. Famille complète des Saxophones :**
+  - 🎷 **Saxophone Alto (en Mi♭)** (La3 concert / Fa#4 sax, Si♭3 concert / Do4 sax, Ré4, Fa3, La4)
+  - 🎷 **Saxophone Ténor (en Si♭)** (Si♭3 concert / Do4 sax, La3 concert / Si3 sax, Fa3, Si♭2 grave, Ré4)
+  - 🎷 **Saxophone Baryton (Mi♭) & Soprano (Si♭)** (Notes clés transposées pour le quatuor complet de saxophones)
+- **2.2. Cuivres d'orchestre et d'harmonie :**
+  - 🎺 **Trompette & Clarinette (en Si♭)**
+  - 📯 **Cor d'harmonie (en Fa)**
+  - 🎺 **Trombone, Euphonium & Tuba (en Ut - Clé de Fa)**
+- **2.3. Bois et cordes :**
+  - 🪈 **Flûte Traversière (en Ut)**
+  - 🪵 **Hautbois & Basson (en Ut)** (incluant le **La 440 Hz du Hautbois**, référence officielle du diapason de l'orchestre symphonique)
+  - 🪕 **Banjo (5 cordes - Open G)**
+- **2.4. Chant & Voix humaine :**
+  - 🎤 **Chant & Voix (Tessitures & Vocalises)** avec notes de repère adaptées (Basse, Baryton, Ténor, Alto, Mezzo, Soprano), immunisées contre les formants des voyelles chantées et le vibrato naturel.
 
 ---
 
