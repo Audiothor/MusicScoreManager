@@ -295,6 +295,104 @@ namespace MusicScoreManager.Services
                     new TuningNote { StringLabel = "La5", NoteName = "A5", Solfege = "La5", Frequency = 880.00, MidiNote = 81 },
                 }
             });
+
+            // 14. Saxophone Baryton (en Mi♭) & Soprano (en Si♭)
+            Instruments.Add(new TunerInstrument
+            {
+                Id = "sax_bar_sop",
+                Name = "Saxophone Baryton (Mi♭) & Soprano (Si♭)",
+                Icon = "🎷",
+                Notes = new List<TuningNote>
+                {
+                    new TuningNote { StringLabel = "La concert (Fa#3 sax baryton)", NoteName = "A2", Solfege = "La2 (Fa#3 bar)", Frequency = 110.00, MidiNote = 45 },
+                    new TuningNote { StringLabel = "Si♭ concert (Do3 sax baryton)", NoteName = "A#2", Solfege = "Si♭2 (Do3 bar)", Frequency = 116.54, MidiNote = 46 },
+                    new TuningNote { StringLabel = "Ré concert (Si2 sax baryton)", NoteName = "D3", Solfege = "Ré3 (Si2 bar)", Frequency = 146.83, MidiNote = 50 },
+                    new TuningNote { StringLabel = "Si♭ concert (Do5 sax soprano)", NoteName = "A#4", Solfege = "Si♭4 (Do5 sop)", Frequency = 466.16, MidiNote = 70 },
+                    new TuningNote { StringLabel = "La concert (Si4 sax soprano)", NoteName = "A4", Solfege = "La4 (Si4 sop)", Frequency = 440.00, MidiNote = 69 },
+                    new TuningNote { StringLabel = "Fa concert (Sol4 sax soprano)", NoteName = "F4", Solfege = "Fa4 (Sol4 sop)", Frequency = 349.23, MidiNote = 65 },
+                }
+            });
+
+            // 15. Cor d'harmonie (en Fa)
+            Instruments.Add(new TunerInstrument
+            {
+                Id = "french_horn",
+                Name = "Cor d'harmonie (en Fa)",
+                Icon = "📯",
+                Notes = new List<TuningNote>
+                {
+                    new TuningNote { StringLabel = "Fa concert (Do4 cor)", NoteName = "F3", Solfege = "Fa3 (Do4 cor)", Frequency = 174.61, MidiNote = 53 },
+                    new TuningNote { StringLabel = "Si♭ concert (Fa4 cor)", NoteName = "A#3", Solfege = "Si♭3 (Fa4 cor)", Frequency = 233.08, MidiNote = 58 },
+                    new TuningNote { StringLabel = "Do concert (Sol4 cor)", NoteName = "C4", Solfege = "Do4 (Sol4 cor)", Frequency = 261.63, MidiNote = 60 },
+                    new TuningNote { StringLabel = "La concert (Mi4 cor)", NoteName = "A3", Solfege = "La3 (Mi4 cor)", Frequency = 220.00, MidiNote = 57 },
+                }
+            });
+
+            // 16. Trombone, Euphonium & Tuba (en Ut - Clé de Fa)
+            Instruments.Add(new TunerInstrument
+            {
+                Id = "trombone_tuba",
+                Name = "Trombone, Euphonium & Tuba (en Ut)",
+                Icon = "🎺",
+                Notes = new List<TuningNote>
+                {
+                    new TuningNote { StringLabel = "Si♭ concert (repère trombone)", NoteName = "A#2", Solfege = "Si♭2", Frequency = 116.54, MidiNote = 46 },
+                    new TuningNote { StringLabel = "Fa concert", NoteName = "F2", Solfege = "Fa2", Frequency = 87.31, MidiNote = 41 },
+                    new TuningNote { StringLabel = "Fa médium", NoteName = "F3", Solfege = "Fa3", Frequency = 174.61, MidiNote = 53 },
+                    new TuningNote { StringLabel = "Si♭ grave (Tuba)", NoteName = "A#1", Solfege = "Si♭1", Frequency = 58.27, MidiNote = 34 },
+                    new TuningNote { StringLabel = "Ré concert", NoteName = "D3", Solfege = "Ré3", Frequency = 146.83, MidiNote = 50 },
+                }
+            });
+
+            // 17. Hautbois & Basson (en Ut)
+            Instruments.Add(new TunerInstrument
+            {
+                Id = "oboe_bassoon",
+                Name = "Hautbois & Basson (en Ut)",
+                Icon = "🪵",
+                Notes = new List<TuningNote>
+                {
+                    new TuningNote { StringLabel = "La4 Hautbois (Diapason orchestre)", NoteName = "A4", Solfege = "La4 (440 Hz)", Frequency = 440.00, MidiNote = 69 },
+                    new TuningNote { StringLabel = "Do4 Hautbois", NoteName = "C4", Solfege = "Do4", Frequency = 261.63, MidiNote = 60 },
+                    new TuningNote { StringLabel = "Sol4 Hautbois", NoteName = "G4", Solfege = "Sol4", Frequency = 392.00, MidiNote = 67 },
+                    new TuningNote { StringLabel = "La2 Basson", NoteName = "A2", Solfege = "La2", Frequency = 110.00, MidiNote = 45 },
+                    new TuningNote { StringLabel = "Fa2 Basson", NoteName = "F2", Solfege = "Fa2", Frequency = 87.31, MidiNote = 41 },
+                    new TuningNote { StringLabel = "Si♭1 Basson (Grave)", NoteName = "A#1", Solfege = "Si♭1", Frequency = 58.27, MidiNote = 34 },
+                }
+            });
+
+            // 18. Banjo (5 cordes - Open G)
+            Instruments.Add(new TunerInstrument
+            {
+                Id = "banjo",
+                Name = "Banjo (5 cordes - Open G)",
+                Icon = "🪕",
+                Notes = new List<TuningNote>
+                {
+                    new TuningNote { StringLabel = "5", NoteName = "G4", Solfege = "Sol4", Frequency = 392.00, MidiNote = 67 },
+                    new TuningNote { StringLabel = "4", NoteName = "D3", Solfege = "Ré3", Frequency = 146.83, MidiNote = 50 },
+                    new TuningNote { StringLabel = "3", NoteName = "G3", Solfege = "Sol3", Frequency = 196.00, MidiNote = 55 },
+                    new TuningNote { StringLabel = "2", NoteName = "B3", Solfege = "Si3", Frequency = 246.94, MidiNote = 59 },
+                    new TuningNote { StringLabel = "1", NoteName = "D4", Solfege = "Ré4", Frequency = 293.66, MidiNote = 62 },
+                }
+            });
+
+            // 19. Chant & Voix (Tessitures & Vocalises)
+            Instruments.Add(new TunerInstrument
+            {
+                Id = "vocal",
+                Name = "Chant & Voix (Tessitures)",
+                Icon = "🎤",
+                Notes = new List<TuningNote>
+                {
+                    new TuningNote { StringLabel = "Do3 (Basse / Baryton)", NoteName = "C3", Solfege = "Do3", Frequency = 130.81, MidiNote = 48 },
+                    new TuningNote { StringLabel = "Sol3 (Ténor / Alto)", NoteName = "G3", Solfege = "Sol3", Frequency = 196.00, MidiNote = 55 },
+                    new TuningNote { StringLabel = "Do4 (Do médium / Ténor)", NoteName = "C4", Solfege = "Do4", Frequency = 261.63, MidiNote = 60 },
+                    new TuningNote { StringLabel = "Mi4 (Alto / Mezzo)", NoteName = "E4", Solfege = "Mi4", Frequency = 329.63, MidiNote = 64 },
+                    new TuningNote { StringLabel = "La4 (Diapason / Soprano)", NoteName = "A4", Solfege = "La4", Frequency = 440.00, MidiNote = 69 },
+                    new TuningNote { StringLabel = "Do5 (Do aigu Soprano)", NoteName = "C5", Solfege = "Do5", Frequency = 523.25, MidiNote = 72 },
+                }
+            });
         }
 
         public async Task<bool> StartListeningAsync()
