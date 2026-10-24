@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
     
     
       
@@ -33,10 +33,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -853,10 +853,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#a-partie-haute-de-lecran-plusieurs-commandes-essentielles" class="md-nav__link">
+  <a href="#a-partie-haute-de-lecran-commandes-essentielles" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A. Partie haute de l'écran - plusieurs commandes essentielles :
+        A. Partie haute de l'écran - commandes essentielles :
       
     </span>
   </a>
@@ -933,19 +933,27 @@
 <h2 id="1-interface-principale">1. Interface principale</h2>
 <p>Cet écran s'affiche lorsque vous lancez l'application.
 Si vous n'avez jamais lancé et donc importé de partitions, l'application vous signifiera que vous n'avez pas de partition à afficher.</p>
-<h3 id="a-partie-haute-de-lecran-plusieurs-commandes-essentielles">A. Partie haute de l'écran  - plusieurs commandes essentielles :</h3>
+<h3 id="a-partie-haute-de-lecran-commandes-essentielles">A. Partie haute de l'écran  - commandes essentielles :</h3>
 <p><strong>[1] Barre de Recherche en Temps Réel</strong></p>
 <ul>
 <li>Saisissez quelques lettres pour filtrer instantanément la liste par <strong>titre de partition</strong>, <strong>nom de compositeur</strong> ou nom de fichier.</li>
 <li>Effacement rapide d'une touche pour retrouver la vue intégrale.</li>
 </ul>
-<p><strong>[2] Bouton de Filtrage par Étiquettes (🏷️)</strong></p>
+<p><strong>[2] Bouton de Bascule d'Affichage (📁 Mode Dossiers / Liste)</strong></p>
+<ul>
+<li>Permet d'alterner instantanément entre la <strong>Vue en Liste classique</strong> et la <strong>Vue Dossiers / Catégories</strong> :</li>
+<li><strong>Vue Dossiers (Organisation thématique)</strong> : affiche vos répertoires sous forme de cartes d'aperçu rapides avec le nombre exact de morceaux. Un clic sur un dossier ouvre son contenu en <em>drill-down</em> ultra-rapide avec barre de navigation / fil d'Ariane <code>[ ⬅ Tous les dossiers ]</code>.</li>
+<li><strong>Menu contextuel de dossier</strong> : permet de renommer le dossier, le vider ou le supprimer (les partitions sont rapatriées en toute sécurité dans le dossier "Général").</li>
+<li><strong>Création instantanée</strong> : bouton <code>[ ➕ Nouveau dossier ]</code> pour créer une nouvelle catégorie à la volée.</li>
+<li>Les partitions sont également réparties physiquement sur votre disque dans des sous-répertoires au nom de chaque catégorie.</li>
+</ul>
+<p><strong>[3] Bouton de Filtrage par Étiquettes (🏷️)</strong></p>
 <ul>
 <li>Ouvre le volet de sélection des tags avec recherche interne et tri des tags (A-Z, Z-A, les plus/moins utilisés).</li>
 <li>Affiche les étiquettes actives sous forme de carrousel horizontal avec pastilles de couleur et boutons de retrait rapide.</li>
 <li>Boutons <em>« Tout effacer »</em> et <em>« Appliquer »</em>.</li>
 </ul>
-<p><strong>[3] Bouton de Tri Rapide (🔃)</strong></p>
+<p><strong>[4] Bouton de Tri Rapide (⇅)</strong></p>
 <ul>
 <li>Permet de réordonner instantanément votre bibliothèque selon :</li>
 <li><strong>Date d'ajout (Plus récent d'abord)</strong> : tri par défaut pour repérer immédiatement vos derniers imports.</li>
@@ -956,21 +964,23 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
 <li><strong>Compositeur (A-Z)</strong> : ordre alphabétique des compositeurs. Un paramètre dédié dans <em>Paramètres &gt; Partitions</em> permet de choisir si les partitions sans compositeur renseigné apparaissent au tout début ou à la fin.</li>
 <li><strong>Sans étiquette d'abord</strong> : place en tête les partitions qui n'ont encore aucun tag assigné pour vous aider à les classer facilement.</li>
 </ul>
-<p><strong>[4] Bouton Multi-sélection (☑️)</strong></p>
+<p><strong>[5] Bouton Multi-sélection (☑️)</strong></p>
 <ul>
 <li>Active le mode de sélection par lots pour appliquer des actions sur plusieurs partitions à la fois.</li>
 <li>Affiche une barre d'actions en bas de l'écran :</li>
-<li><strong>🏷️ Assigner des étiquettes</strong> : modale pour ajouter ou remplacer simultanément des tags sur toutes les partitions cochées.</li>
-<li><strong>📡 Partager en Wi-Fi Direct</strong> : transmettez tout le paquet sélectionné en une seule fois sans fil.</li>
-<li><strong>📦 Exporter (.msmscores)</strong> : génère une archive compressée unique regroupant tous les fichiers choisis (avec choix des annotations et des pistes audio).</li>
 <li><strong>🗑️ Supprimer</strong> : suppression groupée avec confirmation de sécurité.</li>
+<li><strong>📁 Dossier</strong> : modale moderne pour déplacer ou réassigner simultanément les partitions cochées vers un dossier existant ou nouveau.</li>
+<li><strong>🏷️ Assigner des étiquettes</strong> : modale pour ajouter ou remplacer simultanément des tags sur toutes les partitions cochées.</li>
+<li><strong>📦 Exporter (.msmscores)</strong> : génère une archive compressée unique regroupant tous les fichiers choisis (avec choix des annotations et des pistes audio).</li>
+<li><strong>📡 Partager en Wi-Fi Direct</strong> : transmettez tout le paquet sélectionné en une seule fois sans fil.</li>
 </ul>
-<p><strong>[5] Bouton Ajouter (➕)</strong></p>
+<p><strong>[6] Bouton Ajouter (➕)</strong></p>
 <ul>
-<li><strong>Importation de PDF</strong> : Contrôle strict de l'intégrité binaire (<code>%PDF-</code>) empêchant tout plantage. L'import peut se faire par lot (plusieurs pdf importés en une seule fois)</li>
+<li><strong>Importation contextuelle directe</strong> : si vous êtes actuellement dans un dossier spécifique, les nouveaux fichiers importés y sont directement enregistrés sans étape intermédiaire.</li>
+<li><strong>Importation de PDF</strong> : Contrôle strict de l'intégrité binaire (<code>%PDF-</code>) empêchant tout plantage. L'import peut se faire par lot (plusieurs PDF importés en une seule fois).</li>
 <li><strong>Importation et conversion d'Images</strong> : La sélection d'un ou plusieurs fichiers images (PNG, JPEG, GIF, WEBP, BMP) affiche un message d'information listant les fichiers images qui vont être convertis en PDF :</li>
 <li><strong>Annuler</strong> : Les images sont ignorées. Les éventuels PDF sélectionnés en même temps continuent leur import normal.</li>
-<li><strong>Continuer</strong> : Une boîte de chargement modale bloquante avec indicateur d'avancement informe l'utilisateur pendant la conversion en PDF haute netteté. Les images sont fusionnées en un seul PDF multi-pages ou converties en partitions individuelles selon le choix de l'utilisateur, puis une confirmation s'affiche dès l'import terminé.</li>
+<li><strong>Continuer</strong> : Une boîte de chargement modale avec indicateur d'avancement informe l'utilisateur pendant la conversion en PDF haute netteté. Les images sont fusionnées en un seul PDF multi-pages ou converties en partitions individuelles selon le choix de l'utilisateur, puis une confirmation s'affiche dès l'import terminé.</li>
 <li>Lors de l'ajout de partitions depuis votre appareil, l'application propose deux modes de gestion :</li>
 <li><strong>Copier vers la bibliothèque (Conseillé)</strong> :<br />
     Le fichier PDF est copié dans le dossier interne dédié de Music Score Manager. Vos partitions restent accessibles en permanence même si le fichier original est déplacé ou supprimé de son dossier de téléchargement.</li>
@@ -979,45 +989,34 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
 </ul>
 <h3 id="b-milieu-de-lecran-liste-des-partitions-referencees-dans-lapplication">B. Milieu de l'écran - liste des partitions référencées dans l'application</h3>
 <ul>
-<li><strong>[6] : La partition</strong></li>
+<li><strong>[7] : La partition</strong></li>
 </ul>
 <p>Chaque partition est représentée par une carte visuelle comprenant :</p>
 <p>a. <strong>Titre principal de l'œuvre</strong>.</p>
-<p>b. <strong>Sous-titre personnalisable</strong> (configurable dans les paramètres : compositeur, date d'ajout ou combinaison des deux).</p>
+<p>b. <strong>Sous-titre personnalisable</strong> (configurable dans les paramètres : compositeur, date d'ajout, nombre de pages ou dossier / catégorie <code>📁 [NomDossier]</code>).</p>
 <p>c. <strong>Pastilles d'étiquettes colorées</strong> pour repérer les catégories au premier coup d'œil.</p>
 <p><strong>🔗 Pastille de liaison externe</strong> si le fichier est stocké hors du dossier interne.</p>
 <p><strong>⚠️ Pastille d'alerte rouge (!) et Titre rouge</strong> :<br />
 Si le fichier PDF associé a été déplacé, renommé sur le stockage ou est introuvable, une pastille rouge d'avertissement avec point d'exclamation apparaît à gauche du bouton ⋮ pour vous prévenir qu'elle ne pourra pas s'ouvrir en concert.</p>
 <ul>
-<li><strong>[7] : Menu contextuel</strong>
-  Accès au menu contextuel d'une partition (voir le chapitre § 2 ci-dessous) </li>
+<li><strong>Index Alphabétique Rapide (A-Z)</strong> :</li>
+<li>Sur le bord droit de la liste, une réglette verticale alphabétique permet de sauter d'un seul toucher directement à la lettre souhaitée.</li>
+<li><strong>Bouton Flottant Haut de Page (▲)</strong> :</li>
+<li>
+<p>Permet de remonter instantanément au début de la liste après un long défilement.</p>
+</li>
+<li>
+<p><strong>[8] : Menu contextuel</strong>
+  Accès au menu contextuel d'une partition (voir le chapitre § 2 ci-dessous)</p>
+</li>
 </ul>
 <h3 id="c-bas-de-lecran-menus-principaux-de-lapplication">C. Bas de l'écran - menus principaux de l'application</h3>
 <ul>
-<li>
-<p><strong>[8] Partitions</strong>
-  Le menu actuel, en gras quand vous êtes dans ce menu</p>
-</li>
-<li>
-<p><strong>[9] : Setlists</strong>
-  Il gère les groupements de partitions pour un concert par exemple
-  =&gt; Voir le chapitre dédié aux Setlists</p>
-</li>
-<li>
-<p><strong>[10] : Outils</strong>
-  A cet endroit sont disposés de multiples outils utiles pour vos partitions (transformations, imports, sauvegardes, gestion des étiquettes etc...)
-  =&gt; Voir le chapitre dédié aux Outils</p>
-</li>
-<li>
-<p><strong>[11] : Paramètres</strong>
-  Tous les paramètres de l'applciation, des partitions, Setlists etc...
-  =&gt; Voir le chapitre dédié aux Paramètres</p>
-</li>
-<li>
-<p><strong>[12] : Quitter</strong>
-  Tout simplement pour quitter l'application en cours
-  =&gt; Voir le chapitre dédié à la fonction de Quitter</p>
-</li>
+<li><strong>[9] Partitions</strong> : Le menu actuel, mis en valeur quand vous êtes dans ce menu.</li>
+<li><strong>[10] Setlists</strong> : Gère les groupements de morceaux pour concert ou répétition (voir chapitre Setlists).</li>
+<li><strong>[11] Outils</strong> : Utilitaires spécialisés (Scanner de partitions, Assemblage PDF, Wi-Fi Direct, Étiquettes, Sauvegardes...).</li>
+<li><strong>[12] Paramètres</strong> : Personnalisation complète de l'application, des partitions, de l'affichage et des pédaliers.</li>
+<li><strong>[13] Quitter</strong> : Fermeture propre et sécurisée de l'application.</li>
 </ul>
 <hr />
 <h2 id="2-menu-contextuel-dune-partition">2. Menu Contextuel d'une Partition ( ⋮ )</h2>
@@ -1027,81 +1026,68 @@ Si le fichier PDF associé a été déplacé, renommé sur le stockage ou est in
 </p>
 
 <ol>
-<li>
-<p><strong>📖 Ouvrir la partition</strong> :</p>
-</li>
+<li><strong>📖 Ouvrir la partition</strong> :</li>
 <li>
 <p>Ouvre immédiatement la partition dans le visualiseur plein écran (mode concert).</p>
 </li>
 <li>
 <p><strong>✏️ Éditer la partition</strong> :</p>
 </li>
-<li>Ouvre la page d'édition détaillée :</li>
-</ol>
-<p style="text-align: center;">
-  <img src="../../images/Partitions_fr_4.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
-</p>
-
+<li>
+<p>Ouvre la page d'édition détaillée (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ScoreEditPage.xaml"><code>ScoreEditPage</code></a>) :</p>
 <ul>
-<li>
-<p><strong>Titre</strong> et <strong>Compositeur / Arrangeur</strong>.</p>
-</li>
-<li>
-<p><strong>Tonalité musicale</strong> (solfège classique <em>Do, Ré, Mi...</em> et international <em>A, B, C...</em>).</p>
-</li>
-<li>
-<p><strong>Tempo de référence (BPM)</strong> : valeur initiale pour le métronome.</p>
-</li>
-<li>
-<p><strong>Note (1 à 5 étoiles)</strong>.</p>
-</li>
-<li>
-<p><strong>Étiquettes (tags)</strong> : sélection dynamique (Pour créer des étiquettes, se rendre dans les Outils)</p>
-</li>
-<li>
-<p><strong>Accordéon Métronome</strong> : chiffrage de mesure (2/4, 3/4, 4/4, 6/8...), subdivision, pré-compte et coupure/activation du son par défaut.</p>
-</li>
-<li>
-<p><strong>Accordéon Pistes audio</strong> : association de fichiers audio d'accompagnement (MP3, WAV, etc.), pré-écoute et réglage du volume.</p>
-</li>
-<li>
-<p><strong>Informations techniques</strong> : chemin d'accès, taille, date de modification, date d'ajout et information si des annotations ont été faites sur cette partition.
-  A noter la présence d'un bouton pour réassigner le fichier en cas de déplacement.
-  En cas de modifications, n'oubliez pas de cliquer sur le bouton 'Enregistrer' pour sauvegarder vos modifications.</p>
-</li>
-<li><strong>📋 Ajouter dans un Setlist</strong> :</li>
-<li>Permet d'insérer instantanément la partition dans la setlist de votre choix.</li>
-<li><strong>Placement prioritaire en 1ère position</strong> (décalant les autres morceaux vers le bas).</li>
-<li>Gestion des setlists verrouillées.</li>
+<li><strong>Titre</strong> et <strong>Compositeur / Arrangeur</strong>.</li>
+<li><strong>Dossier / Catégorie</strong> (avec création à la volée <code>➕</code>).</li>
+<li><strong>Tonalité musicale</strong> (solfège classique <em>Do, Ré, Mi...</em> et international <em>A, B, C...</em>).</li>
+<li><strong>Tempo de référence (BPM)</strong> : valeur initiale pour le métronome.</li>
+<li><strong>Note (1 à 5 étoiles)</strong>.</li>
+<li><strong>Étiquettes (tags)</strong> : sélection dynamique.</li>
+<li><strong>Accordéon Métronome</strong> : chiffrage de mesure (2/4, 3/4, 4/4, 6/8...), subdivision, pré-compte et coupure/activation du son par défaut.</li>
+<li><strong>Accordéon Pistes audio</strong> : association de fichiers audio d'accompagnement (MP3, WAV, etc.), pré-écoute et réglage du volume.</li>
+<li><strong>Informations techniques</strong> : chemin d'accès, taille, date de modification, date d'ajout et présence d'annotations.</li>
 </ul>
-<blockquote>
-<ol>
-<li><strong>📑 Modifier l'assemblage PDF</strong> :</li>
-</ol>
-</blockquote>
-<ul>
-<li>Ouvre la partition directement dans l'<strong>Atelier d'Assemblage PDF</strong> pour réorganiser les pages, insérer une page blanche, supprimer des pages inutiles ou effectuer des rotations. Très pratique quand votre fichier pdf est mal organisé.
-  Vous pouvez retrouver cet outil directement dans le menu "Outils" aussi.
-  =&gt; Le détail des modifications d'assemblage est disponible plus en détail dans la partie "Outils"</li>
-</ul>
-<blockquote>
-<p>5.<strong>📡 Envoyer en Wi-Fi Direct</strong> :</p>
-</blockquote>
-<ul>
-<li>Ouvre une boîte modale d'options de partage vous permettant de cocher/décocher :</li>
-<li>☑️ <em>Inclure les annotations manuscrites</em> dessinées sur le document.</li>
-<li>☑️ <em>Inclure les pistes audio rattachées</em> (MP3/WAV).</li>
-<li>Lance la recherche immédiate des appareils à proximité en Wi-Fi Direct P2P.</li>
-<li>Il est juste nécessaire que la personne qui reçoit la partition aille dans "Outils", "Transfert Wi-Fi Direct" et clique sur "Activer la Réception"
-  La partition est immédiatement envoyées et incue dans le Music Score Manager de la personne qui reçoit !
-  =&gt; Le détail des envois/réceptions immédiates est disponible plus en détail dans la partie "Outils"</li>
-<li><strong>📦 Exporter la partition (.msmscore)</strong> :</li>
-<li>Génère une archive (=un fichier) autonome transportable avec un choix  d'options (annotations, pistes audio) d'export.</li>
-<li><strong>🏷️ Renommer la partition</strong> :</li>
-<li>Boîte de dialogue rapide pour changer le titre affiché sans entrer dans l'édition complète.</li>
-<li><strong>🗑️ Supprimer la partition</strong> :</li>
+</li>
+<li>
+<p><strong>📋 Ajouter dans un Setlist</strong> :</p>
+</li>
+<li>
+<p>Permet d'insérer instantanément la partition dans la setlist de votre choix (position prioritaire en tête de programme).</p>
+</li>
+<li>
+<p><strong>📁 Changer de dossier / catégorie</strong> :</p>
+</li>
+<li>
+<p>Ouvre la modale stylisée avec halo lumineux <code>📁</code> pour déplacer instantanément la partition vers un autre dossier existant ou en créer un nouveau.</p>
+</li>
+<li>
+<p><strong>📑 Modifier l'assemblage PDF</strong> :</p>
+</li>
+<li>
+<p>Ouvre la partition directement dans l'<strong>Atelier d'Assemblage PDF</strong> pour réorganiser les pages, insérer une page blanche, supprimer des pages inutiles ou effectuer des rotations.</p>
+</li>
+<li>
+<p><strong>📡 Envoyer en Wi-Fi Direct</strong> :</p>
+</li>
+<li>
+<p>Ouvre une boîte modale d'options de partage (annotations, pistes audio) et recherche immédiatement les appareils à proximité en Wi-Fi Direct P2P.</p>
+</li>
+<li>
+<p><strong>📦 Exporter la partition (.msmscore)</strong> :</p>
+</li>
+<li>
+<p>Génère une archive autonome transportable avec options d'export.</p>
+</li>
+<li>
+<p><strong>🏷️ Renommer la partition</strong> :</p>
+</li>
+<li>
+<p>Boîte de dialogue rapide pour changer le titre affiché sans entrer dans l'édition complète.</p>
+</li>
+<li>
+<p><strong>🗑️ Supprimer la partition</strong> :</p>
+</li>
 <li>Supprime la partition de votre bibliothèque avec demande de confirmation sécurisée.</li>
-</ul>
+</ol>
 
 
 
@@ -1157,10 +1143,10 @@ Si le fichier PDF associé a été déplacé, renommé sur le stockage ou est in
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>

@@ -27,7 +27,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
     
     
       
@@ -35,10 +35,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -867,6 +867,34 @@
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v310-24102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.0 — 24/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.0 — 24/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sauvegarde-complete-des-donnees-export-restauration-integrale-zip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Sauvegarde Complète des Données (Export &amp; Restauration Intégrale .zip)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2965,6 +2993,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v310-24102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.0 — 24/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.0 — 24/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sauvegarde-complete-des-donnees-export-restauration-integrale-zip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Sauvegarde Complète des Données (Export &amp; Restauration Intégrale .zip)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v303-22102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5038,6 +5094,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v310--24102026">v3.1.0 — 24/10/2026</a></li>
 <li><a href="#v303--22102026">v3.0.3 — 22/10/2026</a></li>
 <li><a href="#v302--21102026">v3.0.2 — 21/10/2026</a></li>
 <li><a href="#v301--21102026">v3.0.1 — 21/10/2026</a></li>
@@ -5065,6 +5122,24 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v310-24102026">v3.1.0 — 24/10/2026</h2>
+<h3 id="1-sauvegarde-complete-des-donnees-export-restauration-integrale-zip">1. Sauvegarde Complète des Données (Export &amp; Restauration Intégrale .zip)</h3>
+<ul>
+<li><strong>1.1. Nouveau chapitre « Sauvegarde complète des données » :</strong> Ajout dans <em>Outils &gt; Gestion des sauvegardes</em> d'une section dédiée à la sauvegarde tout-en-un de l'intégralité du logiciel.</li>
+<li><strong>1.2. Export global de la bibliothèque (.zip) :</strong> Sauvegarde complète de la base de données SQLite (<code>scores.db3</code>), de l'ensemble de l'arborescence des dossiers et partitions physiques PDF (<code>ScoresRootDirectory</code>), ainsi que de tous les fichiers audio rattachés (<code>AudioRootDirectory</code>), compressés dans une archive <code>.zip</code> horodatée (<code>MusicScoreManager_FullBackup_yyyyMMdd_HHmmss.zip</code>).</li>
+<li><strong>1.3. Sélection libre du dossier de destination :</strong> Proposé par défaut dans le répertoire <code>Download</code> (Téléchargements) de l'appareil avec affichage du chemin, modifiable à volonté vers un autre répertoire local, carte mémoire SD ou répertoire synchronisé dans le Cloud (Google Drive, pCloud, OneDrive, etc.).</li>
+<li><strong>1.4. Dialogue modal de progression bloquant &amp; Annulation sécurisée :</strong> Affichage d'une fenêtre de suivi en temps réel avec barre de progression, pourcentage exact et descriptif de l'étape courante. L'écran bloque toute interaction ou modification concurrente sur l'application pendant cette opération intensive, tout en offrant un bouton d'annulation (<code>Annuler</code>) nettoyant proprement les fichiers temporaires sans altérer les données.</li>
+<li><strong>1.5. Restauration complète (Erase / Replace) avec protection par étapes :</strong></li>
+<li>Sélection d'une archive <code>.zip</code> de sauvegarde.</li>
+<li>Alerte de confirmation explicite avec avertissement en rouge signalant le remplacement intégral des données actuelles.</li>
+<li>Décompression préalable en zone tampon temporaire (<em>staging</em>), vérification rigoureuse de l'intégrité de la base de données et des fichiers avant toute suppression.</li>
+<li>Remplacement complet et atomique de la base de données SQLite, des répertoires de partitions et des fichiers audio.</li>
+<li>Contrôle d'intégrité et validation post-restauration avec message récapitulatif du nombre de partitions et de fichiers audio restaurés avec succès.</li>
+<li><strong>1.6. Clarification de la gestion des sauvegardes :</strong></li>
+<li>Renommage de « Historique des sauvegardes » en « Historique des sauvegardes de la base de données ».</li>
+<li>Mise à jour du message d'avertissement de la sauvegarde rapide pour orienter clairement l'utilisateur vers la sauvegarde complète située plus bas.</li>
 </ul>
 <hr />
 <h2 id="v303-22102026">v3.0.3 — 22/10/2026</h2>
@@ -5856,10 +5931,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>

@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
     
     
       
@@ -37,10 +37,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -679,6 +679,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tiroir-des-outils-rapides-haut-droite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ Tiroir des Outils Rapides (Haut-Droite)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accordeur-haute-precision-multi-instruments-tuner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎛️ Accordeur Haute Précision Multi-Instruments (Tuner)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#menu-central-rapide-double-tap" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -987,6 +1009,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tiroir-des-outils-rapides-haut-droite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ Tiroir des Outils Rapides (Haut-Droite)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accordeur-haute-precision-multi-instruments-tuner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎛️ Accordeur Haute Précision Multi-Instruments (Tuner)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#menu-central-rapide-double-tap" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1087,6 +1131,44 @@
   - Annuler (Undo) / Rétablir (Redo)
   - Ouvrir le menu central / Quitter le lecteur</p>
 <hr />
+<h2 id="tiroir-des-outils-rapides-haut-droite">🛠️ Tiroir des Outils Rapides (Haut-Droite)</h2>
+<p>Touchez le coin supérieur droit de l'écran (ou l'icône <code>[ 🛠️ ]</code> si elle est activée dans les paramètres) pour ouvrir le <strong>Tiroir des Outils Rapides</strong>. Il permet de basculer instantanément en direct les composants scéniques sans interrompre la lecture :</p>
+<ol>
+<li><strong>✍️ Annotations</strong> : Active ou masque la barre d'annotations en bas de l'écran.</li>
+<li><strong>⏱️ Métronome</strong> : Déploie ou replie le métronome synchronisé.</li>
+<li><strong>🎧 Lecteur Audio</strong> : Affiche ou masque la barre de lecture audio d'accompagnement.</li>
+<li><strong>📄 Numéro de Page</strong> : Active ou masque l'indicateur de page en bas à droite.</li>
+<li><strong>🎛️ Accordeur</strong> : Ouvre l'accordeur flottant multi-instruments haute précision.</li>
+<li><strong>🏷️ Titre de la Partition</strong> : Affiche ou masque le bandeau supérieur avec le nom du morceau.</li>
+</ol>
+<p>Les modifications sont immédiatement réactives en temps réel sur la partition dès le clic sur une tuile.</p>
+<hr />
+<h2 id="accordeur-haute-precision-multi-instruments-tuner">🎛️ Accordeur Haute Précision Multi-Instruments (Tuner)</h2>
+<p>Music Score Manager intègre un accordeur de scène professionnel accessible directement pendant la répétition ou le concert sans quitter votre partition :</p>
+<ul>
+<li><strong>Boîte Flottante Amovible &amp; Déplaçable</strong> :</li>
+<li>Équipée d'une poignée tactile dédiée <code>⠿ Déplacer</code> et d'une détection gestuelle fluide : glissez l'accordeur n'importe où sur l'écran pour ne masquer aucune mesure importante de votre partition.</li>
+<li>Bouton de fermeture rapide <code>✕</code> en haut à droite.</li>
+<li><strong>Moteur DSP de Précision (Algorithme YIN)</strong> :</li>
+<li><strong>Détection YIN ($\theta = 0.15$)</strong> : calcul de la différence au carré cumulée normalisée $d'(\tau)$ pour une précision chirurgicale sans sauts d'octaves ni fausses harmoniques.</li>
+<li><strong>Filtre passe-bas 2 pôles (1200 Hz)</strong> : élimine les bruits de souffle, le grésillement des anches d'instruments à vent et les attaques de médiator.</li>
+<li><strong>Correction des sous-harmoniques &amp; octaves</strong> : verrouille la note fondamentale réelle même sur les instruments dont le fondamental est masqué par le 2ᵉ ou 3ᵉ harmonique (saxophones, cor, basson, hautbois, violoncelle, contrebasse).</li>
+<li><strong>Filtrage médian &amp; Lissage exponentiel (EMA)</strong> : aiguille des cents ultra-stable et sans scintillement visuel ($\alpha = 0.45$).</li>
+<li><strong>Étalonnage du Diapason (Fréquence de Référence A4)</strong> :</li>
+<li>Référence réglable avec précision : Baroque (415 Hz), Diapason naturel (432 Hz), Standard international (440 Hz), Orchestre symphonique (442 Hz), et jusqu'à 444 Hz.</li>
+<li><strong>Large Palette d'Instruments &amp; Presets Dédiés</strong> :</li>
+<li><strong>Accordeur Chromatique Universel</strong> : détecte toutes les notes de la gamme tempérée avec affichage de la fréquence exacte en Hz.</li>
+<li><strong>Guitares &amp; Basses</strong> : Guitare standard (E A D G B E), Basse 4 cordes (E A D G), Basse 5 cordes (B E A D G).</li>
+<li><strong>Cordes Frottées &amp; Traditionnelles</strong> : Violon (G D A E), Alto (C G D A), Violoncelle (C G D A), Contrebasse (E A D G), Ukulélé (G C E A), Banjo 5 cordes (Open G).</li>
+<li><strong>Saxophones (Quatuor complet)</strong> : Saxophone Alto (Mi♭), Saxophone Ténor (Si♭), Saxophone Baryton (Mi♭), Saxophone Soprano (Si♭).</li>
+<li><strong>Cuivres &amp; Harmonies</strong> : Trompette &amp; Clarinette (Si♭), Cor d'harmonie (Fa), Trombone / Euphonium / Tuba (Ut - Clé de Fa).</li>
+<li><strong>Bois</strong> : Flûte traversière (Ut), Hautbois &amp; Basson (Ut, avec le <strong>La 440 Hz du Hautbois</strong> comme référence symphonique).</li>
+<li><strong>Chant &amp; Voix humaine</strong> : Tessitures et vocalises adaptées (Basse, Baryton, Ténor, Alto, Mezzo, Soprano).</li>
+<li><strong>Indicateur Visuel Intuitif</strong> :</li>
+<li>Cadran gradué de -50 à +50 cents avec code couleur dynamique (Vert = parfaitement accordé, Ambre/Rouge = trop bas ou trop haut).</li>
+<li>Double affichage du nom de la note (international <em>A, B, C...</em> et solfège <em>Do, Ré, Mi...</em>), indice d'octave et fréquence en Hz.</li>
+</ul>
+<hr />
 <h2 id="menu-central-rapide-double-tap">🎛️ Menu Central Rapide (Double-Tap)</h2>
 <p>Faites un <strong>double-clic ou double-tap au centre de l'écran</strong> pour afficher le menu d'actions rapides sans quitter votre partition :</p>
 <ol>
@@ -1105,8 +1187,12 @@
 </ol>
 <hr />
 <h2 id="boite-a-outils-dannotation-complete">✍️ Boîte à Outils d'Annotation Complète</h2>
-<p>La barre d'annotation peut être translatée verticalement sur l'écran par glissement (<em>pan</em>), avec boîtes d'options secondaires collées au-dessus :</p>
+<p>La barre d'annotation se déploie depuis le bas de l'écran et s'adapte à vos mouvements :</p>
 <ul>
+<li><strong>Poignée de Déplacement Dédiée (<code>⠿</code>)</strong> :</li>
+<li>Située à gauche de la barre, la poignée <code>⠿</code> permet de faire glisser verticalement l'ensemble des outils d'annotation sur l'écran sans aucun conflit avec le défilement horizontal des crayons et stickers.</li>
+<li><strong>Adaptation Mobile &amp; Tablettes</strong> :</li>
+<li>Sur smartphone, la croix de fermeture <code>✕</code> est ancrée de façon fixe à droite pour rester constamment cliquable quelle que soit la largeur d'écran.</li>
 <li><strong>🖌️ Surligneur Fluo (Stabilo)</strong> :</li>
 <li>Rendu translucide naturel à bords biseautés droits (<code>PenLineCap.Flat</code>).</li>
 <li>4 teintes fluo (jaune, vert, bleu, rose) et 3 largeurs (5 mm, 10 mm, 18 mm).</li>
@@ -1123,7 +1209,7 @@
 <li>Verrouillage automatique systématique à l'ouverture pour sanctuariser la partition contre toute fausse manipulation.</li>
 <li>Déverrouillage automatique au choix d'un outil d'édition.</li>
 <li>Re-verrouillage automatique à la fermeture de la barre (bouton ✕).</li>
-<li><strong>✧ Nettoyage Général</strong> : Réinitialise toutes les annotations de la page.</li>
+<li><strong>✧ Nettoyage Général</strong> : Réinitialise toutes les annotations de la page avec confirmation de sécurité.</li>
 <li><strong>🗑️ Suppression Ciblée</strong> : Sélection tactile d'une annotation existante pour la supprimer au doigt ou par double-tap.</li>
 </ul>
 <hr />
@@ -1141,6 +1227,7 @@
 <li>Prise en charge des fichiers MP3, WAV, AAC, FLAC rattachés.</li>
 <li>Barre de transport compacte avec bouton Lecture/Pause.</li>
 <li>Slider de progression avec affichage du temps écoulé et temps total.</li>
+<li>Amovible et déplaçable librement sur l'écran.</li>
 </ul>
 
 
@@ -1197,10 +1284,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>

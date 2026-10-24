@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
     
     
       
@@ -37,10 +37,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -1198,16 +1198,30 @@
 <ul>
 <li><strong>Tri par défaut à l'ouverture</strong> :</li>
 <li>Définissez quel ordre de tri s'applique dès le lancement de l'application (<em>Date d'ajout plus récent, plus ancien, Titre A-Z / Z-A, Date de modification, Évaluation par étoiles, Compositeur A-Z, ou Sans étiquette d'abord</em>).</li>
+<li><strong>Mode d'affichage par défaut (Liste vs Dossiers)</strong> :</li>
+<li>Choisissez si la bibliothèque s'ouvre par défaut en <strong>Vue en Liste classique</strong> ou en <strong>Vue par Dossiers / Catégories</strong>.</li>
+<li><strong>Mode d'importation par défaut (Copie locale vs Lien externe)</strong> :</li>
+<li>Définissez le comportement par défaut lors de l'ajout de nouveaux fichiers : <em>Copier vers la bibliothèque (conseillé)</em> ou <em>Lier le fichier original (externe)</em>.</li>
 <li><strong>Partitions sans compositeur en premier (Switch On/Off)</strong> :</li>
 <li>Lors d'un tri par compositeur, choisissez si les morceaux dont le champ compositeur est vide apparaissent au tout début (On) ou à la fin de l'ordre alphabétique (Off, comportement par défaut).</li>
 </ul>
 <p>AFFICHAGE</p>
 <ul>
+<li><strong>Informations sous le titre de la partition</strong> :</li>
 <li>
-<p><strong>Informations sous le titre de la partition</strong> :</p>
+<p>Personnalisez et réordonnez les informations affichées sous chaque titre dans la bibliothèque par <strong>glisser-déposer (Drag &amp; Drop)</strong> ou boutons ▲ / ▼ (<em>Date d'ajout</em>, <em>Compositeur</em>, <em>Nombre de pages</em>, <em>Dossier / Catégorie</em> <code>📁 [NomDossier]</code>), avec activation individuelle par cases à cocher et encadré d'aperçu en direct.</p>
 </li>
 <li>
-<p>Personnalisez et réordonnez les informations affichées sous chaque titre dans la bibliothèque par <strong>glisser-déposer (Drag &amp; Drop)</strong> ou boutons ▲ / ▼ (<em>Date d'ajout</em>, <em>Compositeur</em>, <em>Nombre de pages</em>), avec activation individuelle par cases à cocher et encadré d'aperçu en direct.</p>
+<p><strong>Index alphabétique rapide A-Z (Switch On/Off)</strong> :</p>
+</li>
+<li>
+<p>Active ou masque la réglette alphabétique latérale sur le bord droit de la liste des partitions.</p>
+</li>
+<li>
+<p><strong>Bouton flottant Haut de page (▲) (Switch On/Off)</strong> :</p>
+</li>
+<li>
+<p>Active ou masque le bouton circulaire flottant permettant de remonter au sommet de la bibliothèque en un clic.</p>
 </li>
 <li>
 <p><strong>Affichage du numéro de la page actuelle (Switch On/Off)</strong> :</p>
@@ -1216,10 +1230,22 @@
 <p>Affiche ou masque la pastille discrète indiquant la page en cours (ex : <em>Page 3 / 12</em>) en bas à droite de l'écran pendant le jeu.</p>
 </li>
 <li>
+<p><strong>Taille d'affichage du numéro de page</strong> :</p>
+</li>
+<li>
+<p>Curseur réglable de <strong>10 px à 40 px</strong> avec aperçu direct de la taille pour adapter la lisibilité du compteur à votre distance de lecture du pupitre.</p>
+</li>
+<li>
 <p><strong>Afficher l'icône de boîte à outils haut-droite (Switch On/Off, par défaut Off)</strong> :</p>
 </li>
 <li>
 <p>Affiche ou masque l'icône visuelle <code>[ 🛠️ ]</code> dans le coin supérieur droit. La zone tactile secrète d'ouverture du tiroir reste toujours active quel que soit ce réglage.</p>
+</li>
+<li>
+<p><strong>Affichage du titre de la partition tout en haut (Switch On/Off)</strong> :</p>
+</li>
+<li>
+<p>Affiche ou masque le bandeau supérieur discret rappelant le titre du morceau dans le visualiseur.</p>
 </li>
 <li>
 <p><strong>Affichage 2 pages en mode paysage (Switch On/Off)</strong> :</p>
@@ -1230,15 +1256,7 @@
 <li>
 <p><strong>Garder l'écran allumé pendant la lecture (Switch On/Off)</strong> :</p>
 </li>
-<li>
-<p>Permet d'empecher l'assombrissement et la mise en veille automatique pendant la consultation d'une partition</p>
-</li>
-<li>
-<p><strong>Taille d'affichage du numéro de page</strong> :</p>
-</li>
-<li>
-<p>Curseur réglable de <strong>10 px à 40 px</strong> avec aperçu direct de la taille pour adapter la lisibilité du compteur à votre distance de lecture du pupitre.</p>
-</li>
+<li>Permet d'empêcher l'assombrissement et la mise en veille automatique pendant la consultation d'une partition.</li>
 </ul>
 <p>ERGONOMIE</p>
 <ul>
@@ -1348,8 +1366,23 @@ Rendez-vous dans les réglages Android de la tablette &gt; <strong>Système</str
 </li>
 <li>
 <p>Traduction instantanée dynamique de l'ensemble de l'interface.
-    Nota : la langue prise par l'application est par défault celle qui est actuellement utilisée par l'OS de votre tablette/téléphone.
+    Nota : la langue prise par l'application est par défaut celle qui est actuellement utilisée par l'OS de votre tablette/téléphone.
     Si la langue n'est pas prise en charge, elle se positionnera automatiquement sur l'anglais.</p>
+</li>
+<li>
+<p><strong>⚙️ Comportement de l'Application</strong> :</p>
+</li>
+<li>
+<p><strong>Afficher le menu « Quitter » dans la barre de navigation (Switch On/Off)</strong> :</p>
+<ul>
+<li>Permet d'afficher ou masquer l'onglet « Quitter » dans la barre d'onglets principale en bas de l'écran. Idéal si vous utilisez la navigation gestuelle Android ou préférez une barre d'onglets épurée.</li>
+</ul>
+</li>
+<li>
+<p><strong>Demander confirmation avant de quitter (Switch On/Off)</strong> :</p>
+<ul>
+<li>Affiche une boîte de dialogue de confirmation sécurisée avant de fermer l'application pour éviter toute sortie accidentelle.</li>
+</ul>
 </li>
 <li>
 <p><strong>📊 Statistiques de la Bibliothèque &amp; Métriques de Stockage</strong> :</p>
@@ -1358,7 +1391,7 @@ Rendez-vous dans les réglages Android de la tablette &gt; <strong>Système</str
 <p>Nombre total de partitions PDF enregistrées.</p>
 </li>
 <li>Espace disque total occupé par vos partitions PDF (en Mo).</li>
-<li><strong>Espace disponible sur le stockage</strong> : Capacité mémoire libre restante sur l'appareil. (en Go)</li>
+<li><strong>Espace disponible sur le stockage</strong> : Capacité mémoire libre restante sur l'appareil (en Go).</li>
 <li>
 <p><strong>Taille de la base de données</strong> : Espace occupé par SQLite (<code>scores.db3</code> + journaux WAL/SHM).</p>
 </li>
@@ -1439,10 +1472,10 @@ Rendez-vous dans les réglages Android de la tablette &gt; <strong>Système</str
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>

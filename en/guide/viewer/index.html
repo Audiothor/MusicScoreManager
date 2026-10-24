@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
     
     
       
@@ -37,10 +37,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -679,6 +679,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#quick-tools-drawer-top-right" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ Quick Tools Drawer (Top-Right)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#high-precision-multi-instrument-tuner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎛️ High-Precision Multi-Instrument Tuner
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#central-quick-menu-double-tap" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -987,6 +1009,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#quick-tools-drawer-top-right" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ Quick Tools Drawer (Top-Right)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#high-precision-multi-instrument-tuner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎛️ High-Precision Multi-Instrument Tuner
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#central-quick-menu-double-tap" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1087,6 +1131,44 @@
   - Undo / Redo annotations
   - Open central menu / Close viewer</p>
 <hr />
+<h2 id="quick-tools-drawer-top-right">🛠️ Quick Tools Drawer (Top-Right)</h2>
+<p>Tap the top-right corner of the screen (or the <code>[ 🛠️ ]</code> icon if enabled in settings) to open the <strong>Quick Tools Drawer</strong>. It lets you toggle stage components instantaneously in real time without interrupting playback:</p>
+<ol>
+<li><strong>✍️ Annotations</strong>: Shows or hides the bottom annotation toolbar.</li>
+<li><strong>⏱️ Metronome</strong>: Expands or collapses the synchronized visual metronome.</li>
+<li><strong>🎧 Audio Player</strong>: Shows or hides the floating backing track transport bar.</li>
+<li><strong>📄 Page Number</strong>: Toggles the bottom-right page indicator.</li>
+<li><strong>🎛️ Tuner</strong>: Launches the floating multi-instrument precision tuner.</li>
+<li><strong>🏷️ Score Title</strong>: Toggles the top title bar showing the active piece name.</li>
+</ol>
+<p>All toggles update live dynamically on screen immediately upon tapping.</p>
+<hr />
+<h2 id="high-precision-multi-instrument-tuner">🎛️ High-Precision Multi-Instrument Tuner</h2>
+<p>Music Score Manager includes a professional stage-grade chromatic tuner accessible directly during rehearsals or live performances without leaving your score:</p>
+<ul>
+<li><strong>Movable &amp; Draggable Floating Panel</strong>:</li>
+<li>Equipped with a dedicated tactile drag handle <code>⠿ Move</code> and smooth pan gesture: reposition the tuner anywhere on screen so it never covers critical bars or notes.</li>
+<li>Fast-close <code>✕</code> button in the top right.</li>
+<li><strong>State-of-the-Art DSP Engine (YIN Algorithm)</strong>:</li>
+<li><strong>YIN Pitch Detection ($\theta = 0.15$)</strong>: Computes cumulative mean normalized difference $d'(\tau)$ for pinpoint pitch accuracy, eradicating octave jumping and false harmonics.</li>
+<li><strong>2-Pole Low-Pass Filter (1200 Hz)</strong>: Eliminates breath noise, reed sizzle on woodwinds, and sharp pick attack transients.</li>
+<li><strong>Smart Sub-Harmonic &amp; Octave Correction</strong>: Resolves fundamental masking common to acoustic instruments whose fundamental ($f_0$) is overshadowed by the 2nd or 3rd harmonic (saxophones, French horn, bassoon, oboe, cello, double bass).</li>
+<li><strong>Sliding Median Filter &amp; Exponential Needle Smoothing (EMA)</strong>: Rock-solid cents needle response with zero visual jitter ($\alpha = 0.45$).</li>
+<li><strong>Diapason Reference Calibration (A4 Frequency)</strong>:</li>
+<li>Fine-tune reference pitch from Baroque (415 Hz), Natural pitch (432 Hz), International standard (440 Hz), Symphonic orchestra (442 Hz), up to 444 Hz.</li>
+<li><strong>Extensive Instrument Library &amp; Tailored Presets</strong>:</li>
+<li><strong>Universal Chromatic Tuner</strong>: Detects all 12 semitones across all octaves with exact frequency readout in Hz.</li>
+<li><strong>Guitars &amp; Basses</strong>: Standard Guitar (E A D G B E), 4-string Bass (E A D G), 5-string Bass (B E A D G).</li>
+<li><strong>Bowed Strings &amp; Folk</strong>: Violin (G D A E), Viola (C G D A), Cello (C G D A), Double Bass (E A D G), Ukulele (G C E A), 5-string Banjo (Open G).</li>
+<li><strong>Saxophone Family (Full Quartet)</strong>: Alto Saxophone (in E♭), Tenor Saxophone (in B♭), Baritone Saxophone (in E♭), Soprano Saxophone (in B♭).</li>
+<li><strong>Brass &amp; Harmony Winds</strong>: Trumpet &amp; Clarinet (in B♭), French Horn (in F), Trombone / Euphonium / Tuba (in C - Bass Clef).</li>
+<li><strong>Woodwinds</strong>: Concert Flute (in C), Oboe &amp; Bassoon (in C, including the <strong>Oboe A 440 Hz benchmark</strong> for orchestral tuning).</li>
+<li><strong>Vocals &amp; Singing</strong>: Dedicated singing ranges and warmup benchmark notes (Bass, Baritone, Tenor, Alto, Mezzo, Soprano).</li>
+<li><strong>Intuitive Visual Gauge</strong>:</li>
+<li>Calibrated cents arc (-50 to +50 cents) with dynamic color feedback (Green = in tune, Amber/Red = flat or sharp).</li>
+<li>Dual note name display (Standard <em>A, B, C...</em> and classical Solfège <em>Do, Ré, Mi...</em>), octave index, and precise live frequency in Hz.</li>
+</ul>
+<hr />
 <h2 id="central-quick-menu-double-tap">🎛️ Central Quick Menu (Double-Tap)</h2>
 <p><strong>Double-tap at the center of the screen</strong> to open the quick action menu without leaving your score:</p>
 <ol>
@@ -1105,8 +1187,12 @@
 </ol>
 <hr />
 <h2 id="complete-annotation-suite">✍️ Complete Annotation Suite</h2>
-<p>The annotation toolbar can be dragged vertically across the screen (<em>Pan</em>), with secondary option boxes magnetically docked directly above:</p>
+<p>The annotation toolbar expands from the bottom of the screen and adapts effortlessly to your movements:</p>
 <ul>
+<li><strong>Dedicated Vertical Pan Handle (<code>⠿</code>)</strong>:</li>
+<li>Located at the left of the toolbar, the <code>⠿</code> handle allows smooth vertical sliding across the screen without conflicting with horizontal tool scrolling.</li>
+<li><strong>Smartphone &amp; Mobile Responsiveness</strong>:</li>
+<li>On phones, the close button <code>✕</code> is fixed to the right edge so it remains instantly accessible regardless of screen width.</li>
 <li><strong>🖌️ Chiseled Highlighter (Stabilo)</strong>:</li>
 <li>Natural translucent stroke with flat, chiseled ends (<code>PenLineCap.Flat</code>).</li>
 <li>4 vibrant colors (yellow, green, blue, pink) and 3 widths (5 mm, 10 mm, 18 mm).</li>
@@ -1123,7 +1209,7 @@
 <li>Automatically locks by default on score open to safeguard the score from unwanted touches during live play.</li>
 <li>Automatically unlocks when selecting an editing tool.</li>
 <li>Automatically relocks when closing the toolbar (cross button ✕).</li>
-<li><strong>✧ Clear Page</strong>: Reset all annotations on the current page with one tap.</li>
+<li><strong>✧ Clear Page</strong>: Reset all annotations on the current page with safety confirmation.</li>
 <li><strong>🗑️ Targeted Delete</strong>: Touch any existing sticker or text to modify or delete it.</li>
 </ul>
 <hr />
@@ -1141,6 +1227,7 @@
 <li>Supports attached MP3, WAV, AAC, and FLAC accompaniment tracks.</li>
 <li>Compact transport bar with Play/Pause button.</li>
 <li>Scrubbing progress slider with elapsed time and total duration display.</li>
+<li>Floating and freely draggable anywhere on the screen.</li>
 </ul>
 
 
@@ -1197,10 +1284,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>
