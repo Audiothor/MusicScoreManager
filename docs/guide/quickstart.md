@@ -43,17 +43,21 @@ Dès l'ouverture de l'application, rendez-vous dans le menu **Partitions** (dans
 
 ---
 
-## Étape 2 : Organiser sa bibliothèque avec des Étiquettes (Tags)
+## Étape 2 : Organiser sa bibliothèque avec des Dossiers et des Étiquettes
 
 Pour retrouver vos morceaux instantanément parmi des centaines de partitions :
 
-1. Vous pouvez créer vos propres étiquettes avec leur couleur personnalisée via le menu **Paramètres >  Gérer la liste des étiquettes** : attribuez une classification et une couleur pour pouvoir l'assigner à vos partitions.
-   Une partition peut bien entendu avoir plusieurs étiquettes !
-2. Pour assigner une ou plusieurs étiquettes à une partitions, éditez là : dans **Partitions**, appuyez sur les **trois petits points `⋮`** sur une partition, puis choisissez **`Éditer la partition`**.
-3. Attribuez une ou plusieurs étiquettes de couleur que vous avez créés précédement (ex: *Chant*, *Piano*, *Jazz*, *Concert Noël*, *Répétition*).
-   Vous pouvez définir plein de fonctionnalités à votre partition.
-   N'oubliez pas de sauvegarder !
-4. Utilisez la barre de recherche en haut pour filtrer instantanément par **Titre**, **Compositeur** ou en sélectionnant la recherche par **Étiquettes** ou **Trier**
+1. **Dossiers & Catégories (Organisation thématique)** :
+   - Basculez à tout moment entre la **Vue Liste** et la **Vue Dossiers** grâce au bouton `📁` en haut de l'écran.
+   - Attribuez chaque partition à un dossier (ex: *Classique*, *Jazz*, *Chorale*, *Études*...) depuis sa fiche d'édition ou via le menu contextuel `📁 Changer de dossier`. Vous pouvez créer de nouveaux dossiers à la volée avec le bouton `➕`.
+2. **Étiquettes colorées (Tags transversaux)** :
+   - Créez vos propres étiquettes avec leur couleur personnalisée via **Outils > Gestion des étiquettes** (ou *Paramètres > Gérer la liste des étiquettes*).
+   - Une partition peut avoir plusieurs étiquettes (ex: *Chant*, *Piano*, *Noël*).
+3. **Éditer les métadonnées d'une partition** :
+   - Dans **Partitions**, appuyez sur les **trois petits points `⋮`** sur une partition, puis choisissez **`Éditer la partition`**.
+   - Définissez le titre, le compositeur, la catégorie, les étiquettes, la tonalité, le tempo initial et la note.
+   - N'oubliez pas de sauvegarder !
+4. Utilisez la barre de recherche en haut pour filtrer instantanément par **Titre**, **Compositeur**, ou filtrez par **Dossier** et **Étiquettes**.
 
 ---
 
@@ -62,19 +66,15 @@ Pour retrouver vos morceaux instantanément parmi des centaines de partitions :
 Touchez simplement une partition dans la liste pour lancer le **Visualiseur plein écran**.
 
 - **Tourner les pages** :
-  
-  - **Glissement** : Balayez le tiers droit de l'écran pour avancer (page suivante), le tiers gauche pour reculer (page précédente).
-
-- **Pédalier sans fil** : Appairez votre pédale Bluetooth (AirTurn, PageFlip, Donner, etc.). Tourner les pages fonctionne directement sans configuration préalable. Toutefois si votre pédale ne répond pas comme vous le souhaitez, vous pouvez la configurer complètement par rapport aux actions que vous désirez !
-
+  - **Glissement / Toucher** : Balayez le tiers droit de l'écran pour avancer (page suivante), le tiers gauche pour reculer (page précédente).
+- **Pédalier sans fil** :
+  - Appairez votre pédale Bluetooth (AirTurn, PageFlip, Donner, etc.). Tourner les pages fonctionne directement sans configuration préalable. Vous pouvez également personnaliser chaque bouton dans les Paramètres !
 - **Afficher / Masquer les commandes** :
-  
-  - Touchez le **centre** de l'écran par double clic pour faire apparaître le menu d'actions rapides
-  - Touchez le **bas** de l'écran pour faire apparaitre le menu des annotations
-  - Touchez en **haut à droite** de l'écran pour faire apparaitre la boîte à outils pour les affichage d'ptions ou de fonctionnalités multiples !
-  - Sur cette même page il est possible d'afficher le métronome (il sera en haut à droite, fixe), un lecteur audio (en haut à gauche (amovible), et dans le cas d'une lecture de Setlist, le status du déroulement (en haut au centre)
-
-- **Quitter la partition en cours** : allez dans le menu central (double clic) et choisir "Retour à l'accueil"
+  - Touchez le **centre** de l'écran par double-tap pour faire apparaître le menu d'actions rapides (rotations, taille 100%, saut de page...).
+  - Touchez le **bas** de l'écran pour faire apparaître la barre d'annotations (avec poignée de déplacement vertical `⠿`).
+  - Touchez en **haut à droite** de l'écran (ou l'icône `[ 🛠️ ]`) pour ouvrir le **Tiroir des Outils Rapides** : activez/désactivez en 1 clic le métronome, le lecteur audio, les annotations, le titre en haut, le numéro de page, et l'**Accordeur multi-instruments haute précision** amovible !
+- **Quitter la partition en cours** :
+  - Ouvrez le menu central (double-tap) et choisissez **« Retour à l'accueil »**.
 
 ---
 

@@ -14,18 +14,19 @@ The app completely replaces heavy physical sheet music binders and generic PDF v
 
 ---
 
-## 1.2 Top 10 Highlights of Music Score Manager
+## 1.2 Top Highlights of Music Score Manager
 
-1. **Secure & Immersive Stage Viewer**: Strict editing lock during performance (`🔒`), screen keep-awake, and night color inversion (white notes on black background for pit orchestras).
-2. **Powerful Setlist Management with Live Progress Drawer**: Automatic seamless transition between songs, duplicate score support (encores, reprises), 1-tap duplication (`⧉`), and collapsible stage drawer with automatic centering on the current piece.
-3. **P2P Wireless Sharing via Wi-Fi Direct & Hotspot (No Internet)**: Direct tablet-to-tablet transfers in backstage without a router, transferring complete packages including annotations and audio files, with Leader QR Code mode.
-4. **Universal Bluetooth Page-Turner Pedal Support**: Compatible with all major market pedals (AirTurn, PageFlip, Donner, CubeSuite...) with fully customizable physical key mapping.
-5. **Musical Annotation Suite & 100+ Stickers**: Translucent chiseled highlighter, fine/opaque pencil, free text, 100+ categorized musical symbols, and unlimited Undo/Redo.
-6. **Zero-Drift High-Precision Metronome**: Real-time thread-safe regulated clock (`Stopwatch` + `SpinWait`), low-latency Android audio (`SoundPool`), synchronized LED pulse, and on-the-fly sound mute while keeping the visual flash.
-7. **Synchronized Audio Backing Track Player**: Link multiple audio tracks (MP3, WAV, AAC, FLAC, OGG) to each score, with compact player bar integrated into the viewer and adjustable pre-count.
-8. **Smart Import & Multi-Image to PDF Fusion**: Strict binary `%PDF-` verification, photo conversion with blocking progress modal, and automatic multi-photo merging into a single multi-page PDF document.
-9. **Built-in PDF Assembler Studio**: Touch drag-and-drop page reordering, individual page rotation (90°, 180°, 270°), blank page removal, and page insertion without external software.
-10. **Dynamic Categorization & Multi-Tag Filtering (AND / OR Mode)**: Customizable colored tags, instant title/composer search, and multi-tag filtering with interactive switch between intersection and union.
+1. **Secure & Immersive Stage Viewer**: Strict editing lock during performance (`🔒`), screen keep-awake, 2-page landscape view, and night color inversion for pit orchestras.
+2. **Built-in Multi-Instrument Chromatic Tuner (YIN Algorithm)**: Floating, draggable stage tuner powered by the benchmark YIN DSP engine ($\theta = 0.15$), 1200 Hz low-pass filter, and harmonic correction for all instruments (guitars, basses, strings, full saxophone family, brass, flute, oboe A 440 Hz reference, vocals).
+3. **Physical Folder & Category Architecture**: Dual display mode (List View ⇄ Folders View), automatic disk-level sub-directory sync, and 1-tap bulk category assignment.
+4. **High-Definition Paper Score Scanner**: Direct music stand digitization with camera or gallery import, high-contrast B&W enhancement filters, and immediate multi-page PDF generation.
+5. **Powerful Setlist Management with Live Progress Drawer**: Automatic seamless transition between songs, 1-tap duplication (`⧉`), dedicated Bluetooth pedal profiles per setlist, and collapsible progress drawer.
+6. **P2P Wireless Sharing via Wi-Fi Direct & Hotspot (No Internet)**: Direct tablet-to-tablet transfers in backstage without a router, transferring complete packages including annotations and audio files, with Leader QR Code mode.
+7. **Universal Bluetooth Page-Turner Pedal & MIDI Support**: Compatible with all major market pedals (AirTurn, PageFlip, Donner, Joyo, USB/Bluetooth MIDI controllers...) with auto-learn and anti-double-jump debounce protection.
+8. **Musical Annotation Suite & 100+ Stickers**: Translucent chiseled highlighter, fine/opaque pencil, free text, tactile size slider, 100+ categorized musical symbols, and unlimited Undo/Redo.
+9. **Zero-Drift High-Precision Metronome**: Real-time thread-safe regulated clock (`Stopwatch` + `SpinWait`), low-latency Android audio (`SoundPool`), synchronized LED pulse, and on-the-fly sound mute.
+10. **Synchronized Audio Backing Track Player & PDF Assembler Studio**: Link accompaniment audio tracks (MP3, WAV, AAC, FLAC), and built-in studio to reorder, rotate, clone, or insert blank pages in your PDFs.
+11. **Dynamic Categorization & Multi-Tag Filtering**: Customizable colored tags, instant title/composer search, and multi-tag filtering with fast category switching.
 
 ---
 

@@ -22,18 +22,19 @@ Evidement un format inférieur peut tout à fait convenir, c'est juste une histo
 
 ---
 
-## 1.2 Les 10 Points Forts de Music Score Manager
+## 1.2 Les Points Forts Incontournables de Music Score Manager
 
-1. **Visualiseur de Scène Sécurisé & Immersif** : Verrouillage strict anti-fausses manipulations (`🔒`), maintien de l'écran éveillé, et mode sombre / inversion des couleurs (partition blanche sur fond noir pour jouer en fosse d'orchestre sans éblouir).
-2. **Gestion Puissante des Setlists avec Dérouleur Live** : Enchaînement continu automatique entre morceaux, autorisation des doublons (rappels, reprises), duplication instantanée (`⧉`), et volet scénique rétractable avec centrage automatique sur le morceau en cours.
-3. **Partage P2P sans fil en Wi-Fi Direct & Hotspot (Sans Internet)** : Échange direct de tablette à tablette en coulisses sans box ni routeur, transmission complète avec annotations et fichiers audio, et mode Leader avec QR Code.
-4. **Prise en Charge Totale des Pédales Bluetooth / Tourne-Pages** : Compatibilité universelle (AirTurn, PageFlip, Donner, CubeSuite...) et mappage personnalisé des touches physiques (tourne de page, métronome, lecteur audio).
-5. **Atelier d'Annotations Musicales & Bibliothèque de Stickers (+100 symboles)** : Surligneur fluo biseauté translucide, crayon fin/opaque, texte libre, plus de 100 stickers classés (doigtés, nuances, reprises, respirations) et historique Undo/Redo illimité.
-6. **Métronome Haute Précision à Dérive Nulle** : Horloge temps-réel régulée thread-safe (`Stopwatch` + `SpinWait`), son Android basse latence (`SoundPool`), pulsation LED synchronisée et coupure du son à la volée pour garder le signal visuel.
-7. **Lecteur Audio Multipiste Synchronisé** : Rapprochement de pistes d'accompagnement (MP3, WAV, AAC, FLAC, OGG), barre de lecture compacte intégrée au visualiseur et pré-compte réglable.
-8. **Import Intelligent & Fusion d'Images en PDF Haute Définition** : Contrôle strict de l'intégrité binaire `%PDF-`, conversion de photos avec modal bloquant d'avancement et fusion automatique de plusieurs photos en un unique document PDF multi-pages.
-9. **Atelier d'Assemblage PDF Embarqué** : Réorganisation des pages par glisser-déposer tactile, rotation individuelle (90°, 180°, 270°), suppression de pages blanches et insertion de nouvelles pages sans outil externe.
-10. **Classification Dynamique & Filtrage Multi-Étiquettes (Mode ET / OU)** : Pastilles colorées personnalisables, recherche instantanée par titre ou compositeur, et filtrage croisé par plusieurs étiquettes avec choix interactif entre intersection et union.
+1. **Visualiseur de Scène Sécurisé & Immersif** : Verrouillage strict anti-fausses manipulations (`🔒`), maintien de l'écran éveillé, affichage 2 pages en paysage, et mode sombre / inversion des couleurs (partition blanche sur fond noir pour jouer en fosse d'orchestre sans éblouir).
+2. **Accordeur Multi-Instruments Intégré (Algorithme YIN)** : Accordeur de scène flottant et déplaçable, doté du moteur DSP de pointe YIN ($\theta = 0.15$), d'un filtrage passe-bas 1200 Hz et d'une correction d'harmoniques pour tous les instruments (guitares, basses, cordes, quatuor de saxophones, cuivres, flûte, hautbois La 440 Hz, chant).
+3. **Organisation par Dossiers & Catégories Physiques** : Double mode d'affichage Vue Liste ⇄ Vue Dossiers, synchronisation physique des répertoires sur le disque de stockage, et attribution fluide en un clic.
+4. **Scanner de Partitions Papier Haute Définition** : Numérisation directe depuis le pupitre avec caméra ou galerie, filtres d'amélioration N&B haute visibilité et compilation PDF multi-pages immédiate.
+5. **Gestion Puissante des Setlists avec Dérouleur Live** : Enchaînement continu automatique entre morceaux, duplication instantanée (`⧉`), profil de pédalier dédié par setlist, et volet scénique rétractable avec centrage automatique sur le morceau en cours.
+6. **Partage P2P sans fil en Wi-Fi Direct & Hotspot (Sans Internet)** : Échange direct de tablette à tablette en coulisses sans box ni routeur, transmission complète avec annotations et fichiers audio, et mode Leader avec QR Code.
+7. **Prise en Charge Totale des Pédales Bluetooth / Tourne-Pages & MIDI** : Compatibilité universelle (AirTurn, PageFlip, Donner, Joyo, contrôleurs MIDI USB/Bluetooth...) avec apprentissage direct et protection anti-rebond.
+8. **Atelier d'Annotations Musicales & Bibliothèque de Stickers (+100 symboles)** : Surligneur fluo biseauté translucide, crayon fin/opaque, texte libre, réglette tactile de taille, plus de 100 stickers classés (doigtés, nuances, reprises, respirations) et historique Undo/Redo illimité.
+9. **Métronome Haute Précision à Dérive Nulle** : Horloge temps-réel régulée thread-safe (`Stopwatch` + `SpinWait`), son Android basse latence (`SoundPool`), pulsation LED synchronisée et coupure du son à la volée.
+10. **Lecteur Audio Synchronisé & Atelier d'Assemblage PDF** : Pistes d'accompagnement rattachées (MP3, WAV, AAC, FLAC), atelier complet pour réordonner, pivoter, dupliquer ou insérer des pages blanches dans vos PDF.
+11. **Classification Dynamique & Filtrage Multi-Étiquettes (Tags)** : Pastilles colorées personnalisables, recherche instantanée par titre ou compositeur, et filtrage croisé rapide.
 
 ---
 

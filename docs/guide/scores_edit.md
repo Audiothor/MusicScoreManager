@@ -12,15 +12,16 @@ Ces informations ne seront présentes que dans ce logiciel **Music Score Manager
 
 
 
-* **Titre** : Le titre de vote morceau tel qui sera affiché dans l'application (espaces autorisés)
+* **Titre** : Le titre de votre morceau tel qu'il sera affiché dans l'application (espaces autorisés).
 
-* **Compositeur / Arrangeur** : Cet information peut être utile sur la page principale des partitions
+* **Compositeur / Arrangeur** : Cette information peut être affichée sur la page principale des partitions et sert pour le tri alphabétique.
 
-* **Informations techniques** : taille, date de modification, date d'ajout et information si des annotations ont été faites ou non sur cette partition.
+* **Dossier / Catégorie** : Permet de classer la partition dans un répertoire thématique (par défaut "Général") ou d'en créer un nouveau directement avec le bouton `➕`. Le fichier est automatiquement déplacé sur le disque sans rompre aucun lien dans vos setlists.
+
+* **Informations techniques** : taille, date de modification, date d'ajout et indication si des annotations ont été faites ou non sur cette partition. A noter la présence d'un bouton pour réassigner le fichier en cas de déplacement externe.
   
-  
-- **Atelier d'assemblage PDF** : Vous permet de restructurer votre ficheir pdf en lui permettant des rotations de pages, changer l'ordre etc...
-  Une aide plus précise est disponible pour expliquer cela dans le chapitre "Outils"
+- **Atelier d'assemblage PDF** : Vous permet de restructurer votre fichier PDF en lui appliquant des rotations de pages, changer l'ordre, insérer des pages blanches, etc.
+  Une aide plus précise est disponible pour expliquer cela dans le chapitre "Outils".
 
 
 

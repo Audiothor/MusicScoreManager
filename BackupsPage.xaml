@@ -86,7 +86,7 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- Bouton de sauvegarde manuelle -->
+                <!-- Bouton de sauvegarde manuelle rapide (Base de données) -->
                 <Button Text="{Binding [Backups_Manual_Btn], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="#007ACC" 
                         TextColor="White" 
@@ -95,7 +95,7 @@
                         HeightRequest="48" 
                         Clicked="OnBackupClicked" />
 
-                <!-- Avertissement -->
+                <!-- Avertissement sauvegarde rapide -->
                 <Border Stroke="#D35400" StrokeThickness="1" BackgroundColor="#2D1A05" Padding="12">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="8" />
@@ -109,7 +109,7 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- Historique des sauvegardes -->
+                <!-- Historique des sauvegardes de la base de données -->
                 <Label Text="{Binding [Backups_History_Title], Source={x:Static services:LocalizationService.Instance}}" 
                        TextColor="White" 
                        FontAttributes="Bold" 
@@ -117,11 +117,11 @@
                        Margin="0,5,0,0" />
                 
                 <Label x:Name="FolderPathLabel" 
-                       TextColor="#666666" 
+                       TextColor="#888888" 
                        FontSize="11" 
                        LineBreakMode="CharacterWrap" />
 
-                <CollectionView x:Name="BackupsCollectionView" HeightRequest="280" Margin="0,5">
+                <CollectionView x:Name="BackupsCollectionView" HeightRequest="250" Margin="0,5">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="12,10" Margin="0,4">
@@ -165,7 +165,168 @@
                                Margin="0,20" />
                     </CollectionView.EmptyView>
                 </CollectionView>
+
+                <!-- Séparateur visuel -->
+                <BoxView HeightRequest="1" BackgroundColor="#2D2D2D" Margin="0,10" />
+
+                <!-- Nouveau Chapitre : Sauvegarde complète des données -->
+                <Border BackgroundColor="#1A1F26" Stroke="#007ACC" StrokeThickness="1.5" Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="14">
+                        <!-- En-tête de la section -->
+                        <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                            <Label Text="🗄️" FontSize="22" VerticalOptions="Center" />
+                            <Label Text="{Binding [Backups_Full_Title], Source={x:Static services:LocalizationService.Instance}}" 
+                                   TextColor="#007ACC" 
+                                   FontAttributes="Bold" 
+                                   FontSize="16" 
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <!-- Explication complète -->
+                        <Label Text="{Binding [Backups_Full_Description], Source={x:Static services:LocalizationService.Instance}}" 
+                               TextColor="#CCCCCC" 
+                               FontSize="12.5" 
+                               LineHeight="1.2"
+                               LineBreakMode="WordWrap" />
+
+                        <!-- Chemin du répertoire de sauvegarde par défaut / modifiable -->
+                        <VerticalStackLayout Spacing="6" Margin="0,4,0,0">
+                            <Label Text="{Binding [Backups_Full_Destination_Label], Source={x:Static services:LocalizationService.Instance}}" 
+                                   TextColor="White" 
+                                   FontSize="12" 
+                                   FontAttributes="Bold" />
+
+                            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
+                                <Border Grid.Column="0" BackgroundColor="#262C36" Stroke="#3A4454" StrokeThickness="1" Padding="10,4">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="6" />
+                                    </Border.StrokeShape>
+                                    <Entry x:Name="FullBackupFolderEntry"
+                                           TextColor="White"
+                                           FontSize="12"
+                                           VerticalOptions="Center"
+                                           Completed="OnFullBackupFolderEntryCompleted"
+                                           Unfocused="OnFullBackupFolderEntryUnfocused" />
+                                </Border>
+
+                                <Button Grid.Column="1"
+                                        Text="{Binding [Backups_Full_Change_Folder_Btn], Source={x:Static services:LocalizationService.Instance}}"
+                                        BackgroundColor="#2A384C"
+                                        TextColor="#3399FF"
+                                        FontAttributes="Bold"
+                                        FontSize="12"
+                                        HeightRequest="40"
+                                        CornerRadius="6"
+                                        Clicked="OnChangeFullBackupFolderClicked" />
+                            </Grid>
+                        </VerticalStackLayout>
+
+                        <!-- Bouton Sauvegarde complète -->
+                        <Button Text="{Binding [Backups_Full_Export_Btn], Source={x:Static services:LocalizationService.Instance}}" 
+                                BackgroundColor="#28A745" 
+                                TextColor="White" 
+                                FontAttributes="Bold" 
+                                CornerRadius="8" 
+                                HeightRequest="48" 
+                                Margin="0,6,0,0"
+                                Clicked="OnFullBackupExportClicked" />
+
+                        <BoxView HeightRequest="1" BackgroundColor="#2A3340" Margin="0,6" />
+
+                        <!-- Bouton Réimport complet -->
+                        <Button Text="{Binding [Backups_Full_Import_Btn], Source={x:Static services:LocalizationService.Instance}}" 
+                                BackgroundColor="#A93226" 
+                                TextColor="White" 
+                                FontAttributes="Bold" 
+                                CornerRadius="8" 
+                                HeightRequest="48" 
+                                Clicked="OnFullBackupImportClicked" />
+
+                        <!-- Avertissement en rouge bien visible -->
+                        <Border Stroke="#E74C3C" StrokeThickness="1" BackgroundColor="#2D1111" Padding="12">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Label Text="{Binding [Backups_Full_Import_Warning], Source={x:Static services:LocalizationService.Instance}}" 
+                                   TextColor="#FF6B6B" 
+                                   FontSize="11.5" 
+                                   FontAttributes="Bold" 
+                                   LineBreakMode="WordWrap" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
             </VerticalStackLayout>
         </ScrollView>
+
+        <!-- Overlay modal bloquant pour les opérations longues (Sauvegarde / Restauration) -->
+        <Grid x:Name="ProgressOverlay"
+              Grid.Row="0" Grid.RowSpan="2"
+              BackgroundColor="#E60A0E14"
+              IsVisible="False"
+              InputTransparent="False"
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill">
+            <Border BackgroundColor="#1E232B" 
+                    Stroke="#007ACC" 
+                    StrokeThickness="2" 
+                    Padding="28" 
+                    Margin="20"
+                    HorizontalOptions="Center" 
+                    VerticalOptions="Center"
+                    MaximumWidthRequest="480">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
+                    <ActivityIndicator IsRunning="True" Color="#007ACC" WidthRequest="48" HeightRequest="48" HorizontalOptions="Center" />
+                    
+                    <Label x:Name="ProgressTitleLabel"
+                           Text="Sauvegarde complète en cours..."
+                           TextColor="White"
+                           FontAttributes="Bold"
+                           FontSize="16"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+
+                    <Label x:Name="ProgressStatusLabel"
+                           Text="Préparation..."
+                           TextColor="#AAAAAA"
+                           FontSize="12"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"
+                           LineBreakMode="WordWrap" />
+
+                    <ProgressBar x:Name="OperationProgressBar"
+                                 Progress="0.0"
+                                 ProgressColor="#007ACC"
+                                 HeightRequest="10"
+                                 WidthRequest="300" />
+
+                    <Label x:Name="ProgressPercentageLabel"
+                           Text="0 %"
+                           TextColor="#007ACC"
+                           FontAttributes="Bold"
+                           FontSize="15"
+                           HorizontalOptions="Center" />
+
+                    <Button x:Name="CancelOperationButton"
+                            Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}"
+                            BackgroundColor="#2D1111"
+                            BorderColor="#E74C3C"
+                            BorderWidth="1"
+                            TextColor="#FF6B6B"
+                            FontAttributes="Bold"
+                            CornerRadius="6"
+                            HeightRequest="40"
+                            WidthRequest="140"
+                            HorizontalOptions="Center"
+                            Margin="0,6,0,0"
+                            Clicked="OnCancelOperationClicked" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
     </Grid>
 </ContentPage>

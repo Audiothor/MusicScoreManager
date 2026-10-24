@@ -147,3 +147,16 @@ Ce menu est accessible par un double touché/clic dans la partie centrale de l'�
 . Retour à l'acceuil : Reviens au menu précédent d'où la partition a été ouverte
 
 . Fermer : Ferme ce petit menu
+
+---
+
+### [6]. Tiroir des outils rapides et Accordeur (Haut-Droite)
+
+En touchant le coin supérieur droit de l'écran (ou l'icône `[ 🛠️ ]`), vous ouvrez le volet des outils instantanés :
+- **Tuiles d'activation directe** : basculez en un tap les Annotations, le Métronome, le Lecteur Audio, le Numéro de Page, le Titre de la partition et l'**Accordeur**.
+- **Accordeur Multi-Instruments Flottant** :
+  * Déplaçable librement avec la poignée `⠿ Déplacer`.
+  * Détection haute précision par algorithme YIN avec filtrage passe-bas et correction des harmoniques.
+  * Diapason ajustable (415 Hz à 444 Hz).
+  * Presets pour guitare, basse, cordes (violon, alto, violoncelle, contrebasse), cuivres (trompette, cor, trombone/tuba), bois (flûte, hautbois La 440 Hz, basson), saxophones (alto, ténor, baryton, soprano), banjo et tessitures de chant.
+

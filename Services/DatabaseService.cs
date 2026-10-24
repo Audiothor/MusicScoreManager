@@ -593,21 +593,65 @@ namespace MusicScoreManager.Services
             }
         }
 
+        public async Task CheckpointAsync()
+        {
+            await Init();
+            if (_database != null)
+            {
+                try
+                {
+                    await _database.ExecuteAsync("PRAGMA wal_checkpoint(TRUNCATE);");
+                }
+                catch { }
+            }
+        }
+
+        public async Task CloseConnectionAsync()
+        {
+            lock (_initLock)
+            {
+                _initTask = null;
+            }
+
+            if (_database != null)
+            {
+                try
+                {
+                    await _database.ExecuteAsync("PRAGMA wal_checkpoint(TRUNCATE);");
+                }
+                catch { }
+
+                try
+                {
+                    await _database.CloseAsync();
+                }
+                catch { }
+
+                _database = null;
+            }
+        }
+
+        public async Task<int> VerifyDatabaseAsync()
+        {
+            await Init();
+            if (_database == null)
+                throw new InvalidOperationException("Connexion à la base de données impossible.");
+
+            var scores = await _database.Table<Score>().ToListAsync();
+            return scores.Count;
+        }
+
         public async Task RestoreBackupAsync(string backupPath)
         {
             if (!File.Exists(backupPath))
                 throw new FileNotFoundException("Fichier de sauvegarde introuvable.");
 
-            // Pour restaurer, on doit idéalement couper la connexion actuelle
-            if (_database != null)
-            {
-                await _database.CloseAsync();
-                _database = null;
-            }
+            await CloseConnectionAsync();
 
             File.Copy(backupPath, _databasePath, true);
-            
-            // La base sera réinitialisée au prochain appel via Init()
+
+            // Vérifier et réinitialiser la base
+            await VerifyDatabaseAsync();
         }
 
         #region Favorite Stickers
