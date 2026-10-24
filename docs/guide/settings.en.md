@@ -10,20 +10,30 @@ The [`SettingsScoresPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreMan
 
 - **Default Sort on Launch**:
   - Set which order applies automatically (*Date added newest/oldest, Title A-Z/Z-A, Modification date, Star rating, Composer A-Z, or Untagged first*).
+- **Default View Mode (List vs Folders)**:
+  - Choose whether the scores library opens by default in **Classic List View** or in **Folders / Categories View**.
+- **Default Import Mode (Local Copy vs External Link)**:
+  - Configure the default file handling when adding new scores: *Copy to library (recommended)* or *Link original file (external)*.
 - **Scores Without Composer First (Toggle On/Off)**:
   - When sorting by composer, choose whether pieces lacking a composer appear at the very top (On) or at the end of the alphabetical list (Off, default).
 - **Score Subtitle Display**:
-  - Customize and reorder the information shown under each title in the library using interactive **drag-and-drop** or ▲ / ▼ buttons (*Date added*, *Composer*, *Page count*), with individual checkboxes and real-time live preview.
+  - Customize and reorder the information shown under each title in the library using interactive **drag-and-drop** or ▲ / ▼ buttons (*Date added*, *Composer*, *Page count*, *Folder / Category* `📁 [FolderName]`), with individual checkboxes and real-time live preview.
+- **Fast-Scroller Alphabetical Index (Toggle On/Off)**:
+  - Displays or hides the vertical A-Z alphabet bar along the right edge of the score catalog.
+- **Floating Scroll-to-Top Button (▲) (Toggle On/Off)**:
+  - Displays or hides the circular floating button that scrolls back to the very top in one tap.
 - **Current Page Number Display (Toggle On/Off)**:
   - Show or hide the bottom-right page index badge (e.g., *Page 3 / 12*).
+- **Page Number Font Size**:
+  - Adjustable slider from **10 px to 40 px** with live text size preview.
 - **Show Toolbox Icon Top-Right (Toggle On/Off, default Off)**:
   - Displays or hides the visual `[ 🛠️ ]` button in the top-right corner. The secret touch hotspot opening the drawer remains active regardless of this setting.
+- **Show Score Title at Top (Toggle On/Off)**:
+  - Displays or hides the subtle top banner showing the current piece title in the viewer.
 - **2-Page Landscape Display (Toggle On/Off)**:
   - Enables side-by-side dual page reading on horizontal tablets with complete geometric annotation projection.
 - **Keep Screen Awake While Reading (Toggle On/Off)**:
   - Prevents the device screen from dimming or falling asleep while viewing a score during rehearsal or live performance.
-- **Page Number Font Size**:
-  - Adjustable slider from **10 px to 40 px** with live text size preview.
 - **Ergonomic Page Turn Gestures**:
   - *Next page gesture*: Swipe left, Tap right, or Swipe up.
   - *Previous page gesture*: Swipe right, Tap left, or Swipe down.
@@ -87,6 +97,11 @@ The [`SettingsAppPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManage
   - Interactive modal with **8 built-in languages**:
     * 🇫🇷 **Français**, 🇬🇧 **English**, 🇩🇪 **Deutsch**, 🇪🇸 **Español**, 🇮🇹 **Italiano**, 🇵🇱 **Polski**, 🇳🇱 **Nederlands**, 🇵🇹 **Português**.
   - Immediate dynamic translation with no app restart needed.
+- **⚙️ Application Behavior**:
+  - **Show « Quit » tab in bottom navigation (Toggle On/Off)**:
+    * Toggle to display or hide the Quit tab in the main bottom navigation bar. Ideal for musicians relying on Android system gestures or preferring a minimal tab bar.
+  - **Confirm Before Quitting (Toggle On/Off)**:
+    * Displays a confirmation prompt before closing the app to prevent accidental exit.
 - **📊 Library Metrics & Storage Statistics**:
   - Total number of registered PDF scores.
   - Total disk space occupied by sheet music PDFs (in MB/GB).

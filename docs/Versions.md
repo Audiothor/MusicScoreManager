@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.1.0 — 24/10/2026](#v310--24102026)
 - [v3.0.3 — 22/10/2026](#v303--22102026)
 - [v3.0.2 — 21/10/2026](#v302--21102026)
 - [v3.0.1 — 21/10/2026](#v301--21102026)
@@ -33,6 +34,25 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.0 — 24/10/2026
+
+### 1. Sauvegarde Complète des Données (Export & Restauration Intégrale .zip)
+- **1.1. Nouveau chapitre « Sauvegarde complète des données » :** Ajout dans *Outils > Gestion des sauvegardes* d'une section dédiée à la sauvegarde tout-en-un de l'intégralité du logiciel.
+- **1.2. Export global de la bibliothèque (.zip) :** Sauvegarde complète de la base de données SQLite (`scores.db3`), de l'ensemble de l'arborescence des dossiers et partitions physiques PDF (`ScoresRootDirectory`), ainsi que de tous les fichiers audio rattachés (`AudioRootDirectory`), compressés dans une archive `.zip` horodatée (`MusicScoreManager_FullBackup_yyyyMMdd_HHmmss.zip`).
+- **1.3. Sélection libre du dossier de destination :** Proposé par défaut dans le répertoire `Download` (Téléchargements) de l'appareil avec affichage du chemin, modifiable à volonté vers un autre répertoire local, carte mémoire SD ou répertoire synchronisé dans le Cloud (Google Drive, pCloud, OneDrive, etc.).
+- **1.4. Dialogue modal de progression bloquant & Annulation sécurisée :** Affichage d'une fenêtre de suivi en temps réel avec barre de progression, pourcentage exact et descriptif de l'étape courante. L'écran bloque toute interaction ou modification concurrente sur l'application pendant cette opération intensive, tout en offrant un bouton d'annulation (`Annuler`) nettoyant proprement les fichiers temporaires sans altérer les données.
+- **1.5. Restauration complète (Erase / Replace) avec protection par étapes :**
+  - Sélection d'une archive `.zip` de sauvegarde.
+  - Alerte de confirmation explicite avec avertissement en rouge signalant le remplacement intégral des données actuelles.
+  - Décompression préalable en zone tampon temporaire (*staging*), vérification rigoureuse de l'intégrité de la base de données et des fichiers avant toute suppression.
+  - Remplacement complet et atomique de la base de données SQLite, des répertoires de partitions et des fichiers audio.
+  - Contrôle d'intégrité et validation post-restauration avec message récapitulatif du nombre de partitions et de fichiers audio restaurés avec succès.
+- **1.6. Clarification de la gestion des sauvegardes :**
+  - Renommage de « Historique des sauvegardes » en « Historique des sauvegardes de la base de données ».
+  - Mise à jour du message d'avertissement de la sauvegarde rapide pour orienter clairement l'utilisateur vers la sauvegarde complète située plus bas.
 
 ---
 

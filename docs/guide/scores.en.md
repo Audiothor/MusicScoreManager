@@ -12,20 +12,19 @@ At the top of the scores view, you have immediate access to several critical too
    - Type a few letters to instantly filter your library by **piece title**, **composer name**, or file name.
    - Fast one-tap clear button to quickly return to your full catalog.
 
-2. **Batch Multi-selection Button (☑️)**:
-   - Activates bulk selection mode to perform operations across multiple scores simultaneously.
-   - Reveals an action bar at the bottom:
-     * **🏷️ Assign Tags**: Modal overlay to add or replace tags across all selected scores at once.
-     * **📡 Share via Wi-Fi Direct**: Send the entire batch over local peer-to-peer Wi-Fi without internet.
-     * **📦 Export Package (.msmscores)**: Generates a single compressed archive bundling all selected scores (with options to include annotations and audio backing tracks).
-     * **🗑️ Batch Delete**: Secure bulk deletion with confirmation prompt.
+2. **View Mode Toggle Button (📁 Folders ⇄ List)**:
+   - Seamlessly switches between **Classic List View** and **Folders / Categories View**:
+     * **Folders Overview View**: Displays category directories as lightweight preview cards with live score count badges. Tapping any folder opens its songs in an instantaneous drill-down view with breadcrumb navigation `[ ⬅ All Folders ]`.
+     * **Folder Context Menu**: Easily rename, empty, or delete any category (scores are safely moved to the default "Général" category).
+     * **Instant Creation**: Tap `[ ➕ New folder ]` to create a new category immediately.
+     * Scores are physically organized in dedicated sub-directories on storage under each folder name.
 
 3. **Tag Filter Button (🏷️)**:
    - Opens the tag selection modal with internal tag search and tag sort (A-Z, Z-A, most/least used).
    - Displays active filters in a horizontal carousel with color pills and quick-remove buttons.
    - *« Clear all »* and *« Apply »* buttons.
 
-4. **Sort Order Selector (🔃)**:
+4. **Sort Order Selector (⇅)**:
    - Instantly reorders your library by:
      * **Date added (Newest first)**: Default sorting to easily find your latest imports.
      * **Date added (Oldest first)**.
@@ -35,11 +34,21 @@ At the top of the scores view, you have immediate access to several critical too
      * **Composer (A-Z)**: Alphabetical composer order. A dedicated toggle in *Settings > Scores* controls whether pieces without a composer appear at the very top or at the end.
      * **Untagged pieces first**: Prioritizes scores with no assigned tags so you can quickly organize them.
 
-5. **Add Score Button (➕)**:
+5. **Batch Multi-selection Button (☑️)**:
+   - Activates bulk selection mode to perform operations across multiple scores simultaneously.
+   - Reveals an action bar at the bottom:
+     * **🗑️ Batch Delete**: Secure bulk deletion with confirmation prompt.
+     * **📁 Folder Assignment**: Modern modal to move or assign all checked scores to an existing or newly created folder at once.
+     * **🏷️ Assign Tags**: Modal overlay to add or replace tags across all selected scores at once.
+     * **📦 Export Package (.msmscores)**: Generates a single compressed archive bundling all selected scores (with options to include annotations and audio backing tracks).
+     * **📡 Share via Wi-Fi Direct**: Send the entire batch over local peer-to-peer Wi-Fi without internet.
+
+6. **Add Score Button (➕)**:
+   - **Contextual Direct Import**: When inside a specific folder, imported files are automatically saved directly into that category.
    - **PDF Import**: Strict binary `%PDF-` verification prevents corrupt or misnamed files from crashing the viewer.
-    - **Photos / Images Import & Conversion (v2.0.4)**: Selecting one or more image files (PNG, JPEG, GIF, WEBP, BMP) informs the user that the selected image files will be converted into PDF format:
-      * **Cancel**: Image files are ignored. Any accompanying PDF files in the same batch continue their normal import.
-      * **Continue**: A blocking loading overlay with progress status informs the user during high-definition PDF conversion. Images are merged into a single multi-page PDF score or created as individual PDF scores, and a completion alert is displayed once finished.
+   - **Photos / Images Import & Conversion**: Selecting one or more image files (PNG, JPEG, GIF, WEBP, BMP) informs the user that the selected image files will be converted into PDF format:
+     * **Cancel**: Image files are ignored. Any accompanying PDF files in the same batch continue their normal import.
+     * **Continue**: A loading overlay with progress status informs the user during high-definition PDF conversion. Images are merged into a single multi-page PDF score or created as individual PDF scores, and a completion alert is displayed once finished.
 
 ---
 
@@ -58,11 +67,15 @@ When importing scores, the app offers two flexible storage modes:
 
 Every score is displayed as an informative card:
 - **Piece Title**.
-- **Customizable Subtitle** (configurable in Settings: composer name, date added, or both).
+- **Customizable Subtitle** (configurable in Settings: composer name, date added, number of pages, or folder/category badge `📁 [FolderName]`).
 - **Color-coded Tag Badges** for instant visual classification.
 - **🔗 External Linked File Badge** when stored in custom external folders.
 - **⚠️ Missing File Warning Indicator (Red Exclamation Mark (!))**:  
   If a PDF file was moved or deleted from storage, a bright red warning badge appears to the left of the 3-dots ⋮ button, notifying you before a concert that the score cannot be opened.
+- **Fast-Scroller Alphabetical Index (A-Z)**:
+  A vertical alphabet bar on the right side of the list allows instant jumps to any letter with a single tap.
+- **Floating Scroll-to-Top Button (▲)**:
+  Returns instantly to the top of the library after long scrolling.
 
 ---
 
@@ -76,6 +89,7 @@ Tapping the **⋮** button on any score card opens the full context actions menu
 2. **✏️ Edit score**:
    - Opens the detailed metadata editor ([`ScoreEditPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ScoreEditPage.xaml)):
      * **Title** & **Composer / Arranger**.
+     * **Folder / Category** (with on-the-fly folder creation `➕`).
      * **Musical Key** (both standard notation *A, B, C...* and classical solfège *Do, Ré, Mi...*).
      * **Target Tempo (BPM)**: Automatically initializes the metronome when opening this score.
      * **Star Rating (1 to 5 stars)**.
@@ -89,20 +103,23 @@ Tapping the **⋮** button on any score card opens the full context actions menu
    - **High-priority 1st position placement** (automatically shifts other songs down).
    - Handles deduplication and confirmation if the setlist is locked.
 
-4. **📑 Modify PDF assembly**:
+4. **📁 Change folder / category**:
+   - Opens the modern category modal with glowing `📁` halo to move the score to another folder or create a new folder on the fly.
+
+5. **📑 Modify PDF assembly**:
    - Launches the piece directly inside the **PDF Assembler Studio** to rearrange pages, insert blank sheets, rotate pages, or remove unwanted sheets.
 
-5. **📡 Send via Wi-Fi Direct**:
+6. **📡 Send via Wi-Fi Direct**:
    - Opens the sharing options modal asking you to choose:
      * ☑️ *Include handwritten annotations & drawings*.
      * ☑️ *Include attached audio backing tracks* (MP3/WAV).
    - Starts high-speed P2P Wi-Fi Direct transfer to nearby devices.
 
-6. **📦 Export score (.msmscore)**:
+7. **📦 Export score (.msmscore)**:
    - Produces a self-contained archive file containing the PDF, metadata, and optional annotations/audio.
 
-7. **🏷️ Rename score**:
+8. **🏷️ Rename score**:
    - Fast dialog shortcut to rename the piece without opening the full editor.
 
-8. **🗑️ Delete score**:
+9. **🗑️ Delete score**:
    - Removes the piece from your library with a safety confirmation prompt.

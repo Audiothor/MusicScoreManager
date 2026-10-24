@@ -56,7 +56,11 @@ Chaque setlist dispose de son propre menu d'options via le bouton **⋮** :
 
 2. **✏️ Éditer la setlist** :
    
-   - Ouvre la fenêtre d'édition ([`SetlistEditPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SetlistEditPage.xaml)) pour modifier le titre, le statut, ajouter des morceaux via la bibliothèque, réordonner les pièces à l'aide des flèches **▲ / ▼** (ou par glisser-déposer), et supprimer des morceaux.
+   - Ouvre la fenêtre d'édition ([`SetlistEditPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SetlistEditPage.xaml)) :
+     * **Titre, Statut & Date du Concert** : nom du programme, pastille de statut et date planifiée de la prestation.
+     * **Ajout de partitions ultra-fluide** : fenêtre de sélection avec recherche instantanée, tri et **bouton de filtre par dossier / catégorie `[📁]`** pour cibler rapidement un répertoire.
+     * **Réorganisation & Gestion** : réordonnez les morceaux à l'aide des boutons **▲ / ▼** (ou par glisser-déposer) et supprimez un titre avec la corbeille.
+     * **Volet repliable « Options avancées »** : activez le mode enchaînement continu spécifique, assignez un **profil de pédalier Bluetooth dédié** (prioritaire pendant cette setlist puis restauré automatiquement à la sortie), ou supprimez la setlist en toute sécurité.
 
 3. **📡 Envoyer en Wi-Fi Direct** :
    

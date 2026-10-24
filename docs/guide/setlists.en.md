@@ -51,7 +51,11 @@ Each setlist provides its own action menu via the **⋮** button:
    - Launches stage mode starting on the first song in full screen.
 
 2. **✏️ Edit setlist**:
-   - Opens the editor ([`SetlistEditPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SetlistEditPage.xaml)) to adjust the title, status, add songs from your library, rearrange pieces using **▲ / ▼** arrows (or drag-and-drop), and remove pieces.
+   - Opens the editor ([`SetlistEditPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/SetlistEditPage.xaml)):
+     * **Title, Status & Concert Date**: Set program title, status badge, and planned performance date.
+     * **Ultra-Fast Score Addition**: Add songs with instant search, sorting, and **folder/category filter button `[📁]`** to quickly target a repertoire.
+     * **Reordering & Management**: Reorder songs using **▲ / ▼** buttons (or drag-and-drop) and remove songs with the trash icon.
+     * **Collapsible « Advanced Options »**: Toggle setlist-specific continuous mode, assign a **dedicated Bluetooth pedal profile** (takes priority during this concert and restores default on exit), or safely delete the setlist.
 
 3. **📡 Send via Wi-Fi Direct**:
    - Transmits the entire setlist and all its score files to other musicians' tablets via direct local streaming without internet.

@@ -42,6 +42,49 @@ Music Score Manager intègre un moteur de commande matérielle universel :
 
 ---
 
+## 🛠️ Tiroir des Outils Rapides (Haut-Droite)
+
+Touchez le coin supérieur droit de l'écran (ou l'icône `[ 🛠️ ]` si elle est activée dans les paramètres) pour ouvrir le **Tiroir des Outils Rapides**. Il permet de basculer instantanément en direct les composants scéniques sans interrompre la lecture :
+
+1. **✍️ Annotations** : Active ou masque la barre d'annotations en bas de l'écran.
+2. **⏱️ Métronome** : Déploie ou replie le métronome synchronisé.
+3. **🎧 Lecteur Audio** : Affiche ou masque la barre de lecture audio d'accompagnement.
+4. **📄 Numéro de Page** : Active ou masque l'indicateur de page en bas à droite.
+5. **🎛️ Accordeur** : Ouvre l'accordeur flottant multi-instruments haute précision.
+6. **🏷️ Titre de la Partition** : Affiche ou masque le bandeau supérieur avec le nom du morceau.
+
+Les modifications sont immédiatement réactives en temps réel sur la partition dès le clic sur une tuile.
+
+---
+
+## 🎛️ Accordeur Haute Précision Multi-Instruments (Tuner)
+
+Music Score Manager intègre un accordeur de scène professionnel accessible directement pendant la répétition ou le concert sans quitter votre partition :
+
+- **Boîte Flottante Amovible & Déplaçable** :
+  - Équipée d'une poignée tactile dédiée `⠿ Déplacer` et d'une détection gestuelle fluide : glissez l'accordeur n'importe où sur l'écran pour ne masquer aucune mesure importante de votre partition.
+  - Bouton de fermeture rapide `✕` en haut à droite.
+- **Moteur DSP de Précision (Algorithme YIN)** :
+  - **Détection YIN ($\theta = 0.15$)** : calcul de la différence au carré cumulée normalisée $d'(\tau)$ pour une précision chirurgicale sans sauts d'octaves ni fausses harmoniques.
+  - **Filtre passe-bas 2 pôles (1200 Hz)** : élimine les bruits de souffle, le grésillement des anches d'instruments à vent et les attaques de médiator.
+  - **Correction des sous-harmoniques & octaves** : verrouille la note fondamentale réelle même sur les instruments dont le fondamental est masqué par le 2ᵉ ou 3ᵉ harmonique (saxophones, cor, basson, hautbois, violoncelle, contrebasse).
+  - **Filtrage médian & Lissage exponentiel (EMA)** : aiguille des cents ultra-stable et sans scintillement visuel ($\alpha = 0.45$).
+- **Étalonnage du Diapason (Fréquence de Référence A4)** :
+  - Référence réglable avec précision : Baroque (415 Hz), Diapason naturel (432 Hz), Standard international (440 Hz), Orchestre symphonique (442 Hz), et jusqu'à 444 Hz.
+- **Large Palette d'Instruments & Presets Dédiés** :
+  - **Accordeur Chromatique Universel** : détecte toutes les notes de la gamme tempérée avec affichage de la fréquence exacte en Hz.
+  - **Guitares & Basses** : Guitare standard (E A D G B E), Basse 4 cordes (E A D G), Basse 5 cordes (B E A D G).
+  - **Cordes Frottées & Traditionnelles** : Violon (G D A E), Alto (C G D A), Violoncelle (C G D A), Contrebasse (E A D G), Ukulélé (G C E A), Banjo 5 cordes (Open G).
+  - **Saxophones (Quatuor complet)** : Saxophone Alto (Mi♭), Saxophone Ténor (Si♭), Saxophone Baryton (Mi♭), Saxophone Soprano (Si♭).
+  - **Cuivres & Harmonies** : Trompette & Clarinette (Si♭), Cor d'harmonie (Fa), Trombone / Euphonium / Tuba (Ut - Clé de Fa).
+  - **Bois** : Flûte traversière (Ut), Hautbois & Basson (Ut, avec le **La 440 Hz du Hautbois** comme référence symphonique).
+  - **Chant & Voix humaine** : Tessitures et vocalises adaptées (Basse, Baryton, Ténor, Alto, Mezzo, Soprano).
+- **Indicateur Visuel Intuitif** :
+  - Cadran gradué de -50 à +50 cents avec code couleur dynamique (Vert = parfaitement accordé, Ambre/Rouge = trop bas ou trop haut).
+  - Double affichage du nom de la note (international *A, B, C...* et solfège *Do, Ré, Mi...*), indice d'octave et fréquence en Hz.
+
+---
+
 ## 🎛️ Menu Central Rapide (Double-Tap)
 
 Faites un **double-clic ou double-tap au centre de l'écran** pour afficher le menu d'actions rapides sans quitter votre partition :
@@ -63,8 +106,12 @@ Faites un **double-clic ou double-tap au centre de l'écran** pour afficher le m
 
 ## ✍️ Boîte à Outils d'Annotation Complète
 
-La barre d'annotation peut être translatée verticalement sur l'écran par glissement (*pan*), avec boîtes d'options secondaires collées au-dessus :
+La barre d'annotation se déploie depuis le bas de l'écran et s'adapte à vos mouvements :
 
+- **Poignée de Déplacement Dédiée (`⠿`)** :
+  - Située à gauche de la barre, la poignée `⠿` permet de faire glisser verticalement l'ensemble des outils d'annotation sur l'écran sans aucun conflit avec le défilement horizontal des crayons et stickers.
+- **Adaptation Mobile & Tablettes** :
+  - Sur smartphone, la croix de fermeture `✕` est ancrée de façon fixe à droite pour rester constamment cliquable quelle que soit la largeur d'écran.
 - **🖌️ Surligneur Fluo (Stabilo)** :
   - Rendu translucide naturel à bords biseautés droits (`PenLineCap.Flat`).
   - 4 teintes fluo (jaune, vert, bleu, rose) et 3 largeurs (5 mm, 10 mm, 18 mm).
@@ -81,7 +128,7 @@ La barre d'annotation peut être translatée verticalement sur l'écran par glis
   - Verrouillage automatique systématique à l'ouverture pour sanctuariser la partition contre toute fausse manipulation.
   - Déverrouillage automatique au choix d'un outil d'édition.
   - Re-verrouillage automatique à la fermeture de la barre (bouton ✕).
-- **✧ Nettoyage Général** : Réinitialise toutes les annotations de la page.
+- **✧ Nettoyage Général** : Réinitialise toutes les annotations de la page avec confirmation de sécurité.
 - **🗑️ Suppression Ciblée** : Sélection tactile d'une annotation existante pour la supprimer au doigt ou par double-tap.
 
 ---
@@ -101,3 +148,4 @@ La barre d'annotation peut être translatée verticalement sur l'écran par glis
 - Prise en charge des fichiers MP3, WAV, AAC, FLAC rattachés.
 - Barre de transport compacte avec bouton Lecture/Pause.
 - Slider de progression avec affichage du temps écoulé et temps total.
+- Amovible et déplaçable librement sur l'écran.

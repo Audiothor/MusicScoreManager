@@ -6,6 +6,8 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.1.0 — 24/10/2026](#v310--24102026)
+- [v3.0.3 — 22/10/2026](#v303--22102026)
 - [v3.0.2 — 21/10/2026](#v302--21102026)
 - [v3.0.1 — 21/10/2026](#v301--21102026)
 - [v3.0.0 — 21/10/2026](#v300--21102026)
@@ -32,6 +34,53 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.0 — 24/10/2026
+
+### 1. Complete Data Backup (Full Export & Restore .zip)
+- **1.1. New "Complete Data Backup" section:** Added in *Tools > Backup Management* a dedicated section for comprehensive, all-inclusive software backup.
+- **1.2. Complete library export (.zip):** Full backup of the SQLite database (`scores.db3`), the entire folder and PDF score directory hierarchy (`ScoresRootDirectory`), and all linked audio backing tracks (`AudioRootDirectory`), packaged and compressed into a timestamped `.zip` archive (`MusicScoreManager_FullBackup_yyyyMMdd_HHmmss.zip`).
+- **1.3. Flexible destination folder selection:** Suggested by default in the device's `Download` folder with path display, freely customizable to any local folder, external SD card, or cloud-synchronized directory (Google Drive, pCloud, OneDrive, etc.).
+- **1.4. Blocking modal progress dialog & safe cancellation:** Real-time progress window displaying an exact percentage and current operation step. The screen strictly blocks all concurrent application interactions or modifications during this intensive operation, while providing a safe `Cancel` button that cleans up temporary files without touching existing data.
+- **1.5. Full restore (Erase / Replace) with multi-stage verification:**
+  - Backup `.zip` file picker.
+  - Prominent confirmation dialog with explicit red warning alerting that all current local data and files will be replaced.
+  - Safe extraction to a temporary staging cache directory, verifying database and file integrity prior to any deletion.
+  - Full atomic wipe and replacement of the SQLite database, scores folder tree, and audio files.
+  - Final database verification check with a summary dialog displaying the exact number of restored scores and audio files.
+- **1.6. Clarified backup interface:**
+  - Renamed "Backup History" to "Database Backup History".
+  - Updated quick backup warning notice to explicitly guide users to the complete data backup section below.
+
+---
+
+## v3.0.3 — 22/10/2026
+
+### 1. Complete DSP Overhaul of the Quick Tools Tuner
+- **1.1. Integration of the YIN algorithm (Global musical pitch detection benchmark):** Replaced basic autocorrelation with the cumulative mean normalized difference function $d'(\tau)$ (de Cheveigné & Kawahara). The tuner pinpoints the first periodic dip below an absolute threshold ($\theta = 0.15$), eliminating octave jumping and amplitude inaccuracies.
+- **1.2. 2-Pole low-pass pre-filtering (1200 Hz):** Eliminates reed sizzle on woodwinds, air breath noise, and guitar pick transients without attenuating lower fundamental frequencies.
+- **1.3. Smart octave and sub-harmonic correction:** Resolves fundamental masking ($f_0$) by strong 2nd or 3rd harmonics common to acoustic instruments (saxophones, French horn, bassoon, oboe, cello, double bass). The engine cross-checks $2\tau$ and $3\tau$ to reliably lock onto the true note played.
+- **1.4. Sliding 5-frame median filter:** Eradicates momentary tracking dropouts and transient noise glitches.
+- **1.5. Note hysteresis & Exponential Moving Average (EMA) needle smoothing:** Requires 2 consecutive agreeing frames before changing displayed note labels, preventing visual flicker. The cents needle uses exponential smoothing ($\alpha = 0.45$) for a fluid, natural response.
+- **1.6. Zero-allocation DSP architecture:** Pre-allocated reusable buffers (`_filteredBuffer`, `_dBuffer`, `_dPrimeBuffer`) prevent Garbage Collector (GC) stalls and ensure a rock-solid 60 FPS visual rendering.
+
+### 2. Major Expansion of Instrument Presets
+- **2.1. Complete Saxophone family:**
+  - 🎷 **Alto Saxophone (in E♭)** (Concert A3 / Sax F#4, Concert B♭3 / Sax C4, D4, F3, A4)
+  - 🎷 **Tenor Saxophone (in B♭)** (Concert B♭3 / Sax C4, Concert A3 / Sax B3, F3, low B♭2, D4)
+  - 🎷 **Baritone Saxophone (E♭) & Soprano Saxophone (B♭)** (Transposed reference notes for the complete sax quartet)
+- **2.2. Brass & Orchestra Winds:**
+  - 🎺 **Trumpet & Clarinet (in B♭)**
+  - 📯 **French Horn (in F)**
+  - 🎺 **Trombone, Euphonium & Tuba (in C - Bass Clef)**
+- **2.3. Woodwinds, Strings & Folk:**
+  - 🪈 **Concert Flute (in C)**
+  - 🪵 **Oboe & Bassoon (in C)** (including the **Oboe A 440 Hz reference**, official pitch benchmark for symphonic orchestras)
+  - 🪕 **Banjo (5-string - Open G)**
+- **2.4. Vocal Ranges & Singing:**
+  - 🎤 **Singing & Vocals (Ranges & Warmups)** with tailored benchmark pitches (Bass, Baritone, Tenor, Alto, Mezzo, Soprano), resilient against vowel formants and natural vibrato.
 
 ---
 

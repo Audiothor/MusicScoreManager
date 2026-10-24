@@ -39,17 +39,21 @@ As soon as the app opens, go to the **Scores** menu (in the navigation bar).
 
 ---
 
-## Step 2: Organize Your Library with Tags
+## Step 2: Organize Your Library with Folders and Tags
 
 To find your pieces instantly among hundreds of scores:
 
-1. You can create your own tags with their custom color via the **Settings > Score Settings > Organization > Manage Tag List** menu: assign a classification and a color so you can assign it to your scores.
-   A score can of course have multiple tags!
-2. To assign one or more tags to a score, edit it: in **Scores**, tap the **three little dots `⋮`** on a score, then choose **`Edit`**.
-3. Assign one or more color tags that you created previously (e.g. *Vocals*, *Piano*, *Jazz*, *Christmas Concert*, *Rehearsal*).
-   You can define lots of features for your score.
-   Don't forget to save!
-4. Use the search bar at the top to filter instantly by **Title**, **Composer**, or by tapping one or more **Tags**.
+1. **Folders & Categories (Thematic Organization)**:
+   - Toggle seamlessly between **Classic List View** and **Folders View** at any time using the `📁` button at the top of the screen.
+   - Assign each score to a folder (e.g. *Classical*, *Jazz*, *Choir*, *Studies*...) from its edit screen or via the 3-dots context menu `📁 Change folder`. Create new folders on the fly with the `➕` button.
+2. **Color-Coded Tags (Cross-Category Labels)**:
+   - Create your own tags with custom colors via **Tools > Tag Management** (or *Settings > Score Settings > Manage Tag List*).
+   - A score can have multiple tags simultaneously (e.g. *Vocals*, *Piano*, *Christmas*).
+3. **Edit Musical Metadata**:
+   - In **Scores**, tap the **three little dots `⋮`** on a score, then choose **`Edit score`**.
+   - Set the title, composer, folder category, tags, key signature, starting tempo, and star rating.
+   - Don't forget to tap **Save**!
+4. Use the search bar at the top to filter instantly by **Title**, **Composer**, or filter by **Folder** and **Tags**.
 
 ---
 
@@ -58,15 +62,15 @@ To find your pieces instantly among hundreds of scores:
 Simply tap a score in the list to launch the **Full-Screen Viewer**.
 
 - **Turning Pages**:
-  - **Swipe**: Swipe the right third of the screen to go forward (next page), the left third to go backward (previous page).
-
-- **Wireless Foot Pedal**: Pair your Bluetooth pedal (AirTurn, PageFlip, Donner, etc.). Page turns work directly without prior configuration!
-
+  - **Swipe / Tap**: Swipe or tap the right third of the screen to go forward (next page), the left third to go backward (previous page).
+- **Wireless Foot Pedal**:
+  - Pair your Bluetooth pedal (AirTurn, PageFlip, Donner, etc.). Page turns work immediately out of the box. You can also customize each pedal switch in Settings!
 - **Show / Hide Controls**:
-  - Double-tap the **center** of the screen to show the quick actions menu.
-  - Tap the bottom of the screen to show the annotations menu.
-  - On this same page it is possible to display the metronome (it will be at the top right, fixed), an audio player (top left, draggable), and in the case of a Setlist run, the progression status (top center).
-- **Exit the current score**: go to the central menu (double-tap) and choose "Back to Home".
+  - Double-tap the **center** of the screen to show the quick actions menu (rotations, 100% zoom reset, jump to page...).
+  - Tap the **bottom** of the screen to show the annotation toolbar (featuring a dedicated vertical pan handle `⠿`).
+  - Tap the **top-right corner** of the screen (or the `[ 🛠️ ]` icon) to open the **Quick Tools Drawer**: toggle the metronome, audio backing track player, annotations, top title bar, page numbers, and the floating **High-Precision Multi-Instrument Tuner** in one tap!
+- **Exit the current score**:
+  - Open the central menu (double-tap) and choose **« Return to Home »**.
 
 ---
 

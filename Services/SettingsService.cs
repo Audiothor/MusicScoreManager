@@ -26,6 +26,14 @@ namespace MusicScoreManager.Services
             set => Preferences.Set(ExportsRootKey, value);
         }
 
+        private const string FullBackupRootKey = "FullBackupRootDirectory";
+
+        public string FullBackupRootDirectory
+        {
+            get => Preferences.Get(FullBackupRootKey, ExportsRootDirectory);
+            set => Preferences.Set(FullBackupRootKey, value);
+        }
+
         private const string DefaultScoreImportModeKey = "DefaultScoreImportMode";
 
         /// <summary>

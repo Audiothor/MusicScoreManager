@@ -12,34 +12,41 @@ GENERAL
 
 - **Tri par défaut à l'ouverture** :
   - Définissez quel ordre de tri s'applique dès le lancement de l'application (*Date d'ajout plus récent, plus ancien, Titre A-Z / Z-A, Date de modification, Évaluation par étoiles, Compositeur A-Z, ou Sans étiquette d'abord*).
+- **Mode d'affichage par défaut (Liste vs Dossiers)** :
+  - Choisissez si la bibliothèque s'ouvre par défaut en **Vue en Liste classique** ou en **Vue par Dossiers / Catégories**.
+- **Mode d'importation par défaut (Copie locale vs Lien externe)** :
+  - Définissez le comportement par défaut lors de l'ajout de nouveaux fichiers : *Copier vers la bibliothèque (conseillé)* ou *Lier le fichier original (externe)*.
 - **Partitions sans compositeur en premier (Switch On/Off)** :
   - Lors d'un tri par compositeur, choisissez si les morceaux dont le champ compositeur est vide apparaissent au tout début (On) ou à la fin de l'ordre alphabétique (Off, comportement par défaut).
 
 AFFICHAGE
 
 - **Informations sous le titre de la partition** :
-  
-  - Personnalisez et réordonnez les informations affichées sous chaque titre dans la bibliothèque par **glisser-déposer (Drag & Drop)** ou boutons ▲ / ▼ (*Date d'ajout*, *Compositeur*, *Nombre de pages*), avec activation individuelle par cases à cocher et encadré d'aperçu en direct.
+  - Personnalisez et réordonnez les informations affichées sous chaque titre dans la bibliothèque par **glisser-déposer (Drag & Drop)** ou boutons ▲ / ▼ (*Date d'ajout*, *Compositeur*, *Nombre de pages*, *Dossier / Catégorie* `📁 [NomDossier]`), avec activation individuelle par cases à cocher et encadré d'aperçu en direct.
+
+- **Index alphabétique rapide A-Z (Switch On/Off)** :
+  - Active ou masque la réglette alphabétique latérale sur le bord droit de la liste des partitions.
+
+- **Bouton flottant Haut de page (▲) (Switch On/Off)** :
+  - Active ou masque le bouton circulaire flottant permettant de remonter au sommet de la bibliothèque en un clic.
 
 - **Affichage du numéro de la page actuelle (Switch On/Off)** :
-  
   - Affiche ou masque la pastille discrète indiquant la page en cours (ex : *Page 3 / 12*) en bas à droite de l'écran pendant le jeu.
 
+- **Taille d'affichage du numéro de page** :
+  - Curseur réglable de **10 px à 40 px** avec aperçu direct de la taille pour adapter la lisibilité du compteur à votre distance de lecture du pupitre.
+
 - **Afficher l'icône de boîte à outils haut-droite (Switch On/Off, par défaut Off)** :
-  
   - Affiche ou masque l'icône visuelle `[ 🛠️ ]` dans le coin supérieur droit. La zone tactile secrète d'ouverture du tiroir reste toujours active quel que soit ce réglage.
 
+- **Affichage du titre de la partition tout en haut (Switch On/Off)** :
+  - Affiche ou masque le bandeau supérieur discret rappelant le titre du morceau dans le visualiseur.
+
 - **Affichage 2 pages en mode paysage (Switch On/Off)** :
-  
   - Sur tablette ou écran large orienté à l'horizontale, affiche deux pages juxtaposées avec synchronisation géométrique des annotations et adaptation d'échelle.
 
 - **Garder l'écran allumé pendant la lecture (Switch On/Off)** :
-  
-  - Permet d'empecher l'assombrissement et la mise en veille automatique pendant la consultation d'une partition
-
-- **Taille d'affichage du numéro de page** :
-  
-  - Curseur réglable de **10 px à 40 px** avec aperçu direct de la taille pour adapter la lisibilité du compteur à votre distance de lecture du pupitre.
+  - Permet d'empêcher l'assombrissement et la mise en veille automatique pendant la consultation d'une partition.
 
 ERGONOMIE
 
@@ -151,14 +158,21 @@ La page gère le système et l'environnement global de l'application.
   - Modal interactif proposant **8 langues intégrées** :
     * 🇫🇷 **Français**, 🇬🇧 **English**, 🇩🇪 **Deutsch**, 🇪🇸 **Español**, 🇮🇹 **Italiano**, 🇵🇱 **Polski**, 🇳🇱 **Nederlands**, 🇵🇹 **Português**.
   - Traduction instantanée dynamique de l'ensemble de l'interface.
-    Nota : la langue prise par l'application est par défault celle qui est actuellement utilisée par l'OS de votre tablette/téléphone.
+    Nota : la langue prise par l'application est par défaut celle qui est actuellement utilisée par l'OS de votre tablette/téléphone.
     Si la langue n'est pas prise en charge, elle se positionnera automatiquement sur l'anglais.
+
+- **⚙️ Comportement de l'Application** :
+  
+  - **Afficher le menu « Quitter » dans la barre de navigation (Switch On/Off)** :
+    * Permet d'afficher ou masquer l'onglet « Quitter » dans la barre d'onglets principale en bas de l'écran. Idéal si vous utilisez la navigation gestuelle Android ou préférez une barre d'onglets épurée.
+  - **Demander confirmation avant de quitter (Switch On/Off)** :
+    * Affiche une boîte de dialogue de confirmation sécurisée avant de fermer l'application pour éviter toute sortie accidentelle.
 
 - **📊 Statistiques de la Bibliothèque & Métriques de Stockage** :
   
   - Nombre total de partitions PDF enregistrées.
   - Espace disque total occupé par vos partitions PDF (en Mo).
-  - **Espace disponible sur le stockage** : Capacité mémoire libre restante sur l'appareil. (en Go)
+  - **Espace disponible sur le stockage** : Capacité mémoire libre restante sur l'appareil (en Go).
   - **Taille de la base de données** : Espace occupé par SQLite (`scores.db3` + journaux WAL/SHM).
 
 - **📁 Emplacements des Répertoires Personnalisables** :
