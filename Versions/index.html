@@ -871,6 +871,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v313-26102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.3 — 26/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.3 — 26/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-internationalisation-traduction-complete-de-lajout-de-setlist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Internationalisation &amp; Traduction Complète de l'Ajout de Setlist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-stabilisation-suppression-du-decalage-de-loverlay-de-chargement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Stabilisation &amp; Suppression du Décalage de l'Overlay de Chargement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v312-26102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3060,6 +3099,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v313-26102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.3 — 26/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.3 — 26/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-internationalisation-traduction-complete-de-lajout-de-setlist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Internationalisation &amp; Traduction Complète de l'Ajout de Setlist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-stabilisation-suppression-du-decalage-de-loverlay-de-chargement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Stabilisation &amp; Suppression du Décalage de l'Overlay de Chargement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v312-26102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5228,6 +5306,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v313--26102026">v3.1.3 — 26/10/2026</a></li>
 <li><a href="#v312--26102026">v3.1.2 — 26/10/2026</a></li>
 <li><a href="#v311--26102026">v3.1.1 — 26/10/2026</a></li>
 <li><a href="#v310--24102026">v3.1.0 — 24/10/2026</a></li>
@@ -5258,6 +5337,21 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v313-26102026">v3.1.3 — 26/10/2026</h2>
+<h3 id="1-internationalisation-traduction-complete-de-lajout-de-setlist">1. Internationalisation &amp; Traduction Complète de l'Ajout de Setlist</h3>
+<ul>
+<li><strong>1.1. Traduction dans les 8 langues (FR, EN, DE, ES, IT, NL, PL, PT) :</strong></li>
+<li>Le titre de la boîte de dialogue d'ajout de setlist (« Nouvelle Setlist ») et le message d'invite de saisie (« Entrez le nom de la setlist : ») sont désormais intégralement localisés dans la langue choisie par l'utilisateur via les clés <code>Setlist_New_Title</code> et <code>Setlist_New_Prompt</code>.</li>
+<li>Boutons d'action <code>OK</code> et <code>Annuler</code> branchés sur le service de localisation dynamique.</li>
+</ul>
+<h3 id="2-stabilisation-suppression-du-decalage-de-loverlay-de-chargement">2. Stabilisation &amp; Suppression du Décalage de l'Overlay de Chargement</h3>
+<ul>
+<li><strong>2.1. Élimination du saut/décalage visuel à l'ouverture d'une setlist :</strong></li>
+<li>Correction de l'alignement de <code>SetlistLoadingOverlay</code> dans <code>SetlistsPage.xaml</code> en explicitant <code>Grid.Row="0"</code>, <code>Grid.RowSpan="3"</code>, <code>HorizontalOptions="Fill"</code> et <code>VerticalOptions="Fill"</code>.</li>
+<li>Fixation de dimensions stables (<code>WidthRequest="260"</code>, <code>HeightRequest="120"</code>) sur la carte modale interne, évitant tout recalcul asynchrone lors du démarrage de l'indicateur d'activité ou du rendu du texte.</li>
+<li><strong>2.2. Harmonisation dans l'éditeur de setlist :</strong> Application de la même stabilisation sur <code>ScoreLoadingOverlay</code> dans <code>SetlistEditPage.xaml</code> pour garantir une ouverture fluide et centrée des partitions.</li>
 </ul>
 <hr />
 <h2 id="v312-26102026">v3.1.2 — 26/10/2026</h2>
