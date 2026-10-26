@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.1.2 — 26/10/2026](#v312--26102026)
 - [v3.1.1 — 26/10/2026](#v311--26102026)
 - [v3.1.0 — 24/10/2026](#v310--24102026)
 - [v3.0.3 — 22/10/2026](#v303--22102026)
@@ -35,6 +36,30 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.2 — 26/10/2026
+
+### 1. Internationalisation & Traductions Complètes (8 langues : FR, EN, DE, ES, IT, NL, PL, PT)
+- **1.1. Boîte de dialogue « Envoi Wi-Fi Direct Setlist » :**
+  - Titre, liste des appareils détectés, badge d'aide/conseil d'utilisation, état de recherche dynamique et bouton d'envoi désormais intégralement traduits selon la langue active de l'utilisateur.
+  - Traduction complète des alertes système de transfert Wi-Fi (non disponible, préparation, connexion, transfert réussi, échec et erreur).
+- **1.2. Mode Diffusion de Groupe (QR Code & Partage Réseau) :**
+  - Localisation intégrale du panneau de diffusion : titre d'invitation au scan (« Scannez pour télécharger la Setlist »), label d'attente/suivi du nombre de participants connectés, texte explicatif pour le réseau local et bouton de fermeture de la diffusion.
+  - Gestion des messages d'erreur de lancement du serveur web local traduits.
+- **1.3. Gestion des Setlists (Renommage, Duplication & Export) :**
+  - **Renommage :** La boîte de saisie du nouveau nom de setlist (« Entrez le nouveau nom : ») et le titre de dialogue sont localisés dans la langue choisie.
+  - **Duplication :** Traduction du titre, du prompt de saisie, du suffixe automatique (« (Copie) », « (Copy) », « (Kopie) », etc.) et de l'alerte de confirmation de création.
+  - **Export :** Titre modal (« Exporter '{0}' ») et alertes de confirmation/erreur d'export entièrement traduits.
+- **1.4. Outil de Détection des Doublons :**
+  - Traduction du message récapitulatif post-analyse (« Aucun doublon détecté dans votre bibliothèque ! », nombre de groupes et partitions concernées).
+  - En-têtes de cartes par groupe de doublons et statut d'utilisation en setlist (« Utilisé dans : ... » / « Non utilisé en setlist »).
+  - Boîte d'alerte et de confirmation de suppression de doublon avec avertissement traduit en cas d'assignation à des setlists.
+- **1.5. Paramètres Pédales Bluetooth & Événements MIDI :**
+  - Boutons d'action traduits : « Modifier le profil sélectionné », « Nouveau profil », « Supprimer », « Réinitialiser tous les profils d'usine ».
+  - Intitulé des notes/réglages du profil et message de repli (« Aucune note... »).
+  - Dialogues modaux et alertes de création, confirmation de suppression et réinitialisation des profils d'usine traduits.
 
 ---
 

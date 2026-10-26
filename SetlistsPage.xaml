@@ -356,7 +356,7 @@
                 <Grid RowDefinitions="Auto, *, Auto" RowSpacing="15">
                     <!-- Header -->
                     <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
-                        <Label Text="📡 Envoi Wi-Fi Direct Setlist" 
+                        <Label Text="{Binding [Wifi_Setlist_Title], Source={x:Static services:LocalizationService.Instance}}" 
                                TextColor="White" 
                                FontAttributes="Bold" 
                                FontSize="18" 
@@ -377,7 +377,7 @@
                         <!-- Mode Envoi (Recherche et Liste d'appareils) -->
                         <Grid x:Name="WifiSendingView" RowDefinitions="Auto, *, Auto, Auto" RowSpacing="10" IsVisible="True">
                             <VerticalStackLayout Grid.Row="0" Spacing="6">
-                                <Label Text="Appareils Wi-Fi Direct détectés :" TextColor="White" FontAttributes="Bold" FontSize="14" />
+                                <Label Text="{Binding [Wifi_Setlist_Detected_Devices], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontAttributes="Bold" FontSize="14" />
                                 
                                 <!-- Info bulle explicative pour le destinataire -->
                                 <Border BackgroundColor="#1A2736" Stroke="#007ACC" StrokeThickness="1" Padding="10,8" Margin="0,2,0,2">
@@ -387,7 +387,7 @@
                                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8">
                                         <Label Grid.Column="0" Text="💡" FontSize="14" VerticalOptions="Start" />
                                         <Label Grid.Column="1" 
-                                               Text="Pour un envoi direct (1 à 1), le destinataire doit activer le Wi-Fi et ouvrir le menu 'Outils > Réception Wi-Fi Direct' dans son application pour être visible." 
+                                               Text="{Binding [Wifi_Setlist_Direct_Help], Source={x:Static services:LocalizationService.Instance}}" 
                                                TextColor="#B0C4DE" 
                                                FontSize="11" 
                                                LineBreakMode="WordWrap" />
@@ -396,16 +396,16 @@
 
                                 <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
                                     <ActivityIndicator x:Name="WifiScanSpinner" IsRunning="True" Color="#007ACC" HeightRequest="16" WidthRequest="16" VerticalOptions="Center" />
-                                    <Label Text="Recherche d'appareils en cours..." TextColor="#888888" FontSize="11" VerticalOptions="Center" />
+                                    <Label Text="{Binding [Wifi_Setlist_Scanning], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="11" VerticalOptions="Center" />
                                 </HorizontalStackLayout>
                             </VerticalStackLayout>
                             
                             <ListView Grid.Row="1" 
-                                      x:Name="WifiDevicesListView" 
-                                      BackgroundColor="Transparent"
-                                      SeparatorColor="#333333"
-                                      HasUnevenRows="True"
-                                      ItemSelected="OnWifiDeviceSelected">
+                                       x:Name="WifiDevicesListView" 
+                                       BackgroundColor="Transparent"
+                                       SeparatorColor="#333333"
+                                       HasUnevenRows="True"
+                                       ItemSelected="OnWifiDeviceSelected">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="services:WifiDeviceInfo">
                                         <ViewCell>
@@ -416,7 +416,7 @@
                                                     <Label Text="{Binding IpAddress}" TextColor="#888888" FontSize="11" />
                                                 </VerticalStackLayout>
                                                 <Button Grid.Column="2" 
-                                                        Text="Envoyer" 
+                                                        Text="{Binding [Wifi_Setlist_Send_Btn], Source={x:Static services:LocalizationService.Instance}}" 
                                                         BackgroundColor="#007ACC" 
                                                         TextColor="White" 
                                                         FontSize="12" 
@@ -434,7 +434,7 @@
                             <!-- Bouton Diffusion Groupe QR Code -->
                             <Button Grid.Row="2" 
                                     x:Name="ToggleGroupShareButton"
-                                    Text="📲 Mode Diffusion Groupe (QR Code)"
+                                    Text="{Binding [Wifi_Setlist_Toggle_Group_Share], Source={x:Static services:LocalizationService.Instance}}"
                                     BackgroundColor="#2C2C2C"
                                     BorderColor="#FF3366"
                                     BorderWidth="1"
@@ -445,7 +445,7 @@
                                     Clicked="OnToggleGroupShareClicked" />
                             
                             <Button Grid.Row="3" 
-                                    Text="🔄 Relancer la recherche"
+                                    Text="{Binding [Wifi_Setlist_Rescan], Source={x:Static services:LocalizationService.Instance}}"
                                     BackgroundColor="#1A1A1A"
                                     TextColor="#AAAAAA"
                                     CornerRadius="8"
@@ -455,22 +455,22 @@
 
                         <!-- Vue Partage de Groupe QR Code (Leader) -->
                         <VerticalStackLayout x:Name="WifiGroupQrView" Spacing="12" IsVisible="False" VerticalOptions="Center">
-                            <Label Text="Scannez pour télécharger la Setlist" TextColor="White" FontAttributes="Bold" FontSize="14" HorizontalOptions="Center" />
+                            <Label Text="{Binding [Wifi_Setlist_Qr_Scan_Title], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontAttributes="Bold" FontSize="14" HorizontalOptions="Center" />
                             <Border Stroke="#007ACC" StrokeThickness="2" BackgroundColor="White" Padding="8" WidthRequest="220" HeightRequest="220" HorizontalOptions="Center">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="10" />
                                 </Border.StrokeShape>
                                 <Image x:Name="QrCodeImageView" WidthRequest="200" HeightRequest="200" Aspect="AspectFit" />
                             </Border>
-                            <Label x:Name="QrGroupInfoLabel" Text="En attente de musiciens..." TextColor="#2ECC71" FontSize="12" FontAttributes="Bold" HorizontalOptions="Center" />
+                            <Label x:Name="QrGroupInfoLabel" Text="{Binding [Wifi_Setlist_Qr_Waiting], Source={x:Static services:LocalizationService.Instance}}" TextColor="#2ECC71" FontSize="12" FontAttributes="Bold" HorizontalOptions="Center" />
                             <Label x:Name="QrGroupUrlLabel" Text="http://..." TextColor="#888888" FontSize="11" HorizontalOptions="Center" />
-                            <Label Text="💡 Les tablettes doivent être sur le même Wi-Fi ou connectées au point d'accès de cette tablette" 
+                            <Label Text="{Binding [Wifi_Setlist_Qr_Help], Source={x:Static services:LocalizationService.Instance}}" 
                                    TextColor="#AAAAAA" 
                                    FontSize="11" 
                                    HorizontalOptions="Center" 
                                    HorizontalTextAlignment="Center" 
                                    Margin="10,0" />
-                            <Button Text="Fermer le partage de groupe"
+                            <Button Text="{Binding [Wifi_Setlist_Qr_Close], Source={x:Static services:LocalizationService.Instance}}"
                                     BackgroundColor="#CC2929"
                                     TextColor="White"
                                     FontAttributes="Bold"
@@ -483,7 +483,7 @@
                         <VerticalStackLayout x:Name="WifiTransferProgressView" Spacing="16" IsVisible="False" VerticalOptions="Center">
                             <ActivityIndicator IsRunning="True" Color="#007ACC" HeightRequest="50" WidthRequest="50" HorizontalOptions="Center" />
                             <Label x:Name="WifiTransferStatusLabel" 
-                                   Text="Transfert en cours... 0%" 
+                                   Text="{Binding [Wifi_Setlist_Progress_Default], Source={x:Static services:LocalizationService.Instance}}" 
                                    TextColor="White" 
                                    FontAttributes="Bold" 
                                    FontSize="15" 
@@ -496,7 +496,7 @@
 
                     <!-- Footer -->
                     <Label Grid.Row="2"
-                           Text="Wi-Fi Direct P2P &amp; Local Hotspot (Haute Vitesse)"
+                           Text="{Binding [Wifi_Setlist_Footer], Source={x:Static services:LocalizationService.Instance}}"
                            TextColor="#555555"
                            FontSize="10"
                            HorizontalOptions="Center" />

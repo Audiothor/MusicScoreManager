@@ -56,13 +56,13 @@
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
                             <VerticalStackLayout Spacing="4">
-                                <Label Text="💡 Notes &amp; Réglages du profil :" TextColor="#4FC3F7" FontSize="11" FontAttributes="Bold" />
-                                <Label x:Name="ProfileDescLabel" Text="Description du profil..." TextColor="#CCCCCC" FontSize="12" LineBreakMode="WordWrap" />
+                                <Label Text="{Binding [Settings_Pedals_Profile_Notes], Source={x:Static services:LocalizationService.Instance}}" TextColor="#4FC3F7" FontSize="11" FontAttributes="Bold" />
+                                <Label x:Name="ProfileDescLabel" Text="Description..." TextColor="#CCCCCC" FontSize="12" LineBreakMode="WordWrap" />
                             </VerticalStackLayout>
                         </Border>
 
                         <Button x:Name="EditProfileBtn"
-                                Text="✏️ Modifier le profil sélectionné" 
+                                Text="{Binding [Settings_Pedals_Edit_Profile], Source={x:Static services:LocalizationService.Instance}}" 
                                 BackgroundColor="#007ACC" 
                                 TextColor="White" 
                                 FontAttributes="Bold"
@@ -73,7 +73,7 @@
                         <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
                             <Button x:Name="NewProfileBtn"
                                     Grid.Column="0"
-                                    Text="➕ Nouveau profil" 
+                                    Text="{Binding [Settings_Pedals_New_Profile], Source={x:Static services:LocalizationService.Instance}}" 
                                     BackgroundColor="#2C2C2C" 
                                     TextColor="#007ACC" 
                                     BorderColor="#007ACC" 
@@ -84,7 +84,7 @@
                             
                             <Button x:Name="DeleteProfileBtn" 
                                     Grid.Column="1"
-                                    Text="🗑️ Supprimer" 
+                                    Text="{Binding [Settings_Pedals_Delete_Profile], Source={x:Static services:LocalizationService.Instance}}" 
                                     BackgroundColor="#2C2C2C" 
                                     TextColor="#FF6B6B" 
                                     BorderColor="#FF6B6B" 
@@ -95,7 +95,7 @@
                         </Grid>
 
                         <Button x:Name="ResetProfilesBtn"
-                                Text="🔄 Réinitialiser tous les profils d'usine"
+                                Text="{Binding [Settings_Pedals_Reset_Profiles], Source={x:Static services:LocalizationService.Instance}}"
                                 BackgroundColor="Transparent"
                                 TextColor="#888888"
                                 FontSize="12"

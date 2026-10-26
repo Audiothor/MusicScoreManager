@@ -92,14 +92,15 @@ public partial class DuplicatesPage : ContentPage
 
             if (!duplicateGroups.Any())
             {
-                DuplicatesResultSummaryLabel.Text = "✅ Aucun doublon détecté dans votre bibliothèque !";
+                DuplicatesResultSummaryLabel.Text = $"✅ {LocalizationService.Instance.GetString("Duplicates_None_Found_Success")}";
                 DuplicatesResultSummaryLabel.TextColor = Color.FromArgb("#2ECC71");
                 DuplicatesResultSummaryLabel.IsVisible = true;
                 return;
             }
 
             int totalDuplicatesCount = duplicateGroups.Sum(g => g.Value.Count);
-            DuplicatesResultSummaryLabel.Text = $"⚠️ {duplicateGroups.Count} groupe(s) de doublons trouvés ({totalDuplicatesCount} partitions concernées) :";
+            string summaryTemplate = LocalizationService.Instance.GetString("Duplicates_Found_Summary");
+            DuplicatesResultSummaryLabel.Text = $"⚠️ {string.Format(summaryTemplate, duplicateGroups.Count, totalDuplicatesCount)}";
             DuplicatesResultSummaryLabel.TextColor = Color.FromArgb("#E67E22");
             DuplicatesResultSummaryLabel.IsVisible = true;
 
@@ -120,9 +121,10 @@ public partial class DuplicatesPage : ContentPage
 
                 var groupStack = new VerticalStackLayout { Spacing = 10 };
                 
+                string groupTemplate = LocalizationService.Instance.GetString("Duplicates_Group_Header");
                 var headerLabel = new Label
                 {
-                    Text = $"Groupe #{groupIndex} — {group.Value.Count} partitions identiques ({sizeStr})",
+                    Text = $"{string.Format(groupTemplate, groupIndex, group.Value.Count)} ({sizeStr})",
                     TextColor = Color.FromArgb("#007ACC"),
                     FontAttributes = FontAttributes.Bold,
                     FontSize = 14
@@ -171,11 +173,13 @@ public partial class DuplicatesPage : ContentPage
                         LineBreakMode = LineBreakMode.TailTruncation
                     };
 
+                    string usedTemplate = LocalizationService.Instance.GetString("Duplicates_Used_In_Setlists");
+                    string notUsedStr = LocalizationService.Instance.GetString("Duplicates_Not_Used");
                     var usageLabel = new Label
                     {
                         Text = isInSetlist 
-                            ? $"⚠️ Utilisé dans : {string.Join(", ", setlists)}" 
-                            : "🟢 Non utilisé en setlist (suppression sûre)",
+                            ? string.Format(usedTemplate, setlists.Count, string.Join(", ", setlists))
+                            : $"🟢 {notUsedStr}",
                         TextColor = isInSetlist ? Color.FromArgb("#E67E22") : Color.FromArgb("#2ECC71"),
                         FontSize = 11,
                         FontAttributes = FontAttributes.Bold
@@ -187,7 +191,7 @@ public partial class DuplicatesPage : ContentPage
 
                     var deleteBtn = new Button
                     {
-                        Text = "🗑️ Supprimer",
+                        Text = $"🗑️ {LocalizationService.Instance.GetString("Duplicates_Delete_Btn")}",
                         BackgroundColor = Color.FromArgb("#CC2929"),
                         TextColor = Colors.White,
                         FontAttributes = FontAttributes.Bold,
@@ -199,15 +203,20 @@ public partial class DuplicatesPage : ContentPage
 
                     deleteBtn.Clicked += async (s, e) =>
                     {
+                        string deleteTitle = LocalizationService.Instance.GetString("Duplicates_Delete_Title");
+                        string cancelText = LocalizationService.Instance.GetString("Common_Cancel");
+                        string confirmBtn = LocalizationService.Instance.GetString("Duplicates_Delete_Confirm_Btn");
                         string msg = isInSetlist 
-                            ? $"⚠️ ATTENTION : Cette partition '{score.Title}' est actuellement utilisée dans : {string.Join(", ", setlists)}.\n\nVoulez-vous vraiment supprimer cette référence de doublon ?" 
-                            : $"Voulez-vous supprimer le doublon '{score.Title}' ?";
+                            ? string.Format(LocalizationService.Instance.GetString("Duplicates_Delete_Warning_Setlist"), setlists.Count, string.Join(", ", setlists), score.Title)
+                            : string.Format(LocalizationService.Instance.GetString("Duplicates_Delete_Confirm"), score.Title);
 
-                        bool confirm = await DisplayAlertAsync("Supprimer ce doublon", msg, "Oui, supprimer", "Annuler");
+                        bool confirm = await DisplayAlertAsync(deleteTitle, msg, confirmBtn, cancelText);
                         if (confirm)
                         {
                             await _databaseService.DeleteScoreAsync(score);
-                            await DisplayAlertAsync("Supprimé", $"Le doublon '{score.Title}' a été supprimé.", "OK");
+                            string successTitle = LocalizationService.Instance.GetString("Duplicates_Deleted_Success_Title");
+                            string successMsg = LocalizationService.Instance.GetString("Duplicates_Deleted_Success_Msg");
+                            await DisplayAlertAsync(successTitle, successMsg, LocalizationService.Instance.GetString("Common_OK"));
                             OnAnalyzeDuplicatesClicked(this, EventArgs.Empty);
                         }
                     };

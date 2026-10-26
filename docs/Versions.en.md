@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.1.2 — 26/10/2026](#v312--26102026)
 - [v3.1.1 — 26/10/2026](#v311--26102026)
 - [v3.1.0 — 24/10/2026](#v310--24102026)
 - [v3.0.3 — 22/10/2026](#v303--22102026)
@@ -35,6 +36,30 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.2 — 26/10/2026
+
+### 1. Comprehensive Localization & Translation Fixes (8 languages: FR, EN, DE, ES, IT, NL, PL, PT)
+- **1.1. "Wi-Fi Direct Setlist Transfer" Dialog:**
+  - Dialog title, detected devices header, help/instruction tip, dynamic scanning label, and Send button now fully localized based on active user language.
+  - Full translation of Wi-Fi transfer system alerts (unavailable, preparing, connecting, success, failed, and error).
+- **1.2. Group Broadcast Mode (QR Code & Local Network Sharing):**
+  - Complete localization of broadcast modal: scan invitation title ("Scan to download the setlist"), waiting/active client count label, local Wi-Fi guidance tip, and stop broadcast button.
+  - Translated local web server startup error alerts.
+- **1.3. Setlist Management (Rename, Duplicate & Export):**
+  - **Rename:** Setlist renaming prompt ("Enter the new name for the setlist:") and title dialog are localized in the user's language.
+  - **Duplicate:** Translated duplication title, prompt, default suffix (" (Copy)", " (Copie)", " (Kopie)", etc.), and creation confirmation alert.
+  - **Export:** Export modal title ("Export '{0}'") and export success/error alerts completely translated.
+- **1.4. Duplicates Finder:**
+  - Translated post-analysis summary label ("No duplicates detected in your library!", group count, and affected score count).
+  - Duplicate group card headers and setlist usage status ("Used in: ..." / "Not used in any setlist").
+  - Duplicate deletion prompt with translated warning alert if score is used in setlists.
+- **1.5. Bluetooth Pedal & MIDI Settings:**
+  - Action buttons translated: "Edit selected profile", "New profile", "Delete", "Reset all factory profiles".
+  - Profile notes/settings header and fallback note text ("No notes.").
+  - Creation prompt, profile deletion confirmation, and factory reset dialogs/alerts fully translated.
 
 ---
 
