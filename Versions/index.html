@@ -871,6 +871,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v311-26102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.1 — 26/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.1 — 26/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-acceleration-majeure-du-lancement-des-setlists-visualiseur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Accélération Majeure du Lancement des Setlists &amp; Visualiseur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-parametres-des-partitions-taille-daffichage-du-numero-de-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Paramètres des Partitions : Taille d'Affichage du Numéro de Page
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v310-24102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2993,6 +3032,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v311-26102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.1 — 26/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.1 — 26/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-acceleration-majeure-du-lancement-des-setlists-visualiseur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Accélération Majeure du Lancement des Setlists &amp; Visualiseur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-parametres-des-partitions-taille-daffichage-du-numero-de-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Paramètres des Partitions : Taille d'Affichage du Numéro de Page
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v310-24102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5094,6 +5172,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v311--26102026">v3.1.1 — 26/10/2026</a></li>
 <li><a href="#v310--24102026">v3.1.0 — 24/10/2026</a></li>
 <li><a href="#v303--22102026">v3.0.3 — 22/10/2026</a></li>
 <li><a href="#v302--21102026">v3.0.2 — 21/10/2026</a></li>
@@ -5122,6 +5201,21 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v311-26102026">v3.1.1 — 26/10/2026</h2>
+<h3 id="1-acceleration-majeure-du-lancement-des-setlists-visualiseur">1. Accélération Majeure du Lancement des Setlists &amp; Visualiseur</h3>
+<ul>
+<li><strong>1.1. Optimisation drastique de la requête base de données (<code>GetScoresForSetlistAsync</code>) :</strong> Remplacement du chargement indiscriminé de toute la bibliothèque (<code>GetScoresAsync()</code>) par un requêtage ciblé uniquement sur les partitions associées à la setlist (<code>WHERE Id IN (...)</code>). Élimination de plusieurs centaines/milliers d'appels disque bloquants (<code>File.Exists</code>) lors de chaque ouverture, réduisant le temps de requête de 5 à 8 secondes à moins de 20 millisecondes.</li>
+<li><strong>1.2. Optimisation du chargement des détails (<code>LoadDetailsForScoresAsync</code>) :</strong> Ajustement du seuil de chargement des tables de jointure pour ne cibler que les partitions actives, allégeant la consommation mémoire et le processeur.</li>
+<li><strong>1.3. Feedback visuel immédiat &amp; Anti-rebond (<code>SetlistsPage</code> &amp; <code>SetlistEditPage</code>) :</strong></li>
+<li>Ajout d'un overlay de chargement élégant avec <code>ActivityIndicator</code> dès l'appui sur une setlist ou une partition, confirmant instantanément la prise en compte du clic à l'utilisateur.</li>
+<li>Verrouillage anti-double-clic évitant les lancements multiples concurrents.</li>
+<li><strong>1.4. Architecture évolutive du visualiseur (<code>ViewerPage</code>) :</strong> Ajout de la méthode <code>UpdateSetlistScores</code> permettant l'actualisation dynamique et asynchrone des partitions d'une setlist en tâche de fond.</li>
+</ul>
+<h3 id="2-parametres-des-partitions-taille-daffichage-du-numero-de-page">2. Paramètres des Partitions : Taille d'Affichage du Numéro de Page</h3>
+<ul>
+<li><strong>2.1. Valeur par défaut alignée à 14 px :</strong> Dans <em>Paramètres &gt; Paramètres des partitions</em>, la valeur par défaut du curseur de taille du numéro de page actuelle (<code>PageNumberSize</code>) est désormais fixée à 14 px (au lieu de 20 px), garantissant un affichage discret et harmonieux dès l'installation tout en préservant scrupuleusement les préférences personnalisées enregistrées par l'utilisateur.</li>
 </ul>
 <hr />
 <h2 id="v310-24102026">v3.1.0 — 24/10/2026</h2>
