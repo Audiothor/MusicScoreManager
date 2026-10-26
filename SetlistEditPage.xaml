@@ -302,7 +302,8 @@
                      BackgroundColor="#B0000000" 
                      ZIndex="2000"
                      InputTransparent="False">
-            <Border BackgroundColor="#1E1E26" 
+            <Border x:Name="ScoreLoadingBorder"
+                    BackgroundColor="#1E1E26" 
                     Stroke="#007ACC"
                     StrokeThickness="1.5"
                     WidthRequest="260"

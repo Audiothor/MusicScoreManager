@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.1.4 — 26/10/2026](#v314--26102026)
 - [v3.1.3 — 26/10/2026](#v313--26102026)
 - [v3.1.2 — 26/10/2026](#v312--26102026)
 - [v3.1.1 — 26/10/2026](#v311--26102026)
@@ -37,6 +38,16 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.4 — 26/10/2026
+
+### 1. Fix Visual Shift of the Loading Modal (Opening Setlists & Scores)
+- **1.1. Neutralize jumping effect caused by bottom TabBar collapse:**
+  - When opening a setlist or score, transitioning to the full-screen score viewer initiates the hiding of the bottom navigation bar (`TabBar`). The sudden expansion of available page height caused an automatic recalculation of vertical centering, creating an abrupt downward shift of the loading indicator card (`SetlistLoadingOverlay` and `ScoreLoadingOverlay`).
+  - The modal card (`SetlistLoadingBorder` and `ScoreLoadingBorder`) is now anchored and locked to its initial top coordinate (`VerticalOptions = LayoutOptions.Start` with `Margin.Top` computed before transition starts).
+  - TabBar visibility is preemptively synchronized (`Shell.SetTabBarIsVisible(this, false)` upon tap, then restored in `OnAppearing` or on cancellation), ensuring the modal remains 100% rock-solid and stable on screen.
 
 ---
 
