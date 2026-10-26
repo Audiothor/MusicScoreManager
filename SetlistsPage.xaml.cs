@@ -49,7 +49,10 @@ public partial class SetlistsPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        Shell.SetTabBarIsVisible(this, true);
         SetlistLoadingOverlay.IsVisible = false;
+        SetlistLoadingBorder.VerticalOptions = LayoutOptions.Center;
+        SetlistLoadingBorder.Margin = new Thickness(0);
         _isOpeningSetlist = false;
 
         if (!_hasUserCustomSort)
@@ -262,6 +265,21 @@ public partial class SetlistsPage : ContentPage
 
         try
         {
+            // Verrouiller la position verticale exacte de la boîte de chargement par le haut
+            // pour empêcher tout saut ou décalage lors de la disparition de la barre d'onglets
+            if (this.Height > 150)
+            {
+                double topY = (this.Height - 120.0) / 2.0;
+                SetlistLoadingBorder.VerticalOptions = LayoutOptions.Start;
+                SetlistLoadingBorder.Margin = new Thickness(0, Math.Max(0, topY), 0, 0);
+            }
+            else
+            {
+                SetlistLoadingBorder.VerticalOptions = LayoutOptions.Center;
+                SetlistLoadingBorder.Margin = new Thickness(0);
+            }
+
+            Shell.SetTabBarIsVisible(this, false);
             SetlistLoadingOverlay.IsVisible = true;
             await Task.Yield();
 
@@ -269,6 +287,7 @@ public partial class SetlistsPage : ContentPage
             if (scores == null || !scores.Any())
             {
                 SetlistLoadingOverlay.IsVisible = false;
+                Shell.SetTabBarIsVisible(this, true);
                 await DisplayAlertAsync("Setlist vide", $"Aucune partition n'est actuellement assignée à la setlist '{setlist.Name}'.", "OK");
                 return;
             }
@@ -277,6 +296,7 @@ public partial class SetlistsPage : ContentPage
             if (firstScore.IsFileMissing)
             {
                 SetlistLoadingOverlay.IsVisible = false;
+                Shell.SetTabBarIsVisible(this, true);
                 await DisplayAlertAsync("Fichier manquant", $"Le fichier de la première partition '{firstScore.Title}' est introuvable. Veuillez vérifier son emplacement.", "OK");
                 return;
             }
@@ -286,6 +306,7 @@ public partial class SetlistsPage : ContentPage
         catch (Exception ex)
         {
             SetlistLoadingOverlay.IsVisible = false;
+            Shell.SetTabBarIsVisible(this, true);
             System.Diagnostics.Debug.WriteLine($"[SetlistsPage] Erreur ouverture setlist : {ex.Message}");
         }
         finally

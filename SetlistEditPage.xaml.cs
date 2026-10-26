@@ -247,6 +247,21 @@ public partial class SetlistEditPage : ContentPage
             _isOpeningScore = true;
             try
             {
+                // Verrouiller la position verticale exacte de la boîte de chargement par le haut
+                // pour empêcher tout saut ou décalage lors de la disparition de la barre d'onglets
+                if (this.Height > 150)
+                {
+                    double topY = (this.Height - 120.0) / 2.0;
+                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Start;
+                    ScoreLoadingBorder.Margin = new Thickness(0, Math.Max(0, topY), 0, 0);
+                }
+                else
+                {
+                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Center;
+                    ScoreLoadingBorder.Margin = new Thickness(0);
+                }
+
+                Shell.SetTabBarIsVisible(this, false);
                 ScoreLoadingOverlay.IsVisible = true;
                 await Task.Yield();
 
@@ -265,6 +280,7 @@ public partial class SetlistEditPage : ContentPage
             catch (Exception ex)
             {
                 ScoreLoadingOverlay.IsVisible = false;
+                Shell.SetTabBarIsVisible(this, true);
                 System.Diagnostics.Debug.WriteLine($"[SetlistEditPage] Erreur ouverture partition: {ex.Message}");
             }
             finally
@@ -277,7 +293,10 @@ public partial class SetlistEditPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        Shell.SetTabBarIsVisible(this, true);
         ScoreLoadingOverlay.IsVisible = false;
+        ScoreLoadingBorder.VerticalOptions = LayoutOptions.Center;
+        ScoreLoadingBorder.Margin = new Thickness(0);
         _isOpeningScore = false;
 
         if (!_isLoaded)

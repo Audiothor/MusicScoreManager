@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.1.4 — 26/10/2026](#v314--26102026)
 - [v3.1.3 — 26/10/2026](#v313--26102026)
 - [v3.1.2 — 26/10/2026](#v312--26102026)
 - [v3.1.1 — 26/10/2026](#v311--26102026)
@@ -37,6 +38,16 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.4 — 26/10/2026
+
+### 1. Correction du Décalage Visuel de la Boîte de Chargement (Ouverture Setlist & Partition)
+- **1.1. Neutralisation du saut d'affichage lors de la disparition de la barre d'onglets inférieure (TabBar) :**
+  - Lors du clic pour ouvrir une setlist ou une partition, la transition vers le visualiseur plein écran provoque la disparition de la barre de menu horizontale du bas (`TabBar`). L'expansion soudaine de la hauteur disponible de la page provoquait un recalcul dynamique du centrage vertical et un décalage vers le bas de la boîte de dialogue modale (`SetlistLoadingOverlay` et `ScoreLoadingOverlay`).
+  - La boîte modale (`SetlistLoadingBorder` et `ScoreLoadingBorder`) est désormais ancrée et verrouillée sur son ordonnée verticale initiale par le haut (`VerticalOptions = LayoutOptions.Start` avec `Margin.Top` calculé avant toute transition).
+  - La visibilité de la barre d'onglets est synchronisée en amont (`Shell.SetTabBarIsVisible(this, false)` dès le clic, puis restaurée dans `OnAppearing` ou en cas d'annulation), garantissant une totale immobilité et fluidité visuelle de la boîte de temporisation à l'écran.
 
 ---
 
