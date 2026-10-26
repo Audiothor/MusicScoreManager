@@ -11,7 +11,7 @@ namespace MusicScoreManager;
 public partial class ViewerPage : ContentPage
 {
     private Score _score;
-    private readonly List<Score>? _setlistScores;
+    private List<Score>? _setlistScores;
     private readonly Setlist? _setlist;
     private int _currentIndex = -1;
     private bool _isContinuous = true;
@@ -266,6 +266,21 @@ public partial class ViewerPage : ContentPage
             SetupNativeTouchHandling();
 #endif
         };
+    }
+
+    public void UpdateSetlistScores(List<Score> scores, int currentIndex)
+    {
+        _setlistScores = scores;
+        _currentIndex = currentIndex;
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            if (TopSetlistTouchBar != null)
+            {
+                bool isSetlistProgressEnabled = Preferences.Default.Get("ShowSetlistProgressOverlay", true);
+                TopSetlistTouchBar.IsVisible = isSetlistProgressEnabled && _setlistScores != null && _setlistScores.Count > 0;
+            }
+            UpdateTopScoreTitleUI();
+        });
     }
 
     protected override void OnAppearing()

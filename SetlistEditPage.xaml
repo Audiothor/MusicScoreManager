@@ -291,5 +291,33 @@
                     HeightRequest="{OnIdiom Phone=40, Tablet=46}"
                     Clicked="OnSaveClicked" />
         </Grid>
+
+        <!-- Overlay Indicateur de chargement Partition -->
+        <ContentView x:Name="ScoreLoadingOverlay" 
+                     Grid.RowSpan="3"
+                     IsVisible="False" 
+                     BackgroundColor="#B0000000" 
+                     ZIndex="2000"
+                     InputTransparent="False">
+            <Border BackgroundColor="#1E1E26" 
+                    Stroke="#007ACC"
+                    StrokeThickness="1.5"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" 
+                    Padding="30,22">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="14" HorizontalOptions="Center" VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="True" Color="#00B4D8" HeightRequest="45" WidthRequest="45" HorizontalOptions="Center" />
+                    <Label x:Name="ScoreLoadingText"
+                           Text="{Binding [Score_Loading_Opening], Source={x:Static services:LocalizationService.Instance}}"
+                           TextColor="White"
+                           FontSize="15"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+        </ContentView>
     </Grid>
 </ContentPage>

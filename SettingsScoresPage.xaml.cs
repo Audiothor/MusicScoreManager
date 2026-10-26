@@ -73,7 +73,7 @@ public partial class SettingsScoresPage : ContentPage
         ShowScoreTitleSwitch.IsToggled = Preferences.Default.Get("ShowScoreTitle", false);
         TwoPagesLandscapeSwitch.IsToggled = Preferences.Default.Get("TwoPagesLandscape", true);
         KeepScreenOnSwitch.IsToggled = Preferences.Default.Get("KeepScreenOn", true);
-        PageNumberSizeSlider.Value = Preferences.Default.Get("PageNumberSize", 20.0);
+        PageNumberSizeSlider.Value = Preferences.Default.Get("PageNumberSize", 14.0);
 
         NextPageGesturePicker.ItemsSource = new List<string>
         {

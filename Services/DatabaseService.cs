@@ -146,13 +146,13 @@ namespace MusicScoreManager.Services
         {
             if (scores == null || scores.Count == 0 || _database == null) return;
             
-            // Si on a beaucoup de scores, on charge TOUTES les tables de jointure une fois
-            // et on fait le mapping en mémoire (BEAUCOUP plus rapide que Contains sur Android)
+            // Si on a un très grand nombre de scores (> 150), on charge les tables de jointure complètes
+            // Sinon on requête de manière ciblée uniquement les IDs concernés
             List<ScoreTag> allScoreTags;
             List<Tag> allTags;
             List<ScoreAudioFile> allAudioFiles;
 
-            if (scores.Count > 10)
+            if (scores.Count > 150)
             {
                 allScoreTags = await _database.Table<ScoreTag>().ToListAsync();
                 allTags = await _database.Table<Tag>().ToListAsync();
@@ -370,14 +370,40 @@ namespace MusicScoreManager.Services
                                              .OrderBy(ss => ss.Order)
                                              .ToListAsync();
             
-            var scoreIds = associations.Select(a => a.ScoreId).ToList();
-            var allScores = await GetScoresAsync();
+            if (associations == null || associations.Count == 0)
+                return new List<Score>();
+
+            var scoreIds = associations.Select(a => a.ScoreId).Distinct().ToList();
             
-            // Return scores in the specified order
-            return scoreIds.Select(id => allScores.FirstOrDefault(s => s.Id == id))
-                          .Where(s => s != null)
-                          .Cast<Score>()
-                          .ToList();
+            // Optimisation majeure : charger UNIQUEMENT les partitions de la setlist ciblée (évite de charger toute la bibliothèque)
+            var targetScores = await _database.Table<Score>()
+                                             .Where(s => scoreIds.Contains(s.Id))
+                                             .ToListAsync();
+            await LoadDetailsForScoresAsync(targetScores);
+            
+            var scoreDict = targetScores.ToDictionary(s => s.Id);
+            
+            // Conserver l'ordre exact et les éventuelles répétitions définies dans la setlist
+            var result = new List<Score>();
+            foreach (var assoc in associations)
+            {
+                if (scoreDict.TryGetValue(assoc.ScoreId, out var score))
+                {
+                    result.Add(score);
+                }
+            }
+            return result;
+        }
+
+        public async Task<Score?> GetFirstScoreForSetlistAsync(int setlistId)
+        {
+            await Init();
+            var firstAssoc = await _database!.Table<SetlistScore>()
+                                            .Where(ss => ss.SetlistId == setlistId)
+                                            .OrderBy(ss => ss.Order)
+                                            .FirstOrDefaultAsync();
+            if (firstAssoc == null) return null;
+            return await GetScoreAsync(firstAssoc.ScoreId);
         }
 
         public async Task UpdateSetlistScoresAsync(int setlistId, List<int> scoreIds)

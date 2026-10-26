@@ -270,6 +270,8 @@
   "Setlist_Edit_Scores": "Partitions",
   "Setlist_Edit_Unlocked": "DÉVERROUILLÉ 🔓",
   "Setlist_Empty": "Aucune Setlist trouvée.",
+  "Setlist_Loading_Opening": "Chargement de la setlist...",
+  "Score_Loading_Opening": "Chargement de la partition...",
   "Setlist_Lock_Order": "Verrouiller l'ordre",
   "Setlist_Menu_Delete": "🗑️  Supprimer la setlist",
   "Setlist_Menu_Duplicate": "📑  Dupliquer la setlist",

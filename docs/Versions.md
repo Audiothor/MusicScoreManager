@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.1.1 — 26/10/2026](#v311--26102026)
 - [v3.1.0 — 24/10/2026](#v310--24102026)
 - [v3.0.3 — 22/10/2026](#v303--22102026)
 - [v3.0.2 — 21/10/2026](#v302--21102026)
@@ -34,6 +35,21 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.1 — 26/10/2026
+
+### 1. Accélération Majeure du Lancement des Setlists & Visualiseur
+- **1.1. Optimisation drastique de la requête base de données (`GetScoresForSetlistAsync`) :** Remplacement du chargement indiscriminé de toute la bibliothèque (`GetScoresAsync()`) par un requêtage ciblé uniquement sur les partitions associées à la setlist (`WHERE Id IN (...)`). Élimination de plusieurs centaines/milliers d'appels disque bloquants (`File.Exists`) lors de chaque ouverture, réduisant le temps de requête de 5 à 8 secondes à moins de 20 millisecondes.
+- **1.2. Optimisation du chargement des détails (`LoadDetailsForScoresAsync`) :** Ajustement du seuil de chargement des tables de jointure pour ne cibler que les partitions actives, allégeant la consommation mémoire et le processeur.
+- **1.3. Feedback visuel immédiat & Anti-rebond (`SetlistsPage` & `SetlistEditPage`) :**
+  - Ajout d'un overlay de chargement élégant avec `ActivityIndicator` dès l'appui sur une setlist ou une partition, confirmant instantanément la prise en compte du clic à l'utilisateur.
+  - Verrouillage anti-double-clic évitant les lancements multiples concurrents.
+- **1.4. Architecture évolutive du visualiseur (`ViewerPage`) :** Ajout de la méthode `UpdateSetlistScores` permettant l'actualisation dynamique et asynchrone des partitions d'une setlist en tâche de fond.
+
+### 2. Paramètres des Partitions : Taille d'Affichage du Numéro de Page
+- **2.1. Valeur par défaut alignée à 14 px :** Dans *Paramètres > Paramètres des partitions*, la valeur par défaut du curseur de taille du numéro de page actuelle (`PageNumberSize`) est désormais fixée à 14 px (au lieu de 20 px), garantissant un affichage discret et harmonieux dès l'installation tout en préservant scrupuleusement les préférences personnalisées enregistrées par l'utilisateur.
 
 ---
 

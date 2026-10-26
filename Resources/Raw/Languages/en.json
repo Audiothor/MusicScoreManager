@@ -270,6 +270,8 @@
   "Setlist_Edit_Scores": "Scores",
   "Setlist_Edit_Unlocked": "UNLOCKED 🔓",
   "Setlist_Empty": "No Setlist found.",
+  "Setlist_Loading_Opening": "Opening setlist...",
+  "Score_Loading_Opening": "Opening score...",
   "Setlist_Lock_Order": "Lock order",
   "Setlist_Menu_Delete": "🗑️  Delete Setlist",
   "Setlist_Menu_Duplicate": "📑  Duplicate Setlist",

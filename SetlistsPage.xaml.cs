@@ -21,6 +21,7 @@ public partial class SetlistsPage : ContentPage
     private SetlistStatus? _selectedStatusFilter = null;
     private Setlist? _selectedSetlistForAction = null;
     private readonly ObservableCollection<WifiDeviceInfo> _discoveredDevices = new();
+    private bool _isOpeningSetlist = false;
 
     public SetlistsPage(DatabaseService databaseService, IWifiDirectTransferService wifiService, ExportImportService exportImportService)
     {
@@ -48,6 +49,9 @@ public partial class SetlistsPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        SetlistLoadingOverlay.IsVisible = false;
+        _isOpeningSetlist = false;
+
         if (!_hasUserCustomSort)
         {
             _currentSort = Preferences.Default.Get("DefaultSetlistSort", "DateCreatedDesc");
@@ -249,21 +253,41 @@ public partial class SetlistsPage : ContentPage
 
     private async Task StartSetlistAsync(Setlist setlist)
     {
-        var scores = await _databaseService.GetScoresForSetlistAsync(setlist.Id);
-        if (scores == null || !scores.Any())
-        {
-            await DisplayAlertAsync("Setlist vide", $"Aucune partition n'est actuellement assignée à la setlist '{setlist.Name}'.", "OK");
-            return;
-        }
+        if (_isOpeningSetlist) return;
+        _isOpeningSetlist = true;
 
-        var firstScore = scores[0];
-        if (firstScore.IsFileMissing)
+        try
         {
-            await DisplayAlertAsync("Fichier manquant", $"Le fichier de la première partition '{firstScore.Title}' est introuvable. Veuillez vérifier son emplacement.", "OK");
-            return;
-        }
+            SetlistLoadingOverlay.IsVisible = true;
+            await Task.Yield();
 
-        await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading, setlist));
+            var scores = await _databaseService.GetScoresForSetlistAsync(setlist.Id);
+            if (scores == null || !scores.Any())
+            {
+                SetlistLoadingOverlay.IsVisible = false;
+                await DisplayAlertAsync("Setlist vide", $"Aucune partition n'est actuellement assignée à la setlist '{setlist.Name}'.", "OK");
+                return;
+            }
+
+            var firstScore = scores[0];
+            if (firstScore.IsFileMissing)
+            {
+                SetlistLoadingOverlay.IsVisible = false;
+                await DisplayAlertAsync("Fichier manquant", $"Le fichier de la première partition '{firstScore.Title}' est introuvable. Veuillez vérifier son emplacement.", "OK");
+                return;
+            }
+
+            await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading, setlist));
+        }
+        catch (Exception ex)
+        {
+            SetlistLoadingOverlay.IsVisible = false;
+            System.Diagnostics.Debug.WriteLine($"[SetlistsPage] Erreur ouverture setlist : {ex.Message}");
+        }
+        finally
+        {
+            _isOpeningSetlist = false;
+        }
     }
 
     private async void OnMenuEditSetlistClicked(object sender, EventArgs e)
