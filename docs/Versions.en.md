@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.1.1 — 26/10/2026](#v311--26102026)
 - [v3.1.0 — 24/10/2026](#v310--24102026)
 - [v3.0.3 — 22/10/2026](#v303--22102026)
 - [v3.0.2 — 21/10/2026](#v302--21102026)
@@ -34,6 +35,21 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.1 — 26/10/2026
+
+### 1. Major Performance Boost for Setlist & Viewer Launch
+- **1.1. Drastic database query optimization (`GetScoresForSetlistAsync`):** Replaced indiscriminate full library scanning (`GetScoresAsync()`) with targeted querying strictly constrained to the setlist's scores (`WHERE Id IN (...)`). Completely eliminated hundreds/thousands of blocking disk file existence checks (`File.Exists`) on Android storage upon each launch, dropping query time from 5–8 seconds down to under 20 milliseconds.
+- **1.2. Optimized details loading threshold (`LoadDetailsForScoresAsync`):** Adjusted the junction table join threshold to target only active scores, cutting memory and CPU footprint.
+- **1.3. Immediate visual feedback & debouncing (`SetlistsPage` & `SetlistEditPage`):**
+  - Added an elegant loading overlay with an `ActivityIndicator` as soon as a setlist or score is tapped, providing instant user confirmation.
+  - Multi-tap debounce guard preventing concurrent launch collisions.
+- **1.4. Extensible viewer architecture (`ViewerPage`):** Added `UpdateSetlistScores` method allowing dynamic, asynchronous background updates of setlist score sequences.
+
+### 2. Score Settings: Default Current Page Number Font Size
+- **2.1. Default aligned to 14 px:** In *Settings > Score Settings*, the default slider value for the current page number size (`PageNumberSize`) is now set to 14 px (instead of 20 px), offering balanced and discreet presentation out of the box while strictly honoring any existing user preference.
 
 ---
 

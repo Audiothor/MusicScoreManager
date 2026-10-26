@@ -14,6 +14,7 @@ public partial class SetlistEditPage : ContentPage
     private bool _isLocked = false;
 
     private List<PedalProfileOption> _pedalProfileOptions = new();
+    private bool _isOpeningScore = false;
 
     private class PedalProfileOption
     {
@@ -233,6 +234,8 @@ public partial class SetlistEditPage : ContentPage
 
     private async void OnScoreRowTapped(object sender, TappedEventArgs e)
     {
+        if (_isOpeningScore) return;
+
         if (e.Parameter is OrderedScore orderedScore)
         {
             if (orderedScore.Score.IsFileMissing)
@@ -241,23 +244,42 @@ public partial class SetlistEditPage : ContentPage
                 return;
             }
 
-            var allScores = _orderedScores.Select(os => os.Score).ToList();
-            int index = _orderedScores.IndexOf(orderedScore);
-            
-            ApplySelectedPedalProfile();
+            _isOpeningScore = true;
+            try
+            {
+                ScoreLoadingOverlay.IsVisible = true;
+                await Task.Yield();
 
-            await Navigation.PushAsync(new ViewerPage(
-                orderedScore.Score, 
-                allScores, 
-                index, 
-                ContinuousSwitch.IsToggled,
-                _setlist));
+                var allScores = _orderedScores.Select(os => os.Score).ToList();
+                int index = _orderedScores.IndexOf(orderedScore);
+                
+                ApplySelectedPedalProfile();
+
+                await Navigation.PushAsync(new ViewerPage(
+                    orderedScore.Score, 
+                    allScores, 
+                    index, 
+                    ContinuousSwitch.IsToggled,
+                    _setlist));
+            }
+            catch (Exception ex)
+            {
+                ScoreLoadingOverlay.IsVisible = false;
+                System.Diagnostics.Debug.WriteLine($"[SetlistEditPage] Erreur ouverture partition: {ex.Message}");
+            }
+            finally
+            {
+                _isOpeningScore = false;
+            }
         }
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        ScoreLoadingOverlay.IsVisible = false;
+        _isOpeningScore = false;
+
         if (!_isLoaded)
         {
             await LoadScoresAsync();

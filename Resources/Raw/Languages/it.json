@@ -270,6 +270,8 @@
   "Setlist_Edit_Scores": "Spartiti",
   "Setlist_Edit_Unlocked": "SBLOCCATO 🔓",
   "Setlist_Empty": "Nessuna Setlist trovata.",
+  "Setlist_Loading_Opening": "Caricamento setlist...",
+  "Score_Loading_Opening": "Caricamento spartito...",
   "Setlist_Lock_Order": "Blocca ordine",
   "Setlist_Menu_Delete": "🗑️  Elimina setlist",
   "Setlist_Menu_Duplicate": "📑  Duplica setlist",

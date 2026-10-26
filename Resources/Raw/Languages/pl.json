@@ -270,6 +270,8 @@
   "Setlist_Edit_Scores": "Nuty",
   "Setlist_Edit_Unlocked": "ODBLOKOWANE 🔓",
   "Setlist_Empty": "Nie znaleziono żadnej Setlisty.",
+  "Setlist_Loading_Opening": "Ładowanie setlisty...",
+  "Score_Loading_Opening": "Ładowanie partytury...",
   "Setlist_Lock_Order": "Zablokuj kolejność",
   "Setlist_Menu_Delete": "🗑️  Usuń setlistę",
   "Setlist_Menu_Duplicate": "📑  Duplikuj setlistę",

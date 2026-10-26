@@ -270,6 +270,8 @@
   "Setlist_Edit_Scores": "Partituren",
   "Setlist_Edit_Unlocked": "ENTSPERRT 🔓",
   "Setlist_Empty": "Keine Setlist gefunden.",
+  "Setlist_Loading_Opening": "Setlist wird geladen...",
+  "Score_Loading_Opening": "Partitur wird geladen...",
   "Setlist_Lock_Order": "Reihenfolge sperren",
   "Setlist_Menu_Delete": "🗑️  Setlist löschen",
   "Setlist_Menu_Duplicate": "📑  Setlist duplizieren",
