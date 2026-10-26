@@ -215,7 +215,11 @@ public partial class SetlistsPage : ContentPage
 
     private async void OnAddSetlistClicked(object sender, EventArgs e)
     {
-        string result = await DisplayPromptAsync("Nouvelle Setlist", "Entrez le nom de la Setlist :");
+        string title = LocalizationService.Instance.GetString("Setlist_New_Title");
+        string prompt = LocalizationService.Instance.GetString("Setlist_New_Prompt");
+        string okText = LocalizationService.Instance.GetString("Common_OK");
+        string cancelText = LocalizationService.Instance.GetString("Common_Cancel");
+        string result = await DisplayPromptAsync(title, prompt, okText, cancelText);
         if (!string.IsNullOrWhiteSpace(result))
         {
             var newSetlist = new Setlist { Name = result.Trim(), DateCreated = DateTime.Now };

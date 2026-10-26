@@ -789,5 +789,7 @@
   "Settings_Pedals_Delete_Confirm_Msg": "Delete profile '{0}'?",
   "Settings_Pedals_Reset_Profiles": "Reset all factory profiles",
   "Settings_Pedals_Reset_Confirm_Title": "Confirmation",
-  "Settings_Pedals_Reset_Confirm_Msg": "Reset all profiles? Custom profiles will be deleted."
+  "Settings_Pedals_Reset_Confirm_Msg": "Reset all profiles? Custom profiles will be deleted.",
+  "Setlist_New_Title": "New Setlist",
+  "Setlist_New_Prompt": "Enter the name of the setlist:"
 }

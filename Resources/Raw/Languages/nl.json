@@ -786,5 +786,7 @@
   "Settings_Pedals_Delete_Confirm_Msg": "Profiel '{0}' verwijderen?",
   "Settings_Pedals_Reset_Profiles": "Alle fabrieksprofielen resetten",
   "Settings_Pedals_Reset_Confirm_Title": "Bevestiging",
-  "Settings_Pedals_Reset_Confirm_Msg": "Alle profielen resetten? Aangepaste profielen worden verwijderd."
+  "Settings_Pedals_Reset_Confirm_Msg": "Alle profielen resetten? Aangepaste profielen worden verwijderd.",
+  "Setlist_New_Title": "Nieuwe Setlijst",
+  "Setlist_New_Prompt": "Voer de naam van de setlijst in:"
 }
