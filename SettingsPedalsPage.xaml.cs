@@ -83,7 +83,7 @@ namespace MusicScoreManager
             if (active != null)
             {
                 ProfileDescLabel.Text = string.IsNullOrWhiteSpace(active.Description)
-                    ? "Aucune note ou configuration spécifique pour ce profil."
+                    ? LocalizationService.Instance.GetString("Settings_Pedals_No_Notes")
                     : active.Description;
             }
         }
@@ -108,12 +108,17 @@ namespace MusicScoreManager
 
         private async void OnNewCustomProfileClicked(object sender, EventArgs e)
         {
+            string title = LocalizationService.Instance.GetString("Settings_Pedals_New_Profile_Title");
+            string prompt = LocalizationService.Instance.GetString("Settings_Pedals_New_Profile_Prompt");
+            string okText = LocalizationService.Instance.GetString("Common_Create", "OK");
+            string cancelText = LocalizationService.Instance.GetString("Common_Cancel");
+
             string name = await DisplayPromptAsync(
-                "Nouveau profil", 
-                "Entrez le nom de votre configuration de pédale :", 
-                "Créer", 
-                "Annuler", 
-                placeholder: "Ex: Ma Pédale Perso");
+                title, 
+                prompt, 
+                okText, 
+                cancelText, 
+                placeholder: "Ex: AirTurn DUO");
 
             if (!string.IsNullOrWhiteSpace(name))
             {
@@ -129,11 +134,17 @@ namespace MusicScoreManager
             var active = _pedalService.ActiveProfile;
             if (active == null) return;
 
+            string deleteTitle = LocalizationService.Instance.GetString("Settings_Pedals_Delete_Confirm_Title");
+            string template = LocalizationService.Instance.GetString("Settings_Pedals_Delete_Confirm_Msg");
+            string msg = string.Format(template, active.Name);
+            string deleteBtn = LocalizationService.Instance.GetString("Settings_Pedals_Delete_Profile");
+            string cancelText = LocalizationService.Instance.GetString("Common_Cancel");
+
             bool confirm = await DisplayAlertAsync(
-                "Supprimer le profil", 
-                $"Voulez-vous vraiment supprimer le profil « {active.Name} » ?", 
-                "Supprimer", 
-                "Annuler");
+                deleteTitle, 
+                msg, 
+                deleteBtn, 
+                cancelText);
 
             if (confirm)
             {
@@ -144,17 +155,23 @@ namespace MusicScoreManager
 
         private async void OnResetFactoryProfilesClicked(object sender, EventArgs e)
         {
+            string resetTitle = LocalizationService.Instance.GetString("Settings_Pedals_Reset_Confirm_Title");
+            string resetMsg = LocalizationService.Instance.GetString("Settings_Pedals_Reset_Confirm_Msg");
+            string resetBtn = LocalizationService.Instance.GetString("Settings_Pedals_Reset_Profiles");
+            string cancelText = LocalizationService.Instance.GetString("Common_Cancel");
+            string okText = LocalizationService.Instance.GetString("Common_OK");
+
             bool confirm = await DisplayAlertAsync(
-                "Réinitialiser les profils", 
-                "Voulez-vous restaurer tous les profils d'usine par défaut ? Les modifications apportées seront réinitialisées.", 
-                "Réinitialiser", 
-                "Annuler");
+                resetTitle, 
+                resetMsg, 
+                resetBtn, 
+                cancelText);
 
             if (confirm)
             {
                 _pedalService.ResetToFactoryDefaults();
                 RefreshProfiles();
-                await DisplayAlertAsync("Profils réinitialisés", "Tous les profils par défaut ont été restaurés.", "OK");
+                await DisplayAlertAsync(resetTitle, resetMsg, okText);
             }
         }
 

@@ -304,7 +304,8 @@ public partial class SetlistsPage : ContentPage
         SetlistMenuOverlay.IsVisible = false;
         if (_selectedSetlistForAction != null)
         {
-            SetlistOptionsTitle.Text = $"Envoyer '{_selectedSetlistForAction.Name}'";
+            string template = LocalizationService.Instance.GetString("Setlist_Options_Title_Send");
+            SetlistOptionsTitle.Text = string.Format(template, _selectedSetlistForAction.Name);
             OptSendWifiActionButton.IsVisible = true;
             OptExportFileActionButton.IsVisible = false;
             SetlistOptionsOverlay.IsVisible = true;
@@ -316,7 +317,8 @@ public partial class SetlistsPage : ContentPage
         SetlistMenuOverlay.IsVisible = false;
         if (_selectedSetlistForAction != null)
         {
-            SetlistOptionsTitle.Text = $"Exporter '{_selectedSetlistForAction.Name}'";
+            string template = LocalizationService.Instance.GetString("Setlist_Options_Title_Export");
+            SetlistOptionsTitle.Text = string.Format(template, _selectedSetlistForAction.Name);
             OptSendWifiActionButton.IsVisible = false;
             OptExportFileActionButton.IsVisible = true;
             SetlistOptionsOverlay.IsVisible = true;
@@ -329,15 +331,22 @@ public partial class SetlistsPage : ContentPage
         if (_selectedSetlistForAction != null)
         {
             var setlist = _selectedSetlistForAction;
-            string defaultName = $"{setlist.Name} (Copie)";
-            string result = await DisplayPromptAsync("Dupliquer", "Entrez le nom de la nouvelle setlist :", initialValue: defaultName);
+            string copySuffix = LocalizationService.Instance.GetString("Setlist_Duplicate_Copy_Suffix");
+            string defaultName = $"{setlist.Name}{copySuffix}";
+            string promptTitle = LocalizationService.Instance.GetString("Setlist_Duplicate_Title");
+            string promptMsg = LocalizationService.Instance.GetString("Setlist_Duplicate_Prompt");
+            string okText = LocalizationService.Instance.GetString("Common_OK");
+            string cancelText = LocalizationService.Instance.GetString("Common_Cancel");
+            string result = await DisplayPromptAsync(promptTitle, promptMsg, okText, cancelText, initialValue: defaultName);
             if (!string.IsNullOrWhiteSpace(result))
             {
                 var duplicated = await _databaseService.DuplicateSetlistAsync(setlist.Id, result.Trim());
                 await LoadSetlistsAsync(SearchSetlistBar.Text);
                 if (duplicated != null)
                 {
-                    await DisplayAlertAsync("Setlist dupliquée", $"La setlist '{duplicated.Name}' a été créée avec succès.", "OK");
+                    string successTitle = LocalizationService.Instance.GetString("Setlist_Duplicate_Success_Title");
+                    string successMsg = string.Format(LocalizationService.Instance.GetString("Setlist_Duplicate_Success_Msg"), duplicated.Name);
+                    await DisplayAlertAsync(successTitle, successMsg, okText);
                 }
             }
         }
@@ -384,11 +393,15 @@ public partial class SetlistsPage : ContentPage
             };
 
             string exportedPath = await _exportImportService.ExportSetlistToFileAsync(setlist, options);
-            await DisplayAlertAsync("Export réussi", $"La Setlist '{setlist.Name}' a été exportée avec succès dans :\n\n{exportedPath}", "OK");
+            string successTitle = LocalizationService.Instance.GetString("Setlist_Export_Success_Title");
+            string successMsg = $"{LocalizationService.Instance.GetString("Setlist_Export_Success_Msg")}\n\n{exportedPath}";
+            await DisplayAlertAsync(successTitle, successMsg, LocalizationService.Instance.GetString("Common_OK"));
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur d'export", $"Impossible d'exporter la setlist : {ex.Message}", "OK");
+            string errorTitle = LocalizationService.Instance.GetString("Setlist_Export_Error_Title");
+            string errorMsg = string.Format(LocalizationService.Instance.GetString("Setlist_Export_Error_Msg"), ex.Message);
+            await DisplayAlertAsync(errorTitle, errorMsg, LocalizationService.Instance.GetString("Common_OK"));
         }
         finally
         {
@@ -412,7 +425,9 @@ public partial class SetlistsPage : ContentPage
         bool initialized = await _wifiService.InitializeAsync();
         if (!initialized)
         {
-            await DisplayAlertAsync("Wi-Fi indisponible", "Veuillez activer le Wi-Fi sur votre appareil et accorder les permissions.", "OK");
+            string unavailTitle = LocalizationService.Instance.GetString("Wifi_Setlist_Unavailable_Title");
+            string unavailMsg = LocalizationService.Instance.GetString("Wifi_Setlist_Unavailable_Msg");
+            await DisplayAlertAsync(unavailTitle, unavailMsg, LocalizationService.Instance.GetString("Common_OK"));
             WifiOverlay.IsVisible = false;
             _selectedSetlistForAction = null;
             return;
@@ -480,7 +495,7 @@ public partial class SetlistsPage : ContentPage
         try
         {
             ShowWifiView("Progress");
-            WifiTransferStatusLabel.Text = "Préparation du paquet Setlist...";
+            WifiTransferStatusLabel.Text = LocalizationService.Instance.GetString("Wifi_Setlist_Preparing");
             WifiTransferProgressBar.Progress = 0.05;
 
             var options = new ExportOptions
@@ -491,7 +506,8 @@ public partial class SetlistsPage : ContentPage
 
             var payloads = await _exportImportService.CreateWifiPayloadsForSetlistAsync(setlist, options);
 
-            WifiTransferStatusLabel.Text = $"Connexion à {selectedDevice.Name}...";
+            string connTemplate = LocalizationService.Instance.GetString("Wifi_Setlist_Connecting");
+            WifiTransferStatusLabel.Text = string.Format(connTemplate, selectedDevice.Name);
             WifiTransferProgressBar.Progress = 0.15;
 
             string senderName = DeviceInfo.Name ?? "Tablette Musique";
@@ -499,16 +515,22 @@ public partial class SetlistsPage : ContentPage
 
             if (success)
             {
-                await DisplayAlertAsync("Succès", $"La Setlist '{setlist.Name}' ({payloads.Count - 1} partition(s)/fichiers) a été envoyée avec succès via Wi-Fi Direct !", "OK");
+                string successTitle = LocalizationService.Instance.GetString("Wifi_Setlist_Success_Title");
+                string successMsg = LocalizationService.Instance.GetString("Wifi_Setlist_Success_Msg");
+                await DisplayAlertAsync(successTitle, successMsg, LocalizationService.Instance.GetString("Common_OK"));
             }
             else
             {
-                await DisplayAlertAsync("Échec", "Le transfert de la Setlist a échoué ou a été refusé par le destinataire.", "OK");
+                string failedTitle = LocalizationService.Instance.GetString("Wifi_Setlist_Failed_Title");
+                string failedMsg = string.Format(LocalizationService.Instance.GetString("Wifi_Setlist_Failed_Msg"), selectedDevice.Name);
+                await DisplayAlertAsync(failedTitle, failedMsg, LocalizationService.Instance.GetString("Common_OK"));
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Erreur lors du transfert : {ex.Message}", "OK");
+            string errorTitle = LocalizationService.Instance.GetString("Wifi_Setlist_Error_Title");
+            string errorMsg = string.Format(LocalizationService.Instance.GetString("Wifi_Setlist_Error_Msg"), ex.Message);
+            await DisplayAlertAsync(errorTitle, errorMsg, LocalizationService.Instance.GetString("Common_OK"));
         }
         finally
         {
@@ -533,19 +555,22 @@ public partial class SetlistsPage : ContentPage
 
         var shareInfo = await _wifiService.StartGroupBroadcastAsync(payloads, title, (clientsCount) =>
         {
-            QrGroupInfoLabel.Text = $"🟢 {clientsCount} musicien(s) ont téléchargé la setlist !";
+            string connectedTemplate = LocalizationService.Instance.GetString("Wifi_Setlist_Qr_Connected");
+            QrGroupInfoLabel.Text = $"🟢 {string.Format(connectedTemplate, clientsCount)}";
         });
 
         if (shareInfo != null)
         {
             QrCodeImageView.Source = QrCodeGenerator.GenerateQrCodeImageSource(shareInfo.QrCodeContent, 220);
             QrGroupUrlLabel.Text = shareInfo.QrCodeContent;
-            QrGroupInfoLabel.Text = "🟢 En attente de musiciens (0 connecté)...";
+            QrGroupInfoLabel.Text = $"🟢 {LocalizationService.Instance.GetString("Wifi_Setlist_Qr_Waiting_Zero")}";
             ShowWifiView("GroupQr");
         }
         else
         {
-            await DisplayAlertAsync("Erreur", "Impossible de démarrer la diffusion de groupe.", "OK");
+            string errorTitle = LocalizationService.Instance.GetString("Wifi_Setlist_Error_Title");
+            string errorMsg = string.Format(LocalizationService.Instance.GetString("Wifi_Setlist_Qr_Start_Error"), "");
+            await DisplayAlertAsync(errorTitle, errorMsg, LocalizationService.Instance.GetString("Common_OK"));
         }
     }
 
@@ -580,7 +605,11 @@ public partial class SetlistsPage : ContentPage
 
     private async Task RenameSetlistAsync(Setlist setlist)
     {
-        string result = await DisplayPromptAsync("Renommer", "Entrez le nouveau nom :", initialValue: setlist.Name);
+        string promptTitle = LocalizationService.Instance.GetString("Common_Rename");
+        string promptMsg = LocalizationService.Instance.GetString("Setlist_Rename_Prompt");
+        string okText = LocalizationService.Instance.GetString("Common_OK");
+        string cancelText = LocalizationService.Instance.GetString("Common_Cancel");
+        string result = await DisplayPromptAsync(promptTitle, promptMsg, okText, cancelText, initialValue: setlist.Name);
         if (!string.IsNullOrWhiteSpace(result))
         {
             setlist.Name = result.Trim();
