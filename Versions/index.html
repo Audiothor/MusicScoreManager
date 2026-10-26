@@ -871,6 +871,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v314-26102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.4 — 26/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.4 — 26/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-correction-du-decalage-visuel-de-la-boite-de-chargement-ouverture-setlist-partition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Correction du Décalage Visuel de la Boîte de Chargement (Ouverture Setlist &amp; Partition)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v313-26102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3099,6 +3127,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v314-26102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.4 — 26/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.4 — 26/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-correction-du-decalage-visuel-de-la-boite-de-chargement-ouverture-setlist-partition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Correction du Décalage Visuel de la Boîte de Chargement (Ouverture Setlist &amp; Partition)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v313-26102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5306,6 +5362,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v314--26102026">v3.1.4 — 26/10/2026</a></li>
 <li><a href="#v313--26102026">v3.1.3 — 26/10/2026</a></li>
 <li><a href="#v312--26102026">v3.1.2 — 26/10/2026</a></li>
 <li><a href="#v311--26102026">v3.1.1 — 26/10/2026</a></li>
@@ -5337,6 +5394,15 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v314-26102026">v3.1.4 — 26/10/2026</h2>
+<h3 id="1-correction-du-decalage-visuel-de-la-boite-de-chargement-ouverture-setlist-partition">1. Correction du Décalage Visuel de la Boîte de Chargement (Ouverture Setlist &amp; Partition)</h3>
+<ul>
+<li><strong>1.1. Neutralisation du saut d'affichage lors de la disparition de la barre d'onglets inférieure (TabBar) :</strong></li>
+<li>Lors du clic pour ouvrir une setlist ou une partition, la transition vers le visualiseur plein écran provoque la disparition de la barre de menu horizontale du bas (<code>TabBar</code>). L'expansion soudaine de la hauteur disponible de la page provoquait un recalcul dynamique du centrage vertical et un décalage vers le bas de la boîte de dialogue modale (<code>SetlistLoadingOverlay</code> et <code>ScoreLoadingOverlay</code>).</li>
+<li>La boîte modale (<code>SetlistLoadingBorder</code> et <code>ScoreLoadingBorder</code>) est désormais ancrée et verrouillée sur son ordonnée verticale initiale par le haut (<code>VerticalOptions = LayoutOptions.Start</code> avec <code>Margin.Top</code> calculé avant toute transition).</li>
+<li>La visibilité de la barre d'onglets est synchronisée en amont (<code>Shell.SetTabBarIsVisible(this, false)</code> dès le clic, puis restaurée dans <code>OnAppearing</code> ou en cas d'annulation), garantissant une totale immobilité et fluidité visuelle de la boîte de temporisation à l'écran.</li>
 </ul>
 <hr />
 <h2 id="v313-26102026">v3.1.3 — 26/10/2026</h2>
