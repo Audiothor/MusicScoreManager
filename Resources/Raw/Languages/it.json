@@ -786,5 +786,7 @@
   "Settings_Pedals_Delete_Confirm_Msg": "Eliminare il profilo '{0}'?",
   "Settings_Pedals_Reset_Profiles": "Ripristina tutti i profili di fabbrica",
   "Settings_Pedals_Reset_Confirm_Title": "Conferma",
-  "Settings_Pedals_Reset_Confirm_Msg": "Ripristinare tutti i profili? I profili personalizzati verranno eliminati."
+  "Settings_Pedals_Reset_Confirm_Msg": "Ripristinare tutti i profili? I profili personalizzati verranno eliminati.",
+  "Setlist_New_Title": "Nuova Scaletta",
+  "Setlist_New_Prompt": "Inserisci il nome della scaletta:"
 }

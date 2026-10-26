@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.1.3 — 26/10/2026](#v313--26102026)
 - [v3.1.2 — 26/10/2026](#v312--26102026)
 - [v3.1.1 — 26/10/2026](#v311--26102026)
 - [v3.1.0 — 24/10/2026](#v310--24102026)
@@ -36,6 +37,21 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.3 — 26/10/2026
+
+### 1. Internationalisation & Traduction Complète de l'Ajout de Setlist
+- **1.1. Traduction dans les 8 langues (FR, EN, DE, ES, IT, NL, PL, PT) :**
+  - Le titre de la boîte de dialogue d'ajout de setlist (« Nouvelle Setlist ») et le message d'invite de saisie (« Entrez le nom de la setlist : ») sont désormais intégralement localisés dans la langue choisie par l'utilisateur via les clés `Setlist_New_Title` et `Setlist_New_Prompt`.
+  - Boutons d'action `OK` et `Annuler` branchés sur le service de localisation dynamique.
+
+### 2. Stabilisation & Suppression du Décalage de l'Overlay de Chargement
+- **2.1. Élimination du saut/décalage visuel à l'ouverture d'une setlist :**
+  - Correction de l'alignement de `SetlistLoadingOverlay` dans `SetlistsPage.xaml` en explicitant `Grid.Row="0"`, `Grid.RowSpan="3"`, `HorizontalOptions="Fill"` et `VerticalOptions="Fill"`.
+  - Fixation de dimensions stables (`WidthRequest="260"`, `HeightRequest="120"`) sur la carte modale interne, évitant tout recalcul asynchrone lors du démarrage de l'indicateur d'activité ou du rendu du texte.
+- **2.2. Harmonisation dans l'éditeur de setlist :** Application de la même stabilisation sur `ScoreLoadingOverlay` dans `SetlistEditPage.xaml` pour garantir une ouverture fluide et centrée des partitions.
 
 ---
 

@@ -791,5 +791,7 @@
   "Settings_Pedals_Reset_Title": "Réinitialiser les profils",
   "Settings_Pedals_Reset_Confirm": "Voulez-vous restaurer tous les profils d'usine par défaut ? Les modifications apportées seront réinitialisées.",
   "Settings_Pedals_Reset_Success_Title": "Profils réinitialisés",
-  "Settings_Pedals_Reset_Success_Msg": "Tous les profils par défaut ont été restaurés."
+  "Settings_Pedals_Reset_Success_Msg": "Tous les profils par défaut ont été restaurés.",
+  "Setlist_New_Title": "Nouvelle Setlist",
+  "Setlist_New_Prompt": "Entrez le nom de la setlist :"
 }

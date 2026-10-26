@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.1.3 — 26/10/2026](#v313--26102026)
 - [v3.1.2 — 26/10/2026](#v312--26102026)
 - [v3.1.1 — 26/10/2026](#v311--26102026)
 - [v3.1.0 — 24/10/2026](#v310--24102026)
@@ -36,6 +37,21 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.3 — 26/10/2026
+
+### 1. Complete Localization & Translation for Adding New Setlists
+- **1.1. Full 8-language support (FR, EN, DE, ES, IT, NL, PL, PT):**
+  - The dialog title for adding a new setlist ("New Setlist") and the input prompt message ("Enter the name of the setlist:") are now completely localized via `Setlist_New_Title` and `Setlist_New_Prompt`.
+  - Action buttons `OK` and `Cancel` wired directly into dynamic localization lookups.
+
+### 2. Layout Stabilization & Elimination of Loading Overlay Shift
+- **2.1. Fixed visual jump/shift upon opening a setlist:**
+  - Corrected `SetlistLoadingOverlay` alignment in `SetlistsPage.xaml` by explicitly declaring `Grid.Row="0"`, `Grid.RowSpan="3"`, `HorizontalOptions="Fill"`, and `VerticalOptions="Fill"`.
+  - Defined rigid fixed dimensions (`WidthRequest="260"`, `HeightRequest="120"`) on the inner modal card, preventing any recalculation/measure jumps as the activity spinner starts or text measures.
+- **2.2. Harmonization in setlist editor:** Applied identical stabilization fixes to `ScoreLoadingOverlay` in `SetlistEditPage.xaml` for smooth and perfectly centered score loading.
 
 ---
 
