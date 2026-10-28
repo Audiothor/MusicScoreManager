@@ -871,6 +871,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v315-28102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.5 — 28/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.5 — 28/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-fix-major-multi-page-extraction-regression-in-pdf-assembler-studio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Fix Major Multi-Page Extraction Regression in PDF Assembler Studio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-press-hold-long-press-multi-selection-in-scores-library" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Press &amp; Hold (Long-Press) Multi-Selection in Scores Library
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v314-26102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3127,6 +3166,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v315-28102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.5 — 28/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.5 — 28/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-fix-major-multi-page-extraction-regression-in-pdf-assembler-studio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Fix Major Multi-Page Extraction Regression in PDF Assembler Studio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-press-hold-long-press-multi-selection-in-scores-library" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Press &amp; Hold (Long-Press) Multi-Selection in Scores Library
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v314-26102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5362,6 +5440,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v315--28102026">v3.1.5 — 28/10/2026</a></li>
 <li><a href="#v314--26102026">v3.1.4 — 26/10/2026</a></li>
 <li><a href="#v313--26102026">v3.1.3 — 26/10/2026</a></li>
 <li><a href="#v312--26102026">v3.1.2 — 26/10/2026</a></li>
@@ -5394,6 +5473,28 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v315-28102026">v3.1.5 — 28/10/2026</h2>
+<h3 id="1-fix-major-multi-page-extraction-regression-in-pdf-assembler-studio">1. Fix Major Multi-Page Extraction Regression in PDF Assembler Studio</h3>
+<ul>
+<li><strong>1.1. Explicit Android PdfRenderer page closing (<code>page.Close()</code>):</strong></li>
+<li><strong>Symptom Fixed:</strong> When importing or loading a PDF document into the PDF Assembler Studio (whether via manual external file picker, appending pages, or directly modifying an existing score from library), only the first page was listed with page counter displaying <code>Pages (1) :</code>, regardless of the document's actual page count.</li>
+<li><strong>Root Cause:</strong> In Android, <code>Android.Graphics.Pdf.PdfRenderer</code> strictly enforces that no new page can be opened until the previous page is explicitly closed via <code>page.close()</code>. C# <code>using var page</code> only executes <code>Dispose()</code>, leaving the Java peer with <code>mCurrentPage != null</code>, which triggered an immediate <code>java.lang.IllegalStateException: Current page not closed</code> upon opening page 2 (<code>i = 1</code>), aborting the extraction loop and returning solely the first page.</li>
+<li><strong>Fix:</strong> Added <code>finally { page?.Close(); page?.Dispose(); }</code> to guarantee immediate closure of every native page before processing subsequent pages.</li>
+<li><strong>Memory Optimization:</strong> Added <code>bitmap.Recycle()</code> after JPEG compression of each page to prevent excessive RAM consumption on large documents.</li>
+<li><strong>Isolation &amp; Resilience:</strong> Each page render is now wrapped in its own <code>try / catch</code> block so any damaged individual page does not halt extraction of the rest of the document.</li>
+<li><strong>1.2. Dynamic page list height:</strong></li>
+<li><code>CollectionView</code> height in the PDF Assembler Studio now computes dynamically (<code>HeightRequest</code> between 220 and 650 pixels) matching the number of loaded pages, eliminating cramped scrolling areas.</li>
+</ul>
+<h3 id="2-press-hold-long-press-multi-selection-in-scores-library">2. Press &amp; Hold (Long-Press) Multi-Selection in Scores Library</h3>
+<ul>
+<li><strong>2.1. Fluid touch activation via long press:</strong></li>
+<li>In the scores library (<code>ScoresPage</code>), users can now activate multi-selection mode by simply holding down their finger (~450 ms) on any score item.</li>
+<li>The held score is immediately selected and marked with a checkmark upon activation.</li>
+<li>An instant haptic feedback pulse (<code>HapticFeedback.Default.Perform(HapticFeedbackType.LongPress)</code>) confirms mode engagement.</li>
+<li><strong>2.2. Complementary to top-bar action button:</strong></li>
+<li>Seamlessly complements the top action icon <code>☑</code>, allowing either global mode activation without initial selection, or fast inline gesture-driven selection directly while browsing.</li>
 </ul>
 <hr />
 <h2 id="v314-26102026">v3.1.4 — 26/10/2026</h2>
