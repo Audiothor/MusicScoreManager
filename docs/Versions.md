@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.1.5 — 28/10/2026](#v315--28102026)
 - [v3.1.4 — 26/10/2026](#v314--26102026)
 - [v3.1.3 — 26/10/2026](#v313--26102026)
 - [v3.1.2 — 26/10/2026](#v312--26102026)
@@ -38,6 +39,28 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.5 — 28/10/2026
+
+### 1. Correction de la Régression Majeure d'Extraction dans l'Atelier d'Assemblage PDF
+- **1.1. Fermeture explicite des pages Android PdfRenderer (`page.Close()`) :**
+  - **Symptôme corrigé :** Lors du chargement d'un document PDF dans l'Atelier d'Assemblage (que ce soit par sélection manuelle d'un fichier externe, ajout de pages PDF ou ouverture directe depuis la fiche d'une partition existante), seule la toute première page apparaissait dans la liste et dans le compteur (`Pages (1) :`), quel que soit le nombre réel de pages du PDF.
+  - **Cause racine :** Sur Android, le moteur natif `Android.Graphics.Pdf.PdfRenderer` interdit formellement d'ouvrir une nouvelle page tant que la précédente n'a pas été explicitement fermée via `page.close()`. L'instruction C# `using var page` effectuant uniquement `Dispose()`, le peer Java conservait `mCurrentPage != null`, provoquant une exception `java.lang.IllegalStateException: Current page not closed` immédiate dès l'itération de la 2ème page (`i = 1`), stoppant la boucle d'extraction et ne retournant que la page 1.
+  - **Correctif :** Ajout systématique d'un bloc `finally { page?.Close(); page?.Dispose(); }` garantissant la libération immédiate de chaque page native avant le rendu de la suivante.
+  - **Optimisation mémoire :** Appel de `bitmap.Recycle()` après compression JPEG de chaque page pour éviter toute surconsommation de mémoire vive (RAM) lors de l'assemblage de documents volumineux.
+  - **Isolation et robustesse :** Chaque page est désormais encapsulée dans son propre bloc `try / catch` évitant qu'une page corrompue n'interrompe l'extraction des autres pages.
+- **1.2. Dimensionnement dynamique de la liste d'assemblage :**
+  - La hauteur de la `CollectionView` de l'Atelier d'Assemblage s'ajuste désormais dynamiquement (`HeightRequest` calculé entre 220 et 650 pixels) selon le nombre de pages chargées, éliminant les boîtes de défilement étriquées.
+
+### 2. Sélection Multiple par Maintien Prolongé (Appui Long) dans la Bibliothèque de Partitions
+- **2.1. Activation tactile fluide par appui long :**
+  - Dans la liste des partitions (`ScoresPage`), l'utilisateur peut désormais déclencher automatiquement le mode de sélection multiple en maintenant son doigt appuyé pendant un court instant (~450 ms) sur n'importe quelle partition.
+  - La partition maintenue est automatiquement cochée et sélectionnée dès l'apparition du mode multiple.
+  - Un retour haptique vibrant instantané (`HapticFeedback.Default.Perform(HapticFeedbackType.LongPress)`) confirme tactilement le passage en mode sélection multiple.
+- **2.2. Complémentarité avec le bouton d'action supérieur :**
+  - Cette ergonomie tactile moderne complète idéalement le bouton `☑` de la barre supérieure, permettant soit une activation globale sans sélection préalable via l'icône, soit une sélection ciblée rapide au doigt directement dans le flux de navigation.
 
 ---
 

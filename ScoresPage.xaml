@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:MusicScoreManager.Models"
              xmlns:services="clr-namespace:MusicScoreManager.Services"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="MusicScoreManager.ScoresPage"
              x:Name="ScoresPageRoot"
              BackgroundColor="#121212">
@@ -140,8 +141,7 @@
             <CollectionView x:Name="ScoresCollectionView"
                             Grid.Row="1"
                             ItemSizingStrategy="MeasureAllItems"
-                            SelectionMode="Single"
-                            SelectionChanged="OnScoreSelected"
+                            SelectionMode="None"
                             Scrolled="OnScoresScrolled"
                             Margin="{OnIdiom Phone='0,0,24,0', Tablet='0,0,28,0'}">
             <CollectionView.ItemsLayout>
@@ -153,6 +153,15 @@
                             StrokeThickness="1" 
                             BackgroundColor="#1E1E1E" 
                             Padding="10">
+                        <Border.Behaviors>
+                            <toolkit:TouchBehavior 
+                                LongPressDuration="450"
+                                ShouldMakeChildrenInputTransparent="False"
+                                LongPressCommand="{Binding Source={x:Reference ScoresPageRoot}, Path=ScoreLongPressCommand}"
+                                LongPressCommandParameter="{Binding .}"
+                                Command="{Binding Source={x:Reference ScoresPageRoot}, Path=ScoreTappedCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Border.Behaviors>
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>

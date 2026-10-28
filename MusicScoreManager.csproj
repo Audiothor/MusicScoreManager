@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>3.1.4</ApplicationDisplayVersion>
-		<ApplicationVersion>31400</ApplicationVersion>
-		<!-- Version actuelle : v3.1.4 "Correction du décalage de la boîte de chargement lors du masquage de la barre d'onglets" -->
+		<ApplicationDisplayVersion>3.1.5</ApplicationDisplayVersion>
+		<ApplicationVersion>31500</ApplicationVersion>
+		<!-- Version actuelle : v3.1.5 "Sélection multiple par appui long et correctif d'extraction multi-pages dans l'Atelier d'Assemblage PDF" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		
