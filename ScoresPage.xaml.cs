@@ -51,6 +51,9 @@ public partial class ScoresPage : ContentPage
         }
     }
 
+    public System.Windows.Input.ICommand ScoreTappedCommand { get; }
+    public System.Windows.Input.ICommand ScoreLongPressCommand { get; }
+
     public ScoresPage(DatabaseService databaseService, ImportService importService, IWifiDirectTransferService wifiService, ExportImportService exportImportService)
     {
         InitializeComponent();
@@ -58,6 +61,16 @@ public partial class ScoresPage : ContentPage
         _importService = importService;
         _wifiService = wifiService;
         _exportImportService = exportImportService;
+
+        ScoreTappedCommand = new Command<Models.Score>(async (score) =>
+        {
+            if (score != null) await HandleScoreTappedAsync(score);
+        });
+
+        ScoreLongPressCommand = new Command<Models.Score>((score) =>
+        {
+            OnScoreLongPressed(score);
+        });
 
         _currentSort = Preferences.Default.Get("DefaultScoreSort", "DateDesc");
 
@@ -1130,27 +1143,49 @@ public partial class ScoresPage : ContentPage
         }
     }
 
+    private void OnScoreLongPressed(Models.Score? score)
+    {
+        if (score == null) return;
+
+        try
+        {
+            HapticFeedback.Default.Perform(HapticFeedbackType.LongPress);
+        }
+        catch { }
+
+        if (!IsMultiSelectActive)
+        {
+            IsMultiSelectActive = true;
+        }
+
+        score.IsSelected = true;
+    }
+
+    public async Task HandleScoreTappedAsync(Models.Score selectedScore)
+    {
+        if (IsMultiSelectActive)
+        {
+            selectedScore.IsSelected = !selectedScore.IsSelected;
+            return;
+        }
+
+        if (selectedScore.IsFileMissing)
+        {
+            await this.DisplayAlertAsync("Fichier manquant", "Le fichier de cette partition est introuvable. Veuillez vérifier votre répertoire de partitions dans les paramètres.", "OK");
+            return;
+        }
+
+        // Naviguer vers le ViewerPage
+        await Navigation.PushAsync(new ViewerPage(selectedScore));
+    }
+
     private async void OnScoreSelected(object sender, SelectionChangedEventArgs e)
     {
         if (e.CurrentSelection.FirstOrDefault() is Models.Score selectedScore)
         {
             // Toujours désélectionner l'élément
             ScoresCollectionView.SelectedItem = null;
-
-            if (IsMultiSelectActive)
-            {
-                selectedScore.IsSelected = !selectedScore.IsSelected;
-                return;
-            }
-
-            if (selectedScore.IsFileMissing)
-            {
-                await this.DisplayAlertAsync("Fichier manquant", "Le fichier de cette partition est introuvable. Veuillez vérifier votre répertoire de partitions dans les paramètres.", "OK");
-                return;
-            }
-
-            // Naviguer vers le ViewerPage
-            await Navigation.PushAsync(new ViewerPage(selectedScore));
+            await HandleScoreTappedAsync(selectedScore);
         }
     }
 

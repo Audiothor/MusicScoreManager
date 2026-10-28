@@ -620,30 +620,44 @@ namespace MusicScoreManager.Services
 
                         for (int i = 0; i < pageCount; i++)
                         {
-                            using var page = renderer.OpenPage(i);
-                            float scale = 2.0f; // 144 DPI pour un rendu haute netteté
-                            int renderWidth = Math.Max(1, (int)(page.Width * scale));
-                            int renderHeight = Math.Max(1, (int)(page.Height * scale));
-
-                            using var bitmap = Bitmap.CreateBitmap(renderWidth, renderHeight, Bitmap.Config.Argb8888!);
-                            bitmap.EraseColor(Android.Graphics.Color.White);
-
-                            page.Render(bitmap, null, null, PdfRenderMode.ForDisplay);
-
-                            string pageImagePath = Path.Combine(cacheDir, $"pdf_extracted_{Guid.NewGuid()}_{i + 1}.jpg");
-                            using (var stream = File.Create(pageImagePath))
+                            PdfRenderer.Page? page = null;
+                            try
                             {
-                                bitmap.Compress(Bitmap.CompressFormat.Jpeg!, 90, stream);
+                                page = renderer.OpenPage(i);
+                                float scale = 2.0f; // 144 DPI pour un rendu haute netteté
+                                int renderWidth = Math.Max(1, (int)(page.Width * scale));
+                                int renderHeight = Math.Max(1, (int)(page.Height * scale));
+
+                                using var bitmap = Bitmap.CreateBitmap(renderWidth, renderHeight, Bitmap.Config.Argb8888!);
+                                bitmap.EraseColor(Android.Graphics.Color.White);
+
+                                page.Render(bitmap, null, null, PdfRenderMode.ForDisplay);
+
+                                string pageImagePath = Path.Combine(cacheDir, $"pdf_extracted_{Guid.NewGuid()}_{i + 1}.jpg");
+                                using (var stream = File.Create(pageImagePath))
+                                {
+                                    bitmap.Compress(Bitmap.CompressFormat.Jpeg!, 90, stream);
+                                }
+                                try { bitmap.Recycle(); } catch { }
+
+                                list.Add(new PdfPageItem
+                                {
+                                    ImagePath = pageImagePath,
+                                    DisplayName = $"Page {i + 1}",
+                                    ThumbnailSource = ImageSource.FromFile(pageImagePath),
+                                    PageNumber = i + 1,
+                                    Rotation = 0
+                                });
                             }
-
-                            list.Add(new PdfPageItem
+                            catch (Exception pageEx)
                             {
-                                ImagePath = pageImagePath,
-                                DisplayName = $"Page {i + 1}",
-                                ThumbnailSource = ImageSource.FromFile(pageImagePath),
-                                PageNumber = i + 1,
-                                Rotation = 0
-                            });
+                                System.Diagnostics.Debug.WriteLine($"[PdfService] Android ExtractPdfPagesAsync page {i + 1} error: {pageEx.Message}");
+                            }
+                            finally
+                            {
+                                try { page?.Close(); } catch { }
+                                try { page?.Dispose(); } catch { }
+                            }
                         }
                     }
                 }
@@ -661,30 +675,37 @@ namespace MusicScoreManager.Services
 
                     for (uint i = 0; i < pageCount; i++)
                     {
-                        using var page = pdfDoc.GetPage(i);
-                        string pageImagePath = Path.Combine(cacheDir, $"pdf_extracted_{Guid.NewGuid()}_{i + 1}.jpg");
-
-                        using var memStream = new InMemoryRandomAccessStream();
-                        var renderOptions = new PdfPageRenderOptions
+                        try
                         {
-                            DestinationWidth = (uint)Math.Max(1, (int)(page.Size.Width * 2)),
-                            DestinationHeight = (uint)Math.Max(1, (int)(page.Size.Height * 2))
-                        };
+                            using var page = pdfDoc.GetPage(i);
+                            string pageImagePath = Path.Combine(cacheDir, $"pdf_extracted_{Guid.NewGuid()}_{i + 1}.jpg");
 
-                        page.RenderToStreamAsync(memStream, renderOptions).AsTask().GetAwaiter().GetResult();
+                            using var memStream = new InMemoryRandomAccessStream();
+                            var renderOptions = new PdfPageRenderOptions
+                            {
+                                DestinationWidth = (uint)Math.Max(1, (int)(page.Size.Width * 2)),
+                                DestinationHeight = (uint)Math.Max(1, (int)(page.Size.Height * 2))
+                            };
 
-                        using var readStream = memStream.AsStreamForRead();
-                        using var fileStream = File.Create(pageImagePath);
-                        readStream.CopyTo(fileStream);
+                            page.RenderToStreamAsync(memStream, renderOptions).AsTask().GetAwaiter().GetResult();
 
-                        list.Add(new PdfPageItem
+                            using var readStream = memStream.AsStreamForRead();
+                            using var fileStream = File.Create(pageImagePath);
+                            readStream.CopyTo(fileStream);
+
+                            list.Add(new PdfPageItem
+                            {
+                                ImagePath = pageImagePath,
+                                DisplayName = $"Page {i + 1}",
+                                ThumbnailSource = ImageSource.FromFile(pageImagePath),
+                                PageNumber = (int)(i + 1),
+                                Rotation = 0
+                            });
+                        }
+                        catch (Exception pageEx)
                         {
-                            ImagePath = pageImagePath,
-                            DisplayName = $"Page {i + 1}",
-                            ThumbnailSource = ImageSource.FromFile(pageImagePath),
-                            PageNumber = (int)(i + 1),
-                            Rotation = 0
-                        });
+                            System.Diagnostics.Debug.WriteLine($"[PdfService] Windows ExtractPdfPagesAsync page {i + 1} error: {pageEx.Message}");
+                        }
                     }
                 }
                 catch (Exception ex)

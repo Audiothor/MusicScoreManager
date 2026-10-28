@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.1.5 — 28/10/2026](#v315--28102026)
 - [v3.1.4 — 26/10/2026](#v314--26102026)
 - [v3.1.3 — 26/10/2026](#v313--26102026)
 - [v3.1.2 — 26/10/2026](#v312--26102026)
@@ -38,6 +39,28 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.5 — 28/10/2026
+
+### 1. Fix Major Multi-Page Extraction Regression in PDF Assembler Studio
+- **1.1. Explicit Android PdfRenderer page closing (`page.Close()`):**
+  - **Symptom Fixed:** When importing or loading a PDF document into the PDF Assembler Studio (whether via manual external file picker, appending pages, or directly modifying an existing score from library), only the first page was listed with page counter displaying `Pages (1) :`, regardless of the document's actual page count.
+  - **Root Cause:** In Android, `Android.Graphics.Pdf.PdfRenderer` strictly enforces that no new page can be opened until the previous page is explicitly closed via `page.close()`. C# `using var page` only executes `Dispose()`, leaving the Java peer with `mCurrentPage != null`, which triggered an immediate `java.lang.IllegalStateException: Current page not closed` upon opening page 2 (`i = 1`), aborting the extraction loop and returning solely the first page.
+  - **Fix:** Added `finally { page?.Close(); page?.Dispose(); }` to guarantee immediate closure of every native page before processing subsequent pages.
+  - **Memory Optimization:** Added `bitmap.Recycle()` after JPEG compression of each page to prevent excessive RAM consumption on large documents.
+  - **Isolation & Resilience:** Each page render is now wrapped in its own `try / catch` block so any damaged individual page does not halt extraction of the rest of the document.
+- **1.2. Dynamic page list height:**
+  - `CollectionView` height in the PDF Assembler Studio now computes dynamically (`HeightRequest` between 220 and 650 pixels) matching the number of loaded pages, eliminating cramped scrolling areas.
+
+### 2. Press & Hold (Long-Press) Multi-Selection in Scores Library
+- **2.1. Fluid touch activation via long press:**
+  - In the scores library (`ScoresPage`), users can now activate multi-selection mode by simply holding down their finger (~450 ms) on any score item.
+  - The held score is immediately selected and marked with a checkmark upon activation.
+  - An instant haptic feedback pulse (`HapticFeedback.Default.Perform(HapticFeedbackType.LongPress)`) confirms mode engagement.
+- **2.2. Complementary to top-bar action button:**
+  - Seamlessly complements the top action icon `☑`, allowing either global mode activation without initial selection, or fast inline gesture-driven selection directly while browsing.
 
 ---
 

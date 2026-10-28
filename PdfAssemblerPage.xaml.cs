@@ -431,6 +431,11 @@ public partial class PdfAssemblerPage : ContentPage
         var loc = LocalizationService.Instance;
         PdfAssemblerPagesCountLabel.Text = string.Format(loc.GetString("PdfAssembler_Pages_Count", "Pages ({0}) :"), _pdfPages.Count);
 
+        if (hasPages)
+        {
+            PdfAssemblerPagesCollectionView.HeightRequest = Math.Clamp(_pdfPages.Count * 96, 220, 650);
+        }
+
         if (_editingScore != null)
         {
             PdfAssemblerEditScoreBanner.IsVisible = true;
