@@ -7,10 +7,41 @@
              Title="{Binding [Setlist_Menu_Edit], Source={x:Static services:LocalizationService.Instance}}"
              BackgroundColor="#121212">
 
-    <Grid RowDefinitions="Auto, *, Auto" Padding="{OnIdiom Phone='10,8', Tablet='15'}">
+    <Grid RowDefinitions="Auto, Auto, *" Padding="{OnIdiom Phone='10,8', Tablet='15'}">
         
+        <!-- Barre supérieure : Titre et Boutons Annuler / Sauvegarder en haut à droite -->
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,10" VerticalOptions="Center">
+            <Label Grid.Column="0" 
+                   Text="{Binding [Setlist_Menu_Edit], Source={x:Static services:LocalizationService.Instance}}" 
+                   TextColor="White" 
+                   FontSize="{OnIdiom Phone=18, Tablet=20}" 
+                   FontAttributes="Bold" 
+                   VerticalOptions="Center" 
+                   LineBreakMode="TailTruncation" />
+
+            <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                <Button Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}" 
+                        BackgroundColor="#333333" 
+                        TextColor="White" 
+                        CornerRadius="8"
+                        HeightRequest="{OnIdiom Phone=38, Tablet=42}"
+                        Padding="14,0"
+                        FontSize="14"
+                        Clicked="OnCancelClicked" />
+                <Button Text="{Binding [Common_Save], Source={x:Static services:LocalizationService.Instance}}" 
+                        BackgroundColor="#007ACC" 
+                        TextColor="White" 
+                        FontAttributes="Bold" 
+                        CornerRadius="8"
+                        HeightRequest="{OnIdiom Phone=38, Tablet=42}"
+                        Padding="16,0"
+                        FontSize="14"
+                        Clicked="OnSaveClicked" />
+            </HorizontalStackLayout>
+        </Grid>
+
         <!-- En-tête : Détails Setlist -->
-        <VerticalStackLayout Grid.Row="0" Spacing="{OnIdiom Phone=8, Tablet=12}" Margin="{OnIdiom Phone='0,0,0,8', Tablet='0,0,0,15'}">
+        <VerticalStackLayout Grid.Row="1" Spacing="{OnIdiom Phone=8, Tablet=12}" Margin="{OnIdiom Phone='0,0,0,8', Tablet='0,0,0,15'}">
             <Border Stroke="#333333" Padding="{OnIdiom Phone='10,8', Tablet='12'}" BackgroundColor="#1E1E1E">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
@@ -173,7 +204,7 @@
         </VerticalStackLayout>
 
         <!-- Liste des partitions (Réordonnable) -->
-        <CollectionView Grid.Row="1"
+        <CollectionView Grid.Row="2"
                         x:Name="ScoresCollectionView"
                         SelectionMode="Single"
                         CanReorderItems="True"
@@ -275,22 +306,7 @@
             </CollectionView.EmptyView>
         </CollectionView>
 
-        <!-- Boutons d'action (Annuler / Enregistrer) -->
-        <Grid Grid.Row="2" ColumnDefinitions="*, *" ColumnSpacing="12" Margin="{OnIdiom Phone='0,8,0,0', Tablet='0,12,0,0'}">
-            <Button Grid.Column="0" 
-                    Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}" 
-                    BackgroundColor="#333333" 
-                    TextColor="White" 
-                    HeightRequest="{OnIdiom Phone=40, Tablet=46}"
-                    Clicked="OnCancelClicked" />
-            <Button Grid.Column="1" 
-                    Text="{Binding [Common_Save], Source={x:Static services:LocalizationService.Instance}}" 
-                    BackgroundColor="#007ACC" 
-                    TextColor="White" 
-                    FontAttributes="Bold" 
-                    HeightRequest="{OnIdiom Phone=40, Tablet=46}"
-                    Clicked="OnSaveClicked" />
-        </Grid>
+
 
         <!-- Overlay Indicateur de chargement Partition -->
         <ContentView x:Name="ScoreLoadingOverlay" 

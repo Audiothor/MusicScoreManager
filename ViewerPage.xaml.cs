@@ -475,7 +475,8 @@ public partial class ViewerPage : ContentPage
         {
             _currentRotation = _score.Rotation;
         }
-        RotateBtn.Text = $"Rotation {_currentRotation}°";
+        string rotateWord = LocalizationService.Instance.GetString("Viewer_Rotate_Word");
+        RotateBtn.Text = $"↻ {rotateWord} {_currentRotation}°";
     }
 
     private void OnPdfWebViewNavigating(object sender, WebNavigatingEventArgs e)
@@ -1418,7 +1419,7 @@ public partial class ViewerPage : ContentPage
         ModalMetronomeVisualSwitch.IsToggled = _score.ShowMetronome;
 
         int volPercent = (int)Math.Round(_score.MetronomeVolume * 100);
-        ModalMetronomeVolumeSlider.Value = Math.Clamp(volPercent, 5, 100);
+        ModalMetronomeVolumeSlider.Value = Math.Clamp(volPercent, 0, 100);
         ModalVolumeLabel.Text = $"{(int)ModalMetronomeVolumeSlider.Value}%";
         ModalVolumeLayout.Opacity = _score.HasMetronomeSound ? 1.0 : 0.4;
         ModalMetronomeVolumeSlider.IsEnabled = _score.HasMetronomeSound;
@@ -1426,6 +1427,37 @@ public partial class ViewerPage : ContentPage
         MetronomeSettingsModal.Opacity = 0;
         MetronomeSettingsModal.IsVisible = true;
         MetronomeSettingsModal.FadeTo(1.0, 180, Easing.CubicOut);
+    }
+
+    private double _metroSettingsXBase = 0;
+    private double _metroSettingsYBase = 0;
+
+    private void OnMetronomeSettingsPanUpdated(object? sender, PanUpdatedEventArgs e)
+    {
+        if (MetronomeSettingsBorder == null) return;
+
+        switch (e.StatusType)
+        {
+            case GestureStatus.Started:
+                _metroSettingsXBase = MetronomeSettingsBorder.TranslationX;
+                _metroSettingsYBase = MetronomeSettingsBorder.TranslationY;
+                break;
+            case GestureStatus.Running:
+                double newX = _metroSettingsXBase + e.TotalX;
+                double newY = _metroSettingsYBase + e.TotalY;
+                if (this.Width > 0 && this.Height > 0)
+                {
+                    double w = MetronomeSettingsBorder.Width > 0 ? MetronomeSettingsBorder.Width : 390;
+                    double h = MetronomeSettingsBorder.Height > 0 ? MetronomeSettingsBorder.Height : 500;
+                    double halfW = Math.Max(0, (this.Width - w) / 2.0);
+                    double halfH = Math.Max(0, (this.Height - h) / 2.0);
+                    newX = Math.Clamp(newX, -halfW, halfW);
+                    newY = Math.Clamp(newY, -halfH, halfH);
+                }
+                MetronomeSettingsBorder.TranslationX = newX;
+                MetronomeSettingsBorder.TranslationY = newY;
+                break;
+        }
     }
 
     private async void OnCloseMetronomeSettingsModalClicked(object sender, EventArgs e)
@@ -1977,7 +2009,7 @@ public partial class ViewerPage : ContentPage
     {
         if (ToolsIconButton != null)
         {
-            ToolsIconButton.IsVisible = (_score?.ShowToolsButton ?? false) || Preferences.Default.Get("ShowToolsButton", false);
+            ToolsIconButton.IsVisible = (_score?.ShowToolsButton ?? true) || Preferences.Default.Get("ShowToolsButton", true);
         }
 
         if (DrawerMetronomeTile == null) return;
@@ -4383,6 +4415,7 @@ public partial class ViewerPage : ContentPage
 
     private bool _isTextMode = false;
     private string _currentTextColor = "#000000";
+    private string _currentTextBorderColor = "Transparent";
     private double _currentTextSize = 14.0; // 8, 10, 12, 14, 16, 18 (14 par défaut)
 
     private void OnAnnotationTextClicked(object sender, EventArgs e)
@@ -4454,6 +4487,78 @@ public partial class ViewerPage : ContentPage
         TextWhiteBtn.StrokeThickness = _currentTextColor == "#FFFFFF" ? 2 : 1;
     }
 
+    private async void OnTextBorderColorSelected(object? sender, EventArgs e)
+    {
+        string? color = null;
+        if (sender is Grid grid && grid.GestureRecognizers.FirstOrDefault() is TapGestureRecognizer gTap && gTap.CommandParameter is string gColor)
+        {
+            color = gColor;
+        }
+        else if (sender is Border border && border.GestureRecognizers.FirstOrDefault() is TapGestureRecognizer bTap && bTap.CommandParameter is string bColor)
+        {
+            color = bColor;
+        }
+
+        if (color != null)
+        {
+            _currentTextBorderColor = color;
+            UpdateTextBorderBorders();
+
+            // Modification dynamique du cadre du texte sélectionné en temps réel
+            if (!_isAnnotationsLocked && _selectedAnnotation != null && _selectedAnnotation.Type == AnnotationType.Text)
+            {
+                _selectedAnnotation.BorderColor = _currentTextBorderColor;
+                await _databaseService.SaveAnnotationAsync(_selectedAnnotation);
+                RenderAnnotations();
+            }
+        }
+    }
+
+    private void UpdateTextBorderBorders()
+    {
+        if (TextBorderNoneBtn != null)
+        {
+            TextBorderNoneBtn.Stroke = (_currentTextBorderColor == "Transparent") ? Colors.White : Color.FromArgb("#888888");
+            TextBorderNoneBtn.StrokeThickness = (_currentTextBorderColor == "Transparent") ? 2 : 1;
+        }
+
+        if (TextBorderBlackBtn != null)
+        {
+            TextBorderBlackBtn.Stroke = _currentTextBorderColor == "#000000" ? Colors.White : Color.FromArgb("#000000");
+            TextBorderBlackBtn.StrokeThickness = _currentTextBorderColor == "#000000" ? 2.5 : 1.5;
+        }
+
+        if (TextBorderRedBtn != null)
+        {
+            TextBorderRedBtn.Stroke = _currentTextBorderColor == "#E53935" ? Colors.White : Color.FromArgb("#E53935");
+            TextBorderRedBtn.StrokeThickness = _currentTextBorderColor == "#E53935" ? 2.5 : 1.5;
+        }
+
+        if (TextBorderBlueBtn != null)
+        {
+            TextBorderBlueBtn.Stroke = _currentTextBorderColor == "#1E88E5" ? Colors.White : Color.FromArgb("#1E88E5");
+            TextBorderBlueBtn.StrokeThickness = _currentTextBorderColor == "#1E88E5" ? 2.5 : 1.5;
+        }
+
+        if (TextBorderGreenBtn != null)
+        {
+            TextBorderGreenBtn.Stroke = _currentTextBorderColor == "#43A047" ? Colors.White : Color.FromArgb("#43A047");
+            TextBorderGreenBtn.StrokeThickness = _currentTextBorderColor == "#43A047" ? 2.5 : 1.5;
+        }
+
+        if (TextBorderYellowBtn != null)
+        {
+            TextBorderYellowBtn.Stroke = _currentTextBorderColor == "#FFD600" ? Colors.White : Color.FromArgb("#FFD600");
+            TextBorderYellowBtn.StrokeThickness = _currentTextBorderColor == "#FFD600" ? 2.5 : 1.5;
+        }
+
+        if (TextBorderWhiteBtn != null)
+        {
+            TextBorderWhiteBtn.Stroke = _currentTextBorderColor == "#FFFFFF" ? Color.FromArgb("#007ACC") : Colors.White;
+            TextBorderWhiteBtn.StrokeThickness = _currentTextBorderColor == "#FFFFFF" ? 2.5 : 1.5;
+        }
+    }
+
     private async void OnTextSizeSelected(object sender, EventArgs e)
     {
         if (sender is Button btn && btn.CommandParameter is string sizeStr && double.TryParse(sizeStr, out double size))
@@ -4511,7 +4616,11 @@ public partial class ViewerPage : ContentPage
             double containerH = ActiveAnnotationsContainer.Height;
             var (targetPage, relX, relY) = ScreenToPage(absX, absY, containerW, containerH);
 
-            string text = await DisplayPromptAsync("Ajouter du texte", "Tapez votre mot ou texte :", "OK", "Annuler");
+            var loc = LocalizationService.Instance;
+            string promptTitle = loc.GetString("Viewer_Annotations_Text_Prompt_Title");
+            string promptMsg = loc.GetString("Viewer_Annotations_Text_Prompt_Msg");
+            string cancelText = loc.GetString("Common_Cancel");
+            string text = await DisplayPromptAsync(promptTitle, promptMsg, "OK", cancelText);
             if (!string.IsNullOrWhiteSpace(text))
             {
                 var annotation = new Annotation
@@ -4525,6 +4634,7 @@ public partial class ViewerPage : ContentPage
                     Scale = _currentTextSize, // 8, 10, 12, 14, 16, 18
                     Color = _currentTextColor,
                     BackgroundColor = "Transparent",
+                    BorderColor = _currentTextBorderColor,
                     PageNumber = targetPage
                 };
 
@@ -5221,9 +5331,10 @@ public partial class ViewerPage : ContentPage
 
     private async void OnRedoAnnotationClicked(object? sender, EventArgs e)
     {
+        var loc = LocalizationService.Instance;
         if (_isAnnotationsLocked)
         {
-            await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir modifier.", "OK");
+            await DisplayAlertAsync(loc.GetString("Viewer_Annotations_Locked_Title"), loc.GetString("Viewer_Annotations_Locked_Msg"), "OK");
             return;
         }
 
@@ -5272,15 +5383,16 @@ public partial class ViewerPage : ContentPage
 
     private async void OnDeleteSelectedAnnotationClicked(object? sender, EventArgs e)
     {
+        var loc = LocalizationService.Instance;
         if (_isAnnotationsLocked)
         {
-            await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir les modifier.", "OK");
+            await DisplayAlertAsync(loc.GetString("Viewer_Annotations_Locked_Title"), loc.GetString("Viewer_Annotations_Locked_Msg"), "OK");
             return;
         }
 
         if (_selectedAnnotation == null)
         {
-            await DisplayAlertAsync("Supprimer", "Veuillez d'abord sélectionner une annotation en touchant un sticker ou un surlignage.", "OK");
+            await DisplayAlertAsync(loc.GetString("Viewer_Annotations_Delete_Title"), loc.GetString("Viewer_Annotations_Select_First"), "OK");
             return;
         }
 
@@ -5297,19 +5409,20 @@ public partial class ViewerPage : ContentPage
 
     private async void OnResetAnnotationsClicked(object? sender, EventArgs e)
     {
+        var loc = LocalizationService.Instance;
         if (_isAnnotationsLocked)
         {
-            await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir les modifier.", "OK");
+            await DisplayAlertAsync(loc.GetString("Viewer_Annotations_Locked_Title"), loc.GetString("Viewer_Annotations_Locked_Msg"), "OK");
             return;
         }
 
         if (_annotations.Count == 0)
         {
-            await DisplayAlertAsync("Reset", "Il n'y a aucune annotation à supprimer sur cette partition.", "OK");
+            await DisplayAlertAsync("Reset", loc.GetString("Viewer_Annotations_None_To_Delete"), "OK");
             return;
         }
 
-        bool confirm = await DisplayAlertAsync("Reset", "Voulez-vous supprimer TOUTES les annotations de cette partition ?", "Oui", "Non");
+        bool confirm = await DisplayAlertAsync("Reset", loc.GetString("Viewer_Annotations_Confirm_Clear_All"), loc.GetString("Common_Yes"), loc.GetString("Common_No"));
         if (confirm)
         {
             var previousList = new List<Annotation>(_annotations);
@@ -5474,13 +5587,16 @@ public partial class ViewerPage : ContentPage
             FontAttributes = FontAttributes.Bold
         };
 
+        bool hasBorder = !string.IsNullOrWhiteSpace(ann.BorderColor) && !ann.BorderColor.Equals("Transparent", StringComparison.OrdinalIgnoreCase);
+        Color borderStroke = hasBorder ? ParseColor(ann.BorderColor) : Colors.Transparent;
+
         var border = new Border
         {
             BindingContext = ann,
             Padding = new Thickness(6 * displayScale, 2 * displayScale),
             StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = (float)(4 * displayScale) },
-            StrokeThickness = (ann == _selectedAnnotation) ? 1.5 : 0,
-            Stroke = (ann == _selectedAnnotation) ? Color.FromArgb("#007ACC") : Colors.Transparent,
+            StrokeThickness = (ann == _selectedAnnotation) ? 2 : (hasBorder ? 1.5 : 0),
+            Stroke = (ann == _selectedAnnotation) ? Color.FromArgb("#007ACC") : borderStroke,
             BackgroundColor = (ann == _selectedAnnotation) ? Color.FromArgb("#33007ACC") : Colors.Transparent,
             Content = label,
             InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode
@@ -5506,8 +5622,10 @@ public partial class ViewerPage : ContentPage
                 _selectedAnnotation = a;
                 _currentTextColor = a.Color;
                 _currentTextSize = a.Scale <= 0 ? 14 : a.Scale;
+                _currentTextBorderColor = string.IsNullOrEmpty(a.BorderColor) ? "Transparent" : a.BorderColor;
                 UpdateTextColorBorders();
                 UpdateTextSizeButtons();
+                UpdateTextBorderBorders();
                 RenderAnnotations();
             }
         };
@@ -6145,9 +6263,10 @@ public partial class ViewerPage : ContentPage
             MenuBookmarkSwitch.IsToggled = (currentBm != null);
             if (MenuBookmarkStatusLabel != null)
             {
+                var loc = LocalizationService.Instance;
                 MenuBookmarkStatusLabel.Text = currentBm != null
-                    ? $"Marqueur '{currentBm.Name}' (Page {_currentPage})"
-                    : $"Marqueur sur la page {_currentPage}";
+                    ? string.Format(loc.GetString("Viewer_Bookmark_Page_Active"), currentBm.Name, _currentPage)
+                    : string.Format(loc.GetString("Viewer_Bookmark_Page_Inactive"), _currentPage);
             }
 
             bool hasOtherBookmarks = _bookmarks.Count > 1 || (_bookmarks.Count == 1 && currentBm == null);
@@ -6583,15 +6702,16 @@ public partial class ViewerPage : ContentPage
 
     private void UpdateTunerDisplayForSelectedNote()
     {
+        var loc = LocalizationService.Instance;
         if (_selectedTunerNote != null)
         {
             if (TunerNoteLabel != null) TunerNoteLabel.Text = _selectedTunerNote.NoteName;
-            if (TunerSolfegeLabel != null) TunerSolfegeLabel.Text = $"Cible : {_selectedTunerNote.Solfege} ({_selectedTunerNote.Frequency:F1} Hz)";
+            if (TunerSolfegeLabel != null) TunerSolfegeLabel.Text = string.Format(loc.GetString("Viewer_Tuner_Target"), _selectedTunerNote.Solfege, $"{_selectedTunerNote.Frequency:F1}");
             if (TunerFreqLabel != null) TunerFreqLabel.Text = $"{_selectedTunerNote.Frequency:F1} Hz";
-            if (TunerPlayRefBtn != null) TunerPlayRefBtn.Text = $"🔊 Écouter {_selectedTunerNote.Solfege} ({_selectedTunerNote.Frequency:F1} Hz)";
+            if (TunerPlayRefBtn != null) TunerPlayRefBtn.Text = string.Format(loc.GetString("Viewer_Tuner_Listen_Tone"), _selectedTunerNote.Solfege, $"{_selectedTunerNote.Frequency:F1}");
             if (TunerStatusLabel != null && !TunerService.Instance.IsListening)
             {
-                TunerStatusLabel.Text = $"Cible : {_selectedTunerNote.Solfege} ({_selectedTunerNote.Frequency:F1} Hz)";
+                TunerStatusLabel.Text = string.Format(loc.GetString("Viewer_Tuner_Target"), _selectedTunerNote.Solfege, $"{_selectedTunerNote.Frequency:F1}");
                 TunerStatusLabel.TextColor = Color.FromArgb("#00B4D8");
             }
         }
@@ -6599,13 +6719,13 @@ public partial class ViewerPage : ContentPage
         {
             if (TunerNoteLabel != null) TunerNoteLabel.Text = "--";
             if (TunerSolfegeLabel != null) TunerSolfegeLabel.Text = (_currentTunerInstrument != null && _currentTunerInstrument.IsChromatic)
-                ? "Mode Auto : Détection automatique"
-                : "Jouez une note ou activez le micro";
+                ? loc.GetString("Viewer_Tuner_Auto_Mode")
+                : loc.GetString("Viewer_Tuner_Play_Or_Mic");
             if (TunerFreqLabel != null) TunerFreqLabel.Text = "-- Hz";
-            if (TunerPlayRefBtn != null) TunerPlayRefBtn.Text = "🔊 Écouter la note de référence";
+            if (TunerPlayRefBtn != null) TunerPlayRefBtn.Text = $"🔊 {loc.GetString("Viewer_Tuner_Listen_Ref")}";
             if (TunerStatusLabel != null && !TunerService.Instance.IsListening)
             {
-                TunerStatusLabel.Text = "En attente du signal sonore...";
+                TunerStatusLabel.Text = loc.GetString("Viewer_Tuner_Waiting_Signal");
                 TunerStatusLabel.TextColor = Color.FromArgb("#888899");
             }
         }
@@ -6635,7 +6755,8 @@ public partial class ViewerPage : ContentPage
 
             if (status != PermissionStatus.Granted)
             {
-                await DisplayAlert("Microphone", "La permission microphone est nécessaire pour utiliser l'accordeur.", "OK");
+                var loc = LocalizationService.Instance;
+                await DisplayAlert(loc.GetString("Viewer_Tuner_Mic_Permission_Title"), loc.GetString("Viewer_Tuner_Mic_Permission_Msg"), "OK");
                 return;
             }
 
@@ -6659,15 +6780,17 @@ public partial class ViewerPage : ContentPage
     {
         if (TunerMicButton != null)
         {
-            TunerMicButton.Text = isListening ? "🔴 Arrêter l'écoute" : "🎙️ Activer le micro";
+            var loc = LocalizationService.Instance;
+            TunerMicButton.Text = isListening ? loc.GetString("Viewer_Tuner_Mic_Stop") : loc.GetString("Viewer_Tuner_Mic_Start");
             TunerMicButton.BackgroundColor = isListening ? Color.FromArgb("#A32828") : Color.FromArgb("#252535");
         }
     }
 
     private void ResetTunerDisplay()
     {
+        var loc = LocalizationService.Instance;
         if (TunerNoteLabel != null) TunerNoteLabel.Text = "--";
-        if (TunerSolfegeLabel != null) TunerSolfegeLabel.Text = "Jouez une note ou activez le micro";
+        if (TunerSolfegeLabel != null) TunerSolfegeLabel.Text = loc.GetString("Viewer_Tuner_Play_Or_Mic");
         if (TunerFreqLabel != null) TunerFreqLabel.Text = "-- Hz";
         if (TunerNeedle != null)
         {
@@ -6676,7 +6799,7 @@ public partial class ViewerPage : ContentPage
         }
         if (TunerStatusLabel != null)
         {
-            TunerStatusLabel.Text = "En attente du signal sonore...";
+            TunerStatusLabel.Text = loc.GetString("Viewer_Tuner_Waiting_Signal");
             TunerStatusLabel.TextColor = Color.FromArgb("#888899");
         }
     }
@@ -6687,11 +6810,12 @@ public partial class ViewerPage : ContentPage
         {
             if (TunerOverlay == null || !TunerOverlay.IsVisible) return;
 
+            var loc = LocalizationService.Instance;
             if (!result.HasSignal)
             {
                 if (TunerStatusLabel != null)
                 {
-                    TunerStatusLabel.Text = "En attente du signal sonore...";
+                    TunerStatusLabel.Text = loc.GetString("Viewer_Tuner_Waiting_Signal");
                     TunerStatusLabel.TextColor = Color.FromArgb("#888899");
                 }
                 return;
@@ -6741,36 +6865,46 @@ public partial class ViewerPage : ContentPage
             {
                 if (absCents <= 4.0)
                 {
-                    TunerStatusLabel.Text = "✓ PARFAIT ! Accordé";
+                    TunerStatusLabel.Text = loc.GetString("Viewer_Tuner_Perfect");
                     TunerStatusLabel.TextColor = Color.FromArgb("#00E676");
                     if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#00E676");
                 }
                 else if (cents < -15.0)
                 {
-                    TunerStatusLabel.Text = $"▲ Trop bas ({cents:F0} cents) — Tendre / Monter";
+                    TunerStatusLabel.Text = string.Format(loc.GetString("Viewer_Tuner_Too_Low_Advice"), $"{cents:F0}");
                     TunerStatusLabel.TextColor = Color.FromArgb("#FF3D00");
                     if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#FF3D00");
                 }
                 else if (cents < -4.0)
                 {
-                    TunerStatusLabel.Text = $"▲ Un peu trop bas ({cents:F0} cents) — Monter légèrement";
+                    TunerStatusLabel.Text = string.Format(loc.GetString("Viewer_Tuner_Slightly_Low_Advice"), $"{cents:F0}");
                     TunerStatusLabel.TextColor = Color.FromArgb("#FF9800");
                     if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#FF9800");
                 }
                 else if (cents > 15.0)
                 {
-                    TunerStatusLabel.Text = $"▼ Trop haut (+{cents:F0} cents) — Desserrer / Descendre";
+                    TunerStatusLabel.Text = string.Format(loc.GetString("Viewer_Tuner_Too_High_Advice"), $"{cents:F0}");
                     TunerStatusLabel.TextColor = Color.FromArgb("#FF3D00");
                     if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#FF3D00");
                 }
                 else
                 {
-                    TunerStatusLabel.Text = $"▼ Un peu trop haut (+{cents:F0} cents) — Descendre légèrement";
+                    TunerStatusLabel.Text = string.Format(loc.GetString("Viewer_Tuner_Slightly_High_Advice"), $"{cents:F0}");
                     TunerStatusLabel.TextColor = Color.FromArgb("#FF9800");
                     if (TunerNeedle != null) TunerNeedle.Color = Color.FromArgb("#FF9800");
                 }
             }
         });
+    }
+
+    private void OnTunerVolumeSliderValueChanged(object? sender, ValueChangedEventArgs e)
+    {
+        int volPercent = (int)Math.Round(e.NewValue);
+        if (TunerVolumeLabel != null) TunerVolumeLabel.Text = $"{volPercent}%";
+        if (TunerTonePlayer != null)
+        {
+            TunerTonePlayer.Volume = volPercent / 100.0;
+        }
     }
 
     private void OnTunerPlayRefClicked(object sender, EventArgs e)
@@ -6782,6 +6916,7 @@ public partial class ViewerPage : ContentPage
             string wavPath = TunerService.Instance.GenerateReferenceToneWav(freq);
             if (TunerTonePlayer != null)
             {
+                TunerTonePlayer.Volume = (TunerVolumeSlider != null ? TunerVolumeSlider.Value : 100.0) / 100.0;
                 TunerTonePlayer.Stop();
                 TunerTonePlayer.Source = MediaSource.FromFile(wavPath);
                 TunerTonePlayer.Play();

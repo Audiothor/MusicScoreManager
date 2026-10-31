@@ -237,7 +237,8 @@ public partial class ScoreSelectionPage : ContentPage
         {
             if (selectable.Score.IsFileMissing)
             {
-                await DisplayAlertAsync("Fichier manquant", "Cette partition ne peut pas être ajoutée car son fichier est introuvable.", "OK");
+                var loc = LocalizationService.Instance;
+                await DisplayAlertAsync(loc.GetString("Score_Edit_MissingFile_Title"), loc.GetString("Score_Edit_Missing_Msg"), "OK");
                 return;
             }
             selectable.IsSelected = !selectable.IsSelected;

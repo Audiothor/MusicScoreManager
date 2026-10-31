@@ -22,7 +22,16 @@ namespace MusicScoreManager.Models
             }
         }
 
-        public string DisplayName => string.IsNullOrWhiteSpace(_name) ? LocalizationService.Instance.GetString("Score_Category_Default", "Général") : _name;
+        public bool IsDefaultCategory => string.IsNullOrWhiteSpace(_name) ||
+            string.Equals(_name, "Général", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(_name, "Default", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(_name, "General", StringComparison.OrdinalIgnoreCase);
+
+        public bool CanManage => !IsDefaultCategory;
+
+        public string DisplayName => IsDefaultCategory 
+            ? LocalizationService.Instance.GetString("Score_Category_Default", "Général") 
+            : _name;
 
         private bool _isExpanded = true;
         public bool IsExpanded

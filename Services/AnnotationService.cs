@@ -79,6 +79,7 @@ public class AnnotationService
 
     public List<StickerCategory> GetStickerCategories(List<string>? favorites = null, List<string>? activeCategoryNames = null)
     {
+        var loc = LocalizationService.Instance;
         var allPredefined = new List<(string Name, List<string> Items)>
         {
             ("Favoris", (favorites ?? new List<string>())),
@@ -90,7 +91,7 @@ public class AnnotationService
             ("Nuances", new List<string> { "pp", "p", "mp", "mf", "f", "ff", "sfz", "<", ">", "Cantabile", "Dolce", "Marcato", "Legato", "Staccato" }),
             ("Structure", new List<string> { "A", "B", "C", "D", "1", "2", "3", "Coda", "Segno", "D.C.", "Fine", "VI-DE", "→", "V.S." }),
             ("Technique", new List<string> { "Π", "V", "Pizz.", "Arco", "Ped.", "*", ",", "//" }),
-            ("Travail", new List<string> { "!", "?", "👁", "À travailler", "OK", "Rythme faux", "Justesse", "🔴", "🟢", "🔵" })
+            ("Travail", new List<string> { "!", "?", "👁", loc.GetString("Sticker_Item_NeedsPractice", "À travailler"), "OK", loc.GetString("Sticker_Item_WrongRhythm", "Rythme faux"), loc.GetString("Sticker_Item_Intonation", "Justesse"), "🔴", "🟢", "🔵" })
         };
 
         var categories = new List<StickerCategory>();

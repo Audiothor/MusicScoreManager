@@ -69,7 +69,7 @@ public partial class SettingsScoresPage : ContentPage
         ShowAlphabeticalIndexSwitch.IsToggled = Preferences.Default.Get("ShowAlphabeticalIndex", true);
         ShowScrollTopSwitch.IsToggled = Preferences.Default.Get("ShowScrollTop", true);
         ShowPageNumberSwitch.IsToggled = Preferences.Default.Get("ShowPageNumber", true);
-        ShowToolsButtonSwitch.IsToggled = Preferences.Default.Get("ShowToolsButton", false);
+        ShowToolsButtonSwitch.IsToggled = Preferences.Default.Get("ShowToolsButton", true);
         ShowScoreTitleSwitch.IsToggled = Preferences.Default.Get("ShowScoreTitle", false);
         TwoPagesLandscapeSwitch.IsToggled = Preferences.Default.Get("TwoPagesLandscape", true);
         KeepScreenOnSwitch.IsToggled = Preferences.Default.Get("KeepScreenOn", true);

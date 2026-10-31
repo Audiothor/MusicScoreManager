@@ -55,7 +55,7 @@ public partial class ScoreEditPage : ContentPage
         MetronomeSwitch.IsToggled = _score.ShowMetronome;
         MetronomeSoundSwitch.IsToggled = _score.HasMetronomeSound;
         int volPercent = (int)Math.Round(_score.MetronomeVolume * 100);
-        MetronomeVolumeSlider.Value = Math.Clamp(volPercent, 5, 100);
+        MetronomeVolumeSlider.Value = Math.Clamp(volPercent, 0, 100);
         MetronomeVolumeLabel.Text = $"{(int)MetronomeVolumeSlider.Value}%";
         MetronomeVolumeLayout.Opacity = _score.HasMetronomeSound ? 1.0 : 0.4;
         MetronomeVolumeSlider.IsEnabled = _score.HasMetronomeSound;
@@ -284,20 +284,22 @@ public partial class ScoreEditPage : ContentPage
         {
             var annotations = await _databaseService.GetAnnotationsForScoreAsync(_score.Id);
             int count = annotations?.Count ?? 0;
+            var loc = LocalizationService.Instance;
             if (count > 0)
             {
-                AnnotationsLabel.Text = $"Oui ({count})";
+                string yesWord = loc.GetString("Common_Yes", "Oui");
+                AnnotationsLabel.Text = $"{yesWord} ({count})";
                 AnnotationsLabel.TextColor = Color.FromArgb("#4CAF50");
             }
             else
             {
-                AnnotationsLabel.Text = "Aucune";
+                AnnotationsLabel.Text = loc.GetString("Common_None", "Aucune");
                 AnnotationsLabel.TextColor = Color.FromArgb("#888888");
             }
         }
         catch
         {
-            AnnotationsLabel.Text = "Aucune";
+            AnnotationsLabel.Text = LocalizationService.Instance.GetString("Common_None", "Aucune");
             AnnotationsLabel.TextColor = Color.FromArgb("#888888");
         }
     }
@@ -581,7 +583,8 @@ public partial class ScoreEditPage : ContentPage
         {
             PathEntry.Text = newPath;
             UpdateExternalIndicators();
-            await this.DisplayAlertAsync("Succès", "La partition a été rapatriée dans votre dossier Scores.", "OK");
+            var loc = LocalizationService.Instance;
+            await this.DisplayAlertAsync(loc.GetString("Common_Success"), loc.GetString("Score_Edit_Import_Score_Success"), "OK");
         }
     }
 
@@ -594,7 +597,8 @@ public partial class ScoreEditPage : ContentPage
         {
             af.FilePath = newPath;
             RefreshAudioFilesUI();
-            await this.DisplayAlertAsync("Succès", "Le fichier audio a été rapatrié dans votre dossier Audio.", "OK");
+            var loc = LocalizationService.Instance;
+            await this.DisplayAlertAsync(loc.GetString("Common_Success"), loc.GetString("Score_Edit_Import_Audio_Success"), "OK");
         }
     }
 
@@ -625,7 +629,8 @@ public partial class ScoreEditPage : ContentPage
         {
             if (!File.Exists(sourcePath))
             {
-                await this.DisplayAlertAsync("Erreur", "Le fichier original n'est plus accessible.", "OK");
+                var loc = LocalizationService.Instance;
+                await this.DisplayAlertAsync(loc.GetString("Common_Error"), loc.GetString("Alert_File_Not_Found"), "OK");
                 return null;
             }
 

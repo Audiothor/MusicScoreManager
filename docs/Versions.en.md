@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.1.6 — 10/31/2026](#v316--10312026)
 - [v3.1.5 — 28/10/2026](#v315--28102026)
 - [v3.1.4 — 26/10/2026](#v314--26102026)
 - [v3.1.3 — 26/10/2026](#v313--26102026)
@@ -39,6 +40,52 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.6 — 10/31/2026
+
+### 1. Scores Library: Touch Gestures & Ergonomics
+- **1.1. Fix score opening and press & hold (long-press) multi-selection:**
+  - **Symptom Fixed:** Single tap on a score failed or was blocked from opening the viewer, and holding down did not consistently trigger multi-selection mode.
+  - **Fix:** Properly initialized `ScoreTappedCommand` and `ScoreLongPressCommand` prior to `InitializeComponent()`, added `InputTransparent="True"` to inner score card containers (title, subtitle, badge stack), and stabilized selected item recalculation (`RecalculateSelectedCount`).
+- **1.2. Improved touch hitbox for 3-dots menu button (⋮):**
+  - Expanded hit target to 48x48 dp with `Padding="0"`, perfect center alignment, and `ZIndex="20"` to prevent card gesture interception.
+- **1.3. Protection & localization of default category "Default" ("Général"):**
+  - Protected root folder: prevented renaming or deleting the default category container.
+  - Dynamic localization for the default category name ("Default" in English, "Général" in French, etc.).
+  - Localized summary text ("{0} folders, {1} scores").
+
+### 2. Score & Setlist Editing: Ergonomic Refresh
+- **2.1. Relocated Action Buttons to Top Right:**
+  - In `ScoreEditPage` and `SetlistEditPage`, "Cancel" and "Save" buttons are now located in the top-right header, eliminating the need to scroll all the way down.
+- **2.2. Integrated Metronome Volume:**
+  - Fixed percentage label positioning: resolved overlap with "Metronome volume" header at 100%.
+  - Expanded volume slider range to 0% (full mute) with visible 0% and 100% boundary markers.
+- **2.3. Toolbox Icon Default Enabled:**
+  - Default value for "Show toolbox icon" (`ShowToolsButton`) is now ON (`true`) for all new scores.
+
+### 3. Stage Viewer: Tuner, Metronome & Annotations
+- **3.1. Tuner — Reference Tone Volume & Full Localization:**
+  - Added dedicated volume slider (0 to 100%) below "Play reference tone" to adjust reference tone playback level.
+  - Full localization of tuner strings: Concert pitch, Mic Start/Stop, Octaves, Solfège, Pitch statuses ("Waiting for signal", "Too flat", "In tune", "Too sharp", "Perfect") and tuning tips.
+- **3.2. Draggable Metronome Settings (Drag & Drop) & Localization:**
+  - The metronome settings modal can now be freely dragged around the screen by dragging its header.
+  - Full localization of all metronome options (Tempo, Beats, Sound, Visual).
+- **3.3. Text Annotations with Customizable Border Frame:**
+  - Added option to wrap text in a rectangular border with selectable colors (Transparent, Black, Red, Blue, Green, Yellow, White).
+  - Stored in annotation data model and migrated cleanly in SQLite database.
+- **3.4. Viewer Central Menu Localization:**
+  - Fully translated all buttons in the viewer central menu (Home, Page Bookmarks, Rotate, Go to Page, Edit Score, Modify Assembly).
+- **3.5. Stickers & Annotation Messages:**
+  - Localized practice sticker text labels ("Needs practice", "Wrong rhythm", "Intonation").
+  - Localized all annotation alerts ("No annotations to clear on this score...").
+
+### 4. Global Internationalization & Translations
+- **4.1. Musical Keys (MusicalKey):**
+  - Fully translated all musical keys ("Not specified", "C Major", "A Minor", etc.) in all supported languages.
+- **4.2. Dialog & Alert Messages:**
+  - Replaced remaining hardcoded dialog strings with localized keys.
 
 ---
 

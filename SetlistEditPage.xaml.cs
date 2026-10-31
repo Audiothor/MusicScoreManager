@@ -168,7 +168,8 @@ public partial class SetlistEditPage : ContentPage
 
         if (_isLocked && showAlert)
         {
-            await DisplayAlertAsync("Mode Lecture", "La setlist est verrouillée. Les modifications sont désactivées.", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Alert_Setlist_Locked_Title"), loc.GetString("Alert_Setlist_Locked_Msg"), "OK");
         }
     }
 
@@ -240,7 +241,8 @@ public partial class SetlistEditPage : ContentPage
         {
             if (orderedScore.Score.IsFileMissing)
             {
-                await DisplayAlertAsync("Fichier manquant", $"Le fichier de la partition '{orderedScore.Score.Title}' est introuvable. Veuillez vérifier son emplacement dans les paramètres.", "OK");
+                var loc = LocalizationService.Instance;
+                await DisplayAlertAsync(loc.GetString("Score_Edit_MissingFile_Title"), loc.GetString("Score_Edit_Missing_Msg"), "OK");
                 return;
             }
 
@@ -396,7 +398,8 @@ public partial class SetlistEditPage : ContentPage
     {
         if (string.IsNullOrWhiteSpace(NameEntry.Text))
         {
-            await DisplayAlertAsync("Erreur", "Le nom de la setlist est obligatoire.", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Common_Error"), loc.GetString("Alert_Title_Required"), "OK");
             return;
         }
 
@@ -420,7 +423,8 @@ public partial class SetlistEditPage : ContentPage
 
     private async void OnDeleteSetlistClicked(object sender, EventArgs e)
     {
-        bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer la setlist '{_setlist.Name}' ?", "Oui", "Non");
+        var loc = LocalizationService.Instance;
+        bool answer = await DisplayAlertAsync(loc.GetString("Alert_Delete_Title"), string.Format(loc.GetString("Alert_Delete_Setlist_Msg"), _setlist.Name), loc.GetString("Common_Yes"), loc.GetString("Common_No"));
         if (answer)
         {
             await _databaseService.DeleteSetlistAsync(_setlist);

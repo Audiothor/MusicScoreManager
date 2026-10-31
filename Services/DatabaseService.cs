@@ -101,6 +101,11 @@ namespace MusicScoreManager.Services
                     await db.CreateTableAsync<ScoreTag>();
                     await db.CreateTableAsync<ScoreAudioFile>();
                     await db.CreateTableAsync<Annotation>();
+                    try
+                    {
+                        await db.ExecuteAsync("ALTER TABLE Annotation ADD COLUMN BorderColor TEXT DEFAULT 'Transparent';");
+                    }
+                    catch { }
                     await db.CreateTableAsync<FavoriteSticker>();
                     await db.CreateTableAsync<ScorePageRotation>();
                     await db.CreateTableAsync<ScoreBookmark>();
