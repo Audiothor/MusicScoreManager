@@ -871,6 +871,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v318-11012026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.8 — 11/01/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.8 — 11/01/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-scores-library-complete-elimination-of-anr-not-responding-instant-score-opening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Scores Library: Complete Elimination of ANR ("Not Responding") &amp; Instant Score Opening
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v317-10312026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3299,6 +3327,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v318-11012026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.8 — 11/01/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.8 — 11/01/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-scores-library-complete-elimination-of-anr-not-responding-instant-score-opening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Scores Library: Complete Elimination of ANR ("Not Responding") &amp; Instant Score Opening
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v317-10312026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5706,6 +5762,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v318--11012026">v3.1.8 — 11/01/2026</a></li>
 <li><a href="#v317--10312026">v3.1.7 — 10/31/2026</a></li>
 <li><a href="#v316--10312026">v3.1.6 — 10/31/2026</a></li>
 <li><a href="#v315--28102026">v3.1.5 — 28/10/2026</a></li>
@@ -5741,6 +5798,19 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v318-11012026">v3.1.8 — 11/01/2026</h2>
+<h3 id="1-scores-library-complete-elimination-of-anr-not-responding-instant-score-opening">1. Scores Library: Complete Elimination of ANR ("Not Responding") &amp; Instant Score Opening</h3>
+<ul>
+<li><strong>1.1. Fixed UI Thread Freezing (ANR) on Large Libraries:</strong></li>
+<li><strong>Root Cause:</strong> Combining <code>ItemSizingStrategy="MeasureAllItems"</code>, <code>SelectionMode="Single"</code>, <code>TouchBehavior</code> (CommunityToolkit), and <code>TapGestureRecognizer</code> on every <code>CollectionView</code> item forced Android to synchronously measure all items and created native touch interception conflicts, freezing the UI thread ("MusicScoreManager is not responding") and blocking score opening.</li>
+<li><strong>Architectural Fix:</strong> Switched to strict virtualization with <code>ItemSizingStrategy="MeasureFirstItem"</code> and <code>SelectionMode="None"</code> (matching the Setlists and Folders views), completely eliminating layout bottlenecks and gesture conflicts.</li>
+<li><strong>1.2. Smooth Score Opening with Loading Feedback &amp; Native Android Long-Press:</strong></li>
+<li>Replaced <code>TouchBehavior</code> with a lightweight native Android <code>View.IOnLongClickListener</code> attached via <code>HandlerChanged</code> to trigger multi-selection with haptic feedback on long press without interfering with single taps (<code>TapGestureRecognizer</code>).</li>
+<li>Marked tag badges and inner labels as <code>InputTransparent="True"</code> so the entire score card surface responds immediately to touch.</li>
+<li>Added the <code>ScoreLoadingOverlay</code> transition indicator when opening a score for instant visual feedback prior to <code>ViewerPage</code> rendering.</li>
+<li>Optimized <code>UpdateMultiSelectUI</code> by batching property updates (<code>_isUpdatingMultiSelect</code>) and throttled background PDF page count checks.</li>
 </ul>
 <hr />
 <h2 id="v317-10312026">v3.1.7 — 10/31/2026</h2>
