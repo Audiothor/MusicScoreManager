@@ -232,16 +232,6 @@ namespace MusicScoreManager.Models
             }
         }
 
-        public static System.Windows.Input.ICommand? GlobalOpenScoreCommand { get; set; }
-        public static System.Windows.Input.ICommand? GlobalLongPressScoreCommand { get; set; }
-
-        [Ignore]
-        public System.Windows.Input.ICommand? OpenScoreCommand => GlobalOpenScoreCommand;
-
-        [Ignore]
-        public System.Windows.Input.ICommand? LongPressScoreCommand => GlobalLongPressScoreCommand;
-
-
         private List<Tag> _appliedTags = new List<Tag>();
         [Ignore]
         public List<Tag> AppliedTags

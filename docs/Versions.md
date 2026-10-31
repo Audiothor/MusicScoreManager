@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.1.8 — 01/11/2026](#v318--01112026)
 - [v3.1.7 — 31/10/2026](#v317--31102026)
 - [v3.1.6 — 31/10/2026](#v316--31102026)
 - [v3.1.5 — 28/10/2026](#v315--28102026)
@@ -41,6 +42,20 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.8 — 01/11/2026
+
+### 1. Bibliothèque de Partitions : Élimination Définitive de l'ANR (« Ne répond pas ») & Ouverture Instantanée
+- **1.1. Suppression de la saturation du thread UI (ANR) sur les grandes bibliothèques :**
+  - **Cause identifiée :** L'association simultanée de `ItemSizingStrategy="MeasureAllItems"`, `SelectionMode="Single"`, `TouchBehavior` (CommunityToolkit) et `TapGestureRecognizer` sur chaque carte de la `CollectionView` forçait Android à instancier et mesurer synchrone l'intégralité des partitions au chargement et lors des changements d'état, provoquant un gel complet du thread principal (« MusicScoreManager ne répond pas ») et le blocage des événements tactiles.
+  - **Correctif architectural :** Passage en virtualisation stricte `ItemSizingStrategy="MeasureFirstItem"` et `SelectionMode="None"` (identique aux vues Setlists et Dossiers), éliminant toute surcharge de mesure et tout conflit d'interception tactile.
+- **1.2. Ouverture fluide avec indicateur visuel et appui long natif Android :**
+  - Remplacement de `TouchBehavior` par un écouteur natif léger Android (`View.IOnLongClickListener`) attaché au conteneur de carte pour déclencher la sélection multiple par appui long avec retour haptique, sans interférer avec le clic simple (`TapGestureRecognizer`).
+  - Ajout de `InputTransparent="True"` sur les conteneurs et badges d'étiquettes pour garantir que 100 % de la surface de la carte (hors bouton `⋮` et case à cocher) réponde immédiatement au toucher.
+  - Intégration de l'overlay de transition (`ScoreLoadingOverlay`) lors de l'ouverture d'une partition pour un retour visuel immédiat avant l'affichage du `ViewerPage`.
+  - Optimisation de `UpdateMultiSelectUI` avec suspension temporaire des recalculs unitaires (`_isUpdatingMultiSelect`) et temporisation de la tâche de fond de comptage des pages PDF.
 
 ---
 

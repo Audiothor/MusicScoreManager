@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.1.8 — 11/01/2026](#v318--11012026)
 - [v3.1.7 — 10/31/2026](#v317--10312026)
 - [v3.1.6 — 10/31/2026](#v316--10312026)
 - [v3.1.5 — 28/10/2026](#v315--28102026)
@@ -41,6 +42,20 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.8 — 11/01/2026
+
+### 1. Scores Library: Complete Elimination of ANR ("Not Responding") & Instant Score Opening
+- **1.1. Fixed UI Thread Freezing (ANR) on Large Libraries:**
+  - **Root Cause:** Combining `ItemSizingStrategy="MeasureAllItems"`, `SelectionMode="Single"`, `TouchBehavior` (CommunityToolkit), and `TapGestureRecognizer` on every `CollectionView` item forced Android to synchronously measure all items and created native touch interception conflicts, freezing the UI thread ("MusicScoreManager is not responding") and blocking score opening.
+  - **Architectural Fix:** Switched to strict virtualization with `ItemSizingStrategy="MeasureFirstItem"` and `SelectionMode="None"` (matching the Setlists and Folders views), completely eliminating layout bottlenecks and gesture conflicts.
+- **1.2. Smooth Score Opening with Loading Feedback & Native Android Long-Press:**
+  - Replaced `TouchBehavior` with a lightweight native Android `View.IOnLongClickListener` attached via `HandlerChanged` to trigger multi-selection with haptic feedback on long press without interfering with single taps (`TapGestureRecognizer`).
+  - Marked tag badges and inner labels as `InputTransparent="True"` so the entire score card surface responds immediately to touch.
+  - Added the `ScoreLoadingOverlay` transition indicator when opening a score for instant visual feedback prior to `ViewerPage` rendering.
+  - Optimized `UpdateMultiSelectUI` by batching property updates (`_isUpdatingMultiSelect`) and throttled background PDF page count checks.
 
 ---
 
