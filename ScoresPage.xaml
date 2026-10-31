@@ -173,16 +173,16 @@
                                       Margin="0,0,10,0"
                                       Color="#007ACC" />
 
-                            <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="5">
+                            <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="5" InputTransparent="True">
                                 <Label Text="⚠️" 
                                        TextColor="Red" 
                                        FontSize="16" 
-                                       VerticalOptions="Center"
+                                       VerticalOptions="Center" 
                                        IsVisible="{Binding IsFileMissing}" />
                                 <Label Text="🔗" 
                                        TextColor="#007ACC" 
                                        FontSize="16" 
-                                       VerticalOptions="Center"
+                                       VerticalOptions="Center" 
                                        IsVisible="{Binding IsExternal}" />
                                 <Label Text="{Binding Title}" 
                                        TextColor="{Binding TitleColorHex}"
@@ -201,6 +201,7 @@
                                         WidthRequest="22"
                                         HeightRequest="22"
                                         VerticalOptions="Center"
+                                        InputTransparent="True"
                                         Margin="0,0,4,0">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="11" />
@@ -215,13 +216,15 @@
                                 </Border>
 
                                 <Button Text="⋮"
-                                        FontSize="24"
+                                        FontSize="26"
                                         FontAttributes="Bold"
                                         TextColor="White"
                                         BackgroundColor="Transparent"
                                         VerticalOptions="Center"
-                                        WidthRequest="40"
-                                        HeightRequest="40"
+                                        WidthRequest="48"
+                                        HeightRequest="48"
+                                        Padding="0"
+                                        ZIndex="20"
                                         CommandParameter="{Binding .}"
                                         Clicked="OnScoreOptionsClicked" />
                             </HorizontalStackLayout>
@@ -230,11 +233,13 @@
                                    Text="{Binding DisplaySubtitle}" 
                                    FontSize="12" 
                                    TextColor="#888888" 
+                                   InputTransparent="True"
                                    Margin="0,2,0,6"/>
                                    
                             <HorizontalStackLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
                                                    BindableLayout.ItemsSource="{Binding AppliedTags}"
                                                    IsVisible="{Binding HasTags}"
+                                                   InputTransparent="True"
                                                    Spacing="5">
                                 <BindableLayout.ItemTemplate>
                                     <DataTemplate x:DataType="models:Tag">
@@ -397,14 +402,16 @@
 
                                 <Button Grid.Column="2"
                                         Text="⋮"
-                                        FontSize="22"
+                                        FontSize="26"
                                         FontAttributes="Bold"
                                         TextColor="White"
                                         BackgroundColor="Transparent"
                                         VerticalOptions="Center"
-                                        WidthRequest="36"
-                                        HeightRequest="36"
+                                        WidthRequest="48"
+                                        HeightRequest="48"
                                         Padding="0"
+                                        ZIndex="20"
+                                        IsVisible="{Binding CanManage}"
                                         CommandParameter="{Binding .}"
                                         Clicked="OnCategoryOptionsClicked" />
 

@@ -95,7 +95,7 @@ namespace MusicScoreManager.Models
         public bool ShowPageNumber { get; set; } = true;
 
         // Tools Hub Button
-        public bool ShowToolsButton { get; set; } = false;
+        public bool ShowToolsButton { get; set; } = true;
 
         // Titre de partition en haut
         public bool ShowScoreTitle { get; set; } = false;

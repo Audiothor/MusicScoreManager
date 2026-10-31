@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.1.6 — 31/10/2026](#v316--31102026)
 - [v3.1.5 — 28/10/2026](#v315--28102026)
 - [v3.1.4 — 26/10/2026](#v314--26102026)
 - [v3.1.3 — 26/10/2026](#v313--26102026)
@@ -39,6 +40,52 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.6 — 31/10/2026
+
+### 1. Bibliothèque de Partitions : Gestes Tactiles & Ergonomie
+- **1.1. Correction de l'ouverture et de la sélection multiple par appui long :**
+  - **Symptôme résolu :** Suite à la refonte des gestes, l'ouverture simple d'une partition au toucher ne répondait plus ou bloquait l'accès à la partition, et l'appui long n'activait pas toujours la sélection multiple.
+  - **Correctif :** Initialisation des commandes `ScoreTappedCommand` et `ScoreLongPressCommand` avant `InitializeComponent()`, avec `InputTransparent="True"` sur les conteneurs d'informations internes (titre, sous-titre, badges) et fiabilisation du calcul du compteur d'éléments sélectionnés (`RecalculateSelectedCount`).
+- **1.2. Amélioration de la cible tactile du menu 3 points (⋮) :**
+  - Zone tactile élargie à 48x48 dp avec `Padding="0"`, centrage parfait et `ZIndex="20"` pour éviter tout conflit avec le geste de sélection de carte.
+- **1.3. Gestion et protection de la catégorie par défaut « Général » :**
+  - Protection absolue du dossier racine : impossibilité de renommer ou supprimer « Général » (« Default »).
+  - Traduction dynamique du nom de catégorie par défaut (« Général » en français, « Default » en anglais, etc.).
+  - Traduction des résumés de contenu (« {0} dossiers, {1} partitions »).
+
+### 2. Édition de Partitions & Setlists : Refonte Ergonomique
+- **2.1. Déplacement des boutons d'actions en haut à droite :**
+  - Dans les pages d'édition de partition (`ScoreEditPage`) et de setlist (`SetlistEditPage`), les boutons « Annuler » et « Enregistrer » sont désormais positionnés directement dans l'en-tête supérieur droit, offrant un accès immédiat sans nécessiter de défilement jusqu'au bas de page.
+- **2.2. Volume du métronome intégré :**
+  - Correction du positionnement du pourcentage : suppression du chevauchement à 100% avec le titre.
+  - Plage étendue jusqu'à 0% (silence complet) et affichage clair des bornes 0% et 100%.
+- **2.3. Paramètre Boîte à Outils activé par défaut :**
+  - Le paramètre « Afficher l'icône de boîte à outils » (`ShowToolsButton`) est désormais activé par défaut (`true`) pour toute nouvelle partition.
+
+### 3. Visualiseur de Scène : Accordeur, Métronome & Annotations
+- **3.1. Accordeur — Volume de référence & Internationalisation complète :**
+  - Ajout d'un curseur de volume dédié (0 à 100%) directement sous « Écouter la note de référence » pour moduler le niveau sonore du son de référence généré.
+  - Traduction intégrale de l'accordeur : Diapason, Activation/Désactivation micro, Octaves, Solfège, Statuts d'accordage (« En attente de signal », « Trop bas », « Accordé », « Trop haut », « Parfait ») et conseils d'ajustement.
+- **3.2. Métronome Déplaçable (Drag & Drop) & Internationalisation :**
+  - La fenêtre modale des paramètres du métronome peut désormais être déplacée n'importe où sur l'écran par simple glisser-déposer sur son en-tête.
+  - Traduction intégrale de toutes les options du métronome (Tempo, Battements, Son, Visuel).
+- **3.3. Annotations Texte avec Cadre Personnalisable :**
+  - Possibilité d'entourer le texte d'un cadre rectangulaire avec choix de couleur de bordure (Transparent, Noir, Rouge, Bleu, Vert, Jaune, Blanc).
+  - Prise en charge dans le modèle d'annotation et migration transparente de la base SQLite.
+- **3.4. Menu Central du Visualiseur :**
+  - Traduction intégrale de l'ensemble des boutons du menu central (Accueil, Marqueurs de page, Rotation, Aller à la page, Modifier la partition, Modifier l'assemblage).
+- **3.5. Stickers & Messages :**
+  - Traduction des termes textuels des stickers d'apprentissage (« À travailler », « Rythme faux », « Justesse »).
+  - Traduction de toutes les alertes d'annotations (« Il n'y a aucune annotation à supprimer... »).
+
+### 4. Internationalisation Globale & Traduction
+- **4.1. Tonalités musicales (MusicalKey) :**
+  - Traduction complète de toutes les tonalités (« Non définie », « Do Majeur », « La Mineur », etc.) dans toutes les langues supportées.
+- **4.2. Messages et alertes de confirmation :**
+  - Remplacement de tous les textes en dur restants dans les popups, boîtes de dialogue et alertes par des clés de localisation dynamiques.
 
 ---
 

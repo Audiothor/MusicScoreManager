@@ -7,23 +7,35 @@
              Title="{Binding [Score_Edit_Title], Source={x:Static services:LocalizationService.Instance}}">
 
     <Grid RowDefinitions="Auto, *">
-        <!-- Header personnalisé avec titre grand et lisible -->
-        <Grid Grid.Row="0" ColumnDefinitions="Auto, *" Padding="12,14" BackgroundColor="#1E1E1E">
-            <Button Grid.Column="0" 
-                    Text="{Binding [Common_Back], Source={x:Static services:LocalizationService.Instance}}" 
-                    BackgroundColor="Transparent" 
-                    TextColor="#007ACC" 
-                    FontSize="16"
-                    FontAttributes="Bold"
-                    Clicked="OnCancelClicked" />
-            <Label Grid.Column="1" 
+        <!-- Header personnalisé avec titre et boutons Annuler / Sauvegarder en haut à droite -->
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Padding="14,10" BackgroundColor="#1E1E1E">
+            <Label Grid.Column="0" 
                    Text="{Binding [Score_Edit_Header], Source={x:Static services:LocalizationService.Instance}}" 
                    TextColor="White" 
-                   FontSize="22" 
+                   FontSize="20" 
                    FontAttributes="Bold" 
                    VerticalOptions="Center" 
-                   HorizontalOptions="Center"
-                   Margin="0,0,70,0" />
+                   LineBreakMode="TailTruncation" />
+
+            <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                <Button Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}" 
+                        BackgroundColor="#333333" 
+                        TextColor="White" 
+                        CornerRadius="8"
+                        HeightRequest="38"
+                        Padding="14,0"
+                        FontSize="14"
+                        Clicked="OnCancelClicked" />
+                <Button Text="{Binding [Common_Save], Source={x:Static services:LocalizationService.Instance}}" 
+                        BackgroundColor="#007ACC" 
+                        TextColor="White" 
+                        FontAttributes="Bold"
+                        CornerRadius="8"
+                        HeightRequest="38"
+                        Padding="16,0"
+                        FontSize="14"
+                        Clicked="OnSaveClicked" />
+            </HorizontalStackLayout>
         </Grid>
 
         <ScrollView Grid.Row="1">
@@ -316,16 +328,20 @@
                             </Grid>
                             <VerticalStackLayout x:Name="MetronomeVolumeLayout" Spacing="6">
                                 <Grid ColumnDefinitions="*, Auto">
-                                    <Label Text="Volume du métronome" TextColor="#AAAAAA" VerticalOptions="Center" />
-                                    <Label x:Name="MetronomeVolumeLabel" Text="100%" TextColor="#00B0FF" FontAttributes="Bold" VerticalOptions="Center" />
+                                    <Label Grid.Column="0" Text="{Binding [Score_Edit_Metronome_Volume], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" VerticalOptions="Center" />
+                                    <Label Grid.Column="1" x:Name="MetronomeVolumeLabel" Text="100%" TextColor="#00B0FF" FontAttributes="Bold" VerticalOptions="Center" />
                                 </Grid>
                                 <Slider x:Name="MetronomeVolumeSlider" 
-                                        Minimum="5" 
+                                        Minimum="0" 
                                         Maximum="100" 
                                         Value="100"
                                         MinimumTrackColor="#007ACC" 
                                         MaximumTrackColor="#333333" 
                                         ThumbColor="#00B0FF" />
+                                <Grid ColumnDefinitions="Auto, *, Auto" Margin="2,-4,2,0">
+                                    <Label Grid.Column="0" Text="0%" TextColor="#666666" FontSize="11" />
+                                    <Label Grid.Column="2" Text="100%" TextColor="#666666" FontSize="11" />
+                                </Grid>
                             </VerticalStackLayout>
                         </VerticalStackLayout>
                     </VerticalStackLayout>
@@ -404,26 +420,6 @@
                      </VerticalStackLayout>
                  </Border>
 
-                 <!-- BOUTONS D'ACTION -->
-                <Grid ColumnDefinitions="*, *" ColumnSpacing="15" Margin="0,15,0,20">
-                    <Button Grid.Column="0"
-                            Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}" 
-                            BackgroundColor="#333333" 
-                            TextColor="White" 
-                            CornerRadius="8"
-                            HeightRequest="50"
-                            FontSize="16"
-                            Clicked="OnCancelClicked" />
-                    <Button Grid.Column="1"
-                            Text="{Binding [Common_Save], Source={x:Static services:LocalizationService.Instance}}" 
-                            BackgroundColor="#007ACC" 
-                            TextColor="White" 
-                            FontAttributes="Bold"
-                            CornerRadius="8"
-                            HeightRequest="50"
-                            FontSize="16"
-                            Clicked="OnSaveClicked" />
-                </Grid>
             </VerticalStackLayout>
         </ScrollView>
         

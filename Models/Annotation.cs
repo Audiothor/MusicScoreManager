@@ -32,6 +32,7 @@ public class Annotation
 
     public string Color { get; set; } = "#FFFFFF";
     public string BackgroundColor { get; set; } = "Transparent";
+    public string BorderColor { get; set; } = "Transparent";
 
     public int PageNumber { get; set; } = 1;
 

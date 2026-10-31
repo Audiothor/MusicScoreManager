@@ -288,7 +288,8 @@ public partial class SetlistsPage : ContentPage
             {
                 SetlistLoadingOverlay.IsVisible = false;
                 Shell.SetTabBarIsVisible(this, true);
-                await DisplayAlertAsync("Setlist vide", $"Aucune partition n'est actuellement assignée à la setlist '{setlist.Name}'.", "OK");
+                var loc = LocalizationService.Instance;
+                await DisplayAlertAsync(loc.GetString("Setlist_Empty"), string.Format(loc.GetString("Setlist_Edit_Empty"), setlist.Name), "OK");
                 return;
             }
 
@@ -297,7 +298,8 @@ public partial class SetlistsPage : ContentPage
             {
                 SetlistLoadingOverlay.IsVisible = false;
                 Shell.SetTabBarIsVisible(this, true);
-                await DisplayAlertAsync("Fichier manquant", $"Le fichier de la première partition '{firstScore.Title}' est introuvable. Veuillez vérifier son emplacement.", "OK");
+                var loc = LocalizationService.Instance;
+                await DisplayAlertAsync(loc.GetString("Score_Edit_MissingFile_Title"), loc.GetString("Score_Edit_Missing_Msg"), "OK");
                 return;
             }
 
@@ -645,7 +647,8 @@ public partial class SetlistsPage : ContentPage
 
     private async Task DeleteSetlistAsync(Setlist setlist)
     {
-        bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer '{setlist.Name}' ?", "Oui", "Non");
+        var loc = LocalizationService.Instance;
+        bool answer = await DisplayAlertAsync(loc.GetString("Alert_Delete_Title"), string.Format(loc.GetString("Alert_Delete_Setlist_Msg"), setlist.Name), loc.GetString("Common_Yes"), loc.GetString("Common_No"));
         if (answer)
         {
             await _databaseService.DeleteSetlistAsync(setlist);

@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>3.1.5</ApplicationDisplayVersion>
-		<ApplicationVersion>31500</ApplicationVersion>
-		<!-- Version actuelle : v3.1.5 "Sélection multiple par appui long et correctif d'extraction multi-pages dans l'Atelier d'Assemblage PDF" -->
+		<ApplicationDisplayVersion>3.1.6</ApplicationDisplayVersion>
+		<ApplicationVersion>31600</ApplicationVersion>
+		<!-- Version actuelle : v3.1.6 "Améliorations de l'interface, accordeur, métronome déplaçable, cadre de texte et traductions complètes" -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

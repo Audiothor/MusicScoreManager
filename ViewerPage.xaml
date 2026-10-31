@@ -588,7 +588,7 @@
                 <!-- Séparateur vertical (visible en paysage) -->
                 <BoxView x:Name="TextOptionsSeparator" IsVisible="{OnIdiom Phone=False, Tablet=True}" WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
 
-                <!-- Choix de taille en pixel (8, 10, 12, 14, 16, 18) + Bouton fermer -->
+                <!-- Choix de taille en pixel (8, 10, 12, 14, 16, 18) -->
                 <HorizontalStackLayout Spacing="2" VerticalOptions="Center" HorizontalOptions="Center">
                     <Button x:Name="TextSize8Btn" Text="8" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="8" />
                     <Button x:Name="TextSize10Btn" Text="10" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="10" />
@@ -596,6 +596,51 @@
                     <Button x:Name="TextSize14Btn" Text="14" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#007ACC" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" FontAttributes="Bold" Clicked="OnTextSizeSelected" CommandParameter="14" />
                     <Button x:Name="TextSize16Btn" Text="16" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="16" />
                     <Button x:Name="TextSize18Btn" Text="18" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="18" />
+                </HorizontalStackLayout>
+
+                <!-- Séparateur vertical (visible en paysage) -->
+                <BoxView x:Name="TextBorderSeparator" IsVisible="{OnIdiom Phone=False, Tablet=True}" WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
+
+                <!-- Choix de cadre / bordure avec couleur -->
+                <HorizontalStackLayout Spacing="4" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Label Text="{Binding [Viewer_Text_Border_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" VerticalOptions="Center" Margin="0,0,2,0" />
+                    <!-- Sans cadre (Transparent) -->
+                    <Border x:Name="TextBorderNoneBtn" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" BackgroundColor="Transparent" Stroke="White" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="11" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBorderColorSelected" CommandParameter="Transparent"/></Border.GestureRecognizers>
+                        <Label Text="∅" TextColor="#AAAAAA" FontSize="11" HorizontalOptions="Center" VerticalOptions="Center" InputTransparent="True" />
+                    </Border>
+                    <!-- Noir -->
+                    <Border x:Name="TextBorderBlackBtn" BackgroundColor="Transparent" WidthRequest="22" HeightRequest="22" Stroke="#000000" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBorderColorSelected" CommandParameter="#000000" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Rouge -->
+                    <Border x:Name="TextBorderRedBtn" BackgroundColor="Transparent" WidthRequest="22" HeightRequest="22" Stroke="#E53935" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBorderColorSelected" CommandParameter="#E53935" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Bleu -->
+                    <Border x:Name="TextBorderBlueBtn" BackgroundColor="Transparent" WidthRequest="22" HeightRequest="22" Stroke="#1E88E5" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBorderColorSelected" CommandParameter="#1E88E5" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Vert -->
+                    <Border x:Name="TextBorderGreenBtn" BackgroundColor="Transparent" WidthRequest="22" HeightRequest="22" Stroke="#43A047" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBorderColorSelected" CommandParameter="#43A047" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Jaune -->
+                    <Border x:Name="TextBorderYellowBtn" BackgroundColor="Transparent" WidthRequest="22" HeightRequest="22" Stroke="#FFD600" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBorderColorSelected" CommandParameter="#FFD600" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Blanc -->
+                    <Border x:Name="TextBorderWhiteBtn" BackgroundColor="Transparent" WidthRequest="22" HeightRequest="22" Stroke="#FFFFFF" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBorderColorSelected" CommandParameter="#FFFFFF" /></Border.GestureRecognizers>
+                    </Border>
+
                     <!-- Bouton fermer le panneau -->
                     <Button Text="✕" BackgroundColor="Transparent" TextColor="#AAAAAA" FontSize="14" HeightRequest="26" WidthRequest="22" Padding="0" Clicked="OnCloseTextOptionsClicked" VerticalOptions="Center" Margin="3,0,0,0" />
                 </HorizontalStackLayout>
@@ -743,7 +788,7 @@
                 <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
                     <!-- Bouton Retour Accueil Prioritaire -->
                     <Button Grid.Column="0" 
-                            Text="🏠 Accueil" 
+                            Text="{Binding [Viewer_Home], Source={x:Static services:LocalizationService.Instance}, StringFormat='🏠 {0}'}" 
                             ToolTipProperties.Text="{Binding [Viewer_Home], Source={x:Static services:LocalizationService.Instance}}"
                             BackgroundColor="#D32F2F" 
                             TextColor="White" 
@@ -790,13 +835,13 @@
                             <VerticalStackLayout Spacing="8">
                                 <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
                                     <Label Grid.Column="0" Text="🔖" FontSize="16" VerticalOptions="Center" Margin="0,0,6,0" />
-                                    <Label Grid.Column="1" x:Name="MenuBookmarkStatusLabel" Text="Marqueur sur cette page" TextColor="White" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+                                    <Label Grid.Column="1" x:Name="MenuBookmarkStatusLabel" Text="{Binding [Viewer_Bookmark_Page_Status], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
                                     <Switch Grid.Column="2" x:Name="MenuBookmarkSwitch" OnColor="#00E5FF" ThumbColor="White" Scale="0.8" VerticalOptions="Center" Toggled="OnMenuBookmarkToggled" />
                                 </Grid>
                                 <!-- Rangée Navigation entre marqueurs -->
                                 <Grid x:Name="MenuBookmarkNavRow" ColumnDefinitions="*, *" ColumnSpacing="8">
-                                    <Button Grid.Column="0" x:Name="MenuPrevBookmarkBtn" Text="⏮ Précédent" BackgroundColor="#2D2D38" TextColor="#00E5FF" FontSize="12" HeightRequest="34" CornerRadius="8" Padding="0" Clicked="OnMenuPrevBookmarkClicked" />
-                                    <Button Grid.Column="1" x:Name="MenuNextBookmarkBtn" Text="Suivant ⏭" BackgroundColor="#2D2D38" TextColor="#00E5FF" FontSize="12" HeightRequest="34" CornerRadius="8" Padding="0" Clicked="OnMenuNextBookmarkClicked" />
+                                    <Button Grid.Column="0" x:Name="MenuPrevBookmarkBtn" Text="{Binding [Viewer_Bookmark_Prev], Source={x:Static services:LocalizationService.Instance}, StringFormat='⏮ {0}'}" BackgroundColor="#2D2D38" TextColor="#00E5FF" FontSize="12" HeightRequest="34" CornerRadius="8" Padding="0" Clicked="OnMenuPrevBookmarkClicked" />
+                                    <Button Grid.Column="1" x:Name="MenuNextBookmarkBtn" Text="{Binding [Viewer_Bookmark_Next], Source={x:Static services:LocalizationService.Instance}, StringFormat='{0} ⏭'}" BackgroundColor="#2D2D38" TextColor="#00E5FF" FontSize="12" HeightRequest="34" CornerRadius="8" Padding="0" Clicked="OnMenuNextBookmarkClicked" />
                                 </Grid>
                             </VerticalStackLayout>
                         </Border>
@@ -806,9 +851,9 @@
                             <Border.StrokeShape><RoundRectangle CornerRadius="12"/></Border.StrokeShape>
                             <VerticalStackLayout Spacing="8">
                                 <Grid ColumnDefinitions="*, *, *" ColumnSpacing="6">
-                                    <Button Grid.Column="0" x:Name="RotateBtn" Text="↻ Rotation" BackgroundColor="#2D2D38" TextColor="White" FontSize="12" HeightRequest="36" CornerRadius="8" Padding="0" Clicked="OnRotateClicked" />
+                                    <Button Grid.Column="0" x:Name="RotateBtn" Text="{Binding [Viewer_Rotate_Btn], Source={x:Static services:LocalizationService.Instance}, StringFormat='↻ {0}'}" BackgroundColor="#2D2D38" TextColor="White" FontSize="12" HeightRequest="36" CornerRadius="8" Padding="0" Clicked="OnRotateClicked" />
                                     <Button Grid.Column="1" Text="🔍 100%" ToolTipProperties.Text="{Binding [Viewer_Menu_ResetZoom], Source={x:Static services:LocalizationService.Instance}}" BackgroundColor="#2D2D38" TextColor="White" FontSize="12" HeightRequest="36" CornerRadius="8" Padding="0" Clicked="OnResetZoomClicked" />
-                                    <Button Grid.Column="2" Text="📄 Page" BackgroundColor="#2D2D38" TextColor="White" FontSize="12" HeightRequest="36" CornerRadius="8" Padding="0" Clicked="OnGoToPageClicked" />
+                                    <Button Grid.Column="2" Text="{Binding [Viewer_GoTo_Page_Btn], Source={x:Static services:LocalizationService.Instance}, StringFormat='📄 {0}'}" BackgroundColor="#2D2D38" TextColor="White" FontSize="12" HeightRequest="36" CornerRadius="8" Padding="0" Clicked="OnGoToPageClicked" />
                                 </Grid>
                                 <Grid ColumnDefinitions="*, Auto" Margin="2,0">
                                     <Label x:Name="RotationScopeLabel" Text="{Binding [Viewer_Rotate_Page_Only], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="11" VerticalOptions="Center" />
@@ -825,8 +870,8 @@
 
                         <!-- Section 4 : 🛠️ Actions Partition -->
                         <Grid ColumnDefinitions="*, *" ColumnSpacing="8" Margin="0,4,0,4">
-                            <Button Grid.Column="0" Text="✏️ Modifier" ToolTipProperties.Text="{Binding [Viewer_Edit_Score], Source={x:Static services:LocalizationService.Instance}}" BackgroundColor="#007ACC" TextColor="White" FontSize="12" FontAttributes="Bold" CornerRadius="10" HeightRequest="38" Clicked="OnEditScoreClicked" />
-                            <Button Grid.Column="1" x:Name="MenuModifyAssemblyButton" Text="📑 Assemblage" ToolTipProperties.Text="{Binding [Viewer_Menu_ModifyAssembly], Source={x:Static services:LocalizationService.Instance}}" BackgroundColor="#34495E" TextColor="White" FontSize="12" CornerRadius="10" HeightRequest="38" Clicked="OnMenuModifyAssemblyClicked" />
+                            <Button Grid.Column="0" Text="{Binding [Viewer_Edit_Score], Source={x:Static services:LocalizationService.Instance}, StringFormat='✏️ {0}'}" ToolTipProperties.Text="{Binding [Viewer_Edit_Score], Source={x:Static services:LocalizationService.Instance}}" BackgroundColor="#007ACC" TextColor="White" FontSize="12" FontAttributes="Bold" CornerRadius="10" HeightRequest="38" Clicked="OnEditScoreClicked" />
+                            <Button Grid.Column="1" x:Name="MenuModifyAssemblyButton" Text="{Binding [Viewer_Menu_ModifyAssembly], Source={x:Static services:LocalizationService.Instance}, StringFormat='📑 {0}'}" ToolTipProperties.Text="{Binding [Viewer_Menu_ModifyAssembly], Source={x:Static services:LocalizationService.Instance}}" BackgroundColor="#34495E" TextColor="White" FontSize="12" CornerRadius="10" HeightRequest="38" Clicked="OnMenuModifyAssemblyClicked" />
                         </Grid>
                     </VerticalStackLayout>
                 </ScrollView>
@@ -1039,14 +1084,10 @@
             <!-- Arrière-plan semi-transparent -->
             <BoxView BackgroundColor="#80000000"
                      HorizontalOptions="Fill"
-                     VerticalOptions="Fill">
-                <BoxView.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnCloseMetronomeSettingsModalClicked" />
-                </BoxView.GestureRecognizers>
-            </BoxView>
-
-            <!-- Boîte de dialogue moderne et épurée -->
-            <Border HorizontalOptions="Center"
+                     VerticalOptions="Fill" />
+                          <!-- Boîte de dialogue moderne et épurée (déplaçable) -->
+            <Border x:Name="MetronomeSettingsBorder"
+                    HorizontalOptions="Center"
                     VerticalOptions="Center"
                     WidthRequest="390"
                     MaximumWidthRequest="430"
@@ -1061,18 +1102,28 @@
                 <Border.Shadow>
                     <Shadow Brush="#000000" Offset="0,10" Radius="25" Opacity="0.85" />
                 </Border.Shadow>
+                <Border.GestureRecognizers>
+                    <PanGestureRecognizer PanUpdated="OnMetronomeSettingsPanUpdated" />
+                </Border.GestureRecognizers>
 
                 <VerticalStackLayout Spacing="16">
-                    <!-- Entête : Titre & Bouton Fermer -->
-                    <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+                    <!-- Entête : Titre, Poignée de Déplacement & Bouton Fermer -->
+                    <Grid ColumnDefinitions="Auto, *, Auto, Auto" VerticalOptions="Center">
+                        <Grid.GestureRecognizers>
+                            <PanGestureRecognizer PanUpdated="OnMetronomeSettingsPanUpdated" />
+                        </Grid.GestureRecognizers>
                         <Label Grid.Column="0" Text="⏱️" FontSize="22" VerticalOptions="Center" Margin="0,0,8,0" />
                         <Label Grid.Column="1" 
-                               Text="Paramètres du Métronome" 
+                               Text="{Binding [Viewer_Metronome_Settings_Title], Source={x:Static services:LocalizationService.Instance}}" 
                                TextColor="White" 
                                FontAttributes="Bold" 
-                               FontSize="17" 
+                               FontSize="16" 
                                VerticalOptions="Center" />
-                        <Button Grid.Column="2" 
+                        <HorizontalStackLayout Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center" Spacing="4" Margin="0,0,10,0">
+                            <Label Text="⠿" TextColor="#007ACC" FontSize="13" VerticalOptions="Center" />
+                            <Label Text="{Binding [Common_Drag], Source={x:Static services:LocalizationService.Instance}}" TextColor="#8888AA" FontSize="10" FontAttributes="Italic" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                        <Button Grid.Column="3" 
                                 Text="✕" 
                                 BackgroundColor="#2D3748" 
                                 TextColor="#CBD5E0" 
@@ -1080,9 +1131,9 @@
                                 FontAttributes="Bold"
                                 WidthRequest="32" 
                                 HeightRequest="32" 
-                                CornerRadius="16"
-                                Padding="0"
-                                VerticalOptions="Center"
+                                CornerRadius="16" 
+                                Padding="0" 
+                                VerticalOptions="Center" 
                                 Clicked="OnCloseMetronomeSettingsModalClicked" />
                     </Grid>
 
@@ -1090,7 +1141,7 @@
 
                     <!-- Section TEMPO (BPM) -->
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="TEMPO (BPM)" TextColor="#90CDF4" FontSize="11" FontAttributes="Bold" CharacterSpacing="1" />
+                        <Label Text="{Binding [Viewer_Metronome_Tempo_Header], Source={x:Static services:LocalizationService.Instance}}" TextColor="#90CDF4" FontSize="11" FontAttributes="Bold" CharacterSpacing="1" />
                         
                         <!-- Badge BPM dynamique & Tap Tempo -->
                         <Grid ColumnDefinitions="*, Auto" ColumnSpacing="12" VerticalOptions="Center">
@@ -1109,14 +1160,14 @@
 
                             <Button Grid.Column="1" 
                                     x:Name="ModalTapTempoButton"
-                                    Text="👆 Tap Tempo" 
+                                    Text="{Binding [Viewer_Metronome_Tap_Tempo], Source={x:Static services:LocalizationService.Instance}, StringFormat='👆 {0}'}" 
                                     BackgroundColor="#2563EB" 
                                     TextColor="White" 
                                     FontAttributes="Bold" 
                                     FontSize="12" 
-                                    HeightRequest="44"
-                                    Padding="14,0"
-                                    CornerRadius="10"
+                                    HeightRequest="44" 
+                                    Padding="14,0" 
+                                    CornerRadius="10" 
                                     Clicked="OnModalTapTempoClicked" />
                         </Grid>
 
@@ -1132,10 +1183,10 @@
                         <Slider x:Name="ModalMetronomeBpmSlider"
                                 Minimum="40" 
                                 Maximum="250" 
-                                Value="120"
+                                Value="120" 
                                 MinimumTrackColor="#007ACC" 
                                 MaximumTrackColor="#334155" 
-                                ThumbColor="#00B0FF"
+                                ThumbColor="#00B0FF" 
                                 ValueChanged="OnModalBpmSliderValueChanged" />
                     </VerticalStackLayout>
 
@@ -1143,12 +1194,12 @@
 
                     <!-- Section SON & VOLUME -->
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="SON &amp; VOLUME" TextColor="#90CDF4" FontSize="11" FontAttributes="Bold" CharacterSpacing="1" />
+                        <Label Text="{Binding [Viewer_Metronome_Sound_Header], Source={x:Static services:LocalizationService.Instance}}" TextColor="#90CDF4" FontSize="11" FontAttributes="Bold" CharacterSpacing="1" />
                         
                         <!-- Toggle Son activé -->
                         <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
                             <Label Text="🔊" FontSize="18" VerticalOptions="Center" Margin="0,0,8,0" />
-                            <Label Grid.Column="1" Text="Son du métronome" TextColor="White" FontSize="14" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="{Binding [Viewer_Metronome_Sound_Enable], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="14" VerticalOptions="Center" />
                             <Switch Grid.Column="2" 
                                     x:Name="ModalMetronomeSoundSwitch" 
                                     OnColor="#007ACC" 
@@ -1160,12 +1211,12 @@
                         <VerticalStackLayout x:Name="ModalVolumeLayout" Spacing="6">
                             <Grid ColumnDefinitions="Auto, *, Auto">
                                 <Label Grid.Column="0" Text="🔈" FontSize="14" TextColor="#A0AEC0" VerticalOptions="Center" Margin="0,0,6,0" />
-                                <Label Grid.Column="1" Text="Volume sonore" TextColor="#CBD5E0" FontSize="13" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="{Binding [Viewer_Metronome_Volume], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CBD5E0" FontSize="13" VerticalOptions="Center" />
                                 <Label Grid.Column="2" x:Name="ModalVolumeLabel" Text="100%" TextColor="#00B0FF" FontAttributes="Bold" FontSize="14" VerticalOptions="Center" />
                             </Grid>
                             
                             <Slider x:Name="ModalMetronomeVolumeSlider"
-                                    Minimum="5"
+                                    Minimum="0"
                                     Maximum="100"
                                     Value="100"
                                     MinimumTrackColor="#007ACC"
@@ -1181,7 +1232,7 @@
                     <!-- Section AFFICHAGE VISUEL -->
                     <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
                         <Label Text="💡" FontSize="18" VerticalOptions="Center" Margin="0,0,8,0" />
-                        <Label Grid.Column="1" Text="Afficher le métronome visuel (LED)" TextColor="White" FontSize="14" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding [Viewer_Metronome_Visual_Enable], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="14" VerticalOptions="Center" />
                         <Switch Grid.Column="2" 
                                 x:Name="ModalMetronomeVisualSwitch" 
                                 OnColor="#007ACC" 
@@ -1190,7 +1241,7 @@
                     </Grid>
 
                     <!-- Bouton Valider / Fermer -->
-                    <Button Text="Terminer" 
+                    <Button Text="{Binding [Common_Done], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#007ACC" 
                             TextColor="White" 
                             FontAttributes="Bold" 
@@ -1506,7 +1557,7 @@
                            TextColor="White" FontSize="15" FontAttributes="Bold" VerticalOptions="Center" />
                     <HorizontalStackLayout Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center" Spacing="4">
                         <Label Text="⠿" TextColor="#007ACC" FontSize="13" VerticalOptions="Center" />
-                        <Label Text="Déplacer" TextColor="#8888AA" FontSize="10" FontAttributes="Italic" VerticalOptions="Center" />
+                        <Label Text="{Binding [Common_Drag], Source={x:Static services:LocalizationService.Instance}}" TextColor="#8888AA" FontSize="10" FontAttributes="Italic" VerticalOptions="Center" />
                     </HorizontalStackLayout>
                     <Button Grid.Column="3" Text="✕" TextColor="#AAAAAA" BackgroundColor="Transparent" 
                             FontSize="15" FontAttributes="Bold" Padding="0" WidthRequest="32" HeightRequest="32" 
@@ -1517,7 +1568,7 @@
 
                 <!-- Sélection Fréquence de référence (Diapason A4) en choix déroulant -->
                 <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
-                    <Label Grid.Column="0" Text="Diapason :" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
+                    <Label Grid.Column="0" Text="{Binding [Viewer_Tuner_Concert_Pitch], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
                     <Border Grid.Column="1" BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="8,2" MinimumHeightRequest="38">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="6" />
@@ -1533,7 +1584,7 @@
 
                 <!-- Bouton activation/désactivation microphone -->
                 <Button x:Name="TunerMicButton"
-                        Text="🎙️ Activer le micro"
+                        Text="{Binding [Viewer_Tuner_Mic_Start], Source={x:Static services:LocalizationService.Instance}}"
                         BackgroundColor="#252535"
                         TextColor="White"
                         FontAttributes="Bold"
@@ -1555,7 +1606,7 @@
 
                 <!-- Sélecteur de Note de référence en choix déroulant -->
                 <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
-                    <Label Grid.Column="0" Text="Note ref. :" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
+                    <Label Grid.Column="0" Text="{Binding [Viewer_Tuner_Ref_Note], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
                     <Border Grid.Column="1" BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="8,2" MinimumHeightRequest="38">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="6" />
@@ -1571,7 +1622,7 @@
 
                 <!-- Sélecteur d'octave (Hauteur de note 1 à 7) en choix déroulant (par défaut 4) -->
                 <Grid x:Name="TunerOctavesContainer" ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
-                    <Label Grid.Column="0" Text="Hauteur :" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
+                    <Label Grid.Column="0" Text="{Binding [Viewer_Tuner_Octave], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
                     <Border Grid.Column="1" BackgroundColor="#1E1E2A" Stroke="#3A3A4C" StrokeThickness="1" Padding="8,2" MinimumHeightRequest="38">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="6" />
@@ -1593,16 +1644,16 @@
                     <VerticalStackLayout Spacing="3" HorizontalOptions="Center">
                         <!-- Grande Note Détectée -->
                         <Label x:Name="TunerNoteLabel" Text="--" TextColor="White" FontSize="44" FontAttributes="Bold" HorizontalTextAlignment="Center" />
-                        <Label x:Name="TunerSolfegeLabel" Text="Jouez une note ou activez le micro" TextColor="#00B4D8" FontSize="13" HorizontalTextAlignment="Center" />
+                        <Label x:Name="TunerSolfegeLabel" Text="{Binding [Viewer_Tuner_Play_Or_Mic], Source={x:Static services:LocalizationService.Instance}}" TextColor="#00B4D8" FontSize="13" HorizontalTextAlignment="Center" />
                         <Label x:Name="TunerFreqLabel" Text="-- Hz" TextColor="#888899" FontSize="12" HorizontalTextAlignment="Center" Margin="0,2,0,0" />
 
                         <!-- Jauge visuelle d'accordage (-50 à +50 cents) avec paliers de couleurs -->
                         <VerticalStackLayout Spacing="3" Margin="0,6,0,0">
                             <!-- Barre de graduation avec guidance claire -->
                             <Grid ColumnDefinitions="*, *, *" HeightRequest="16" Margin="4,0">
-                                <Label Grid.Column="0" Text="◀ TROP BAS" FontSize="9" TextColor="#FF3D00" HorizontalTextAlignment="Start" FontAttributes="Bold" />
-                                <Label Grid.Column="1" Text="● ACCORDÉ" FontSize="9" TextColor="#00E676" HorizontalTextAlignment="Center" FontAttributes="Bold" />
-                                <Label Grid.Column="2" Text="TROP HAUT ▶" FontSize="9" TextColor="#FF3D00" HorizontalTextAlignment="End" FontAttributes="Bold" />
+                                <Label Grid.Column="0" Text="{Binding [Viewer_Tuner_Too_Flat], Source={x:Static services:LocalizationService.Instance}}" FontSize="9" TextColor="#FF3D00" HorizontalTextAlignment="Start" FontAttributes="Bold" />
+                                <Label Grid.Column="1" Text="{Binding [Viewer_Tuner_In_Tune], Source={x:Static services:LocalizationService.Instance}}" FontSize="9" TextColor="#00E676" HorizontalTextAlignment="Center" FontAttributes="Bold" />
+                                <Label Grid.Column="2" Text="{Binding [Viewer_Tuner_Too_Sharp], Source={x:Static services:LocalizationService.Instance}}" FontSize="9" TextColor="#FF3D00" HorizontalTextAlignment="End" FontAttributes="Bold" />
                             </Grid>
 
                             <!-- Piste et Aiguille avec fond à 3 couleurs : rouge - orange - vert - orange - rouge -->
@@ -1624,20 +1675,30 @@
                             </Grid>
 
                             <!-- Statut textuel d'accordage avec direction à suivre -->
-                            <Label x:Name="TunerStatusLabel" Text="En attente du signal sonore..." TextColor="#888899" FontSize="11" HorizontalTextAlignment="Center" FontAttributes="Bold" Margin="0,2,0,0" />
+                            <Label x:Name="TunerStatusLabel" Text="{Binding [Viewer_Tuner_Waiting_Signal], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888899" FontSize="11" HorizontalTextAlignment="Center" FontAttributes="Bold" Margin="0,2,0,0" />
                         </VerticalStackLayout>
                     </VerticalStackLayout>
                 </Border>
 
                 <!-- Bouton Jouer la note de référence (Diapason) -->
                 <Button x:Name="TunerPlayRefBtn"
-                        Text="🔊 Écouter la note de référence"
+                        Text="{Binding [Viewer_Tuner_Listen_Ref], Source={x:Static services:LocalizationService.Instance}, StringFormat='🔊 {0}'}"
                         BackgroundColor="#252535"
                         TextColor="#00B4D8"
                         FontSize="12"
                         HeightRequest="34"
                         CornerRadius="8"
                         Clicked="OnTunerPlayRefClicked" />
+
+                <!-- Réglage du Volume de la note de référence -->
+                <Grid ColumnDefinitions="Auto, *, Auto" Margin="4,2,4,0" VerticalOptions="Center">
+                    <Label Grid.Column="0" Text="🔈" FontSize="13" TextColor="#8888AA" VerticalOptions="Center" Margin="0,0,6,0" />
+                    <Slider Grid.Column="1" x:Name="TunerVolumeSlider"
+                            Minimum="0" Maximum="100" Value="100"
+                            MinimumTrackColor="#007ACC" MaximumTrackColor="#333344" ThumbColor="#00B4D8"
+                            ValueChanged="OnTunerVolumeSliderValueChanged" />
+                    <Label Grid.Column="2" x:Name="TunerVolumeLabel" Text="100%" TextColor="#00B4D8" FontSize="11" FontAttributes="Bold" WidthRequest="36" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                </Grid>
             </VerticalStackLayout>
         </Border>
     </Grid>

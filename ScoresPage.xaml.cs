@@ -56,12 +56,6 @@ public partial class ScoresPage : ContentPage
 
     public ScoresPage(DatabaseService databaseService, ImportService importService, IWifiDirectTransferService wifiService, ExportImportService exportImportService)
     {
-        InitializeComponent();
-        _databaseService = databaseService;
-        _importService = importService;
-        _wifiService = wifiService;
-        _exportImportService = exportImportService;
-
         ScoreTappedCommand = new Command<Models.Score>(async (score) =>
         {
             if (score != null) await HandleScoreTappedAsync(score);
@@ -71,6 +65,12 @@ public partial class ScoresPage : ContentPage
         {
             OnScoreLongPressed(score);
         });
+
+        InitializeComponent();
+        _databaseService = databaseService;
+        _importService = importService;
+        _wifiService = wifiService;
+        _exportImportService = exportImportService;
 
         _currentSort = Preferences.Default.Get("DefaultScoreSort", "DateDesc");
 
@@ -1159,6 +1159,7 @@ public partial class ScoresPage : ContentPage
         }
 
         score.IsSelected = true;
+        RecalculateSelectedCount();
     }
 
     public async Task HandleScoreTappedAsync(Models.Score selectedScore)
@@ -1166,12 +1167,17 @@ public partial class ScoresPage : ContentPage
         if (IsMultiSelectActive)
         {
             selectedScore.IsSelected = !selectedScore.IsSelected;
+            RecalculateSelectedCount();
             return;
         }
 
         if (selectedScore.IsFileMissing)
         {
-            await this.DisplayAlertAsync("Fichier manquant", "Le fichier de cette partition est introuvable. Veuillez vérifier votre répertoire de partitions dans les paramètres.", "OK");
+            var loc = LocalizationService.Instance;
+            await this.DisplayAlertAsync(
+                loc.GetString("Score_Missing_File_Title", "Fichier manquant"),
+                loc.GetString("Score_Missing_File_Desc", "Le fichier de cette partition est introuvable. Veuillez vérifier votre répertoire de partitions dans les paramètres."),
+                loc.GetString("Common_OK", "OK"));
             return;
         }
 
@@ -1238,7 +1244,8 @@ public partial class ScoresPage : ContentPage
         {
             if (_selectedScoreForMenu.IsFileMissing)
             {
-                await DisplayAlertAsync("Fichier manquant", "Le fichier de cette partition est introuvable. Veuillez vérifier votre répertoire de partitions dans les paramètres.", "OK");
+                var loc = LocalizationService.Instance;
+                await DisplayAlertAsync(loc.GetString("Score_Edit_MissingFile_Title"), loc.GetString("Score_Edit_Missing_Msg"), "OK");
                 return;
             }
             await Navigation.PushAsync(new ViewerPage(_selectedScoreForMenu));
@@ -1456,8 +1463,9 @@ public partial class ScoresPage : ContentPage
 
                 int totalFolders = groups.Count;
                 int totalScores = scores.Count;
-                string fWord = totalFolders > 1 ? "dossiers" : "dossier";
-                string sWord = totalScores > 1 ? "partitions" : "partition";
+                var loc = LocalizationService.Instance;
+                string fWord = totalFolders > 1 ? loc.GetString("Scores_Folders_Count_Plural", "dossiers") : loc.GetString("Scores_Folders_Count_Single", "dossier");
+                string sWord = totalScores > 1 ? loc.GetString("Scores_Count_Plural", "partitions") : loc.GetString("Scores_Count_Single", "partition");
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
@@ -1513,19 +1521,20 @@ public partial class ScoresPage : ContentPage
     private async Task HandleCategoryOptionsAsync(ScoreCategoryGroup group)
     {
             var loc = LocalizationService.Instance;
+            if (group.IsDefaultCategory)
+            {
+                await DisplayAlertAsync(
+                    group.DisplayName,
+                    loc.GetString("Score_Category_Default_No_Actions", "Le dossier par défaut ne peut pas être modifié ni supprimé."),
+                    loc.GetString("Common_OK", "OK"));
+                return;
+            }
+
             string cancel = loc.GetString("Common_Cancel", "Annuler");
             string rename = loc.GetString("Score_Category_Rename_Title", "Renommer le dossier");
             string delete = loc.GetString("Score_Category_Delete_Title", "Supprimer le dossier");
 
-            string? action;
-            if (string.Equals(group.Name, "Général", StringComparison.OrdinalIgnoreCase))
-            {
-                action = await DisplayActionSheetAsync(group.DisplayName, cancel, null, rename);
-            }
-            else
-            {
-                action = await DisplayActionSheetAsync(group.DisplayName, cancel, delete, rename);
-            }
+            string? action = await DisplayActionSheetAsync(group.DisplayName, cancel, delete, rename);
 
             if (action == rename)
             {
@@ -1597,7 +1606,8 @@ public partial class ScoresPage : ContentPage
 
             if (score.IsFileMissing)
             {
-                await this.DisplayAlertAsync("Fichier manquant", "Le fichier de cette partition est introuvable. Veuillez vérifier votre répertoire de partitions dans les paramètres.", "OK");
+                var loc = LocalizationService.Instance;
+                await this.DisplayAlertAsync(loc.GetString("Score_Edit_MissingFile_Title"), loc.GetString("Score_Edit_Missing_Msg"), "OK");
                 return;
             }
 
