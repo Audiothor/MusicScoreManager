@@ -68,7 +68,7 @@ namespace MusicScoreManager
         {
             ProfilesPicker.SelectedIndexChanged -= OnProfileSelectionChanged;
 
-            ProfilesPicker.ItemsSource = _pedalService.Profiles.Select(p => p.Name).ToList();
+            ProfilesPicker.ItemsSource = _pedalService.Profiles.Select(p => GetLocalizedProfileName(p)).ToList();
             var activeIndex = _pedalService.Profiles.FindIndex(p => p.Id == _pedalService.ActiveProfile.Id);
             ProfilesPicker.SelectedIndex = activeIndex >= 0 ? activeIndex : 0;
 
@@ -77,16 +77,41 @@ namespace MusicScoreManager
             UpdateProfileUI();
         }
 
+        private string GetLocalizedProfileName(PedalProfile profile)
+        {
+            if (profile.IsBuiltIn && !string.IsNullOrEmpty(profile.Id))
+            {
+                string key = $"Pedal_Profile_Name_{profile.Id}";
+                string locName = LocalizationService.Instance.GetString(key);
+                if (!string.IsNullOrEmpty(locName) && locName != key)
+                    return locName;
+            }
+            return profile.Name;
+        }
+
+        private string GetLocalizedProfileDescription(PedalProfile profile)
+        {
+            if (profile.IsBuiltIn && !string.IsNullOrEmpty(profile.Id))
+            {
+                string key = $"Pedal_Profile_Desc_{profile.Id}";
+                string locDesc = LocalizationService.Instance.GetString(key);
+                if (!string.IsNullOrEmpty(locDesc) && locDesc != key)
+                    return locDesc;
+            }
+            return string.IsNullOrWhiteSpace(profile.Description)
+                ? LocalizationService.Instance.GetString("Settings_Pedals_No_Notes")
+                : profile.Description;
+        }
+
         private void UpdateProfileUI()
         {
             var active = _pedalService.ActiveProfile;
             if (active != null)
             {
-                ProfileDescLabel.Text = string.IsNullOrWhiteSpace(active.Description)
-                    ? LocalizationService.Instance.GetString("Settings_Pedals_No_Notes")
-                    : active.Description;
+                ProfileDescLabel.Text = GetLocalizedProfileDescription(active);
             }
         }
+
 
         private void OnProfileSelectionChanged(object? sender, EventArgs e)
         {

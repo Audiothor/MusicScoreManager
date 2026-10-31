@@ -141,7 +141,8 @@
             <CollectionView x:Name="ScoresCollectionView"
                             Grid.Row="1"
                             ItemSizingStrategy="MeasureAllItems"
-                            SelectionMode="None"
+                            SelectionMode="Single"
+                            SelectionChanged="OnScoreSelected"
                             Scrolled="OnScoresScrolled"
                             Margin="{OnIdiom Phone='0,0,24,0', Tablet='0,0,28,0'}">
             <CollectionView.ItemsLayout>
@@ -157,21 +158,26 @@
                             <toolkit:TouchBehavior 
                                 LongPressDuration="450"
                                 ShouldMakeChildrenInputTransparent="False"
-                                LongPressCommand="{Binding Source={x:Reference ScoresPageRoot}, Path=ScoreLongPressCommand}"
+                                LongPressCommand="{Binding LongPressScoreCommand}"
                                 LongPressCommandParameter="{Binding .}"
-                                Command="{Binding Source={x:Reference ScoresPageRoot}, Path=ScoreTappedCommand}"
+                                Command="{Binding OpenScoreCommand}"
                                 CommandParameter="{Binding .}" />
                         </Border.Behaviors>
+
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnScoreCardTapped" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
                         <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="Auto, *, Auto">
                             <CheckBox Grid.Column="0" Grid.RowSpan="3"
                                       IsChecked="{Binding IsSelected}"
-                                      IsVisible="{Binding Source={x:Reference ScoresPageRoot}, Path=IsMultiSelectActive}"
+                                      IsVisible="{Binding IsMultiSelectActive}"
                                       VerticalOptions="Center"
                                       Margin="0,0,10,0"
                                       Color="#007ACC" />
+
 
                             <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="5" InputTransparent="True">
                                 <Label Text="⚠️" 
@@ -407,13 +413,13 @@
                                         TextColor="White"
                                         BackgroundColor="Transparent"
                                         VerticalOptions="Center"
-                                        WidthRequest="48"
-                                        HeightRequest="48"
+                                        WidthRequest="50"
+                                        HeightRequest="50"
                                         Padding="0"
                                         ZIndex="20"
-                                        IsVisible="{Binding CanManage}"
                                         CommandParameter="{Binding .}"
                                         Clicked="OnCategoryOptionsClicked" />
+
 
                                 <Label Grid.Column="3"
                                        Text="›"

@@ -3846,9 +3846,12 @@ public partial class ViewerPage : ContentPage
                                     {
                                         _currentTextColor = hit.Color;
                                         _currentTextSize = hit.Scale <= 0 ? 14 : hit.Scale;
+                                        _currentTextBorderColor = string.IsNullOrEmpty(hit.BorderColor) ? "Transparent" : hit.BorderColor;
                                         UpdateTextColorBorders();
                                         UpdateTextSizeButtons();
+                                        UpdateTextBorderBorders();
                                     }
+
                                     else if (hit.Type == AnnotationType.Sticker)
                                     {
                                         _currentStickerColor = hit.Color;
@@ -4489,17 +4492,20 @@ public partial class ViewerPage : ContentPage
 
     private async void OnTextBorderColorSelected(object? sender, EventArgs e)
     {
-        string? color = null;
-        if (sender is Grid grid && grid.GestureRecognizers.FirstOrDefault() is TapGestureRecognizer gTap && gTap.CommandParameter is string gColor)
+        string? color = (e as TappedEventArgs)?.Parameter as string;
+        if (string.IsNullOrEmpty(color))
         {
-            color = gColor;
-        }
-        else if (sender is Border border && border.GestureRecognizers.FirstOrDefault() is TapGestureRecognizer bTap && bTap.CommandParameter is string bColor)
-        {
-            color = bColor;
+            if (sender is Border border && border.GestureRecognizers.FirstOrDefault() is TapGestureRecognizer bTap && bTap.CommandParameter is string bColor)
+            {
+                color = bColor;
+            }
+            else if (sender is Grid grid && grid.GestureRecognizers.FirstOrDefault() is TapGestureRecognizer gTap && gTap.CommandParameter is string gColor)
+            {
+                color = gColor;
+            }
         }
 
-        if (color != null)
+        if (!string.IsNullOrEmpty(color))
         {
             _currentTextBorderColor = color;
             UpdateTextBorderBorders();
@@ -4513,6 +4519,7 @@ public partial class ViewerPage : ContentPage
             }
         }
     }
+
 
     private void UpdateTextBorderBorders()
     {
@@ -5572,13 +5579,30 @@ public partial class ViewerPage : ContentPage
         double displayScale = GetPageDisplayScale();
         double fontSize = (ann.Scale <= 0 ? 14.0 : ann.Scale) * displayScale;
 
+        bool isSelected = (ann == _selectedAnnotation);
+        bool hasBorder = !string.IsNullOrWhiteSpace(ann.BorderColor) && !ann.BorderColor.Equals("Transparent", StringComparison.OrdinalIgnoreCase);
+        Color borderStroke = hasBorder ? ParseColor(ann.BorderColor) : Colors.Transparent;
+
+        Color strokeColor;
+        double strokeThick;
+        if (hasBorder)
+        {
+            strokeColor = borderStroke;
+            strokeThick = isSelected ? (2.5 * displayScale) : (1.5 * displayScale);
+        }
+        else
+        {
+            strokeColor = isSelected ? Color.FromArgb("#007ACC") : Colors.Transparent;
+            strokeThick = isSelected ? (1.5 * displayScale) : 0;
+        }
+
         var label = new Label
         {
             BackgroundColor = Colors.Transparent,
             HorizontalTextAlignment = TextAlignment.Center,
             VerticalTextAlignment = TextAlignment.Center,
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.Center,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
             LineBreakMode = LineBreakMode.NoWrap,
             InputTransparent = true,
             Text = ann.Content,
@@ -5587,32 +5611,37 @@ public partial class ViewerPage : ContentPage
             FontAttributes = FontAttributes.Bold
         };
 
-        bool hasBorder = !string.IsNullOrWhiteSpace(ann.BorderColor) && !ann.BorderColor.Equals("Transparent", StringComparison.OrdinalIgnoreCase);
-        Color borderStroke = hasBorder ? ParseColor(ann.BorderColor) : Colors.Transparent;
-
         var border = new Border
         {
             BindingContext = ann,
-            Padding = new Thickness(6 * displayScale, 2 * displayScale),
+            Padding = hasBorder 
+                ? new Thickness(6 * displayScale, 2 * displayScale) 
+                : new Thickness(2 * displayScale, 1 * displayScale),
             StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = (float)(4 * displayScale) },
-            StrokeThickness = (ann == _selectedAnnotation) ? 2 : (hasBorder ? 1.5 : 0),
-            Stroke = (ann == _selectedAnnotation) ? Color.FromArgb("#007ACC") : borderStroke,
-            BackgroundColor = (ann == _selectedAnnotation) ? Color.FromArgb("#33007ACC") : Colors.Transparent,
+            StrokeThickness = strokeThick,
+            Stroke = strokeColor,
+            BackgroundColor = isSelected ? Color.FromArgb("#33007ACC") : Colors.Transparent,
             Content = label,
             InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode
         };
 
         AbsoluteLayout.SetLayoutFlags(border, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
 
-        var size = border.Measure(double.PositiveInfinity, double.PositiveInfinity);
+        var size = label.Measure(double.PositiveInfinity, double.PositiveInfinity);
         double charCount = string.IsNullOrEmpty(ann.Content) ? 1 : ann.Content.Length;
-        double estimatedTextWidth = charCount * (fontSize * 0.75);
+        double minTextW = charCount * (fontSize * 0.62);
+        double measuredW = Math.Max(size.Width, minTextW);
+        double measuredH = Math.Max(size.Height, fontSize * 1.25);
 
-        double w = Math.Max(Math.Max(size.Width + (14 * displayScale), estimatedTextWidth + (16 * displayScale)), 24 * displayScale);
-        double h = Math.Max(Math.Max(size.Height + (6 * displayScale), (fontSize * 1.5) + (6 * displayScale)), 20 * displayScale);
+        double extraW = (hasBorder ? 14 : 6) * displayScale;
+        double extraH = (hasBorder ? 6 : 2) * displayScale;
+        double w = Math.Max(measuredW + extraW, 20 * displayScale);
+        double h = Math.Max(measuredH + extraH, 18 * displayScale);
+
         var (absX, absY) = PageToScreen(ann.X, ann.Y, ann.PageNumber, containerW, containerH);
 
         AbsoluteLayout.SetLayoutBounds(border, new Rect(absX - (w / 2), absY - (h / 2), w, h));
+
 
         var selectTap = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
         selectTap.Tapped += (s, e) => {
@@ -6520,12 +6549,13 @@ public partial class ViewerPage : ContentPage
 
         if (TunerA4Picker != null)
         {
+            var loc = LocalizationService.Instance;
             TunerA4Picker.ItemsSource = new List<string>
             {
-                "440 Hz (Standard international)",
-                "442 Hz (Orchestre symphonique)",
-                "415 Hz (Musique baroque)",
-                "432 Hz (Fréquence alternative)"
+                loc.GetString("Tuner_A4_440", "440 Hz (Standard international)"),
+                loc.GetString("Tuner_A4_442", "442 Hz (Orchestre symphonique)"),
+                loc.GetString("Tuner_A4_415", "415 Hz (Musique baroque)"),
+                loc.GetString("Tuner_A4_432", "432 Hz (Fréquence alternative)")
             };
             double currentA4 = TunerService.Instance.A4Frequency;
             int selIdx = _tunerA4Frequencies.FindIndex(f => Math.Abs(f - currentA4) < 0.1);
@@ -6534,18 +6564,36 @@ public partial class ViewerPage : ContentPage
 
         if (TunerOctavePicker != null)
         {
-            TunerOctavePicker.ItemsSource = new List<string> { "1", "2", "3", "4", "5", "6", "7" };
+            var loc = LocalizationService.Instance;
+            string octPrefix = loc.GetString("Tuner_Octave", "Octave");
+            TunerOctavePicker.ItemsSource = new List<string>
+            {
+                $"{octPrefix} 1",
+                $"{octPrefix} 2",
+                $"{octPrefix} 3",
+                $"{octPrefix} 4",
+                $"{octPrefix} 5",
+                $"{octPrefix} 6",
+                $"{octPrefix} 7"
+            };
             TunerOctavePicker.SelectedIndex = Math.Clamp(_selectedChromaticOctave - 1, 0, 6);
         }
 
         if (TunerInstrumentPicker != null)
         {
-            TunerInstrumentPicker.ItemsSource = TunerService.Instance.Instruments.Select(i => i.Name).ToList();
+            var loc = LocalizationService.Instance;
+            TunerInstrumentPicker.ItemsSource = TunerService.Instance.Instruments.Select(i =>
+            {
+                string key = $"Tuner_Instrument_{i.Id}";
+                string name = loc.GetString(key);
+                return (!string.IsNullOrEmpty(name) && name != key) ? name : i.Name;
+            }).ToList();
             TunerInstrumentPicker.SelectedIndex = 0;
             _currentTunerInstrument = TunerService.Instance.Instruments[0];
             PopulateTunerNotePicker(_currentTunerInstrument);
         }
     }
+
 
     private double _tunerXBase = 0;
     private double _tunerYBase = 0;
@@ -6629,18 +6677,33 @@ public partial class ViewerPage : ContentPage
         if (TunerNotePicker == null) return;
         _isUpdatingTunerPickers = true;
 
-        var items = new List<string> { "Détection auto" };
+        var loc = LocalizationService.Instance;
+        var items = new List<string> { loc.GetString("Tuner_Auto_Detect", "Détection auto") };
 
         if (instrument.IsChromatic)
         {
             if (TunerOctavesContainer != null) TunerOctavesContainer.IsVisible = true;
-            string[] solfeges = { "Do", "Do#", "Ré", "Ré#", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "Si♭", "Si" };
+            string[] solfeges = {
+                loc.GetString("Note_Do", "Do"),
+                loc.GetString("Note_Do_Sharp", "Do#"),
+                loc.GetString("Note_Re", "Ré"),
+                loc.GetString("Note_Re_Sharp", "Ré#"),
+                loc.GetString("Note_Mi", "Mi"),
+                loc.GetString("Note_Fa", "Fa"),
+                loc.GetString("Note_Fa_Sharp", "Fa#"),
+                loc.GetString("Note_Sol", "Sol"),
+                loc.GetString("Note_Sol_Sharp", "Sol#"),
+                loc.GetString("Note_La", "La"),
+                loc.GetString("Note_Si_Flat", "Si♭"),
+                loc.GetString("Note_Si", "Si")
+            };
             string[] anglo = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
             for (int i = 0; i < 12; i++)
             {
                 items.Add($"{solfeges[i]} ({anglo[i]})");
             }
         }
+
         else
         {
             if (TunerOctavesContainer != null) TunerOctavesContainer.IsVisible = false;

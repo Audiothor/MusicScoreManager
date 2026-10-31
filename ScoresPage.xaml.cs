@@ -66,6 +66,10 @@ public partial class ScoresPage : ContentPage
             OnScoreLongPressed(score);
         });
 
+        Models.Score.GlobalOpenScoreCommand = ScoreTappedCommand;
+        Models.Score.GlobalLongPressScoreCommand = ScoreLongPressCommand;
+
+
         InitializeComponent();
         _databaseService = databaseService;
         _importService = importService;
@@ -136,10 +140,12 @@ public partial class ScoresPage : ContentPage
                 string subtitlePref = Preferences.Default.Get("ScoreSubtitleDisplay", "DateAdded");
                 foreach (var score in scores)
                 {
+                    score.IsMultiSelectActive = IsMultiSelectActive;
                     score.DisplaySubtitle = score.GetSubtitle(subtitlePref);
                     score.PropertyChanged -= OnScorePropertyChanged;
                     score.PropertyChanged += OnScorePropertyChanged;
                 }
+
 
                 _lastLoadedScores = scores;
 
@@ -288,10 +294,12 @@ public partial class ScoresPage : ContentPage
         string subtitlePref = Preferences.Default.Get("ScoreSubtitleDisplay", "DateAdded");
         foreach (var score in scores)
         {
+            score.IsMultiSelectActive = IsMultiSelectActive;
             score.DisplaySubtitle = score.GetSubtitle(subtitlePref);
             score.PropertyChanged -= OnScorePropertyChanged;
             score.PropertyChanged += OnScorePropertyChanged;
         }
+
 
         _lastLoadedScores = scores;
 
@@ -360,6 +368,29 @@ public partial class ScoresPage : ContentPage
 
     private void UpdateMultiSelectUI()
     {
+        if (ScoresCollectionView.ItemsSource is IEnumerable<Models.Score> scores)
+        {
+            foreach (var score in scores)
+            {
+                score.IsMultiSelectActive = IsMultiSelectActive;
+                if (!IsMultiSelectActive)
+                {
+                    score.IsSelected = false;
+                }
+            }
+        }
+        if (_lastLoadedScores != null)
+        {
+            foreach (var score in _lastLoadedScores)
+            {
+                score.IsMultiSelectActive = IsMultiSelectActive;
+                if (!IsMultiSelectActive)
+                {
+                    score.IsSelected = false;
+                }
+            }
+        }
+
         if (IsMultiSelectActive)
         {
             MultiSelectActionBar.IsVisible = true;
@@ -369,17 +400,10 @@ public partial class ScoresPage : ContentPage
         {
             MultiSelectActionBar.IsVisible = false;
             MultiSelectToggleButton.BackgroundColor = Color.FromArgb("#333333");
-
-            if (ScoresCollectionView.ItemsSource is IEnumerable<Models.Score> scores)
-            {
-                foreach (var score in scores)
-                {
-                    score.IsSelected = false;
-                }
-            }
             RecalculateSelectedCount();
         }
     }
+
 
     private void OnMultiSelectToggleClicked(object sender, EventArgs e)
     {
@@ -1162,8 +1186,16 @@ public partial class ScoresPage : ContentPage
         RecalculateSelectedCount();
     }
 
+    private DateTime _lastScoreTapTime = DateTime.MinValue;
+
     public async Task HandleScoreTappedAsync(Models.Score selectedScore)
     {
+        if (selectedScore == null) return;
+
+        if ((DateTime.UtcNow - _lastScoreTapTime).TotalMilliseconds < 350)
+            return;
+        _lastScoreTapTime = DateTime.UtcNow;
+
         if (IsMultiSelectActive)
         {
             selectedScore.IsSelected = !selectedScore.IsSelected;
@@ -1194,6 +1226,7 @@ public partial class ScoresPage : ContentPage
             await HandleScoreTappedAsync(selectedScore);
         }
     }
+
 
     private async void OnSortClicked(object sender, EventArgs e)
     {
@@ -1520,62 +1553,68 @@ public partial class ScoresPage : ContentPage
 
     private async Task HandleCategoryOptionsAsync(ScoreCategoryGroup group)
     {
-            var loc = LocalizationService.Instance;
-            if (group.IsDefaultCategory)
+        var loc = LocalizationService.Instance;
+        string cancel = loc.GetString("Common_Cancel", "Annuler");
+        string rename = loc.GetString("Score_Category_Rename_Title", "Renommer le dossier");
+        string delete = loc.GetString("Score_Category_Delete_Title", "Supprimer le dossier");
+
+        string? action;
+        if (group.IsDefaultCategory)
+        {
+            // Le dossier par défaut peut être renommé librement, mais pas supprimé
+            action = await DisplayActionSheetAsync(group.DisplayName, cancel, null, rename);
+        }
+        else
+        {
+            action = await DisplayActionSheetAsync(group.DisplayName, cancel, delete, rename);
+        }
+
+        if (action == rename)
+        {
+            string promptTitle = loc.GetString("Score_Category_Rename_Title", "Renommer le dossier");
+            string promptMsg = loc.GetString("Score_Category_Rename_Prompt", "Entrez le nouveau nom du dossier :");
+            string ok = loc.GetString("Common_Save", "Enregistrer");
+            string? newName = await ShowModernPromptDialogAsync(promptTitle, promptMsg, group.DisplayName, ok);
+            if (!string.IsNullOrWhiteSpace(newName) && !string.Equals(newName.Trim(), group.Name, StringComparison.OrdinalIgnoreCase))
             {
-                await DisplayAlertAsync(
-                    group.DisplayName,
-                    loc.GetString("Score_Category_Default_No_Actions", "Le dossier par défaut ne peut pas être modifié ni supprimé."),
-                    loc.GetString("Common_OK", "OK"));
-                return;
-            }
-
-            string cancel = loc.GetString("Common_Cancel", "Annuler");
-            string rename = loc.GetString("Score_Category_Rename_Title", "Renommer le dossier");
-            string delete = loc.GetString("Score_Category_Delete_Title", "Supprimer le dossier");
-
-            string? action = await DisplayActionSheetAsync(group.DisplayName, cancel, delete, rename);
-
-            if (action == rename)
-            {
-                string promptTitle = loc.GetString("Score_Category_Rename_Title", "Renommer le dossier");
-                string promptMsg = loc.GetString("Score_Category_Rename_Prompt", "Entrez le nouveau nom du dossier :");
-                string ok = loc.GetString("Common_Save", "Enregistrer");
-                string? newName = await ShowModernPromptDialogAsync(promptTitle, promptMsg, group.Name, ok);
-                if (!string.IsNullOrWhiteSpace(newName) && !string.Equals(newName.Trim(), group.Name, StringComparison.OrdinalIgnoreCase))
+                string cleanNew = newName.Trim();
+                await _databaseService.RenameCategoryAsync(group.Name, cleanNew);
+                if (group.IsDefaultCategory)
                 {
-                    string cleanNew = newName.Trim();
-                    await _databaseService.RenameCategoryAsync(group.Name, cleanNew);
-                    if (string.Equals(_selectedCategory, group.Name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        _selectedCategory = cleanNew;
-                    }
-                    await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
+                    Preferences.Default.Set("DefaultCategoryName", cleanNew);
                 }
-            }
-            else if (action == delete)
-            {
-                string confirmMsg = string.Format(
-                    loc.GetString("Score_Category_Delete_Confirm", "Voulez-vous supprimer le dossier '{0}' ? Ses {1} partition(s) seront déplacées dans 'Général'."),
-                    group.Name, group.Count);
-
-                bool confirm = await DisplayAlertAsync(
-                    loc.GetString("Score_Category_Delete_Title", "Supprimer le dossier"),
-                    confirmMsg,
-                    loc.GetString("Common_Delete", "Supprimer"),
-                    cancel);
-
-                if (confirm)
+                if (string.Equals(_selectedCategory, group.Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    await _databaseService.DeleteCategoryAsync(group.Name, "Général");
-                    if (string.Equals(_selectedCategory, group.Name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        _selectedCategory = null;
-                    }
-                    await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
+                    _selectedCategory = cleanNew;
                 }
+                await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
             }
         }
+        else if (action == delete && !group.IsDefaultCategory)
+        {
+            string defaultCat = Preferences.Default.Get("DefaultCategoryName", "Général");
+            string confirmMsg = string.Format(
+                loc.GetString("Score_Category_Delete_Confirm", "Voulez-vous supprimer le dossier '{0}' ? Ses {1} partition(s) seront déplacées dans '{2}'."),
+                group.Name, group.Count, defaultCat);
+
+            bool confirm = await DisplayAlertAsync(
+                loc.GetString("Score_Category_Delete_Title", "Supprimer le dossier"),
+                confirmMsg,
+                loc.GetString("Common_Delete", "Supprimer"),
+                cancel);
+
+            if (confirm)
+            {
+                await _databaseService.DeleteCategoryAsync(group.Name, defaultCat);
+                if (string.Equals(_selectedCategory, group.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    _selectedCategory = null;
+                }
+                await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
+            }
+        }
+    }
+
 
     private async void OnAddNewCategoryFromScoresPageClicked(object? sender, EventArgs e)
     {
@@ -1595,25 +1634,14 @@ public partial class ScoresPage : ContentPage
 
     private async void OnScoreCardTapped(object? sender, TappedEventArgs e)
     {
-        if (e.Parameter is Models.Score score)
+        var score = e.Parameter as Models.Score 
+                 ?? (sender as Element)?.BindingContext as Models.Score;
+        if (score != null)
         {
-            if (IsMultiSelectActive)
-            {
-                score.IsSelected = !score.IsSelected;
-                RecalculateSelectedCount();
-                return;
-            }
-
-            if (score.IsFileMissing)
-            {
-                var loc = LocalizationService.Instance;
-                await this.DisplayAlertAsync(loc.GetString("Score_Edit_MissingFile_Title"), loc.GetString("Score_Edit_Missing_Msg"), "OK");
-                return;
-            }
-
-            await Navigation.PushAsync(new ViewerPage(score));
+            await HandleScoreTappedAsync(score);
         }
     }
+
 
     private async void OnMenuChangeCategoryClicked(object sender, EventArgs e)
     {
@@ -2419,7 +2447,7 @@ public partial class ScoresPage : ContentPage
 
             var cancelBtn = new Button
             {
-                Text = "Annuler",
+                Text = LocalizationService.Instance.GetString("Common_Cancel", "Annuler"),
                 BackgroundColor = Color.FromArgb("#2D303B"),
                 TextColor = Color.FromArgb("#DDDDDD"),
                 FontSize = 13,
