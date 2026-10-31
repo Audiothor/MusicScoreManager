@@ -871,6 +871,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v317-10312026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.7 — 10/31/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.7 — 10/31/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-scores-library-critical-opening-multi-selection-fix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Scores Library: Critical Opening &amp; Multi-Selection Fix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-text-annotations-border-color-labels-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Text Annotations: Border Color, Labels &amp; Alignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-categories-folders-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Categories &amp; Folders Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-tuner-complete-localization-refinements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Tuner: Complete Localization &amp; Refinements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-tools-settings-visual-polish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Tools &amp; Settings Visual Polish
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v316-10312026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3227,6 +3299,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v317-10312026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.7 — 10/31/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.7 — 10/31/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-scores-library-critical-opening-multi-selection-fix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Scores Library: Critical Opening &amp; Multi-Selection Fix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-text-annotations-border-color-labels-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Text Annotations: Border Color, Labels &amp; Alignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-categories-folders-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Categories &amp; Folders Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-tuner-complete-localization-refinements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Tuner: Complete Localization &amp; Refinements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-tools-settings-visual-polish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Tools &amp; Settings Visual Polish
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v316-10312026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5562,6 +5706,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v317--10312026">v3.1.7 — 10/31/2026</a></li>
 <li><a href="#v316--10312026">v3.1.6 — 10/31/2026</a></li>
 <li><a href="#v315--28102026">v3.1.5 — 28/10/2026</a></li>
 <li><a href="#v314--26102026">v3.1.4 — 26/10/2026</a></li>
@@ -5596,6 +5741,55 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v317-10312026">v3.1.7 — 10/31/2026</h2>
+<h3 id="1-scores-library-critical-opening-multi-selection-fix">1. Scores Library: Critical Opening &amp; Multi-Selection Fix</h3>
+<ul>
+<li><strong>1.1. Restored Instant Score Opening:</strong></li>
+<li><strong>Critical Fix:</strong> Removed relative XAML bindings <code>{Binding Source={x:Reference ...}}</code> that silently failed in DataTemplates under .NET MAUI.</li>
+<li>Implemented triple-redundant tap activation: <code>TouchBehavior.Command</code>, native <code>TapGestureRecognizer</code>, and <code>CollectionView.SelectionChanged</code>, protected with a 350 ms hardware debounce to prevent duplicate push navigation.</li>
+<li><strong>1.2. Reliable Multi-Selection &amp; Immediate Checkbox Display:</strong></li>
+<li>Added <code>IsMultiSelectActive</code> directly to <code>Score</code> model with <code>INotifyPropertyChanged</code> notifications.</li>
+<li>Checkboxes immediately appear across all score items upon long-pressing any score or toggling the bulk selection button.</li>
+<li>Long press handled via <code>LongPressCompleted</code> event with tactile haptic feedback.</li>
+</ul>
+<h3 id="2-text-annotations-border-color-labels-alignment">2. Text Annotations: Border Color, Labels &amp; Alignment</h3>
+<ul>
+<li><strong>2.1. Clean Rendering &amp; Alignment for Unbordered Text Labels:</strong></li>
+<li>Dynamic sizing calculated from actual label measurements instead of exaggerated character estimates.</li>
+<li>Centered alignment with <code>LayoutOptions.Fill</code> and tightened margins, eliminating excess padding and uncentered bounding boxes.</li>
+<li><strong>2.2. Functional Border Color Selection:</strong></li>
+<li>Decoupled border stroke from selection indicator: chosen border color (black, red, blue, green, yellow, white) remains clearly displayed when text is selected, highlighted by a subtle translucent blue inner fill and reinforced stroke.</li>
+<li>Immediate real-time border color application when tapping palette chips, persisted to the database.</li>
+<li>Active border color in the palette dynamically syncs when selecting a text annotation on the canvas.</li>
+</ul>
+<h3 id="3-categories-folders-management">3. Categories &amp; Folders Management</h3>
+<ul>
+<li><strong>3.1. User Rename Freedom for Any Folder:</strong></li>
+<li>Users can now freely rename any category including the default category according to their needs.</li>
+<li>When the default category is renamed, user preferences automatically update without creating duplicate ghost folders.</li>
+<li>The 3-dots button (⋮) is systematically accessible on all category folder headers.</li>
+<li><strong>3.2. Localized "Cancel" Button in New Folder Prompt:</strong></li>
+<li>Translated the "Cancel" button in the modern prompt dialog across all languages.</li>
+</ul>
+<h3 id="4-tuner-complete-localization-refinements">4. Tuner: Complete Localization &amp; Refinements</h3>
+<ul>
+<li><strong>4.1. Localized Diapason A4 Frequencies:</strong></li>
+<li>Dynamic localization for A4 presets: "440 Hz (International Standard)", "442 Hz (Symphony Orchestra)", "415 Hz (Baroque Music)", "432 Hz (Alternative Frequency)".</li>
+<li><strong>4.2. Localized Reference Notes and Octaves:</strong></li>
+<li>Translated "Auto Detect" option and octave prefixes ("Octave 1" through "Octave 7").</li>
+<li>Localized instrument names and chromatic notes across all 8 supported languages.</li>
+</ul>
+<h3 id="5-tools-settings-visual-polish">5. Tools &amp; Settings Visual Polish</h3>
+<ul>
+<li><strong>5.1. Wi-Fi Direct:</strong></li>
+<li>Removed unwanted white bar at the bottom caused by transparent <code>BoxView</code>.</li>
+<li>Hidden navigation bar and tab bar for an edge-to-edge modern look.</li>
+<li><strong>5.2. Help Page:</strong></li>
+<li>Removed redundant quickstart rocket banner 🚀 directly under the title.</li>
+<li><strong>5.3. Pedals &amp; MIDI Settings:</strong></li>
+<li>Translated all profile notes and descriptions for the 11 built-in presets (PageFlip Dragonfly, Firefly, AirTurn Duo, Quad, Donner, Joyo, Harley Benton, iRig BlueTurn, STOMP, Advanced MIDI).</li>
 </ul>
 <hr />
 <h2 id="v316-10312026">v3.1.6 — 10/31/2026</h2>
