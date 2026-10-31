@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.1.7 — 10/31/2026](#v317--10312026)
 - [v3.1.6 — 10/31/2026](#v316--10312026)
 - [v3.1.5 — 28/10/2026](#v315--28102026)
 - [v3.1.4 — 26/10/2026](#v314--26102026)
@@ -43,7 +44,54 @@ This document contains the official changelog of all versions of **Music Score M
 
 ---
 
+## v3.1.7 — 10/31/2026
+
+### 1. Scores Library: Critical Opening & Multi-Selection Fix
+- **1.1. Restored Instant Score Opening:**
+  - **Critical Fix:** Removed relative XAML bindings `{Binding Source={x:Reference ...}}` that silently failed in DataTemplates under .NET MAUI.
+  - Implemented triple-redundant tap activation: `TouchBehavior.Command`, native `TapGestureRecognizer`, and `CollectionView.SelectionChanged`, protected with a 350 ms hardware debounce to prevent duplicate push navigation.
+- **1.2. Reliable Multi-Selection & Immediate Checkbox Display:**
+  - Added `IsMultiSelectActive` directly to `Score` model with `INotifyPropertyChanged` notifications.
+  - Checkboxes immediately appear across all score items upon long-pressing any score or toggling the bulk selection button.
+  - Long press handled via `LongPressCompleted` event with tactile haptic feedback.
+
+### 2. Text Annotations: Border Color, Labels & Alignment
+- **2.1. Clean Rendering & Alignment for Unbordered Text Labels:**
+  - Dynamic sizing calculated from actual label measurements instead of exaggerated character estimates.
+  - Centered alignment with `LayoutOptions.Fill` and tightened margins, eliminating excess padding and uncentered bounding boxes.
+- **2.2. Functional Border Color Selection:**
+  - Decoupled border stroke from selection indicator: chosen border color (black, red, blue, green, yellow, white) remains clearly displayed when text is selected, highlighted by a subtle translucent blue inner fill and reinforced stroke.
+  - Immediate real-time border color application when tapping palette chips, persisted to the database.
+  - Active border color in the palette dynamically syncs when selecting a text annotation on the canvas.
+
+### 3. Categories & Folders Management
+- **3.1. User Rename Freedom for Any Folder:**
+  - Users can now freely rename any category including the default category according to their needs.
+  - When the default category is renamed, user preferences automatically update without creating duplicate ghost folders.
+  - The 3-dots button (⋮) is systematically accessible on all category folder headers.
+- **3.2. Localized "Cancel" Button in New Folder Prompt:**
+  - Translated the "Cancel" button in the modern prompt dialog across all languages.
+
+### 4. Tuner: Complete Localization & Refinements
+- **4.1. Localized Diapason A4 Frequencies:**
+  - Dynamic localization for A4 presets: "440 Hz (International Standard)", "442 Hz (Symphony Orchestra)", "415 Hz (Baroque Music)", "432 Hz (Alternative Frequency)".
+- **4.2. Localized Reference Notes and Octaves:**
+  - Translated "Auto Detect" option and octave prefixes ("Octave 1" through "Octave 7").
+  - Localized instrument names and chromatic notes across all 8 supported languages.
+
+### 5. Tools & Settings Visual Polish
+- **5.1. Wi-Fi Direct:**
+  - Removed unwanted white bar at the bottom caused by transparent `BoxView`.
+  - Hidden navigation bar and tab bar for an edge-to-edge modern look.
+- **5.2. Help Page:**
+  - Removed redundant quickstart rocket banner 🚀 directly under the title.
+- **5.3. Pedals & MIDI Settings:**
+  - Translated all profile notes and descriptions for the 11 built-in presets (PageFlip Dragonfly, Firefly, AirTurn Duo, Quad, Donner, Joyo, Harley Benton, iRig BlueTurn, STOMP, Advanced MIDI).
+
+---
+
 ## v3.1.6 — 10/31/2026
+
 
 ### 1. Scores Library: Touch Gestures & Ergonomics
 - **1.1. Fix score opening and press & hold (long-press) multi-selection:**

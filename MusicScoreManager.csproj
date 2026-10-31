@@ -16,9 +16,10 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>3.1.6</ApplicationDisplayVersion>
-		<ApplicationVersion>31600</ApplicationVersion>
-		<!-- Version actuelle : v3.1.6 "Améliorations de l'interface, accordeur, métronome déplaçable, cadre de texte et traductions complètes" -->
+		<ApplicationDisplayVersion>3.1.7</ApplicationDisplayVersion>
+		<ApplicationVersion>31700</ApplicationVersion>
+		<!-- Version actuelle : v3.1.7 "Correction de l'ouverture et sélection multiple des partitions, affichage et cadre des annotations texte, renommage des dossiers, traductions complètes de l'accordeur et des pédales" -->
+
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		

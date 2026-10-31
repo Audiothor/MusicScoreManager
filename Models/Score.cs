@@ -217,6 +217,31 @@ namespace MusicScoreManager.Models
             }
         }
 
+        private bool _isMultiSelectActive;
+        [Ignore]
+        public bool IsMultiSelectActive
+        {
+            get => _isMultiSelectActive;
+            set
+            {
+                if (_isMultiSelectActive != value)
+                {
+                    _isMultiSelectActive = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public static System.Windows.Input.ICommand? GlobalOpenScoreCommand { get; set; }
+        public static System.Windows.Input.ICommand? GlobalLongPressScoreCommand { get; set; }
+
+        [Ignore]
+        public System.Windows.Input.ICommand? OpenScoreCommand => GlobalOpenScoreCommand;
+
+        [Ignore]
+        public System.Windows.Input.ICommand? LongPressScoreCommand => GlobalLongPressScoreCommand;
+
+
         private List<Tag> _appliedTags = new List<Tag>();
         [Ignore]
         public List<Tag> AppliedTags

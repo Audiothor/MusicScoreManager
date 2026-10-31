@@ -838,7 +838,8 @@ namespace MusicScoreManager.Services
         public async Task<List<string>> GetCategoriesAsync()
         {
             await Init();
-            var categories = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Général" };
+            string defaultCategory = Preferences.Default.Get("DefaultCategoryName", "Général");
+            var categories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             try
             {
@@ -871,8 +872,13 @@ namespace MusicScoreManager.Services
             }
             catch { }
 
-            // Ordonner avec "Général" toujours en première position
-            var list = categories.OrderBy(c => c.Equals("Général", StringComparison.OrdinalIgnoreCase) ? 0 : 1)
+            if (categories.Count == 0)
+            {
+                categories.Add(defaultCategory);
+            }
+
+            // Ordonner avec la catégorie par défaut en première position
+            var list = categories.OrderBy(c => c.Equals(defaultCategory, StringComparison.OrdinalIgnoreCase) ? 0 : 1)
                                  .ThenBy(c => c, StringComparer.CurrentCultureIgnoreCase)
                                  .ToList();
             return list;
@@ -907,11 +913,19 @@ namespace MusicScoreManager.Services
             string cleanNew = SanitizeCategoryName(newName);
             if (string.Equals(cleanOld, cleanNew, StringComparison.OrdinalIgnoreCase)) return true;
 
+            string defaultCategory = Preferences.Default.Get("DefaultCategoryName", "Général");
+            if (string.Equals(cleanOld, defaultCategory, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(cleanOld, "Général", StringComparison.OrdinalIgnoreCase))
+            {
+                Preferences.Default.Set("DefaultCategoryName", cleanNew);
+            }
+
             try
             {
                 string scoresRoot = _settingsService.ScoresRootDirectory;
                 string oldDir = Path.Combine(scoresRoot, cleanOld);
                 string newDir = Path.Combine(scoresRoot, cleanNew);
+
 
                 if (!Directory.Exists(newDir))
                 {

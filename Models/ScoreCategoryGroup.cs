@@ -27,7 +27,7 @@ namespace MusicScoreManager.Models
             string.Equals(_name, "Default", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(_name, "General", StringComparison.OrdinalIgnoreCase);
 
-        public bool CanManage => !IsDefaultCategory;
+        public bool CanManage => true;
 
         public string DisplayName => IsDefaultCategory 
             ? LocalizationService.Instance.GetString("Score_Category_Default", "Général") 

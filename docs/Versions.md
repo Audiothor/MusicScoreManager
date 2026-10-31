@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.1.7 — 31/10/2026](#v317--31102026)
 - [v3.1.6 — 31/10/2026](#v316--31102026)
 - [v3.1.5 — 28/10/2026](#v315--28102026)
 - [v3.1.4 — 26/10/2026](#v314--26102026)
@@ -43,7 +44,54 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ---
 
+## v3.1.7 — 31/10/2026
+
+### 1. Bibliothèque de Partitions : Correction Majeure de l'Ouverture et Sélection Multiple
+- **1.1. Restauration de l'ouverture instantanée d'une partition :**
+  - **Correction du bogue critique :** Suppression des liaisons XAML relatives `{Binding Source={x:Reference ...}}` qui échouaient silencieusement dans le DataTemplate sous .NET MAUI.
+  - Implémentation d'une triple sécurité d'activation : `TouchBehavior.Command`, `TapGestureRecognizer` natif et événement `SelectionChanged` de la `CollectionView`, consolidés avec un anti-rebond matériel de 350 ms pour prévenir toute double navigation intempestive.
+- **1.2. Fiabilisation de la sélection multiple et affichage immédiat des coches :**
+  - Ajout de la propriété `IsMultiSelectActive` directement sur le modèle `Score` avec notification `INotifyPropertyChanged`.
+  - Activation instantanée de la visibilité des cases à cocher sur l'ensemble de la bibliothèque dès l'appui long ou le clic sur le bouton de sélection groupée.
+  - Gestion du geste d'appui long par événement `LongPressCompleted` et vibration haptique.
+
+### 2. Annotations de Type Texte : Cadre, Couleurs et Alignement
+- **2.1. Affichage et alignement des labels sans bordure :**
+  - Calcul dynamique de l'encombrement textuel basé sur la mesure réelle du label au lieu d'une estimation disproportionnée.
+  - Alignement centré avec `LayoutOptions.Fill` et marges ajustées, éliminant les espaces excessifs et le décentrage des textes sans bordure.
+- **2.2. Correction du positionnement de la couleur de bordure :**
+  - Séparation de la couleur de bordure (`borderStroke`) et de l'indicateur de sélection : la bordure choisie (noir, rouge, bleu, vert, jaune, blanc) reste parfaitement visible même lorsque le texte est sélectionné, avec un surlignage bleuté translucide et un trait renforcé.
+  - Prise en compte immédiate du clic sur les pastilles de couleur de bordure dans la palette avec sauvegarde en base et rafraîchissement temps réel.
+  - Mise à jour de la couleur de bordure active dans la palette lors de la sélection tactile sur le canevas.
+
+### 3. Gestion des Répertoires et Catégories
+- **3.1. Renommage libre de n'importe quel dossier :**
+  - Restauration de la possibilité pour l'utilisateur de renommer toutes les catégories selon ses préférences.
+  - Si le dossier par défaut (« Général ») est renommé, la préférence utilisateur est automatiquement actualisée sans recréer de doublon fantôme.
+  - Le bouton d'options (⋮) est rendu systématiquement accessible sur chaque entête de répertoire.
+- **3.2. Traduction du dialogue de nouveau dossier :**
+  - Correction du bouton « Annuler » dans la boîte de dialogue de saisie d'un nouveau dossier qui était resté en dur en français.
+
+### 4. Accordeur : Internationalisation et Finitions
+- **4.1. Traduction des fréquences du diapason A4 :**
+  - Localisation dynamique des éléments du diapason : « 440 Hz (Standard international) », « 442 Hz (Orchestre symphonique) », « 415 Hz (Musique baroque) », « 432 Hz (Fréquence alternative) ».
+- **4.2. Traduction des notes de référence et octaves :**
+  - Traduction de l'option « Détection auto » et des préfixes d'octave (« Octave 1 » à « Octave 7 »).
+  - Noms de notes et instruments traduits dans les 8 langues prises en charge.
+
+### 5. Outils et Paramètres : Améliorations Graphiques
+- **5.1. Wi-Fi Direct :**
+  - Suppression de la barre/trait blanc résiduel en bas de page causé par un `BoxView` transparent.
+  - Masquage des barres de navigation et d'onglets pour un rendu pleine page net et moderne.
+- **5.2. Page Aide :**
+  - Suppression du bandeau interactif redondant avec la fusée 🚀 sous le titre, allégeant la mise en page.
+- **5.3. Pédales et Événements MIDI :**
+  - Traduction complète des notes explicatives et des descriptions des 11 profils constructeurs prédéfinis (PageFlip Dragonfly, Firefly, AirTurn Duo, Quad, Donner, Joyo, Harley Benton, iRig BlueTurn, STOMP, MIDI avancé).
+
+---
+
 ## v3.1.6 — 31/10/2026
+
 
 ### 1. Bibliothèque de Partitions : Gestes Tactiles & Ergonomie
 - **1.1. Correction de l'ouverture et de la sélection multiple par appui long :**
