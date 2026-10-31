@@ -871,6 +871,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v316-10312026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.6 — 10/31/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.6 — 10/31/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-scores-library-touch-gestures-ergonomics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Scores Library: Touch Gestures &amp; Ergonomics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-score-setlist-editing-ergonomic-refresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Score &amp; Setlist Editing: Ergonomic Refresh
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-stage-viewer-tuner-metronome-annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Stage Viewer: Tuner, Metronome &amp; Annotations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-global-internationalization-translations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Global Internationalization &amp; Translations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v315-28102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3166,6 +3227,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v316-10312026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.6 — 10/31/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.6 — 10/31/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-scores-library-touch-gestures-ergonomics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Scores Library: Touch Gestures &amp; Ergonomics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-score-setlist-editing-ergonomic-refresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Score &amp; Setlist Editing: Ergonomic Refresh
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-stage-viewer-tuner-metronome-annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Stage Viewer: Tuner, Metronome &amp; Annotations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-global-internationalization-translations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Global Internationalization &amp; Translations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v315-28102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5440,6 +5562,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v316--10312026">v3.1.6 — 10/31/2026</a></li>
 <li><a href="#v315--28102026">v3.1.5 — 28/10/2026</a></li>
 <li><a href="#v314--26102026">v3.1.4 — 26/10/2026</a></li>
 <li><a href="#v313--26102026">v3.1.3 — 26/10/2026</a></li>
@@ -5473,6 +5596,54 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v316-10312026">v3.1.6 — 10/31/2026</h2>
+<h3 id="1-scores-library-touch-gestures-ergonomics">1. Scores Library: Touch Gestures &amp; Ergonomics</h3>
+<ul>
+<li><strong>1.1. Fix score opening and press &amp; hold (long-press) multi-selection:</strong></li>
+<li><strong>Symptom Fixed:</strong> Single tap on a score failed or was blocked from opening the viewer, and holding down did not consistently trigger multi-selection mode.</li>
+<li><strong>Fix:</strong> Properly initialized <code>ScoreTappedCommand</code> and <code>ScoreLongPressCommand</code> prior to <code>InitializeComponent()</code>, added <code>InputTransparent="True"</code> to inner score card containers (title, subtitle, badge stack), and stabilized selected item recalculation (<code>RecalculateSelectedCount</code>).</li>
+<li><strong>1.2. Improved touch hitbox for 3-dots menu button (⋮):</strong></li>
+<li>Expanded hit target to 48x48 dp with <code>Padding="0"</code>, perfect center alignment, and <code>ZIndex="20"</code> to prevent card gesture interception.</li>
+<li><strong>1.3. Protection &amp; localization of default category "Default" ("Général"):</strong></li>
+<li>Protected root folder: prevented renaming or deleting the default category container.</li>
+<li>Dynamic localization for the default category name ("Default" in English, "Général" in French, etc.).</li>
+<li>Localized summary text ("{0} folders, {1} scores").</li>
+</ul>
+<h3 id="2-score-setlist-editing-ergonomic-refresh">2. Score &amp; Setlist Editing: Ergonomic Refresh</h3>
+<ul>
+<li><strong>2.1. Relocated Action Buttons to Top Right:</strong></li>
+<li>In <code>ScoreEditPage</code> and <code>SetlistEditPage</code>, "Cancel" and "Save" buttons are now located in the top-right header, eliminating the need to scroll all the way down.</li>
+<li><strong>2.2. Integrated Metronome Volume:</strong></li>
+<li>Fixed percentage label positioning: resolved overlap with "Metronome volume" header at 100%.</li>
+<li>Expanded volume slider range to 0% (full mute) with visible 0% and 100% boundary markers.</li>
+<li><strong>2.3. Toolbox Icon Default Enabled:</strong></li>
+<li>Default value for "Show toolbox icon" (<code>ShowToolsButton</code>) is now ON (<code>true</code>) for all new scores.</li>
+</ul>
+<h3 id="3-stage-viewer-tuner-metronome-annotations">3. Stage Viewer: Tuner, Metronome &amp; Annotations</h3>
+<ul>
+<li><strong>3.1. Tuner — Reference Tone Volume &amp; Full Localization:</strong></li>
+<li>Added dedicated volume slider (0 to 100%) below "Play reference tone" to adjust reference tone playback level.</li>
+<li>Full localization of tuner strings: Concert pitch, Mic Start/Stop, Octaves, Solfège, Pitch statuses ("Waiting for signal", "Too flat", "In tune", "Too sharp", "Perfect") and tuning tips.</li>
+<li><strong>3.2. Draggable Metronome Settings (Drag &amp; Drop) &amp; Localization:</strong></li>
+<li>The metronome settings modal can now be freely dragged around the screen by dragging its header.</li>
+<li>Full localization of all metronome options (Tempo, Beats, Sound, Visual).</li>
+<li><strong>3.3. Text Annotations with Customizable Border Frame:</strong></li>
+<li>Added option to wrap text in a rectangular border with selectable colors (Transparent, Black, Red, Blue, Green, Yellow, White).</li>
+<li>Stored in annotation data model and migrated cleanly in SQLite database.</li>
+<li><strong>3.4. Viewer Central Menu Localization:</strong></li>
+<li>Fully translated all buttons in the viewer central menu (Home, Page Bookmarks, Rotate, Go to Page, Edit Score, Modify Assembly).</li>
+<li><strong>3.5. Stickers &amp; Annotation Messages:</strong></li>
+<li>Localized practice sticker text labels ("Needs practice", "Wrong rhythm", "Intonation").</li>
+<li>Localized all annotation alerts ("No annotations to clear on this score...").</li>
+</ul>
+<h3 id="4-global-internationalization-translations">4. Global Internationalization &amp; Translations</h3>
+<ul>
+<li><strong>4.1. Musical Keys (MusicalKey):</strong></li>
+<li>Fully translated all musical keys ("Not specified", "C Major", "A Minor", etc.) in all supported languages.</li>
+<li><strong>4.2. Dialog &amp; Alert Messages:</strong></li>
+<li>Replaced remaining hardcoded dialog strings with localized keys.</li>
 </ul>
 <hr />
 <h2 id="v315-28102026">v3.1.5 — 28/10/2026</h2>

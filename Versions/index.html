@@ -871,6 +871,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v316-31102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.6 — 31/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.6 — 31/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-bibliotheque-de-partitions-gestes-tactiles-ergonomie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Bibliothèque de Partitions : Gestes Tactiles &amp; Ergonomie
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-edition-de-partitions-setlists-refonte-ergonomique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Édition de Partitions &amp; Setlists : Refonte Ergonomique
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-visualiseur-de-scene-accordeur-metronome-annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Visualiseur de Scène : Accordeur, Métronome &amp; Annotations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-internationalisation-globale-traduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Internationalisation Globale &amp; Traduction
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v315-28102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3166,6 +3227,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v316-31102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.6 — 31/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.6 — 31/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-bibliotheque-de-partitions-gestes-tactiles-ergonomie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Bibliothèque de Partitions : Gestes Tactiles &amp; Ergonomie
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-edition-de-partitions-setlists-refonte-ergonomique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Édition de Partitions &amp; Setlists : Refonte Ergonomique
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-visualiseur-de-scene-accordeur-metronome-annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Visualiseur de Scène : Accordeur, Métronome &amp; Annotations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-internationalisation-globale-traduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Internationalisation Globale &amp; Traduction
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v315-28102026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5440,6 +5562,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v316--31102026">v3.1.6 — 31/10/2026</a></li>
 <li><a href="#v315--28102026">v3.1.5 — 28/10/2026</a></li>
 <li><a href="#v314--26102026">v3.1.4 — 26/10/2026</a></li>
 <li><a href="#v313--26102026">v3.1.3 — 26/10/2026</a></li>
@@ -5473,6 +5596,54 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v316-31102026">v3.1.6 — 31/10/2026</h2>
+<h3 id="1-bibliotheque-de-partitions-gestes-tactiles-ergonomie">1. Bibliothèque de Partitions : Gestes Tactiles &amp; Ergonomie</h3>
+<ul>
+<li><strong>1.1. Correction de l'ouverture et de la sélection multiple par appui long :</strong></li>
+<li><strong>Symptôme résolu :</strong> Suite à la refonte des gestes, l'ouverture simple d'une partition au toucher ne répondait plus ou bloquait l'accès à la partition, et l'appui long n'activait pas toujours la sélection multiple.</li>
+<li><strong>Correctif :</strong> Initialisation des commandes <code>ScoreTappedCommand</code> et <code>ScoreLongPressCommand</code> avant <code>InitializeComponent()</code>, avec <code>InputTransparent="True"</code> sur les conteneurs d'informations internes (titre, sous-titre, badges) et fiabilisation du calcul du compteur d'éléments sélectionnés (<code>RecalculateSelectedCount</code>).</li>
+<li><strong>1.2. Amélioration de la cible tactile du menu 3 points (⋮) :</strong></li>
+<li>Zone tactile élargie à 48x48 dp avec <code>Padding="0"</code>, centrage parfait et <code>ZIndex="20"</code> pour éviter tout conflit avec le geste de sélection de carte.</li>
+<li><strong>1.3. Gestion et protection de la catégorie par défaut « Général » :</strong></li>
+<li>Protection absolue du dossier racine : impossibilité de renommer ou supprimer « Général » (« Default »).</li>
+<li>Traduction dynamique du nom de catégorie par défaut (« Général » en français, « Default » en anglais, etc.).</li>
+<li>Traduction des résumés de contenu (« {0} dossiers, {1} partitions »).</li>
+</ul>
+<h3 id="2-edition-de-partitions-setlists-refonte-ergonomique">2. Édition de Partitions &amp; Setlists : Refonte Ergonomique</h3>
+<ul>
+<li><strong>2.1. Déplacement des boutons d'actions en haut à droite :</strong></li>
+<li>Dans les pages d'édition de partition (<code>ScoreEditPage</code>) et de setlist (<code>SetlistEditPage</code>), les boutons « Annuler » et « Enregistrer » sont désormais positionnés directement dans l'en-tête supérieur droit, offrant un accès immédiat sans nécessiter de défilement jusqu'au bas de page.</li>
+<li><strong>2.2. Volume du métronome intégré :</strong></li>
+<li>Correction du positionnement du pourcentage : suppression du chevauchement à 100% avec le titre.</li>
+<li>Plage étendue jusqu'à 0% (silence complet) et affichage clair des bornes 0% et 100%.</li>
+<li><strong>2.3. Paramètre Boîte à Outils activé par défaut :</strong></li>
+<li>Le paramètre « Afficher l'icône de boîte à outils » (<code>ShowToolsButton</code>) est désormais activé par défaut (<code>true</code>) pour toute nouvelle partition.</li>
+</ul>
+<h3 id="3-visualiseur-de-scene-accordeur-metronome-annotations">3. Visualiseur de Scène : Accordeur, Métronome &amp; Annotations</h3>
+<ul>
+<li><strong>3.1. Accordeur — Volume de référence &amp; Internationalisation complète :</strong></li>
+<li>Ajout d'un curseur de volume dédié (0 à 100%) directement sous « Écouter la note de référence » pour moduler le niveau sonore du son de référence généré.</li>
+<li>Traduction intégrale de l'accordeur : Diapason, Activation/Désactivation micro, Octaves, Solfège, Statuts d'accordage (« En attente de signal », « Trop bas », « Accordé », « Trop haut », « Parfait ») et conseils d'ajustement.</li>
+<li><strong>3.2. Métronome Déplaçable (Drag &amp; Drop) &amp; Internationalisation :</strong></li>
+<li>La fenêtre modale des paramètres du métronome peut désormais être déplacée n'importe où sur l'écran par simple glisser-déposer sur son en-tête.</li>
+<li>Traduction intégrale de toutes les options du métronome (Tempo, Battements, Son, Visuel).</li>
+<li><strong>3.3. Annotations Texte avec Cadre Personnalisable :</strong></li>
+<li>Possibilité d'entourer le texte d'un cadre rectangulaire avec choix de couleur de bordure (Transparent, Noir, Rouge, Bleu, Vert, Jaune, Blanc).</li>
+<li>Prise en charge dans le modèle d'annotation et migration transparente de la base SQLite.</li>
+<li><strong>3.4. Menu Central du Visualiseur :</strong></li>
+<li>Traduction intégrale de l'ensemble des boutons du menu central (Accueil, Marqueurs de page, Rotation, Aller à la page, Modifier la partition, Modifier l'assemblage).</li>
+<li><strong>3.5. Stickers &amp; Messages :</strong></li>
+<li>Traduction des termes textuels des stickers d'apprentissage (« À travailler », « Rythme faux », « Justesse »).</li>
+<li>Traduction de toutes les alertes d'annotations (« Il n'y a aucune annotation à supprimer... »).</li>
+</ul>
+<h3 id="4-internationalisation-globale-traduction">4. Internationalisation Globale &amp; Traduction</h3>
+<ul>
+<li><strong>4.1. Tonalités musicales (MusicalKey) :</strong></li>
+<li>Traduction complète de toutes les tonalités (« Non définie », « Do Majeur », « La Mineur », etc.) dans toutes les langues supportées.</li>
+<li><strong>4.2. Messages et alertes de confirmation :</strong></li>
+<li>Remplacement de tous les textes en dur restants dans les popups, boîtes de dialogue et alertes par des clés de localisation dynamiques.</li>
 </ul>
 <hr />
 <h2 id="v315-28102026">v3.1.5 — 28/10/2026</h2>
