@@ -51,25 +51,8 @@ public partial class ScoresPage : ContentPage
         }
     }
 
-    public System.Windows.Input.ICommand ScoreTappedCommand { get; }
-    public System.Windows.Input.ICommand ScoreLongPressCommand { get; }
-
     public ScoresPage(DatabaseService databaseService, ImportService importService, IWifiDirectTransferService wifiService, ExportImportService exportImportService)
     {
-        ScoreTappedCommand = new Command<Models.Score>(async (score) =>
-        {
-            if (score != null) await HandleScoreTappedAsync(score);
-        });
-
-        ScoreLongPressCommand = new Command<Models.Score>((score) =>
-        {
-            OnScoreLongPressed(score);
-        });
-
-        Models.Score.GlobalOpenScoreCommand = ScoreTappedCommand;
-        Models.Score.GlobalLongPressScoreCommand = ScoreLongPressCommand;
-
-
         InitializeComponent();
         _databaseService = databaseService;
         _importService = importService;
@@ -106,6 +89,15 @@ public partial class ScoresPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+
+        Shell.SetTabBarIsVisible(this, true);
+        if (ScoreLoadingOverlay != null)
+        {
+            ScoreLoadingOverlay.IsVisible = false;
+            ScoreLoadingBorder.VerticalOptions = LayoutOptions.Center;
+            ScoreLoadingBorder.Margin = new Thickness(0);
+        }
+        _isOpeningScore = false;
 
         // S'abonner aux événements Wi-Fi Direct
         _wifiService.DeviceDiscovered += OnWifiDeviceDiscovered;
@@ -158,27 +150,32 @@ public partial class ScoresPage : ContentPage
                     ApplyCurrentViewModeData(scores);
                 });
 
-                // Calcul asynchrone des nombres de pages manquants en arrière-plan sans bloquer l'affichage initial
+                // Calcul asynchrone des nombres de pages manquants en arrière-plan (temporisé pour ne pas saturer l'UI ni SQLite)
                 var missingPageScores = scores.Where(s => s.PageCount <= 0).ToList();
                 if (missingPageScores.Count > 0)
                 {
                     foreach (var score in missingPageScores)
                     {
-                        if (score.Type == ScoreType.Image)
+                        try
                         {
-                            score.PageCount = 1;
-                            _ = _databaseService.SaveScoreAsync(score);
-                        }
-                        else if (score.Type == ScoreType.PDF)
-                        {
-                            string fullPath = _settingsService.GetAbsolutePath(score.FilePath);
-                            if (File.Exists(fullPath))
+                            if (score.Type == ScoreType.Image)
                             {
-                                int cnt = await _pdfService.GetPdfPageCountAsync(fullPath);
-                                score.PageCount = cnt > 0 ? cnt : 1;
-                                _ = _databaseService.SaveScoreAsync(score);
+                                score.PageCount = 1;
+                                await _databaseService.SaveScoreAsync(score);
                             }
+                            else if (score.Type == ScoreType.PDF)
+                            {
+                                string fullPath = _settingsService.GetAbsolutePath(score.FilePath);
+                                if (File.Exists(fullPath))
+                                {
+                                    int cnt = await _pdfService.GetPdfPageCountAsync(fullPath);
+                                    score.PageCount = cnt > 0 ? cnt : 1;
+                                    await _databaseService.SaveScoreAsync(score);
+                                }
+                            }
+                            await Task.Delay(40);
                         }
+                        catch { }
                     }
                 }
             }
@@ -346,6 +343,8 @@ public partial class ScoresPage : ContentPage
 
     private void OnScorePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        if (_isUpdatingMultiSelect) return;
+
         if (e.PropertyName == nameof(Models.Score.IsSelected))
         {
             RecalculateSelectedCount();
@@ -366,35 +365,42 @@ public partial class ScoresPage : ContentPage
             : string.Format(loc.GetString("Scores_Bulk_Selected_Multiple", "{0} partitions sélectionnées"), count);
     }
 
+    private bool _isUpdatingMultiSelect = false;
+
     private void UpdateMultiSelectUI()
     {
-        if (ScoresCollectionView.ItemsSource is IEnumerable<Models.Score> scores)
+        _isUpdatingMultiSelect = true;
+        try
         {
-            foreach (var score in scores)
+            var uniqueScores = new HashSet<Models.Score>();
+            if (ScoresCollectionView.ItemsSource is IEnumerable<Models.Score> scores)
+            {
+                foreach (var s in scores) uniqueScores.Add(s);
+            }
+            if (_lastLoadedScores != null)
+            {
+                foreach (var s in _lastLoadedScores) uniqueScores.Add(s);
+            }
+
+            foreach (var score in uniqueScores)
             {
                 score.IsMultiSelectActive = IsMultiSelectActive;
-                if (!IsMultiSelectActive)
+                if (!IsMultiSelectActive && score.IsSelected)
                 {
                     score.IsSelected = false;
                 }
             }
         }
-        if (_lastLoadedScores != null)
+        finally
         {
-            foreach (var score in _lastLoadedScores)
-            {
-                score.IsMultiSelectActive = IsMultiSelectActive;
-                if (!IsMultiSelectActive)
-                {
-                    score.IsSelected = false;
-                }
-            }
+            _isUpdatingMultiSelect = false;
         }
 
         if (IsMultiSelectActive)
         {
             MultiSelectActionBar.IsVisible = true;
             MultiSelectToggleButton.BackgroundColor = Color.FromArgb("#007ACC");
+            RecalculateSelectedCount();
         }
         else
         {
@@ -1167,6 +1173,43 @@ public partial class ScoresPage : ContentPage
         }
     }
 
+    private void OnScoreCardHandlerChanged(object? sender, EventArgs e)
+    {
+#if ANDROID
+        if (sender is Border border && border.Handler?.PlatformView is Android.Views.View nativeView)
+        {
+            nativeView.LongClickable = true;
+            nativeView.SetOnLongClickListener(new ScoreCardLongClickListener(this, border));
+        }
+#endif
+    }
+
+#if ANDROID
+    private sealed class ScoreCardLongClickListener : Java.Lang.Object, Android.Views.View.IOnLongClickListener
+    {
+        private readonly WeakReference<ScoresPage> _pageRef;
+        private readonly WeakReference<Border> _borderRef;
+
+        public ScoreCardLongClickListener(ScoresPage page, Border border)
+        {
+            _pageRef = new WeakReference<ScoresPage>(page);
+            _borderRef = new WeakReference<Border>(border);
+        }
+
+        public bool OnLongClick(Android.Views.View? v)
+        {
+            if (_pageRef.TryGetTarget(out var page) &&
+                _borderRef.TryGetTarget(out var border) &&
+                border.BindingContext is Models.Score score)
+            {
+                page.OnScoreLongPressed(score);
+                return true;
+            }
+            return false;
+        }
+    }
+#endif
+
     private void OnScoreLongPressed(Models.Score? score)
     {
         if (score == null) return;
@@ -1187,10 +1230,11 @@ public partial class ScoresPage : ContentPage
     }
 
     private DateTime _lastScoreTapTime = DateTime.MinValue;
+    private bool _isOpeningScore = false;
 
     public async Task HandleScoreTappedAsync(Models.Score selectedScore)
     {
-        if (selectedScore == null) return;
+        if (selectedScore == null || _isOpeningScore) return;
 
         if ((DateTime.UtcNow - _lastScoreTapTime).TotalMilliseconds < 350)
             return;
@@ -1203,6 +1247,13 @@ public partial class ScoresPage : ContentPage
             return;
         }
 
+        await OpenScoreWithOverlayAsync(selectedScore);
+    }
+
+    private async Task OpenScoreWithOverlayAsync(Models.Score selectedScore)
+    {
+        if (selectedScore == null || _isOpeningScore) return;
+
         if (selectedScore.IsFileMissing)
         {
             var loc = LocalizationService.Instance;
@@ -1213,20 +1264,41 @@ public partial class ScoresPage : ContentPage
             return;
         }
 
-        // Naviguer vers le ViewerPage
-        await Navigation.PushAsync(new ViewerPage(selectedScore));
-    }
-
-    private async void OnScoreSelected(object sender, SelectionChangedEventArgs e)
-    {
-        if (e.CurrentSelection.FirstOrDefault() is Models.Score selectedScore)
+        _isOpeningScore = true;
+        try
         {
-            // Toujours désélectionner l'élément
-            ScoresCollectionView.SelectedItem = null;
-            await HandleScoreTappedAsync(selectedScore);
+            if (ScoreLoadingOverlay != null && ScoreLoadingBorder != null)
+            {
+                if (this.Height > 150)
+                {
+                    double topY = (this.Height - 120.0) / 2.0;
+                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Start;
+                    ScoreLoadingBorder.Margin = new Thickness(0, Math.Max(0, topY), 0, 0);
+                }
+                else
+                {
+                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Center;
+                    ScoreLoadingBorder.Margin = new Thickness(0);
+                }
+
+                Shell.SetTabBarIsVisible(this, false);
+                ScoreLoadingOverlay.IsVisible = true;
+                await Task.Yield();
+            }
+
+            await Navigation.PushAsync(new ViewerPage(selectedScore));
+        }
+        catch (Exception ex)
+        {
+            if (ScoreLoadingOverlay != null) ScoreLoadingOverlay.IsVisible = false;
+            Shell.SetTabBarIsVisible(this, true);
+            System.Diagnostics.Debug.WriteLine($"[ScoresPage] Erreur ouverture partition : {ex.Message}");
+        }
+        finally
+        {
+            _isOpeningScore = false;
         }
     }
-
 
     private async void OnSortClicked(object sender, EventArgs e)
     {
@@ -1275,13 +1347,9 @@ public partial class ScoresPage : ContentPage
         ScoreMenuOverlay.IsVisible = false;
         if (_selectedScoreForMenu != null)
         {
-            if (_selectedScoreForMenu.IsFileMissing)
-            {
-                var loc = LocalizationService.Instance;
-                await DisplayAlertAsync(loc.GetString("Score_Edit_MissingFile_Title"), loc.GetString("Score_Edit_Missing_Msg"), "OK");
-                return;
-            }
-            await Navigation.PushAsync(new ViewerPage(_selectedScoreForMenu));
+            var score = _selectedScoreForMenu;
+            _selectedScoreForMenu = null;
+            await OpenScoreWithOverlayAsync(score);
         }
     }
 

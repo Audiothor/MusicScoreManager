@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>3.1.7</ApplicationDisplayVersion>
-		<ApplicationVersion>31700</ApplicationVersion>
-		<!-- Version actuelle : v3.1.7 "Correction de l'ouverture et sélection multiple des partitions, affichage et cadre des annotations texte, renommage des dossiers, traductions complètes de l'accordeur et des pédales" -->
+		<ApplicationDisplayVersion>3.1.8</ApplicationDisplayVersion>
+		<ApplicationVersion>31800</ApplicationVersion>
+		<!-- Version actuelle : v3.1.8 "Élimination des blocages ANR, ouverture instantanée des partitions et gestion native de l'appui long" -->
 
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>

@@ -140,9 +140,8 @@
 
             <CollectionView x:Name="ScoresCollectionView"
                             Grid.Row="1"
-                            ItemSizingStrategy="MeasureAllItems"
-                            SelectionMode="Single"
-                            SelectionChanged="OnScoreSelected"
+                            ItemSizingStrategy="MeasureFirstItem"
+                            SelectionMode="None"
                             Scrolled="OnScoresScrolled"
                             Margin="{OnIdiom Phone='0,0,24,0', Tablet='0,0,28,0'}">
             <CollectionView.ItemsLayout>
@@ -153,17 +152,8 @@
                     <Border Stroke="#333333" 
                             StrokeThickness="1" 
                             BackgroundColor="#1E1E1E" 
-                            Padding="10">
-                        <Border.Behaviors>
-                            <toolkit:TouchBehavior 
-                                LongPressDuration="450"
-                                ShouldMakeChildrenInputTransparent="False"
-                                LongPressCommand="{Binding LongPressScoreCommand}"
-                                LongPressCommandParameter="{Binding .}"
-                                Command="{Binding OpenScoreCommand}"
-                                CommandParameter="{Binding .}" />
-                        </Border.Behaviors>
-
+                            Padding="10"
+                            HandlerChanged="OnScoreCardHandlerChanged">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnScoreCardTapped" CommandParameter="{Binding .}" />
                         </Border.GestureRecognizers>
@@ -252,7 +242,8 @@
                                         <Border BackgroundColor="{Binding ColorHex}"
                                                 StrokeThickness="0"
                                                 Padding="8,2"
-                                                HeightRequest="22">
+                                                HeightRequest="22"
+                                                InputTransparent="True">
                                             <Border.StrokeShape>
                                                 <RoundRectangle CornerRadius="11" />
                                             </Border.StrokeShape>
@@ -261,7 +252,8 @@
                                                    FontSize="11" 
                                                    FontAttributes="Bold"
                                                    VerticalOptions="Center"
-                                                   VerticalTextAlignment="Center" />
+                                                   VerticalTextAlignment="Center"
+                                                   InputTransparent="True" />
                                         </Border>
                                     </DataTemplate>
                                 </BindableLayout.ItemTemplate>
@@ -385,24 +377,28 @@
                                         StrokeThickness="0"
                                         WidthRequest="44"
                                         HeightRequest="44"
+                                        InputTransparent="True"
                                         VerticalOptions="Center">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="10" />
                                     </Border.StrokeShape>
                                     <Label Text="📁"
                                            FontSize="22"
+                                           InputTransparent="True"
                                            HorizontalOptions="Center"
                                            VerticalOptions="Center" />
                                 </Border>
 
-                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2" InputTransparent="True">
                                     <Label Text="{Binding DisplayName}"
                                            TextColor="White"
                                            FontAttributes="Bold"
                                            FontSize="15"
+                                           InputTransparent="True"
                                            LineBreakMode="TailTruncation" />
                                     <Label Text="{Binding FormattedCount}"
                                            TextColor="#8E8E9F"
+                                           InputTransparent="True"
                                            FontSize="12" />
                                 </VerticalStackLayout>
 
@@ -426,6 +422,7 @@
                                        TextColor="#007ACC"
                                        FontSize="22"
                                        FontAttributes="Bold"
+                                       InputTransparent="True"
                                        VerticalOptions="Center"
                                        Margin="0,0,4,0" />
                             </Grid>
@@ -1408,6 +1405,41 @@
 
                     <!-- Zone des boutons d'action (dynamique) -->
                     <VerticalStackLayout x:Name="ModernModalButtonsLayout" Spacing="8" Margin="0,2,0,0" />
+                </VerticalStackLayout>
+            </Border>
+        </ContentView>
+
+        <!-- Overlay Indicateur de chargement Partition -->
+        <ContentView x:Name="ScoreLoadingOverlay" 
+                     Grid.Row="0"
+                     Grid.RowSpan="3"
+                     HorizontalOptions="Fill"
+                     VerticalOptions="Fill"
+                     IsVisible="False" 
+                     BackgroundColor="#B0000000" 
+                     ZIndex="2000"
+                     InputTransparent="False">
+            <Border x:Name="ScoreLoadingBorder"
+                    BackgroundColor="#1E1E26" 
+                    Stroke="#007ACC"
+                    StrokeThickness="1.5"
+                    WidthRequest="260"
+                    HeightRequest="120"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" 
+                    Padding="24,18">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12" HorizontalOptions="Center" VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="True" Color="#00B4D8" HeightRequest="40" WidthRequest="40" HorizontalOptions="Center" />
+                    <Label x:Name="ScoreLoadingText"
+                           Text="{Binding [Score_Loading_Opening], Source={x:Static services:LocalizationService.Instance}}"
+                           TextColor="White"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
                 </VerticalStackLayout>
             </Border>
         </ContentView>
