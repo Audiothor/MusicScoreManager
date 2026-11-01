@@ -17,7 +17,7 @@
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
 		<ApplicationDisplayVersion>3.1.10</ApplicationDisplayVersion>
-		<ApplicationVersion>31100</ApplicationVersion>
+		<ApplicationVersion>31910</ApplicationVersion>
 		<!-- Version actuelle : v3.1.10 "Couleur de fond des annotations de texte, indicateur de chargement continu à l'ouverture des partitions et setlists, et 0 warning sur toutes les cibles" -->
 
 		<ImplicitUsings>enable</ImplicitUsings>
