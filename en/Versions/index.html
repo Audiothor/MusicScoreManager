@@ -871,6 +871,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v3110-11012026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.10 — 11/01/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.10 — 11/01/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-text-annotations-added-background-color-background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Text Annotations: Added Background Color (Background)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-score-setlist-opening-continuous-loading-message-overlay-opening-score" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Score &amp; Setlist Opening: Continuous Loading Message Overlay ("Opening score...")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-code-quality-eliminated-all-5-remaining-multi-target-warnings-0-warnings-0-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Code Quality: Eliminated All 5 Remaining Multi-Target Warnings (0 Warnings / 0 Errors)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v319-11012026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3388,6 +3438,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v3110-11012026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.10 — 11/01/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.10 — 11/01/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-text-annotations-added-background-color-background" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Text Annotations: Added Background Color (Background)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-score-setlist-opening-continuous-loading-message-overlay-opening-score" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Score &amp; Setlist Opening: Continuous Loading Message Overlay ("Opening score...")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-code-quality-eliminated-all-5-remaining-multi-target-warnings-0-warnings-0-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Code Quality: Eliminated All 5 Remaining Multi-Target Warnings (0 Warnings / 0 Errors)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v319-11012026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5884,6 +5984,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v3110--11012026">v3.1.10 — 11/01/2026</a></li>
 <li><a href="#v319--11012026">v3.1.9 — 11/01/2026</a></li>
 <li><a href="#v318--11012026">v3.1.8 — 11/01/2026</a></li>
 <li><a href="#v317--10312026">v3.1.7 — 10/31/2026</a></li>
@@ -5921,6 +6022,26 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v3110-11012026">v3.1.10 — 11/01/2026</h2>
+<h3 id="1-text-annotations-added-background-color-background">1. Text Annotations: Added Background Color (<code>Background</code>)</h3>
+<ul>
+<li><strong>Background color selector in Text Options panel (<code>TextOptionsOverlay</code>)</strong>: Added a dedicated <strong>Background</strong> row (<code>Viewer_Text_Bg_Label</code> localized across all 8 languages: <code>Fond</code>, <code>Background</code>, <code>Hintergrund</code>, <code>Fondo</code>, <code>Sfondo</code>, <code>Achtergrond</code>, <code>Tło</code>, <code>Fundo</code>) alongside text color (<code>Color</code>), font size (<code>Size</code>), and border (<code>Border</code>).</li>
+<li><strong>Full palette &amp; transparency support</strong>: Supports transparent background (<code>∅ Transparent</code>, default) as well as 6 solid background colors (<code>Black #000000</code>, <code>Red #E53935</code>, <code>Blue #1E88E5</code>, <code>Green #43A047</code>, <code>Yellow #FFD600</code>, <code>White #FFFFFF</code>).</li>
+<li><strong>Real-time live editing &amp; SQLite persistence</strong>: Tapping a background color chip immediately updates any currently selected text annotation on the canvas and persists <code>BackgroundColor</code> to the database, automatically applying balanced padding (<code>padX</code> / <code>padY</code>) whenever a background or border is active.</li>
+</ul>
+<h3 id="2-score-setlist-opening-continuous-loading-message-overlay-opening-score">2. Score &amp; Setlist Opening: Continuous Loading Message Overlay ("Opening score...")</h3>
+<ul>
+<li><strong>Immediate visual confirmation on tap</strong>: Restored the loading message overlay (<code>ScoreLoadingOverlay</code> in <code>ScoresPage</code> and <code>SetlistEditPage</code>, <code>SetlistLoadingOverlay</code> in <code>SetlistsPage</code>) as soon as a user taps a score or setlist to open it, without triggering layout-blocking <code>Shell.SetTabBarIsVisible</code> calls.</li>
+<li><strong>Seamless handoff in <code>ViewerPage</code> (<code>ViewerLoadingOverlay</code>)</strong>: Added a centered loading overlay inside <code>ViewerPage</code> that remains visible while the PDF page is being rendered and automatically hides once the score image is displayed on screen.</li>
+</ul>
+<h3 id="3-code-quality-eliminated-all-5-remaining-multi-target-warnings-0-warnings-0-errors">3. Code Quality: Eliminated All 5 Remaining Multi-Target Warnings (<code>0 Warnings</code> / <code>0 Errors</code>)</h3>
+<ul>
+<li><strong>Fixed <code>CA1422</code> (<code>Services/PdfService.cs</code>)</strong>: Replaced obsolete <code>NSData.Save(string, bool)</code> on iOS/MacCatalyst with <code>NSUrl.FromFilename</code> + <code>NSData.Save(NSUrl, bool)</code>.</li>
+<li><strong>Fixed <code>XC0022</code> XamlC compiled bindings</strong>: Added <code>x:DataType="local:OrderedScore"</code> in <code>SetlistEditPage.xaml</code> and <code>x:DataType="services:StickerCategory"</code> / <code>x:DataType="services:StickerItem"</code> in <code>ViewerPage.xaml</code>.</li>
+<li><strong>Migrated obsolete MAUI APIs (<code>CS0618</code>)</strong>: Replaced all remaining calls to <code>DisplayAlert</code>, <code>FadeTo</code>, <code>ScaleTo</code>, <code>TranslateTo</code>, <code>FillAndExpand</code>, and <code>Application.MainPage</code> with their modern equivalents (<code>DisplayAlertAsync</code>, <code>FadeToAsync</code>, <code>ScaleToAsync</code>, <code>TranslateToAsync</code>, <code>Fill</code>, <code>Windows[0].Page</code>) in <code>ScoreScannerPage.xaml.cs</code>, <code>SettingsAppPage.xaml.cs</code>, <code>ScoresPage.xaml.cs</code>, and <code>ViewerPage.xaml.cs</code>.</li>
+<li><strong>Automatic Android/Java SDK fallback paths in <code>MusicScoreManager.csproj</code></strong>: Enables plain <code>dotnet build</code> from the terminal with 0 warnings and 0 errors.</li>
 </ul>
 <hr />
 <h2 id="v319-11012026">v3.1.9 — 11/01/2026</h2>
