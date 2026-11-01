@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MusicScoreManager"
              xmlns:models="clr-namespace:MusicScoreManager.Models"
              xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.SetlistEditPage"
@@ -213,7 +214,7 @@
                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="local:OrderedScore">
                     <Grid Padding="10" BackgroundColor="#1E1E1E" Margin="0,1" ColumnSpacing="10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />

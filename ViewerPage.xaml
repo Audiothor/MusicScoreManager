@@ -6,7 +6,6 @@
              xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.ViewerPage"
              BackgroundColor="#000000"
-             Title="{Binding Title}"
              Shell.NavBarIsVisible="False"
              Shell.TabBarIsVisible="False">
 
@@ -337,7 +336,7 @@
                                 Minimum="0.5" Maximum="3.0" Value="1.0" 
                                 HeightRequest="36" 
                                 MinimumTrackColor="#007ACC" MaximumTrackColor="#555555" ThumbColor="White" 
-                                VerticalOptions="Center" HorizontalOptions="FillAndExpand" 
+                                VerticalOptions="Center" HorizontalOptions="Fill" 
                                 ValueChanged="OnStickerSizeChanged" />
                     </Grid>
 
@@ -353,7 +352,7 @@
                             <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="services:StickerCategory">
                                 <Border BackgroundColor="#2D2D35" 
                                         Padding="14,6" 
                                         Stroke="#444444"
@@ -385,7 +384,7 @@
                             <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="services:StickerItem">
                                 <Border x:Name="StickerBorder"
                                         Margin="2,2" 
                                         BackgroundColor="{Binding BackgroundColor}" 
@@ -551,9 +550,9 @@
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
             <VerticalStackLayout x:Name="TextOptionsLayout" Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
-                <!-- Ligne 1 : Pastilles de couleurs (Noir par défaut, Rouge, Bleu, Vert, Jaune, Blanc) -->
+                <!-- Ligne 1 : Pastilles de couleurs de texte (Noir par défaut, Rouge, Bleu, Vert, Jaune, Blanc) -->
                 <HorizontalStackLayout Spacing="6" VerticalOptions="Center" HorizontalOptions="Start">
-                    <Label Text="{Binding [Viewer_Text_Color_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="48" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
+                    <Label Text="{Binding [Viewer_Text_Color_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="58" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
                     <!-- Noir (défaut) -->
                     <Border x:Name="TextBlackBtn" BackgroundColor="#000000" WidthRequest="22" HeightRequest="22" Stroke="White" StrokeThickness="2">
                         <Border.StrokeShape><RoundRectangle CornerRadius="11" /></Border.StrokeShape>
@@ -588,7 +587,7 @@
 
                 <!-- Ligne 2 : Choix de taille en pixel (8, 10, 12, 14, 16, 18) -->
                 <HorizontalStackLayout Spacing="4" VerticalOptions="Center" HorizontalOptions="Start">
-                    <Label Text="{Binding [Viewer_Text_Size_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="48" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
+                    <Label Text="{Binding [Viewer_Text_Size_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="58" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
                     <Button x:Name="TextSize8Btn" Text="8" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="8" />
                     <Button x:Name="TextSize10Btn" Text="10" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="10" />
                     <Button x:Name="TextSize12Btn" Text="12" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="12" />
@@ -597,9 +596,50 @@
                     <Button x:Name="TextSize18Btn" Text="18" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="18" />
                 </HorizontalStackLayout>
 
-                <!-- Ligne 3 : Choix de cadre / bordure avec couleur -->
+                <!-- Ligne 3 : Choix de couleur de fond de texte -->
                 <HorizontalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="Start">
-                    <Label Text="{Binding [Viewer_Text_Border_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="48" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
+                    <Label Text="{Binding [Viewer_Text_Bg_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="58" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
+                    <!-- Sans fond (Transparent) -->
+                    <Border x:Name="TextBgNoneBtn" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" BackgroundColor="Transparent" Stroke="White" StrokeThickness="2">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="11" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBgColorSelected" CommandParameter="Transparent"/></Border.GestureRecognizers>
+                        <Label Text="∅" TextColor="#AAAAAA" FontSize="11" HorizontalOptions="Center" VerticalOptions="Center" InputTransparent="True" />
+                    </Border>
+                    <!-- Noir -->
+                    <Border x:Name="TextBgBlackBtn" BackgroundColor="#000000" WidthRequest="22" HeightRequest="22" Stroke="#555555" StrokeThickness="1.5">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBgColorSelected" CommandParameter="#000000" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Rouge -->
+                    <Border x:Name="TextBgRedBtn" BackgroundColor="#E53935" WidthRequest="22" HeightRequest="22" Stroke="Transparent" StrokeThickness="1.5">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBgColorSelected" CommandParameter="#E53935" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Bleu -->
+                    <Border x:Name="TextBgBlueBtn" BackgroundColor="#1E88E5" WidthRequest="22" HeightRequest="22" Stroke="Transparent" StrokeThickness="1.5">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBgColorSelected" CommandParameter="#1E88E5" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Vert -->
+                    <Border x:Name="TextBgGreenBtn" BackgroundColor="#43A047" WidthRequest="22" HeightRequest="22" Stroke="Transparent" StrokeThickness="1.5">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBgColorSelected" CommandParameter="#43A047" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Jaune -->
+                    <Border x:Name="TextBgYellowBtn" BackgroundColor="#FFD600" WidthRequest="22" HeightRequest="22" Stroke="Transparent" StrokeThickness="1.5">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBgColorSelected" CommandParameter="#FFD600" /></Border.GestureRecognizers>
+                    </Border>
+                    <!-- Blanc -->
+                    <Border x:Name="TextBgWhiteBtn" BackgroundColor="#FFFFFF" WidthRequest="22" HeightRequest="22" Stroke="Transparent" StrokeThickness="1.5">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                        <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnTextBgColorSelected" CommandParameter="#FFFFFF" /></Border.GestureRecognizers>
+                    </Border>
+                </HorizontalStackLayout>
+
+                <!-- Ligne 4 : Choix de cadre / bordure avec couleur -->
+                <HorizontalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="Start">
+                    <Label Text="{Binding [Viewer_Text_Border_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="58" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
                     <!-- Sans cadre (Transparent) -->
                     <Border x:Name="TextBorderNoneBtn" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" BackgroundColor="Transparent" Stroke="White" StrokeThickness="2">
                         <Border.StrokeShape><RoundRectangle CornerRadius="11" /></Border.StrokeShape>
@@ -1697,5 +1737,33 @@
                 </Grid>
             </VerticalStackLayout>
         </Border>
+
+        <!-- Overlay de chargement de la partition (visible pendant le rendu initial ou changement de partition) -->
+        <Grid x:Name="ViewerLoadingOverlay"
+              IsVisible="True"
+              BackgroundColor="#88000000"
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill"
+              ZIndex="2000"
+              InputTransparent="True">
+            <Border BackgroundColor="#1E1E1E"
+                    Stroke="#007ACC"
+                    StrokeThickness="2"
+                    Padding="28,22"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="14" HorizontalOptions="Center">
+                    <ActivityIndicator IsRunning="True" Color="#007ACC" WidthRequest="44" HeightRequest="44" HorizontalOptions="Center" />
+                    <Label Text="{Binding [Scores_Opening_Wait], Source={x:Static services:LocalizationService.Instance}}"
+                           TextColor="White"
+                           FontSize="15"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
     </Grid>
 </ContentPage>

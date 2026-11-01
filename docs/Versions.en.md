@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.1.10 — 11/01/2026](#v3110--11012026)
 - [v3.1.9 — 11/01/2026](#v319--11012026)
 - [v3.1.8 — 11/01/2026](#v318--11012026)
 - [v3.1.7 — 10/31/2026](#v317--10312026)
@@ -43,6 +44,25 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.10 — 11/01/2026
+
+### 1. Text Annotations: Added Background Color (`Background`)
+- **Background color selector in Text Options panel (`TextOptionsOverlay`)**: Added a dedicated **Background** row (`Viewer_Text_Bg_Label` localized across all 8 languages: `Fond`, `Background`, `Hintergrund`, `Fondo`, `Sfondo`, `Achtergrond`, `Tło`, `Fundo`) alongside text color (`Color`), font size (`Size`), and border (`Border`).
+- **Full palette & transparency support**: Supports transparent background (`∅ Transparent`, default) as well as 6 solid background colors (`Black #000000`, `Red #E53935`, `Blue #1E88E5`, `Green #43A047`, `Yellow #FFD600`, `White #FFFFFF`).
+- **Real-time live editing & SQLite persistence**: Tapping a background color chip immediately updates any currently selected text annotation on the canvas and persists `BackgroundColor` to the database, automatically applying balanced padding (`padX` / `padY`) whenever a background or border is active.
+
+### 2. Score & Setlist Opening: Continuous Loading Message Overlay ("Opening score...")
+- **Immediate visual confirmation on tap**: Restored the loading message overlay (`ScoreLoadingOverlay` in `ScoresPage` and `SetlistEditPage`, `SetlistLoadingOverlay` in `SetlistsPage`) as soon as a user taps a score or setlist to open it, without triggering layout-blocking `Shell.SetTabBarIsVisible` calls.
+- **Seamless handoff in `ViewerPage` (`ViewerLoadingOverlay`)**: Added a centered loading overlay inside `ViewerPage` that remains visible while the PDF page is being rendered and automatically hides once the score image is displayed on screen.
+
+### 3. Code Quality: Eliminated All 5 Remaining Multi-Target Warnings (`0 Warnings` / `0 Errors`)
+- **Fixed `CA1422` (`Services/PdfService.cs`)**: Replaced obsolete `NSData.Save(string, bool)` on iOS/MacCatalyst with `NSUrl.FromFilename` + `NSData.Save(NSUrl, bool)`.
+- **Fixed `XC0022` XamlC compiled bindings**: Added `x:DataType="local:OrderedScore"` in `SetlistEditPage.xaml` and `x:DataType="services:StickerCategory"` / `x:DataType="services:StickerItem"` in `ViewerPage.xaml`.
+- **Migrated obsolete MAUI APIs (`CS0618`)**: Replaced all remaining calls to `DisplayAlert`, `FadeTo`, `ScaleTo`, `TranslateTo`, `FillAndExpand`, and `Application.MainPage` with their modern equivalents (`DisplayAlertAsync`, `FadeToAsync`, `ScaleToAsync`, `TranslateToAsync`, `Fill`, `Windows[0].Page`) in `ScoreScannerPage.xaml.cs`, `SettingsAppPage.xaml.cs`, `ScoresPage.xaml.cs`, and `ViewerPage.xaml.cs`.
+- **Automatic Android/Java SDK fallback paths in `MusicScoreManager.csproj`**: Enables plain `dotnet build` from the terminal with 0 warnings and 0 errors.
 
 ---
 

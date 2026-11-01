@@ -546,11 +546,13 @@ public partial class ViewerPage : ContentPage
     private async void LoadContentAsync()
     {
         System.Diagnostics.Debug.WriteLine($"[Viewer] --- Début chargement partition: {_score.Title} ---");
+        if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = true;
 
         try
         {
             if (string.IsNullOrEmpty(_score.FilePath))
             {
+                if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
                 System.Diagnostics.Debug.WriteLine("[Viewer] ERREUR : _score.FilePath est NULL ou vide");
                 await DisplayAlertAsync("Erreur", "Chemin du fichier manquant", "OK");
                 return;
@@ -565,6 +567,7 @@ public partial class ViewerPage : ContentPage
 
             if (!exists)
             {
+                if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
                 System.Diagnostics.Debug.WriteLine($"[Viewer] ERREUR : Le fichier n'existe pas au chemin : {fullPath}");
                 await DisplayAlertAsync("Fichier introuvable", $"Le fichier est introuvable :\n{fullPath}", "OK");
                 return;
@@ -587,11 +590,13 @@ public partial class ViewerPage : ContentPage
                     _maxPages = 1;
                     UpdatePageIndicator();
                     _isScoreReady = true;
+                    if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
                     RenderAnnotations();
                     if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
                 }
                 catch (Exception imgEx)
                 {
+                    if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
                     System.Diagnostics.Debug.WriteLine($"[Viewer] ECHEC chargement Image: {imgEx.Message}");
                     await DisplayAlertAsync("Erreur Lecture", $"{imgEx.Message}\n\nL'application n'a pas pu charger l'image.", "OK");
                 }
@@ -661,6 +666,7 @@ public partial class ViewerPage : ContentPage
         }
         catch (Exception ex)
         {
+            if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
             System.Diagnostics.Debug.WriteLine($"[Viewer] CRASH dans LoadContentAsync: {ex.Message}");
             await DisplayAlertAsync("Erreur de chargement", $"{ex.Message}\n\nFichier: {_score.FilePath}", "OK");
         }
@@ -831,6 +837,7 @@ public partial class ViewerPage : ContentPage
                 UpdateCanvasBounds(finalW, finalH, rendered.Width, rendered.Height);
 
                 _isScoreReady = true;
+                if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
                 UpdatePageIndicator();
                 RenderAnnotations();
 
@@ -854,7 +861,12 @@ public partial class ViewerPage : ContentPage
         }
         catch (Exception ex)
         {
+            if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
             System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur RenderPdfCurrentAsync: {ex.Message}");
+        }
+        finally
+        {
+            if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
         }
     }
 
@@ -926,6 +938,7 @@ public partial class ViewerPage : ContentPage
 
     private async void OnPdfWebViewNavigated(object? sender, WebNavigatedEventArgs e)
     {
+        if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
         if (_score.Type == ScoreType.PDF && e.Result == WebNavigationResult.Success)
         {
             System.Diagnostics.Debug.WriteLine("[Viewer] WebView Navigated - Shell HTML prêt.");
@@ -1455,7 +1468,7 @@ public partial class ViewerPage : ContentPage
 
         MetronomeSettingsModal.Opacity = 0;
         MetronomeSettingsModal.IsVisible = true;
-        MetronomeSettingsModal.FadeTo(1.0, 180, Easing.CubicOut);
+        _ = MetronomeSettingsModal.FadeToAsync(1.0, 180, Easing.CubicOut);
     }
 
     private double _metroSettingsXBase = 0;
@@ -1491,7 +1504,7 @@ public partial class ViewerPage : ContentPage
 
     private async void OnCloseMetronomeSettingsModalClicked(object sender, EventArgs e)
     {
-        await MetronomeSettingsModal.FadeTo(0, 150, Easing.CubicIn);
+        await MetronomeSettingsModal.FadeToAsync(0, 150, Easing.CubicIn);
         MetronomeSettingsModal.IsVisible = false;
         await _databaseService.SaveScoreAsync(_score);
     }
@@ -2446,8 +2459,8 @@ public partial class ViewerPage : ContentPage
         BottomTouchBar.IsVisible = !AnnotationBar.IsVisible;
 
         // Réinitialiser le zoom MAUI avec animation fluide
-        _ = ZoomLayout.TranslateTo(0, 0, 250, Easing.CubicOut);
-        await ZoomLayout.ScaleTo(1.0, 250, Easing.CubicOut);
+        _ = ZoomLayout.TranslateToAsync(0, 0, 250, Easing.CubicOut);
+        await ZoomLayout.ScaleToAsync(1.0, 250, Easing.CubicOut);
 
         // Réinitialiser le scroll / zoom du visual viewport WebView
         if (_score.Type == ScoreType.PDF && PdfWebView != null && PdfWebView.IsVisible)
@@ -3123,7 +3136,7 @@ public partial class ViewerPage : ContentPage
                     break;
 
                 case PedalAction.ToggleNightMode:
-                    await DisplayAlert("Mode Nuit", "L'activation du mode nuit sera disponible dans une prochaine mise à jour.", "OK");
+                    await DisplayAlertAsync("Mode Nuit", "L'activation du mode nuit sera disponible dans une prochaine mise à jour.", "OK");
                     break;
 
                 case PedalAction.ZoomIn:
@@ -3152,7 +3165,7 @@ public partial class ViewerPage : ContentPage
             double targetScale = Math.Min(3.5, ZoomLayout.Scale + 0.25);
             currentScale = targetScale;
             _isZoomed = targetScale > 1.05;
-            await ZoomLayout.ScaleTo(targetScale, 180, Easing.CubicOut);
+            await ZoomLayout.ScaleToAsync(targetScale, 180, Easing.CubicOut);
         }
         catch { }
     }
@@ -3166,9 +3179,9 @@ public partial class ViewerPage : ContentPage
             _isZoomed = targetScale > 1.05;
             if (targetScale <= 1.05)
             {
-                _ = ZoomLayout.TranslateTo(0, 0, 180, Easing.CubicOut);
+                _ = ZoomLayout.TranslateToAsync(0, 0, 180, Easing.CubicOut);
             }
-            await ZoomLayout.ScaleTo(targetScale, 180, Easing.CubicOut);
+            await ZoomLayout.ScaleToAsync(targetScale, 180, Easing.CubicOut);
         }
         catch { }
     }
@@ -4437,6 +4450,7 @@ public partial class ViewerPage : ContentPage
 
     private bool _isTextMode = false;
     private string _currentTextColor = "#000000";
+    private string _currentTextBgColor = "Transparent";
     private string _currentTextBorderColor = "Transparent";
     private double _currentTextSize = 14.0; // 8, 10, 12, 14, 16, 18 (14 par défaut)
 
@@ -4448,6 +4462,10 @@ public partial class ViewerPage : ContentPage
         TextOptionsOverlay.IsVisible = _isTextMode;
         if (_isTextMode)
         {
+            UpdateTextColorBorders();
+            UpdateTextSizeButtons();
+            UpdateTextBgBorders();
+            UpdateTextBorderBorders();
             UpdateAnnotationOverlaysLayout(this.Width, this.Height);
             TextOptionsOverlay.TranslationY = AnnotationBar.TranslationY;
             _isHighlightMode = false;
@@ -4507,6 +4525,81 @@ public partial class ViewerPage : ContentPage
 
         TextWhiteBtn.Stroke = _currentTextColor == "#FFFFFF" ? Colors.Gray : Colors.Transparent;
         TextWhiteBtn.StrokeThickness = _currentTextColor == "#FFFFFF" ? 2 : 1;
+    }
+
+    private async void OnTextBgColorSelected(object? sender, EventArgs e)
+    {
+        string? color = (e as TappedEventArgs)?.Parameter as string;
+        if (string.IsNullOrEmpty(color))
+        {
+            if (sender is Border border && border.GestureRecognizers.FirstOrDefault() is TapGestureRecognizer bTap && bTap.CommandParameter is string bColor)
+            {
+                color = bColor;
+            }
+            else if (sender is Grid grid && grid.GestureRecognizers.FirstOrDefault() is TapGestureRecognizer gTap && gTap.CommandParameter is string gColor)
+            {
+                color = gColor;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(color))
+        {
+            _currentTextBgColor = color;
+            UpdateTextBgBorders();
+
+            // Modification dynamique du fond du texte sélectionné en temps réel
+            if (!_isAnnotationsLocked && _selectedAnnotation != null && _selectedAnnotation.Type == AnnotationType.Text)
+            {
+                _selectedAnnotation.BackgroundColor = _currentTextBgColor;
+                await _databaseService.SaveAnnotationAsync(_selectedAnnotation);
+                RenderAnnotations();
+            }
+        }
+    }
+
+    private void UpdateTextBgBorders()
+    {
+        if (TextBgNoneBtn != null)
+        {
+            TextBgNoneBtn.Stroke = (_currentTextBgColor == "Transparent") ? Colors.White : Color.FromArgb("#888888");
+            TextBgNoneBtn.StrokeThickness = (_currentTextBgColor == "Transparent") ? 2 : 1;
+        }
+
+        if (TextBgBlackBtn != null)
+        {
+            TextBgBlackBtn.Stroke = _currentTextBgColor == "#000000" ? Colors.White : Color.FromArgb("#555555");
+            TextBgBlackBtn.StrokeThickness = _currentTextBgColor == "#000000" ? 2.5 : 1.5;
+        }
+
+        if (TextBgRedBtn != null)
+        {
+            TextBgRedBtn.Stroke = _currentTextBgColor == "#E53935" ? Colors.White : Colors.Transparent;
+            TextBgRedBtn.StrokeThickness = _currentTextBgColor == "#E53935" ? 2.5 : 1.5;
+        }
+
+        if (TextBgBlueBtn != null)
+        {
+            TextBgBlueBtn.Stroke = _currentTextBgColor == "#1E88E5" ? Colors.White : Colors.Transparent;
+            TextBgBlueBtn.StrokeThickness = _currentTextBgColor == "#1E88E5" ? 2.5 : 1.5;
+        }
+
+        if (TextBgGreenBtn != null)
+        {
+            TextBgGreenBtn.Stroke = _currentTextBgColor == "#43A047" ? Colors.White : Colors.Transparent;
+            TextBgGreenBtn.StrokeThickness = _currentTextBgColor == "#43A047" ? 2.5 : 1.5;
+        }
+
+        if (TextBgYellowBtn != null)
+        {
+            TextBgYellowBtn.Stroke = _currentTextBgColor == "#FFD600" ? Colors.White : Colors.Transparent;
+            TextBgYellowBtn.StrokeThickness = _currentTextBgColor == "#FFD600" ? 2.5 : 1.5;
+        }
+
+        if (TextBgWhiteBtn != null)
+        {
+            TextBgWhiteBtn.Stroke = _currentTextBgColor == "#FFFFFF" ? Color.FromArgb("#007ACC") : Colors.Transparent;
+            TextBgWhiteBtn.StrokeThickness = _currentTextBgColor == "#FFFFFF" ? 2.5 : 1.5;
+        }
     }
 
     private async void OnTextBorderColorSelected(object? sender, EventArgs e)
@@ -4659,7 +4752,7 @@ public partial class ViewerPage : ContentPage
                     Y = relY,
                     Scale = _currentTextSize, // 8, 10, 12, 14, 16, 18
                     Color = _currentTextColor,
-                    BackgroundColor = "Transparent",
+                    BackgroundColor = _currentTextBgColor,
                     BorderColor = _currentTextBorderColor,
                     PageNumber = targetPage
                 };
@@ -4885,8 +4978,8 @@ public partial class ViewerPage : ContentPage
             {
                 border.Stroke = Colors.Gold;
                 border.StrokeThickness = 3;
-                await border.ScaleTo(1.4, 120);
-                await border.ScaleTo(1.0, 120);
+                await border.ScaleToAsync(1.4, 120);
+                await border.ScaleToAsync(1.0, 120);
                 border.Stroke = Colors.Red;
                 border.StrokeThickness = 2;
             }
@@ -5163,8 +5256,8 @@ public partial class ViewerPage : ContentPage
             {
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
-                    await view.ScaleTo(1.15, 60);
-                    await view.ScaleTo(1.0, 60);
+                    await view.ScaleToAsync(1.15, 60);
+                    await view.ScaleToAsync(1.0, 60);
                 });
             }
             catch { }
@@ -5600,6 +5693,7 @@ public partial class ViewerPage : ContentPage
         double fontSize = (ann.Scale <= 0 ? 14.0 : ann.Scale) * displayScale;
         bool isSelected = (ann == _selectedAnnotation);
         bool hasBorder = !string.IsNullOrWhiteSpace(ann.BorderColor) && !ann.BorderColor.Equals("Transparent", StringComparison.OrdinalIgnoreCase);
+        bool hasBg = !string.IsNullOrWhiteSpace(ann.BackgroundColor) && !ann.BackgroundColor.Equals("Transparent", StringComparison.OrdinalIgnoreCase);
 
         double strokeThick = hasBorder
             ? (isSelected ? (2.5 * displayScale) : (1.5 * displayScale))
@@ -5613,8 +5707,8 @@ public partial class ViewerPage : ContentPage
         double measuredW = Math.Max(size.Width, minTextW);
         double measuredH = Math.Max(size.Height, fontSize * 1.2);
 
-        double padX = (hasBorder ? 8 : 4) * displayScale;
-        double padY = (hasBorder ? 4 : 2) * displayScale;
+        double padX = ((hasBorder || hasBg) ? 8 : 4) * displayScale;
+        double padY = ((hasBorder || hasBg) ? 4 : 2) * displayScale;
         double w = Math.Max(measuredW + (padX * 2) + (strokeThick * 2), 24 * displayScale);
         double h = Math.Max(measuredH + (padY * 2) + (strokeThick * 2), 20 * displayScale);
 
@@ -5629,7 +5723,9 @@ public partial class ViewerPage : ContentPage
 
         bool isSelected = (ann == _selectedAnnotation);
         bool hasBorder = !string.IsNullOrWhiteSpace(ann.BorderColor) && !ann.BorderColor.Equals("Transparent", StringComparison.OrdinalIgnoreCase);
+        bool hasBg = !string.IsNullOrWhiteSpace(ann.BackgroundColor) && !ann.BackgroundColor.Equals("Transparent", StringComparison.OrdinalIgnoreCase);
         Color borderStroke = hasBorder ? ParseColor(ann.BorderColor) : Colors.Transparent;
+        Color bgColor = hasBg ? ParseColor(ann.BackgroundColor) : (isSelected ? Color.FromArgb("#33007ACC") : Colors.Transparent);
 
         Color strokeColor;
         double strokeThick;
@@ -5694,7 +5790,7 @@ public partial class ViewerPage : ContentPage
             StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = (float)(4 * displayScale) },
             StrokeThickness = strokeThick,
             Stroke = strokeColor,
-            BackgroundColor = isSelected ? Color.FromArgb("#33007ACC") : Colors.Transparent,
+            BackgroundColor = bgColor,
             Content = contentGrid,
             InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode
         };
@@ -5711,9 +5807,11 @@ public partial class ViewerPage : ContentPage
                 _selectedAnnotation = a;
                 _currentTextColor = a.Color;
                 _currentTextSize = a.Scale <= 0 ? 14 : a.Scale;
+                _currentTextBgColor = string.IsNullOrEmpty(a.BackgroundColor) ? "Transparent" : a.BackgroundColor;
                 _currentTextBorderColor = string.IsNullOrEmpty(a.BorderColor) ? "Transparent" : a.BorderColor;
                 UpdateTextColorBorders();
                 UpdateTextSizeButtons();
+                UpdateTextBgBorders();
                 UpdateTextBorderBorders();
                 RenderAnnotations();
             }
@@ -6215,8 +6313,8 @@ public partial class ViewerPage : ContentPage
             SetlistProgressOverlay.Opacity = 0;
             SetlistProgressOverlay.TranslationY = -60;
             _ = Task.WhenAll(
-                SetlistProgressOverlay.FadeTo(1, 200, Easing.CubicOut),
-                SetlistProgressOverlay.TranslateTo(0, 0, 200, Easing.CubicOut)
+                SetlistProgressOverlay.FadeToAsync(1, 200, Easing.CubicOut),
+                SetlistProgressOverlay.TranslateToAsync(0, 0, 200, Easing.CubicOut)
             );
 
             // Centrer automatiquement le morceau en cours dans la boîte de défilement
@@ -6241,8 +6339,8 @@ public partial class ViewerPage : ContentPage
         if (SetlistProgressModal != null && SetlistProgressModal.IsVisible)
         {
             _ = Task.WhenAll(
-                SetlistProgressOverlay.FadeTo(0, 150, Easing.CubicIn),
-                SetlistProgressOverlay.TranslateTo(0, -60, 150, Easing.CubicIn)
+                SetlistProgressOverlay.FadeToAsync(0, 150, Easing.CubicIn),
+                SetlistProgressOverlay.TranslateToAsync(0, -60, 150, Easing.CubicIn)
             ).ContinueWith(t =>
             {
                 MainThread.BeginInvokeOnMainThread(() =>
@@ -6879,7 +6977,7 @@ public partial class ViewerPage : ContentPage
             if (status != PermissionStatus.Granted)
             {
                 var loc = LocalizationService.Instance;
-                await DisplayAlert(loc.GetString("Viewer_Tuner_Mic_Permission_Title"), loc.GetString("Viewer_Tuner_Mic_Permission_Msg"), "OK");
+                await DisplayAlertAsync(loc.GetString("Viewer_Tuner_Mic_Permission_Title"), loc.GetString("Viewer_Tuner_Mic_Permission_Msg"), "OK");
                 return;
             }
 

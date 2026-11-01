@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.1.10 — 01/11/2026](#v3110--01112026)
 - [v3.1.9 — 01/11/2026](#v319--01112026)
 - [v3.1.8 — 01/11/2026](#v318--01112026)
 - [v3.1.7 — 31/10/2026](#v317--31102026)
@@ -43,6 +44,25 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.10 — 01/11/2026
+
+### 1. Annotations de Texte : Ajout de la Couleur de Fond (`Fond`)
+- **Sélecteur de couleur de fond intégré au panneau Texte (`TextOptionsOverlay`)** : Ajout d'une nouvelle ligne dédiée **« Fond »** (`Viewer_Text_Bg_Label` traduit dans les 8 langues : `Fond`, `Background`, `Hintergrund`, `Fondo`, `Sfondo`, `Achtergrond`, `Tło`, `Fundo`) en complément de la couleur de texte (`Couleur`), de la taille (`Taille`) et de la bordure (`Cadre`).
+- **Palette complète & transparence** : Prise en charge du mode sans fond (`∅ Transparent` par défaut) ainsi que des 6 couleurs de fond (`Noir #000000`, `Rouge #E53935`, `Bleu #1E88E5`, `Vert #43A047`, `Jaune #FFD600`, `Blanc #FFFFFF`).
+- **Modification en temps réel et persistance SQLite** : Cliquer sur une pastille de couleur de fond met à jour instantanément l'annotation de texte sélectionnée sur la partition et sauvegarde la propriété `BackgroundColor` en base de données. L'espacement interne (`padX` / `padY`) s'adapte automatiquement dès qu'un fond ou un cadre est actif pour un rendu centré et lisible.
+
+### 2. Ouverture des Partitions & Setlists : Message de Chargement Continu (« Ouverture de la partition... »)
+- **Confirmation visuelle immédiate dès la sélection** : Réactivation de la boîte de message de chargement (`ScoreLoadingOverlay` dans `ScoresPage` et `SetlistEditPage`, `SetlistLoadingOverlay` dans `SetlistsPage`) dès le clic sur une partition ou une setlist, sans appel bloquant à `Shell.SetTabBarIsVisible`.
+- **Relais fluide dans `ViewerPage` (`ViewerLoadingOverlay`)** : Ajout d'un indicateur de chargement centré dans `ViewerPage` qui reste affiché pendant le rendu natif ou WebView de la partition PDF et se masque automatiquement dès que la page est prête à l'écran, confirmant immédiatement à l'utilisateur que sa sélection est bien prise en compte.
+
+### 3. Qualité du Code : Élimination des 5 Derniers Avertissements Multi-Cibles (`0 Warning` / `0 Erreur`)
+- **Correction `CA1422` (`Services/PdfService.cs`)** : Remplacement de l'appel obsolète `NSData.Save(string, bool)` sur iOS/MacCatalyst par `NSUrl.FromFilename` + `NSData.Save(NSUrl, bool)`.
+- **Correction des liaisons compilées XamlC `XC0022`** : Ajout de `x:DataType="local:OrderedScore"` dans `SetlistEditPage.xaml` et de `x:DataType="services:StickerCategory"` / `x:DataType="services:StickerItem"` dans `ViewerPage.xaml`.
+- **Migration des API MAUI obsolètes (`CS0618`)** : Remplacement de tous les appels restants à `DisplayAlert`, `FadeTo`, `ScaleTo`, `TranslateTo`, `FillAndExpand` et `Application.MainPage` par leurs équivalents modernes (`DisplayAlertAsync`, `FadeToAsync`, `ScaleToAsync`, `TranslateToAsync`, `Fill`, `Windows[0].Page`) dans `ScoreScannerPage.xaml.cs`, `SettingsAppPage.xaml.cs`, `ScoresPage.xaml.cs` et `ViewerPage.xaml.cs`.
+- **Détection automatique du SDK Android/Java dans `MusicScoreManager.csproj`** : Permet d'exécuter `dotnet build` directement dans le terminal sans erreur ni avertissement.
 
 ---
 

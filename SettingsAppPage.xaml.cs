@@ -210,9 +210,9 @@ public partial class SettingsAppPage : ContentPage
             UpdateSelectedLanguageLabel(_pendingLang);
 
             // Recharger l'AppShell pour rafraîchir instantanément toutes les vues, textes et onglets
-            if (Application.Current != null)
+            if (Application.Current != null && Application.Current.Windows.Count > 0)
             {
-                Application.Current.MainPage = new AppShell();
+                Application.Current.Windows[0].Page = new AppShell();
             }
         }
     }
