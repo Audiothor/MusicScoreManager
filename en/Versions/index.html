@@ -871,6 +871,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v319-11012026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.9 — 11/01/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.9 — 11/01/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-pdf-score-opening-maximum-response-time-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PDF Score Opening: Maximum Response Time Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-text-annotations-redesigned-options-panel-perfect-border-centering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Text Annotations: Redesigned Options Panel &amp; Perfect Border Centering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-scores-library-long-press-multi-selection-gesturedetector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Scores Library: Long-Press Multi-Selection (GestureDetector)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-code-quality-fixed-all-7-compilerbuild-warnings-0-warnings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Code Quality: Fixed All 7 Compiler/Build Warnings (0 Warnings)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v318-11012026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3327,6 +3388,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v319-11012026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.9 — 11/01/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.9 — 11/01/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-pdf-score-opening-maximum-response-time-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PDF Score Opening: Maximum Response Time Optimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-text-annotations-redesigned-options-panel-perfect-border-centering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Text Annotations: Redesigned Options Panel &amp; Perfect Border Centering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-scores-library-long-press-multi-selection-gesturedetector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Scores Library: Long-Press Multi-Selection (GestureDetector)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-code-quality-fixed-all-7-compilerbuild-warnings-0-warnings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Code Quality: Fixed All 7 Compiler/Build Warnings (0 Warnings)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v318-11012026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5762,6 +5884,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v319--11012026">v3.1.9 — 11/01/2026</a></li>
 <li><a href="#v318--11012026">v3.1.8 — 11/01/2026</a></li>
 <li><a href="#v317--10312026">v3.1.7 — 10/31/2026</a></li>
 <li><a href="#v316--10312026">v3.1.6 — 10/31/2026</a></li>
@@ -5798,6 +5921,30 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v319-11012026">v3.1.9 — 11/01/2026</h2>
+<h3 id="1-pdf-score-opening-maximum-response-time-optimization">1. PDF Score Opening: Maximum Response Time Optimization</h3>
+<ul>
+<li><strong>Zero-latency direct navigation (<code>0 ms</code>)</strong>: Removed <code>Shell.SetTabBarIsVisible(this, false)</code> and intermediate loading overlay toggling on <code>ScoresPage</code>, <code>SetlistsPage</code>, and <code>SetlistEditPage</code> prior to <code>Navigation.PushAsync(new ViewerPage(...))</code>, which previously forced a full layout pass of the source page's <code>CollectionView</code> on the UI thread before navigation even started (<code>ViewerPage</code> already sets <code>Shell.TabBarIsVisible="False"</code> natively).</li>
+<li><strong>Eliminated duplicate PDF open on first load</strong>: <code>RenderedPdfPage</code> now carries <code>TotalPages</code> directly and populates a static <code>_pageCountCache</code>, avoiding opening the file descriptor and <code>PdfRenderer</code>/<code>PdfDocument</code> twice (once to count pages and a second time to render).</li>
+<li><strong>100% CPU/IO priority for Page 1</strong>: Calibrated rasterization scale (<code>1.6x</code> single page, <code>1.35x</code> two-page landscape spread, JPEG quality <code>82</code>), cached metronome WAV assets (<code>click.wav</code>, <code>precount.wav</code>) once per session, and staggered secondary background tasks (<code>80 ms</code>) and adjacent page preloading (<code>150 ms</code>) so page 1 renders nearly twice as fast.</li>
+</ul>
+<h3 id="2-text-annotations-redesigned-options-panel-perfect-border-centering">2. Text Annotations: Redesigned Options Panel &amp; Perfect Border Centering</h3>
+<ul>
+<li><strong>Localized row labels and removal of anomalous white line</strong>: The text options panel (<code>TextOptionsOverlay</code>) is now structured as a clean 3-row layout where each row displays its localized label across all 8 languages (<code>Color</code>, <code>Size</code>, <code>Border</code>). Removed the vertical separator <code>BoxView</code> elements (<code>TextOptionsSeparator</code>, <code>TextBorderSeparator</code>) that caused an anomalous vertical white line below the size buttons.</li>
+<li><strong>Exact vertical and horizontal text centering inside borders</strong>: Disabled Android's default font ascent/descent padding (<code>SetIncludeFontPadding(false)</code> and <code>GravityFlags.Center</code> on the native <code>TextView</code>), wrapped the <code>Label</code> inside a centered <code>Grid</code>, and measured bounds after attaching to <code>ActiveAnnotationsContainer</code> (<code>UpdateTextBorderBounds</code>), ensuring lowercase and mixed-case text annotations (such as <code>"test"</code>) are centered inside their colored border.</li>
+</ul>
+<h3 id="3-scores-library-long-press-multi-selection-gesturedetector">3. Scores Library: Long-Press Multi-Selection (<code>GestureDetector</code>)</h3>
+<ul>
+<li><strong>Unified native tap and long-press detection</strong>: Replaced the standalone long-click listener with a native <code>ScoreCardTouchListener</code> backed by <code>Android.Views.GestureDetector</code> (<code>SimpleOnGestureListener</code>) on score cards so MAUI's gesture manager no longer swallows long-press events. Long-pressing a score triggers haptic feedback, activates multi-selection mode with checkboxes on the left (equivalent to the top bar <code>☑</code> button), and selects the score.</li>
+</ul>
+<h3 id="4-code-quality-fixed-all-7-compilerbuild-warnings-0-warnings">4. Code Quality: Fixed All 7 Compiler/Build Warnings (<code>0 Warnings</code>)</h3>
+<ul>
+<li>Added <code>x:DataType="services:BackupFile"</code> to the <code>DataTemplate</code> in <code>BackupsPage.xaml</code> (3 <code>XC0022</code> warnings).</li>
+<li>Wrapped <code>FolderPicker.Default.PickAsync</code> with <code>#pragma warning disable CA1416</code> in <code>BackupsPage.xaml.cs</code> (Android API 26 compatibility warning).</li>
+<li>Updated <code>OnPdfWebViewNavigating</code> and <code>OnPdfWebViewNavigated</code> signatures to <code>object? sender</code> in <code>ViewerPage.xaml.cs</code> (2 <code>CS8622</code> warnings).</li>
+<li>Disabled offline NuGet audit warnings (<code>&lt;NuGetAudit&gt;false&lt;/NuGetAudit&gt;</code>) in <code>MusicScoreManager.csproj</code> (<code>NU1900</code>).</li>
 </ul>
 <hr />
 <h2 id="v318-11012026">v3.1.8 — 11/01/2026</h2>
