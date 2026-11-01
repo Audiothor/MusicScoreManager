@@ -846,7 +846,7 @@ namespace MusicScoreManager.Services
                 try
                 {
                     using var sourceImage = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(item.ImagePath!);
-                    
+
                     // Correction automatique de l'orientation Exif de l'appareil photo
                     sourceImage.Mutate(x => x.AutoOrient());
 

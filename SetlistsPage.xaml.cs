@@ -265,6 +265,20 @@ public partial class SetlistsPage : ContentPage
 
         try
         {
+            double topY = -1;
+            if (this.Height > 150)
+            {
+                topY = Math.Max(0, (this.Height - 120.0) / 2.0);
+                SetlistLoadingBorder.VerticalOptions = LayoutOptions.Start;
+                SetlistLoadingBorder.Margin = new Thickness(0, topY, 0, 0);
+            }
+            else
+            {
+                SetlistLoadingBorder.VerticalOptions = LayoutOptions.Center;
+                SetlistLoadingBorder.Margin = new Thickness(0);
+            }
+
+            Shell.SetTabBarIsVisible(this, false);
             SetlistLoadingOverlay.IsVisible = true;
             await Task.Delay(25);
 
@@ -272,6 +286,7 @@ public partial class SetlistsPage : ContentPage
             if (scores == null || !scores.Any())
             {
                 SetlistLoadingOverlay.IsVisible = false;
+                Shell.SetTabBarIsVisible(this, true);
                 var loc = LocalizationService.Instance;
                 await DisplayAlertAsync(loc.GetString("Setlist_Empty"), string.Format(loc.GetString("Setlist_Edit_Empty"), setlist.Name), "OK");
                 return;
@@ -281,12 +296,13 @@ public partial class SetlistsPage : ContentPage
             if (firstScore.IsFileMissing)
             {
                 SetlistLoadingOverlay.IsVisible = false;
+                Shell.SetTabBarIsVisible(this, true);
                 var loc = LocalizationService.Instance;
                 await DisplayAlertAsync(loc.GetString("Score_Edit_MissingFile_Title"), loc.GetString("Score_Edit_Missing_Msg"), "OK");
                 return;
             }
 
-            await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading, setlist));
+            await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading, setlist, initialLoadingTopY: topY, isSetlistOpening: true), false);
         }
         catch (Exception ex)
         {

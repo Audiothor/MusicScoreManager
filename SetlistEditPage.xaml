@@ -313,6 +313,7 @@
         <ContentView x:Name="ScoreLoadingOverlay" 
                      Grid.Row="0"
                      Grid.RowSpan="3"
+                     Margin="{OnIdiom Phone='-10,-8', Tablet='-15'}"
                      HorizontalOptions="Fill"
                      VerticalOptions="Fill"
                      IsVisible="False" 

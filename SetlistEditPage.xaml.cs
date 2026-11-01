@@ -249,6 +249,20 @@ public partial class SetlistEditPage : ContentPage
             _isOpeningScore = true;
             try
             {
+                double topY = -1;
+                if (this.Height > 150)
+                {
+                    topY = Math.Max(0, (this.Height - 120.0) / 2.0);
+                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Start;
+                    ScoreLoadingBorder.Margin = new Thickness(0, topY, 0, 0);
+                }
+                else
+                {
+                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Center;
+                    ScoreLoadingBorder.Margin = new Thickness(0);
+                }
+
+                Shell.SetTabBarIsVisible(this, false);
                 ScoreLoadingOverlay.IsVisible = true;
                 await Task.Delay(25);
 
@@ -262,11 +276,14 @@ public partial class SetlistEditPage : ContentPage
                     allScores, 
                     index, 
                     ContinuousSwitch.IsToggled,
-                    _setlist));
+                    _setlist,
+                    initialLoadingTopY: topY,
+                    isSetlistOpening: false), false);
             }
             catch (Exception ex)
             {
                 ScoreLoadingOverlay.IsVisible = false;
+                Shell.SetTabBarIsVisible(this, true);
                 System.Diagnostics.Debug.WriteLine($"[SetlistEditPage] Erreur ouverture partition: {ex.Message}");
             }
             finally

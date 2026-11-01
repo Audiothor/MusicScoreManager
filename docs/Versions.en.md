@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.1.11 — 11/01/2026](#v3111--11012026)
 - [v3.1.10 — 11/01/2026](#v3110--11012026)
 - [v3.1.9 — 11/01/2026](#v319--11012026)
 - [v3.1.8 — 11/01/2026](#v318--11012026)
@@ -44,6 +45,21 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.11 — 11/01/2026
+
+### 1. Score & Setlist Opening: Complete Elimination of Loading Modal Visual Shift
+- **1.1. Restored and synchronized vertical anchoring (`Margin.Top` & `TabBar`):**
+  - Computes the exact vertical coordinate `topY = Math.Max(0, (this.Height - 120.0) / 2.0)` prior to hiding the bottom `TabBar` (`Shell.SetTabBarIsVisible(this, false)`) across `ScoresPage`, `SetlistsPage`, and `SetlistEditPage`.
+  - Locks `ScoreLoadingBorder` and `SetlistLoadingBorder` using `VerticalOptions = LayoutOptions.Start` and `Margin = new Thickness(0, topY, 0, 0)`, preventing any downward jump when page height expands upon `TabBar` collapse.
+- **1.2. Pixel-perfect continuity with `ViewerPage` (`ViewerLoadingOverlay`):**
+  - Unified the visual template of `ViewerLoadingOverlay` / `ViewerLoadingBorder` in `ViewerPage.xaml` to match `ScoresPage` / `SetlistsPage` (`WidthRequest="260"`, `HeightRequest="120"`, `#1E1E26` background, `#007ACC` `1.5` border, `#00B4D8` `40×40` spinner, `14pt` bold font, and identical localized text).
+  - Passes `initialLoadingTopY` and `isSetlistOpening` directly to `ViewerPage` with a non-animated transition (`Navigation.PushAsync(..., false)`), keeping the loading modal 100% stationary at the exact same screen pixel from initial tap until the rendered score is displayed.
+- **1.3. Full-bleed alignment in `SetlistEditPage` & PDF layout stability:**
+  - Offset the root grid padding in `SetlistEditPage.xaml` on `ScoreLoadingOverlay` (`Margin="{OnIdiom Phone='-10,-8', Tablet='-15'}"`).
+  - Synchronized `_isTwoPagesMode` prior to async rendering and updated canvas bounds (`UpdateCanvasBounds`) inside `AnnotationsContainer.SizeChanged`.
 
 ---
 

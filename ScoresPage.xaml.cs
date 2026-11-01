@@ -1327,16 +1327,31 @@ public partial class ScoresPage : ContentPage
         _isOpeningScore = true;
         try
         {
-            if (ScoreLoadingOverlay != null)
+            double topY = -1;
+            if (ScoreLoadingOverlay != null && ScoreLoadingBorder != null)
             {
+                if (this.Height > 150)
+                {
+                    topY = Math.Max(0, (this.Height - 120.0) / 2.0);
+                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Start;
+                    ScoreLoadingBorder.Margin = new Thickness(0, topY, 0, 0);
+                }
+                else
+                {
+                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Center;
+                    ScoreLoadingBorder.Margin = new Thickness(0);
+                }
+
+                Shell.SetTabBarIsVisible(this, false);
                 ScoreLoadingOverlay.IsVisible = true;
                 await Task.Delay(25);
             }
-            await Navigation.PushAsync(new ViewerPage(selectedScore));
+            await Navigation.PushAsync(new ViewerPage(selectedScore, initialLoadingTopY: topY, isSetlistOpening: false), false);
         }
         catch (Exception ex)
         {
             if (ScoreLoadingOverlay != null) ScoreLoadingOverlay.IsVisible = false;
+            Shell.SetTabBarIsVisible(this, true);
             System.Diagnostics.Debug.WriteLine($"[ScoresPage] Erreur ouverture partition : {ex.Message}");
         }
         finally
@@ -2295,7 +2310,7 @@ public partial class ScoresPage : ContentPage
                     tcs.TrySetResult(true);
                     if (_lastImportedScore != null)
                     {
-                        await Navigation.PushAsync(new ViewerPage(_lastImportedScore));
+                        await OpenScoreWithOverlayAsync(_lastImportedScore);
                     }
                 };
                 ModernModalButtonsLayout.Add(openBtn);
