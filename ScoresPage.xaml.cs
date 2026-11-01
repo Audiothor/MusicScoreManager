@@ -1327,6 +1327,11 @@ public partial class ScoresPage : ContentPage
         _isOpeningScore = true;
         try
         {
+            if (ScoreLoadingOverlay != null)
+            {
+                ScoreLoadingOverlay.IsVisible = true;
+                await Task.Delay(25);
+            }
             await Navigation.PushAsync(new ViewerPage(selectedScore));
         }
         catch (Exception ex)
@@ -2197,16 +2202,16 @@ public partial class ScoresPage : ContentPage
         ModernImportModalOverlay.Opacity = 0;
         ModernImportModalCard.Scale = 0.88;
         await Task.WhenAll(
-            ModernImportModalOverlay.FadeTo(1, 180, Easing.CubicOut),
-            ModernImportModalCard.ScaleTo(1.0, 180, Easing.CubicOut)
+            ModernImportModalOverlay.FadeToAsync(1, 180, Easing.CubicOut),
+            ModernImportModalCard.ScaleToAsync(1.0, 180, Easing.CubicOut)
         );
     }
 
     private async Task AnimateModalCloseAsync()
     {
         await Task.WhenAll(
-            ModernImportModalOverlay.FadeTo(0, 140, Easing.CubicIn),
-            ModernImportModalCard.ScaleTo(0.9, 140, Easing.CubicIn)
+            ModernImportModalOverlay.FadeToAsync(0, 140, Easing.CubicIn),
+            ModernImportModalCard.ScaleToAsync(0.9, 140, Easing.CubicIn)
         );
         ModernImportModalOverlay.IsVisible = false;
     }
@@ -2734,8 +2739,8 @@ public partial class ScoresPage : ContentPage
             ModernCategoryModalOverlay.Opacity = 0;
             ModernCategoryModalCard.Scale = 0.9;
             await Task.WhenAll(
-                ModernCategoryModalOverlay.FadeTo(1, 180, Easing.CubicOut),
-                ModernCategoryModalCard.ScaleTo(1.0, 180, Easing.CubicOut)
+                ModernCategoryModalOverlay.FadeToAsync(1, 180, Easing.CubicOut),
+                ModernCategoryModalCard.ScaleToAsync(1.0, 180, Easing.CubicOut)
             );
         });
 
@@ -2746,8 +2751,8 @@ public partial class ScoresPage : ContentPage
     {
         if (ModernCategoryModalOverlay == null || !ModernCategoryModalOverlay.IsVisible) return;
         await Task.WhenAll(
-            ModernCategoryModalOverlay.FadeTo(0, 140, Easing.CubicIn),
-            ModernCategoryModalCard.ScaleTo(0.9, 140, Easing.CubicIn)
+            ModernCategoryModalOverlay.FadeToAsync(0, 140, Easing.CubicIn),
+            ModernCategoryModalCard.ScaleToAsync(0.9, 140, Easing.CubicIn)
         );
         ModernCategoryModalOverlay.IsVisible = false;
     }

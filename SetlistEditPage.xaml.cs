@@ -249,6 +249,9 @@ public partial class SetlistEditPage : ContentPage
             _isOpeningScore = true;
             try
             {
+                ScoreLoadingOverlay.IsVisible = true;
+                await Task.Delay(25);
+
                 var allScores = _orderedScores.Select(os => os.Score).ToList();
                 int index = _orderedScores.IndexOf(orderedScore);
                 

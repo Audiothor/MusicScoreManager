@@ -765,7 +765,8 @@ namespace MusicScoreManager.Services
                                     using var jpegData = img.AsJPEG(0.9f);
                                     if (jpegData != null)
                                     {
-                                        jpegData.Save(pageImagePath, true);
+                                        using var saveUrl = Foundation.NSUrl.FromFilename(pageImagePath);
+                                        jpegData.Save(saveUrl, true);
                                         list.Add(new PdfPageItem
                                         {
                                             ImagePath = pageImagePath,

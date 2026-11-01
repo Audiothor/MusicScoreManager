@@ -100,7 +100,7 @@ public partial class ScoreScannerPage : ContentPage
         {
             if (!MediaPicker.Default.IsCaptureSupported)
             {
-                await DisplayAlert(loc.GetString("Common_Info", "Information"),
+                await DisplayAlertAsync(loc.GetString("Common_Info", "Information"),
                     loc.GetString("ScoreScanner_No_Camera", "L'appareil photo n'est pas disponible sur cet appareil. Utilisez le bouton 'Choisir une image'."),
                     loc.GetString("Common_OK", "OK"));
                 return;
@@ -114,7 +114,7 @@ public partial class ScoreScannerPage : ContentPage
 
             if (status != PermissionStatus.Granted)
             {
-                await DisplayAlert(loc.GetString("Common_Warning", "Attention"),
+                await DisplayAlertAsync(loc.GetString("Common_Warning", "Attention"),
                     loc.GetString("ScoreScanner_Camera_Permission", "L'autorisation d'accéder à l'appareil photo est requise pour numériser une partition."),
                     loc.GetString("Common_OK", "OK"));
                 return;
@@ -129,7 +129,7 @@ public partial class ScoreScannerPage : ContentPage
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"[ScoreScanner] Erreur capture photo: {ex.Message}");
-            await DisplayAlert(loc.GetString("Common_Error", "Erreur"), ex.Message, loc.GetString("Common_OK", "OK"));
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), ex.Message, loc.GetString("Common_OK", "OK"));
         }
     }
 
@@ -458,7 +458,7 @@ public partial class ScoreScannerPage : ContentPage
 
         if (!_scannedPages.Any())
         {
-            await DisplayAlert(loc.GetString("Common_Error", "Erreur"),
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"),
                 loc.GetString("ScoreScanner_No_Page_Error", "Veuillez numériser au moins une page pour créer la partition."),
                 loc.GetString("Common_OK", "OK"));
             return;
@@ -521,7 +521,7 @@ public partial class ScoreScannerPage : ContentPage
 
             await _databaseService.SaveScoreAsync(newScore);
 
-            bool openNow = await DisplayAlert(
+            bool openNow = await DisplayAlertAsync(
                 loc.GetString("ScoreScanner_Success_Title", "Partition créée !"),
                 string.Format(loc.GetString("ScoreScanner_Success_Msg", "La partition '{0}' a été créée avec succès ({1} pages) et ajoutée à votre bibliothèque.\n\nSouhaitez-vous l'ouvrir maintenant ?"), title, _scannedPages.Count),
                 loc.GetString("Score_Open", "Ouvrir"),
@@ -539,7 +539,7 @@ public partial class ScoreScannerPage : ContentPage
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"[ScoreScanner] Erreur génération: {ex.Message}");
-            await DisplayAlert(loc.GetString("Common_Error", "Erreur"), ex.Message, loc.GetString("Common_OK", "OK"));
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), ex.Message, loc.GetString("Common_OK", "OK"));
         }
         finally
         {

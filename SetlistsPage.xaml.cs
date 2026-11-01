@@ -265,6 +265,9 @@ public partial class SetlistsPage : ContentPage
 
         try
         {
+            SetlistLoadingOverlay.IsVisible = true;
+            await Task.Delay(25);
+
             var scores = await _databaseService.GetScoresForSetlistAsync(setlist.Id);
             if (scores == null || !scores.Any())
             {

@@ -806,6 +806,7 @@
   "Sticker_Item_Intonation": "Justesse",
   "Viewer_Text_Color_Label": "Couleur",
   "Viewer_Text_Size_Label": "Taille",
+  "Viewer_Text_Bg_Label": "Fond",
   "Viewer_Text_Border_Label": "Cadre",
   "Viewer_Metronome_Settings_Title": "Paramètres du Métronome",
   "Viewer_Metronome_Tempo_Header": "TEMPO (BPM)",
