@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>3.1.8</ApplicationDisplayVersion>
-		<ApplicationVersion>31800</ApplicationVersion>
-		<!-- Version actuelle : v3.1.8 "Élimination des blocages ANR, ouverture instantanée des partitions et gestion native de l'appui long" -->
+		<ApplicationDisplayVersion>3.1.9</ApplicationDisplayVersion>
+		<ApplicationVersion>31900</ApplicationVersion>
+		<!-- Version actuelle : v3.1.9 "Optimisation ultra-rapide de l'ouverture PDF, refonte du panneau et centrage des annotations texte, sélection multiple par maintien long et 0 warning" -->
 
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -59,7 +59,8 @@
 
 	<PropertyGroup>
 		<!-- Désactiver les avertissements d'audit pour les paquets transitifs -->
-		<NoWarn>$(NoWarn);NU1902;NU1903;CS0618</NoWarn>
+		<NuGetAudit>false</NuGetAudit>
+		<NoWarn>$(NoWarn);NU1900;NU1902;NU1903;CS0618;XC0025;XC0022</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

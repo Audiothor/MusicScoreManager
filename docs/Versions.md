@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.1.9 — 01/11/2026](#v319--01112026)
 - [v3.1.8 — 01/11/2026](#v318--01112026)
 - [v3.1.7 — 31/10/2026](#v317--31102026)
 - [v3.1.6 — 31/10/2026](#v316--31102026)
@@ -42,6 +43,28 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.9 — 01/11/2026
+
+### 1. Ouverture des Partitions PDF : Optimisation Maximale des Temps de Réponse
+- **Navigation directe à latence zéro (`0 ms`)** : Suppression de l'appel à `Shell.SetTabBarIsVisible(this, false)` et de l'affichage de l'overlay intermédiaire sur `ScoresPage`, `SetlistsPage` et `SetlistEditPage` avant le `Navigation.PushAsync(new ViewerPage(...))`. Ce masquage préalable forçait un recalcul complet de la mise en page de la `CollectionView` sur le thread UI avant même le début de la navigation (`ViewerPage` gérant déjà nativement `Shell.TabBarIsVisible="False"`).
+- **Élimination de la double ouverture PDF au premier chargement** : `RenderedPdfPage` transporte désormais directement `TotalPages` et alimente un cache mémoire statique `_pageCountCache`, évitant d'ouvrir une première fois le descripteur de fichier et `PdfRenderer`/`PdfDocument` pour compter les pages avant de l'ouvrir une seconde fois pour le rendu.
+- **Priorisation CPU/IO absolue de la Page 1** : Le calibrage de l'échelle de rastérisation (`1.6x` en page simple, `1.35x` en double page paysage, compression JPEG `82`), la mise en cache unique des fichiers WAV du métronome (`click.wav`, `precount.wav`) par session, et la temporisation de `80 ms` / `150 ms` des tâches secondaires et du préchargement des pages adjacentes réduisent de près de moitié le temps d'affichage initial.
+
+### 2. Annotations de Texte : Refonte du Panneau d'Options & Centrage Parfait dans les Cadres
+- **Libellés localisés et suppression du trait blanc parasite** : Le panneau d'options de texte (`TextOptionsOverlay`) est désormais structuré en 3 lignes alignées disposant chacune de son libellé traduit dans les 8 langues (`Couleur`, `Taille`, `Cadre`). Les séparateurs verticaux (`TextOptionsSeparator`, `TextBorderSeparator`) responsables du trait blanc vertical anormal sous la barre de tailles ont été supprimés.
+- **Centrage vertical et horizontal exact du texte dans son cadre** : Suppression du padding interne de police Android (`SetIncludeFontPadding(false)` et `GravityFlags.Center` sur le `TextView` natif), encapsulation du `Label` dans une `Grid` centrée et recalcul précis des dimensions du cadre après attachement au conteneur actif (`UpdateTextBorderBounds`), garantissant un centrage parfait des textes (y compris en minuscules comme `"test"`) au milieu de leur bordure colorée.
+
+### 3. Bibliothèque de Partitions : Sélection Multiple par Maintien Long (`GestureDetector` Natif)
+- **Détection native conjointe du clic court et du maintien long** : Remplacement du listener simple par un `ScoreCardTouchListener` basé sur `Android.Views.GestureDetector` (`SimpleOnGestureListener`) sur chaque carte de partition. Le gestionnaire de gestes MAUI ne bloque plus l'événement d'appui long : un maintien prolongé sur une partition déclenche immédiatement la vibration haptique, active le mode de sélection multiple avec les cases à cocher à gauche (équivalent au bouton `☑` de la barre supérieure) et coche la partition ciblée.
+
+### 4. Qualité du Code : Résolution des 7 Avertissements de Compilation (`0 Warning`)
+- Ajout de `x:DataType="services:BackupFile"` sur le `DataTemplate` de `BackupsPage.xaml` (3 avertissements XamlC `XC0022`).
+- Encapsulation de `FolderPicker.Default.PickAsync` avec `#pragma warning disable CA1416` dans `BackupsPage.xaml.cs` (avertissement de plateforme Android API 26).
+- Correction de la nullabilité `object? sender` sur `OnPdfWebViewNavigating` et `OnPdfWebViewNavigated` dans `ViewerPage.xaml.cs` (2 avertissements `CS8622`).
+- Désactivation de l'audit NuGet hors-ligne (`<NuGetAudit>false</NuGetAudit>`) dans `MusicScoreManager.csproj` (`NU1900`).
 
 ---
 

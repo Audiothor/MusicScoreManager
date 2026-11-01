@@ -156,6 +156,7 @@ public partial class ScoresPage : ContentPage
                 {
                     foreach (var score in missingPageScores)
                     {
+                        if (_isOpeningScore) break;
                         try
                         {
                             if (score.Type == ScoreType.Image)
@@ -173,7 +174,7 @@ public partial class ScoresPage : ContentPage
                                     await _databaseService.SaveScoreAsync(score);
                                 }
                             }
-                            await Task.Delay(40);
+                            await Task.Delay(80);
                         }
                         catch { }
                     }
@@ -316,6 +317,7 @@ public partial class ScoresPage : ContentPage
             {
                 foreach (var score in missingPageScores)
                 {
+                    if (_isOpeningScore) break;
                     try
                     {
                         if (score.Type == ScoreType.Image)
@@ -333,7 +335,7 @@ public partial class ScoresPage : ContentPage
                                 await _databaseService.SaveScoreAsync(score);
                             }
                         }
-                        await Task.Delay(40);
+                        await Task.Delay(80);
                     }
                     catch { }
                 }
@@ -1178,13 +1180,71 @@ public partial class ScoresPage : ContentPage
 #if ANDROID
         if (sender is Border border && border.Handler?.PlatformView is Android.Views.View nativeView)
         {
+            nativeView.Clickable = true;
             nativeView.LongClickable = true;
+            nativeView.SetOnTouchListener(new ScoreCardTouchListener(this, border, nativeView.Context));
             nativeView.SetOnLongClickListener(new ScoreCardLongClickListener(this, border));
         }
 #endif
     }
 
 #if ANDROID
+    private sealed class ScoreCardTouchListener : Java.Lang.Object, Android.Views.View.IOnTouchListener
+    {
+        private readonly Android.Views.GestureDetector _gestureDetector;
+
+        public ScoreCardTouchListener(ScoresPage page, Border border, Android.Content.Context? context)
+        {
+            var ctx = context ?? Android.App.Application.Context;
+            _gestureDetector = new Android.Views.GestureDetector(ctx, new ScoreCardGestureListener(page, border));
+        }
+
+        public bool OnTouch(Android.Views.View? v, Android.Views.MotionEvent? e)
+        {
+            if (e != null)
+            {
+                _gestureDetector.OnTouchEvent(e);
+            }
+            return true;
+        }
+    }
+
+    private sealed class ScoreCardGestureListener : Android.Views.GestureDetector.SimpleOnGestureListener
+    {
+        private readonly WeakReference<ScoresPage> _pageRef;
+        private readonly WeakReference<Border> _borderRef;
+
+        public ScoreCardGestureListener(ScoresPage page, Border border)
+        {
+            _pageRef = new WeakReference<ScoresPage>(page);
+            _borderRef = new WeakReference<Border>(border);
+        }
+
+        public override bool OnDown(Android.Views.MotionEvent e) => true;
+
+        public override bool OnSingleTapUp(Android.Views.MotionEvent e)
+        {
+            if (_pageRef.TryGetTarget(out var page) &&
+                _borderRef.TryGetTarget(out var border) &&
+                border.BindingContext is Models.Score score)
+            {
+                MainThread.BeginInvokeOnMainThread(() => _ = page.HandleScoreTappedAsync(score));
+                return true;
+            }
+            return false;
+        }
+
+        public override void OnLongPress(Android.Views.MotionEvent e)
+        {
+            if (_pageRef.TryGetTarget(out var page) &&
+                _borderRef.TryGetTarget(out var border) &&
+                border.BindingContext is Models.Score score)
+            {
+                MainThread.BeginInvokeOnMainThread(() => page.OnScoreLongPressed(score));
+            }
+        }
+    }
+
     private sealed class ScoreCardLongClickListener : Java.Lang.Object, Android.Views.View.IOnLongClickListener
     {
         private readonly WeakReference<ScoresPage> _pageRef;
@@ -1202,7 +1262,7 @@ public partial class ScoresPage : ContentPage
                 _borderRef.TryGetTarget(out var border) &&
                 border.BindingContext is Models.Score score)
             {
-                page.OnScoreLongPressed(score);
+                MainThread.BeginInvokeOnMainThread(() => page.OnScoreLongPressed(score));
                 return true;
             }
             return false;
@@ -1267,31 +1327,11 @@ public partial class ScoresPage : ContentPage
         _isOpeningScore = true;
         try
         {
-            if (ScoreLoadingOverlay != null && ScoreLoadingBorder != null)
-            {
-                if (this.Height > 150)
-                {
-                    double topY = (this.Height - 120.0) / 2.0;
-                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Start;
-                    ScoreLoadingBorder.Margin = new Thickness(0, Math.Max(0, topY), 0, 0);
-                }
-                else
-                {
-                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Center;
-                    ScoreLoadingBorder.Margin = new Thickness(0);
-                }
-
-                Shell.SetTabBarIsVisible(this, false);
-                ScoreLoadingOverlay.IsVisible = true;
-                await Task.Yield();
-            }
-
             await Navigation.PushAsync(new ViewerPage(selectedScore));
         }
         catch (Exception ex)
         {
             if (ScoreLoadingOverlay != null) ScoreLoadingOverlay.IsVisible = false;
-            Shell.SetTabBarIsVisible(this, true);
             System.Diagnostics.Debug.WriteLine($"[ScoresPage] Erreur ouverture partition : {ex.Message}");
         }
         finally

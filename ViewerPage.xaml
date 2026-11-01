@@ -545,14 +545,15 @@
                 BackgroundColor="#EE1E1E24"
                 Stroke="#44FFFFFF"
                 StrokeThickness="1"
-                Padding="8,5"
+                Padding="12,8"
                 ZIndex="25">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12" />
             </Border.StrokeShape>
-            <StackLayout x:Name="TextOptionsLayout" Orientation="{OnIdiom Phone=Vertical, Tablet=Horizontal}" Spacing="{OnIdiom Phone=4, Tablet=6}" VerticalOptions="Center" HorizontalOptions="Center">
-                <!-- Pastilles de couleurs (Noir par défaut, Rouge, Bleu, Vert, Jaune, Blanc) -->
-                <HorizontalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="Center">
+            <VerticalStackLayout x:Name="TextOptionsLayout" Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
+                <!-- Ligne 1 : Pastilles de couleurs (Noir par défaut, Rouge, Bleu, Vert, Jaune, Blanc) -->
+                <HorizontalStackLayout Spacing="6" VerticalOptions="Center" HorizontalOptions="Start">
+                    <Label Text="{Binding [Viewer_Text_Color_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="48" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
                     <!-- Noir (défaut) -->
                     <Border x:Name="TextBlackBtn" BackgroundColor="#000000" WidthRequest="22" HeightRequest="22" Stroke="White" StrokeThickness="2">
                         <Border.StrokeShape><RoundRectangle CornerRadius="11" /></Border.StrokeShape>
@@ -585,11 +586,9 @@
                     </Border>
                 </HorizontalStackLayout>
 
-                <!-- Séparateur vertical (visible en paysage) -->
-                <BoxView x:Name="TextOptionsSeparator" IsVisible="{OnIdiom Phone=False, Tablet=True}" WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
-
-                <!-- Choix de taille en pixel (8, 10, 12, 14, 16, 18) -->
-                <HorizontalStackLayout Spacing="2" VerticalOptions="Center" HorizontalOptions="Center">
+                <!-- Ligne 2 : Choix de taille en pixel (8, 10, 12, 14, 16, 18) -->
+                <HorizontalStackLayout Spacing="4" VerticalOptions="Center" HorizontalOptions="Start">
+                    <Label Text="{Binding [Viewer_Text_Size_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="48" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
                     <Button x:Name="TextSize8Btn" Text="8" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="8" />
                     <Button x:Name="TextSize10Btn" Text="10" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="10" />
                     <Button x:Name="TextSize12Btn" Text="12" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="12" />
@@ -598,12 +597,9 @@
                     <Button x:Name="TextSize18Btn" Text="18" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="18" />
                 </HorizontalStackLayout>
 
-                <!-- Séparateur vertical (visible en paysage) -->
-                <BoxView x:Name="TextBorderSeparator" IsVisible="{OnIdiom Phone=False, Tablet=True}" WidthRequest="1" HeightRequest="20" Color="#44FFFFFF" VerticalOptions="Center" />
-
-                <!-- Choix de cadre / bordure avec couleur -->
-                <HorizontalStackLayout Spacing="4" VerticalOptions="Center" HorizontalOptions="Center">
-                    <Label Text="{Binding [Viewer_Text_Border_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" VerticalOptions="Center" Margin="0,0,2,0" />
+                <!-- Ligne 3 : Choix de cadre / bordure avec couleur -->
+                <HorizontalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="Start">
+                    <Label Text="{Binding [Viewer_Text_Border_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="48" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
                     <!-- Sans cadre (Transparent) -->
                     <Border x:Name="TextBorderNoneBtn" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" BackgroundColor="Transparent" Stroke="White" StrokeThickness="2">
                         <Border.StrokeShape><RoundRectangle CornerRadius="11" /></Border.StrokeShape>
@@ -642,9 +638,9 @@
                     </Border>
 
                     <!-- Bouton fermer le panneau -->
-                    <Button Text="✕" BackgroundColor="Transparent" TextColor="#AAAAAA" FontSize="14" HeightRequest="26" WidthRequest="22" Padding="0" Clicked="OnCloseTextOptionsClicked" VerticalOptions="Center" Margin="3,0,0,0" />
+                    <Button Text="✕" BackgroundColor="Transparent" TextColor="#AAAAAA" FontSize="14" HeightRequest="26" WidthRequest="22" Padding="0" Clicked="OnCloseTextOptionsClicked" VerticalOptions="Center" Margin="6,0,0,0" />
                 </HorizontalStackLayout>
-            </StackLayout>
+            </VerticalStackLayout>
         </Border>
 
         <!-- Barre d'Annotations (Bas) -->

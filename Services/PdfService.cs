@@ -108,6 +108,7 @@ namespace MusicScoreManager.Services
         public int Width { get; set; }
         public int Height { get; set; }
         public int PageNumber { get; set; }
+        public int TotalPages { get; set; } = 1;
         public bool IsTwoPages { get; set; }
         public int LeftPage { get; set; }
         public int RightPage { get; set; }
@@ -117,8 +118,9 @@ namespace MusicScoreManager.Services
     public class PdfService
     {
         private static readonly Dictionary<string, RenderedPdfPage> _pageMemoryCache = new();
+        private static readonly Dictionary<string, int> _pageCountCache = new(StringComparer.OrdinalIgnoreCase);
         private static readonly object _cacheLock = new();
-        private const int MaxMemoryCacheEntries = 12;
+        private const int MaxMemoryCacheEntries = 14;
 
         public static bool IsNativePdfSupported =>
 #if ANDROID || WINDOWS || IOS || MACCATALYST
@@ -132,12 +134,21 @@ namespace MusicScoreManager.Services
             lock (_cacheLock)
             {
                 _pageMemoryCache.Clear();
+                _pageCountCache.Clear();
             }
         }
 
         public async Task<int> GetPdfPageCountAsync(string pdfPath)
         {
             if (string.IsNullOrWhiteSpace(pdfPath) || !File.Exists(pdfPath)) return 1;
+
+            lock (_cacheLock)
+            {
+                if (_pageCountCache.TryGetValue(pdfPath, out int cachedCount) && cachedCount > 0)
+                {
+                    return cachedCount;
+                }
+            }
 
             return await Task.Run(async () =>
             {
@@ -149,7 +160,9 @@ namespace MusicScoreManager.Services
                     if (fd != null)
                     {
                         using var renderer = new PdfRenderer(fd);
-                        return renderer.PageCount;
+                        int count = Math.Max(1, renderer.PageCount);
+                        lock (_cacheLock) { _pageCountCache[pdfPath] = count; }
+                        return count;
                     }
                 }
                 catch (Exception ex)
@@ -162,7 +175,9 @@ namespace MusicScoreManager.Services
                 {
                     var storageFile = await StorageFile.GetFileFromPathAsync(pdfPath);
                     var pdfDoc = await PdfDocument.LoadFromFileAsync(storageFile);
-                    return (int)pdfDoc.PageCount;
+                    int count = Math.Max(1, (int)pdfDoc.PageCount);
+                    lock (_cacheLock) { _pageCountCache[pdfPath] = count; }
+                    return count;
                 }
                 catch (Exception ex)
                 {
@@ -174,7 +189,12 @@ namespace MusicScoreManager.Services
                 {
                     using var url = Foundation.NSUrl.FromFilename(pdfPath);
                     using var pdfDoc = new PdfKit.PdfDocument(url);
-                    if (pdfDoc != null) return (int)pdfDoc.PageCount;
+                    if (pdfDoc != null)
+                    {
+                        int count = Math.Max(1, (int)pdfDoc.PageCount);
+                        lock (_cacheLock) { _pageCountCache[pdfPath] = count; }
+                        return count;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -185,7 +205,7 @@ namespace MusicScoreManager.Services
             });
         }
 
-        public async Task<RenderedPdfPage?> RenderPdfPageAsync(string pdfPath, int pageNumber, int rotation = 0, float scale = 2.0f)
+        public async Task<RenderedPdfPage?> RenderPdfPageAsync(string pdfPath, int pageNumber, int rotation = 0, float scale = 1.6f)
         {
             if (string.IsNullOrWhiteSpace(pdfPath) || !File.Exists(pdfPath)) return null;
 
@@ -208,7 +228,9 @@ namespace MusicScoreManager.Services
                     if (fd == null) return null;
 
                     using var renderer = new PdfRenderer(fd);
-                    int pageIndex = Math.Clamp(pageNumber - 1, 0, renderer.PageCount - 1);
+                    int totalPages = Math.Max(1, renderer.PageCount);
+                    lock (_cacheLock) { _pageCountCache[pdfPath] = totalPages; }
+                    int pageIndex = Math.Clamp(pageNumber - 1, 0, totalPages - 1);
                     using var page = renderer.OpenPage(pageIndex);
 
                     int renderW = Math.Max(1, (int)(page.Width * scale));
@@ -230,7 +252,7 @@ namespace MusicScoreManager.Services
                     }
 
                     using var ms = new MemoryStream();
-                    finalBmp.Compress(Bitmap.CompressFormat.Jpeg!, 90, ms);
+                    finalBmp.Compress(Bitmap.CompressFormat.Jpeg!, 82, ms);
                     int fw = finalBmp.Width;
                     int fh = finalBmp.Height;
 
@@ -242,6 +264,7 @@ namespace MusicScoreManager.Services
                         Width = fw,
                         Height = fh,
                         PageNumber = pageIndex + 1,
+                        TotalPages = totalPages,
                         IsTwoPages = false
                     };
                 }
@@ -255,7 +278,9 @@ namespace MusicScoreManager.Services
                 {
                     var storageFile = await StorageFile.GetFileFromPathAsync(pdfPath);
                     var pdfDoc = await PdfDocument.LoadFromFileAsync(storageFile);
-                    int pageIndex = Math.Clamp(pageNumber - 1, 0, (int)pdfDoc.PageCount - 1);
+                    int totalPages = Math.Max(1, (int)pdfDoc.PageCount);
+                    lock (_cacheLock) { _pageCountCache[pdfPath] = totalPages; }
+                    int pageIndex = Math.Clamp(pageNumber - 1, 0, totalPages - 1);
 
                     using var page = pdfDoc.GetPage((uint)pageIndex);
                     using var memStream = new InMemoryRandomAccessStream();
@@ -279,7 +304,7 @@ namespace MusicScoreManager.Services
                         using var img = SixLabors.ImageSharp.Image.Load(bytes);
                         img.Mutate(ctx => ctx.Rotate(normRot));
                         using var rotMs = new MemoryStream();
-                        img.SaveAsJpeg(rotMs, new JpegEncoder { Quality = 90 });
+                        img.SaveAsJpeg(rotMs, new JpegEncoder { Quality = 82 });
                         bytes = rotMs.ToArray();
                         fw = img.Width;
                         fh = img.Height;
@@ -291,6 +316,7 @@ namespace MusicScoreManager.Services
                         Width = fw,
                         Height = fh,
                         PageNumber = pageIndex + 1,
+                        TotalPages = totalPages,
                         IsTwoPages = false
                     };
                 }
@@ -306,7 +332,9 @@ namespace MusicScoreManager.Services
                     using var pdfDoc = new PdfKit.PdfDocument(url);
                     if (pdfDoc != null)
                     {
-                        int pageIndex = Math.Clamp(pageNumber - 1, 0, (int)pdfDoc.PageCount - 1);
+                        int totalPages = Math.Max(1, (int)pdfDoc.PageCount);
+                        lock (_cacheLock) { _pageCountCache[pdfPath] = totalPages; }
+                        int pageIndex = Math.Clamp(pageNumber - 1, 0, totalPages - 1);
                         using var page = pdfDoc.GetPage(pageIndex);
                         if (page != null)
                         {
@@ -315,7 +343,7 @@ namespace MusicScoreManager.Services
                             using var img = page.GetThumbnail(size, PdfKit.PdfDisplayBox.Media);
                             if (img != null)
                             {
-                                using var jpegData = img.AsJPEG(0.9f);
+                                using var jpegData = img.AsJPEG(0.82f);
                                 if (jpegData != null)
                                 {
                                     return new RenderedPdfPage
@@ -324,6 +352,7 @@ namespace MusicScoreManager.Services
                                         Width = (int)size.Width,
                                         Height = (int)size.Height,
                                         PageNumber = pageIndex + 1,
+                                        TotalPages = totalPages,
                                         IsTwoPages = false
                                     };
                                 }
@@ -355,7 +384,7 @@ namespace MusicScoreManager.Services
             return rendered;
         }
 
-        public async Task<RenderedPdfPage?> RenderPdfTwoPagesAsync(string pdfPath, int leftPage, int rightPage, int leftRot = 0, int rightRot = 0, float scale = 1.5f)
+        public async Task<RenderedPdfPage?> RenderPdfTwoPagesAsync(string pdfPath, int leftPage, int rightPage, int leftRot = 0, int rightRot = 0, float scale = 1.35f)
         {
             if (string.IsNullOrWhiteSpace(pdfPath) || !File.Exists(pdfPath)) return null;
 
@@ -378,7 +407,8 @@ namespace MusicScoreManager.Services
                     if (fd == null) return null;
 
                     using var renderer = new PdfRenderer(fd);
-                    int totalPages = renderer.PageCount;
+                    int totalPages = Math.Max(1, renderer.PageCount);
+                    lock (_cacheLock) { _pageCountCache[pdfPath] = totalPages; }
                     int leftIdx = Math.Clamp(leftPage - 1, 0, totalPages - 1);
                     int rightIdx = rightPage - 1;
                     bool hasRight = (rightIdx >= 0 && rightIdx < totalPages);
@@ -455,7 +485,7 @@ namespace MusicScoreManager.Services
                     if (rBmp != null) rBmp.Recycle();
 
                     using var ms = new MemoryStream();
-                    combined.Compress(Bitmap.CompressFormat.Jpeg!, 90, ms);
+                    combined.Compress(Bitmap.CompressFormat.Jpeg!, 82, ms);
 
                     return new RenderedPdfPage
                     {
@@ -463,6 +493,7 @@ namespace MusicScoreManager.Services
                         Width = totalW,
                         Height = maxH,
                         PageNumber = leftIdx + 1,
+                        TotalPages = totalPages,
                         IsTwoPages = true,
                         LeftPage = leftIdx + 1,
                         RightPage = rightIdx + 1,
@@ -480,9 +511,7 @@ namespace MusicScoreManager.Services
                     var leftSingle = await RenderPdfPageAsync(pdfPath, leftPage, leftRot, scale);
                     if (leftSingle == null) return null;
 
-                    var storageFile = await StorageFile.GetFileFromPathAsync(pdfPath);
-                    var pdfDoc = await PdfDocument.LoadFromFileAsync(storageFile);
-                    int totalPages = (int)pdfDoc.PageCount;
+                    int totalPages = Math.Max(1, leftSingle.TotalPages);
                     int rightIdx = rightPage - 1;
                     bool hasRight = (rightIdx >= 0 && rightIdx < totalPages);
 
@@ -515,7 +544,7 @@ namespace MusicScoreManager.Services
                     rightImg?.Dispose();
 
                     using var ms = new MemoryStream();
-                    combined.SaveAsJpeg(ms, new JpegEncoder { Quality = 90 });
+                    combined.SaveAsJpeg(ms, new JpegEncoder { Quality = 82 });
 
                     return new RenderedPdfPage
                     {
@@ -523,6 +552,7 @@ namespace MusicScoreManager.Services
                         Width = totalW,
                         Height = maxH,
                         PageNumber = leftPage,
+                        TotalPages = totalPages,
                         IsTwoPages = true,
                         LeftPage = leftPage,
                         RightPage = rightPage,

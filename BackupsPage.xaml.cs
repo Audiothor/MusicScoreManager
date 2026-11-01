@@ -190,7 +190,9 @@ public partial class BackupsPage : ContentPage
                 startFolder = _settingsService.ExportsRootDirectory;
             }
 
+#pragma warning disable CA1416
             var result = await FolderPicker.Default.PickAsync(startFolder, default);
+#pragma warning restore CA1416
             if (result != null && result.IsSuccessful && result.Folder != null)
             {
                 string newPath = result.Folder.Path;
