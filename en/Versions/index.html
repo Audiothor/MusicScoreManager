@@ -871,6 +871,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v3111-11012026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.11 — 11/01/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.11 — 11/01/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-score-setlist-opening-complete-elimination-of-loading-modal-visual-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Score &amp; Setlist Opening: Complete Elimination of Loading Modal Visual Shift
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v3110-11012026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3438,6 +3466,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v3111-11012026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.11 — 11/01/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.11 — 11/01/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-score-setlist-opening-complete-elimination-of-loading-modal-visual-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Score &amp; Setlist Opening: Complete Elimination of Loading Modal Visual Shift
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v3110-11012026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5984,6 +6040,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v3111--11012026">v3.1.11 — 11/01/2026</a></li>
 <li><a href="#v3110--11012026">v3.1.10 — 11/01/2026</a></li>
 <li><a href="#v319--11012026">v3.1.9 — 11/01/2026</a></li>
 <li><a href="#v318--11012026">v3.1.8 — 11/01/2026</a></li>
@@ -6022,6 +6079,20 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v3111-11012026">v3.1.11 — 11/01/2026</h2>
+<h3 id="1-score-setlist-opening-complete-elimination-of-loading-modal-visual-shift">1. Score &amp; Setlist Opening: Complete Elimination of Loading Modal Visual Shift</h3>
+<ul>
+<li><strong>1.1. Restored and synchronized vertical anchoring (<code>Margin.Top</code> &amp; <code>TabBar</code>):</strong></li>
+<li>Computes the exact vertical coordinate <code>topY = Math.Max(0, (this.Height - 120.0) / 2.0)</code> prior to hiding the bottom <code>TabBar</code> (<code>Shell.SetTabBarIsVisible(this, false)</code>) across <code>ScoresPage</code>, <code>SetlistsPage</code>, and <code>SetlistEditPage</code>.</li>
+<li>Locks <code>ScoreLoadingBorder</code> and <code>SetlistLoadingBorder</code> using <code>VerticalOptions = LayoutOptions.Start</code> and <code>Margin = new Thickness(0, topY, 0, 0)</code>, preventing any downward jump when page height expands upon <code>TabBar</code> collapse.</li>
+<li><strong>1.2. Pixel-perfect continuity with <code>ViewerPage</code> (<code>ViewerLoadingOverlay</code>):</strong></li>
+<li>Unified the visual template of <code>ViewerLoadingOverlay</code> / <code>ViewerLoadingBorder</code> in <code>ViewerPage.xaml</code> to match <code>ScoresPage</code> / <code>SetlistsPage</code> (<code>WidthRequest="260"</code>, <code>HeightRequest="120"</code>, <code>#1E1E26</code> background, <code>#007ACC</code> <code>1.5</code> border, <code>#00B4D8</code> <code>40×40</code> spinner, <code>14pt</code> bold font, and identical localized text).</li>
+<li>Passes <code>initialLoadingTopY</code> and <code>isSetlistOpening</code> directly to <code>ViewerPage</code> with a non-animated transition (<code>Navigation.PushAsync(..., false)</code>), keeping the loading modal 100% stationary at the exact same screen pixel from initial tap until the rendered score is displayed.</li>
+<li><strong>1.3. Full-bleed alignment in <code>SetlistEditPage</code> &amp; PDF layout stability:</strong></li>
+<li>Offset the root grid padding in <code>SetlistEditPage.xaml</code> on <code>ScoreLoadingOverlay</code> (<code>Margin="{OnIdiom Phone='-10,-8', Tablet='-15'}"</code>).</li>
+<li>Synchronized <code>_isTwoPagesMode</code> prior to async rendering and updated canvas bounds (<code>UpdateCanvasBounds</code>) inside <code>AnnotationsContainer.SizeChanged</code>.</li>
 </ul>
 <hr />
 <h2 id="v3110-11012026">v3.1.10 — 11/01/2026</h2>
