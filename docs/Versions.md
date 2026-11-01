@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.1.11 — 01/11/2026](#v3111--01112026)
 - [v3.1.10 — 01/11/2026](#v3110--01112026)
 - [v3.1.9 — 01/11/2026](#v319--01112026)
 - [v3.1.8 — 01/11/2026](#v318--01112026)
@@ -44,6 +45,21 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.11 — 01/11/2026
+
+### 1. Ouverture des Partitions & Setlists : Élimination Définitive du Décalage Visuel de la Boîte de Chargement
+- **1.1. Restauration et synchronisation de l'ancrage vertical (`Margin.Top` & `TabBar`) :**
+  - Calcul de l'ordonnée verticale exacte `topY = Math.Max(0, (this.Height - 120.0) / 2.0)` avant le masquage de la barre d'onglets inférieure (`Shell.SetTabBarIsVisible(this, false)`) dans `ScoresPage`, `SetlistsPage` et `SetlistEditPage`.
+  - Verrouillage de `ScoreLoadingBorder` et `SetlistLoadingBorder` avec `VerticalOptions = LayoutOptions.Start` et `Margin = new Thickness(0, topY, 0, 0)`, empêchant tout saut vers le bas lorsque la hauteur de page s'étend au masquage de la `TabBar`.
+- **1.2. Continuité pixel-parfait avec `ViewerPage` (`ViewerLoadingOverlay`) :**
+  - Harmonisation stricte du gabarit visuel de `ViewerLoadingOverlay` / `ViewerLoadingBorder` dans `ViewerPage.xaml` avec celui de `ScoresPage` / `SetlistsPage` (`WidthRequest="260"`, `HeightRequest="120"`, fond `#1E1E26`, bordure `#007ACC` `1.5`, indicateur `#00B4D8` `40×40`, police `14` en gras et libellé localisé identique).
+  - Transmission de l'ordonnée `initialLoadingTopY` et de l'état `isSetlistOpening` au constructeur de `ViewerPage` avec transition immédiate sans animation parasite (`Navigation.PushAsync(..., false)`), garantissant que la boîte de chargement demeure strictement immobile au pixel près du clic initial jusqu'à l'affichage de la partition.
+- **1.3. Alignement plein écran dans `SetlistEditPage` & stabilité du rendu PDF :**
+  - Compensation du `Padding` de la grille racine de `SetlistEditPage.xaml` sur `ScoreLoadingOverlay` (`Margin="{OnIdiom Phone='-10,-8', Tablet='-15'}"`).
+  - Synchronisation immédiate de `_isTwoPagesMode` et recalcul automatique des bornes du canevas (`UpdateCanvasBounds`) lors du `SizeChanged` de `AnnotationsContainer`.
 
 ---
 

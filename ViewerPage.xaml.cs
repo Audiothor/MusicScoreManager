@@ -197,7 +197,24 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    public ViewerPage(Score score, List<Score>? setlistScores = null, int currentIndex = -1, bool isContinuous = true, Setlist? setlist = null)
+    private void HideViewerLoadingOverlay()
+    {
+        if (ViewerLoadingOverlay != null && ViewerLoadingOverlay.IsVisible)
+        {
+            ViewerLoadingOverlay.IsVisible = false;
+            if (ViewerLoadingBorder != null)
+            {
+                ViewerLoadingBorder.VerticalOptions = LayoutOptions.Center;
+                ViewerLoadingBorder.Margin = new Thickness(0);
+            }
+            if (ViewerLoadingText != null)
+            {
+                ViewerLoadingText.Text = LocalizationService.Instance.GetString("Score_Loading_Opening", "Ouverture de la partition...");
+            }
+        }
+    }
+
+    public ViewerPage(Score score, List<Score>? setlistScores = null, int currentIndex = -1, bool isContinuous = true, Setlist? setlist = null, double initialLoadingTopY = -1, bool isSetlistOpening = false)
     {
         InitializeComponent();
         _score = score;
@@ -208,6 +225,27 @@ public partial class ViewerPage : ContentPage
         _databaseService = new DatabaseService();
         _settingsService = new SettingsService();
         _annotationService = new AnnotationService();
+
+        if (ViewerLoadingBorder != null)
+        {
+            if (initialLoadingTopY >= 0)
+            {
+                ViewerLoadingBorder.VerticalOptions = LayoutOptions.Start;
+                ViewerLoadingBorder.Margin = new Thickness(0, initialLoadingTopY, 0, 0);
+            }
+            else
+            {
+                ViewerLoadingBorder.VerticalOptions = LayoutOptions.Center;
+                ViewerLoadingBorder.Margin = new Thickness(0);
+            }
+        }
+
+        if (ViewerLoadingText != null)
+        {
+            ViewerLoadingText.Text = isSetlistOpening
+                ? LocalizationService.Instance.GetString("Setlist_Loading_Opening", "Ouverture de la setlist...")
+                : LocalizationService.Instance.GetString("Score_Loading_Opening", "Ouverture de la partition...");
+        }
 
         Title = _score.Title;
 
@@ -260,7 +298,14 @@ public partial class ViewerPage : ContentPage
         }
 
         // Repositionner dynamiquement les annotations lors des changements de taille du conteneur (rotation, layout, etc.)
-        AnnotationsContainer.SizeChanged += (s, e) => RenderAnnotations();
+        AnnotationsContainer.SizeChanged += (s, e) =>
+        {
+            if (AnnotationsContainer.Width > 0 && AnnotationsContainer.Height > 0 && _currentRenderedWidth > 0 && _currentRenderedHeight > 0)
+            {
+                UpdateCanvasBounds(AnnotationsContainer.Width, AnnotationsContainer.Height, _currentRenderedWidth, _currentRenderedHeight);
+            }
+            RenderAnnotations();
+        };
         AnnotationsContainer.HandlerChanged += (s, e) => {
 #if ANDROID
             SetupNativeTouchHandling();
@@ -552,7 +597,7 @@ public partial class ViewerPage : ContentPage
         {
             if (string.IsNullOrEmpty(_score.FilePath))
             {
-                if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
+                HideViewerLoadingOverlay();
                 System.Diagnostics.Debug.WriteLine("[Viewer] ERREUR : _score.FilePath est NULL ou vide");
                 await DisplayAlertAsync("Erreur", "Chemin du fichier manquant", "OK");
                 return;
@@ -567,7 +612,7 @@ public partial class ViewerPage : ContentPage
 
             if (!exists)
             {
-                if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
+                HideViewerLoadingOverlay();
                 System.Diagnostics.Debug.WriteLine($"[Viewer] ERREUR : Le fichier n'existe pas au chemin : {fullPath}");
                 await DisplayAlertAsync("Fichier introuvable", $"Le fichier est introuvable :\n{fullPath}", "OK");
                 return;
@@ -590,13 +635,13 @@ public partial class ViewerPage : ContentPage
                     _maxPages = 1;
                     UpdatePageIndicator();
                     _isScoreReady = true;
-                    if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
+                    HideViewerLoadingOverlay();
                     RenderAnnotations();
                     if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
                 }
                 catch (Exception imgEx)
                 {
-                    if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
+                    HideViewerLoadingOverlay();
                     System.Diagnostics.Debug.WriteLine($"[Viewer] ECHEC chargement Image: {imgEx.Message}");
                     await DisplayAlertAsync("Erreur Lecture", $"{imgEx.Message}\n\nL'application n'a pas pu charger l'image.", "OK");
                 }
@@ -666,7 +711,7 @@ public partial class ViewerPage : ContentPage
         }
         catch (Exception ex)
         {
-            if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
+            HideViewerLoadingOverlay();
             System.Diagnostics.Debug.WriteLine($"[Viewer] CRASH dans LoadContentAsync: {ex.Message}");
             await DisplayAlertAsync("Erreur de chargement", $"{ex.Message}\n\nFichier: {_score.FilePath}", "OK");
         }
@@ -755,6 +800,7 @@ public partial class ViewerPage : ContentPage
 
             if (tryTwoPages)
             {
+                _isTwoPagesMode = true;
                 int leftNum = (pageNum % 2 == 0) ? (pageNum - 1) : pageNum;
                 if (leftNum < 1) leftNum = 1;
                 int rightNum = leftNum + 1;
@@ -837,7 +883,7 @@ public partial class ViewerPage : ContentPage
                 UpdateCanvasBounds(finalW, finalH, rendered.Width, rendered.Height);
 
                 _isScoreReady = true;
-                if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
+                HideViewerLoadingOverlay();
                 UpdatePageIndicator();
                 RenderAnnotations();
 
@@ -861,12 +907,12 @@ public partial class ViewerPage : ContentPage
         }
         catch (Exception ex)
         {
-            if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
+            HideViewerLoadingOverlay();
             System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur RenderPdfCurrentAsync: {ex.Message}");
         }
         finally
         {
-            if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
+            HideViewerLoadingOverlay();
         }
     }
 
@@ -938,7 +984,7 @@ public partial class ViewerPage : ContentPage
 
     private async void OnPdfWebViewNavigated(object? sender, WebNavigatedEventArgs e)
     {
-        if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = false;
+        HideViewerLoadingOverlay();
         if (_score.Type == ScoreType.PDF && e.Result == WebNavigationResult.Success)
         {
             System.Diagnostics.Debug.WriteLine("[Viewer] WebView Navigated - Shell HTML prêt.");

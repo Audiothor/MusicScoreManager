@@ -1738,32 +1738,37 @@
             </VerticalStackLayout>
         </Border>
 
-        <!-- Overlay de chargement de la partition (visible pendant le rendu initial ou changement de partition) -->
-        <Grid x:Name="ViewerLoadingOverlay"
-              IsVisible="True"
-              BackgroundColor="#88000000"
-              HorizontalOptions="Fill"
-              VerticalOptions="Fill"
-              ZIndex="2000"
-              InputTransparent="True">
-            <Border BackgroundColor="#1E1E1E"
+        <!-- Overlay Indicateur de chargement Partition / Setlist (aligné au pixel près avec ScoresPage / SetlistsPage) -->
+        <ContentView x:Name="ViewerLoadingOverlay"
+                     IsVisible="True"
+                     BackgroundColor="#B0000000"
+                     HorizontalOptions="Fill"
+                     VerticalOptions="Fill"
+                     ZIndex="2000"
+                     InputTransparent="False">
+            <Border x:Name="ViewerLoadingBorder"
+                    BackgroundColor="#1E1E26"
                     Stroke="#007ACC"
-                    StrokeThickness="2"
-                    Padding="28,22"
+                    StrokeThickness="1.5"
+                    WidthRequest="260"
+                    HeightRequest="120"
+                    VerticalOptions="Center"
                     HorizontalOptions="Center"
-                    VerticalOptions="Center">
+                    Padding="24,18">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="16" />
                 </Border.StrokeShape>
-                <VerticalStackLayout Spacing="14" HorizontalOptions="Center">
-                    <ActivityIndicator IsRunning="True" Color="#007ACC" WidthRequest="44" HeightRequest="44" HorizontalOptions="Center" />
-                    <Label Text="{Binding [Scores_Opening_Wait], Source={x:Static services:LocalizationService.Instance}}"
+                <VerticalStackLayout Spacing="12" HorizontalOptions="Center" VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="True" Color="#00B4D8" HeightRequest="40" WidthRequest="40" HorizontalOptions="Center" />
+                    <Label x:Name="ViewerLoadingText"
+                           Text="{Binding [Score_Loading_Opening], Source={x:Static services:LocalizationService.Instance}}"
                            TextColor="White"
-                           FontSize="15"
+                           FontSize="14"
                            FontAttributes="Bold"
+                           HorizontalOptions="Center"
                            HorizontalTextAlignment="Center" />
                 </VerticalStackLayout>
             </Border>
-        </Grid>
+        </ContentView>
     </Grid>
 </ContentPage>
