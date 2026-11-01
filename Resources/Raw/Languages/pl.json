@@ -800,6 +800,8 @@
   "Sticker_Item_NeedsPractice": "Needs practice",
   "Sticker_Item_WrongRhythm": "Wrong rhythm",
   "Sticker_Item_Intonation": "Intonation",
+  "Viewer_Text_Color_Label": "Kolor",
+  "Viewer_Text_Size_Label": "Rozmiar",
   "Viewer_Text_Border_Label": "Border",
   "Viewer_Metronome_Settings_Title": "Metronome Settings",
   "Viewer_Metronome_Tempo_Header": "TEMPO (BPM)",

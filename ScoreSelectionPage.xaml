@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:MusicScoreManager"
+             xmlns:models="clr-namespace:MusicScoreManager.Models"
              xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.ScoreSelectionPage"
              Title="{Binding [Score_Selection_Title], Source={x:Static services:LocalizationService.Instance}}"
@@ -99,7 +100,7 @@
                                                        Spacing="4"
                                                        Margin="0,2,0,0">
                                     <BindableLayout.ItemTemplate>
-                                        <DataTemplate>
+                                        <DataTemplate x:DataType="models:Tag">
                                             <Border BackgroundColor="{Binding ColorHex}"
                                                     StrokeThickness="0"
                                                     Padding="6,2"

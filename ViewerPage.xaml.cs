@@ -326,10 +326,12 @@ public partial class ViewerPage : ContentPage
         // 1. Démarrer immédiatement le chargement de la partition et des rotations sans délai
         _ = LoadPageAndContentImmediatelyAsync();
 
-        // 2. Initialiser le métronome, l'audio et les annotations en tâche de fond (chargement optimisé)
+        // 2. Initialiser les annotations, le métronome et l'audio en tâche de fond après un court délai
+        //    afin de laisser 100% du CPU/IO au rendu de la première page PDF
         _ = Task.Run(async () => {
-            InitializeMetronome();
             await LoadAnnotationsAsync();
+            await Task.Delay(80);
+            InitializeMetronome();
             await LoadBookmarksAsync();
 
             try
@@ -479,7 +481,7 @@ public partial class ViewerPage : ContentPage
         RotateBtn.Text = $"↻ {rotateWord} {_currentRotation}°";
     }
 
-    private void OnPdfWebViewNavigating(object sender, WebNavigatingEventArgs e)
+    private void OnPdfWebViewNavigating(object? sender, WebNavigatingEventArgs e)
     {
         if (e.Url != null && e.Url.StartsWith("app://musicscore/menu"))
         {
@@ -723,13 +725,6 @@ public partial class ViewerPage : ContentPage
             {
                 _maxPages = _score.PageCount;
             }
-            else if (_maxPages <= 1)
-            {
-                _maxPages = await _pdfService.GetPdfPageCountAsync(fullPath);
-                if (_maxPages < 1) _maxPages = 1;
-                _score.PageCount = _maxPages;
-                _ = _databaseService.SaveScoreAsync(_score);
-            }
 
             double containerW = this.Width > 0 ? this.Width : ImageContainer.Width;
             double containerH = this.Height > 0 ? this.Height : ImageContainer.Height;
@@ -748,11 +743,11 @@ public partial class ViewerPage : ContentPage
 
             bool twoPagesPref = Preferences.Default.Get("TwoPagesLandscape", true);
             bool isLandscape = (containerW > containerH);
-            _isTwoPagesMode = twoPagesPref && isLandscape && _maxPages > 1;
+            bool tryTwoPages = twoPagesPref && isLandscape && (_score.PageCount <= 0 || _maxPages > 1);
 
             RenderedPdfPage? rendered = null;
 
-            if (_isTwoPagesMode)
+            if (tryTwoPages)
             {
                 int leftNum = (pageNum % 2 == 0) ? (pageNum - 1) : pageNum;
                 if (leftNum < 1) leftNum = 1;
@@ -760,25 +755,46 @@ public partial class ViewerPage : ContentPage
                 int leftRot = GetRotationForPage(leftNum);
                 int rightRot = GetRotationForPage(rightNum);
 
-                _leftPageNumber = leftNum;
-                _rightPageNumber = rightNum;
-                _hasRightPage = (rightNum <= _maxPages);
-                _currentPage = _leftPageNumber;
-                _currentPageDisplay = _hasRightPage ? $"{_leftPageNumber}-{_rightPageNumber}" : $"{_leftPageNumber}";
-
                 rendered = await _pdfService.RenderPdfTwoPagesAsync(fullPath, leftNum, rightNum, leftRot, rightRot);
                 if (rendered != null)
                 {
-                    _leftPageNumber = rendered.LeftPage;
-                    _rightPageNumber = rendered.RightPage;
-                    _hasRightPage = rendered.HasRightPage;
-                    _currentPage = _leftPageNumber;
-                    _currentPageDisplay = _hasRightPage ? $"{_leftPageNumber}-{_rightPageNumber}" : $"{_leftPageNumber}";
+                    if (rendered.TotalPages > 0)
+                    {
+                        _maxPages = rendered.TotalPages;
+                        if (_score.PageCount != _maxPages)
+                        {
+                            _score.PageCount = _maxPages;
+                            _ = _databaseService.SaveScoreAsync(_score);
+                        }
+                    }
+
+                    if (_maxPages <= 1)
+                    {
+                        // PDF d'une seule page : basculer proprement en rendu simple page
+                        _isTwoPagesMode = false;
+                        int rot = GetRotationForPage(1);
+                        rendered = await _pdfService.RenderPdfPageAsync(fullPath, 1, rot);
+                        if (rendered != null)
+                        {
+                            _currentPage = rendered.PageNumber;
+                            _currentPageDisplay = _currentPage.ToString();
+                        }
+                    }
+                    else
+                    {
+                        _isTwoPagesMode = true;
+                        _leftPageNumber = rendered.LeftPage;
+                        _rightPageNumber = rendered.RightPage;
+                        _hasRightPage = rendered.HasRightPage;
+                        _currentPage = _leftPageNumber;
+                        _currentPageDisplay = _hasRightPage ? $"{_leftPageNumber}-{_rightPageNumber}" : $"{_leftPageNumber}";
+                    }
                 }
             }
             else
             {
-                int pNum = Math.Clamp(pageNum, 1, _maxPages);
+                _isTwoPagesMode = false;
+                int pNum = _maxPages > 0 ? Math.Clamp(pageNum, 1, _maxPages) : Math.Max(1, pageNum);
                 int rot = GetRotationForPage(pNum);
 
                 _currentPage = pNum;
@@ -787,6 +803,15 @@ public partial class ViewerPage : ContentPage
                 rendered = await _pdfService.RenderPdfPageAsync(fullPath, pNum, rot);
                 if (rendered != null)
                 {
+                    if (rendered.TotalPages > 0)
+                    {
+                        _maxPages = rendered.TotalPages;
+                        if (_score.PageCount != _maxPages)
+                        {
+                            _score.PageCount = _maxPages;
+                            _ = _databaseService.SaveScoreAsync(_score);
+                        }
+                    }
                     _currentPage = rendered.PageNumber;
                     _currentPageDisplay = _currentPage.ToString();
                 }
@@ -837,6 +862,7 @@ public partial class ViewerPage : ContentPage
     {
         try
         {
+            await Task.Delay(150);
             if (_isTwoPagesMode)
             {
                 if (currentLeft + 2 <= _maxPages)
@@ -898,7 +924,7 @@ public partial class ViewerPage : ContentPage
         _isPdfJsReady = true;
     }
 
-    private async void OnPdfWebViewNavigated(object sender, WebNavigatedEventArgs e)
+    private async void OnPdfWebViewNavigated(object? sender, WebNavigatedEventArgs e)
     {
         if (_score.Type == ScoreType.PDF && e.Result == WebNavigationResult.Success)
         {
@@ -1087,8 +1113,6 @@ public partial class ViewerPage : ContentPage
             PageIndicator.FontSize = fontSize;
             string displayNum = !string.IsNullOrEmpty(_currentPageDisplay) ? _currentPageDisplay : _currentPage.ToString();
             PageIndicator.Text = $"{displayNum} / {_maxPages}";
-            PageIndicator.IsVisible = true;
-            RenderAnnotations();
         }
         else
         {
@@ -1100,6 +1124,7 @@ public partial class ViewerPage : ContentPage
 
     private readonly object _metronomeLock = new();
     private CancellationTokenSource? _metronomeCts = null;
+    private static bool _isMetronomeAssetsPrepared = false;
 
     private async void InitializeMetronome()
     {
@@ -1111,17 +1136,21 @@ public partial class ViewerPage : ContentPage
 
         try
         {
-            // Extraire click.wav vers le cache local pour un chargement direct ultra-rapide
             string clickPath = Path.Combine(FileSystem.CacheDirectory, "click.wav");
-            using (var src = await FileSystem.OpenAppPackageFileAsync("click.wav"))
-            using (var dst = File.Create(clickPath))
-            {
-                await src.CopyToAsync(dst);
-            }
-
-            // Générer le wav du pré-compte (880Hz, 100ms)
             string preCountPath = Path.Combine(FileSystem.CacheDirectory, "precount.wav");
-            GenerateBeepWav(preCountPath, 880, 0.1);
+
+            if (!_isMetronomeAssetsPrepared || !File.Exists(clickPath) || !File.Exists(preCountPath))
+            {
+                using (var src = await FileSystem.OpenAppPackageFileAsync("click.wav"))
+                using (var dst = File.Create(clickPath))
+                {
+                    await src.CopyToAsync(dst);
+                }
+
+                // Générer le wav du pré-compte (880Hz, 100ms)
+                GenerateBeepWav(preCountPath, 880, 0.1);
+                _isMetronomeAssetsPrepared = true;
+            }
 
 #if ANDROID
             var audioAttributes = new Android.Media.AudioAttributes.Builder()!
@@ -2836,16 +2865,6 @@ public partial class ViewerPage : ContentPage
         if (HighlightOptionsSeparator != null)
         {
             HighlightOptionsSeparator.IsVisible = !isPortrait;
-        }
-
-        // 3. Texte (TextOptionsOverlay)
-        if (TextOptionsLayout != null)
-        {
-            TextOptionsLayout.Orientation = isPortrait ? StackOrientation.Vertical : StackOrientation.Horizontal;
-        }
-        if (TextOptionsSeparator != null)
-        {
-            TextOptionsSeparator.IsVisible = !isPortrait;
         }
 
         // 4. Stickers (StickerPickerOverlay)
@@ -5565,6 +5584,7 @@ public partial class ViewerPage : ContentPage
             {
                 var border = CreateTextBorder(ann, containerW, containerH);
                 ActiveAnnotationsContainer.Children.Add(border);
+                UpdateTextBorderBounds(border, ann, containerW, containerH);
             }
             else
             {
@@ -5572,6 +5592,34 @@ public partial class ViewerPage : ContentPage
                 ActiveAnnotationsContainer.Children.Add(border);
             }
         }
+    }
+
+    private void UpdateTextBorderBounds(Border border, Annotation ann, double containerW, double containerH)
+    {
+        double displayScale = GetPageDisplayScale();
+        double fontSize = (ann.Scale <= 0 ? 14.0 : ann.Scale) * displayScale;
+        bool isSelected = (ann == _selectedAnnotation);
+        bool hasBorder = !string.IsNullOrWhiteSpace(ann.BorderColor) && !ann.BorderColor.Equals("Transparent", StringComparison.OrdinalIgnoreCase);
+
+        double strokeThick = hasBorder
+            ? (isSelected ? (2.5 * displayScale) : (1.5 * displayScale))
+            : (isSelected ? (1.5 * displayScale) : 0);
+
+        Label? label = border.Content as Label ?? (border.Content as Grid)?.Children.OfType<Label>().FirstOrDefault();
+        Size size = label != null ? label.Measure(double.PositiveInfinity, double.PositiveInfinity) : Size.Zero;
+
+        double charCount = string.IsNullOrEmpty(ann.Content) ? 1 : ann.Content.Length;
+        double minTextW = charCount * (fontSize * 0.58);
+        double measuredW = Math.Max(size.Width, minTextW);
+        double measuredH = Math.Max(size.Height, fontSize * 1.2);
+
+        double padX = (hasBorder ? 8 : 4) * displayScale;
+        double padY = (hasBorder ? 4 : 2) * displayScale;
+        double w = Math.Max(measuredW + (padX * 2) + (strokeThick * 2), 24 * displayScale);
+        double h = Math.Max(measuredH + (padY * 2) + (strokeThick * 2), 20 * displayScale);
+
+        var (absX, absY) = PageToScreen(ann.X, ann.Y, ann.PageNumber, containerW, containerH);
+        AbsoluteLayout.SetLayoutBounds(border, new Rect(absX - (w / 2.0), absY - (h / 2.0), w, h));
     }
 
     private Border CreateTextBorder(Annotation ann, double containerW, double containerH)
@@ -5601,8 +5649,10 @@ public partial class ViewerPage : ContentPage
             BackgroundColor = Colors.Transparent,
             HorizontalTextAlignment = TextAlignment.Center,
             VerticalTextAlignment = TextAlignment.Center,
-            HorizontalOptions = LayoutOptions.Fill,
-            VerticalOptions = LayoutOptions.Fill,
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center,
+            Margin = Thickness.Zero,
+            Padding = Thickness.Zero,
             LineBreakMode = LineBreakMode.NoWrap,
             InputTransparent = true,
             Text = ann.Content,
@@ -5611,36 +5661,46 @@ public partial class ViewerPage : ContentPage
             FontAttributes = FontAttributes.Bold
         };
 
+#if ANDROID
+        void ApplyAndroidTextCentering(Label lbl)
+        {
+            if (lbl.Handler?.PlatformView is Android.Widget.TextView tv)
+            {
+                tv.SetIncludeFontPadding(false);
+                tv.Gravity = Android.Views.GravityFlags.Center;
+                tv.SetPadding(0, 0, 0, 0);
+            }
+        }
+        label.HandlerChanged += (s, e) =>
+        {
+            if (s is Label lbl) ApplyAndroidTextCentering(lbl);
+        };
+#endif
+
+        var contentGrid = new Grid
+        {
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+            Margin = Thickness.Zero,
+            Padding = Thickness.Zero,
+            InputTransparent = true
+        };
+        contentGrid.Children.Add(label);
+
         var border = new Border
         {
             BindingContext = ann,
-            Padding = hasBorder 
-                ? new Thickness(6 * displayScale, 2 * displayScale) 
-                : new Thickness(2 * displayScale, 1 * displayScale),
+            Padding = Thickness.Zero,
             StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = (float)(4 * displayScale) },
             StrokeThickness = strokeThick,
             Stroke = strokeColor,
             BackgroundColor = isSelected ? Color.FromArgb("#33007ACC") : Colors.Transparent,
-            Content = label,
+            Content = contentGrid,
             InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode
         };
 
         AbsoluteLayout.SetLayoutFlags(border, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
-
-        var size = label.Measure(double.PositiveInfinity, double.PositiveInfinity);
-        double charCount = string.IsNullOrEmpty(ann.Content) ? 1 : ann.Content.Length;
-        double minTextW = charCount * (fontSize * 0.62);
-        double measuredW = Math.Max(size.Width, minTextW);
-        double measuredH = Math.Max(size.Height, fontSize * 1.25);
-
-        double extraW = (hasBorder ? 14 : 6) * displayScale;
-        double extraH = (hasBorder ? 6 : 2) * displayScale;
-        double w = Math.Max(measuredW + extraW, 20 * displayScale);
-        double h = Math.Max(measuredH + extraH, 18 * displayScale);
-
-        var (absX, absY) = PageToScreen(ann.X, ann.Y, ann.PageNumber, containerW, containerH);
-
-        AbsoluteLayout.SetLayoutBounds(border, new Rect(absX - (w / 2), absY - (h / 2), w, h));
+        UpdateTextBorderBounds(border, ann, containerW, containerH);
 
 
         var selectTap = new TapGestureRecognizer { NumberOfTapsRequired = 1 };

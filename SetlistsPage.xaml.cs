@@ -265,29 +265,10 @@ public partial class SetlistsPage : ContentPage
 
         try
         {
-            // Verrouiller la position verticale exacte de la boîte de chargement par le haut
-            // pour empêcher tout saut ou décalage lors de la disparition de la barre d'onglets
-            if (this.Height > 150)
-            {
-                double topY = (this.Height - 120.0) / 2.0;
-                SetlistLoadingBorder.VerticalOptions = LayoutOptions.Start;
-                SetlistLoadingBorder.Margin = new Thickness(0, Math.Max(0, topY), 0, 0);
-            }
-            else
-            {
-                SetlistLoadingBorder.VerticalOptions = LayoutOptions.Center;
-                SetlistLoadingBorder.Margin = new Thickness(0);
-            }
-
-            Shell.SetTabBarIsVisible(this, false);
-            SetlistLoadingOverlay.IsVisible = true;
-            await Task.Yield();
-
             var scores = await _databaseService.GetScoresForSetlistAsync(setlist.Id);
             if (scores == null || !scores.Any())
             {
                 SetlistLoadingOverlay.IsVisible = false;
-                Shell.SetTabBarIsVisible(this, true);
                 var loc = LocalizationService.Instance;
                 await DisplayAlertAsync(loc.GetString("Setlist_Empty"), string.Format(loc.GetString("Setlist_Edit_Empty"), setlist.Name), "OK");
                 return;
@@ -297,7 +278,6 @@ public partial class SetlistsPage : ContentPage
             if (firstScore.IsFileMissing)
             {
                 SetlistLoadingOverlay.IsVisible = false;
-                Shell.SetTabBarIsVisible(this, true);
                 var loc = LocalizationService.Instance;
                 await DisplayAlertAsync(loc.GetString("Score_Edit_MissingFile_Title"), loc.GetString("Score_Edit_Missing_Msg"), "OK");
                 return;

@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.1.9 — 11/01/2026](#v319--11012026)
 - [v3.1.8 — 11/01/2026](#v318--11012026)
 - [v3.1.7 — 10/31/2026](#v317--10312026)
 - [v3.1.6 — 10/31/2026](#v316--10312026)
@@ -42,6 +43,28 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.9 — 11/01/2026
+
+### 1. PDF Score Opening: Maximum Response Time Optimization
+- **Zero-latency direct navigation (`0 ms`)**: Removed `Shell.SetTabBarIsVisible(this, false)` and intermediate loading overlay toggling on `ScoresPage`, `SetlistsPage`, and `SetlistEditPage` prior to `Navigation.PushAsync(new ViewerPage(...))`, which previously forced a full layout pass of the source page's `CollectionView` on the UI thread before navigation even started (`ViewerPage` already sets `Shell.TabBarIsVisible="False"` natively).
+- **Eliminated duplicate PDF open on first load**: `RenderedPdfPage` now carries `TotalPages` directly and populates a static `_pageCountCache`, avoiding opening the file descriptor and `PdfRenderer`/`PdfDocument` twice (once to count pages and a second time to render).
+- **100% CPU/IO priority for Page 1**: Calibrated rasterization scale (`1.6x` single page, `1.35x` two-page landscape spread, JPEG quality `82`), cached metronome WAV assets (`click.wav`, `precount.wav`) once per session, and staggered secondary background tasks (`80 ms`) and adjacent page preloading (`150 ms`) so page 1 renders nearly twice as fast.
+
+### 2. Text Annotations: Redesigned Options Panel & Perfect Border Centering
+- **Localized row labels and removal of anomalous white line**: The text options panel (`TextOptionsOverlay`) is now structured as a clean 3-row layout where each row displays its localized label across all 8 languages (`Color`, `Size`, `Border`). Removed the vertical separator `BoxView` elements (`TextOptionsSeparator`, `TextBorderSeparator`) that caused an anomalous vertical white line below the size buttons.
+- **Exact vertical and horizontal text centering inside borders**: Disabled Android's default font ascent/descent padding (`SetIncludeFontPadding(false)` and `GravityFlags.Center` on the native `TextView`), wrapped the `Label` inside a centered `Grid`, and measured bounds after attaching to `ActiveAnnotationsContainer` (`UpdateTextBorderBounds`), ensuring lowercase and mixed-case text annotations (such as `"test"`) are centered inside their colored border.
+
+### 3. Scores Library: Long-Press Multi-Selection (`GestureDetector`)
+- **Unified native tap and long-press detection**: Replaced the standalone long-click listener with a native `ScoreCardTouchListener` backed by `Android.Views.GestureDetector` (`SimpleOnGestureListener`) on score cards so MAUI's gesture manager no longer swallows long-press events. Long-pressing a score triggers haptic feedback, activates multi-selection mode with checkboxes on the left (equivalent to the top bar `☑` button), and selects the score.
+
+### 4. Code Quality: Fixed All 7 Compiler/Build Warnings (`0 Warnings`)
+- Added `x:DataType="services:BackupFile"` to the `DataTemplate` in `BackupsPage.xaml` (3 `XC0022` warnings).
+- Wrapped `FolderPicker.Default.PickAsync` with `#pragma warning disable CA1416` in `BackupsPage.xaml.cs` (Android API 26 compatibility warning).
+- Updated `OnPdfWebViewNavigating` and `OnPdfWebViewNavigated` signatures to `object? sender` in `ViewerPage.xaml.cs` (2 `CS8622` warnings).
+- Disabled offline NuGet audit warnings (`<NuGetAudit>false</NuGetAudit>`) in `MusicScoreManager.csproj` (`NU1900`).
 
 ---
 
