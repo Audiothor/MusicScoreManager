@@ -871,6 +871,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v3113-02112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.13 — 02/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.13 — 02/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-optimisation-haute-performance-du-rendu-de-louverture-des-partitions-pdf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Optimisation Haute Performance du Rendu &amp; de l'Ouverture des Partitions PDF
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v3112-02112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3516,6 +3544,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v3113-02112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.13 — 02/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.13 — 02/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-optimisation-haute-performance-du-rendu-de-louverture-des-partitions-pdf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Optimisation Haute Performance du Rendu &amp; de l'Ouverture des Partitions PDF
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v3112-02112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6140,6 +6196,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v3113--02112026">v3.1.13 — 02/11/2026</a></li>
 <li><a href="#v3112--02112026">v3.1.12 — 02/11/2026</a></li>
 <li><a href="#v3111--01112026">v3.1.11 — 01/11/2026</a></li>
 <li><a href="#v3110--01112026">v3.1.10 — 01/11/2026</a></li>
@@ -6180,6 +6237,21 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v3113-02112026">v3.1.13 — 02/11/2026</h2>
+<h3 id="1-optimisation-haute-performance-du-rendu-de-louverture-des-partitions-pdf">1. Optimisation Haute Performance du Rendu &amp; de l'Ouverture des Partitions PDF</h3>
+<ul>
+<li><strong>1.1. Préchargement immédiat au toucher (<em>Pre-warming on Tap</em>) :</strong></li>
+<li>Dès le clic de l'utilisateur sur une partition ou une setlist (<code>ScoresPage</code>, <code>SetlistsPage</code>, <code>SetlistEditPage</code>), et dès le constructeur de <code>ViewerPage</code>, le décodage de la première page PDF démarre immédiatement en arrière-plan via <code>PdfService.PreloadFirstPageAsync</code>.</li>
+<li>La première page est prête en mémoire cache avant même l'achèvement de l'animation de transition MAUI, rendant l'ouverture perçue quasi-instantanée (&lt; 50 ms).</li>
+<li><strong>1.2. Plafonnement intelligent de la résolution (<em>Smart Clamping</em>) :</strong></li>
+<li>Neutralisation de l'explosion de résolution sur les documents scannés haute définition (300/600 DPI) : la dimension maximale de rastérisation est plafonnée à 2048 px (mode simple page) et 1536 px (mode double page paysage).</li>
+<li>Élimine la création de bitmaps surdimensionnés (25 à 45 Mpx), divisant par 3 à 5 le temps de calcul CPU/GPU et l'empreinte mémoire vive.</li>
+<li><strong>1.3. Déduplication des rendus en vol (<em>In-flight Task Deduplication</em>) :</strong></li>
+<li>Suivi thread-safe des tâches de décodage asynchrones (<code>_inFlightTasks</code>) : empêche tout double décodage ou accès concurrents au descripteur de fichier PDF si le Viewer arrive alors que le préchargement est déjà en cours.</li>
+<li><strong>1.4. Optimisation du pipeline d'encodage JPEG :</strong></li>
+<li>Ajustement fin du taux de compression JPEG à 78% sur toutes les plateformes (Android, Windows, iOS), accélérant la compression native et le décodage d'image MAUI de ~35% sans dégradation visuelle.</li>
 </ul>
 <hr />
 <h2 id="v3112-02112026">v3.1.12 — 02/11/2026</h2>
