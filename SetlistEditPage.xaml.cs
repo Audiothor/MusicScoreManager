@@ -15,6 +15,7 @@ public partial class SetlistEditPage : ContentPage
 
     private List<PedalProfileOption> _pedalProfileOptions = new();
     private bool _isOpeningScore = false;
+    private readonly PdfService _pdfService = new();
 
     private class PedalProfileOption
     {
@@ -270,6 +271,13 @@ public partial class SetlistEditPage : ContentPage
                 int index = _orderedScores.IndexOf(orderedScore);
                 
                 ApplySelectedPedalProfile();
+
+                // 🚀 Optimisation ouverture ultra-rapide : précharger la partition choisie
+                if (orderedScore.Score.Type == ScoreType.PDF && PdfService.IsNativePdfSupported && !string.IsNullOrEmpty(orderedScore.Score.FilePath))
+                {
+                    string fullPath = _settingsService.GetAbsolutePath(orderedScore.Score.FilePath);
+                    _ = _pdfService.PreloadFirstPageAsync(fullPath, orderedScore.Score.Rotation);
+                }
 
                 await Navigation.PushAsync(new ViewerPage(
                     orderedScore.Score, 
