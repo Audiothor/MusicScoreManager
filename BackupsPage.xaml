@@ -284,7 +284,7 @@
                     <ActivityIndicator IsRunning="True" Color="#007ACC" WidthRequest="48" HeightRequest="48" HorizontalOptions="Center" />
                     
                     <Label x:Name="ProgressTitleLabel"
-                           Text="{loc:Translate Backups_Full_Progress_Title}"
+                           Text="{Binding [Backups_Full_Progress_Title], Source={x:Static services:LocalizationService.Instance}}"
                            TextColor="White"
                            FontAttributes="Bold"
                            FontSize="16"
@@ -292,7 +292,7 @@
                            HorizontalTextAlignment="Center" />
 
                     <Label x:Name="ProgressStatusLabel"
-                           Text="{loc:Translate Backups_Full_Progress_Status_Prep}"
+                           Text="{Binding [Backups_Full_Progress_Status_Prep], Source={x:Static services:LocalizationService.Instance}}"
                            TextColor="#AAAAAA"
                            FontSize="12"
                            HorizontalOptions="Center"
