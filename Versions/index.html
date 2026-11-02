@@ -871,6 +871,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v3112-02112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.12 — 02/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.12 — 02/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-gestion-des-categories-alignement-physique-des-repertoires" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Gestion des Catégories &amp; Alignement Physique des Répertoires
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-localisation-integrale-de-lapplication-8-langues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Localisation Intégrale de l'Application (8 Langues)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-qualite-du-code-compilation-zero-defaut" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Qualité du Code &amp; Compilation Zéro Défaut
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v3111-01112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3466,6 +3516,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v3112-02112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.1.12 — 02/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.1.12 — 02/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-gestion-des-categories-alignement-physique-des-repertoires" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Gestion des Catégories &amp; Alignement Physique des Répertoires
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-localisation-integrale-de-lapplication-8-langues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Localisation Intégrale de l'Application (8 Langues)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-qualite-du-code-compilation-zero-defaut" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Qualité du Code &amp; Compilation Zéro Défaut
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v3111-01112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6040,6 +6140,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v3112--02112026">v3.1.12 — 02/11/2026</a></li>
 <li><a href="#v3111--01112026">v3.1.11 — 01/11/2026</a></li>
 <li><a href="#v3110--01112026">v3.1.10 — 01/11/2026</a></li>
 <li><a href="#v319--01112026">v3.1.9 — 01/11/2026</a></li>
@@ -6079,6 +6180,37 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v3112-02112026">v3.1.12 — 02/11/2026</h2>
+<h3 id="1-gestion-des-categories-alignement-physique-des-repertoires">1. Gestion des Catégories &amp; Alignement Physique des Répertoires</h3>
+<ul>
+<li><strong>1.1. Sélection de la catégorie par défaut (<code>SettingsScoresPage</code>) :</strong></li>
+<li>Ajout dans <em>Paramètres &gt; Partitions</em> d'une option dédiée <strong>« Catégorie (dossier) par défaut »</strong> avec sélecteur déroulant (<code>Picker</code>) permettant à l'utilisateur de choisir la catégorie attribuée automatiquement lors de l'import de partitions sans dossier spécifié (valeur par défaut : <code>"Default"</code>).</li>
+<li>Intégration dans <code>SettingsService.DefaultCategory</code> et persistance dans les <code>Preferences</code>.</li>
+<li><strong>1.2. Normalisation et rangement physique des fichiers dans leurs répertoires (<code>Scores/{Catégorie}/</code>) :</strong></li>
+<li>Règle physique unifiée dans <code>ImportService</code> : chaque partition importée est systématiquement enregistrée dans le sous-dossier de sa catégorie (<code>Path.Combine(rootDir, category)</code>), éliminant l'exception historique qui plaçait les fichiers de la catégorie générale en vrac à la racine de <code>Scores/</code>.</li>
+<li>Renommage de catégorie étendu dans <code>DatabaseService.RenameCategoryAsync</code> : déplacement automatique des fichiers situés à la racine ou dans l'ancien sous-dossier vers le nouveau répertoire de catégorie, avec mise à jour du chemin relatif en base.</li>
+<li>Outil d'assainissement physique (<code>ConsolidatePhysicalCategoriesAsync</code>) :<ul>
+<li>Déplacement physique de toutes les partitions existantes situées à la racine de <code>Scores/</code> vers leurs sous-dossiers de catégories respectifs (notamment <code>Scores/Default/</code>).</li>
+<li>Mise à jour cohérente de <code>score.FilePath</code> en base SQLite.</li>
+<li>Exécution transparente au démarrage de l'application et bouton d'action manuel disponible dans les paramètres de partitions.</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-localisation-integrale-de-lapplication-8-langues">2. Localisation Intégrale de l'Application (8 Langues)</h3>
+<ul>
+<li><strong>2.1. Audit &amp; élimination des textes en dur :</strong></li>
+<li>Détection et remplacement de plus de 200 chaînes textuelles en dur résiduelles à travers l'ensemble des fichiers <code>.xaml</code> et <code>.cs</code> (dialogues, popups d'importation, atelier d'assemblage PDF, alertes Wi-Fi Direct, gestion des tags, aperçus et marqueurs).</li>
+<li><strong>2.2. Traduction complète dans les 8 langues prises en charge :</strong></li>
+<li>Ajout et synchronisation de toutes les clés dans les fichiers <code>fr.json</code>, <code>en.json</code>, <code>de.json</code>, <code>es.json</code>, <code>it.json</code>, <code>nl.json</code>, <code>pl.json</code> et <code>pt.json</code>.</li>
+<li>Connexion automatique aux mécanismes de changement dynamique de langue via <code>LocalizationService.Instance</code>.</li>
+</ul>
+<h3 id="3-qualite-du-code-compilation-zero-defaut">3. Qualité du Code &amp; Compilation Zéro Défaut</h3>
+<ul>
+<li>Résolution définitive des avertissements <code>CS1998</code> dans <code>PdfService.cs</code> pour les plateformes non-Windows.</li>
+<li>Nettoyage et synchronisation des méthodes de préparation de setlist dans <code>SetlistEditPage.xaml.cs</code>.</li>
+<li><strong>Bilan de compilation :</strong> <strong>0 Avertissement(s), 0 Erreur(s)</strong> sous Windows (<code>net10.0-windows10.0.19041.0</code>) et iOS (<code>net10.0-ios</code>).</li>
 </ul>
 <hr />
 <h2 id="v3111-01112026">v3.1.11 — 01/11/2026</h2>
