@@ -268,7 +268,7 @@ public partial class ScoreEditPage : ContentPage
             {
                 CategoryPicker.Items.Add(cat);
             }
-            string currentCat = string.IsNullOrWhiteSpace(_score.Category) ? "Général" : _score.Category;
+            string currentCat = string.IsNullOrWhiteSpace(_score.Category) ? _settingsService.DefaultCategory : _score.Category;
             if (!CategoryPicker.Items.Contains(currentCat))
             {
                 CategoryPicker.Items.Add(currentCat);
@@ -655,7 +655,7 @@ public partial class ScoreEditPage : ContentPage
             }
 
             string cat = CategoryPicker.SelectedItem as string ?? _score.Category;
-            if (string.IsNullOrWhiteSpace(cat)) cat = "Général";
+            if (string.IsNullOrWhiteSpace(cat)) cat = _settingsService.DefaultCategory;
 
             var rootDir = isAudio ? _settingsService.AudioRootDirectory : Path.Combine(_settingsService.ScoresRootDirectory, cat);
             if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
@@ -707,7 +707,7 @@ public partial class ScoreEditPage : ContentPage
         
         // Catégorie / Dossier physique
         string selectedCat = CategoryPicker.SelectedItem as string ?? _score.Category;
-        if (string.IsNullOrWhiteSpace(selectedCat)) selectedCat = "Général";
+        if (string.IsNullOrWhiteSpace(selectedCat)) selectedCat = _settingsService.DefaultCategory;
         if (!string.Equals(_score.Category, selectedCat, StringComparison.OrdinalIgnoreCase))
         {
             await _databaseService.MoveScoreToCategoryAsync(_score, selectedCat);

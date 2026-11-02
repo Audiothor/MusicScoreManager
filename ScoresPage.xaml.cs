@@ -1635,7 +1635,8 @@ public partial class ScoresPage : ContentPage
 
     private void PopulateFoldersOverview(List<Models.Score> scores)
     {
-        var grouped = scores.GroupBy(s => string.IsNullOrWhiteSpace(s.Category) ? "Général" : s.Category.Trim(), StringComparer.OrdinalIgnoreCase)
+        string defaultCategory = _settingsService.DefaultCategory;
+        var grouped = scores.GroupBy(s => string.IsNullOrWhiteSpace(s.Category) || string.Equals(s.Category, "Général", StringComparison.OrdinalIgnoreCase) || string.Equals(s.Category, "General", StringComparison.OrdinalIgnoreCase) ? defaultCategory : s.Category.Trim(), StringComparer.OrdinalIgnoreCase)
                             .ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
 
         _ = Task.Run(async () =>
@@ -1753,7 +1754,7 @@ public partial class ScoresPage : ContentPage
         }
         else if (action == delete && !group.IsDefaultCategory)
         {
-            string defaultCat = Preferences.Default.Get("DefaultCategoryName", "Général");
+            string defaultCat = _settingsService.DefaultCategory;
             string confirmMsg = string.Format(
                 loc.GetString("Score_Category_Delete_Confirm", "Voulez-vous supprimer le dossier '{0}' ? Ses {1} partition(s) seront déplacées dans '{2}'."),
                 group.Name, group.Count, defaultCat);

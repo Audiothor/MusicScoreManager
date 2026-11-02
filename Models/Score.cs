@@ -49,14 +49,14 @@ namespace MusicScoreManager.Models
 
         public string FilePath { get; set; } = string.Empty;
 
-        private string _category = "Général";
+        private string _category = "Default";
         [Indexed]
         public string Category
         {
-            get => string.IsNullOrWhiteSpace(_category) ? "Général" : _category;
+            get => string.IsNullOrWhiteSpace(_category) ? "Default" : _category;
             set
             {
-                var val = string.IsNullOrWhiteSpace(value) ? "Général" : value.Trim();
+                var val = string.IsNullOrWhiteSpace(value) ? "Default" : value.Trim();
                 if (_category != val)
                 {
                     _category = val;

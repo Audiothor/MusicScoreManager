@@ -87,7 +87,7 @@ namespace MusicScoreManager.Services
                     catch { }
                     try
                     {
-                        await db.ExecuteAsync("ALTER TABLE Score ADD COLUMN Category TEXT NOT NULL DEFAULT 'Général';");
+                        await db.ExecuteAsync("ALTER TABLE Score ADD COLUMN Category TEXT NOT NULL DEFAULT 'Default';");
                     }
                     catch { }
                     await db.CreateTableAsync<Setlist>();
@@ -111,6 +111,13 @@ namespace MusicScoreManager.Services
                     await db.CreateTableAsync<ScoreBookmark>();
                     
                     _database = db;
+
+                    // Migration automatique : convertir toute ancienne mention 'Général', 'General' ou vide vers 'Default'
+                    try
+                    {
+                        await db.ExecuteAsync("UPDATE Score SET Category = 'Default' WHERE Category = 'Général' OR Category = 'General' OR Category = 'Allgemein' OR Category = 'Generale' OR Category = 'Algemeen' OR Category = 'Ogólne' OR Category = 'Geral' OR Category IS NULL OR Category = '';");
+                    }
+                    catch { }
 
                     // Consolidation transparente des fichiers physiques dans leurs répertoires de catégories
                     _ = Task.Run(async () =>
@@ -928,7 +935,9 @@ namespace MusicScoreManager.Services
 
             string defaultCategory = _settingsService.DefaultCategory;
             if (string.Equals(cleanOld, defaultCategory, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(cleanOld, "Général", StringComparison.OrdinalIgnoreCase))
+                string.Equals(cleanOld, "Default", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(cleanOld, "Général", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(cleanOld, "General", StringComparison.OrdinalIgnoreCase))
             {
                 _settingsService.DefaultCategory = cleanNew;
             }
@@ -1014,7 +1023,9 @@ namespace MusicScoreManager.Services
             string cleanFallback = string.IsNullOrWhiteSpace(fallbackCategory) ? defaultCat : fallbackCategory.Trim();
 
             if (string.Equals(cleanCat, defaultCat, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(cleanCat, "Général", StringComparison.OrdinalIgnoreCase))
+                string.Equals(cleanCat, "Default", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(cleanCat, "Général", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(cleanCat, "General", StringComparison.OrdinalIgnoreCase))
             {
                 // Ne pas supprimer le dossier par défaut
                 return false;
@@ -1090,10 +1101,49 @@ namespace MusicScoreManager.Services
             var allScores = await _database!.Table<Score>().ToListAsync();
             string defaultCat = _settingsService.DefaultCategory;
 
+            // 0. Si un ancien dossier physique 'Général', 'General' ou similaire existe, migrer ses fichiers vers Default/
+            try
+            {
+                string[] oldGeneralDirNames = { "Général", "General", "Allgemein", "Generale", "Algemeen", "Ogólne", "Geral" };
+                string defaultDirPath = Path.Combine(scoresRoot, defaultCat);
+                if (!Directory.Exists(defaultDirPath)) Directory.CreateDirectory(defaultDirPath);
+
+                foreach (var oldName in oldGeneralDirNames)
+                {
+                    string oldPath = Path.Combine(scoresRoot, oldName);
+                    if (Directory.Exists(oldPath) && !string.Equals(oldPath, defaultDirPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var files = Directory.GetFiles(oldPath);
+                        foreach (var f in files)
+                        {
+                            string dest = Path.Combine(defaultDirPath, Path.GetFileName(f));
+                            if (!File.Exists(dest))
+                            {
+                                File.Move(f, dest);
+                            }
+                        }
+                        try { Directory.Delete(oldPath, true); } catch { }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DatabaseService] Error migrating old general folders: {ex.Message}");
+            }
+
             foreach (var score in allScores)
             {
-                string cat = string.IsNullOrWhiteSpace(score.Category) ? defaultCat : score.Category.Trim();
-                if (string.IsNullOrWhiteSpace(score.Category))
+                string cat = (string.IsNullOrWhiteSpace(score.Category) ||
+                              string.Equals(score.Category, "Général", StringComparison.OrdinalIgnoreCase) ||
+                              string.Equals(score.Category, "General", StringComparison.OrdinalIgnoreCase) ||
+                              string.Equals(score.Category, "Allgemein", StringComparison.OrdinalIgnoreCase) ||
+                              string.Equals(score.Category, "Generale", StringComparison.OrdinalIgnoreCase) ||
+                              string.Equals(score.Category, "Algemeen", StringComparison.OrdinalIgnoreCase) ||
+                              string.Equals(score.Category, "Ogólne", StringComparison.OrdinalIgnoreCase) ||
+                              string.Equals(score.Category, "Geral", StringComparison.OrdinalIgnoreCase))
+                              ? defaultCat : score.Category.Trim();
+
+                if (score.Category != cat)
                 {
                     score.Category = cat;
                 }
@@ -1201,10 +1251,10 @@ namespace MusicScoreManager.Services
 
         private static string SanitizeCategoryName(string name)
         {
-            if (string.IsNullOrWhiteSpace(name)) return "Général";
+            if (string.IsNullOrWhiteSpace(name)) return "Default";
             var invalidChars = Path.GetInvalidFileNameChars();
             var cleaned = new string(name.Trim().Where(c => !invalidChars.Contains(c) && c != '/' && c != '\\').ToArray());
-            return string.IsNullOrWhiteSpace(cleaned) ? "Général" : cleaned;
+            return string.IsNullOrWhiteSpace(cleaned) ? "Default" : cleaned;
         }
 
         #endregion

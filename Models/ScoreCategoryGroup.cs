@@ -7,7 +7,7 @@ namespace MusicScoreManager.Models
 {
     public class ScoreCategoryGroup : INotifyPropertyChanged
     {
-        private string _name = "Général";
+        private string _name = "Default";
         public string Name
         {
             get => _name;
@@ -23,15 +23,13 @@ namespace MusicScoreManager.Models
         }
 
         public bool IsDefaultCategory => string.IsNullOrWhiteSpace(_name) ||
-            string.Equals(_name, "Général", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(_name, "Default", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(_name, "Général", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(_name, "General", StringComparison.OrdinalIgnoreCase);
 
         public bool CanManage => true;
 
-        public string DisplayName => IsDefaultCategory 
-            ? LocalizationService.Instance.GetString("Score_Category_Default", "Général") 
-            : _name;
+        public string DisplayName => IsDefaultCategory ? "Default" : _name;
 
         private bool _isExpanded = true;
         public bool IsExpanded
