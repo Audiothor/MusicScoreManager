@@ -284,7 +284,7 @@
                     <ActivityIndicator IsRunning="True" Color="#007ACC" WidthRequest="48" HeightRequest="48" HorizontalOptions="Center" />
                     
                     <Label x:Name="ProgressTitleLabel"
-                           Text="Sauvegarde complète en cours..."
+                           Text="{loc:Translate Backups_Full_Progress_Title}"
                            TextColor="White"
                            FontAttributes="Bold"
                            FontSize="16"
@@ -292,7 +292,7 @@
                            HorizontalTextAlignment="Center" />
 
                     <Label x:Name="ProgressStatusLabel"
-                           Text="Préparation..."
+                           Text="{loc:Translate Backups_Full_Progress_Status_Prep}"
                            TextColor="#AAAAAA"
                            FontSize="12"
                            HorizontalOptions="Center"

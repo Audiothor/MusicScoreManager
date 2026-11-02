@@ -327,9 +327,10 @@ public partial class ScoreScannerPage : ContentPage
             Spacing = 4
         };
 
+        var loc = LocalizationService.Instance;
         var pageLabel = new Label
         {
-            Text = $"Page {page.PageIndex}",
+            Text = string.Format(loc.GetString("Scanner_Page_Number", "Page {0}"), page.PageIndex),
             TextColor = Colors.White,
             FontSize = 15,
             FontAttributes = FontAttributes.Bold
@@ -338,7 +339,7 @@ public partial class ScoreScannerPage : ContentPage
 
         var rotLabel = new Label
         {
-            Text = $"Rotation: {page.Rotation}°",
+            Text = string.Format(loc.GetString("Scanner_Page_Rotation", "Rotation: {0}°"), page.Rotation),
             TextColor = Microsoft.Maui.Graphics.Color.FromArgb("#8888AA"),
             FontSize = 11
         };
@@ -370,7 +371,7 @@ public partial class ScoreScannerPage : ContentPage
         rotRightBtn.Clicked += (s, e) =>
         {
             page.Rotation = (page.Rotation + 90) % 360;
-            rotLabel.Text = $"Rotation: {page.Rotation}°";
+            rotLabel.Text = string.Format(loc.GetString("Scanner_Page_Rotation", "Rotation: {0}°"), page.Rotation);
             img.Rotation = page.Rotation;
         };
         actionsStack.Children.Add(rotRightBtn);
@@ -474,7 +475,7 @@ public partial class ScoreScannerPage : ContentPage
 
         GenerateScoreTopButton.IsEnabled = false;
         GenerateScoreBottomButton.IsEnabled = false;
-        GenerateScoreBottomButton.Text = "⏳ Création du PDF...";
+        GenerateScoreBottomButton.Text = loc.GetString("Scanner_Creating_Pdf", "⏳ Création du PDF...");
 
         try
         {

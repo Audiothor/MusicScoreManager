@@ -201,6 +201,9 @@ namespace MusicScoreManager.Services
                     System.Diagnostics.Debug.WriteLine($"[PdfService] iOS GetPdfPageCountAsync error: {ex.Message}");
                 }
 #endif
+#if !WINDOWS
+                await Task.CompletedTask;
+#endif
                 return 1;
             });
         }
@@ -364,6 +367,9 @@ namespace MusicScoreManager.Services
                 {
                     System.Diagnostics.Debug.WriteLine($"[PdfService] iOS RenderPdfPageAsync error: {ex.Message}");
                 }
+#endif
+#if !WINDOWS
+                await Task.CompletedTask;
 #endif
                 return null;
             });
@@ -564,7 +570,7 @@ namespace MusicScoreManager.Services
                     System.Diagnostics.Debug.WriteLine($"[PdfService] Windows RenderPdfTwoPagesAsync error: {ex.Message}");
                 }
 #endif
-#if !WINDOWS && !ANDROID
+#if !WINDOWS
                 await Task.CompletedTask;
 #endif
                 return (RenderedPdfPage?)null;

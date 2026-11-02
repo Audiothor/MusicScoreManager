@@ -193,7 +193,7 @@ public partial class ScoreEditPage : ContentPage
             }
             else
             {
-                FileSizeLabel.Text = "Fichier introuvable";
+                FileSizeLabel.Text = LocalizationService.Instance.GetString("Score_Edit_File_Missing", "Fichier introuvable");
                 FileModifiedDateLabel.Text = "N/A";
             }
 
@@ -210,11 +210,12 @@ public partial class ScoreEditPage : ContentPage
 
     private static string FormatBytes(long bytes)
     {
+        var loc = LocalizationService.Instance;
         if (bytes >= 1024 * 1024)
-            return $"{bytes / (1024.0 * 1024.0):F2} Mo";
+            return $"{bytes / (1024.0 * 1024.0):F2} {loc.GetString("Unit_MB", "Mo")}";
         if (bytes >= 1024)
-            return $"{bytes / 1024.0:F1} Ko";
-        return $"{bytes} octets";
+            return $"{bytes / 1024.0:F1} {loc.GetString("Unit_KB", "Ko")}";
+        return $"{bytes} {loc.GetString("Unit_Bytes", "octets")}";
     }
 
     private void UpdateExternalIndicators()
@@ -421,7 +422,14 @@ public partial class ScoreEditPage : ContentPage
 
             if (Path.IsPathRooted(af.FilePath))
             {
-                var importBtn = new Button { Text = "Rapatrier", FontSize = 10, HeightRequest = 30, Padding = new Thickness(5, 0), BackgroundColor = Color.FromArgb("#007ACC"), TextColor = Colors.White };
+                var importBtn = new Button { 
+                    Text = LocalizationService.Instance.GetString("Score_Edit_Import_Action", "Rapatrier"), 
+                    FontSize = 10, 
+                    HeightRequest = 30, 
+                    Padding = new Thickness(5, 0), 
+                    BackgroundColor = Color.FromArgb("#007ACC"), 
+                    TextColor = Colors.White 
+                };
                 importBtn.Clicked += async (s, e) => await OnImportAudioToLibraryClicked(af);
                 actionsStack.Children.Add(importBtn);
             }
@@ -458,7 +466,7 @@ public partial class ScoreEditPage : ContentPage
 
             var result = await FilePicker.Default.PickAsync(new PickOptions
             {
-                PickerTitle = "Sélectionnez un fichier audio",
+                PickerTitle = LocalizationService.Instance.GetString("Score_Edit_Audio_Picker_Title", "Sélectionnez un fichier audio"),
                 FileTypes = customFileType
             });
 
@@ -515,20 +523,28 @@ public partial class ScoreEditPage : ContentPage
                         && File.Exists(result.FullPath)
                         && (string.IsNullOrEmpty(FileSystem.CacheDirectory) || !result.FullPath.StartsWith(FileSystem.CacheDirectory, StringComparison.OrdinalIgnoreCase));
 
+                    var loc = LocalizationService.Instance;
+                    string copyOption = loc.GetString("Score_Edit_Audio_Copy_Library", "Copier vers la bibliothèque Audio");
+                    string linkOption = loc.GetString("Score_Edit_Audio_Link_External", "Lier le fichier original (Externe)");
+                    string cancelOption = loc.GetString("Common_Cancel", "Annuler");
+
                     string? action = null;
                     if (canLink)
                     {
-                        action = await this.DisplayActionSheetAsync("Fichier audio externe", "Annuler", null, 
-                            "Copier vers la bibliothèque Audio", 
-                            "Lier le fichier original (Externe)");
+                        action = await this.DisplayActionSheetAsync(
+                            loc.GetString("Score_Edit_Audio_External_Title", "Fichier audio externe"), 
+                            cancelOption, 
+                            null, 
+                            copyOption, 
+                            linkOption);
                     }
                     else
                     {
                         // Fichier cloud (Google Drive, etc.) : copie directe obligatoire dans la bibliothèque
-                        action = "Copier vers la bibliothèque Audio";
+                        action = copyOption;
                     }
 
-                    if (action == "Copier vers la bibliothèque Audio")
+                    if (action == copyOption)
                     {
                         var sanitizedFileName = fileName.Replace(" ", "_");
                         var localFilePath = Path.Combine(rootDir, sanitizedFileName);
@@ -546,7 +562,7 @@ public partial class ScoreEditPage : ContentPage
                         
                         finalStoredPath = _settingsService.GetRelativePath(localFilePath, isAudio: true);
                     }
-                    else if (action == "Lier le fichier original (Externe)" && canLink)
+                    else if (action == linkOption && canLink)
                     {
                         finalStoredPath = result.FullPath!;
                     }
@@ -569,7 +585,11 @@ public partial class ScoreEditPage : ContentPage
         }
         catch (Exception ex)
         {
-            await this.DisplayAlertAsync("Erreur", $"Impossible d'importer le fichier : {ex.Message}", "OK");
+            var loc = LocalizationService.Instance;
+            await this.DisplayAlertAsync(
+                loc.GetString("Common_Error", "Erreur"), 
+                string.Format(loc.GetString("Score_Edit_Import_Error_Msg", "Impossible d'importer le fichier : {0}"), ex.Message), 
+                "OK");
         }
     }
 
@@ -610,7 +630,7 @@ public partial class ScoreEditPage : ContentPage
         string ok = loc.GetString("Common_OK", "OK");
         string cancel = loc.GetString("Common_Cancel", "Annuler");
 
-        string? result = await DisplayPromptAsync(title, prompt, ok, cancel, placeholder: "Ex: Liturgie, Jazz...");
+        string? result = await DisplayPromptAsync(title, prompt, ok, cancel, placeholder: loc.GetString("Score_Edit_Category_New_Placeholder", "Ex: Liturgie, Jazz..."));
         if (!string.IsNullOrWhiteSpace(result))
         {
             string clean = result.Trim();
@@ -655,7 +675,11 @@ public partial class ScoreEditPage : ContentPage
         }
         catch (Exception ex)
         {
-            await this.DisplayAlertAsync("Erreur", "Échec de la copie : " + ex.Message, "OK");
+            var loc = LocalizationService.Instance;
+            await this.DisplayAlertAsync(
+                loc.GetString("Common_Error", "Erreur"), 
+                string.Format(loc.GetString("Score_Edit_Copy_Error_Msg", "Échec de la copie : {0}"), ex.Message), 
+                "OK");
             return null;
         }
     }

@@ -161,7 +161,7 @@
                     <!-- Stop / Retour début -->
                     <Button Grid.Column="0" 
                             Text="⏮" 
-                            ToolTipProperties.Text="Stop / Début"
+                            ToolTipProperties.Text="{Binding [Viewer_Metronome_StopStart], Source={x:Static services:LocalizationService.Instance}}"
                             BackgroundColor="#2D2D35" 
                             TextColor="White" 
                             FontSize="15" 
@@ -245,7 +245,7 @@
                 <VerticalStackLayout Spacing="8">
                     <!-- Header : Titre et Bouton Fermer -->
                     <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,2">
-                        <Label Grid.Column="0" Text="Réglages des stickers" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Label Grid.Column="0" Text="{Binding [Viewer_Stickers_Settings], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
                         <Button Grid.Column="1" Text="✕" TextColor="#FF5555" BackgroundColor="Transparent" FontSize="18" FontAttributes="Bold" Padding="0" WidthRequest="32" HeightRequest="32" VerticalOptions="Center" HorizontalOptions="Center" Clicked="OnCloseStickerPickerClicked" />
                     </Grid>
 
@@ -704,7 +704,7 @@
                         StrokeThickness="0"
                         VerticalOptions="Center"
                         HorizontalOptions="Center"
-                        ToolTipProperties.Text="Déplacer la barre d'annotation">
+                        ToolTipProperties.Text="{Binding [Viewer_Move_Annotation_Bar], Source={x:Static services:LocalizationService.Instance}}">
                     <Border.GestureRecognizers>
                         <PanGestureRecognizer PanUpdated="OnAnnotationBarPanUpdated" />
                     </Border.GestureRecognizers>
@@ -964,7 +964,7 @@
 
                     <!-- Section Renommer (Max 3 caractères, unique) -->
                     <VerticalStackLayout Spacing="6">
-                        <Label Text="NOM DU MARQUEUR (1-3 CARACTÈRES)" TextColor="#90CDF4" FontSize="10" FontAttributes="Bold" CharacterSpacing="1" />
+                        <Label Text="{Binding [Viewer_Bookmark_Name_Header], Source={x:Static services:LocalizationService.Instance}}" TextColor="#90CDF4" FontSize="10" FontAttributes="Bold" CharacterSpacing="1" />
                         <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
                             <Entry x:Name="BookmarkNameEntry" 
                                    MaxLength="3" 
@@ -990,7 +990,7 @@
 
                     <!-- Section Navigation Précédent / Suivant -->
                     <Grid ColumnDefinitions="*, *" ColumnSpacing="8">
-                        <Button Grid.Column="0" x:Name="ModalPrevBookmarkBtn" Text="⏮ Précédent" BackgroundColor="#2D3748" TextColor="White" FontSize="12" HeightRequest="36" CornerRadius="8" Clicked="OnModalPrevBookmarkClicked" />
+                        <Button Grid.Column="0" x:Name="ModalPrevBookmarkBtn" Text="{Binding [Viewer_Bookmark_Prev], Source={x:Static services:LocalizationService.Instance}}" BackgroundColor="#2D3748" TextColor="White" FontSize="12" HeightRequest="36" CornerRadius="8" Clicked="OnModalPrevBookmarkClicked" />
                         <Button Grid.Column="1" x:Name="ModalNextBookmarkBtn" Text="Suivant ⏭" BackgroundColor="#2D3748" TextColor="White" FontSize="12" HeightRequest="36" CornerRadius="8" Clicked="OnModalNextBookmarkClicked" />
                     </Grid>
 
@@ -1005,7 +1005,7 @@
                     <BoxView HeightRequest="1" Color="#2D3748" />
 
                     <!-- Bouton Supprimer le marqueur -->
-                    <Button Text="🗑️ Supprimer ce marqueur" 
+                    <Button Text="{Binding [Viewer_Bookmark_Delete_Btn], Source={x:Static services:LocalizationService.Instance}}" 
                             BackgroundColor="#5A1E1E" 
                             TextColor="#FF8A80" 
                             FontAttributes="Bold" 
@@ -1069,7 +1069,7 @@
                     <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto">
                         <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
                             <Label Text="📋" FontSize="18" VerticalOptions="Center" />
-                            <Label Text="Déroulement de la setlist" 
+                            <Label Text="{Binding [Viewer_Setlist_Flow_Title], Source={x:Static services:LocalizationService.Instance}}" 
                                    TextColor="White" 
                                    FontAttributes="Bold" 
                                    FontSize="16" 

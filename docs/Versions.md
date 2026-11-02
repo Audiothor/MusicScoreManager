@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.1.12 — 02/11/2026](#v3112--02112026)
 - [v3.1.11 — 01/11/2026](#v3111--01112026)
 - [v3.1.10 — 01/11/2026](#v3110--01112026)
 - [v3.1.9 — 01/11/2026](#v319--01112026)
@@ -45,6 +46,34 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.1.12 — 02/11/2026
+
+### 1. Gestion des Catégories & Alignement Physique des Répertoires
+- **1.1. Sélection de la catégorie par défaut (`SettingsScoresPage`) :**
+  - Ajout dans *Paramètres > Partitions* d'une option dédiée **« Catégorie (dossier) par défaut »** avec sélecteur déroulant (`Picker`) permettant à l'utilisateur de choisir la catégorie attribuée automatiquement lors de l'import de partitions sans dossier spécifié (valeur par défaut : `"Default"`).
+  - Intégration dans `SettingsService.DefaultCategory` et persistance dans les `Preferences`.
+- **1.2. Normalisation et rangement physique des fichiers dans leurs répertoires (`Scores/{Catégorie}/`) :**
+  - Règle physique unifiée dans `ImportService` : chaque partition importée est systématiquement enregistrée dans le sous-dossier de sa catégorie (`Path.Combine(rootDir, category)`), éliminant l'exception historique qui plaçait les fichiers de la catégorie générale en vrac à la racine de `Scores/`.
+  - Renommage de catégorie étendu dans `DatabaseService.RenameCategoryAsync` : déplacement automatique des fichiers situés à la racine ou dans l'ancien sous-dossier vers le nouveau répertoire de catégorie, avec mise à jour du chemin relatif en base.
+  - Outil d'assainissement physique (`ConsolidatePhysicalCategoriesAsync`) :
+    - Déplacement physique de toutes les partitions existantes situées à la racine de `Scores/` vers leurs sous-dossiers de catégories respectifs (notamment `Scores/Default/`).
+    - Mise à jour cohérente de `score.FilePath` en base SQLite.
+    - Exécution transparente au démarrage de l'application et bouton d'action manuel disponible dans les paramètres de partitions.
+
+### 2. Localisation Intégrale de l'Application (8 Langues)
+- **2.1. Audit & élimination des textes en dur :**
+  - Détection et remplacement de plus de 200 chaînes textuelles en dur résiduelles à travers l'ensemble des fichiers `.xaml` et `.cs` (dialogues, popups d'importation, atelier d'assemblage PDF, alertes Wi-Fi Direct, gestion des tags, aperçus et marqueurs).
+- **2.2. Traduction complète dans les 8 langues prises en charge :**
+  - Ajout et synchronisation de toutes les clés dans les fichiers `fr.json`, `en.json`, `de.json`, `es.json`, `it.json`, `nl.json`, `pl.json` et `pt.json`.
+  - Connexion automatique aux mécanismes de changement dynamique de langue via `LocalizationService.Instance`.
+
+### 3. Qualité du Code & Compilation Zéro Défaut
+- Résolution définitive des avertissements `CS1998` dans `PdfService.cs` pour les plateformes non-Windows.
+- Nettoyage et synchronisation des méthodes de préparation de setlist dans `SetlistEditPage.xaml.cs`.
+- **Bilan de compilation :** **0 Avertissement(s), 0 Erreur(s)** sous Windows (`net10.0-windows10.0.19041.0`) et iOS (`net10.0-ios`).
 
 ---
 

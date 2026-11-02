@@ -23,7 +23,8 @@ namespace MusicScoreManager
             _exportImportService = exportImportService;
             _databaseService = databaseService;
 
-            DeviceNameLabel.Text = DeviceInfo.Name ?? "Tablette Musique";
+            var loc = LocalizationService.Instance;
+            DeviceNameLabel.Text = DeviceInfo.Name ?? loc.GetString("Wifi_Transfer_Device_Default", "Tablette Musique");
             _wifiService.TransferProgressChanged += OnTransferProgressChanged;
         }
 
@@ -37,7 +38,8 @@ namespace MusicScoreManager
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            DeviceNameLabel.Text = DeviceInfo.Name ?? "Tablette Musique";
+            var loc = LocalizationService.Instance;
+            DeviceNameLabel.Text = DeviceInfo.Name ?? loc.GetString("Wifi_Transfer_Device_Default", "Tablette Musique");
         }
 
         protected override async void OnDisappearing()
@@ -69,14 +71,15 @@ namespace MusicScoreManager
                 _isListening = true;
 
                 var loc = LocalizationService.Instance;
-                ToggleReceiveButton.Text = "🔴 Désactiver la Réception";
+                ToggleReceiveButton.Text = loc.GetString("Wifi_Transfer_Disable_Receive", "🔴 Désactiver la Réception");
                 ToggleReceiveButton.BackgroundColor = Color.FromArgb("#E74C3C");
                 StatusBadgeLabel.Text = loc.GetString("Wifi_Listening_Visible", "🟢 En écoute (Visible)");
                 StatusBadgeLabel.TextColor = Color.FromArgb("#2ECC71");
 
-                await DisplayAlertAsync("Réception Activée", 
-                    "Votre tablette est maintenant visible par les autres musiciens en Wi-Fi Direct.\n\nVous recevrez une notification d'acceptation dès qu'un envoi vous parviendra.", 
-                    "OK");
+                await DisplayAlertAsync(
+                    loc.GetString("Wifi_Transfer_Receive_Active_Title", "Réception Activée"), 
+                    loc.GetString("Wifi_Transfer_Receive_Active_Msg", "Votre tablette est maintenant visible par les autres musiciens en Wi-Fi Direct.\n\nVous recevrez une notification d'acceptation dès qu'un envoi vous parviendra."), 
+                    loc.GetString("Common_OK", "OK"));
             }
             else
             {
@@ -84,7 +87,7 @@ namespace MusicScoreManager
                 _isListening = false;
 
                 var loc = LocalizationService.Instance;
-                ToggleReceiveButton.Text = "🟢 Activer la Réception (Se rendre visible)";
+                ToggleReceiveButton.Text = loc.GetString("Wifi_Transfer_Enable_Receive", "🟢 Activer la Réception (Se rendre visible)");
                 ToggleReceiveButton.BackgroundColor = Color.FromArgb("#2ECC71");
                 StatusBadgeLabel.Text = loc.GetString("Wifi_Idle_Status", "⚫ En veille");
                 StatusBadgeLabel.TextColor = Color.FromArgb("#AAAAAA");
@@ -95,11 +98,12 @@ namespace MusicScoreManager
         {
             return await MainThread.InvokeOnMainThreadAsync(async () =>
             {
+                var loc = LocalizationService.Instance;
                 return await DisplayAlertAsync(
-                    "📥 Réception Wi-Fi Direct",
-                    $"{senderName} souhaite vous envoyer {fileCount} élément(s) (partitions, annotations, audios).\n\nAccepter le transfert ?",
-                    "Accepter",
-                    "Refuser"
+                    loc.GetString("Wifi_Transfer_Prompt_Title", "📥 Réception Wi-Fi Direct"),
+                    string.Format(loc.GetString("Wifi_Transfer_Prompt_Msg", "{0} souhaite vous envoyer {1} élément(s) (partitions, annotations, audios).\n\nAccepter le transfert ?"), senderName, fileCount),
+                    loc.GetString("Wifi_Transfer_Accept_Btn", "Accepter"),
+                    loc.GetString("Wifi_Transfer_Refuse_Btn", "Refuser")
                 );
             });
         }
@@ -126,30 +130,43 @@ namespace MusicScoreManager
                         success = await _exportImportService.ImportPackageFromWifiPayloadsAsync(files);
                     }
 
+                    var loc = LocalizationService.Instance;
                     if (success)
                     {
-                        await DisplayAlertAsync("Succès", 
-                            $"Réception terminée avec succès depuis {senderName} !\n\nLes éléments ont été intégrés à votre bibliothèque.", 
-                            "Super !");
+                        await DisplayAlertAsync(
+                            loc.GetString("Wifi_Transfer_Success_Title", "Succès"), 
+                            string.Format(loc.GetString("Wifi_Transfer_Success_Msg", "Réception terminée avec succès depuis {0} !\n\nLes éléments ont été intégrés à votre bibliothèque."), senderName), 
+                            loc.GetString("Common_OK", "OK"));
                     }
                     else
                     {
-                        await DisplayAlertAsync("Avertissement", "Les données ont été reçues mais une anomalie s'est produite lors de l'intégration.", "OK");
+                        await DisplayAlertAsync(
+                            loc.GetString("Common_Warning", "Avertissement"), 
+                            loc.GetString("Wifi_Transfer_Integration_Warning", "Les données ont été reçues mais une anomalie s'est produite lors de l'intégration."), 
+                            loc.GetString("Common_OK", "OK"));
                     }
                 }
                 catch (Exception ex)
                 {
-                    await DisplayAlertAsync("Erreur", $"Erreur lors de l'importation : {ex.Message}", "OK");
+                    var loc = LocalizationService.Instance;
+                    await DisplayAlertAsync(
+                        loc.GetString("Common_Error", "Erreur"), 
+                        $"{loc.GetString("Wifi_Transfer_Import_Error", "Erreur lors de l'importation")} : {ex.Message}", 
+                        loc.GetString("Common_OK", "OK"));
                 }
             });
         }
 
         private async void OnDownloadQrClicked(object? sender, EventArgs e)
         {
+            var loc = LocalizationService.Instance;
             string url = QrAddressEntry.Text?.Trim() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(url))
             {
-                await DisplayAlertAsync("Adresse requise", "Veuillez saisir ou coller l'adresse affichée sur l'écran émetteur (ex: http://192.168.49.1:8765/msm_package/).", "OK");
+                await DisplayAlertAsync(
+                    loc.GetString("Wifi_Transfer_Address_Required_Title", "Adresse requise"), 
+                    loc.GetString("Wifi_Transfer_Address_Required", "Veuillez saisir ou coller l'adresse affichée sur l'écran émetteur (ex: http://192.168.49.1:8765/msm_package/)."), 
+                    loc.GetString("Common_OK", "OK"));
                 return;
             }
 
@@ -158,7 +175,10 @@ namespace MusicScoreManager
 
             if (!success)
             {
-                await DisplayAlertAsync("Échec", "Impossible de récupérer le partage. Vérifiez que vous êtes connecté au même réseau ou au point d'accès de l'émetteur.", "OK");
+                await DisplayAlertAsync(
+                    loc.GetString("Wifi_Transfer_Failed", "Échec"), 
+                    loc.GetString("Wifi_Transfer_Join_Failed", "Impossible de récupérer le partage. Vérifiez que vous êtes connecté au même réseau ou au point d'accès de l'émetteur."), 
+                    loc.GetString("Common_OK", "OK"));
             }
         }
 

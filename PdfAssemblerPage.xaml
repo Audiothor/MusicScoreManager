@@ -86,7 +86,7 @@
                             <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="8">
                                 <Label Grid.Column="0" Text="✏️" FontSize="18" VerticalOptions="Center" />
                                 <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                                    <Label x:Name="PdfAssemblerEditingScoreLabel" Text="Modification de la partition : [Titre]" TextColor="#64B5F6" FontSize="13" FontAttributes="Bold" />
+                                    <Label x:Name="PdfAssemblerEditingScoreLabel" Text="{Binding [PdfAssembler_Editing_Score_Default], Source={x:Static services:LocalizationService.Instance}}" TextColor="#64B5F6" FontSize="13" FontAttributes="Bold" />
                                     <Label Text="{Binding [PdfAssembler_Banner_Sub], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="11" />
                                 </VerticalStackLayout>
                                 <Button Grid.Column="2" Text="{Binding [PdfAssembler_Banner_Change], Source={x:Static services:LocalizationService.Instance}}" TextColor="#64B5F6" BackgroundColor="#243C5E" CornerRadius="6" FontSize="11" HeightRequest="32" Padding="10,0" Clicked="OnPdfAssemblerPickScoreClicked" />
@@ -160,7 +160,7 @@
 
                         <!-- En-tête de liste des pages -->
                         <Grid ColumnDefinitions="*, Auto" Margin="0,6,0,0">
-                            <Label Grid.Column="0" x:Name="PdfAssemblerPagesCountLabel" Text="Pages (0) :" TextColor="#AAAAAA" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Label Grid.Column="0" x:Name="PdfAssemblerPagesCountLabel" Text="{Binding [PdfAssembler_Pages_Count_Zero], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
                             <Label Grid.Column="1" Text="{Binding [PdfAssembler_Pages_Hint], Source={x:Static services:LocalizationService.Instance}}" TextColor="#666666" FontSize="11" VerticalOptions="Center" />
                         </Grid>
 
@@ -463,8 +463,8 @@
                         <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
                             <Label Grid.Column="0" Text="🔍" FontSize="20" VerticalOptions="Center" />
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                                <Label x:Name="PagePreviewTitleLabel" Text="Aperçu Page" TextColor="White" FontSize="15" FontAttributes="Bold" />
-                                <Label x:Name="PagePreviewInfoLabel" Text="Détails" TextColor="#888888" FontSize="11" />
+                                <Label x:Name="PagePreviewTitleLabel" Text="{Binding [Pdf_Assembler_Page_Preview], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                <Label x:Name="PagePreviewInfoLabel" Text="{Binding [Pdf_Assembler_Details], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="11" />
                             </VerticalStackLayout>
                             <Button Grid.Column="2" Text="✕" FontSize="14" TextColor="#888888" BackgroundColor="Transparent" WidthRequest="32" HeightRequest="32" Padding="0" Clicked="OnPreviewCloseClicked" />
                         </Grid>

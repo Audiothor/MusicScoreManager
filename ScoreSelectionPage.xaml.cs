@@ -51,10 +51,11 @@ public partial class ScoreSelectionPage : ContentPage
     private void PopulateTags()
     {
         TagFiltersStack.Children.Clear();
+        var loc = LocalizationService.Instance;
 
         // "Tous" chip
         bool isAll = _selectedTagIds.Count == 0;
-        var allChip = CreateChip("Tous", () =>
+        var allChip = CreateChip(loc.GetString("Selection_All_Chip", "Tous"), () =>
         {
             _selectedTagIds.Clear();
             PopulateTags();
@@ -65,7 +66,9 @@ public partial class ScoreSelectionPage : ContentPage
         // Chip Mode ET / OU si plusieurs tags sélectionnés
         if (_selectedTagIds.Count > 1)
         {
-            string modeText = _matchAllTags ? "Mode : ET (Toutes) ⇄" : "Mode : OU (Au moins une) ⇄";
+            string modeText = _matchAllTags 
+                ? loc.GetString("Selection_Mode_And", "Mode : ET (Toutes) ⇄") 
+                : loc.GetString("Selection_Mode_Or", "Mode : OU (Au moins une) ⇄");
             var modeChip = CreateChip(modeText, () =>
             {
                 _matchAllTags = !_matchAllTags;
@@ -167,14 +170,17 @@ public partial class ScoreSelectionPage : ContentPage
 
     private async void OnCategoryFilterClicked(object sender, EventArgs e)
     {
+        var loc = LocalizationService.Instance;
         var categories = await _databaseService.GetCategoriesAsync();
-        var options = new List<string> { "📁 Tous les dossiers (Toutes)" };
+        string allFoldersLabel = loc.GetString("Selection_Filter_Folders_All", "📁 Tous les dossiers (Toutes)");
+        var options = new List<string> { allFoldersLabel };
         options.AddRange(categories.Select(c => $"📁 {c}"));
 
-        string action = await DisplayActionSheetAsync("Filtrer par dossier / catégorie", "Annuler", null, options.ToArray());
-        if (string.IsNullOrEmpty(action) || action == "Annuler") return;
+        string cancel = loc.GetString("Common_Cancel", "Annuler");
+        string action = await DisplayActionSheetAsync(loc.GetString("Selection_Filter_Folders_Title", "Filtrer par dossier / catégorie"), cancel, null, options.ToArray());
+        if (string.IsNullOrEmpty(action) || action == cancel) return;
 
-        if (action.Contains("Tous les dossiers"))
+        if (action == allFoldersLabel || action.Contains("Tous les dossiers"))
         {
             _selectedCategoryFilter = null;
             CategoryFilterButton.BackgroundColor = Color.FromArgb("#333333");
@@ -193,35 +199,42 @@ public partial class ScoreSelectionPage : ContentPage
 
     private async void OnSortClicked(object sender, EventArgs e)
     {
+        var loc = LocalizationService.Instance;
+        string optTitleAsc = loc.GetString("Sort_TitleAsc", "Titre (A-Z)");
+        string optTitleDesc = loc.GetString("Sort_TitleDesc", "Titre (Z-A)");
+        string optDateDesc = loc.GetString("Sort_DateDesc", "Date d'ajout (Récent)");
+        string optDateAsc = loc.GetString("Sort_DateAsc", "Date d'ajout (Ancien)");
+        string optCompAsc = loc.GetString("Sort_ComposerAsc", "Compositeur (A-Z)");
+        string optTagsAsc = loc.GetString("Sort_TagsAsc", "Par étiquettes (A-Z)");
+        string optTagMatches = loc.GetString("Sort_TagMatches", "Correspondance d'étiquettes (Pertinence)");
+
         var options = new List<string>
         {
-            "Titre (A-Z)",
-            "Titre (Z-A)",
-            "Date d'ajout (Récent)",
-            "Date d'ajout (Ancien)",
-            "Compositeur (A-Z)",
-            "Par étiquettes (A-Z)"
+            optTitleAsc,
+            optTitleDesc,
+            optDateDesc,
+            optDateAsc,
+            optCompAsc,
+            optTagsAsc
         };
 
         if (_selectedTagIds.Count > 0)
         {
-            options.Add("Correspondance d'étiquettes (Pertinence)");
+            options.Add(optTagMatches);
         }
 
-        string action = await DisplayActionSheetAsync("Trier par", "Annuler", null, options.ToArray());
-        if (string.IsNullOrEmpty(action) || action == "Annuler") return;
+        string cancel = loc.GetString("Common_Cancel", "Annuler");
+        string action = await DisplayActionSheetAsync(loc.GetString("Selection_Sort_Title", "Trier par"), cancel, null, options.ToArray());
+        if (string.IsNullOrEmpty(action) || action == cancel) return;
 
-        _currentSort = action switch
-        {
-            "Titre (A-Z)" => "TitleAsc",
-            "Titre (Z-A)" => "TitleDesc",
-            "Date d'ajout (Récent)" => "DateDesc",
-            "Date d'ajout (Ancien)" => "DateAsc",
-            "Compositeur (A-Z)" => "ComposerAsc",
-            "Par étiquettes (A-Z)" => "TagsAsc",
-            "Correspondance d'étiquettes (Pertinence)" => "TagMatches",
-            _ => "TitleAsc"
-        };
+        if (action == optTitleAsc) _currentSort = "TitleAsc";
+        else if (action == optTitleDesc) _currentSort = "TitleDesc";
+        else if (action == optDateDesc) _currentSort = "DateDesc";
+        else if (action == optDateAsc) _currentSort = "DateAsc";
+        else if (action == optCompAsc) _currentSort = "ComposerAsc";
+        else if (action == optTagsAsc) _currentSort = "TagsAsc";
+        else if (action == optTagMatches) _currentSort = "TagMatches";
+        else _currentSort = "TitleAsc";
 
         FilterScores();
     }

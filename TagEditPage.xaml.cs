@@ -127,9 +127,10 @@ public partial class TagEditPage : ContentPage
 
     private async void OnSaveClicked(object sender, EventArgs e)
     {
+        var loc = LocalizationService.Instance;
         if (string.IsNullOrWhiteSpace(NameEntry.Text))
         {
-            await DisplayAlertAsync("Erreur", "Le nom ne peut pas être vide.", "OK");
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), loc.GetString("Common_Tag_Name_Empty", "Le nom ne peut pas être vide."), loc.GetString("Common_OK", "OK"));
             return;
         }
 
@@ -145,7 +146,12 @@ public partial class TagEditPage : ContentPage
 
     private async void OnDeleteClicked(object sender, EventArgs e)
     {
-        bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer l'étiquette '{_tag.Name}' ?\nCela la retirera de toutes les partitions.", "Oui", "Non");
+        var loc = LocalizationService.Instance;
+        bool answer = await DisplayAlertAsync(
+            loc.GetString("Common_Delete", "Supprimer"),
+            string.Format(loc.GetString("Common_Tag_Delete_Prompt", "Voulez-vous vraiment supprimer l'étiquette '{0}' ?\nCela la retirera de toutes les partitions."), _tag.Name),
+            loc.GetString("Common_Yes", "Oui"),
+            loc.GetString("Common_No", "Non"));
         if (answer)
         {
             await _databaseService.DeleteTagAsync(_tag);

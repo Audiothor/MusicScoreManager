@@ -259,7 +259,7 @@
                                 <Button x:Name="Star5Btn" Text="★" TextColor="#555555" BackgroundColor="Transparent" FontSize="26" WidthRequest="40" HeightRequest="40" Padding="0" Clicked="OnStarClicked" CommandParameter="5" />
                             </HorizontalStackLayout>
                             
-                            <Label Grid.Column="1" x:Name="RatingTextLabel" Text="Non notée" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" Margin="10,0,0,0" />
+                            <Label Grid.Column="1" x:Name="RatingTextLabel" Text="{Binding [Score_Edit_Rating_None], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="13" VerticalOptions="Center" Margin="10,0,0,0" />
 
                             <Button Grid.Column="2" 
                                     x:Name="ClearRatingBtn"

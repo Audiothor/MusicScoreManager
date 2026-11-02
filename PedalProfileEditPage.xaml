@@ -6,20 +6,20 @@
              xmlns:services="clr-namespace:MusicScoreManager.Services"
              x:Class="MusicScoreManager.PedalProfileEditPage"
              BackgroundColor="#121212"
-             Title="Édition du profil">
+             Title="{Binding [Pedal_Profile_Edit_Title], Source={x:Static services:LocalizationService.Instance}}">
 
     <Grid RowDefinitions="Auto, *">
         <!-- En-tête -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Padding="12,10" BackgroundColor="#1E1E1E">
             <Button Grid.Column="0" 
-                    Text="‹ Retour" 
+                    Text="{Binding [Common_Back], Source={x:Static services:LocalizationService.Instance}}" 
                     BackgroundColor="Transparent" 
                     TextColor="#007ACC" 
                     FontAttributes="Bold" 
                     Clicked="OnBackClicked" />
 
             <Label Grid.Column="1" 
-                   Text="Éditer le profil de pédale" 
+                   Text="{Binding [Pedal_Profile_Edit_Header], Source={x:Static services:LocalizationService.Instance}}" 
                    TextColor="White" 
                    FontSize="17" 
                    FontAttributes="Bold" 
@@ -27,7 +27,7 @@
                    HorizontalOptions="Center" />
 
             <Button Grid.Column="2" 
-                    Text="💾 Sauvegarder" 
+                    Text="{Binding [Common_Save], Source={x:Static services:LocalizationService.Instance}}" 
                     BackgroundColor="#007ACC" 
                     TextColor="White" 
                     FontAttributes="Bold" 
@@ -46,11 +46,11 @@
                         <RoundRectangle CornerRadius="12" />
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="14">
-                        <Label Text="Informations du profil" TextColor="#007ACC" FontSize="16" FontAttributes="Bold" />
+                        <Label Text="{Binding [Pedal_Profile_Section_Info], Source={x:Static services:LocalizationService.Instance}}" TextColor="#007ACC" FontSize="16" FontAttributes="Bold" />
 
                         <!-- Nom du profil -->
                         <VerticalStackLayout Spacing="6">
-                            <Label Text="Nom du profil" TextColor="#CCCCCC" FontSize="13" FontAttributes="Bold" />
+                            <Label Text="{Binding [Pedal_Profile_Name_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="13" FontAttributes="Bold" />
                             <Border Stroke="#444444" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="10,0">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="8" />
@@ -58,7 +58,7 @@
                                 <Entry x:Name="ProfileNameEntry" 
                                        TextColor="White" 
                                        FontSize="15" 
-                                       Placeholder="Ex: PageFlip Dragonfly, Ma Pédale..." 
+                                       Placeholder="{Binding [Pedal_Profile_Name_Placeholder], Source={x:Static services:LocalizationService.Instance}}" 
                                        PlaceholderColor="#777777" />
                             </Border>
                         </VerticalStackLayout>
@@ -66,8 +66,8 @@
                         <!-- Description & Commentaires libres -->
                         <VerticalStackLayout Spacing="6">
                             <Grid ColumnDefinitions="*, Auto">
-                                <Label Text="Description &amp; Conseils d'utilisation" TextColor="#CCCCCC" FontSize="13" FontAttributes="Bold" />
-                                <Label Grid.Column="1" Text="(Visible dans la liste)" TextColor="#777777" FontSize="11" />
+                                <Label Text="{Binding [Pedal_Profile_Desc_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="13" FontAttributes="Bold" />
+                                <Label Grid.Column="1" Text="{Binding [Pedal_Profile_Visible_Hint], Source={x:Static services:LocalizationService.Instance}}" TextColor="#777777" FontSize="11" />
                             </Grid>
                             <Border Stroke="#444444" StrokeThickness="1" BackgroundColor="#2A2A2A" Padding="10,8">
                                 <Border.StrokeShape>
@@ -78,7 +78,7 @@
                                         FontSize="13" 
                                         AutoSize="TextChanges" 
                                         MinimumHeightRequest="75"
-                                        Placeholder="Ajoutez vos remarques, le mode sélectionné sur la pédale (ex: Mode 3, REPEAT OFF, etc.)..." 
+                                        Placeholder="{Binding [Pedal_Profile_Desc_Placeholder], Source={x:Static services:LocalizationService.Instance}}" 
                                         PlaceholderColor="#777777" />
                             </Border>
                         </VerticalStackLayout>
@@ -93,12 +93,12 @@
                     <VerticalStackLayout Spacing="16">
                         <Grid ColumnDefinitions="*, Auto">
                             <VerticalStackLayout VerticalOptions="Center" Spacing="2">
-                                <Label Text="Pédales &amp; Boutons configurés" TextColor="#007ACC" FontSize="16" FontAttributes="Bold" />
-                                <Label x:Name="ButtonsCountLabel" Text="0 action(s) configurée(s)" TextColor="#888888" FontSize="12" />
+                                <Label Text="{Binding [Pedal_Profile_Section_Buttons], Source={x:Static services:LocalizationService.Instance}}" TextColor="#007ACC" FontSize="16" FontAttributes="Bold" />
+                                <Label x:Name="ButtonsCountLabel" Text="" TextColor="#888888" FontSize="12" />
                             </VerticalStackLayout>
 
                             <Button Grid.Column="1" 
-                                    Text="➕ Ajouter une pédale" 
+                                    Text="{Binding [Pedal_Profile_Add_Btn], Source={x:Static services:LocalizationService.Instance}}" 
                                     BackgroundColor="#2E7D32" 
                                     TextColor="White" 
                                     FontAttributes="Bold" 
@@ -113,7 +113,7 @@
 
                         <!-- Message si aucun bouton -->
                         <Label x:Name="EmptyBindingsLabel" 
-                               Text="Aucune pédale ou bouton configuré pour ce profil.&#10;Touchez « ➕ Ajouter une pédale » pour en créer une." 
+                               Text="{Binding [Pedal_Profile_Empty_Bindings], Source={x:Static services:LocalizationService.Instance}}" 
                                TextColor="#888888" 
                                FontSize="13" 
                                HorizontalTextAlignment="Center" 
@@ -127,7 +127,7 @@
                 </Border>
 
                 <!-- Bouton Enregistrer au bas également -->
-                <Button Text="💾 Enregistrer les modifications du profil" 
+                <Button Text="{Binding [Pedal_Profile_Save_Changes], Source={x:Static services:LocalizationService.Instance}}" 
                         BackgroundColor="#007ACC" 
                         TextColor="White" 
                         FontAttributes="Bold" 

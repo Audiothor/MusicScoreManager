@@ -56,7 +56,7 @@ namespace MusicScoreManager.Services
         public async Task<List<Score>> ImportScoresAsync(string? targetCategory = null)
         {
             var importedScores = new List<Score>();
-            string effectiveCategory = string.IsNullOrWhiteSpace(targetCategory) ? "Général" : targetCategory.Trim();
+            string effectiveCategory = string.IsNullOrWhiteSpace(targetCategory) ? _settingsService.DefaultCategory : targetCategory.Trim();
             try
             {
                 // Sur Android, FilePicker utilise le sélecteur système SAF qui n'exige pas de permission préalable.
@@ -90,9 +90,7 @@ namespace MusicScoreManager.Services
                 var rootDir = _settingsService.ScoresRootDirectory;
                 if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
 
-                var destDir = string.Equals(effectiveCategory, "Général", StringComparison.OrdinalIgnoreCase)
-                    ? rootDir
-                    : Path.Combine(rootDir, effectiveCategory);
+                var destDir = Path.Combine(rootDir, effectiveCategory);
                 if (!Directory.Exists(destDir)) Directory.CreateDirectory(destDir);
 
                 var cacheDir = FileSystem.CacheDirectory;

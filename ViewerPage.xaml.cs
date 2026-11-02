@@ -599,7 +599,8 @@ public partial class ViewerPage : ContentPage
             {
                 HideViewerLoadingOverlay();
                 System.Diagnostics.Debug.WriteLine("[Viewer] ERREUR : _score.FilePath est NULL ou vide");
-                await DisplayAlertAsync("Erreur", "Chemin du fichier manquant", "OK");
+                var loc = LocalizationService.Instance;
+                await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), loc.GetString("Viewer_Error_MissingPath", "Chemin du fichier manquant"), loc.GetString("Common_OK", "OK"));
                 return;
             }
 
@@ -614,7 +615,8 @@ public partial class ViewerPage : ContentPage
             {
                 HideViewerLoadingOverlay();
                 System.Diagnostics.Debug.WriteLine($"[Viewer] ERREUR : Le fichier n'existe pas au chemin : {fullPath}");
-                await DisplayAlertAsync("Fichier introuvable", $"Le fichier est introuvable :\n{fullPath}", "OK");
+                var loc = LocalizationService.Instance;
+                await DisplayAlertAsync(loc.GetString("Viewer_Error_FileNotFound_Title", "Fichier introuvable"), string.Format(loc.GetString("Viewer_Error_FileNotFound_Msg", "Le fichier est introuvable :\n{0}"), fullPath), loc.GetString("Common_OK", "OK"));
                 return;
             }
 
@@ -643,7 +645,8 @@ public partial class ViewerPage : ContentPage
                 {
                     HideViewerLoadingOverlay();
                     System.Diagnostics.Debug.WriteLine($"[Viewer] ECHEC chargement Image: {imgEx.Message}");
-                    await DisplayAlertAsync("Erreur Lecture", $"{imgEx.Message}\n\nL'application n'a pas pu charger l'image.", "OK");
+                    var loc = LocalizationService.Instance;
+                await DisplayAlertAsync(loc.GetString("Viewer_Error_Read_Image", "Erreur Lecture"), string.Format(loc.GetString("Viewer_Error_Load_Image_Msg", "{0}\n\nL'application n'a pas pu charger l'image."), imgEx.Message), loc.GetString("Common_OK", "OK"));
                 }
             }
             else if (_score.Type == ScoreType.PDF)
@@ -713,7 +716,8 @@ public partial class ViewerPage : ContentPage
         {
             HideViewerLoadingOverlay();
             System.Diagnostics.Debug.WriteLine($"[Viewer] CRASH dans LoadContentAsync: {ex.Message}");
-            await DisplayAlertAsync("Erreur de chargement", $"{ex.Message}\n\nFichier: {_score.FilePath}", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Viewer_Error_Load_Title", "Erreur de chargement"), $"{ex.Message}\n\nFichier: {_score.FilePath}", loc.GetString("Common_OK", "OK"));
         }
     }
 
@@ -3182,7 +3186,8 @@ public partial class ViewerPage : ContentPage
                     break;
 
                 case PedalAction.ToggleNightMode:
-                    await DisplayAlertAsync("Mode Nuit", "L'activation du mode nuit sera disponible dans une prochaine mise à jour.", "OK");
+                    var loc = LocalizationService.Instance;
+        await DisplayAlertAsync(loc.GetString("Viewer_NightMode_Title", "Mode Nuit"), loc.GetString("Viewer_NightMode_Future", "L'activation du mode nuit sera disponible dans une prochaine mise à jour."), loc.GetString("Common_OK", "OK"));
                     break;
 
                 case PedalAction.ZoomIn:
@@ -5190,7 +5195,8 @@ public partial class ViewerPage : ContentPage
     {
         if (_isAnnotationsLocked)
         {
-            await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour ajouter des stickers.", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Viewer_Annotations_Locked_Title", "Verrouillé"), loc.GetString("Viewer_Annotations_Locked_Stickers", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour ajouter des stickers."), loc.GetString("Common_OK", "OK"));
             return;
         }
 
@@ -5445,7 +5451,8 @@ public partial class ViewerPage : ContentPage
     {
         if (_isAnnotationsLocked)
         {
-            await DisplayAlertAsync("Verrouillé", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir modifier.", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Viewer_Annotations_Locked_Title", "Verrouillé"), loc.GetString("Viewer_Annotations_Locked_Edit", "Les annotations sont verrouillées. Déverrouillez-les (🔓) pour pouvoir modifier."), loc.GetString("Common_OK", "OK"));
             return;
         }
 
@@ -6673,7 +6680,8 @@ public partial class ViewerPage : ContentPage
         {
             if (BookmarkErrorLabel != null)
             {
-                BookmarkErrorLabel.Text = "Le nom ne peut pas être vide.";
+                var loc = LocalizationService.Instance;
+            BookmarkErrorLabel.Text = loc.GetString("Viewer_Bookmark_Name_Empty", "Le nom ne peut pas être vide.");
                 BookmarkErrorLabel.IsVisible = true;
             }
             return;
@@ -6682,7 +6690,8 @@ public partial class ViewerPage : ContentPage
         {
             if (BookmarkErrorLabel != null)
             {
-                BookmarkErrorLabel.Text = "3 caractères maximum (ex: A, B, C1...).";
+                var loc = LocalizationService.Instance;
+            BookmarkErrorLabel.Text = loc.GetString("Viewer_Bookmark_Name_Length", "3 caractères maximum (ex: A, B, C1...).");
                 BookmarkErrorLabel.IsVisible = true;
             }
             return;
