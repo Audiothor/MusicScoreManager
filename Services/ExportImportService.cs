@@ -75,7 +75,7 @@ namespace MusicScoreManager.Services
             {
                 Title = score.Title,
                 FileName = Path.GetFileName(score.FilePath),
-                Category = score.Category ?? "Général",
+                Category = score.Category ?? _settingsService.DefaultCategory,
                 Type = score.Type,
                 Rotation = score.Rotation,
                 IsRotationSaved = score.IsRotationSaved,
@@ -388,9 +388,11 @@ namespace MusicScoreManager.Services
                 var scorePayload = payloads.FirstOrDefault(p => p.FileName == scoreMeta.FileName);
                 if (scorePayload != null)
                 {
-                    // Ne pas imposer l'arborescence de l'expéditeur au destinataire : import dans Général
-                    string cat = "Général";
-                    string targetFilePath = Path.Combine(scoresRootDir, scoreMeta.FileName);
+                    // Ne pas imposer l'arborescence de l'expéditeur au destinataire : import dans la catégorie par défaut
+                    string cat = _settingsService.DefaultCategory;
+                    string targetCatDir = Path.Combine(scoresRootDir, cat);
+                    if (!Directory.Exists(targetCatDir)) Directory.CreateDirectory(targetCatDir);
+                    string targetFilePath = Path.Combine(targetCatDir, scoreMeta.FileName);
                     if (!File.Exists(targetFilePath))
                     {
                         await File.WriteAllBytesAsync(targetFilePath, scorePayload.Data);
@@ -530,9 +532,11 @@ namespace MusicScoreManager.Services
                 var scorePayload = payloads.FirstOrDefault(p => p.FileName == scoreMeta.FileName);
                 if (scorePayload != null)
                 {
-                    // Ne pas imposer l'arborescence de l'expéditeur au destinataire : import dans Général
-                    string cat = "Général";
-                    string targetFilePath = Path.Combine(scoresRootDir, scoreMeta.FileName);
+                    // Ne pas imposer l'arborescence de l'expéditeur au destinataire : import dans la catégorie par défaut
+                    string cat = _settingsService.DefaultCategory;
+                    string targetCatDir = Path.Combine(scoresRootDir, cat);
+                    if (!Directory.Exists(targetCatDir)) Directory.CreateDirectory(targetCatDir);
+                    string targetFilePath = Path.Combine(targetCatDir, scoreMeta.FileName);
                     if (!File.Exists(targetFilePath))
                     {
                         await File.WriteAllBytesAsync(targetFilePath, scorePayload.Data);

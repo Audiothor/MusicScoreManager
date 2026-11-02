@@ -44,13 +44,14 @@ public partial class ScoreScannerPage : ContentPage
         var categories = await _databaseService.GetCategoriesAsync();
         ScoreCategoryPicker.ItemsSource = categories;
 
+        string defaultCategory = _settingsService.DefaultCategory;
         if (!string.IsNullOrEmpty(preSelectCategory) && categories.Contains(preSelectCategory))
         {
             ScoreCategoryPicker.SelectedItem = preSelectCategory;
         }
-        else if (categories.Contains("Général"))
+        else if (categories.Contains(defaultCategory))
         {
-            ScoreCategoryPicker.SelectedItem = "Général";
+            ScoreCategoryPicker.SelectedItem = defaultCategory;
         }
         else if (categories.Any())
         {
@@ -479,13 +480,11 @@ public partial class ScoreScannerPage : ContentPage
 
         try
         {
-            string selectedCategory = ScoreCategoryPicker.SelectedItem as string ?? "Général";
+            string selectedCategory = ScoreCategoryPicker.SelectedItem as string ?? _settingsService.DefaultCategory;
             var rootDir = _settingsService.ScoresRootDirectory;
             if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
 
-            var destDir = string.Equals(selectedCategory, "Général", StringComparison.OrdinalIgnoreCase)
-                ? rootDir
-                : Path.Combine(rootDir, selectedCategory);
+            var destDir = Path.Combine(rootDir, selectedCategory);
             if (!Directory.Exists(destDir)) Directory.CreateDirectory(destDir);
 
             var invalidChars = Path.GetInvalidFileNameChars();
