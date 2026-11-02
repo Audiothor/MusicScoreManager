@@ -82,7 +82,8 @@ public partial class PdfAssemblerPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Impossible de charger les partitions : {ex.Message}", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), $"{loc.GetString("PdfAssembler_Error_Load_Scores", "Impossible de charger les partitions")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
         }
     }
 
@@ -146,9 +147,10 @@ public partial class PdfAssemblerPage : ContentPage
                     { DevicePlatform.MacCatalyst, new[] { "com.adobe.pdf" } },
                 });
 
+            var loc = LocalizationService.Instance;
             var options = new PickOptions
             {
-                PickerTitle = "Sélectionnez un document PDF à charger et modifier",
+                PickerTitle = loc.GetString("Pdf_Assembler_Pick_Pdf_Modify", "Sélectionnez un document PDF à charger et modifier"),
                 FileTypes = customFileType,
             };
 
@@ -156,7 +158,7 @@ public partial class PdfAssemblerPage : ContentPage
             if (result == null) return;
 
             string fileName = !string.IsNullOrWhiteSpace(result.FileName) ? result.FileName : "Partition.pdf";
-            PdfLoadingLabel.Text = $"⏳ Extraction des pages de '{fileName}'...";
+            PdfLoadingLabel.Text = string.Format(loc.GetString("Pdf_Assembler_Extracting_Pages", "⏳ Extraction des pages de '{0}'..."), fileName);
             PdfLoadingOverlay.IsVisible = true;
 
             ClearPdfAssemblerData();
@@ -176,7 +178,10 @@ public partial class PdfAssemblerPage : ContentPage
 
             if (!extracted.Any())
             {
-                await DisplayAlertAsync("Avertissement", "Aucune page n'a pu être extraite de ce document PDF.", "OK");
+                await DisplayAlertAsync(
+                    loc.GetString("Common_Warning", "Avertissement"), 
+                    loc.GetString("Pdf_Assembler_No_Pages_Extracted", "Aucune page n'a pu être extraite de ce document PDF."), 
+                    "OK");
                 return;
             }
 
@@ -190,7 +195,11 @@ public partial class PdfAssemblerPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Impossible d'ouvrir le fichier PDF : {ex.Message}", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(
+                loc.GetString("Common_Error", "Erreur"), 
+                string.Format(loc.GetString("Pdf_Assembler_Open_Error", "Impossible d'ouvrir le fichier PDF : {0}"), ex.Message), 
+                "OK");
         }
         finally
         {
@@ -200,14 +209,18 @@ public partial class PdfAssemblerPage : ContentPage
 
     private async Task LoadScoreIntoAssemblerAsync(Score score)
     {
+        var loc = LocalizationService.Instance;
         string fullPath = _settingsService.GetAbsolutePath(score.FilePath);
         if (!File.Exists(fullPath))
         {
-            await DisplayAlertAsync("Fichier introuvable", $"Le fichier PDF '{score.Title}' est introuvable sur le stockage.", "OK");
+            await DisplayAlertAsync(
+                loc.GetString("Score_Edit_File_Missing", "Fichier introuvable"), 
+                string.Format(loc.GetString("Pdf_Assembler_File_Missing_On_Disk", "Le fichier PDF '{0}' est introuvable sur le stockage."), score.Title), 
+                "OK");
             return;
         }
 
-        PdfLoadingLabel.Text = $"⏳ Extraction des pages de '{score.Title}'...";
+        PdfLoadingLabel.Text = string.Format(loc.GetString("Pdf_Assembler_Extracting_Pages", "⏳ Extraction des pages de '{0}'..."), score.Title);
         PdfLoadingOverlay.IsVisible = true;
 
         try
@@ -219,7 +232,10 @@ public partial class PdfAssemblerPage : ContentPage
 
             if (!extracted.Any())
             {
-                await DisplayAlertAsync("Avertissement", "Aucune page n'a pu être extraite de ce document PDF.", "OK");
+                await DisplayAlertAsync(
+                    loc.GetString("Common_Warning", "Avertissement"), 
+                    loc.GetString("Pdf_Assembler_No_Pages_Extracted", "Aucune page n'a pu être extraite de ce document PDF."), 
+                    "OK");
                 return;
             }
 
@@ -233,7 +249,10 @@ public partial class PdfAssemblerPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Impossible d'extraire les pages : {ex.Message}", "OK");
+            await DisplayAlertAsync(
+                loc.GetString("Common_Error", "Erreur"), 
+                string.Format(loc.GetString("Pdf_Assembler_Extract_Error", "Impossible d'extraire les pages : {0}"), ex.Message), 
+                "OK");
         }
         finally
         {
@@ -262,7 +281,8 @@ public partial class PdfAssemblerPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Impossible d'insérer une page blanche : {ex.Message}", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), $"{loc.GetString("PdfAssembler_Error_Add_Blank", "Impossible d'insérer une page blanche")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
         }
     }
 
@@ -305,9 +325,10 @@ public partial class PdfAssemblerPage : ContentPage
                     { DevicePlatform.MacCatalyst, new[] { "com.adobe.pdf" } },
                 });
 
+            var loc = LocalizationService.Instance;
             var options = new PickOptions
             {
-                PickerTitle = "Sélectionnez un document PDF à ajouter",
+                PickerTitle = loc.GetString("Pdf_Assembler_Pick_Pdf_Add", "Sélectionnez un document PDF à ajouter"),
                 FileTypes = customFileType,
             };
 
@@ -315,7 +336,7 @@ public partial class PdfAssemblerPage : ContentPage
             if (result == null) return;
 
             string fileName = !string.IsNullOrWhiteSpace(result.FileName) ? result.FileName : "Partition.pdf";
-            PdfLoadingLabel.Text = "⏳ Extraction des pages du PDF...";
+            PdfLoadingLabel.Text = loc.GetString("Pdf_Assembler_Extracting_General", "⏳ Extraction des pages du PDF...");
             PdfLoadingOverlay.IsVisible = true;
 
             var safeExt = Path.GetExtension(fileName);
@@ -341,7 +362,11 @@ public partial class PdfAssemblerPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Impossible d'ajouter le PDF : {ex.Message}", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(
+                loc.GetString("Common_Error", "Erreur"), 
+                string.Format(loc.GetString("Pdf_Assembler_Add_Pdf_Error", "Impossible d'ajouter le PDF : {0}"), ex.Message), 
+                "OK");
         }
         finally
         {
@@ -362,9 +387,10 @@ public partial class PdfAssemblerPage : ContentPage
                     { DevicePlatform.MacCatalyst, new[] { "public.image" } },
                 });
 
+            var loc = LocalizationService.Instance;
             var options = new PickOptions
             {
-                PickerTitle = "Sélectionnez les photos / images de la partition",
+                PickerTitle = loc.GetString("Pdf_Assembler_Pick_Images_Add", "Sélectionnez les photos / images de la partition"),
                 FileTypes = customFileType,
             };
 
@@ -420,7 +446,8 @@ public partial class PdfAssemblerPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Impossible de charger les images : {ex.Message}", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), $"{loc.GetString("PdfAssembler_Error_Load_Images", "Impossible de charger les images")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
         }
     }
 
@@ -541,10 +568,12 @@ public partial class PdfAssemblerPage : ContentPage
                     string copyPath = Path.Combine(FileSystem.CacheDirectory, $"{Guid.NewGuid()}_copy_{Path.GetFileName(item.ImagePath)}");
                     File.Copy(item.ImagePath, copyPath);
 
+                    var loc = LocalizationService.Instance;
+                    string copySuffix = loc.GetString("PdfAssembler_Copy_Suffix", "Copie");
                     var copyItem = new PdfPageItem
                     {
                         ImagePath = copyPath,
-                        DisplayName = $"{item.DisplayName} (Copie)",
+                        DisplayName = $"{item.DisplayName} ({copySuffix})",
                         ThumbnailSource = ImageSource.FromFile(copyPath),
                         PageNumber = index + 2,
                         Rotation = item.Rotation
@@ -556,7 +585,8 @@ public partial class PdfAssemblerPage : ContentPage
                 }
                 catch (Exception ex)
                 {
-                    DisplayAlertAsync("Erreur", $"Impossible de dupliquer la page : {ex.Message}", "OK");
+                    var loc = LocalizationService.Instance;
+                    _ = DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), $"{loc.GetString("PdfAssembler_Error_Duplicate", "Impossible de dupliquer la page")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
                 }
             }
         }

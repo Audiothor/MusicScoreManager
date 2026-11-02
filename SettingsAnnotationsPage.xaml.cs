@@ -192,7 +192,13 @@ public partial class SettingsAnnotationsPage : ContentPage
     {
         if (sender is Button btn && btn.CommandParameter is FavoriteSticker fav)
         {
-            bool confirm = await DisplayAlertAsync("Supprimer", $"Supprimer le sticker '{fav.Text}' ?", "Oui", "Non");
+            var loc = LocalizationService.Instance;
+            bool confirm = await DisplayAlertAsync(
+                loc.GetString("Common_Delete", "Supprimer"),
+                string.Format(loc.GetString("Annotation_Delete_Sticker_Prompt", "Supprimer le sticker '{0}' ?"), fav.Text),
+                loc.GetString("Common_Yes", "Oui"),
+                loc.GetString("Common_No", "Non"));
+
             if (confirm)
             {
                 await _databaseService.DeleteFavoriteStickerAsync(fav);

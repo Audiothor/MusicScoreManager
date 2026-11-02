@@ -90,6 +90,41 @@
                 </Border>
             </VerticalStackLayout>
 
+            <!-- Option : Catégorie / Répertoire par défaut -->
+            <VerticalStackLayout Spacing="8" Margin="0,5,0,0">
+                <Label Text="{Binding [Settings_Scores_Default_Category], Source={x:Static services:LocalizationService.Instance}}" 
+                       TextColor="White" 
+                       FontSize="16" />
+                <Label Text="{Binding [Settings_Scores_Default_Category_Desc], Source={x:Static services:LocalizationService.Instance}}" 
+                       TextColor="#888888" 
+                       FontSize="12" />
+                <Border BackgroundColor="#1E1E1E" Stroke="#333333" StrokeThickness="1" Padding="10,2">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="8" />
+                    </Border.StrokeShape>
+                    <Picker x:Name="DefaultCategoryPicker"
+                            TextColor="White"
+                            TitleColor="#888888"
+                            SelectedIndexChanged="OnDefaultCategoryChanged" />
+                </Border>
+
+                <!-- Bouton d'assainissement et organisation physique des dossiers -->
+                <Button x:Name="ConsolidateCategoriesBtn"
+                        Text="{Binding [Settings_Scores_Consolidate_Btn], Source={x:Static services:LocalizationService.Instance}}"
+                        BackgroundColor="#252836"
+                        TextColor="#00B0FF"
+                        BorderColor="#007ACC"
+                        BorderWidth="1"
+                        CornerRadius="8"
+                        HeightRequest="42"
+                        Margin="0,4,0,0"
+                        Clicked="OnConsolidateCategoriesClicked" />
+                <Label Text="{Binding [Settings_Scores_Consolidate_Desc], Source={x:Static services:LocalizationService.Instance}}" 
+                       TextColor="#777777" 
+                       FontSize="11" 
+                       Margin="2,0,0,0" />
+            </VerticalStackLayout>
+
             <!-- Option : Sans compositeur en premier lors du tri par compositeur -->
             <Grid ColumnDefinitions="*, Auto" Margin="0,5,0,0">
                 <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">

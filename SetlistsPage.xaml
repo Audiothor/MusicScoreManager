@@ -133,7 +133,7 @@
             </CollectionView.ItemTemplate>
             <CollectionView.EmptyView>
                 <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                    <Label Text="Aucune Setlist trouvée."
+                    <Label Text="{Binding [Setlist_Picker_Empty], Source={x:Static services:LocalizationService.Instance}}"
                            TextColor="#888888"
                            HorizontalOptions="Center" />
                 </StackLayout>

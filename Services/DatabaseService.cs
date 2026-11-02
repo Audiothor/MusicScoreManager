@@ -111,6 +111,19 @@ namespace MusicScoreManager.Services
                     await db.CreateTableAsync<ScoreBookmark>();
                     
                     _database = db;
+
+                    // Consolidation transparente des fichiers physiques dans leurs répertoires de catégories
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await ConsolidatePhysicalCategoriesAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[DatabaseService] Background consolidation error: {ex.Message}");
+                        }
+                    });
                 });
                 return _initTask;
             }
@@ -838,7 +851,7 @@ namespace MusicScoreManager.Services
         public async Task<List<string>> GetCategoriesAsync()
         {
             await Init();
-            string defaultCategory = Preferences.Default.Get("DefaultCategoryName", "Général");
+            string defaultCategory = _settingsService.DefaultCategory;
             var categories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             try
@@ -913,11 +926,11 @@ namespace MusicScoreManager.Services
             string cleanNew = SanitizeCategoryName(newName);
             if (string.Equals(cleanOld, cleanNew, StringComparison.OrdinalIgnoreCase)) return true;
 
-            string defaultCategory = Preferences.Default.Get("DefaultCategoryName", "Général");
+            string defaultCategory = _settingsService.DefaultCategory;
             if (string.Equals(cleanOld, defaultCategory, StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(cleanOld, "Général", StringComparison.OrdinalIgnoreCase))
             {
-                Preferences.Default.Set("DefaultCategoryName", cleanNew);
+                _settingsService.DefaultCategory = cleanNew;
             }
 
             try
@@ -925,7 +938,6 @@ namespace MusicScoreManager.Services
                 string scoresRoot = _settingsService.ScoresRootDirectory;
                 string oldDir = Path.Combine(scoresRoot, cleanOld);
                 string newDir = Path.Combine(scoresRoot, cleanNew);
-
 
                 if (!Directory.Exists(newDir))
                 {
@@ -957,13 +969,26 @@ namespace MusicScoreManager.Services
                     {
                         score.Category = cleanNew;
 
-                        // Mettre à jour FilePath si relatif et préfixé par l'ancien dossier
+                        // Mettre à jour FilePath et déplacer si nécessaire
                         if (!string.IsNullOrWhiteSpace(score.FilePath) && !Path.IsPathRooted(score.FilePath))
                         {
                             string norm = score.FilePath.Replace('\\', '/');
+                            string oldFullPath = _settingsService.GetAbsolutePath(score.FilePath);
+
                             if (norm.StartsWith(cleanOld + "/", StringComparison.OrdinalIgnoreCase))
                             {
                                 score.FilePath = cleanNew + norm.Substring(cleanOld.Length);
+                            }
+                            else if (!norm.Contains('/') && File.Exists(oldFullPath))
+                            {
+                                // Le fichier était directement à la racine de Scores/
+                                string fileName = Path.GetFileName(oldFullPath);
+                                string destPath = Path.Combine(newDir, fileName);
+                                if (!File.Exists(destPath))
+                                {
+                                    File.Move(oldFullPath, destPath);
+                                }
+                                score.FilePath = $"{cleanNew}/{fileName}".Replace('\\', '/');
                             }
                         }
 
@@ -980,16 +1005,18 @@ namespace MusicScoreManager.Services
             }
         }
 
-        public async Task<bool> DeleteCategoryAsync(string categoryName, string fallbackCategory = "Général")
+        public async Task<bool> DeleteCategoryAsync(string categoryName, string? fallbackCategory = null)
         {
             await Init();
             if (string.IsNullOrWhiteSpace(categoryName)) return false;
             string cleanCat = categoryName.Trim();
-            string cleanFallback = string.IsNullOrWhiteSpace(fallbackCategory) ? "Général" : fallbackCategory.Trim();
+            string defaultCat = _settingsService.DefaultCategory;
+            string cleanFallback = string.IsNullOrWhiteSpace(fallbackCategory) ? defaultCat : fallbackCategory.Trim();
 
-            if (string.Equals(cleanCat, "Général", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(cleanCat, defaultCat, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(cleanCat, "Général", StringComparison.OrdinalIgnoreCase))
             {
-                // Ne pas supprimer le dossier racine / par défaut
+                // Ne pas supprimer le dossier par défaut
                 return false;
             }
 
@@ -1048,11 +1075,89 @@ namespace MusicScoreManager.Services
             }
         }
 
+        /// <summary>
+        /// Consolide et assainit l'arborescence physique des fichiers de partitions :
+        /// Tout fichier situé directement à la racine de Scores/ ou hors de son sous-dossier de catégorie
+        /// est déplacé physiquement dans Scores/{Category}/ et son chemin relatif est mis à jour en base.
+        /// </summary>
+        public async Task<int> ConsolidatePhysicalCategoriesAsync()
+        {
+            await Init();
+            string scoresRoot = _settingsService.ScoresRootDirectory;
+            if (!Directory.Exists(scoresRoot)) return 0;
+
+            int movedCount = 0;
+            var allScores = await _database!.Table<Score>().ToListAsync();
+            string defaultCat = _settingsService.DefaultCategory;
+
+            foreach (var score in allScores)
+            {
+                string cat = string.IsNullOrWhiteSpace(score.Category) ? defaultCat : score.Category.Trim();
+                if (string.IsNullOrWhiteSpace(score.Category))
+                {
+                    score.Category = cat;
+                }
+
+                string targetDir = Path.Combine(scoresRoot, cat);
+                if (!Directory.Exists(targetDir))
+                {
+                    Directory.CreateDirectory(targetDir);
+                }
+
+                if (string.IsNullOrWhiteSpace(score.FilePath)) continue;
+
+                // Fichier stocké en relatif ou absolu
+                string currentFullPath = _settingsService.GetAbsolutePath(score.FilePath);
+                if (!File.Exists(currentFullPath)) continue;
+
+                string fileName = Path.GetFileName(currentFullPath);
+                string expectedRelativePath = $"{cat}/{fileName}".Replace('\\', '/');
+                string expectedFullPath = Path.Combine(targetDir, fileName);
+
+                // Si le fichier n'est pas déjà dans le bon dossier de catégorie
+                if (!string.Equals(Path.GetFullPath(currentFullPath), Path.GetFullPath(expectedFullPath), StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        if (File.Exists(expectedFullPath))
+                        {
+                            string nameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                            string ext = Path.GetExtension(fileName);
+                            int counter = 1;
+                            while (File.Exists(expectedFullPath))
+                            {
+                                fileName = $"{nameWithoutExt}_{counter}{ext}";
+                                expectedFullPath = Path.Combine(targetDir, fileName);
+                                expectedRelativePath = $"{cat}/{fileName}".Replace('\\', '/');
+                                counter++;
+                            }
+                        }
+
+                        File.Move(currentFullPath, expectedFullPath);
+                        score.FilePath = expectedRelativePath;
+                        await _database.UpdateAsync(score);
+                        movedCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[DatabaseService] Error consolidating score '{score.Title}': {ex.Message}");
+                    }
+                }
+                else if (score.FilePath != expectedRelativePath)
+                {
+                    score.FilePath = expectedRelativePath;
+                    await _database.UpdateAsync(score);
+                }
+            }
+
+            return movedCount;
+        }
+
         public async Task<bool> MoveScoreToCategoryAsync(Score score, string newCategory)
         {
             await Init();
             if (score == null) return false;
-            string cleanCat = string.IsNullOrWhiteSpace(newCategory) ? "Général" : SanitizeCategoryName(newCategory);
+            string cleanCat = string.IsNullOrWhiteSpace(newCategory) ? _settingsService.DefaultCategory : SanitizeCategoryName(newCategory);
 
             try
             {

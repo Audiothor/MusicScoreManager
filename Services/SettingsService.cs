@@ -45,6 +45,21 @@ namespace MusicScoreManager.Services
             set => Preferences.Set(DefaultScoreImportModeKey, value);
         }
 
+        private const string DefaultCategoryKey = "DefaultCategoryName";
+
+        /// <summary>
+        /// Catégorie (répertoire) par défaut pour les nouvelles partitions importées sans catégorie spécifique.
+        /// </summary>
+        public string DefaultCategory
+        {
+            get => Preferences.Get(DefaultCategoryKey, "Default");
+            set
+            {
+                string clean = string.IsNullOrWhiteSpace(value) ? "Default" : value.Trim();
+                Preferences.Set(DefaultCategoryKey, clean);
+            }
+        }
+
         private const string ActiveStickerCategoriesKey = "ActiveStickerCategories";
 
         public static readonly List<string> AllStickerCategories = new()

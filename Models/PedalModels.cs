@@ -133,7 +133,7 @@ namespace MusicScoreManager.Models
         public int Value { get; set; }
         public bool IsLongPress { get; set; }
         public PedalAction MatchedAction { get; set; } = PedalAction.None;
-        public string Source { get; set; } = "Clavier / Bluetooth HID";
+        public string Source { get; set; } = Services.LocalizationService.Instance.GetString("Pedal_Source_Keyboard_Hid", "Clavier / Bluetooth HID");
 
         public string HexCode => $"0x{KeyCode:X2} ({KeyCode})";
         public string FormattedTime => Timestamp.ToString("HH:mm:ss.fff");
@@ -143,22 +143,23 @@ namespace MusicScoreManager.Models
     {
         public static string GetActionDisplayName(PedalAction action)
         {
+            var loc = Services.LocalizationService.Instance;
             return action switch
             {
-                PedalAction.PreviousPage => "Page précédente",
-                PedalAction.NextPage => "Page suivante",
-                PedalAction.FirstPage => "Aller au début du morceau",
-                PedalAction.LastPage => "Aller à la fin du morceau",
-                PedalAction.PreviousBookmark => "Aller au marqueur précédent",
-                PedalAction.NextBookmark => "Aller au marqueur suivant",
-                PedalAction.PreviousScore => "Aller au début du morceau précédent du setlist",
-                PedalAction.NextScore => "Aller au début du morceau suivant du setlist",
-                PedalAction.OpenSetlistDrawer => "Ouvrir le menu de liste de morceaux de la setlist",
-                PedalAction.ToggleNightMode => "Activer le mode nuit (Implémentation future)",
-                PedalAction.ZoomIn => "Zoom +",
-                PedalAction.ZoomOut => "Zoom -",
-                PedalAction.ToggleAnnotationsVisibility => "Afficher / retirer les annotations",
-                _ => "Aucune action"
+                PedalAction.PreviousPage => loc.GetString("Pedal_Action_PreviousPage", "Page précédente"),
+                PedalAction.NextPage => loc.GetString("Pedal_Action_NextPage", "Page suivante"),
+                PedalAction.FirstPage => loc.GetString("Pedal_Action_FirstPage", "Aller au début du morceau"),
+                PedalAction.LastPage => loc.GetString("Pedal_Action_LastPage", "Aller à la fin du morceau"),
+                PedalAction.PreviousBookmark => loc.GetString("Pedal_Action_PreviousBookmark", "Aller au marqueur précédent"),
+                PedalAction.NextBookmark => loc.GetString("Pedal_Action_NextBookmark", "Aller au marqueur suivant"),
+                PedalAction.PreviousScore => loc.GetString("Pedal_Action_PreviousScore", "Aller au début du morceau précédent du setlist"),
+                PedalAction.NextScore => loc.GetString("Pedal_Action_NextScore", "Aller au début du morceau suivant du setlist"),
+                PedalAction.OpenSetlistDrawer => loc.GetString("Pedal_Action_OpenSetlistDrawer", "Ouvrir le menu de liste de morceaux de la setlist"),
+                PedalAction.ToggleNightMode => loc.GetString("Pedal_Action_ToggleNightMode", "Activer le mode nuit (Implémentation future)"),
+                PedalAction.ZoomIn => loc.GetString("Pedal_Action_ZoomIn", "Zoom +"),
+                PedalAction.ZoomOut => loc.GetString("Pedal_Action_ZoomOut", "Zoom -"),
+                PedalAction.ToggleAnnotationsVisibility => loc.GetString("Pedal_Action_ToggleAnnotationsVisibility", "Afficher / retirer les annotations"),
+                _ => loc.GetString("Pedal_Action_None", "Aucune action")
             };
         }
 

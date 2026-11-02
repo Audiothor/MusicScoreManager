@@ -68,7 +68,12 @@ public partial class TagsPage : ContentPage
     {
         if (sender is SwipeItem item && item.CommandParameter is Tag tag)
         {
-            bool answer = await DisplayAlertAsync("Supprimer", $"Voulez-vous vraiment supprimer l'étiquette '{tag.Name}' ?", "Oui", "Non");
+            var loc = LocalizationService.Instance;
+            bool answer = await DisplayAlertAsync(
+                loc.GetString("Common_Delete", "Supprimer"),
+                string.Format(loc.GetString("Common_Tag_Delete_Simple", "Voulez-vous vraiment supprimer l'étiquette '{0}' ?"), tag.Name),
+                loc.GetString("Common_Yes", "Oui"),
+                loc.GetString("Common_No", "Non"));
             if (answer)
             {
                 await _databaseService.DeleteTagAsync(tag);

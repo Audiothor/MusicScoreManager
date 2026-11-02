@@ -140,15 +140,22 @@ namespace MusicScoreManager.Models
 
         public string GetSubtitle(string displayOption)
         {
+            var loc = Services.LocalizationService.Instance;
             string dateStr = DateAdded != default ? DateAdded.ToString("dd/MM/yyyy") : "";
-            string composerStr = !string.IsNullOrWhiteSpace(Composer) ? Composer.Trim() : "Compositeur non renseigné";
+            string composerStr = !string.IsNullOrWhiteSpace(Composer) 
+                ? Composer.Trim() 
+                : loc.GetString("Score_Composer_Unknown", "Compositeur non renseigné");
             int pages = PageCount > 0 ? PageCount : 1;
-            string pagesStr = pages > 1 ? $"{pages} pages" : "1 page";
+            string pagesStr = pages > 1 
+                ? string.Format(loc.GetString("Score_Pages_Plural", "{0} pages"), pages)
+                : loc.GetString("Score_Pages_Single", "1 page");
 
             // Rétrocompatibilité avec les anciennes options fixes
             if (displayOption == "Composer")
             {
-                return !string.IsNullOrWhiteSpace(Composer) ? composerStr : "Compositeur non renseigné";
+                return !string.IsNullOrWhiteSpace(Composer) 
+                    ? composerStr 
+                    : loc.GetString("Score_Composer_Unknown", "Compositeur non renseigné");
             }
             if (displayOption == "DateAdded")
             {
@@ -178,7 +185,7 @@ namespace MusicScoreManager.Models
                         }
                         else if (tokens.Length == 1)
                         {
-                            parts.Add("Compositeur non renseigné");
+                            parts.Add(loc.GetString("Score_Composer_Unknown", "Compositeur non renseigné"));
                         }
                         break;
                     case "PageCount":

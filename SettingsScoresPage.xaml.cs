@@ -2,6 +2,9 @@ namespace MusicScoreManager;
 
 public partial class SettingsScoresPage : ContentPage
 {
+    private readonly Services.DatabaseService _databaseService = new();
+    private readonly Services.SettingsService _settingsService = new();
+
     public SettingsScoresPage()
     {
         InitializeComponent();
@@ -59,6 +62,8 @@ public partial class SettingsScoresPage : ContentPage
             "Ask" => 2,
             _ => 0
         };
+
+        _ = LoadDefaultCategoryAsync();
 
         ComposerEmptyFirstSwitch.IsToggled = Preferences.Default.Get("ComposerSortEmptyFirst", false);
 
@@ -504,5 +509,64 @@ public partial class SettingsScoresPage : ContentPage
     private async void OnManageTagsTapped(object? sender, EventArgs e)
     {
         await Navigation.PushAsync(new TagsPage());
+    }
+
+    private async Task LoadDefaultCategoryAsync()
+    {
+        try
+        {
+            var categories = await _databaseService.GetCategoriesAsync();
+            string currentDefault = _settingsService.DefaultCategory;
+            if (!categories.Contains(currentDefault, StringComparer.OrdinalIgnoreCase))
+            {
+                categories.Insert(0, currentDefault);
+            }
+
+            DefaultCategoryPicker.ItemsSource = categories;
+            int idx = categories.FindIndex(c => c.Equals(currentDefault, StringComparison.OrdinalIgnoreCase));
+            DefaultCategoryPicker.SelectedIndex = idx >= 0 ? idx : 0;
+        }
+        catch { }
+    }
+
+    private void OnDefaultCategoryChanged(object? sender, EventArgs e)
+    {
+        if (DefaultCategoryPicker.SelectedItem is string selected && !string.IsNullOrWhiteSpace(selected))
+        {
+            _settingsService.DefaultCategory = selected.Trim();
+        }
+    }
+
+    private async void OnConsolidateCategoriesClicked(object? sender, EventArgs e)
+    {
+        var loc = Services.LocalizationService.Instance;
+        ConsolidateCategoriesBtn.IsEnabled = false;
+        try
+        {
+            int moved = await _databaseService.ConsolidatePhysicalCategoriesAsync();
+            if (moved > 0)
+            {
+                await DisplayAlertAsync(
+                    loc.GetString("Settings_Scores_Consolidate_Success_Title", "Organisation terminée"),
+                    string.Format(loc.GetString("Settings_Scores_Consolidate_Success_Msg", "{0} partition(s) ont été rangées physiquement dans leurs dossiers de catégories."), moved),
+                    loc.GetString("Common_OK", "OK"));
+            }
+            else
+            {
+                await DisplayAlertAsync(
+                    loc.GetString("Settings_Scores_Consolidate_Success_Title", "Organisation terminée"),
+                    loc.GetString("Settings_Scores_Consolidate_None", "Tous vos fichiers physiques sont déjà parfaitement classés dans leurs répertoires de catégories."),
+                    loc.GetString("Common_OK", "OK"));
+            }
+            await LoadDefaultCategoryAsync();
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), ex.Message, loc.GetString("Common_OK", "OK"));
+        }
+        finally
+        {
+            ConsolidateCategoriesBtn.IsEnabled = true;
+        }
     }
 }

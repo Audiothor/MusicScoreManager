@@ -51,7 +51,7 @@
                     <!-- Nom de la Setlist -->
                     <Label Text="{Binding [Setlist_Name], Source={x:Static services:LocalizationService.Instance}}" TextColor="#888888" FontSize="11" />
                     <Entry x:Name="NameEntry" 
-                           Placeholder="Ex: Concert d'été" 
+                           Placeholder="{Binding [Setlist_Edit_Name_Placeholder], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="White" 
                            FontSize="{OnIdiom Phone=16, Tablet=18}" 
                            FontAttributes="Bold" />

@@ -19,6 +19,7 @@ public partial class ImportPackagePage : ContentPage
 
     private async void OnImportPackageClicked(object? sender, EventArgs e)
     {
+        var loc = LocalizationService.Instance;
         try
         {
             var customFileType = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
@@ -31,15 +32,15 @@ public partial class ImportPackagePage : ContentPage
 
             var result = await FilePicker.Default.PickAsync(new PickOptions
             {
-                PickerTitle = "Sélectionner un paquet (.msmsetlist, .msmscore)",
+                PickerTitle = loc.GetString("Import_Package_Picker_Title", "Sélectionner un paquet (.msmsetlist, .msmscore)"),
                 FileTypes = customFileType
             });
 
             if (result != null)
             {
                 ImportStatusSection.IsVisible = true;
-                string fileName = !string.IsNullOrWhiteSpace(result.FileName) ? result.FileName : "paquet";
-                ImportStatusLabel.Text = $"Importation de '{fileName}' en cours...";
+                string fileName = !string.IsNullOrWhiteSpace(result.FileName) ? result.FileName : loc.GetString("Import_Package_Default_Name", "paquet");
+                ImportStatusLabel.Text = string.Format(loc.GetString("Import_Package_Progress_File", "Importation de '{0}' en cours..."), fileName);
 
                 using var stream = await result.OpenReadAsync();
                 bool success = await _exportImportService.ImportPackageFromStreamAsync(stream);
@@ -47,18 +48,27 @@ public partial class ImportPackagePage : ContentPage
 
                 if (success)
                 {
-                    await DisplayAlertAsync("Import réussi", $"Le paquet '{fileName}' a été importé avec succès !", "OK");
+                    await DisplayAlertAsync(
+                        loc.GetString("Import_Package_Success_Title", "Import réussi"),
+                        string.Format(loc.GetString("Import_Package_Success_Msg", "Le paquet '{0}' a été importé avec succès !"), fileName),
+                        loc.GetString("Common_OK", "OK"));
                 }
                 else
                 {
-                    await DisplayAlertAsync("Erreur", "Impossible de lire ou d'importer le paquet sélectionné.", "OK");
+                    await DisplayAlertAsync(
+                        loc.GetString("Common_Error", "Erreur"),
+                        loc.GetString("Import_Package_Error_Read", "Impossible de lire ou d'importer le paquet sélectionné."),
+                        loc.GetString("Common_OK", "OK"));
                 }
             }
         }
         catch (Exception ex)
         {
             ImportStatusSection.IsVisible = false;
-            await DisplayAlertAsync("Erreur", $"Erreur lors de l'import : {ex.Message}", "OK");
+            await DisplayAlertAsync(
+                loc.GetString("Common_Error", "Erreur"),
+                $"{loc.GetString("Import_Package_Error", "Erreur lors de l'import")} : {ex.Message}",
+                loc.GetString("Common_OK", "OK"));
         }
     }
 }

@@ -687,10 +687,11 @@ public partial class ScoresPage : ContentPage
         WifiScanSpinner.IsRunning = true;
         WifiScanSpinner.IsVisible = true;
 
+        var loc = LocalizationService.Instance;
         bool initialized = await _wifiService.InitializeAsync();
         if (!initialized)
         {
-            await DisplayAlertAsync("Wi-Fi indisponible", "Veuillez activer le Wi-Fi sur votre appareil et accorder les permissions.", "OK");
+            await DisplayAlertAsync(loc.GetString("Wifi_Setlist_Unavailable_Title", "Wi-Fi indisponible"), loc.GetString("Wifi_Setlist_Unavailable_Msg", "Veuillez activer le Wi-Fi sur votre appareil et accorder les permissions."), loc.GetString("Common_OK", "OK"));
             WifiOverlay.IsVisible = false;
             return;
         }
@@ -701,7 +702,7 @@ public partial class ScoresPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Erreur lors du démarrage de la recherche : {ex.Message}", "OK");
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), $"{loc.GetString("Wifi_Error_Scan_Start", "Erreur lors du démarrage de la recherche")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
             WifiOverlay.IsVisible = false;
         }
     }
@@ -718,7 +719,8 @@ public partial class ScoresPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Erreur lors de la recherche : {ex.Message}", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), $"{loc.GetString("Wifi_Error_Scan", "Erreur lors de la recherche")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
         }
     }
 
@@ -735,14 +737,15 @@ public partial class ScoresPage : ContentPage
 
     private async void OnWifiStartListeningClicked(object sender, EventArgs e)
     {
-        WifiOverlayTitle.Text = "Mode Réception Wi-Fi";
+        var loc = LocalizationService.Instance;
+        WifiOverlayTitle.Text = loc.GetString("Wifi_Listening_Title", "Mode Réception Wi-Fi");
         ShowWifiView("Listening");
-        WifiListeningStatusLabel.Text = "En attente d'un émetteur...";
+        WifiListeningStatusLabel.Text = loc.GetString("Wifi_Waiting_Sender", "En attente d'un émetteur...");
 
         bool initialized = await _wifiService.InitializeAsync();
         if (!initialized)
         {
-            await DisplayAlertAsync("Wi-Fi indisponible", "Veuillez vérifier que le Wi-Fi est activé et que les permissions sont accordées.", "OK");
+            await DisplayAlertAsync(loc.GetString("Wifi_Setlist_Unavailable_Title", "Wi-Fi indisponible"), loc.GetString("Wifi_Setlist_Unavailable_Msg", "Veuillez vérifier que le Wi-Fi est activé et que les permissions sont accordées."), loc.GetString("Common_OK", "OK"));
             ShowWifiView("Choice");
             return;
         }
@@ -756,7 +759,7 @@ public partial class ScoresPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Erreur lors de l'écoute : {ex.Message}", "OK");
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), $"{loc.GetString("Wifi_Error_Listening", "Erreur lors de l'écoute")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
             ShowWifiView("Choice");
         }
     }
@@ -830,37 +833,47 @@ public partial class ScoresPage : ContentPage
         try
         {
             ShowWifiView("Progress");
-            WifiTransferStatusLabel.Text = "Préparation du paquet...";
+            var locPrep = LocalizationService.Instance;
+            WifiTransferStatusLabel.Text = locPrep.GetString("Wifi_Setlist_Preparing", "Préparation du paquet...");
             WifiTransferProgressBar.Progress = 0.05;
 
             var filesToSend = await _exportImportService.CreateWifiPayloadsForScoresAsync(selectedScores, _currentExportOptions);
 
             if (!filesToSend.Any())
             {
-                await DisplayAlertAsync("Erreur", "Aucun fichier valide n'a pu être trouvé pour l'envoi.", "OK");
+                var loc = LocalizationService.Instance;
+                await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), loc.GetString("Wifi_No_Valid_File_Error", "Aucun fichier valide n'a pu être trouvé pour l'envoi."), loc.GetString("Common_OK", "OK"));
                 WifiOverlay.IsVisible = false;
                 return;
             }
 
-            WifiTransferStatusLabel.Text = $"Connexion à {targetDevice.Name}...";
+            var locService = LocalizationService.Instance;
+            WifiTransferStatusLabel.Text = string.Format(locService.GetString("Wifi_Connecting_To_Device", "Connexion à {0}..."), targetDevice.Name);
             WifiTransferProgressBar.Progress = 0.15;
 
-            string senderName = DeviceInfo.Name ?? "Tablette Musique";
+            string senderName = DeviceInfo.Name ?? locService.GetString("Wifi_Device_Default_Name", "Tablette Musique");
             bool success = await _wifiService.SendDataAsync(targetDevice, filesToSend, senderName);
 
             if (success)
             {
-                await DisplayAlertAsync("Succès", $"{selectedScores.Count} partition(s) envoyée(s) avec succès via Wi-Fi Direct !", "OK");
+                await DisplayAlertAsync(
+                    locService.GetString("Common_Success", "Succès"),
+                    string.Format(locService.GetString("Wifi_Scores_Sent_Success", "{0} partition(s) envoyée(s) avec succès via Wi-Fi Direct !"), selectedScores.Count),
+                    locService.GetString("Common_OK", "OK"));
                 IsMultiSelectActive = false;
             }
             else
             {
-                await DisplayAlertAsync("Échec", "Le transfert a échoué ou a été refusé par le destinataire.", "OK");
+                await DisplayAlertAsync(
+                    locService.GetString("Wifi_Setlist_Failed_Title", "Échec"),
+                    locService.GetString("Wifi_Setlist_Failed_Msg", "Le transfert a échoué ou a été refusé par le destinataire."),
+                    locService.GetString("Common_OK", "OK"));
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Erreur lors du transfert : {ex.Message}", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), $"{loc.GetString("Wifi_Setlist_Error_Msg", "Erreur lors du transfert")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
         }
         finally
         {
@@ -878,24 +891,25 @@ public partial class ScoresPage : ContentPage
         }
         if (!selectedScores.Any()) return;
 
+        var loc = LocalizationService.Instance;
         var filesToSend = await _exportImportService.CreateWifiPayloadsForScoresAsync(selectedScores, _currentExportOptions);
 
-        string title = $"{selectedScores.Count} partition(s)";
+        string title = string.Format(loc.GetString("Score_Count_Label", "{0} partition(s)"), selectedScores.Count);
         var shareInfo = await _wifiService.StartGroupBroadcastAsync(filesToSend, title, (clientsCount) =>
         {
-            QrGroupInfoLabel.Text = $"🟢 {clientsCount} musicien(s) ont téléchargé la sélection !";
+            QrGroupInfoLabel.Text = string.Format(loc.GetString("Wifi_Setlist_Qr_Connected", "🟢 {0} musicien(s) ont téléchargé la sélection !"), clientsCount);
         });
 
         if (shareInfo != null)
         {
             QrCodeImageView.Source = QrCodeGenerator.GenerateQrCodeImageSource(shareInfo.QrCodeContent, 220);
             QrGroupUrlLabel.Text = shareInfo.QrCodeContent;
-            QrGroupInfoLabel.Text = "🟢 En attente de musiciens (0 connecté)...";
+            QrGroupInfoLabel.Text = loc.GetString("Wifi_Setlist_Qr_Waiting_Zero", "🟢 En attente de musiciens (0 connecté)...");
             ShowWifiView("GroupQr");
         }
         else
         {
-            await DisplayAlertAsync("Erreur", "Impossible de démarrer le partage de groupe local.", "OK");
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), loc.GetString("Wifi_Setlist_Qr_Start_Error", "Impossible de démarrer le partage de groupe local."), loc.GetString("Common_OK", "OK"));
         }
     }
 
@@ -909,16 +923,17 @@ public partial class ScoresPage : ContentPage
     {
         return await MainThread.InvokeOnMainThreadAsync(async () =>
         {
+            var loc = LocalizationService.Instance;
             bool accept = await DisplayAlertAsync(
-                "📥 Réception Wi-Fi Direct", 
-                $"L'appareil '{senderDeviceName}' souhaite vous envoyer {scoreCount} partition(s) / élément(s).\n\nAcceptez-vous la réception ?", 
-                "Oui, accepter", 
-                "Non, refuser");
+                loc.GetString("Wifi_Transfer_Prompt_Title", "📥 Réception Wi-Fi Direct"), 
+                string.Format(loc.GetString("Wifi_Transfer_Prompt_Msg", "L'appareil '{0}' souhaite vous envoyer {1} élément(s).\n\nAcceptez-vous la réception ?"), senderDeviceName, scoreCount), 
+                loc.GetString("Common_Yes", "Oui, accepter"), 
+                loc.GetString("Common_No", "Non, refuser"));
 
             if (accept)
             {
                 ShowWifiView("Progress");
-                WifiTransferStatusLabel.Text = "Connexion acceptée. Réception haute vitesse...";
+                WifiTransferStatusLabel.Text = loc.GetString("Wifi_Transfer_Accepted", "Connexion acceptée. Réception haute vitesse...");
                 WifiTransferProgressBar.Progress = 0;
             }
 
@@ -930,9 +945,10 @@ public partial class ScoresPage : ContentPage
     {
         try
         {
+            var loc = LocalizationService.Instance;
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
-                WifiTransferStatusLabel.Text = "Intégration des données...";
+                WifiTransferStatusLabel.Text = loc.GetString("Wifi_Transfer_Integrating", "Intégration des données...");
                 WifiTransferProgressBar.Progress = 0.95;
             });
 
@@ -944,11 +960,17 @@ public partial class ScoresPage : ContentPage
                 await LoadScoresAsync(SearchScoreBar.Text);
                 if (success)
                 {
-                    await DisplayAlertAsync("Réception réussie", $"Les partitions ont été reçues et intégrées avec succès depuis {senderName} !", "OK");
+                    await DisplayAlertAsync(
+                        loc.GetString("Wifi_Transfer_Success_Title", "Réception réussie"),
+                        string.Format(loc.GetString("Wifi_Transfer_Success_Msg", "Les partitions ont été reçues et intégrées avec succès depuis {0} !"), senderName),
+                        loc.GetString("Common_OK", "OK"));
                 }
                 else
                 {
-                    await DisplayAlertAsync("Avertissement", "Les données ont été reçues mais une erreur s'est produite lors de l'intégration.", "OK");
+                    await DisplayAlertAsync(
+                        loc.GetString("Common_Warning", "Avertissement"),
+                        loc.GetString("Wifi_Transfer_Integration_Warning", "Les données ont été reçues mais une erreur s'est produite lors de l'intégration."),
+                        loc.GetString("Common_OK", "OK"));
                 }
             });
         }
@@ -957,8 +979,12 @@ public partial class ScoresPage : ContentPage
             System.Diagnostics.Debug.WriteLine($"Error processing received files: {ex.Message}");
             await MainThread.InvokeOnMainThreadAsync(async () =>
             {
+                var loc = LocalizationService.Instance;
                 WifiOverlay.IsVisible = false;
-                await DisplayAlertAsync("Échec de l'intégration", $"Une erreur est survenue lors de l'intégration : {ex.Message}", "OK");
+                await DisplayAlertAsync(
+                    loc.GetString("Common_Error", "Échec de l'intégration"),
+                    $"{loc.GetString("Wifi_Transfer_Integration_Failed", "Une erreur est survenue lors de l'intégration")} : {ex.Message}",
+                    loc.GetString("Common_OK", "OK"));
             });
         }
     }
@@ -1851,17 +1877,19 @@ public partial class ScoresPage : ContentPage
 
             try
             {
+                var loc = LocalizationService.Instance;
                 string path = await _exportImportService.ExportScoresToFileAsync(scores, _currentExportOptions);
                 string message = scores.Count == 1
-                    ? $"La partition '{scores[0].Title}' a été exportée avec succès dans :\n\n{path}"
-                    : $"{scores.Count} partitions ont été exportées avec succès dans :\n\n{path}";
+                    ? string.Format(loc.GetString("Export_Score_Success_Single", "La partition '{0}' a été exportée avec succès dans :\n\n{1}"), scores[0].Title, path)
+                    : string.Format(loc.GetString("Export_Score_Success_Plural", "{0} partitions ont été exportées avec succès dans :\n\n{1}"), scores.Count, path);
 
-                await DisplayAlertAsync("Export réussi", message, "OK");
+                await DisplayAlertAsync(loc.GetString("Export_Success_Title", "Export réussi"), message, loc.GetString("Common_OK", "OK"));
                 IsMultiSelectActive = false;
             }
             catch (Exception ex)
             {
-                await DisplayAlertAsync("Erreur d'export", $"Impossible d'exporter la sélection : {ex.Message}", "OK");
+                var loc = LocalizationService.Instance;
+                await DisplayAlertAsync(loc.GetString("Export_Error_Title", "Erreur d'export"), $"{loc.GetString("Export_Error_Msg", "Impossible d'exporter la sélection")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
             }
         }
     }
@@ -2253,7 +2281,8 @@ public partial class ScoresPage : ContentPage
             ModernModalIconLabel.TextColor = Color.FromArgb("#2ECC71");
             ModernModalIconHalo.Stroke = Color.FromArgb("#2ECC71");
             ModernModalIconHalo.BackgroundColor = Color.FromArgb("#182ECC71");
-            ModernModalTitleLabel.Text = "Importation réussie !";
+            var loc = LocalizationService.Instance;
+            ModernModalTitleLabel.Text = loc.GetString("Score_Import_Success_Title", "Importation réussie !");
 
             ModernModalBadgeBorder.IsVisible = true;
             ModernModalInputWrapper.IsVisible = false;
@@ -2264,7 +2293,7 @@ public partial class ScoresPage : ContentPage
                 var singleScore = scores[0];
                 _lastImportedScore = singleScore;
 
-                ModernModalBadgeLabel.Text = "1 partition ajoutée";
+                ModernModalBadgeLabel.Text = loc.GetString("Score_Import_Single_Added", "1 partition ajoutée");
                 ModernModalBadgeBorder.Stroke = Color.FromArgb("#1E88E5");
                 ModernModalBadgeBorder.BackgroundColor = Color.FromArgb("#132B45");
                 ModernModalBadgeLabel.TextColor = Color.FromArgb("#4FC3F7");
@@ -2292,11 +2321,11 @@ public partial class ScoresPage : ContentPage
                 };
                 ModernModalContentContainer.Add(pageLbl);
 
-                ModernModalHintLabel.Text = "Disponible immédiatement dans votre bibliothèque";
+                ModernModalHintLabel.Text = loc.GetString("Score_Import_Available_Single", "Disponible immédiatement dans votre bibliothèque");
 
                 var openBtn = new Button
                 {
-                    Text = "🎵 Ouvrir la partition",
+                    Text = loc.GetString("Score_Open_Btn", "🎵 Ouvrir la partition"),
                     BackgroundColor = Color.FromArgb("#007ACC"),
                     TextColor = Colors.White,
                     FontAttributes = FontAttributes.Bold,
@@ -2317,7 +2346,7 @@ public partial class ScoresPage : ContentPage
 
                 var closeBtn = new Button
                 {
-                    Text = "Fermer",
+                    Text = loc.GetString("Common_Close", "Fermer"),
                     BackgroundColor = Color.FromArgb("#2D303B"),
                     TextColor = Color.FromArgb("#DDDDDD"),
                     FontSize = 13,
@@ -2334,7 +2363,7 @@ public partial class ScoresPage : ContentPage
             else
             {
                 _lastImportedScore = null;
-                ModernModalBadgeLabel.Text = $"{scores.Count} partitions ajoutées";
+                ModernModalBadgeLabel.Text = string.Format(loc.GetString("Score_Import_Plural_Added", "{0} partitions ajoutées"), scores.Count);
                 ModernModalBadgeBorder.Stroke = Color.FromArgb("#2ECC71");
                 ModernModalBadgeBorder.BackgroundColor = Color.FromArgb("#142E1F");
                 ModernModalBadgeLabel.TextColor = Color.FromArgb("#58D68D");
@@ -2359,11 +2388,11 @@ public partial class ScoresPage : ContentPage
                     });
                 }
 
-                ModernModalHintLabel.Text = "Disponibles immédiatement dans votre bibliothèque";
+                ModernModalHintLabel.Text = loc.GetString("Score_Import_Available_Plural", "Disponibles immédiatement dans votre bibliothèque");
 
                 var okBtn = new Button
                 {
-                    Text = "✓ Voir la bibliothèque",
+                    Text = loc.GetString("Score_View_Library_Btn", "✓ Voir la bibliothèque"),
                     BackgroundColor = Color.FromArgb("#007ACC"),
                     TextColor = Colors.White,
                     FontAttributes = FontAttributes.Bold,
@@ -2472,7 +2501,8 @@ public partial class ScoresPage : ContentPage
             ModernModalBadgeBorder.IsVisible = false;
             ModernModalInputWrapper.IsVisible = false;
             ModernModalContentContainer.Clear();
-            ModernModalHintLabel.Text = "Choisissez le mode de traitement :";
+            var locMode = LocalizationService.Instance;
+            ModernModalHintLabel.Text = locMode.GetString("Score_Import_Choose_Mode", "Choisissez le mode de traitement :");
 
             ModernModalButtonsLayout.Clear();
 

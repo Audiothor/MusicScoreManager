@@ -34,7 +34,10 @@ namespace MusicScoreManager
             BindingsListLayout.Children.Clear();
 
             int count = _profile.Bindings.Count;
-            ButtonsCountLabel.Text = $"{count} action{(count > 1 ? "s" : "")} configurée{(count > 1 ? "s" : "")}";
+            var loc = LocalizationService.Instance;
+            ButtonsCountLabel.Text = count > 1 
+                ? string.Format(loc.GetString("Pedal_Profile_Actions_Count_Plural", "{0} actions configurées"), count)
+                : string.Format(loc.GetString("Pedal_Profile_Actions_Count_Single", "{0} action configurée"), count);
             EmptyBindingsLabel.IsVisible = count == 0;
 
             foreach (var binding in _profile.Bindings)
@@ -68,7 +71,7 @@ namespace MusicScoreManager
             };
 
             string displayLabel = string.IsNullOrWhiteSpace(binding.ButtonLabel) 
-                ? (string.IsNullOrWhiteSpace(binding.KeyName) ? "Bouton sans nom" : binding.KeyName) 
+                ? (string.IsNullOrWhiteSpace(binding.KeyName) ? LocalizationService.Instance.GetString("Pedal_Profile_Unnamed_Button", "Bouton sans nom") : binding.KeyName) 
                 : binding.ButtonLabel;
 
             var nameLabel = new Label
@@ -92,7 +95,9 @@ namespace MusicScoreManager
                 StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 6 },
                 Content = new Label
                 {
-                    Text = isLong ? "⏱️ Appui long" : "⚡ Appui simple",
+                    Text = isLong 
+                        ? LocalizationService.Instance.GetString("Pedal_Config_Press_Long", "⏱️ Appui long") 
+                        : LocalizationService.Instance.GetString("Pedal_Config_Press_Simple", "⚡ Appui simple"),
                     TextColor = Colors.White,
                     FontSize = 11,
                     FontAttributes = FontAttributes.Bold
@@ -125,7 +130,9 @@ namespace MusicScoreManager
                 StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 6 },
                 Content = new Label
                 {
-                    Text = string.IsNullOrWhiteSpace(binding.KeyName) ? "Aucune touche" : binding.KeyName,
+                    Text = string.IsNullOrWhiteSpace(binding.KeyName) 
+                        ? LocalizationService.Instance.GetString("Pedal_Profile_No_Key", "Aucune touche") 
+                        : binding.KeyName,
                     TextColor = Color.FromArgb("#4FC3F7"),
                     FontSize = 12,
                     FontAttributes = FontAttributes.Bold
@@ -165,7 +172,7 @@ namespace MusicScoreManager
 
             var editBtn = new Button
             {
-                Text = "✏️ Modifier",
+                Text = LocalizationService.Instance.GetString("Common_Edit", "✏️ Modifier"),
                 BackgroundColor = Color.FromArgb("#2C2C2C"),
                 TextColor = Color.FromArgb("#007ACC"),
                 BorderColor = Color.FromArgb("#007ACC"),
@@ -183,7 +190,7 @@ namespace MusicScoreManager
 
             var deleteBtn = new Button
             {
-                Text = "🗑️ Supprimer",
+                Text = LocalizationService.Instance.GetString("Duplicates_Delete_Btn", "🗑️ Supprimer"),
                 BackgroundColor = Color.FromArgb("#2C2C2C"),
                 TextColor = Color.FromArgb("#FF6B6B"),
                 BorderColor = Color.FromArgb("#FF6B6B"),
@@ -195,11 +202,12 @@ namespace MusicScoreManager
             };
             deleteBtn.Clicked += async (s, e) =>
             {
+                var loc = LocalizationService.Instance;
                 bool confirm = await DisplayAlertAsync(
-                    "Supprimer", 
-                    $"Voulez-vous supprimer l'action associée à « {displayLabel} » ?", 
-                    "Supprimer", 
-                    "Annuler");
+                    loc.GetString("Common_Delete", "Supprimer"), 
+                    string.Format(loc.GetString("Pedal_Profile_Delete_Action_Confirm", "Voulez-vous supprimer l'action associée à « {0} » ?"), displayLabel), 
+                    loc.GetString("Common_Delete", "Supprimer"), 
+                    loc.GetString("Common_Cancel", "Annuler"));
 
                 if (confirm)
                 {
@@ -220,19 +228,20 @@ namespace MusicScoreManager
 
         private async void OnAddButtonBindingClicked(object sender, EventArgs e)
         {
+            var loc = LocalizationService.Instance;
             string label = await DisplayPromptAsync(
-                "Nouveau bouton / pédale", 
-                "Nom ou rôle de la pédale (ex: Pédale gauche, Bouton 1...) :", 
-                "Continuer", 
-                "Annuler", 
-                placeholder: "Ex: Pédale droite");
+                loc.GetString("Pedal_Profile_New_Btn_Title", "Nouveau bouton / pédale"), 
+                loc.GetString("Pedal_Profile_New_Btn_Prompt", "Nom ou rôle de la pédale (ex: Pédale gauche, Bouton 1...) :"), 
+                loc.GetString("Common_Continue", "Continuer"), 
+                loc.GetString("Common_Cancel", "Annuler"), 
+                placeholder: loc.GetString("Pedal_Profile_New_Btn_Placeholder", "Ex: Pédale droite"));
 
             if (!string.IsNullOrWhiteSpace(label))
             {
                 var newBinding = new PedalBinding
                 {
                     ButtonLabel = label.Trim(),
-                    KeyName = "Non assigné",
+                    KeyName = loc.GetString("Pedal_Profile_Unassigned", "Non assigné"),
                     KeyCode = 0,
                     PressType = PedalPressType.Simple,
                     Action = PedalAction.NextPage
@@ -245,7 +254,11 @@ namespace MusicScoreManager
         private async void OnSaveProfileClicked(object sender, EventArgs e)
         {
             SaveProfileData();
-            await DisplayAlertAsync("Profil enregistré", "Le profil et ses boutons ont été enregistrés avec succès.", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(
+                loc.GetString("Pedal_Profile_Saved_Title", "Profil enregistré"), 
+                loc.GetString("Pedal_Profile_Saved_Msg", "Le profil et ses boutons ont été enregistrés avec succès."), 
+                "OK");
             await Navigation.PopAsync();
         }
 

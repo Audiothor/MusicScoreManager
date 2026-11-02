@@ -59,7 +59,7 @@ namespace MusicScoreManager
             if (_binding.KeyCode != 0 || !string.IsNullOrWhiteSpace(_binding.KeyName))
             {
                 DetectedKeyLabel.Text = _binding.KeyName;
-                DetectedDetailsLabel.Text = $"Code actuel : 0x{_binding.KeyCode:X2} ({_binding.KeyCode})";
+                DetectedDetailsLabel.Text = string.Format(LocalizationService.Instance.GetString("Pedal_Config_Current_Code", "Code actuel : 0x{0:X2} ({1})"), _binding.KeyCode, _binding.KeyCode);
             }
 
             // 3. Remplir le sélecteur manuel de touches
@@ -100,21 +100,21 @@ namespace MusicScoreManager
                 _detectedInputType = rawEvent.InputType;
 
                 DetectedKeyLabel.Text = rawEvent.KeyName;
-                DetectedDetailsLabel.Text = $"Détecté : {rawEvent.HexCode} • {rawEvent.Source}";
+                DetectedDetailsLabel.Text = string.Format(LocalizationService.Instance.GetString("Pedal_Config_Detected", "Détecté : {0} • {1}"), rawEvent.HexCode, rawEvent.Source);
                 DetectedSourceLabel.Text = rawEvent.Source;
 
                 // Flash visuel vert pour signifier la capture réussie
                 DetectedKeyBox.Stroke = Color.FromArgb("#4CAF50");
                 SignalBorderCard.Stroke = Color.FromArgb("#4CAF50");
                 ListeningBadge.BackgroundColor = Color.FromArgb("#1B5E20");
-                ListeningLabel.Text = "✓ Signal capté !";
+                ListeningLabel.Text = LocalizationService.Instance.GetString("Pedal_Config_Signal_Captured", "✓ Signal capté !");
 
                 await Task.Delay(400);
 
                 DetectedKeyBox.Stroke = Color.FromArgb("#444444");
                 SignalBorderCard.Stroke = Color.FromArgb("#007ACC");
                 ListeningBadge.BackgroundColor = Color.FromArgb("#1B3820");
-                ListeningLabel.Text = "🟢 En écoute...";
+                ListeningLabel.Text = LocalizationService.Instance.GetString("Pedal_Config_Listening", "🟢 En écoute...");
             });
         }
 
@@ -129,8 +129,8 @@ namespace MusicScoreManager
                 _detectedInputType = PedalInputType.KeyboardKey;
 
                 DetectedKeyLabel.Text = _detectedKeyName;
-                DetectedDetailsLabel.Text = $"Sélection manuelle : 0x{item.Code:X2} ({item.Code})";
-                DetectedSourceLabel.Text = "Sélection manuelle";
+                DetectedDetailsLabel.Text = string.Format(LocalizationService.Instance.GetString("Pedal_Config_Manual_Selected", "Sélection manuelle : 0x{0:X2} ({1})"), item.Code, item.Code);
+                DetectedSourceLabel.Text = LocalizationService.Instance.GetString("Pedal_Config_Manual_Source", "Sélection manuelle");
             }
         }
 
@@ -177,7 +177,7 @@ namespace MusicScoreManager
             string label = ButtonLabelEntry.Text?.Trim() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(label))
             {
-                label = !string.IsNullOrWhiteSpace(_detectedKeyName) ? _detectedKeyName : "Pédale";
+                label = !string.IsNullOrWhiteSpace(_detectedKeyName) ? _detectedKeyName : LocalizationService.Instance.GetString("Pedal_Config_Default_Label", "Pédale");
             }
 
             int selectedActionIdx = ActionPicker.SelectedIndex;

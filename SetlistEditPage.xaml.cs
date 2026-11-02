@@ -132,7 +132,7 @@ public partial class SetlistEditPage : ContentPage
         }
     }
 
-    private async void OnLockTapped(object sender, EventArgs e)
+    private void OnLockTapped(object sender, EventArgs e)
     {
         _isLocked = !_isLocked;
         UpdateLockUI(true);
@@ -317,16 +317,16 @@ public partial class SetlistEditPage : ContentPage
         ScoresCollectionView.ItemsSource = _orderedScores;
         
         // Vérification ultra-rapide des partitions
-        _ = PrepareSetlistStatusAsync(scores);
+        PrepareSetlistStatus(scores);
     }
 
-    private async Task PrepareSetlistStatusAsync(List<Score> scores)
+    private void PrepareSetlistStatus(List<Score> scores)
     {
         try
         {
             MainThread.BeginInvokeOnMainThread(() => {
                 CacheStatusIcon.Text = "⚡";
-                CacheStatusText.Text = "Prêt";
+                CacheStatusText.Text = Services.LocalizationService.Instance.GetString("Common_Ready", "Prêt");
             });
         }
         catch (Exception ex)
@@ -341,7 +341,7 @@ public partial class SetlistEditPage : ContentPage
         {
             _orderedScores[i].DisplayOrder = i + 1;
         }
-        _ = PrepareSetlistStatusAsync(_orderedScores.Select(os => os.Score).ToList());
+        PrepareSetlistStatus(_orderedScores.Select(os => os.Score).ToList());
     }
 
     private void OnReorderCompleted(object sender, EventArgs e)
@@ -364,7 +364,7 @@ public partial class SetlistEditPage : ContentPage
 
         if (added)
         {
-            _ = PrepareSetlistStatusAsync(_orderedScores.Select(os => os.Score).ToList());
+            PrepareSetlistStatus(_orderedScores.Select(os => os.Score).ToList());
         }
     }
 
@@ -381,7 +381,7 @@ public partial class SetlistEditPage : ContentPage
             };
             _orderedScores.Insert(index + 1, duplicate);
             UpdateOrderNumbers();
-            _ = PrepareSetlistStatusAsync(_orderedScores.Select(os => os.Score).ToList());
+            PrepareSetlistStatus(_orderedScores.Select(os => os.Score).ToList());
         }
     }
 
@@ -391,7 +391,7 @@ public partial class SetlistEditPage : ContentPage
         {
             _orderedScores.Remove(orderedScore);
             UpdateOrderNumbers();
-            _ = PrepareSetlistStatusAsync(_orderedScores.Select(os => os.Score).ToList());
+            PrepareSetlistStatus(_orderedScores.Select(os => os.Score).ToList());
         }
     }
 

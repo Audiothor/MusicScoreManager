@@ -269,11 +269,16 @@ public partial class SettingsAppPage : ContentPage
 
     private async Task<bool> ValidateAndSetPath(string newPath, bool isScores)
     {
+        var loc = LocalizationService.Instance;
         try 
         {
             if (!Directory.Exists(newPath))
             {
-                bool create = await this.DisplayAlertAsync("Dossier inexistant", "Ce dossier n'existe pas. Voulez-vous le créer ?", "Oui", "Non");
+                bool create = await this.DisplayAlertAsync(
+                    loc.GetString("Settings_Directory_Not_Found_Title", "Dossier inexistant"),
+                    loc.GetString("Settings_Directory_Not_Found_Msg", "Ce dossier n'existe pas. Voulez-vous le créer ?"),
+                    loc.GetString("Common_Yes", "Oui"),
+                    loc.GetString("Common_No", "Non"));
                 if (create)
                 {
                     Directory.CreateDirectory(newPath);
@@ -285,7 +290,10 @@ public partial class SettingsAppPage : ContentPage
         }
         catch (Exception ex)
         {
-            await this.DisplayAlertAsync("Erreur", "Impossible d'utiliser ce répertoire : " + ex.Message, "OK");
+            await this.DisplayAlertAsync(
+                loc.GetString("Common_Error", "Erreur"),
+                $"{loc.GetString("Settings_Directory_Use_Error", "Impossible d'utiliser ce répertoire")} : {ex.Message}",
+                loc.GetString("Common_OK", "OK"));
             return false;
         }
     }

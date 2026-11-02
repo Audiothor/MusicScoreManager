@@ -1,3 +1,5 @@
+using MusicScoreManager.Services;
+
 namespace MusicScoreManager;
 
 public partial class AboutPage : ContentPage
@@ -22,7 +24,8 @@ public partial class AboutPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Impossible d'ouvrir le lien : {ex.Message}", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), $"{loc.GetString("Common_LinkOpenError", "Impossible d'ouvrir le lien")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
         }
     }
 
@@ -35,7 +38,8 @@ public partial class AboutPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Impossible d'ouvrir le lien : {ex.Message}", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), $"{loc.GetString("Common_LinkOpenError", "Impossible d'ouvrir le lien")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
         }
     }
 
@@ -48,7 +52,8 @@ public partial class AboutPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", $"Impossible d'ouvrir le lien : {ex.Message}", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), $"{loc.GetString("Common_LinkOpenError", "Impossible d'ouvrir le lien")} : {ex.Message}", loc.GetString("Common_OK", "OK"));
         }
     }
 }

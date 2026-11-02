@@ -28,9 +28,10 @@ public partial class DuplicatesPage : ContentPage
 
         try
         {
+            var loc = LocalizationService.Instance;
             DuplicatesProgressSection.IsVisible = true;
             DuplicatesProgressBar.Progress = 0;
-            DuplicatesProgressLabel.Text = "Récupération des partitions...";
+            DuplicatesProgressLabel.Text = loc.GetString("Duplicates_Fetching", "Récupération des partitions...");
             DuplicatesResultSummaryLabel.IsVisible = false;
             DuplicatesListContainer.Children.Clear();
 
@@ -38,7 +39,7 @@ public partial class DuplicatesPage : ContentPage
             if (!scores.Any())
             {
                 DuplicatesProgressSection.IsVisible = false;
-                DuplicatesResultSummaryLabel.Text = "Aucune partition dans la bibliothèque.";
+                DuplicatesResultSummaryLabel.Text = loc.GetString("Duplicates_NoScores", "Aucune partition dans la bibliothèque.");
                 DuplicatesResultSummaryLabel.TextColor = Color.FromArgb("#888888");
                 DuplicatesResultSummaryLabel.IsVisible = true;
                 return;
@@ -237,8 +238,9 @@ public partial class DuplicatesPage : ContentPage
         }
         catch (Exception ex)
         {
+            var loc = LocalizationService.Instance;
             DuplicatesProgressSection.IsVisible = false;
-            await DisplayAlertAsync("Erreur d'analyse", $"Erreur lors de l'analyse des doublons : {ex.Message}", "OK");
+            await DisplayAlertAsync(loc.GetString("Duplicates_Error_Title", "Erreur d'analyse"), string.Format(loc.GetString("Duplicates_Error_Msg", "Erreur lors de l'analyse des doublons : {0}"), ex.Message), loc.GetString("Common_OK", "OK"));
         }
         finally
         {

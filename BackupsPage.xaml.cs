@@ -205,7 +205,8 @@ public partial class BackupsPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlertAsync("Erreur", ex.Message, "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(loc.GetString("Common_Error", "Erreur"), ex.Message, loc.GetString("Common_OK", "OK"));
         }
     }
 
