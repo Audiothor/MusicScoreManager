@@ -15,6 +15,8 @@ public partial class SetlistsPage : ContentPage
     private readonly DatabaseService _databaseService;
     private readonly IWifiDirectTransferService _wifiService;
     private readonly ExportImportService _exportImportService;
+    private readonly SettingsService _settingsService = new();
+    private readonly PdfService _pdfService = new();
 
     private string _currentSort = "DateCreatedDesc";
     private bool _hasUserCustomSort = false;
@@ -300,6 +302,13 @@ public partial class SetlistsPage : ContentPage
                 var loc = LocalizationService.Instance;
                 await DisplayAlertAsync(loc.GetString("Score_Edit_MissingFile_Title"), loc.GetString("Score_Edit_Missing_Msg"), "OK");
                 return;
+            }
+
+            // 🚀 Optimisation ouverture ultra-rapide : précharger la première partition de la setlist
+            if (firstScore.Type == ScoreType.PDF && PdfService.IsNativePdfSupported && !string.IsNullOrEmpty(firstScore.FilePath))
+            {
+                string fullPath = _settingsService.GetAbsolutePath(firstScore.FilePath);
+                _ = _pdfService.PreloadFirstPageAsync(fullPath, firstScore.Rotation);
             }
 
             await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading, setlist, initialLoadingTopY: topY, isSetlistOpening: true), false);

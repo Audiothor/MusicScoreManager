@@ -119,6 +119,7 @@ namespace MusicScoreManager.Services
     {
         private static readonly Dictionary<string, RenderedPdfPage> _pageMemoryCache = new();
         private static readonly Dictionary<string, int> _pageCountCache = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, Task<RenderedPdfPage?>> _inFlightTasks = new();
         private static readonly object _cacheLock = new();
         private const int MaxMemoryCacheEntries = 14;
 
@@ -135,6 +136,7 @@ namespace MusicScoreManager.Services
             {
                 _pageMemoryCache.Clear();
                 _pageCountCache.Clear();
+                _inFlightTasks.Clear();
             }
         }
 
@@ -208,20 +210,68 @@ namespace MusicScoreManager.Services
             });
         }
 
+        /// <summary>
+        /// Précharge en mémoire la première page (ou double page si orientation paysage) du document PDF
+        /// pour une ouverture instantanée dès l'affichage du Viewer.
+        /// </summary>
+        public async Task PreloadFirstPageAsync(string pdfPath, int rotation = 0)
+        {
+            if (string.IsNullOrWhiteSpace(pdfPath) || !File.Exists(pdfPath)) return;
+
+            try
+            {
+                bool twoPagesPref = Preferences.Default.Get("TwoPagesLandscape", true);
+                bool isLandscape = false;
+                try
+                {
+                    var orientation = DeviceDisplay.MainDisplayInfo.Orientation;
+                    isLandscape = (orientation == DisplayOrientation.Landscape);
+                }
+                catch { }
+
+                if (twoPagesPref && isLandscape)
+                {
+                    await RenderPdfTwoPagesAsync(pdfPath, 1, 2, rotation, rotation);
+                }
+                else
+                {
+                    await RenderPdfPageAsync(pdfPath, 1, rotation);
+                }
+
+                _ = GetPdfPageCountAsync(pdfPath);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[PdfService] PreloadFirstPageAsync error: {ex.Message}");
+            }
+        }
+
         public async Task<RenderedPdfPage?> RenderPdfPageAsync(string pdfPath, int pageNumber, int rotation = 0, float scale = 1.6f)
         {
             if (string.IsNullOrWhiteSpace(pdfPath) || !File.Exists(pdfPath)) return null;
 
             string cacheKey = $"{pdfPath}_p{pageNumber}_r{rotation}_s{scale}";
+            Task<RenderedPdfPage?>? existingTask = null;
+
             lock (_cacheLock)
             {
                 if (_pageMemoryCache.TryGetValue(cacheKey, out var cached))
                 {
                     return cached;
                 }
+
+                if (_inFlightTasks.TryGetValue(cacheKey, out existingTask))
+                {
+                    // Rendu déjà en cours : on réutilise la tâche pour éviter le double décodage
+                }
             }
 
-            var rendered = await Task.Run(async () =>
+            if (existingTask != null)
+            {
+                return await existingTask;
+            }
+
+            var renderTask = Task.Run(async () =>
             {
 #if ANDROID
                 try
@@ -236,8 +286,15 @@ namespace MusicScoreManager.Services
                     int pageIndex = Math.Clamp(pageNumber - 1, 0, totalPages - 1);
                     using var page = renderer.OpenPage(pageIndex);
 
-                    int renderW = Math.Max(1, (int)(page.Width * scale));
-                    int renderH = Math.Max(1, (int)(page.Height * scale));
+                    int baseDim = Math.Max(page.Width, page.Height);
+                    float effectiveScale = scale;
+                    if (baseDim * effectiveScale > 2048)
+                    {
+                        effectiveScale = 2048f / baseDim;
+                    }
+
+                    int renderW = Math.Max(1, (int)(page.Width * effectiveScale));
+                    int renderH = Math.Max(1, (int)(page.Height * effectiveScale));
 
                     using var rawBmp = Bitmap.CreateBitmap(renderW, renderH, Bitmap.Config.Argb8888!);
                     rawBmp.EraseColor(Android.Graphics.Color.White);
@@ -255,7 +312,7 @@ namespace MusicScoreManager.Services
                     }
 
                     using var ms = new MemoryStream();
-                    finalBmp.Compress(Bitmap.CompressFormat.Jpeg!, 82, ms);
+                    finalBmp.Compress(Bitmap.CompressFormat.Jpeg!, 78, ms);
                     int fw = finalBmp.Width;
                     int fh = finalBmp.Height;
 
@@ -287,10 +344,17 @@ namespace MusicScoreManager.Services
 
                     using var page = pdfDoc.GetPage((uint)pageIndex);
                     using var memStream = new InMemoryRandomAccessStream();
+                    double baseDim = Math.Max(page.Size.Width, page.Size.Height);
+                    float effectiveScale = scale;
+                    if (baseDim * effectiveScale > 2048)
+                    {
+                        effectiveScale = 2048f / (float)baseDim;
+                    }
+
                     var options = new PdfPageRenderOptions
                     {
-                        DestinationWidth = (uint)Math.Max(1, (int)(page.Size.Width * scale)),
-                        DestinationHeight = (uint)Math.Max(1, (int)(page.Size.Height * scale))
+                        DestinationWidth = (uint)Math.Max(1, (int)(page.Size.Width * effectiveScale)),
+                        DestinationHeight = (uint)Math.Max(1, (int)(page.Size.Height * effectiveScale))
                     };
                     await page.RenderToStreamAsync(memStream, options);
 
@@ -307,7 +371,7 @@ namespace MusicScoreManager.Services
                         using var img = SixLabors.ImageSharp.Image.Load(bytes);
                         img.Mutate(ctx => ctx.Rotate(normRot));
                         using var rotMs = new MemoryStream();
-                        img.SaveAsJpeg(rotMs, new JpegEncoder { Quality = 82 });
+                        img.SaveAsJpeg(rotMs, new JpegEncoder { Quality = 78 });
                         bytes = rotMs.ToArray();
                         fw = img.Width;
                         fh = img.Height;
@@ -342,11 +406,18 @@ namespace MusicScoreManager.Services
                         if (page != null)
                         {
                             var rect = page.GetBoundsForBox(PdfKit.PdfDisplayBox.Media);
-                            var size = new CoreGraphics.CGSize(rect.Width * scale, rect.Height * scale);
+                            double baseDim = Math.Max(rect.Width, rect.Height);
+                            float effectiveScale = scale;
+                            if (baseDim * effectiveScale > 2048)
+                            {
+                                effectiveScale = 2048f / (float)baseDim;
+                            }
+
+                            var size = new CoreGraphics.CGSize(rect.Width * effectiveScale, rect.Height * effectiveScale);
                             using var img = page.GetThumbnail(size, PdfKit.PdfDisplayBox.Media);
                             if (img != null)
                             {
-                                using var jpegData = img.AsJPEG(0.82f);
+                                using var jpegData = img.AsJPEG(0.78f);
                                 if (jpegData != null)
                                 {
                                     return new RenderedPdfPage
@@ -374,6 +445,24 @@ namespace MusicScoreManager.Services
                 return null;
             });
 
+            lock (_cacheLock)
+            {
+                _inFlightTasks[cacheKey] = renderTask;
+            }
+
+            RenderedPdfPage? rendered = null;
+            try
+            {
+                rendered = await renderTask;
+            }
+            finally
+            {
+                lock (_cacheLock)
+                {
+                    _inFlightTasks.Remove(cacheKey);
+                }
+            }
+
             if (rendered != null)
             {
                 lock (_cacheLock)
@@ -395,15 +484,27 @@ namespace MusicScoreManager.Services
             if (string.IsNullOrWhiteSpace(pdfPath) || !File.Exists(pdfPath)) return null;
 
             string cacheKey = $"{pdfPath}_spread_l{leftPage}_r{rightPage}_lr{leftRot}_rr{rightRot}_s{scale}";
+            Task<RenderedPdfPage?>? existingTask = null;
+
             lock (_cacheLock)
             {
                 if (_pageMemoryCache.TryGetValue(cacheKey, out var cached))
                 {
                     return cached;
                 }
+
+                if (_inFlightTasks.TryGetValue(cacheKey, out existingTask))
+                {
+                    // Rendu déjà en cours : on réutilise la tâche
+                }
             }
 
-            var rendered = await Task.Run<RenderedPdfPage?>(async () =>
+            if (existingTask != null)
+            {
+                return await existingTask;
+            }
+
+            var renderTask = Task.Run<RenderedPdfPage?>(async () =>
             {
 #if ANDROID
                 try
@@ -423,8 +524,15 @@ namespace MusicScoreManager.Services
                     int lNormRot = (leftRot % 360 + 360) % 360;
                     using (var lPage = renderer.OpenPage(leftIdx))
                     {
-                        int lW = Math.Max(1, (int)(lPage.Width * scale));
-                        int lH = Math.Max(1, (int)(lPage.Height * scale));
+                        int baseDim = Math.Max(lPage.Width, lPage.Height);
+                        float effectiveScale = scale;
+                        if (baseDim * effectiveScale > 1536)
+                        {
+                            effectiveScale = 1536f / baseDim;
+                        }
+
+                        int lW = Math.Max(1, (int)(lPage.Width * effectiveScale));
+                        int lH = Math.Max(1, (int)(lPage.Height * effectiveScale));
 
                         var lRawBmp = Bitmap.CreateBitmap(lW, lH, Bitmap.Config.Argb8888!);
                         lRawBmp.EraseColor(Android.Graphics.Color.White);
@@ -449,8 +557,15 @@ namespace MusicScoreManager.Services
                         int rNormRot = (rightRot % 360 + 360) % 360;
                         using (var rPage = renderer.OpenPage(rightIdx))
                         {
-                            int rW = Math.Max(1, (int)(rPage.Width * scale));
-                            int rH = Math.Max(1, (int)(rPage.Height * scale));
+                            int baseDimR = Math.Max(rPage.Width, rPage.Height);
+                            float effectiveScaleR = scale;
+                            if (baseDimR * effectiveScaleR > 1536)
+                            {
+                                effectiveScaleR = 1536f / baseDimR;
+                            }
+
+                            int rW = Math.Max(1, (int)(rPage.Width * effectiveScaleR));
+                            int rH = Math.Max(1, (int)(rPage.Height * effectiveScaleR));
 
                             var rRawBmp = Bitmap.CreateBitmap(rW, rH, Bitmap.Config.Argb8888!);
                             rRawBmp.EraseColor(Android.Graphics.Color.White);
@@ -491,7 +606,7 @@ namespace MusicScoreManager.Services
                     if (rBmp != null) rBmp.Recycle();
 
                     using var ms = new MemoryStream();
-                    combined.Compress(Bitmap.CompressFormat.Jpeg!, 82, ms);
+                    combined.Compress(Bitmap.CompressFormat.Jpeg!, 78, ms);
 
                     return new RenderedPdfPage
                     {
@@ -550,7 +665,7 @@ namespace MusicScoreManager.Services
                     rightImg?.Dispose();
 
                     using var ms = new MemoryStream();
-                    combined.SaveAsJpeg(ms, new JpegEncoder { Quality = 82 });
+                    combined.SaveAsJpeg(ms, new JpegEncoder { Quality = 78 });
 
                     return new RenderedPdfPage
                     {
@@ -575,6 +690,24 @@ namespace MusicScoreManager.Services
 #endif
                 return (RenderedPdfPage?)null;
             });
+
+            lock (_cacheLock)
+            {
+                _inFlightTasks[cacheKey] = renderTask;
+            }
+
+            RenderedPdfPage? rendered = null;
+            try
+            {
+                rendered = await renderTask;
+            }
+            finally
+            {
+                lock (_cacheLock)
+                {
+                    _inFlightTasks.Remove(cacheKey);
+                }
+            }
 
             if (rendered != null)
             {

@@ -1353,6 +1353,13 @@ public partial class ScoresPage : ContentPage
         _isOpeningScore = true;
         try
         {
+            // 🚀 Optimisation ouverture ultra-rapide : précharger la page 1 immédiatement en arrière-plan
+            if (selectedScore.Type == Models.ScoreType.PDF && PdfService.IsNativePdfSupported && !string.IsNullOrEmpty(selectedScore.FilePath))
+            {
+                string fullPath = _settingsService.GetAbsolutePath(selectedScore.FilePath);
+                _ = _pdfService.PreloadFirstPageAsync(fullPath, selectedScore.Rotation);
+            }
+
             double topY = -1;
             if (ScoreLoadingOverlay != null && ScoreLoadingBorder != null)
             {

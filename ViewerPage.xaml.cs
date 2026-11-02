@@ -287,6 +287,20 @@ public partial class ViewerPage : ContentPage
             _currentRotation = _score.Rotation;
         }
 
+        // 🚀 Démarrage immédiat du préchargement de la partition dès la création du Viewer
+        if (_score.Type == ScoreType.PDF && PdfService.IsNativePdfSupported && !string.IsNullOrEmpty(_score.FilePath))
+        {
+            try
+            {
+                string fullPath = _settingsService.GetAbsolutePath(_score.FilePath);
+                if (!string.IsNullOrEmpty(fullPath) && File.Exists(fullPath))
+                {
+                    _ = _pdfService.PreloadFirstPageAsync(fullPath, _score.Rotation);
+                }
+            }
+            catch { }
+        }
+
         // Verrouillage systématique par défaut pour ne pas bloquer les interactions et le changement de page
         LockAnnotations();
 
