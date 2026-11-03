@@ -1123,5 +1123,6 @@
   "Scores_Bulk_Tags_None_Selected_Remove": "Seleccione al menos una etiqueta para quitar.",
   "Scores_Bulk_Tags_Remove_Empty": "No hay etiquetas asociadas a las partituras seleccionadas.",
   "Scores_Bulk_Tags_Remove_Success": "{0} etiqueta(s) quitada(s) con éxito de {1} partitura(s).",
-  "Sort_CategoryAsc": "Categoría (A-Z)"
+  "Sort_CategoryAsc": "Categoría (A-Z)",
+  "Score_Category_Open_Folder": "Abrir carpeta"
 }

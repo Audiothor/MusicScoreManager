@@ -1123,5 +1123,6 @@
   "Scores_Bulk_Tags_None_Selected_Remove": "Seleziona almeno un'etichetta da rimuovere.",
   "Scores_Bulk_Tags_Remove_Empty": "Nessuna etichetta è associata agli spartiti selezionati.",
   "Scores_Bulk_Tags_Remove_Success": "{0} etichetta/e rimossa/e con successo da {1} spartito/i.",
-  "Sort_CategoryAsc": "Categoria (A-Z)"
+  "Sort_CategoryAsc": "Categoria (A-Z)",
+  "Score_Category_Open_Folder": "Apri cartella"
 }

@@ -62,8 +62,13 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - **1.2. Configuration du tri d'ouverture par défaut (`SettingsScoresPage`) :**
   - Ajout du choix **« Catégorie (A-Z) »** dans le sélecteur de tri par défaut des partitions (*Paramètres > Partitions*).
   - Persistance dans les préférences utilisateur (`DefaultScoreSort = "CategoryAsc"`).
-- **1.3. Localisation intégrale :**
-  - Traduction de `Sort_CategoryAsc` dans les 8 langues gérées par l'application (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
+- **1.3. Protection du dossier permanent `Default` :**
+  - Masquage des 3 petits points (⋮) d'options pour le dossier "Default" sur les cartes de dossiers ainsi que sur la barre de fil d'Ariane, interdisant tout renommage ou suppression intempestive.
+- **1.4. Modernisation des boîtes de dialogue de dossiers :**
+  - Remplacement des actions sheets et alertes système par une boîte modale moderne et ergonomique (`CategoryMenuOverlay`) avec actions Ouvrir, Renommer et Supprimer.
+  - Boîte de confirmation de suppression moderne (`ShowModernConfirmDialogAsync`) avec badge d'alerte `🗑️` et message explicatif.
+- **1.5. Localisation intégrale :**
+  - Traduction de `Sort_CategoryAsc` et `Score_Category_Open_Folder` dans les 8 langues gérées par l'application (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
 
 ---
 
