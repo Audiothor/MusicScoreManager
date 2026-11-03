@@ -1112,5 +1112,15 @@
   "Settings_Scores_Consolidate_Desc": "Verschiebt im Stammverzeichnis liegende Dateien physisch in ihre jeweiligen Kategorie-Unterordner (z. B. Scores/Default/).",
   "Settings_Scores_Consolidate_Success_Title": "Organisation abgeschlossen",
   "Settings_Scores_Consolidate_Success_Msg": "{0} Partitur(en) wurden physisch in ihren Kategorieordnern organisiert.",
-  "Settings_Scores_Consolidate_None": "Alle Ihre physischen Dateien sind bereits perfekt in ihren Kategorieordnern organisiert."
+  "Settings_Scores_Consolidate_None": "Alle Ihre physischen Dateien sind bereits perfekt in ihren Kategorieordnern organisiert.",
+  "Scores_Bulk_Tags_Mode_Add": "➕ Hinzufügen",
+  "Scores_Bulk_Tags_Mode_Remove": "➖ Entfernen",
+  "Scores_Bulk_Tags_Apply_Add": "Zuweisen",
+  "Scores_Bulk_Tags_Apply_Remove": "Entfernen",
+  "Scores_Bulk_Tags_Header_Remove": "🗑️ Tags entfernen ({0} Part.)",
+  "Scores_Bulk_Tags_Sub_Add": "Wählen Sie die Tags aus, die allen ausgewählten Partituren zugewiesen werden sollen.",
+  "Scores_Bulk_Tags_Sub_Remove": "Wählen Sie die Tags aus, die von den ausgewählten Partituren entfernt werden sollen.",
+  "Scores_Bulk_Tags_None_Selected_Remove": "Bitte wählen Sie mindestens ein Tag zum Entfernen aus.",
+  "Scores_Bulk_Tags_Remove_Empty": "Keine Tags sind mit den ausgewählten Partituren verknüpft.",
+  "Scores_Bulk_Tags_Remove_Success": "{0} Tag(s) erfolgreich von {1} Partitur(en) entfernt."
 }

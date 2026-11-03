@@ -3944,8 +3944,10 @@ public partial class ViewerPage : ContentPage
                                         _currentTextColor = hit.Color;
                                         _currentTextSize = hit.Scale <= 0 ? 14 : hit.Scale;
                                         _currentTextBorderColor = string.IsNullOrEmpty(hit.BorderColor) ? "Transparent" : hit.BorderColor;
+                                        _currentTextBgColor = string.IsNullOrEmpty(hit.BackgroundColor) ? "Transparent" : hit.BackgroundColor;
                                         UpdateTextColorBorders();
                                         UpdateTextSizeButtons();
+                                        UpdateTextBgBorders();
                                         UpdateTextBorderBorders();
                                     }
 
@@ -4786,6 +4788,8 @@ public partial class ViewerPage : ContentPage
         TextOptionsOverlay.IsVisible = false;
         _isTextMode = false;
         TextAnnotationBtn.BackgroundColor = Colors.Transparent;
+        _selectedAnnotation = null;
+        RenderAnnotations();
     }
 
     private bool _isPromptingText = false;
@@ -5792,19 +5796,28 @@ public partial class ViewerPage : ContentPage
         bool hasBorder = !string.IsNullOrWhiteSpace(ann.BorderColor) && !ann.BorderColor.Equals("Transparent", StringComparison.OrdinalIgnoreCase);
         bool hasBg = !string.IsNullOrWhiteSpace(ann.BackgroundColor) && !ann.BackgroundColor.Equals("Transparent", StringComparison.OrdinalIgnoreCase);
         Color borderStroke = hasBorder ? ParseColor(ann.BorderColor) : Colors.Transparent;
-        Color bgColor = hasBg ? ParseColor(ann.BackgroundColor) : (isSelected ? Color.FromArgb("#33007ACC") : Colors.Transparent);
+        Color bgColor = hasBg ? ParseColor(ann.BackgroundColor) : Colors.Transparent;
 
         Color strokeColor;
         double strokeThick;
+        DoubleCollection? dashArray = null;
+
         if (hasBorder)
         {
             strokeColor = borderStroke;
             strokeThick = isSelected ? (2.5 * displayScale) : (1.5 * displayScale);
         }
+        else if (isSelected)
+        {
+            // Cadre de sélection discret en pointillés quand la bordure du texte est transparente
+            strokeColor = Color.FromArgb("#007ACC");
+            strokeThick = 1.0 * displayScale;
+            dashArray = new DoubleCollection { 3, 2 };
+        }
         else
         {
-            strokeColor = isSelected ? Color.FromArgb("#007ACC") : Colors.Transparent;
-            strokeThick = isSelected ? (1.5 * displayScale) : 0;
+            strokeColor = Colors.Transparent;
+            strokeThick = 0;
         }
 
         var label = new Label
@@ -5857,6 +5870,7 @@ public partial class ViewerPage : ContentPage
             StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = (float)(4 * displayScale) },
             StrokeThickness = strokeThick,
             Stroke = strokeColor,
+            StrokeDashArray = dashArray,
             BackgroundColor = bgColor,
             Content = contentGrid,
             InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode

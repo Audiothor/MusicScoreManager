@@ -1112,5 +1112,15 @@
   "Settings_Scores_Consolidate_Desc": "Move fisicamente os ficheiros na raiz para as respetivas subpastas de categorias (ex: Scores/Default/).",
   "Settings_Scores_Consolidate_Success_Title": "Organização concluída",
   "Settings_Scores_Consolidate_Success_Msg": "{0} partitura(s) foram organizadas fisicamente nas suas pastas de categorias.",
-  "Settings_Scores_Consolidate_None": "Todos os seus ficheiros físicos já estão perfeitamente classificados nas suas pastas de categorias."
+  "Settings_Scores_Consolidate_None": "Todos os seus ficheiros físicos já estão perfeitamente classificados nas suas pastas de categorias.",
+  "Scores_Bulk_Tags_Mode_Add": "➕ Adicionar",
+  "Scores_Bulk_Tags_Mode_Remove": "➖ Remover",
+  "Scores_Bulk_Tags_Apply_Add": "Atribuir",
+  "Scores_Bulk_Tags_Apply_Remove": "Remover",
+  "Scores_Bulk_Tags_Header_Remove": "🗑️ Remover etiquetas ({0} part.)",
+  "Scores_Bulk_Tags_Sub_Add": "Marque as etiquetas para atribuir a todas as partituras selecionadas.",
+  "Scores_Bulk_Tags_Sub_Remove": "Marque as etiquetas para remover das partituras selecionadas.",
+  "Scores_Bulk_Tags_None_Selected_Remove": "Selecione pelo menos uma etiqueta para remover.",
+  "Scores_Bulk_Tags_Remove_Empty": "Nenhuma etiqueta está associada às partituras selecionadas.",
+  "Scores_Bulk_Tags_Remove_Success": "{0} etiqueta(s) removida(s) com sucesso de {1} partitura(s)."
 }

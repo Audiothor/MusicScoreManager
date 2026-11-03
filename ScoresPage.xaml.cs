@@ -489,6 +489,8 @@ public partial class ScoresPage : ContentPage
 
     private readonly List<int> _bulkSelectedTagIds = new();
     private string _bulkTagSearchQuery = string.Empty;
+    private bool _isBulkTagRemoveMode = false;
+    private readonly Dictionary<int, int> _bulkTagsPresentCount = new();
 
     private void OnBulkTagsClicked(object sender, EventArgs e)
     {
@@ -505,12 +507,78 @@ public partial class ScoresPage : ContentPage
             return;
         }
 
-        BulkTagsHeaderLabel.Text = string.Format(LocalizationService.Instance.GetString("Scores_Bulk_Tags_Header", "🏷️ Étiqueter {0} partition(s)"), selectedScores.Count);
+        BulkTagsHeaderLabel.Text = string.Format(loc.GetString("Scores_Bulk_Tags_Header", "🏷️ Étiqueter {0} partition(s)"), selectedScores.Count);
+        _isBulkTagRemoveMode = false;
         _bulkSelectedTagIds.Clear();
         _bulkTagSearchQuery = string.Empty;
         BulkTagSearchEntry.Text = string.Empty;
+        CalculateBulkTagsPresence(selectedScores);
+        UpdateBulkTagModeUI();
         RenderBulkTags();
         BulkTagsOverlay.IsVisible = true;
+    }
+
+    private void CalculateBulkTagsPresence(List<Models.Score> selectedScores)
+    {
+        _bulkTagsPresentCount.Clear();
+        foreach (var score in selectedScores)
+        {
+            if (score.AppliedTags == null) continue;
+            foreach (var tag in score.AppliedTags)
+            {
+                if (_bulkTagsPresentCount.TryGetValue(tag.Id, out int count))
+                {
+                    _bulkTagsPresentCount[tag.Id] = count + 1;
+                }
+                else
+                {
+                    _bulkTagsPresentCount[tag.Id] = 1;
+                }
+            }
+        }
+    }
+
+    private void OnBulkTagModeAddClicked(object sender, EventArgs e)
+    {
+        if (!_isBulkTagRemoveMode) return;
+        _isBulkTagRemoveMode = false;
+        _bulkSelectedTagIds.Clear();
+        UpdateBulkTagModeUI();
+        RenderBulkTags();
+    }
+
+    private void OnBulkTagModeRemoveClicked(object sender, EventArgs e)
+    {
+        if (_isBulkTagRemoveMode) return;
+        _isBulkTagRemoveMode = true;
+        _bulkSelectedTagIds.Clear();
+        UpdateBulkTagModeUI();
+        RenderBulkTags();
+    }
+
+    private void UpdateBulkTagModeUI()
+    {
+        var loc = LocalizationService.Instance;
+        if (!_isBulkTagRemoveMode)
+        {
+            BulkTagModeAddBtn.BackgroundColor = Color.FromArgb("#8E44AD");
+            BulkTagModeAddBtn.TextColor = Colors.White;
+            BulkTagModeRemoveBtn.BackgroundColor = Color.FromArgb("#2D303B");
+            BulkTagModeRemoveBtn.TextColor = Color.FromArgb("#DDDDDD");
+            BulkTagsSubLabel.Text = loc.GetString("Scores_Bulk_Tags_Sub", "Sélectionnez les étiquettes à attribuer aux partitions sélectionnées :");
+            BulkTagsApplyBtn.Text = loc.GetString("Scores_Bulk_Tags_Apply_Add", "Attribuer");
+            BulkTagsApplyBtn.BackgroundColor = Color.FromArgb("#8E44AD");
+        }
+        else
+        {
+            BulkTagModeAddBtn.BackgroundColor = Color.FromArgb("#2D303B");
+            BulkTagModeAddBtn.TextColor = Color.FromArgb("#DDDDDD");
+            BulkTagModeRemoveBtn.BackgroundColor = Color.FromArgb("#C0392B");
+            BulkTagModeRemoveBtn.TextColor = Colors.White;
+            BulkTagsSubLabel.Text = loc.GetString("Scores_Bulk_Tags_Sub_Remove", "Sélectionnez les étiquettes à retirer des partitions sélectionnées :");
+            BulkTagsApplyBtn.Text = loc.GetString("Scores_Bulk_Tags_Apply_Remove", "Retirer");
+            BulkTagsApplyBtn.BackgroundColor = Color.FromArgb("#C0392B");
+        }
     }
 
     private void OnBulkTagsCloseClicked(object sender, EventArgs e)
@@ -529,6 +597,11 @@ public partial class ScoresPage : ContentPage
         BulkTagsContainer.Children.Clear();
 
         var filteredTags = _allTags.AsEnumerable();
+        if (_isBulkTagRemoveMode)
+        {
+            filteredTags = filteredTags.Where(t => _bulkTagsPresentCount.ContainsKey(t.Id));
+        }
+
         if (!string.IsNullOrWhiteSpace(_bulkTagSearchQuery))
         {
             filteredTags = filteredTags.Where(t => t.Name.Contains(_bulkTagSearchQuery, StringComparison.OrdinalIgnoreCase));
@@ -539,11 +612,29 @@ public partial class ScoresPage : ContentPage
         foreach (var tag in list)
         {
             bool isSelected = _bulkSelectedTagIds.Contains(tag.Id);
+            int countOnSelected = _bulkTagsPresentCount.TryGetValue(tag.Id, out int c) ? c : 0;
+
+            Color bgColor;
+            Color strokeColor;
+            string labelText;
+
+            if (_isBulkTagRemoveMode)
+            {
+                bgColor = isSelected ? Color.FromArgb("#C0392B") : Color.FromArgb("#2A2A2A");
+                strokeColor = isSelected ? Colors.White : Color.FromArgb(tag.ColorHex);
+                labelText = isSelected ? $"✕ {tag.Name} ({countOnSelected})  " : $"{tag.Name} ({countOnSelected})  ";
+            }
+            else
+            {
+                bgColor = isSelected ? Color.FromArgb(tag.ColorHex) : Color.FromArgb("#2A2A2A");
+                strokeColor = isSelected ? Colors.White : Color.FromArgb(tag.ColorHex);
+                labelText = isSelected ? $"✓ {tag.Name}  " : $"{tag.Name}  ";
+            }
 
             var border = new Border
             {
-                BackgroundColor = isSelected ? Color.FromArgb(tag.ColorHex) : Color.FromArgb("#2A2A2A"),
-                Stroke = isSelected ? Colors.White : Color.FromArgb(tag.ColorHex),
+                BackgroundColor = bgColor,
+                Stroke = strokeColor,
                 StrokeThickness = isSelected ? 2 : 1,
                 Padding = new Thickness(12, 6, 8, 6),
                 Margin = new Thickness(0, 0, 8, 8),
@@ -553,7 +644,7 @@ public partial class ScoresPage : ContentPage
 
             var label = new Label
             {
-                Text = isSelected ? $"✓ {tag.Name}  " : tag.Name + "  ",
+                Text = labelText,
                 TextColor = isSelected ? Colors.White : Color.FromArgb("#E0E0E0"),
                 FontAttributes = FontAttributes.Bold,
                 FontSize = 12,
@@ -585,7 +676,9 @@ public partial class ScoresPage : ContentPage
         {
             var noTags = new Label
             {
-                Text = LocalizationService.Instance.GetString("Scores_Bulk_No_Tags_Available", "Aucune étiquette disponible. Créez-en dans le menu Outils."),
+                Text = _isBulkTagRemoveMode
+                    ? LocalizationService.Instance.GetString("Scores_Bulk_Tags_No_Tags_On_Selection", "Aucune étiquette n'est associée aux partitions sélectionnées.")
+                    : LocalizationService.Instance.GetString("Scores_Bulk_No_Tags_Available", "Aucune étiquette disponible. Créez-en dans le menu Outils."),
                 TextColor = Color.FromArgb("#888888"),
                 FontSize = 12,
                 Margin = new Thickness(0, 10, 0, 0),
@@ -602,7 +695,9 @@ public partial class ScoresPage : ContentPage
         {
             await DisplayAlertAsync(
                 loc.GetString("Common_Warning", "Attention"), 
-                loc.GetString("Scores_Bulk_Tags_None_Selected", "Veuillez sélectionner au moins une étiquette à appliquer."), 
+                _isBulkTagRemoveMode 
+                    ? loc.GetString("Scores_Bulk_Tags_None_Selected_Remove", "Veuillez sélectionner au moins une étiquette à retirer.")
+                    : loc.GetString("Scores_Bulk_Tags_None_Selected", "Veuillez sélectionner au moins une étiquette à appliquer."), 
                 loc.GetString("Common_OK", "OK"));
             return;
         }
@@ -612,21 +707,42 @@ public partial class ScoresPage : ContentPage
         var selectedScores = scores.Where(s => s.IsSelected).ToList();
         if (!selectedScores.Any()) return;
 
-        foreach (var score in selectedScores)
+        if (_isBulkTagRemoveMode)
         {
-            foreach (var tagId in _bulkSelectedTagIds)
+            foreach (var score in selectedScores)
             {
-                await _databaseService.AddTagToScoreAsync(score.Id, tagId);
+                foreach (var tagId in _bulkSelectedTagIds)
+                {
+                    await _databaseService.RemoveTagFromScoreAsync(score.Id, tagId);
+                }
             }
-        }
 
-        BulkTagsOverlay.IsVisible = false;
-        IsMultiSelectActive = false; // Quitter le mode multi-sélection
-        await LoadScoresAsync(SearchScoreBar.Text);
-        await DisplayAlertAsync(
-            loc.GetString("Common_Success", "Succès"), 
-            string.Format(loc.GetString("Scores_Bulk_Tags_Success", "{0} étiquette(s) attribuée(s) avec succès à {1} partition(s)."), _bulkSelectedTagIds.Count, selectedScores.Count), 
-            loc.GetString("Common_OK", "OK"));
+            BulkTagsOverlay.IsVisible = false;
+            IsMultiSelectActive = false; // Quitter le mode multi-sélection
+            await LoadScoresAsync(SearchScoreBar.Text);
+            await DisplayAlertAsync(
+                loc.GetString("Common_Success", "Succès"), 
+                string.Format(loc.GetString("Scores_Bulk_Tags_Success_Remove", "{0} étiquette(s) retirée(s) avec succès de {1} partition(s)."), _bulkSelectedTagIds.Count, selectedScores.Count), 
+                loc.GetString("Common_OK", "OK"));
+        }
+        else
+        {
+            foreach (var score in selectedScores)
+            {
+                foreach (var tagId in _bulkSelectedTagIds)
+                {
+                    await _databaseService.AddTagToScoreAsync(score.Id, tagId);
+                }
+            }
+
+            BulkTagsOverlay.IsVisible = false;
+            IsMultiSelectActive = false; // Quitter le mode multi-sélection
+            await LoadScoresAsync(SearchScoreBar.Text);
+            await DisplayAlertAsync(
+                loc.GetString("Common_Success", "Succès"), 
+                string.Format(loc.GetString("Scores_Bulk_Tags_Success", "{0} étiquette(s) attribuée(s) avec succès à {1} partition(s)."), _bulkSelectedTagIds.Count, selectedScores.Count), 
+                loc.GetString("Common_OK", "OK"));
+        }
     }
 
     private List<Models.Score>? _scoresToSendForExchange = null;

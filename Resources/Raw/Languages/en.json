@@ -1112,5 +1112,15 @@
   "Settings_Scores_Consolidate_Desc": "Physically moves files sitting at the root into their respective category subfolders (e.g. Scores/Default/).",
   "Settings_Scores_Consolidate_Success_Title": "Organization completed",
   "Settings_Scores_Consolidate_Success_Msg": "{0} score(s) have been physically organized into their category folders.",
-  "Settings_Scores_Consolidate_None": "All your physical files are already perfectly organized in their category folders."
+  "Settings_Scores_Consolidate_None": "All your physical files are already perfectly organized in their category folders.",
+  "Scores_Bulk_Tags_Mode_Add": "➕ Add",
+  "Scores_Bulk_Tags_Mode_Remove": "➖ Remove",
+  "Scores_Bulk_Tags_Apply_Add": "Assign",
+  "Scores_Bulk_Tags_Apply_Remove": "Remove",
+  "Scores_Bulk_Tags_Header_Remove": "🗑️ Remove Tags ({0} scores)",
+  "Scores_Bulk_Tags_Sub_Add": "Check the tags to assign to all selected scores.",
+  "Scores_Bulk_Tags_Sub_Remove": "Check the tags to remove from the selected scores.",
+  "Scores_Bulk_Tags_None_Selected_Remove": "Please select at least one tag to remove.",
+  "Scores_Bulk_Tags_Remove_Empty": "No tags are currently associated with the selected scores.",
+  "Scores_Bulk_Tags_Remove_Success": "{0} tag(s) successfully removed from {1} score(s)."
 }

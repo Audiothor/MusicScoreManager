@@ -1112,5 +1112,15 @@
   "Settings_Scores_Consolidate_Desc": "Fizycznie przenosi pliki z katalogu głównego do odpowiednich podfolderów kategorii (np. Scores/Default/).",
   "Settings_Scores_Consolidate_Success_Title": "Organizowanie ukończone",
   "Settings_Scores_Consolidate_Success_Msg": "{0} partytur zostało fizycznie uporządkowanych w folderach kategorii.",
-  "Settings_Scores_Consolidate_None": "Wszystkie Twoje pliki fizyczne są już idealnie sklasyfikowane w folderach kategorii."
+  "Settings_Scores_Consolidate_None": "Wszystkie Twoje pliki fizyczne są już idealnie sklasyfikowane w folderach kategorii.",
+  "Scores_Bulk_Tags_Mode_Add": "➕ Dodaj",
+  "Scores_Bulk_Tags_Mode_Remove": "➖ Usuń",
+  "Scores_Bulk_Tags_Apply_Add": "Przypisz",
+  "Scores_Bulk_Tags_Apply_Remove": "Usuń",
+  "Scores_Bulk_Tags_Header_Remove": "🗑️ Usuń etykiety ({0} nut)",
+  "Scores_Bulk_Tags_Sub_Add": "Zaznacz etykiety, które chcesz przypisać do wszystkich wybranych nut.",
+  "Scores_Bulk_Tags_Sub_Remove": "Zaznacz etykiety, które chcesz usunąć z wybranych nut.",
+  "Scores_Bulk_Tags_None_Selected_Remove": "Wybierz co najmniej jedną etykietę do usunięcia.",
+  "Scores_Bulk_Tags_Remove_Empty": "Brak etykiet powiązanych z wybranymi nutami.",
+  "Scores_Bulk_Tags_Remove_Success": "{0} etykiet(y) pomyślnie usunięto z {1} nut."
 }
