@@ -52,7 +52,7 @@ Pour retrouver vos morceaux instantanément parmi des centaines de partitions :
    - Basculez à tout moment entre la **Vue Liste** et la **Vue Dossiers** grâce au bouton `📁` en haut de l'écran.
    - Attribuez chaque partition à un dossier (ex: *Classique*, *Jazz*, *Chorale*, *Études*...) depuis sa fiche d'édition ou via le menu contextuel `📁 Changer de dossier`. Vous pouvez créer de nouveaux dossiers à la volée avec le bouton `➕`.
 2. **Étiquettes colorées (Tags transversaux)** :
-   - Créez vos propres étiquettes avec leur couleur personnalisée via **Outils > Gestion des étiquettes** (ou *Paramètres > Gérer la liste des étiquettes*).
+   - Créez vos propres étiquettes avec leur couleur personnalisée via **Paramètres > Gestion des étiquettes**.
    - Une partition peut avoir plusieurs étiquettes (ex: *Chant*, *Piano*, *Noël*).
 3. **Éditer les métadonnées d'une partition** :
    - Dans **Partitions**, appuyez sur les **trois petits points `⋮`** sur une partition, puis choisissez **`Éditer la partition`**.

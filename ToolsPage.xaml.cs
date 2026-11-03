@@ -95,11 +95,6 @@ public partial class ToolsPage : ContentPage
         await Navigation.PushAsync(new WifiTransferPage(_wifiService, _exportImportService, _databaseService));
     }
 
-    private async void OnToolsTagsTapped(object? sender, TappedEventArgs e)
-    {
-        await Navigation.PushAsync(new TagsPage(_databaseService));
-    }
-
     private async void OnToolsImportPackageTapped(object? sender, TappedEventArgs e)
     {
         await Navigation.PushAsync(new ImportPackagePage(_exportImportService));

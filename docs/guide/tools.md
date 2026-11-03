@@ -6,7 +6,7 @@ Le menu **Outils** regroupe la suite d'utilitaires spécialisés de Music Score 
 
 ## 1. Scanner de Partitions Papier (Capture Photo Haute Fidélité)
 
-Le **Scanner de Partitions** ([`ScoreScannerPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ScoreScannerPage.xaml)) permet de numériser directement vos partitions papier depuis votre pupitre sans scanner externe :
+Le **Scanner de Partitions** permet de numériser directement vos partitions papier depuis votre pupitre sans scanner externe :
 
 - **Capture Photo Instantanée & Import Galerie** :
   - Prenez directement en photo chaque page de votre partition grâce à l'appareil photo (`Prendre une photo`) ou importez vos photos déjà enregistrées (`Importer une image`).
@@ -60,39 +60,45 @@ Les partitions reçues sont automatiquement dirigées vers votre dossier "Géné
 
 #### A. Échange Direct de Tablette à Tablette (P2P)
 
-<u>CAS OÙ LES PERSONNES SONT SUR UN MÊME RÉSEAU WI-FI</u>
+##### 1. Préparation
 
-1. **Le Destinataire** :
-   - Ouvre **Outils > Transfert Wi-Fi Direct**, active le Wi-Fi de sa tablette et appuie sur **Recevoir**. Son appareil devient visible sur le réseau local ad-hoc.
-2. **L'Émetteur** :
-   - Sélectionne la partition ou la setlist à envoyer (depuis les menus 3 points ⋮ ou en multi-sélection).
-   - Choisit d'inclure ou non les annotations manuscrites et les pistes audio.
-   - Sélectionne le destinataire dans la liste des appareils détectés. Le transfert binaire TCP s'exécute à très grande vitesse.
+<u>- CAS OÙ LES PERSONNES SONT SUR UN MÊME RÉSEAU WI-FI
+(à la maison, réseau du conservatoire,etc...)</u>
 
-<u>CAS OÙ LES PERSONNES NE SONT PAS SUR UN MÊME RÉSEAU WI-FI</u>
+Le destinataire et l'émetteur se connectent au réseau wifi commun.
 
-#### 1. Créer le lien Wi-Fi entre les 2 tablettes
+
+<u>- CAS OÙ LES PERSONNES NE SONT PAS SUR UN MÊME RÉSEAU WI-FI</u>
+
+##### => Créer le lien Wi-Fi entre les 2 tablettes
 
 1. **Sur la tablette 1 (n'importe laquelle des deux) :**
    - Ouvrez les réglages Android / le volet supérieur de notifications.
    - Activez le **« Point d'accès Wi-Fi »** (ou *Partage de connexion*).
 2. **Sur la tablette 2 :**
    - Activez le **Wi-Fi** et connectez-vous au réseau Wi-Fi créé par la tablette 1. *(Les deux tablettes sont désormais reliées en réseau direct)*.
+     
 
----
 
-#### 2. Réaliser le transfert dans Music Score Manager
+
+
+
+##### 2. Réaliser le transfert dans Music Score Manager
 
 1. **Sur la tablette qui reçoit :**
+   
    - Ouvrez l'onglet **Outils** > **Transfert Wi-Fi Direct (P2P)**.
    - Cliquez sur le gros bouton vert **« 🟢 Activer la Réception (Se rendre visible) »**.
 
 2. **Sur la tablette qui envoie :**
+   
    - Sur la partition ou la setlist à partager, appuyez sur le menu **⋮** (3 points) > **« Envoyer en Wi-Fi Direct »** (ou cochez plusieurs partitions avec le bouton de sélection).
    - L'autre tablette apparaît instantanément dans la liste des appareils détectés.
+   - Choisit d'inclure ou non les annotations manuscrites et les pistes audio
    - Cliquez sur son nom pour lancer l'envoi.
 
 3. **Sur la tablette qui reçoit :**
+   
    - Une boîte de dialogue apparaît : cliquez sur **« Accepter »**.
    - Les partitions, annotations et pistes audio sont reçues et intégrées directement dans la bibliothèque en quelques secondes !
 
@@ -106,18 +112,7 @@ Les partitions reçues sont automatiquement dirigées vers votre dossier "Géné
 
 ---
 
-## 4. Gestion des Étiquettes (Tags)
-
-La page ([`TagsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/TagsPage.xaml) & [`TagEditPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/TagEditPage.xaml)) vous donne le plein contrôle sur l'organisation de votre bibliothèque :
-
-- **Créer une nouvelle étiquette** avec un nom personnalisé (ex : *Chorale*, *Solfège*, *Concert Noël*, *Guitare Acoustique*).
-- **Palette de couleurs vives & curseurs RVB** : assignez une pastille colorée unique à chaque étiquette avec aperçu en temps réel pour une identification visuelle immédiate dans la liste des partitions.
-- **Modifier ou renommer** un tag existant.
-- **Supprimer une étiquette** : supprime l'étiquette de l'application sans endommager les partitions qui la possédaient.
-
----
-
-## 5. Imports de fichiers (Setlists, Partitions et paquets)
+## 4. Imports de fichiers (Setlists, Partitions et paquets)
 
 La page ([`ImportPackagePage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ImportPackagePage.xaml)) vous permet de charger des fichiers partagés par des tiers :
 
@@ -127,9 +122,9 @@ La page ([`ImportPackagePage`](file:///c:/Users/comme/Documents/GitHub/MusicScor
 
 ---
 
-## 6. Gestion des Doublons
+## 5. Gestion des Doublons
 
-La page ([`DuplicatesPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/DuplicatesPage.xaml)) inspecte l'intégralité de votre bibliothèque de partitions pour libérer de l'espace de stockage et clarifier votre catalogue :
+Cet outil inspecte l'intégralité de votre bibliothèque de partitions pour libérer de l'espace de stockage et clarifier votre catalogue :
 
 - **Analyse d'empreinte SHA-256** : compare le contenu binaire exact de vos PDF (même si deux fichiers portent des noms différents).
 - **Analyse récursive des dossiers** : examine automatiquement l'ensemble des sous-répertoires de catégories (`📁 [Catégorie] Chemin`).
@@ -138,7 +133,7 @@ La page ([`DuplicatesPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreMa
 
 ---
 
-## 7. Gestion des Sauvegardes & Restauration
+## 6. Gestion des Sauvegardes & Restauration
 
 La page ([`BackupsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/BackupsPage.xaml)) assure la pérennité totale de votre travail musical :
 

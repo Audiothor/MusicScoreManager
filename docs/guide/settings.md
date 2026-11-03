@@ -67,7 +67,18 @@ ERGONOMIE
 
 ---
 
-## 2. Paramètres Setlists
+## 2. Gestion des Étiquettes
+
+Accessible directement depuis la racine des Paramètres (**Paramètres > Gestion des étiquettes**), la console ([`TagsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/TagsPage.xaml)) vous permet de gérer et personnaliser les étiquettes de votre bibliothèque :
+
+- **Création d'étiquettes personnalisées** (ex : *Chorale*, *Solfège*, *Concert Noël*, *Guitare Acoustique*).
+- **Nuancier de couleurs & curseurs RVB** : assignez une pastille colorée unique à chaque étiquette avec aperçu en temps réel pour une identification visuelle immédiate dans la liste des partitions.
+- **Modification et renommage** d'une étiquette existante.
+- **Suppression sécurisée** : supprime l'étiquette de l'application sans endommager les partitions associées.
+
+---
+
+## 3. Paramètres Setlists
 
 Cette page configure les paramètres des setlist lors de concerts.
 
@@ -98,7 +109,7 @@ COMPORTEMENT PAR DEFAUT
 
 ---
 
-## 3. Paramètres Annotations
+## 4. Paramètres Annotations
 
 Ces paramètres ne s'appliquent que dans l'utilsiation des annotations au niveau de la partition.
 
@@ -114,7 +125,7 @@ Ces paramètres ne s'appliquent que dans l'utilsiation des annotations au niveau
 
 ---
 
-## 4. Paramètres Pédaliers Bluetooth & Événements MIDI
+## 5. Paramètres Pédaliers Bluetooth & Événements MIDI
 
 Sur scène comme en répétition, la lecture mains-libres est indispensable. Music Score Manager intègre un moteur universel capable de dialoguer aussi bien avec les **pédaliers Bluetooth (HID)** qu'avec les **contrôleurs et pédaliers MIDI (USB et Bluetooth BLE)**, tout en protégeant le musicien contre les fausses manipulations lors des performances en direct.
 
@@ -204,7 +215,7 @@ Pour garantir une sérénité absolue sous la chaussure pendant le direct :
 
 ---
 
-## 5. Paramètres Application (Général)
+## 6. Paramètres Application (Général)
 
 La page gère le système et l'environnement global de l'application.
 
@@ -246,7 +257,7 @@ BIBLIOTHEQUE (statistiques)
 
 ---
 
-## 6. Aide Intégrée
+## 7. Aide Intégrée
 
 La page intègre des fiches d'aide et conseils scéniques hors-ligne plus succintes que celles du site web.
 Avec aussi :
@@ -259,7 +270,7 @@ Avec aussi :
 
 ---
 
-## 7. À propos
+## 8. À propos
 
 La page fournit les informations légales et techniques :
 

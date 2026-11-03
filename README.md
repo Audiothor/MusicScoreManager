@@ -501,7 +501,7 @@ graph TD
 - **Ergonomie des Gestes de Navigation** :
   - *Aller vers page suivante* : Glisser vers la gauche, Taper à droite, ou Glisser vers le haut.
   - *Aller vers page précédente* : Glisser vers la droite, Taper à gauche, ou Glisser vers le bas.
-- **Organisation (Gérer la liste des étiquettes)** : Raccourci vers la console de gestion des étiquettes (`TagsPage`).
+- **Organisation (Gestion des étiquettes)** : Raccourci vers la console de gestion des étiquettes (`TagsPage`).
 
 ---
 

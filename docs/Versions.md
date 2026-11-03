@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.4 — 03/11/2026](#v324--03112026)
 - [v3.2.3 — 03/11/2026](#v323--03112026)
 - [v3.2.2 — 03/11/2026](#v322--03112026)
 - [v3.2.1 — 03/11/2026](#v321--03112026)
@@ -51,6 +52,17 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.2.4 — 03/11/2026
+
+### 1. Ergonomie : Unification de la Gestion des Étiquettes
+- **1.1. Suppression de l'entrée redondante dans le menu Outils (`ToolsPage`) :**
+  - Retrait de l'élément « Gestion des étiquettes » du panneau Outils, la gestion des métadonnées et catégories relevant logiquement du volet Paramètres.
+- **1.2. Harmonisation dans le menu Paramètres (`SettingsPage`) :**
+  - Renommage de l'option « Gérer la liste des étiquettes » en **« Gestion des étiquettes »** pour une appellation plus directe et cohérente.
+  - Mise à jour et alignement des libellés dans les 8 langues prises en charge (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
 
 ---
 
