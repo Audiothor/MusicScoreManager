@@ -16,12 +16,13 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>3.2.2</ApplicationDisplayVersion>
-		<ApplicationVersion>32002</ApplicationVersion>
-		<!-- Version actuelle : v3.2.2 "Correction de l'aperçu en direct du sous-titre pour Dossier/Catégorie dans les paramètres de partitions" -->
+		<ApplicationDisplayVersion>3.2.3</ApplicationDisplayVersion>
+		<ApplicationVersion>32003</ApplicationVersion>
+		<!-- Version actuelle : v3.2.3 "Optimisation de l'ouverture des paramètres d'application (chargement asynchrone et feedback instantané)" -->
 
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<NoWarn>$(NoWarn);IDE0028;IDE0300;IDE0301;IDE0305;IDE0290;IDE0005;IDE0090</NoWarn>
 		
 		<!-- Support universel : ARM32, ARM64 et x64 (émulateur) -->
 		<RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">android-arm;android-arm64;android-x64</RuntimeIdentifiers>

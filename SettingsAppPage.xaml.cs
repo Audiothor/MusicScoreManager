@@ -11,6 +11,7 @@ public partial class SettingsAppPage : ContentPage
     private readonly DatabaseService _databaseService;
 
     private string _pendingLang = "fr";
+    private bool _statsLoaded;
 
     public SettingsAppPage()
     {
@@ -19,8 +20,22 @@ public partial class SettingsAppPage : ContentPage
         _databaseService = new DatabaseService();
         _pendingLang = LocalizationService.Instance.CurrentLanguage;
         RefreshUI();
-        _ = LoadScoreStatsAsync();
+        // Le calcul des statistiques est différé dans OnAppearing pour une ouverture instantanée de la page
         LocalizationService.Instance.LanguageChanged += OnLanguageChanged;
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        if (!_statsLoaded)
+        {
+            _ = Task.Run(async () =>
+            {
+                // Petit délai pour laisser l'animation de navigation MAUI se terminer à 60 FPS
+                await Task.Delay(150);
+                await LoadScoreStatsAsync();
+            });
+        }
     }
 
     private void OnLanguageChanged(object? sender, EventArgs e)
@@ -28,7 +43,7 @@ public partial class SettingsAppPage : ContentPage
         MainThread.BeginInvokeOnMainThread(() =>
         {
             RefreshUI();
-            _ = LoadScoreStatsAsync();
+            _ = Task.Run(async () => await LoadScoreStatsAsync());
         });
     }
 
@@ -172,11 +187,26 @@ public partial class SettingsAppPage : ContentPage
                 PdfSizeLabel.Text = $"{sizeInMb:F1} Mo";
                 AvailableDiskSpaceLabel.Text = freeSpaceText;
                 DatabaseSizeLabel.Text = dbSizeText;
+
+                if (StatsLoadingIndicator != null)
+                {
+                    StatsLoadingIndicator.IsRunning = false;
+                    StatsLoadingIndicator.IsVisible = false;
+                }
+                _statsLoaded = true;
             });
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"[SettingsAppPage] Erreur calcul stats: {ex.Message}");
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                if (StatsLoadingIndicator != null)
+                {
+                    StatsLoadingIndicator.IsRunning = false;
+                    StatsLoadingIndicator.IsVisible = false;
+                }
+            });
         }
     }
 

@@ -3,12 +3,19 @@ root = true
 
 [*.cs]
 # Style de code C#
-# Désactivation des suggestions de style purement cosmétiques dans la fenêtre "Problèmes" de l'éditeur
-dotnet_diagnostic.IDE0028.severity = none    # L'initialisation des collections peut être simplifiée
-dotnet_diagnostic.IDE0300.severity = none    # Simplifier l'initialisation de collection (expression de collection)
-dotnet_diagnostic.IDE0301.severity = none    # Simplifier l'initialisation de collection
-dotnet_diagnostic.IDE0305.severity = none    # Simplifier l'initialisation de collection
-dotnet_diagnostic.IDE0290.severity = none    # Utiliser le constructeur principal
-dotnet_diagnostic.IDE0005.severity = none    # Directive using inutile
-dotnet_diagnostic.IDE0090.severity = none    # 'new' peut être simplifié
+# Desactivation des suggestions de style purement cosmetiques dans la fenetre "Problemes" de l'editeur
+# Note : Les commentaires EditorConfig doivent obligatoirement etre sur leur propre ligne.
+# L'initialisation des collections peut etre simplifiee
+dotnet_diagnostic.IDE0028.severity = none
+# Simplifier l'initialisation de collection (expression de collection [])
+dotnet_diagnostic.IDE0300.severity = none
+dotnet_diagnostic.IDE0301.severity = none
+dotnet_diagnostic.IDE0305.severity = none
+# Utiliser le constructeur principal
+dotnet_diagnostic.IDE0290.severity = none
+# Directive using inutile
+dotnet_diagnostic.IDE0005.severity = none
+# 'new' peut etre simplifie
+dotnet_diagnostic.IDE0090.severity = none
+
 

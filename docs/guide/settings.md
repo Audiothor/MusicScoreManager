@@ -100,15 +100,15 @@ COMPORTEMENT PAR DEFAUT
 
 ## 3. Paramètres Annotations
 
-La page est divisée en deux chapitres clairs :
+Ces paramètres ne s'appliquent que dans l'utilsiation des annotations au niveau de la partition.
 
-- **Chapitre 1 : Gestion des stickers Favoris** :
+- **Gestion des stickers Favoris** :
   
   - Champ de saisie pour créer vos stickers personnalisés avec texte libre (ex : *Vibrato*, *Attention*, *Solo*, *Respirer*,*Intro Hélène*...).
-  - Liste de vos favoris avec suppression unitaire `✕`.
-  - Pensez à cocher la cétagorie "Favoris" (Cf Sélection des catégories de stickers)
+  - Liste de vos favoris avec suppression unitaire `✕` et positionnement dans la liste
+  - Pensez à cocher la catégorie "Favoris" (Cf Sélection des catégories de stickers)
 
-- **Chapitre 2 : Sélection des catégories de stickers ** :
+- **Sélection des catégories de stickers** :
   
   - Cochez ou décochez les catégories de stickers que vous souhaitez voir apparaître dans le tiroir d'annotations (*Favoris, Doigtés, Nuances, Articulations, Répétitions, Notes, Silences, Altérations, Symboles*).
 
@@ -125,6 +125,7 @@ Sur scène comme en répétition, la lecture mains-libres est indispensable. Mus
 * **Pédaliers Bluetooth HID (Mode Clavier) :**
   * Compatible avec tous les pédaliers du marché : *AirTurn (Duo 500, Quad, PEDpro)*, *PageFlip (Dragonfly, Firefly, Butterfly)*, *Donner*, *Joyo*, *Thomann / Harley Benton*, *IK Multimedia iRig BlueTurn*, *Coda STOMP*, etc.
   * Il suffit d'appairer le pédalier dans les réglages Bluetooth de votre tablette.
+  * <u>Et si jamais les actions de votre pédalier ne vous conviennent pas, vous pouvez les personnaliser complétement avec les actions que vous désirez selon vos boutons !!</u>
 * **Contrôleurs & Pédaliers MIDI (USB-OTG & Bluetooth BLE) :**
   * Connexion filaire directe sans pilote via adaptateur USB-OTG (Boss, Behringer FCB1010, Morningstar, Line 6 Helix, etc.) ou sans fil via adaptateur Bluetooth MIDI.
   * Interception native des messages :
@@ -139,25 +140,49 @@ Sur scène comme en répétition, la lecture mains-libres est indispensable. Mus
 Pour s'adapter à vos différents contextes de jeu (orchestre classique, groupe de rock, piano solo), l'application repose sur un système de profils interchangeables :
 
 * **Profil Actif par Défaut :** Le profil sélectionné dans les paramètres généraux s'applique automatiquement à toute la bibliothèque.
-* **Profils d'Usine Intégrés :** Des profils préconfigurés sont fournis pour les plus grands modèles du marché (Dragonfly 4 pédales, Duo 2 pédales, Flèches standard, etc.).
+  
+* **Profils d'Usine Intégrés :** Des profils préconfigurés sont fournis pour les plus grands modèles du marché (Dragonfly 4 pédales, Duo 2 pédales, Flèches standard, etc.). Si ils ne vous conviennent pas, vous pouvez les modifier à votre guise !
+  
 * **Profils Personnalisés Illimités :** Créez, nommez, dupliquez et modifiez autant de profils que vous le souhaitez avec vos propres annotations d'utilisation.
+  
 * **⭐ Profils Dédiés par Setlist :** Vous pouvez associer un profil spécifique à une setlist particulière (depuis l'éditeur de setlist). Lors de la lecture de cette setlist en concert, ce profil prend la priorité absolue, puis le profil par défaut est automatiquement restauré dès la sortie du lecteur.
+  
+  
+
+=> 
 
 ---
 
 #### C. Configuration et Apprentissage Automatique des Boutons
 
-L'éditeur de profil permet d'assigner les pédales en quelques secondes grâce à l'apprentissage en direct :
+L'éditeur de profil ("Modifier les profile sélectionné") permet d'assigner les pédales en quelques secondes grâce à l'apprentissage en direct :
 
-1. **Détection Automatique (Mode « En écoute ») :**
-   * Appuyez sur la pédale physique ou la commande MIDI : l'application capture instantanément le signal, identifie son type (Clavier HID, CC, Note MIDI) et affiche son code exact.
-2. **Appui Simple (⚡) vs Appui Long (⏱️) :**
-   * Chaque pédale physique peut accomplir **deux actions différentes** selon la durée de maintien (ex. : *Appui simple = Page suivante*, *Appui long = Morceau suivant de la setlist*).
-3. **Catalogue des Actions Assignables :**
-   * **Tourne & Navigation :** Page suivante / précédente, Défilement haut / bas, Première / dernière page, Morceau suivant / précédent de la setlist.
-   * **Répétition & Outils Scéniques :** Démarrer / arrêter le métronome, Couper / activer le son du métronome, Lecture / pause de la piste audio, Recommencer le morceau.
-   * **Lecture & Affichage :** Signet / marqueur suivant / précédent, Zoom avant / arrière / réinitialisation, Mode Nuit (inversion des couleurs).
-   * **Annotations :** Verrouiller / déverrouiller le calque de dessin, Masquer / afficher les annotations, Annuler / rétablir le dernier tracé.
+1. **Attribuez un nom de profile ou gardez celui par défaut**
+   Personnalisez le nom de votre profiel de pédales.
+2. **Ajoutez si vous le souhaitez une description**
+   Facultatif.
+3. **Ajouter les boutons/pédale**
+   C'est ici que vous pouver ajouter une pédale dans la gestion de votre appareil.
+   
+   
+4. **Pour chaque pédale :**
+   Lui donner un nom ("pédale droite"...)
+   1. **Détection Automatique (Mode « En écoute ») :**
+      * Appuyez sur la pédale physique ou la commande MIDI : l'application capture instantanément le signal, identifie son type (Clavier HID, CC, Note MIDI) et affiche son code exact.
+   2. **Appui Simple (⚡) vs Appui Long (⏱️) :**
+      * Chaque pédale physique peut accomplir **deux actions différentes** selon la durée de maintien (ex. : *Appui simple = Page suivante*, *Appui long = Morceau suivant de la setlist*).
+   3. **Catalogue des Actions Assignables :**
+      * **Tourne & Navigation :** Page suivante / précédente, Défilement haut / bas, Première / dernière page, Morceau suivant / précédent de la setlist.
+      * **Répétition & Outils Scéniques :** Démarrer / arrêter le métronome, Couper / activer le son du métronome, Lecture / pause de la piste audio, Recommencer le morceau.
+      * **Lecture & Affichage :** Signet / marqueur suivant / précédent, Zoom avant / arrière / réinitialisation, Mode Nuit (inversion des couleurs).
+      * **Annotations :** Verrouiller / déverrouiller le calque de dessin, Masquer / afficher les annotations, Annuler / rétablir le dernier tracé.
+        
+        
+        NE PAS OUBLIER DE SAUVEGARDER VOTRE PROFILE !
+5. **Répétez ces actions avec vos autres pédales !**
+
+
+
 
 ---
 
@@ -183,18 +208,34 @@ Pour garantir une sérénité absolue sous la chaussure pendant le direct :
 
 La page gère le système et l'environnement global de l'application.
 
+
+LANGUE
+
 - **🌐 Choix de la Langue de l'Interface** :
   
   - Modal interactif proposant **8 langues intégrées** :
     * 🇫🇷 **Français**, 🇬🇧 **English**, 🇩🇪 **Deutsch**, 🇪🇸 **Español**, 🇮🇹 **Italiano**, 🇵🇱 **Polski**, 🇳🇱 **Nederlands**, 🇵🇹 **Português**.
   - Traduction instantanée dynamique de l'ensemble de l'interface.
-    Nota : la langue prise par l'application est par défault celle qui est actuellement utilisée par l'OS de votre tablette/téléphone.
+    Nota : la langue prise par l'application est par défaut celle qui est actuellement utilisée par l'OS de votre tablette/téléphone.
     Si la langue n'est pas prise en charge, elle se positionnera automatiquement sur l'anglais.
+    
+
+COMPORTEMENT DE L'APPLICATION
+
+- **Afficher le menu "Quitter"**
+  Affiche ou masque le menu "Quitter"" en bas de l'application
+
+- **Quitter l'application**
+  Demande la confirmation pour quitter l'application
+
+
+
+BIBLIOTHEQUE (statistiques)
 
 - **📊 Statistiques de la Bibliothèque & Métriques de Stockage** :
   
-  - Nombre total de partitions PDF enregistrées.
-  - Espace disque total occupé par vos partitions PDF (en Mo).
+  - **Nombre total de partitions** PDF enregistrées.
+  - **Espace disque total occupé** par vos partitions PDF (en Mo).
   - **Espace disponible sur le stockage** : Capacité mémoire libre restante sur l'appareil. (en Go)
   - **Taille de la base de données** : Espace occupé par SQLite (`scores.db3` + journaux WAL/SHM).
 
@@ -208,6 +249,13 @@ La page gère le système et l'environnement global de l'application.
 ## 6. Aide Intégrée
 
 La page intègre des fiches d'aide et conseils scéniques hors-ligne plus succintes que celles du site web.
+Avec aussi :
+
+- Une aide de démarrage rapide est disponible
+
+- Le lien de la documentation complète (ce présent document, disponible en français et en anglais uniquement)
+
+- Le lien Discord pour échanger sur les problèmes et fonctionnalités, pour proposer ou pour remercier !
 
 ---
 

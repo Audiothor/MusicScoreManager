@@ -34,7 +34,8 @@ if ($status) {
     git commit -m "docs(wiki): update complete technical wiki pages"
     git push origin master
     Write-Host "==> Wiki synchronisé avec succès sur GitHub !" -ForegroundColor Green
-} else {
+}
+else {
     Write-Host "==> Aucune modification détectée dans le Wiki." -ForegroundColor Green
 }
 

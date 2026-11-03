@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.3 — 03/11/2026](#v323--03112026)
 - [v3.2.2 — 03/11/2026](#v322--03112026)
 - [v3.2.1 — 03/11/2026](#v321--03112026)
 - [v3.2.0 — 03/11/2026](#v320--03112026)
@@ -50,6 +51,25 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.2.3 — 03/11/2026
+
+### 1. Paramètres de l'Application : Réactivité Immédiate & Chargement Asynchrone
+- **1.1. Feedback visuel instantané au tap (`SettingsPage`) :**
+  - Remplacement immédiat (< 16 ms) du chevron `›` par un indicateur d'activité circulaire bleu (`ActivityIndicator`) lors de la sélection de « Paramètres de l'application ».
+  - Élimine tout doute pour l'utilisateur sur la prise en compte du clic.
+  - Protection anti-rebond globale (`_isNavigating`) sur l'ensemble des rubriques de paramètres pour éviter les multi-clics accidentels.
+- **1.2. Ouverture instantanée de la page & calcul différé des statistiques (`SettingsAppPage`) :**
+  - Suppression du blocage au constructeur : la page des paramètres d'application s'ouvre désormais instantanément.
+  - Le calcul du nombre total de partitions, de la taille occupée et de l'espace disque disponible est exécuté en tâche de fond (`Task.Run`) dans `OnAppearing` après un délai de fluidité (150 ms) pour garantir une transition à 60 FPS.
+  - Affichage d'un spinner rotatif discret dans le bloc *« Statistiques de la Bibliothèque »* pendant le calcul, s'effaçant automatiquement dès que les valeurs réelles sont prêtes.
+
+### 2. Maintenance & Configuration de l'Environnement de Développement
+- **2.1. Correction de la syntaxe `.editorconfig` & désactivation des alertes cosmétiques :**
+  - Correction du placement des commentaires selon la spécification officielle EditorConfig (lignes dédiées obligatoires).
+  - Suppression complète des 57 alertes d'information `IDE0028` (simplification des initialisations de collections) dans la vue Problèmes de l'IDE.
 
 ---
 
