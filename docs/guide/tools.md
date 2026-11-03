@@ -28,7 +28,7 @@ Le **Scanner de Partitions** permet de numériser directement vos partitions pap
 
 ## 2. Créateur & Assemblage PDF (Atelier Studio)
 
-L'**Atelier d'Assemblage PDF** ([`PdfAssemblerPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/PdfAssemblerPage.xaml)) est un studio complet de retouche et de composition de documents PDF multi-pages.
+L'**Atelier d'Assemblage PDF** est un studio complet de retouche et de composition de documents PDF multi-pages.
 
 ### Fonctionnalités disponibles :
 
@@ -54,7 +54,7 @@ L'**Atelier d'Assemblage PDF** ([`PdfAssemblerPage`](file:///c:/Users/comme/Docu
 
 ## 3. Transfert Wi-Fi Direct (P2P) & Diffusion Groupe
 
-La page ([`WifiTransferPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/WifiTransferPage.xaml)) gère les échanges sans fil directs entre musiciens, **sans box internet ni routeur 4G/5G requis**.
+L'outil gère les échanges sans fil directs entre musiciens, **sans box internet ni routeur 4G/5G requis**.
 La manipulation nécessite juste d'activer le Wi-Fi (sans connexion Internet nécessaire !).
 Les partitions reçues sont automatiquement dirigées vers votre dossier "Général", afin de préserver votre propre organisation personnelle de répertoires sans être polluée par celle de l'expéditeur.
 
@@ -78,10 +78,6 @@ Le destinataire et l'émetteur se connectent au réseau wifi commun.
 2. **Sur la tablette 2 :**
    - Activez le **Wi-Fi** et connectez-vous au réseau Wi-Fi créé par la tablette 1. *(Les deux tablettes sont désormais reliées en réseau direct)*.
      
-
-
-
-
 
 ##### 2. Réaliser le transfert dans Music Score Manager
 
@@ -114,7 +110,7 @@ Le destinataire et l'émetteur se connectent au réseau wifi commun.
 
 ## 4. Imports de fichiers (Setlists, Partitions et paquets)
 
-La page ([`ImportPackagePage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ImportPackagePage.xaml)) vous permet de charger des fichiers partagés par des tiers :
+La page vous permet de charger des fichiers partagés par des tiers :
 
 - **Formats reconnus** : `.msmsetlist` (setlist complète), `.msmscore` (partition individuelle avec annotations/audio) et `.msmscores` (paquet groupé de plusieurs partitions).
 - **Importation automatisée** : extrait les documents PDF, recrée les métadonnées musicales (tempo, compositeur, tonalité, note), réinjecte les calques d'annotations et rattache les fichiers audio dans votre bibliothèque locale en une seule opération.
@@ -135,11 +131,16 @@ Cet outil inspecte l'intégralité de votre bibliothèque de partitions pour lib
 
 ## 6. Gestion des Sauvegardes & Restauration
 
-La page ([`BackupsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/BackupsPage.xaml)) assure la pérennité totale de votre travail musical :
+La page assure la pérennité totale de votre travail musical :
 
 - **Sauvegarde manuelle rapide (Base de données)** : créez un instantané horodaté de votre base de données SQLite (titres, métadonnées, setlists, liaisons, annotations, tags).
+  
 - **Historique des sauvegardes de la base de données** : liste détaillée des points de sauvegarde de la base de données enregistrés localement avec date, heure et poids, et restauration en un clic.
+  
 - **Sauvegarde complète des données (.zip)** : export tout-en-un compressé réunissant la base de données SQLite (`scores.db3`), l'intégralité des partitions PDF physiques avec leur arborescence de répertoires, ainsi que tous les fichiers audio associés.
+  
 - **Destination personnalisée** : proposé par défaut dans le dossier Téléchargements (`Download`) et modifiable pour exporter directement vers un stockage externe (clé USB, carte SD) ou un cloud synchronisé (Google Drive, pCloud, OneDrive).
+  
 - **Dialogue de progression bloquant** : suivi étape par étape avec pourcentage exact et possibilité d'annulation propre.
+  
 - **Restauration complète (Erase / Replace)** : réimportation intégrale d'une archive `.zip` avec confirmation solennelle, extraction sécurisée en zone temporaire, remplacement complet et vérification automatique de l'intégrité de la bibliothèque.

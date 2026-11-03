@@ -67,14 +67,17 @@ ERGONOMIE
 
 ---
 
-## 2. Gestion des Étiquettes
+## 2. Gestion des Étiquettes (Tags)
 
-Accessible directement depuis la racine des Paramètres (**Paramètres > Gestion des étiquettes**), la console ([`TagsPage`](file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/TagsPage.xaml)) vous permet de gérer et personnaliser les étiquettes de votre bibliothèque :
+La page vous donne le plein contrôle sur l'organisation de votre bibliothèque :
 
-- **Création d'étiquettes personnalisées** (ex : *Chorale*, *Solfège*, *Concert Noël*, *Guitare Acoustique*).
-- **Nuancier de couleurs & curseurs RVB** : assignez une pastille colorée unique à chaque étiquette avec aperçu en temps réel pour une identification visuelle immédiate dans la liste des partitions.
-- **Modification et renommage** d'une étiquette existante.
-- **Suppression sécurisée** : supprime l'étiquette de l'application sans endommager les partitions associées.
+- **Créer une nouvelle étiquette** avec un nom personnalisé (ex : *Chorale*, *Solfège*, *Concert Noël*, *Guitare Acoustique*).
+  
+- **Palette de couleurs vives & curseurs RVB** : assignez une pastille colorée unique à chaque étiquette avec aperçu en temps réel pour une identification visuelle immédiate dans la liste des partitions.
+  
+- **Modifier ou renommer** un tag existant.
+  
+- **Supprimer une étiquette** : supprime l'étiquette de l'application sans endommager les partitions qui la possédaient.
 
 ---
 
