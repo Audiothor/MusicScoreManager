@@ -1237,7 +1237,7 @@
 </ul>
 <hr />
 <h2 id="2-createur-assemblage-pdf-atelier-studio">2. Créateur &amp; Assemblage PDF (Atelier Studio)</h2>
-<p>L'<strong>Atelier d'Assemblage PDF</strong> (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/PdfAssemblerPage.xaml"><code>PdfAssemblerPage</code></a>) est un studio complet de retouche et de composition de documents PDF multi-pages.</p>
+<p>L'<strong>Atelier d'Assemblage PDF</strong> est un studio complet de retouche et de composition de documents PDF multi-pages.</p>
 <h3 id="fonctionnalites-disponibles">Fonctionnalités disponibles :</h3>
 <ul>
 <li><strong>Créer un PDF à partir de photos ou d'images</strong> :</li>
@@ -1260,7 +1260,7 @@
 </ul>
 <hr />
 <h2 id="3-transfert-wi-fi-direct-p2p-diffusion-groupe">3. Transfert Wi-Fi Direct (P2P) &amp; Diffusion Groupe</h2>
-<p>La page (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/WifiTransferPage.xaml"><code>WifiTransferPage</code></a>) gère les échanges sans fil directs entre musiciens, <strong>sans box internet ni routeur 4G/5G requis</strong>.
+<p>L'outil gère les échanges sans fil directs entre musiciens, <strong>sans box internet ni routeur 4G/5G requis</strong>.
 La manipulation nécessite juste d'activer le Wi-Fi (sans connexion Internet nécessaire !).
 Les partitions reçues sont automatiquement dirigées vers votre dossier "Général", afin de préserver votre propre organisation personnelle de répertoires sans être polluée par celle de l'expéditeur.</p>
 <h4 id="a-echange-direct-de-tablette-a-tablette-p2p">A. Échange Direct de Tablette à Tablette (P2P)</h4>
@@ -1317,7 +1317,7 @@ Les partitions reçues sont automatiquement dirigées vers votre dossier "Géné
 </ol>
 <hr />
 <h2 id="4-imports-de-fichiers-setlists-partitions-et-paquets">4. Imports de fichiers (Setlists, Partitions et paquets)</h2>
-<p>La page (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/ImportPackagePage.xaml"><code>ImportPackagePage</code></a>) vous permet de charger des fichiers partagés par des tiers :</p>
+<p>La page vous permet de charger des fichiers partagés par des tiers :</p>
 <ul>
 <li><strong>Formats reconnus</strong> : <code>.msmsetlist</code> (setlist complète), <code>.msmscore</code> (partition individuelle avec annotations/audio) et <code>.msmscores</code> (paquet groupé de plusieurs partitions).</li>
 <li><strong>Importation automatisée</strong> : extrait les documents PDF, recrée les métadonnées musicales (tempo, compositeur, tonalité, note), réinjecte les calques d'annotations et rattache les fichiers audio dans votre bibliothèque locale en une seule opération.</li>
@@ -1334,14 +1334,26 @@ Les partitions reçues sont automatiquement dirigées vers votre dossier "Géné
 </ul>
 <hr />
 <h2 id="6-gestion-des-sauvegardes-restauration">6. Gestion des Sauvegardes &amp; Restauration</h2>
-<p>La page (<a href="file:///c:/Users/comme/Documents/GitHub/MusicScoreManager/BackupsPage.xaml"><code>BackupsPage</code></a>) assure la pérennité totale de votre travail musical :</p>
+<p>La page assure la pérennité totale de votre travail musical :</p>
 <ul>
-<li><strong>Sauvegarde manuelle rapide (Base de données)</strong> : créez un instantané horodaté de votre base de données SQLite (titres, métadonnées, setlists, liaisons, annotations, tags).</li>
-<li><strong>Historique des sauvegardes de la base de données</strong> : liste détaillée des points de sauvegarde de la base de données enregistrés localement avec date, heure et poids, et restauration en un clic.</li>
-<li><strong>Sauvegarde complète des données (.zip)</strong> : export tout-en-un compressé réunissant la base de données SQLite (<code>scores.db3</code>), l'intégralité des partitions PDF physiques avec leur arborescence de répertoires, ainsi que tous les fichiers audio associés.</li>
-<li><strong>Destination personnalisée</strong> : proposé par défaut dans le dossier Téléchargements (<code>Download</code>) et modifiable pour exporter directement vers un stockage externe (clé USB, carte SD) ou un cloud synchronisé (Google Drive, pCloud, OneDrive).</li>
-<li><strong>Dialogue de progression bloquant</strong> : suivi étape par étape avec pourcentage exact et possibilité d'annulation propre.</li>
-<li><strong>Restauration complète (Erase / Replace)</strong> : réimportation intégrale d'une archive <code>.zip</code> avec confirmation solennelle, extraction sécurisée en zone temporaire, remplacement complet et vérification automatique de l'intégrité de la bibliothèque.</li>
+<li>
+<p><strong>Sauvegarde manuelle rapide (Base de données)</strong> : créez un instantané horodaté de votre base de données SQLite (titres, métadonnées, setlists, liaisons, annotations, tags).</p>
+</li>
+<li>
+<p><strong>Historique des sauvegardes de la base de données</strong> : liste détaillée des points de sauvegarde de la base de données enregistrés localement avec date, heure et poids, et restauration en un clic.</p>
+</li>
+<li>
+<p><strong>Sauvegarde complète des données (.zip)</strong> : export tout-en-un compressé réunissant la base de données SQLite (<code>scores.db3</code>), l'intégralité des partitions PDF physiques avec leur arborescence de répertoires, ainsi que tous les fichiers audio associés.</p>
+</li>
+<li>
+<p><strong>Destination personnalisée</strong> : proposé par défaut dans le dossier Téléchargements (<code>Download</code>) et modifiable pour exporter directement vers un stockage externe (clé USB, carte SD) ou un cloud synchronisé (Google Drive, pCloud, OneDrive).</p>
+</li>
+<li>
+<p><strong>Dialogue de progression bloquant</strong> : suivi étape par étape avec pourcentage exact et possibilité d'annulation propre.</p>
+</li>
+<li>
+<p><strong>Restauration complète (Erase / Replace)</strong> : réimportation intégrale d'une archive <code>.zip</code> avec confirmation solennelle, extraction sécurisée en zone temporaire, remplacement complet et vérification automatique de l'intégrité de la bibliothèque.</p>
+</li>
 </ul>
 
 
