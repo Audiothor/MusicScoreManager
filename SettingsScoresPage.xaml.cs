@@ -391,6 +391,9 @@ public partial class SettingsScoresPage : ContentPage
                 case "DateAdded":
                     parts.Add(DateTime.Now.ToString("dd/MM/yyyy"));
                     break;
+                case "Category":
+                    parts.Add("📁 Classique");
+                    break;
             }
         }
 

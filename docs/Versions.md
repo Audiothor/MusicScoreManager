@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.2 — 03/11/2026](#v322--03112026)
 - [v3.2.1 — 03/11/2026](#v321--03112026)
 - [v3.2.0 — 03/11/2026](#v320--03112026)
 - [v3.1.13 — 02/11/2026](#v3113--02112026)
@@ -49,6 +50,15 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.2.2 — 03/11/2026
+
+### 1. Paramètres des Partitions : Aperçu en Direct des Sous-titres
+- **1.1. Prise en charge de « Dossier / Catégorie » dans l'aperçu en direct (`SettingsScoresPage`) :**
+  - Correction de l'absence de l'élément « Dossier / Catégorie » dans la fonction de prévisualisation en temps réel (`UpdateSubtitlePreview`).
+  - L'activation ou le réordonnancement de l'option affiche désormais fidèlement la pastille de catégorie (`📁 Classique`) sous le titre d'exemple aux côtés du compositeur, du nombre de pages et de la date d'ajout.
 
 ---
 
