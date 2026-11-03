@@ -19,6 +19,9 @@ Le **Visualiseur** ([`ViewerPage`](file:///c:/Users/comme/Documents/GitHub/Music
   - Les annotations sont synchronisées géométriquement avec une fidélité absolue sur la page de gauche et la page de droite en tenant compte des marges réelles (*letterbox/pillarbox*).
 - **Indicateur de Page Cliquable** :
   - Badge de numérotation en bas à droite (`ex: 2/8`). Un clic ouvre la boîte de saut direct vers la page de votre choix.
+- **Mode Plein Écran Immersif (100% de la surface physique)** :
+  - Masquage complet de l'en-tête système (heure, batterie, notifications) et de la barre de navigation inférieure pour éliminer toute distraction sur scène.
+  - *Accès système temporaire préservé* : un simple glissement rapide depuis le bord supérieur ou inférieur de l'écran fait réapparaître les barres système en transparence pendant ~3 secondes. Configurable dans *Paramètres > Partitions*.
 
 ---
 

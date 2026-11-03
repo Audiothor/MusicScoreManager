@@ -378,6 +378,16 @@ public partial class ViewerPage : ContentPage
             System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur KeepScreenOn: {ex.Message}");
         }
 
+        try
+        {
+            bool immersiveMode = Preferences.Default.Get("ImmersiveMode", true);
+            ApplyImmersiveMode(immersiveMode);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur ImmersiveMode: {ex.Message}");
+        }
+
 #if ANDROID
         SetupNativeTouchHandling();
 #endif
@@ -3000,6 +3010,12 @@ public partial class ViewerPage : ContentPage
         }
         catch { }
 
+        try
+        {
+            ApplyImmersiveMode(false);
+        }
+        catch { }
+
         PedalMidiService.Instance.ClearOverrideProfile();
         PedalMidiService.Instance.ActionTriggered -= OnPedalActionTriggered;
         // Laisser le cache mémoire actif (plafonné à 12 pages) pour un rendu instantané à 0ms en réouverture
@@ -3040,6 +3056,39 @@ public partial class ViewerPage : ContentPage
             }
             catch { }
         });
+    }
+
+    private void ApplyImmersiveMode(bool enable)
+    {
+#if ANDROID
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            try
+            {
+                var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
+                var window = activity?.Window;
+                if (window == null) return;
+
+                var insetsController = AndroidX.Core.View.WindowCompat.GetInsetsController(window, window.DecorView);
+                if (insetsController != null)
+                {
+                    if (enable)
+                    {
+                        insetsController.Hide(AndroidX.Core.View.WindowInsetsCompat.Type.SystemBars());
+                        insetsController.SystemBarsBehavior = AndroidX.Core.View.WindowInsetsControllerCompat.BehaviorShowTransientBarsBySwipe;
+                    }
+                    else
+                    {
+                        insetsController.Show(AndroidX.Core.View.WindowInsetsCompat.Type.SystemBars());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur ApplyImmersiveMode: {ex.Message}");
+            }
+        });
+#endif
     }
 
     private async void OnPedalActionTriggered(PedalAction action)

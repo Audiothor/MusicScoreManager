@@ -1125,5 +1125,7 @@
   "Scores_Bulk_Tags_Remove_Success": "{0} tag(s) successfully removed from {1} score(s).",
   "Sort_CategoryAsc": "Category (A-Z)",
   "Score_Category_Open_Folder": "Open folder",
-  "Settings_Scores_Show_Tools_Button_Desc": "Displays the visual icon in the top-right corner while viewing a score"
+  "Settings_Scores_Show_Tools_Button_Desc": "Displays the visual icon in the top-right corner while viewing a score",
+  "Settings_Scores_Immersive_Mode": "Immersive full-screen mode",
+  "Settings_Scores_Immersive_Mode_Desc": "Hides the system header (clock, battery) and bottom navigation bar for a clean full-page view. System access preserved: swipe from the top or bottom edge to temporarily show the bars (~3s)."
 }

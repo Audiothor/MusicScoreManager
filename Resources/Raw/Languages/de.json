@@ -1125,5 +1125,7 @@
   "Scores_Bulk_Tags_Remove_Success": "{0} Tag(s) erfolgreich von {1} Partitur(en) entfernt.",
   "Sort_CategoryAsc": "Kategorie (A-Z)",
   "Score_Category_Open_Folder": "Ordner öffnen",
-  "Settings_Scores_Show_Tools_Button_Desc": "Zeigt das visuelle Symbol in der oberen rechten Ecke beim Anzeigen einer Partitur an"
+  "Settings_Scores_Show_Tools_Button_Desc": "Zeigt das visuelle Symbol in der oberen rechten Ecke beim Anzeigen einer Partitur an",
+  "Settings_Scores_Immersive_Mode": "Immersiver Vollbildmodus",
+  "Settings_Scores_Immersive_Mode_Desc": "Blendet Statusleiste (Uhr, Akku) und Navigationsleiste für eine ungestörte Ganzseitenansicht aus. Systemzugriff bleibt erhalten: Wischen Sie von oben oder unten, um Leisten kurz einzublenden (~3 Sek.)."
 }

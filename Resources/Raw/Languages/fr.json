@@ -1129,5 +1129,7 @@
   "Scores_Bulk_Tags_Remove_Success": "{0} étiquette(s) retirée(s) avec succès de {1} partition(s).",
   "Sort_CategoryAsc": "Catégorie (A-Z)",
   "Score_Category_Open_Folder": "Ouvrir le dossier",
-  "Settings_Scores_Show_Tools_Button_Desc": "Affiche l'icône visuelle dans le coin supérieur droit lors de la lecture d'une partition"
+  "Settings_Scores_Show_Tools_Button_Desc": "Affiche l'icône visuelle dans le coin supérieur droit lors de la lecture d'une partition",
+  "Settings_Scores_Immersive_Mode": "Mode plein écran immersif",
+  "Settings_Scores_Immersive_Mode_Desc": "Masque l'en-tête (heure, batterie) et la barre inférieure pour un affichage pleine page. Accès au système préservé : glissez le doigt depuis le bord haut ou bas pour faire réapparaître temporairement les barres (~3 s)."
 }

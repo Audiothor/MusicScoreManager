@@ -1125,5 +1125,7 @@
   "Scores_Bulk_Tags_Remove_Success": "{0} label(s) succesvol verwijderd van {1} partitu(u)r(en).",
   "Sort_CategoryAsc": "Categorie (A-Z)",
   "Score_Category_Open_Folder": "Map openen",
-  "Settings_Scores_Show_Tools_Button_Desc": "Toont het visuele pictogram in de rechterbovenhoek tijdens het bekijken van een partituur"
+  "Settings_Scores_Show_Tools_Button_Desc": "Toont het visuele pictogram in de rechterbovenhoek tijdens het bekijken van een partituur",
+  "Settings_Scores_Immersive_Mode": "Meeslepende schermvullende modus",
+  "Settings_Scores_Immersive_Mode_Desc": "Verbergt de statusbalk (tijd, batterij) en de navigatiebalk onderaan voor een rustige paginavullende weergave. Systeemtoegang blijft behouden: veeg vanaf de boven- of onderrand om de balken tijdelijk te tonen (~3 s)."
 }
