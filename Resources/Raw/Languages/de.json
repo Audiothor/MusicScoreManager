@@ -1122,5 +1122,6 @@
   "Scores_Bulk_Tags_Sub_Remove": "Wählen Sie die Tags aus, die von den ausgewählten Partituren entfernt werden sollen.",
   "Scores_Bulk_Tags_None_Selected_Remove": "Bitte wählen Sie mindestens ein Tag zum Entfernen aus.",
   "Scores_Bulk_Tags_Remove_Empty": "Keine Tags sind mit den ausgewählten Partituren verknüpft.",
-  "Scores_Bulk_Tags_Remove_Success": "{0} Tag(s) erfolgreich von {1} Partitur(en) entfernt."
+  "Scores_Bulk_Tags_Remove_Success": "{0} Tag(s) erfolgreich von {1} Partitur(en) entfernt.",
+  "Sort_CategoryAsc": "Kategorie (A-Z)"
 }

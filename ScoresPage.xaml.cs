@@ -272,6 +272,7 @@ public partial class ScoresPage : ContentPage
         {
             "TitleAsc" => scores.OrderBy(s => s.Title).ToList(),
             "TitleDesc" => scores.OrderByDescending(s => s.Title).ToList(),
+            "CategoryAsc" => scores.OrderBy(s => s.Category).ThenBy(s => s.Title).ToList(),
             "DateAsc" => scores.OrderBy(s => s.DateAdded).ToList(),
             "DateDesc" => scores.OrderByDescending(s => s.DateAdded).ToList(),
             "ModifiedDesc" => scores.OrderByDescending(s => s.DateModified).ToList(),
@@ -1516,6 +1517,7 @@ public partial class ScoresPage : ContentPage
         string optDateAsc = loc.GetString("Sort_DateAsc", "Date d'ajout (Ancien)");
         string optTitleAsc = loc.GetString("Sort_TitleAsc", "Titre (A-Z)");
         string optTitleDesc = loc.GetString("Sort_TitleDesc", "Titre (Z-A)");
+        string optCatAsc = loc.GetString("Sort_CategoryAsc", "Catégorie (A-Z)");
         string optModDesc = loc.GetString("Sort_ModifiedDesc", "Date de modification");
         string optRatingDesc = loc.GetString("Sort_RatingDesc", "Évaluation (Note)");
         string optCompAsc = loc.GetString("Sort_ComposerAsc", "Compositeur (A-Z)");
@@ -1523,12 +1525,13 @@ public partial class ScoresPage : ContentPage
         string cancel = loc.GetString("Common_Cancel", "Annuler");
 
         string action = await DisplayActionSheetAsync(loc.GetString("Sort_Dialog_Title", "Trier par"), cancel, null, 
-            optDateDesc, optDateAsc, optTitleAsc, optTitleDesc, optModDesc, optRatingDesc, optCompAsc, optNoTags);
+            optDateDesc, optDateAsc, optTitleAsc, optTitleDesc, optCatAsc, optModDesc, optRatingDesc, optCompAsc, optNoTags);
 
         if (action == optDateDesc) { _currentSort = "DateDesc"; _hasUserCustomSort = true; }
         else if (action == optDateAsc) { _currentSort = "DateAsc"; _hasUserCustomSort = true; }
         else if (action == optTitleAsc) { _currentSort = "TitleAsc"; _hasUserCustomSort = true; }
         else if (action == optTitleDesc) { _currentSort = "TitleDesc"; _hasUserCustomSort = true; }
+        else if (action == optCatAsc) { _currentSort = "CategoryAsc"; _hasUserCustomSort = true; }
         else if (action == optModDesc) { _currentSort = "ModifiedDesc"; _hasUserCustomSort = true; }
         else if (action == optRatingDesc) { _currentSort = "RatingDesc"; _hasUserCustomSort = true; }
         else if (action == optCompAsc) { _currentSort = "ComposerAsc"; _hasUserCustomSort = true; }
@@ -2161,7 +2164,7 @@ public partial class ScoresPage : ContentPage
         _cachedShowAlphabeticalIndex = Preferences.Default.Get("ShowAlphabeticalIndex", true);
         _cachedShowScrollTop = Preferences.Default.Get("ShowScrollTop", true);
 
-        bool isAlphaSort = _currentSort is "TitleAsc" or "TitleDesc" or "ComposerAsc" or "ComposerDesc";
+        bool isAlphaSort = _currentSort is "TitleAsc" or "TitleDesc" or "ComposerAsc" or "ComposerDesc" or "CategoryAsc";
         bool hasScores = ScoresCollectionView?.ItemsSource is IEnumerable<Models.Score> list && list.Any();
 
         if (AlphabeticalIndexBorder != null)
@@ -2176,12 +2179,13 @@ public partial class ScoresPage : ContentPage
         if (scores == null || scores.Count == 0) return;
 
         bool byComposer = _currentSort.StartsWith("Composer", StringComparison.OrdinalIgnoreCase);
+        bool byCategory = _currentSort.StartsWith("Category", StringComparison.OrdinalIgnoreCase);
         bool isDescending = _currentSort.EndsWith("Desc", StringComparison.OrdinalIgnoreCase);
 
         var scoreKeys = new string[scores.Count];
         for (int i = 0; i < scores.Count; i++)
         {
-            scoreKeys[i] = GetScoreSortKey(scores[i], byComposer);
+            scoreKeys[i] = GetScoreSortKey(scores[i], byComposer, byCategory);
         }
 
         // Cible pour '#'
@@ -2288,9 +2292,11 @@ public partial class ScoresPage : ContentPage
         });
     }
 
-    private static string GetScoreSortKey(Models.Score score, bool byComposer)
+    private static string GetScoreSortKey(Models.Score score, bool byComposer, bool byCategory)
     {
-        string raw = byComposer ? (score.Composer ?? string.Empty) : (score.Title ?? string.Empty);
+        string raw = byComposer 
+            ? (score.Composer ?? string.Empty) 
+            : (byCategory ? (score.Category ?? string.Empty) : (score.Title ?? string.Empty));
         if (string.IsNullOrWhiteSpace(raw)) return string.Empty;
 
         return RemoveDiacritics(raw.Trim());

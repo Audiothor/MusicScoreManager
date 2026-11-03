@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.1 — 03/11/2026](#v321--03112026)
 - [v3.2.0 — 03/11/2026](#v320--03112026)
 - [v3.1.13 — 02/11/2026](#v3113--02112026)
 - [v3.1.12 — 02/11/2026](#v3112--02112026)
@@ -48,6 +49,21 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.2.1 — 03/11/2026
+
+### 1. Tri par Catégorie (A-Z) des Partitions
+- **1.1. Intégration dans le dialogue de tri de la page Partitions (`ScoresPage`) :**
+  - Ajout de l'option **« Catégorie (A-Z) »** (`Sort_CategoryAsc`) dans le menu d'action de tri.
+  - Classement hiérarchique : regroupement par ordre alphabétique des catégories, puis par titre de partition au sein de chaque catégorie.
+  - Prise en charge de la barre d'index alphabétique latérale (A-Z, #) naviguant directement selon les initiales de catégories.
+- **1.2. Configuration du tri d'ouverture par défaut (`SettingsScoresPage`) :**
+  - Ajout du choix **« Catégorie (A-Z) »** dans le sélecteur de tri par défaut des partitions (*Paramètres > Partitions*).
+  - Persistance dans les préférences utilisateur (`DefaultScoreSort = "CategoryAsc"`).
+- **1.3. Localisation intégrale :**
+  - Traduction de `Sort_CategoryAsc` dans les 8 langues gérées par l'application (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
 
 ---
 
