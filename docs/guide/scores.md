@@ -196,3 +196,5 @@ En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et
 - Boîte de dialogue rapide pour changer le titre affiché sans entrer dans l'édition complète.
 9. **🗑️ Supprimer la partition** :
 - Supprime la partition de votre bibliothèque avec demande de confirmation sécurisée.
+
+ 
