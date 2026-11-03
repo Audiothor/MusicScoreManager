@@ -114,7 +114,10 @@
                         <RoundRectangle CornerRadius="10" />
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="8">
-                        <Label Text="{Binding [Scores_Total], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontAttributes="Bold" FontSize="14" />
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label Text="{Binding [Scores_Total], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" FontAttributes="Bold" FontSize="14" VerticalOptions="Center" />
+                            <ActivityIndicator Grid.Column="1" x:Name="StatsLoadingIndicator" IsRunning="True" IsVisible="True" HeightRequest="16" WidthRequest="16" Color="#007ACC" VerticalOptions="Center" />
+                        </Grid>
                         
                         <Grid ColumnDefinitions="*, Auto" Margin="0,2">
                             <Label Text="{Binding [Settings_App_Stats_Pdf_Count], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="13" VerticalOptions="Center" />
