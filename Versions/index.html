@@ -871,6 +871,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v320-03112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.2.0 — 03/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.2.0 — 03/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-gestion-des-etiquettes-en-selection-multiple-ajout-retrait-dedies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Gestion des Étiquettes en Sélection Multiple (Ajout &amp; Retrait Dédiés)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-precision-du-rendu-des-annotations-texte-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Précision du Rendu des Annotations Texte (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-normalisation-definitive-des-categories-dossier-permanent-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Normalisation Définitive des Catégories &amp; Dossier Permanent Default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-environnement-de-developpement-qualite-de-compilation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Environnement de Développement &amp; Qualité de Compilation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v3113-02112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3544,6 +3605,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v320-03112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.2.0 — 03/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.2.0 — 03/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-gestion-des-etiquettes-en-selection-multiple-ajout-retrait-dedies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Gestion des Étiquettes en Sélection Multiple (Ajout &amp; Retrait Dédiés)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-precision-du-rendu-des-annotations-texte-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Précision du Rendu des Annotations Texte (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-normalisation-definitive-des-categories-dossier-permanent-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Normalisation Définitive des Catégories &amp; Dossier Permanent Default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-environnement-de-developpement-qualite-de-compilation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Environnement de Développement &amp; Qualité de Compilation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v3113-02112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6196,6 +6318,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v320--03112026">v3.2.0 — 03/11/2026</a></li>
 <li><a href="#v3113--02112026">v3.1.13 — 02/11/2026</a></li>
 <li><a href="#v3112--02112026">v3.1.12 — 02/11/2026</a></li>
 <li><a href="#v3111--01112026">v3.1.11 — 01/11/2026</a></li>
@@ -6237,6 +6360,36 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v320-03112026">v3.2.0 — 03/11/2026</h2>
+<h3 id="1-gestion-des-etiquettes-en-selection-multiple-ajout-retrait-dedies">1. Gestion des Étiquettes en Sélection Multiple (Ajout &amp; Retrait Dédiés)</h3>
+<ul>
+<li><strong>1.1. Sélecteur de mode ergonomique dans l'overlay d'étiquetage en masse (<code>BulkTagsOverlay</code>) :</strong></li>
+<li>Ajout des modes <strong>[➕ Ajouter]</strong> et <strong>[➖ Retirer]</strong> avec bascule dynamique d'interface, de styles et d'actions.</li>
+<li>Mode <strong>Retirer</strong> : filtrage intelligent n'affichant que les étiquettes actuellement portées par au moins une partition de la sélection, avec compteur dynamique en temps réel (<code>Nom (n)</code>).</li>
+<li>Suppression ciblée en base de données (<code>RemoveTagFromScoreAsync</code>) pour toutes les partitions sélectionnées.</li>
+<li>Messages clairs et localisés dans les 8 langues prises en charge.</li>
+</ul>
+<h3 id="2-precision-du-rendu-des-annotations-texte-viewerpage">2. Précision du Rendu des Annotations Texte (<code>ViewerPage</code>)</h3>
+<ul>
+<li><strong>2.1. Respect strict de la transparence :</strong></li>
+<li>Correction de l'arrière-plan des annotations texte : application fidèle de <code>Colors.Transparent</code> lorsqu'aucun fond n'est sélectionné.</li>
+<li>Contour de manipulation en pointillés discrets (<code>StrokeDashArray = { 3, 2 }</code>) lors de l'édition d'une boîte de texte sans bordure, disparaissant immédiatement à la validation.</li>
+<li>Synchronisation instantanée des pastilles d'options (couleur du texte, fond, bordure) lors de la sélection d'un texte existant.</li>
+</ul>
+<h3 id="3-normalisation-definitive-des-categories-dossier-permanent-default">3. Normalisation Définitive des Catégories &amp; Dossier Permanent <code>Default</code></h3>
+<ul>
+<li>Élimination définitive de toute référence à la catégorie historique « Général » au profit exclusif du répertoire permanent <code>Default</code>.</li>
+<li>Migration et alignement automatique des partitions et répertoires physiques au démarrage.</li>
+</ul>
+<h3 id="4-environnement-de-developpement-qualite-de-compilation">4. Environnement de Développement &amp; Qualité de Compilation</h3>
+<ul>
+<li><strong>4.1. Priorisation du framework Windows dans <code>MusicScoreManager.csproj</code> :</strong></li>
+<li>Placement de <code>net10.0-windows10.0.19041.0</code> en première position sous Windows pour éliminer la désynchronisation de l'analyseur IDE et les faux positifs MAUI.</li>
+<li><strong>4.2. Configuration <code>.editorconfig</code> :</strong></li>
+<li>Déploiement du fichier racine <code>.editorconfig</code> pour filtrer les suggestions de style purement cosmétiques (IDE0028, IDE0300, etc.) dans l'onglet Problèmes de l'éditeur.</li>
+<li><strong>4.3. Bilan de compilation :</strong> <strong>0 Erreur, 0 Avertissement, 0 Alerte</strong> sur toutes les plateformes.</li>
 </ul>
 <hr />
 <h2 id="v3113-02112026">v3.1.13 — 02/11/2026</h2>
