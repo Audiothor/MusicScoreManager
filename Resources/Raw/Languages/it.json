@@ -1125,5 +1125,7 @@
   "Scores_Bulk_Tags_Remove_Success": "{0} etichetta/e rimossa/e con successo da {1} spartito/i.",
   "Sort_CategoryAsc": "Categoria (A-Z)",
   "Score_Category_Open_Folder": "Apri cartella",
-  "Settings_Scores_Show_Tools_Button_Desc": "Visualizza l'icona nell'angolo in alto a destra durante la visualizzazione di uno spartito"
+  "Settings_Scores_Show_Tools_Button_Desc": "Visualizza l'icona nell'angolo in alto a destra durante la visualizzazione di uno spartito",
+  "Settings_Scores_Immersive_Mode": "Modalità a schermo intero immersiva",
+  "Settings_Scores_Immersive_Mode_Desc": "Nasconde la barra di stato (ora, batteria) e la barra inferiore per una visualizzazione a pagina intera. Accesso al sistema preservato: scorri dal bordo superiore o inferiore per visualizzare temporaneamente le barre (~3 s)."
 }

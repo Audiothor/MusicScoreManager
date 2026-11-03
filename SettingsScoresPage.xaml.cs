@@ -80,6 +80,7 @@ public partial class SettingsScoresPage : ContentPage
         ShowScoreTitleSwitch.IsToggled = Preferences.Default.Get("ShowScoreTitle", false);
         TwoPagesLandscapeSwitch.IsToggled = Preferences.Default.Get("TwoPagesLandscape", true);
         KeepScreenOnSwitch.IsToggled = Preferences.Default.Get("KeepScreenOn", true);
+        ImmersiveModeSwitch.IsToggled = Preferences.Default.Get("ImmersiveMode", true);
         PageNumberSizeSlider.Value = Preferences.Default.Get("PageNumberSize", 14.0);
 
         NextPageGesturePicker.ItemsSource = new List<string>
@@ -476,6 +477,11 @@ public partial class SettingsScoresPage : ContentPage
     private void OnKeepScreenOnToggled(object sender, ToggledEventArgs e)
     {
         Preferences.Default.Set("KeepScreenOn", e.Value);
+    }
+
+    private void OnImmersiveModeToggled(object sender, ToggledEventArgs e)
+    {
+        Preferences.Default.Set("ImmersiveMode", e.Value);
     }
 
     private void OnPageNumberSizeChanged(object sender, ValueChangedEventArgs e)

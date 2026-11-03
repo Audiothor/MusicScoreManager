@@ -1125,5 +1125,7 @@
   "Scores_Bulk_Tags_Remove_Success": "{0} etiqueta(s) quitada(s) con éxito de {1} partitura(s).",
   "Sort_CategoryAsc": "Categoría (A-Z)",
   "Score_Category_Open_Folder": "Abrir carpeta",
-  "Settings_Scores_Show_Tools_Button_Desc": "Muestra el icono visual en la esquina superior derecha al ver una partitura"
+  "Settings_Scores_Show_Tools_Button_Desc": "Muestra el icono visual en la esquina superior derecha al ver una partitura",
+  "Settings_Scores_Immersive_Mode": "Modo de pantalla completa inmersivo",
+  "Settings_Scores_Immersive_Mode_Desc": "Oculta la barra de estado (hora, batería) y la barra inferior para una vista de página completa. Acceso al sistema preservado: deslice desde el borde superior o inferior para mostrar las barras temporalmente (~3 s)."
 }

@@ -1125,5 +1125,7 @@
   "Scores_Bulk_Tags_Remove_Success": "{0} etykiet(y) pomyślnie usunięto z {1} nut.",
   "Sort_CategoryAsc": "Kategoria (A-Z)",
   "Score_Category_Open_Folder": "Otwórz folder",
-  "Settings_Scores_Show_Tools_Button_Desc": "Wyświetla ikonę w prawym górnym rogu podczas przeglądania nut"
+  "Settings_Scores_Show_Tools_Button_Desc": "Wyświetla ikonę w prawym górnym rogu podczas przeglądania nut",
+  "Settings_Scores_Immersive_Mode": "Wciągający tryb pełnoekranowy",
+  "Settings_Scores_Immersive_Mode_Desc": "Ukrywa pasek stanu (zegar, bateria) i dolny pasek nawigacyjny, zapewniając widok pełnostronicowy. Dostęp do systemu zachowany: przesuń palcem od górnej lub dolnej krawędzi, aby tymczasowo wyświetlić paski (~3 s)."
 }

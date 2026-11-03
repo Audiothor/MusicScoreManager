@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.5 — 03/11/2026](#v325--03112026)
 - [v3.2.4 — 03/11/2026](#v324--03112026)
 - [v3.2.3 — 03/11/2026](#v323--03112026)
 - [v3.2.2 — 03/11/2026](#v322--03112026)
@@ -52,6 +53,22 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.2.5 — 03/11/2026
+
+### 1. Affichage des Partitions : Mode Plein Écran Immersif
+- **1.1. Immersion totale en affichage partition (`ViewerPage`) :**
+  - Masquage complet de l'en-tête système Android (barre d'état avec heure, batterie et notifications) et de la barre de navigation inférieure (trait blanc de geste).
+  - La partition occupe désormais 100% de la surface physique de l'écran, sans pollution visuelle ni risque de fausse manipulation gestuelle.
+  - **Accès au système préservé en cas de besoin :** un simple balayage du doigt depuis le bord haut ou bas de l'écran réaffiche temporairement les barres système en surimpression semi-transparente pendant ~3 secondes avant leur masquage automatique.
+  - Restauration immédiate des barres système dès la sortie du lecteur de partitions vers la bibliothèque ou les menus.
+- **1.2. Contrôle utilisateur dans les Paramètres Partitions (`SettingsScoresPage`) :**
+  - Ajout du paramètre **« Mode plein écran immersif »** dans la section *Affichage* des paramètres de partitions.
+  - Option activée par défaut, permettant aux musiciens qui préfèrent surveiller l'heure ou la batterie de la désactiver à leur convenance.
+  - Note explicative intégrée sur l'accès gestuel temporaire au système.
+  - Localisation intégrale du paramètre et de sa description dans les 8 langues de l'application (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
 
 ---
 

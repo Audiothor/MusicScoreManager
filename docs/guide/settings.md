@@ -54,6 +54,11 @@ AFFICHAGE
   
   - Permet d'empecher l'assombrissement et la mise en veille automatique pendant la consultation d'une partition
 
+- **Mode plein écran immersif (Switch On/Off, activé par défaut)** :
+  
+  - Masque l'en-tête du système (heure, batterie, notifications) et la barre de navigation inférieure pour un affichage pleine page épuré à 100% de la surface physique de l'écran.
+  - *Accès au système préservé en cas de besoin :* glissez rapidement le doigt depuis le bord tout en haut ou tout en bas de l'écran pour faire réapparaître temporairement les barres en transparence (~3 s) avant leur masquage automatique.
+
 - **Taille d'affichage du numéro de page** :
   
   - Curseur réglable de **10 px à 40 px** avec aperçu direct de la taille pour adapter la lisibilité du compteur à votre distance de lecture du pupitre. Paré défaut c'est 14px
