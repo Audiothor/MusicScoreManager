@@ -871,6 +871,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v323-03112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.2.3 — 03/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.2.3 — 03/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-parametres-de-lapplication-reactivite-immediate-chargement-asynchrone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Paramètres de l'Application : Réactivité Immédiate &amp; Chargement Asynchrone
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-maintenance-configuration-de-lenvironnement-de-developpement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Maintenance &amp; Configuration de l'Environnement de Développement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v322-03112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3661,6 +3700,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v323-03112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.2.3 — 03/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.2.3 — 03/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-parametres-de-lapplication-reactivite-immediate-chargement-asynchrone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Paramètres de l'Application : Réactivité Immédiate &amp; Chargement Asynchrone
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-maintenance-configuration-de-lenvironnement-de-developpement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Maintenance &amp; Configuration de l'Environnement de Développement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v322-03112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6430,6 +6508,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v323--03112026">v3.2.3 — 03/11/2026</a></li>
 <li><a href="#v322--03112026">v3.2.2 — 03/11/2026</a></li>
 <li><a href="#v321--03112026">v3.2.1 — 03/11/2026</a></li>
 <li><a href="#v320--03112026">v3.2.0 — 03/11/2026</a></li>
@@ -6474,6 +6553,25 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v323-03112026">v3.2.3 — 03/11/2026</h2>
+<h3 id="1-parametres-de-lapplication-reactivite-immediate-chargement-asynchrone">1. Paramètres de l'Application : Réactivité Immédiate &amp; Chargement Asynchrone</h3>
+<ul>
+<li><strong>1.1. Feedback visuel instantané au tap (<code>SettingsPage</code>) :</strong></li>
+<li>Remplacement immédiat (&lt; 16 ms) du chevron <code>›</code> par un indicateur d'activité circulaire bleu (<code>ActivityIndicator</code>) lors de la sélection de « Paramètres de l'application ».</li>
+<li>Élimine tout doute pour l'utilisateur sur la prise en compte du clic.</li>
+<li>Protection anti-rebond globale (<code>_isNavigating</code>) sur l'ensemble des rubriques de paramètres pour éviter les multi-clics accidentels.</li>
+<li><strong>1.2. Ouverture instantanée de la page &amp; calcul différé des statistiques (<code>SettingsAppPage</code>) :</strong></li>
+<li>Suppression du blocage au constructeur : la page des paramètres d'application s'ouvre désormais instantanément.</li>
+<li>Le calcul du nombre total de partitions, de la taille occupée et de l'espace disque disponible est exécuté en tâche de fond (<code>Task.Run</code>) dans <code>OnAppearing</code> après un délai de fluidité (150 ms) pour garantir une transition à 60 FPS.</li>
+<li>Affichage d'un spinner rotatif discret dans le bloc <em>« Statistiques de la Bibliothèque »</em> pendant le calcul, s'effaçant automatiquement dès que les valeurs réelles sont prêtes.</li>
+</ul>
+<h3 id="2-maintenance-configuration-de-lenvironnement-de-developpement">2. Maintenance &amp; Configuration de l'Environnement de Développement</h3>
+<ul>
+<li><strong>2.1. Correction de la syntaxe <code>.editorconfig</code> &amp; désactivation des alertes cosmétiques :</strong></li>
+<li>Correction du placement des commentaires selon la spécification officielle EditorConfig (lignes dédiées obligatoires).</li>
+<li>Suppression complète des 57 alertes d'information <code>IDE0028</code> (simplification des initialisations de collections) dans la vue Problèmes de l'IDE.</li>
 </ul>
 <hr />
 <h2 id="v322-03112026">v3.2.2 — 03/11/2026</h2>
