@@ -212,6 +212,18 @@ public partial class ViewerPage : ContentPage
                 ViewerLoadingText.Text = LocalizationService.Instance.GetString("Score_Loading_Opening", "Ouverture de la partition...");
             }
         }
+
+        try
+        {
+            if (Preferences.Default.Get("ImmersiveMode", true))
+            {
+                ApplyImmersiveMode(true);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Viewer] Erreur ImmersiveMode dans HideViewerLoadingOverlay: {ex.Message}");
+        }
     }
 
     public ViewerPage(Score score, List<Score>? setlistScores = null, int currentIndex = -1, bool isContinuous = true, Setlist? setlist = null, double initialLoadingTopY = -1, bool isSetlistOpening = false)
@@ -381,7 +393,13 @@ public partial class ViewerPage : ContentPage
         try
         {
             bool immersiveMode = Preferences.Default.Get("ImmersiveMode", true);
-            ApplyImmersiveMode(immersiveMode);
+            // Si l'overlay de chargement n'est pas actif (ex: réouverture depuis l'arrière-plan), activer immédiatement l'immersion.
+            // S'il est actif, l'immersion sera appliquée dès que l'overlay se masquera dans HideViewerLoadingOverlay()
+            // pour garantir une stabilité visuelle absolue au pixel près du message de chargement.
+            if (immersiveMode && (ViewerLoadingOverlay == null || !ViewerLoadingOverlay.IsVisible))
+            {
+                ApplyImmersiveMode(true);
+            }
         }
         catch (Exception ex)
         {
