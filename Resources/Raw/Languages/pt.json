@@ -1122,5 +1122,6 @@
   "Scores_Bulk_Tags_Sub_Remove": "Marque as etiquetas para remover das partituras selecionadas.",
   "Scores_Bulk_Tags_None_Selected_Remove": "Selecione pelo menos uma etiqueta para remover.",
   "Scores_Bulk_Tags_Remove_Empty": "Nenhuma etiqueta está associada às partituras selecionadas.",
-  "Scores_Bulk_Tags_Remove_Success": "{0} etiqueta(s) removida(s) com sucesso de {1} partitura(s)."
+  "Scores_Bulk_Tags_Remove_Success": "{0} etiqueta(s) removida(s) com sucesso de {1} partitura(s).",
+  "Sort_CategoryAsc": "Categoria (A-Z)"
 }

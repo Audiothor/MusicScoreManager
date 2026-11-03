@@ -1122,5 +1122,6 @@
   "Scores_Bulk_Tags_Sub_Remove": "Seleziona le etichette da rimuovere dagli spartiti selezionati.",
   "Scores_Bulk_Tags_None_Selected_Remove": "Seleziona almeno un'etichetta da rimuovere.",
   "Scores_Bulk_Tags_Remove_Empty": "Nessuna etichetta è associata agli spartiti selezionati.",
-  "Scores_Bulk_Tags_Remove_Success": "{0} etichetta/e rimossa/e con successo da {1} spartito/i."
+  "Scores_Bulk_Tags_Remove_Success": "{0} etichetta/e rimossa/e con successo da {1} spartito/i.",
+  "Sort_CategoryAsc": "Categoria (A-Z)"
 }

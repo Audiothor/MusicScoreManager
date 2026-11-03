@@ -17,6 +17,7 @@ public partial class SettingsScoresPage : ContentPage
             loc.GetString("Sort_DateAsc", "Date d'ajout (Plus ancien d'abord)"),
             loc.GetString("Sort_TitleAsc", "Titre (A-Z)"),
             loc.GetString("Sort_TitleDesc", "Titre (Z-A)"),
+            loc.GetString("Sort_CategoryAsc", "Catégorie (A-Z)"),
             loc.GetString("Sort_ModifiedDesc", "Date de modification (Récent)"),
             loc.GetString("Sort_RatingDesc", "Évaluation (Meilleures notes)"),
             loc.GetString("Sort_ComposerAsc", "Compositeur (A-Z)"),
@@ -31,10 +32,11 @@ public partial class SettingsScoresPage : ContentPage
             "DateAsc" => 1,
             "TitleAsc" => 2,
             "TitleDesc" => 3,
-            "ModifiedDesc" => 4,
-            "RatingDesc" => 5,
-            "ComposerAsc" => 6,
-            "NoTagsFirst" => 7,
+            "CategoryAsc" => 4,
+            "ModifiedDesc" => 5,
+            "RatingDesc" => 6,
+            "ComposerAsc" => 7,
+            "NoTagsFirst" => 8,
             _ => 0
         };
 
@@ -404,10 +406,11 @@ public partial class SettingsScoresPage : ContentPage
             1 => "DateAsc",
             2 => "TitleAsc",
             3 => "TitleDesc",
-            4 => "ModifiedDesc",
-            5 => "RatingDesc",
-            6 => "ComposerAsc",
-            7 => "NoTagsFirst",
+            4 => "CategoryAsc",
+            5 => "ModifiedDesc",
+            6 => "RatingDesc",
+            7 => "ComposerAsc",
+            8 => "NoTagsFirst",
             _ => "DateDesc"
         };
         Preferences.Default.Set("DefaultScoreSort", value);

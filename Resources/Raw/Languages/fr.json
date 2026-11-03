@@ -1126,5 +1126,6 @@
   "Scores_Bulk_Tags_Sub_Remove": "Cochez les étiquettes à retirer des partitions sélectionnées.",
   "Scores_Bulk_Tags_None_Selected_Remove": "Veuillez sélectionner au moins une étiquette à retirer.",
   "Scores_Bulk_Tags_Remove_Empty": "Aucune étiquette n'est associée aux partitions sélectionnées.",
-  "Scores_Bulk_Tags_Remove_Success": "{0} étiquette(s) retirée(s) avec succès de {1} partition(s)."
+  "Scores_Bulk_Tags_Remove_Success": "{0} étiquette(s) retirée(s) avec succès de {1} partition(s).",
+  "Sort_CategoryAsc": "Catégorie (A-Z)"
 }

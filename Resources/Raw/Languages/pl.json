@@ -1122,5 +1122,6 @@
   "Scores_Bulk_Tags_Sub_Remove": "Zaznacz etykiety, które chcesz usunąć z wybranych nut.",
   "Scores_Bulk_Tags_None_Selected_Remove": "Wybierz co najmniej jedną etykietę do usunięcia.",
   "Scores_Bulk_Tags_Remove_Empty": "Brak etykiet powiązanych z wybranymi nutami.",
-  "Scores_Bulk_Tags_Remove_Success": "{0} etykiet(y) pomyślnie usunięto z {1} nut."
+  "Scores_Bulk_Tags_Remove_Success": "{0} etykiet(y) pomyślnie usunięto z {1} nut.",
+  "Sort_CategoryAsc": "Kategoria (A-Z)"
 }

@@ -29,6 +29,7 @@ Dès l'ouverture de l'application, rendez-vous dans le menu **Partitions** (dans
 3. **Vous avez 2 possibilités d'import de partitions :**
    . recopier dans l'application (donc en mode local) votre/vos partitions selectionnées. C'est cette solution qui est à privilégier !
    . vous baser sur votre fichier source sans le recopier dans l'application. Cette solution n'est PAS recommendée car en cas de déplacement il vous faudra toujours un accés externe à vos partitions.
+   Tips : Le mode de sélection de l'import peut être paramétré pour gagner du temps.
    Music Score Manager peut gérer sans problème plusieurs centaines de partitions localement.
 4. **Cas d'un fichier PDF** :
    - Le fichier est immédiatement intégré à votre bibliothèque.
@@ -90,8 +91,6 @@ En mode lecture de partition touchez le bas de l'écran pour déployer la boîte
 - **↩ Undo / ↪ Redo** : Annulez ou rétablissez vos modifications à tout moment.
 - Toute annotation peut être supprimée ou déplacée
 
-
-
 ---
 
 ## Étape 5 : Créer une SetList pour une Répétition ou un Concert
@@ -121,7 +120,6 @@ Directement depuis le visualiseur de partition via l'appel de la boîte à outil
 
 et plein d'autres...
 
-
 Dans l'onglet **Outils** vous trouverez de nombreux utilitaires pour vous aider :
 
 - Scanner de partition papier : prenez une photo, nommez votre partition et elle est directement intégrée en pdf dans l'application !
@@ -137,8 +135,6 @@ Dans l'onglet **Outils** vous trouverez de nombreux utilitaires pour vous aider 
 - Assemblages et organisation internes de vos partitions (vous pouvez redéfinir le sens et l'ordre de vos pages pdf !!!)
 
 - etc...
-
-
 
 Dans l'onglet Paramètres vous trouverez plein d'options de personnalisation de l'application pour tous les menus
 
