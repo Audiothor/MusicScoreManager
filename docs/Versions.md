@@ -69,6 +69,9 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
   - Option activée par défaut, permettant aux musiciens qui préfèrent surveiller l'heure ou la batterie de la désactiver à leur convenance.
   - Note explicative intégrée sur l'accès gestuel temporaire au système.
   - Localisation intégrale du paramètre et de sa description dans les 8 langues de l'application (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
+- **1.3. Élimination du décalage visuel du message d'ouverture :**
+  - Temporisation intelligente de l'activation du mode immersif : le masquage des barres système Android est synchronisé avec le retrait de l'overlay de chargement (`HideViewerLoadingOverlay()`) dès que la partition est prête.
+  - La boîte modale « Ouverture de la partition... » demeure ainsi rigoureusement immobile au pixel près, éliminant tout soubresaut ou saut visuel lors de la transition.
 
 ---
 
