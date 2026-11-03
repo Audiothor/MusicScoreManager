@@ -527,6 +527,12 @@ namespace MusicScoreManager.Services
             }
         }
 
+        public async Task RemoveTagFromScoreAsync(int scoreId, int tagId)
+        {
+            await Init();
+            await _database!.Table<ScoreTag>().Where(st => st.ScoreId == scoreId && st.TagId == tagId).DeleteAsync();
+        }
+
         public async Task<int> SaveTagAsync(Tag tag)
         {
             await Init();

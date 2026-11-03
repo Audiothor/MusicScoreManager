@@ -839,7 +839,7 @@
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="15" />
                 </Border.StrokeShape>
-                <Grid RowDefinitions="Auto, Auto, Auto, *, Auto" RowSpacing="14">
+                <Grid RowDefinitions="Auto, Auto, Auto, Auto, *, Auto" RowSpacing="12">
                     <!-- Header -->
                     <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
                         <Label Grid.Column="0"
@@ -863,13 +863,38 @@
                         </Label>
                     </Grid>
 
-                    <Label Grid.Row="1"
+                    <!-- Sélecteur d'action : Ajouter ou Retirer -->
+                    <Grid Grid.Row="1" ColumnDefinitions="*, *" ColumnSpacing="8">
+                        <Button Grid.Column="0"
+                                x:Name="BulkTagModeAddBtn"
+                                Text="{Binding [Scores_Bulk_Tags_Mode_Add], Source={x:Static services:LocalizationService.Instance}}"
+                                BackgroundColor="#8E44AD"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                FontSize="12"
+                                HeightRequest="36"
+                                CornerRadius="8"
+                                Clicked="OnBulkTagModeAddClicked" />
+                        <Button Grid.Column="1"
+                                x:Name="BulkTagModeRemoveBtn"
+                                Text="{Binding [Scores_Bulk_Tags_Mode_Remove], Source={x:Static services:LocalizationService.Instance}}"
+                                BackgroundColor="#2D303B"
+                                TextColor="#DDDDDD"
+                                FontAttributes="Bold"
+                                FontSize="12"
+                                HeightRequest="36"
+                                CornerRadius="8"
+                                Clicked="OnBulkTagModeRemoveClicked" />
+                    </Grid>
+
+                    <Label Grid.Row="2"
+                           x:Name="BulkTagsSubLabel"
                            Text="{Binding [Scores_Bulk_Tags_Sub], Source={x:Static services:LocalizationService.Instance}}" 
                            TextColor="#AAAAAA" 
                            FontSize="12" />
 
                     <!-- Barre de recherche -->
-                    <Entry Grid.Row="2"
+                    <Entry Grid.Row="3"
                            x:Name="BulkTagSearchEntry"
                            Placeholder="{Binding [Scores_Search_Tag_Placeholder], Source={x:Static services:LocalizationService.Instance}}"
                            PlaceholderColor="#888888"
@@ -879,7 +904,7 @@
                            TextChanged="OnBulkTagSearchEntryTextChanged" />
 
                     <!-- Liste des étiquettes sélectionnables -->
-                    <ScrollView Grid.Row="3" HeightRequest="200">
+                    <ScrollView Grid.Row="4" HeightRequest="200">
                         <FlexLayout x:Name="BulkTagsContainer" 
                                     Wrap="Wrap" 
                                     Direction="Row" 
@@ -888,16 +913,17 @@
                     </ScrollView>
 
                     <!-- Boutons Annuler / Appliquer -->
-                    <Grid Grid.Row="4" ColumnDefinitions="*, *" ColumnSpacing="12" Margin="0,5,0,0">
+                    <Grid Grid.Row="5" ColumnDefinitions="*, *" ColumnSpacing="12" Margin="0,5,0,0">
                         <Button Grid.Column="0" 
                                 Text="{Binding [Common_Cancel], Source={x:Static services:LocalizationService.Instance}}" 
-                                BackgroundColor="#444444" 
-                                TextColor="White" 
+                                BackgroundColor="#2D303B" 
+                                TextColor="#DDDDDD" 
                                 FontAttributes="Bold" 
                                 HeightRequest="44" 
                                 CornerRadius="8" 
                                 Clicked="OnBulkTagsCloseClicked" />
                         <Button Grid.Column="1" 
+                                x:Name="BulkTagsApplyBtn"
                                 Text="{Binding [Common_Apply], Source={x:Static services:LocalizationService.Instance}}" 
                                 BackgroundColor="#8E44AD" 
                                 TextColor="White" 

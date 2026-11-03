@@ -1112,5 +1112,15 @@
   "Settings_Scores_Consolidate_Desc": "Verplaatst bestanden in de hoofdmap fysiek naar hun respectieve categoriesubmappen (bijv. Scores/Default/).",
   "Settings_Scores_Consolidate_Success_Title": "Organisatie voltooid",
   "Settings_Scores_Consolidate_Success_Msg": "{0} partitu(u)r(en) zijn fysiek georganiseerd in hun categoriemappen.",
-  "Settings_Scores_Consolidate_None": "Al uw fysieke bestanden zijn al perfect geclassificeerd in hun categoriemappen."
+  "Settings_Scores_Consolidate_None": "Al uw fysieke bestanden zijn al perfect geclassificeerd in hun categoriemappen.",
+  "Scores_Bulk_Tags_Mode_Add": "➕ Toevoegen",
+  "Scores_Bulk_Tags_Mode_Remove": "➖ Verwijderen",
+  "Scores_Bulk_Tags_Apply_Add": "Toewijzen",
+  "Scores_Bulk_Tags_Apply_Remove": "Verwijderen",
+  "Scores_Bulk_Tags_Header_Remove": "🗑️ Labels verwijderen ({0} part.)",
+  "Scores_Bulk_Tags_Sub_Add": "Vink de labels aan om toe te wijzen aan alle geselecteerde partituren.",
+  "Scores_Bulk_Tags_Sub_Remove": "Vink de labels aan om te verwijderen van de geselecteerde partituren.",
+  "Scores_Bulk_Tags_None_Selected_Remove": "Selecteer minimaal één label om te verwijderen.",
+  "Scores_Bulk_Tags_Remove_Empty": "Er zijn geen labels gekoppeld aan de geselecteerde partituren.",
+  "Scores_Bulk_Tags_Remove_Success": "{0} label(s) succesvol verwijderd van {1} partitu(u)r(en)."
 }

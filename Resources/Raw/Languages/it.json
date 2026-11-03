@@ -1112,5 +1112,15 @@
   "Settings_Scores_Consolidate_Desc": "Sposta fisicamente i file nella radice nelle rispettive sottocartelle di categoria (es: Scores/Default/).",
   "Settings_Scores_Consolidate_Success_Title": "Organizzazione completata",
   "Settings_Scores_Consolidate_Success_Msg": "{0} spartiti sono stati fisicamente organizzati nelle cartelle di categoria.",
-  "Settings_Scores_Consolidate_None": "Tutti i tuoi file fisici sono già perfettamente classificati nelle loro cartelle di categoria."
+  "Settings_Scores_Consolidate_None": "Tutti i tuoi file fisici sono già perfettamente classificati nelle loro cartelle di categoria.",
+  "Scores_Bulk_Tags_Mode_Add": "➕ Aggiungi",
+  "Scores_Bulk_Tags_Mode_Remove": "➖ Rimuovi",
+  "Scores_Bulk_Tags_Apply_Add": "Assegna",
+  "Scores_Bulk_Tags_Apply_Remove": "Rimuovi",
+  "Scores_Bulk_Tags_Header_Remove": "🗑️ Rimuovi etichette ({0} spart.)",
+  "Scores_Bulk_Tags_Sub_Add": "Seleziona le etichette da assegnare a tutti gli spartiti selezionati.",
+  "Scores_Bulk_Tags_Sub_Remove": "Seleziona le etichette da rimuovere dagli spartiti selezionati.",
+  "Scores_Bulk_Tags_None_Selected_Remove": "Seleziona almeno un'etichetta da rimuovere.",
+  "Scores_Bulk_Tags_Remove_Empty": "Nessuna etichetta è associata agli spartiti selezionati.",
+  "Scores_Bulk_Tags_Remove_Success": "{0} etichetta/e rimossa/e con successo da {1} spartito/i."
 }

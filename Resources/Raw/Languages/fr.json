@@ -1116,5 +1116,15 @@
   "Settings_Scores_Consolidate_Desc": "Déplace physiquement les fichiers situés à la racine vers leurs sous-dossiers de catégories respectifs (ex: Scores/Default/).",
   "Settings_Scores_Consolidate_Success_Title": "Organisation terminée",
   "Settings_Scores_Consolidate_Success_Msg": "{0} partition(s) ont été rangées physiquement dans leurs dossiers de catégories.",
-  "Settings_Scores_Consolidate_None": "Tous vos fichiers physiques sont déjà parfaitement classés dans leurs répertoires de catégories."
+  "Settings_Scores_Consolidate_None": "Tous vos fichiers physiques sont déjà parfaitement classés dans leurs répertoires de catégories.",
+  "Scores_Bulk_Tags_Mode_Add": "➕ Ajouter",
+  "Scores_Bulk_Tags_Mode_Remove": "➖ Retirer",
+  "Scores_Bulk_Tags_Apply_Add": "Attribuer",
+  "Scores_Bulk_Tags_Apply_Remove": "Retirer",
+  "Scores_Bulk_Tags_Header_Remove": "🗑️ Retirer étiquettes ({0} part.)",
+  "Scores_Bulk_Tags_Sub_Add": "Cochez les étiquettes à attribuer à toutes les partitions sélectionnées.",
+  "Scores_Bulk_Tags_Sub_Remove": "Cochez les étiquettes à retirer des partitions sélectionnées.",
+  "Scores_Bulk_Tags_None_Selected_Remove": "Veuillez sélectionner au moins une étiquette à retirer.",
+  "Scores_Bulk_Tags_Remove_Empty": "Aucune étiquette n'est associée aux partitions sélectionnées.",
+  "Scores_Bulk_Tags_Remove_Success": "{0} étiquette(s) retirée(s) avec succès de {1} partition(s)."
 }
