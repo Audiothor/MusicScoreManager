@@ -18,6 +18,8 @@ namespace MusicScoreManager.Models
                     _name = value;
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(DisplayName));
+                    OnPropertyChanged(nameof(IsDefaultCategory));
+                    OnPropertyChanged(nameof(CanManage));
                 }
             }
         }
@@ -27,7 +29,7 @@ namespace MusicScoreManager.Models
             string.Equals(_name, "Général", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(_name, "General", StringComparison.OrdinalIgnoreCase);
 
-        public bool CanManage => true;
+        public bool CanManage => !IsDefaultCategory;
 
         public string DisplayName => IsDefaultCategory ? "Default" : _name;
 

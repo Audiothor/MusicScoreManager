@@ -22,6 +22,7 @@ public partial class ScoresPage : ContentPage
     private string _tagSearchQuery = string.Empty;
     private string _tagSortType = "NameAsc"; // "NameAsc", "NameDesc", "SelectedFirst", "Color"
     private Models.Score? _selectedScoreForMenu;
+    private Models.ScoreCategoryGroup? _selectedGroupForMenu;
     private CancellationTokenSource? _searchCts;
     private bool _cachedShowScrollTop = true;
     private bool _cachedShowAlphabeticalIndex = true;
@@ -1723,6 +1724,14 @@ public partial class ScoresPage : ContentPage
                 if (CategoryBreadcrumbBar != null)
                 {
                     CategoryBreadcrumbBar.IsVisible = true;
+                    bool isDefaultCat = string.IsNullOrWhiteSpace(_selectedCategory) ||
+                                        string.Equals(_selectedCategory, "Default", StringComparison.OrdinalIgnoreCase) ||
+                                        string.Equals(_selectedCategory, "Général", StringComparison.OrdinalIgnoreCase) ||
+                                        string.Equals(_selectedCategory, "General", StringComparison.OrdinalIgnoreCase);
+                    if (CurrentCategoryOptionsButton != null)
+                    {
+                        CurrentCategoryOptionsButton.IsVisible = !isDefaultCat;
+                    }
                     if (CurrentCategoryTitleLabel != null)
                     {
                         var inCatScores = scores.Where(s => string.Equals(s.Category, _selectedCategory, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -1817,82 +1826,102 @@ public partial class ScoresPage : ContentPage
         ApplyCurrentViewModeData(_lastLoadedScores);
     }
 
-    private async void OnCurrentCategoryOptionsClicked(object? sender, EventArgs e)
+    private void OnCurrentCategoryOptionsClicked(object? sender, EventArgs e)
     {
         if (string.IsNullOrWhiteSpace(_selectedCategory)) return;
-        var dummyGroup = new ScoreCategoryGroup { Name = _selectedCategory };
-        await HandleCategoryOptionsAsync(dummyGroup);
+        bool isDefault = string.Equals(_selectedCategory, "Default", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(_selectedCategory, "Général", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(_selectedCategory, "General", StringComparison.OrdinalIgnoreCase);
+        if (isDefault) return;
+
+        var group = CategoryGroups.FirstOrDefault(g => string.Equals(g.Name, _selectedCategory, StringComparison.OrdinalIgnoreCase))
+                 ?? new ScoreCategoryGroup { Name = _selectedCategory };
+        ShowCategoryMenuModal(group);
     }
 
-    private async void OnCategoryOptionsClicked(object? sender, EventArgs e)
+    private void OnCategoryOptionsClicked(object? sender, EventArgs e)
     {
         if (sender is Button btn && btn.CommandParameter is ScoreCategoryGroup group)
         {
-            await HandleCategoryOptionsAsync(group);
+            if (group.IsDefaultCategory) return;
+            ShowCategoryMenuModal(group);
         }
     }
 
-    private async Task HandleCategoryOptionsAsync(ScoreCategoryGroup group)
+    private void ShowCategoryMenuModal(ScoreCategoryGroup group)
     {
+        _selectedGroupForMenu = group;
+        CategoryMenuTitleLabel.Text = group.DisplayName;
+        CategoryMenuSubtitleLabel.Text = group.FormattedCount;
+        CategoryMenuOverlay.IsVisible = true;
+    }
+
+    private void OnCategoryMenuCancelClicked(object? sender, EventArgs e)
+    {
+        CategoryMenuOverlay.IsVisible = false;
+    }
+
+    private void OnCategoryMenuOpenClicked(object? sender, EventArgs e)
+    {
+        CategoryMenuOverlay.IsVisible = false;
+        if (_selectedGroupForMenu != null)
+        {
+            OnCategoryCardTapped(this, new TappedEventArgs(_selectedGroupForMenu));
+        }
+    }
+
+    private async void OnCategoryMenuRenameClicked(object? sender, EventArgs e)
+    {
+        CategoryMenuOverlay.IsVisible = false;
+        if (_selectedGroupForMenu == null || _selectedGroupForMenu.IsDefaultCategory) return;
+
+        var group = _selectedGroupForMenu;
         var loc = LocalizationService.Instance;
-        string cancel = loc.GetString("Common_Cancel", "Annuler");
-        string rename = loc.GetString("Score_Category_Rename_Title", "Renommer le dossier");
-        string delete = loc.GetString("Score_Category_Delete_Title", "Supprimer le dossier");
+        string promptTitle = loc.GetString("Score_Category_Rename_Title", "Renommer le dossier");
+        string promptMsg = loc.GetString("Score_Category_Rename_Prompt", "Entrez le nouveau nom du dossier :");
+        string ok = loc.GetString("Common_Save", "Enregistrer");
 
-        string? action;
-        if (group.IsDefaultCategory)
+        string? newName = await ShowModernPromptDialogAsync(promptTitle, promptMsg, group.DisplayName, ok);
+        if (!string.IsNullOrWhiteSpace(newName) && !string.Equals(newName.Trim(), group.Name, StringComparison.OrdinalIgnoreCase))
         {
-            // Le dossier par défaut peut être renommé librement, mais pas supprimé
-            action = await DisplayActionSheetAsync(group.DisplayName, cancel, null, rename);
-        }
-        else
-        {
-            action = await DisplayActionSheetAsync(group.DisplayName, cancel, delete, rename);
-        }
-
-        if (action == rename)
-        {
-            string promptTitle = loc.GetString("Score_Category_Rename_Title", "Renommer le dossier");
-            string promptMsg = loc.GetString("Score_Category_Rename_Prompt", "Entrez le nouveau nom du dossier :");
-            string ok = loc.GetString("Common_Save", "Enregistrer");
-            string? newName = await ShowModernPromptDialogAsync(promptTitle, promptMsg, group.DisplayName, ok);
-            if (!string.IsNullOrWhiteSpace(newName) && !string.Equals(newName.Trim(), group.Name, StringComparison.OrdinalIgnoreCase))
+            string cleanNew = newName.Trim();
+            await _databaseService.RenameCategoryAsync(group.Name, cleanNew);
+            if (string.Equals(_selectedCategory, group.Name, StringComparison.OrdinalIgnoreCase))
             {
-                string cleanNew = newName.Trim();
-                await _databaseService.RenameCategoryAsync(group.Name, cleanNew);
-                if (group.IsDefaultCategory)
-                {
-                    Preferences.Default.Set("DefaultCategoryName", cleanNew);
-                }
-                if (string.Equals(_selectedCategory, group.Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    _selectedCategory = cleanNew;
-                }
-                await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
+                _selectedCategory = cleanNew;
             }
+            await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
         }
-        else if (action == delete && !group.IsDefaultCategory)
+    }
+
+    private async void OnCategoryMenuDeleteClicked(object? sender, EventArgs e)
+    {
+        CategoryMenuOverlay.IsVisible = false;
+        if (_selectedGroupForMenu == null || _selectedGroupForMenu.IsDefaultCategory) return;
+
+        var group = _selectedGroupForMenu;
+        var loc = LocalizationService.Instance;
+        string defaultCat = _settingsService.DefaultCategory;
+        string confirmTitle = loc.GetString("Score_Category_Delete_Title", "Supprimer le dossier");
+        string confirmMsg = string.Format(
+            loc.GetString("Score_Category_Delete_Confirm", "Voulez-vous supprimer le dossier '{0}' ? Ses {1} partition(s) seront déplacées dans '{2}'."),
+            group.Name, group.Count, defaultCat);
+
+        bool confirm = await ShowModernConfirmDialogAsync(
+            confirmTitle,
+            confirmMsg,
+            loc.GetString("Common_Delete", "Supprimer"),
+            loc.GetString("Common_Cancel", "Annuler"),
+            isDestructive: true);
+
+        if (confirm)
         {
-            string defaultCat = _settingsService.DefaultCategory;
-            string confirmMsg = string.Format(
-                loc.GetString("Score_Category_Delete_Confirm", "Voulez-vous supprimer le dossier '{0}' ? Ses {1} partition(s) seront déplacées dans '{2}'."),
-                group.Name, group.Count, defaultCat);
-
-            bool confirm = await DisplayAlertAsync(
-                loc.GetString("Score_Category_Delete_Title", "Supprimer le dossier"),
-                confirmMsg,
-                loc.GetString("Common_Delete", "Supprimer"),
-                cancel);
-
-            if (confirm)
+            await _databaseService.DeleteCategoryAsync(group.Name, defaultCat);
+            if (string.Equals(_selectedCategory, group.Name, StringComparison.OrdinalIgnoreCase))
             {
-                await _databaseService.DeleteCategoryAsync(group.Name, defaultCat);
-                if (string.Equals(_selectedCategory, group.Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    _selectedCategory = null;
-                }
-                await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
+                _selectedCategory = null;
             }
+            await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
         }
     }
 
@@ -2802,6 +2831,74 @@ public partial class ScoresPage : ContentPage
                 tcs.TrySetResult(true);
             };
             ModernModalButtonsLayout.Add(okBtn);
+
+            await AnimateModalOpenAsync();
+        });
+
+        return tcs.Task;
+    }
+
+    private Task<bool> ShowModernConfirmDialogAsync(string title, string message, string confirmBtnText, string cancelBtnText, bool isDestructive = false)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            ModernModalIconLabel.Text = isDestructive ? "🗑️" : "❓";
+            ModernModalIconLabel.TextColor = isDestructive ? Color.FromArgb("#FF5252") : Color.FromArgb("#00B0FF");
+            ModernModalIconHalo.Stroke = isDestructive ? Color.FromArgb("#FF5252") : Color.FromArgb("#00B0FF");
+            ModernModalIconHalo.BackgroundColor = isDestructive ? Color.FromArgb("#20FF5252") : Color.FromArgb("#1500B0FF");
+            ModernModalTitleLabel.Text = title;
+
+            ModernModalBadgeBorder.IsVisible = false;
+            ModernModalInputWrapper.IsVisible = false;
+            ModernModalContentContainer.Clear();
+            ModernModalContentContainer.Add(new Label
+            {
+                Text = message,
+                TextColor = Color.FromArgb("#E2E8F0"),
+                FontSize = 13,
+                HorizontalTextAlignment = TextAlignment.Center,
+                HorizontalOptions = LayoutOptions.Center,
+                LineBreakMode = LineBreakMode.WordWrap
+            });
+
+            ModernModalHintLabel.Text = string.Empty;
+
+            ModernModalButtonsLayout.Clear();
+
+            var confirmBtn = new Button
+            {
+                Text = confirmBtnText,
+                BackgroundColor = isDestructive ? Color.FromArgb("#D32F2F") : Color.FromArgb("#007ACC"),
+                TextColor = Colors.White,
+                FontAttributes = FontAttributes.Bold,
+                FontSize = 14,
+                HeightRequest = 42,
+                CornerRadius = 10
+            };
+            confirmBtn.Clicked += async (s, ev) =>
+            {
+                await AnimateModalCloseAsync();
+                tcs.TrySetResult(true);
+            };
+            ModernModalButtonsLayout.Add(confirmBtn);
+
+            var cancelBtn = new Button
+            {
+                Text = cancelBtnText,
+                BackgroundColor = Color.FromArgb("#2D303B"),
+                TextColor = Color.FromArgb("#DDDDDD"),
+                FontSize = 13,
+                HeightRequest = 38,
+                CornerRadius = 10
+            };
+            cancelBtn.Clicked += async (s, ev) =>
+            {
+                await AnimateModalCloseAsync();
+                tcs.TrySetResult(false);
+            };
+            ModernModalButtonsLayout.Add(cancelBtn);
 
             await AnimateModalOpenAsync();
         });

@@ -33,7 +33,7 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
   Cette fonction est pratique pour l'organisation de vos partitions mais elle est optionnelle. La conséquence de ce mode de fonctionnement est que votre fichier de partition pdf est "physiquement" déplacé dans un répertoire portant le nom de votre catégorie.
   Cette vue est appréciée par de nombreuses personnes qui aiment travailler par répertoires.
   Lors de l'utilisation de cette vue, vous pouvez créer un nouveau dossier et renommer/supprimer.
-  Le dossier par défaut où se placent les partitions lors d'imports est le dossier "Default". Il ne peut être supprimé ou renommé.
+  Le dossier par défaut où se placent les partitions lors d'imports est le dossier "Default". Il ne peut être supprimé ou renommé. Un paramètre existe pour assigner par défaut un autre répertoire : ceci est pratique lorsque vous avez beaucoup d'imports d'une même catégorie de partitions.
   Une suppression de dossier déclenche automatiquement un déplacement des partitions contenues dans le répertoire "Default" : les partitions ne sont donc pas supprimées.
   Bien entendu les partitions peuvent aussi être accessibles et donc visionnable par ce biais. Les options de partitions avec l'accès au menu menu contextuel de la partition sont aussi disponibles.
 
@@ -62,11 +62,12 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
   - **📡 Partager en Wi-Fi Direct** : transmettez tout le paquet sélectionné en une seule fois sans fil.
   - **📦 Exporter (.msmscores)** : génère une archive compressée unique regroupant tous les fichiers choisis (avec choix des annotations et des pistes audio).
   - **🗑️ Supprimer** : suppression groupée avec confirmation de sécurité.
-  - 
+
+TIPS ! Si vous maintenez quelques secondes une partition en mode "Liste" ou "Catégorie", la fontion de mutli-sélection se déclenchera automatiquement !!
 
 **[6] Bouton Ajouter (➕)**
 
-- **Importation de PDF** : Contrôle strict de l'intégrité binaire (`%PDF-`) empêchant tout plantage. L'import peut se faire par lot (plusieurs pdf importés en une seule fois)
+- **Importation de PDF** : Contrôle strict de l'intégrité binaire empêchant tout plantage. L'import peut se faire par lot (plusieurs pdf importés en une seule fois)
 - **Importation et conversion d'Images** : La sélection d'un ou plusieurs fichiers images (PNG, JPEG, GIF, WEBP, BMP) affiche un message d'information listant les fichiers images qui vont être convertis en PDF :
   * **Annuler** : Les images sont ignorées. Les éventuels PDF sélectionnés en même temps continuent leur import normal.
   * **Continuer** : Une boîte de chargement modale bloquante avec indicateur d'avancement informe l'utilisateur pendant la conversion en PDF haute netteté. Les images sont fusionnées en un seul PDF multi-pages ou converties en partitions individuelles selon le choix de l'utilisateur, puis une confirmation s'affiche dès l'import terminé.
@@ -75,6 +76,7 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
     Le fichier PDF est copié dans le dossier interne dédié de Music Score Manager. Vos partitions restent accessibles en permanence même si le fichier original est déplacé ou supprimé de son dossier de téléchargement.
   - **Lier le fichier original (Externe)** :  
     L'application conserve le chemin d'accès absolu vers le fichier sans le dupliquer pour économiser l'espace mémoire (signalé par un badge `🔗`).
+- Pour éviter d'être sollicité en permanence par un mode d'import, vous pouvez définir le type d'import par défaut dans les paramétres de partitions.
 
 ### B. Milieu de l'écran - liste des partitions référencées dans l'application
 
@@ -140,34 +142,47 @@ En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et
 
 * **Titre** et **Compositeur / Arrangeur**.
 
-* **Tonalité musicale** (solfège classique *Do, Ré, Mi...* et international *A, B, C...*).
+* **Catégorie/Dossier** assigné pour cette partition
 
-* **Tempo de référence (BPM)** : valeur initiale pour le métronome.
+* **Informations techniques** : chemin d'accès, taille, date de modification, date d'ajout et information si des annotations ont été faites sur cette partition.
+  A noter la présence d'un bouton pour réassigner le fichier en cas de déplacement.
+  En cas de modifications, n'oubliez pas de cliquer sur le bouton 'Enregistrer' pour sauvegarder vos modifications.
 
-* **Note (1 à 5 étoiles)**.
+* **Atelier d'assemblage PDF** : lien pour réaliser des opérations sur votre fichier PDF
 
 * **Étiquettes (tags)** : sélection dynamique (Pour créer des étiquettes, se rendre dans les Outils)
+
+* **Tempo de référence (BPM)** : valeur initiale pour le métronome
+
+* **Tonalité musicale** (solfège classique *Do, Ré, Mi...* et international *A, B, C...*).
+
+* **Note (1 à 5 étoiles)**. Votre appréciation personnelle.
+
+* **Chemin complet de votre fichier PDF** pour information
 
 * **Accordéon Métronome** : chiffrage de mesure (2/4, 3/4, 4/4, 6/8...), subdivision, pré-compte et coupure/activation du son par défaut.
 
 * **Accordéon Pistes audio** : association de fichiers audio d'accompagnement (MP3, WAV, etc.), pré-écoute et réglage du volume.
 
-* **Informations techniques** : chemin d'accès, taille, date de modification, date d'ajout et information si des annotations ont été faites sur cette partition.
-  A noter la présence d'un bouton pour réassigner le fichier en cas de déplacement.
-  En cas de modifications, n'oubliez pas de cliquer sur le bouton 'Enregistrer' pour sauvegarder vos modifications.
+* Accordéon des Options d'annotations :
+  si on veut afficher les annotations ou non par défaut pour cette partition
+  si on veut afficher les numéros de page pour cette partition
+  si on veut afficher le bouton de boîte à outils en haut à drotie de la partition
+  
+  NE PAS OUBLIER D'ENREGISTRER VOS MODIFICATIONS !
+  
 3. **📋 Ajouter dans un Setlist** :
 - Permet d'insérer instantanément la partition dans la setlist de votre choix.
 - **Placement prioritaire en 1ère position** (décalant les autres morceaux vers le bas).
 - Gestion des setlists verrouillées.
+4. **Changer de dossier / catégorie**
+   Permet d'assigner la partition à un dossier/catégorie pour mieux le classer.
 
-> 6. **📑 Modifier l'assemblage PDF** :
-
+5. **📑 Atelier d'assemblage PDF** :
 - Ouvre la partition directement dans l'**Atelier d'Assemblage PDF** pour réorganiser les pages, insérer une page blanche, supprimer des pages inutiles ou effectuer des rotations. Très pratique quand votre fichier pdf est mal organisé.
   Vous pouvez retrouver cet outil directement dans le menu "Outils" aussi.
   => Le détail des modifications d'assemblage est disponible plus en détail dans la partie "Outils"
-
-> 5.**📡 Envoyer en Wi-Fi Direct** :
-
+6. **Envoyer en Wi-Fi Direct**
 - Ouvre une boîte modale d'options de partage vous permettant de cocher/décocher :
   * ☑️ *Inclure les annotations manuscrites* dessinées sur le document.
   * ☑️ *Inclure les pistes audio rattachées* (MP3/WAV).
@@ -175,9 +190,9 @@ En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et
 - Il est juste nécessaire que la personne qui reçoit la partition aille dans "Outils", "Transfert Wi-Fi Direct" et clique sur "Activer la Réception"
   La partition est immédiatement envoyées et incue dans le Music Score Manager de la personne qui reçoit !
   => Le détail des envois/réceptions immédiates est disponible plus en détail dans la partie "Outils"
-6. **📦 Exporter la partition (.msmscore)** :
+7. **📦 Exporter la partition (.msmscore)** :
 - Génère une archive (=un fichier) autonome transportable avec un choix  d'options (annotations, pistes audio) d'export.
-7. **🏷️ Renommer la partition** :
+8. **🏷️ Renommer la partition** :
 - Boîte de dialogue rapide pour changer le titre affiché sans entrer dans l'édition complète.
-8. **🗑️ Supprimer la partition** :
+9. **🗑️ Supprimer la partition** :
 - Supprime la partition de votre bibliothèque avec demande de confirmation sécurisée.
