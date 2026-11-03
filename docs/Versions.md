@@ -55,10 +55,12 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## v3.2.2 — 03/11/2026
 
-### 1. Paramètres des Partitions : Aperçu en Direct des Sous-titres
+### 1. Paramètres des Partitions : Aperçu en Direct des Sous-titres & Descriptions
 - **1.1. Prise en charge de « Dossier / Catégorie » dans l'aperçu en direct (`SettingsScoresPage`) :**
   - Correction de l'absence de l'élément « Dossier / Catégorie » dans la fonction de prévisualisation en temps réel (`UpdateSubtitlePreview`).
   - L'activation ou le réordonnancement de l'option affiche désormais fidèlement la pastille de catégorie (`📁 Classique`) sous le titre d'exemple aux côtés du compositeur, du nombre de pages et de la date d'ajout.
+- **1.2. Localisation de la description du bouton de boîte à outils :**
+  - Ajout du libellé de description manquant `Settings_Scores_Show_Tools_Button_Desc` dans les 8 langues prises en charge.
 
 ---
 

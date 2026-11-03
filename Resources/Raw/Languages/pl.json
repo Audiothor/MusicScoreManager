@@ -1124,5 +1124,6 @@
   "Scores_Bulk_Tags_Remove_Empty": "Brak etykiet powiązanych z wybranymi nutami.",
   "Scores_Bulk_Tags_Remove_Success": "{0} etykiet(y) pomyślnie usunięto z {1} nut.",
   "Sort_CategoryAsc": "Kategoria (A-Z)",
-  "Score_Category_Open_Folder": "Otwórz folder"
+  "Score_Category_Open_Folder": "Otwórz folder",
+  "Settings_Scores_Show_Tools_Button_Desc": "Wyświetla ikonę w prawym górnym rogu podczas przeglądania nut"
 }

@@ -1124,5 +1124,6 @@
   "Scores_Bulk_Tags_Remove_Empty": "Nessuna etichetta è associata agli spartiti selezionati.",
   "Scores_Bulk_Tags_Remove_Success": "{0} etichetta/e rimossa/e con successo da {1} spartito/i.",
   "Sort_CategoryAsc": "Categoria (A-Z)",
-  "Score_Category_Open_Folder": "Apri cartella"
+  "Score_Category_Open_Folder": "Apri cartella",
+  "Settings_Scores_Show_Tools_Button_Desc": "Visualizza l'icona nell'angolo in alto a destra durante la visualizzazione di uno spartito"
 }

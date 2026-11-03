@@ -1124,5 +1124,6 @@
   "Scores_Bulk_Tags_Remove_Empty": "Keine Tags sind mit den ausgewählten Partituren verknüpft.",
   "Scores_Bulk_Tags_Remove_Success": "{0} Tag(s) erfolgreich von {1} Partitur(en) entfernt.",
   "Sort_CategoryAsc": "Kategorie (A-Z)",
-  "Score_Category_Open_Folder": "Ordner öffnen"
+  "Score_Category_Open_Folder": "Ordner öffnen",
+  "Settings_Scores_Show_Tools_Button_Desc": "Zeigt das visuelle Symbol in der oberen rechten Ecke beim Anzeigen einer Partitur an"
 }
