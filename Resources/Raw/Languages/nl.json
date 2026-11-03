@@ -1124,5 +1124,6 @@
   "Scores_Bulk_Tags_Remove_Empty": "Er zijn geen labels gekoppeld aan de geselecteerde partituren.",
   "Scores_Bulk_Tags_Remove_Success": "{0} label(s) succesvol verwijderd van {1} partitu(u)r(en).",
   "Sort_CategoryAsc": "Categorie (A-Z)",
-  "Score_Category_Open_Folder": "Map openen"
+  "Score_Category_Open_Folder": "Map openen",
+  "Settings_Scores_Show_Tools_Button_Desc": "Toont het visuele pictogram in de rechterbovenhoek tijdens het bekijken van een partituur"
 }

@@ -1128,5 +1128,6 @@
   "Scores_Bulk_Tags_Remove_Empty": "Aucune étiquette n'est associée aux partitions sélectionnées.",
   "Scores_Bulk_Tags_Remove_Success": "{0} étiquette(s) retirée(s) avec succès de {1} partition(s).",
   "Sort_CategoryAsc": "Catégorie (A-Z)",
-  "Score_Category_Open_Folder": "Ouvrir le dossier"
+  "Score_Category_Open_Folder": "Ouvrir le dossier",
+  "Settings_Scores_Show_Tools_Button_Desc": "Affiche l'icône visuelle dans le coin supérieur droit lors de la lecture d'une partition"
 }

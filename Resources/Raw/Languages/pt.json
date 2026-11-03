@@ -1124,5 +1124,6 @@
   "Scores_Bulk_Tags_Remove_Empty": "Nenhuma etiqueta está associada às partituras selecionadas.",
   "Scores_Bulk_Tags_Remove_Success": "{0} etiqueta(s) removida(s) com sucesso de {1} partitura(s).",
   "Sort_CategoryAsc": "Categoria (A-Z)",
-  "Score_Category_Open_Folder": "Abrir pasta"
+  "Score_Category_Open_Folder": "Abrir pasta",
+  "Settings_Scores_Show_Tools_Button_Desc": "Exibe o ícone visual no canto superior direito ao visualizar uma partitura"
 }
