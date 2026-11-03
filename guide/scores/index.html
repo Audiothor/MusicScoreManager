@@ -1066,7 +1066,7 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
   Cette fonction est pratique pour l'organisation de vos partitions mais elle est optionnelle. La conséquence de ce mode de fonctionnement est que votre fichier de partition pdf est "physiquement" déplacé dans un répertoire portant le nom de votre catégorie.
   Cette vue est appréciée par de nombreuses personnes qui aiment travailler par répertoires.
   Lors de l'utilisation de cette vue, vous pouvez créer un nouveau dossier et renommer/supprimer.
-  Le dossier par défaut où se placent les partitions lors d'imports est le dossier "Default". Il ne peut être supprimé ou renommé.
+  Le dossier par défaut où se placent les partitions lors d'imports est le dossier "Default". Il ne peut être supprimé ou renommé. Un paramètre existe pour assigner par défaut un autre répertoire : ceci est pratique lorsque vous avez beaucoup d'imports d'une même catégorie de partitions.
   Une suppression de dossier déclenche automatiquement un déplacement des partitions contenues dans le répertoire "Default" : les partitions ne sont donc pas supprimées.
   Bien entendu les partitions peuvent aussi être accessibles et donc visionnable par ce biais. Les options de partitions avec l'accès au menu menu contextuel de la partition sont aussi disponibles.</p>
 </li>
@@ -1096,11 +1096,11 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
 <li><strong>📡 Partager en Wi-Fi Direct</strong> : transmettez tout le paquet sélectionné en une seule fois sans fil.</li>
 <li><strong>📦 Exporter (.msmscores)</strong> : génère une archive compressée unique regroupant tous les fichiers choisis (avec choix des annotations et des pistes audio).</li>
 <li><strong>🗑️ Supprimer</strong> : suppression groupée avec confirmation de sécurité.</li>
-<li></li>
 </ul>
+<p>TIPS ! Si vous maintenez quelques secondes une partition en mode "Liste" ou "Catégorie", la fontion de mutli-sélection se déclenchera automatiquement !!</p>
 <p><strong>[6] Bouton Ajouter (➕)</strong></p>
 <ul>
-<li><strong>Importation de PDF</strong> : Contrôle strict de l'intégrité binaire (<code>%PDF-</code>) empêchant tout plantage. L'import peut se faire par lot (plusieurs pdf importés en une seule fois)</li>
+<li><strong>Importation de PDF</strong> : Contrôle strict de l'intégrité binaire empêchant tout plantage. L'import peut se faire par lot (plusieurs pdf importés en une seule fois)</li>
 <li><strong>Importation et conversion d'Images</strong> : La sélection d'un ou plusieurs fichiers images (PNG, JPEG, GIF, WEBP, BMP) affiche un message d'information listant les fichiers images qui vont être convertis en PDF :</li>
 <li><strong>Annuler</strong> : Les images sont ignorées. Les éventuels PDF sélectionnés en même temps continuent leur import normal.</li>
 <li><strong>Continuer</strong> : Une boîte de chargement modale bloquante avec indicateur d'avancement informe l'utilisateur pendant la conversion en PDF haute netteté. Les images sont fusionnées en un seul PDF multi-pages ou converties en partitions individuelles selon le choix de l'utilisateur, puis une confirmation s'affiche dès l'import terminé.</li>
@@ -1109,6 +1109,7 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
     Le fichier PDF est copié dans le dossier interne dédié de Music Score Manager. Vos partitions restent accessibles en permanence même si le fichier original est déplacé ou supprimé de son dossier de téléchargement.</li>
 <li><strong>Lier le fichier original (Externe)</strong> :<br />
     L'application conserve le chemin d'accès absolu vers le fichier sans le dupliquer pour économiser l'espace mémoire (signalé par un badge <code>🔗</code>).</li>
+<li>Pour éviter d'être sollicité en permanence par un mode d'import, vous pouvez définir le type d'import par défaut dans les paramétres de partitions.</li>
 </ul>
 <h3 id="b-milieu-de-lecran-liste-des-partitions-referencees-dans-lapplication">B. Milieu de l'écran - liste des partitions référencées dans l'application</h3>
 <ul>
@@ -1180,16 +1181,30 @@ Si le fichier PDF associé a été déplacé, renommé sur le stockage ou est in
 <p><strong>Titre</strong> et <strong>Compositeur / Arrangeur</strong>.</p>
 </li>
 <li>
-<p><strong>Tonalité musicale</strong> (solfège classique <em>Do, Ré, Mi...</em> et international <em>A, B, C...</em>).</p>
+<p><strong>Catégorie/Dossier</strong> assigné pour cette partition</p>
 </li>
 <li>
-<p><strong>Tempo de référence (BPM)</strong> : valeur initiale pour le métronome.</p>
+<p><strong>Informations techniques</strong> : chemin d'accès, taille, date de modification, date d'ajout et information si des annotations ont été faites sur cette partition.
+  A noter la présence d'un bouton pour réassigner le fichier en cas de déplacement.
+  En cas de modifications, n'oubliez pas de cliquer sur le bouton 'Enregistrer' pour sauvegarder vos modifications.</p>
 </li>
 <li>
-<p><strong>Note (1 à 5 étoiles)</strong>.</p>
+<p><strong>Atelier d'assemblage PDF</strong> : lien pour réaliser des opérations sur votre fichier PDF</p>
 </li>
 <li>
 <p><strong>Étiquettes (tags)</strong> : sélection dynamique (Pour créer des étiquettes, se rendre dans les Outils)</p>
+</li>
+<li>
+<p><strong>Tempo de référence (BPM)</strong> : valeur initiale pour le métronome</p>
+</li>
+<li>
+<p><strong>Tonalité musicale</strong> (solfège classique <em>Do, Ré, Mi...</em> et international <em>A, B, C...</em>).</p>
+</li>
+<li>
+<p><strong>Note (1 à 5 étoiles)</strong>. Votre appréciation personnelle.</p>
+</li>
+<li>
+<p><strong>Chemin complet de votre fichier PDF</strong> pour information</p>
 </li>
 <li>
 <p><strong>Accordéon Métronome</strong> : chiffrage de mesure (2/4, 3/4, 4/4, 6/8...), subdivision, pré-compte et coupure/activation du son par défaut.</p>
@@ -1198,29 +1213,29 @@ Si le fichier PDF associé a été déplacé, renommé sur le stockage ou est in
 <p><strong>Accordéon Pistes audio</strong> : association de fichiers audio d'accompagnement (MP3, WAV, etc.), pré-écoute et réglage du volume.</p>
 </li>
 <li>
-<p><strong>Informations techniques</strong> : chemin d'accès, taille, date de modification, date d'ajout et information si des annotations ont été faites sur cette partition.
-  A noter la présence d'un bouton pour réassigner le fichier en cas de déplacement.
-  En cas de modifications, n'oubliez pas de cliquer sur le bouton 'Enregistrer' pour sauvegarder vos modifications.</p>
+<p>Accordéon des Options d'annotations :
+  si on veut afficher les annotations ou non par défaut pour cette partition
+  si on veut afficher les numéros de page pour cette partition
+  si on veut afficher le bouton de boîte à outils en haut à drotie de la partition</p>
 </li>
+</ul>
+<p>NE PAS OUBLIER D'ENREGISTRER VOS MODIFICATIONS !</p>
+<ol>
 <li><strong>📋 Ajouter dans un Setlist</strong> :</li>
 <li>Permet d'insérer instantanément la partition dans la setlist de votre choix.</li>
 <li><strong>Placement prioritaire en 1ère position</strong> (décalant les autres morceaux vers le bas).</li>
 <li>Gestion des setlists verrouillées.</li>
-</ul>
-<blockquote>
-<ol>
-<li><strong>📑 Modifier l'assemblage PDF</strong> :</li>
-</ol>
-</blockquote>
-<ul>
+<li>
+<p><strong>Changer de dossier / catégorie</strong>
+   Permet d'assigner la partition à un dossier/catégorie pour mieux le classer.</p>
+</li>
+<li>
+<p><strong>📑 Atelier d'assemblage PDF</strong> :</p>
+</li>
 <li>Ouvre la partition directement dans l'<strong>Atelier d'Assemblage PDF</strong> pour réorganiser les pages, insérer une page blanche, supprimer des pages inutiles ou effectuer des rotations. Très pratique quand votre fichier pdf est mal organisé.
   Vous pouvez retrouver cet outil directement dans le menu "Outils" aussi.
   =&gt; Le détail des modifications d'assemblage est disponible plus en détail dans la partie "Outils"</li>
-</ul>
-<blockquote>
-<p>5.<strong>📡 Envoyer en Wi-Fi Direct</strong> :</p>
-</blockquote>
-<ul>
+<li><strong>Envoyer en Wi-Fi Direct</strong></li>
 <li>Ouvre une boîte modale d'options de partage vous permettant de cocher/décocher :</li>
 <li>☑️ <em>Inclure les annotations manuscrites</em> dessinées sur le document.</li>
 <li>☑️ <em>Inclure les pistes audio rattachées</em> (MP3/WAV).</li>
@@ -1234,7 +1249,7 @@ Si le fichier PDF associé a été déplacé, renommé sur le stockage ou est in
 <li>Boîte de dialogue rapide pour changer le titre affiché sans entrer dans l'édition complète.</li>
 <li><strong>🗑️ Supprimer la partition</strong> :</li>
 <li>Supprime la partition de votre bibliothèque avec demande de confirmation sécurisée.</li>
-</ul>
+</ol>
 
 
 
