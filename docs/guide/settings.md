@@ -8,6 +8,7 @@ Le menu **Paramètres**  vous permet d'adapter précisément Music Score Manager
 
 La page configure le comportement global de votre bibliothèque de partitions :
 
+
 GENERAL
 
 - **Tri par défaut à l'ouverture** :
@@ -70,13 +71,29 @@ ERGONOMIE
 
 Cette page configure les paramètres des setlist lors de concerts.
 
+
 ORGANISATION
 
+- **Tri par défaut des setlists**
+  
+  - Lors de l'ouverture des setlists, c'est le tri par défaut qui est appliqué à l'affichage
+- **Placer les setlsits terminées en bas**
+  - Permet de mieux se repérer dans les setlists actifs.
+
+
+
+COMPORTEMENT PAR DEFAUT
+
 - **Lecture en continu par défaut (Switch On/Off)** :
+  
   - Définit si toute nouvelle setlist créée doit automatiquement enchaîner sur le morceau suivant lorsqu'on tourne la dernière page d'un morceau.
+
 - **Retour à la setlist en fin de partition** :
+  
   - Si la lecture en continu est désactivée, tourner la page sur la dernière page du morceau quitte le visualiseur pour vous ramener automatiquement à la liste de la setlist.
+
 - **Afficher le déroulement de la setlist (Switch On/Off)** :
+  
   - Active ou désactive le déclenchement du volet de suivi de programme au toucher tout en haut au centre de l'écran (activé par défaut).
 
 ---
@@ -89,8 +106,9 @@ La page est divisée en deux chapitres clairs :
   
   - Champ de saisie pour créer vos stickers personnalisés avec texte libre (ex : *Vibrato*, *Attention*, *Solo*, *Respirer*,*Intro Hélène*...).
   - Liste de vos favoris avec suppression unitaire `✕`.
+  - Pensez à cocher la cétagorie "Favoris" (Cf Sélection des catégories de stickers)
 
-- **Chapitre 2 : Sélection des catégories de stickers actives** :
+- **Chapitre 2 : Sélection des catégories de stickers ** :
   
   - Cochez ou décochez les catégories de stickers que vous souhaitez voir apparaître dans le tiroir d'annotations (*Favoris, Doigtés, Nuances, Articulations, Répétitions, Notes, Silences, Altérations, Symboles*).
 
