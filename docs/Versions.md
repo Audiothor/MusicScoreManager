@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.0 — 03/11/2026](#v320--03112026)
 - [v3.1.13 — 02/11/2026](#v3113--02112026)
 - [v3.1.12 — 02/11/2026](#v3112--02112026)
 - [v3.1.11 — 01/11/2026](#v3111--01112026)
@@ -47,6 +48,34 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.2.0 — 03/11/2026
+
+### 1. Gestion des Étiquettes en Sélection Multiple (Ajout & Retrait Dédiés)
+- **1.1. Sélecteur de mode ergonomique dans l'overlay d'étiquetage en masse (`BulkTagsOverlay`) :**
+  - Ajout des modes **[➕ Ajouter]** et **[➖ Retirer]** avec bascule dynamique d'interface, de styles et d'actions.
+  - Mode **Retirer** : filtrage intelligent n'affichant que les étiquettes actuellement portées par au moins une partition de la sélection, avec compteur dynamique en temps réel (`Nom (n)`).
+  - Suppression ciblée en base de données (`RemoveTagFromScoreAsync`) pour toutes les partitions sélectionnées.
+  - Messages clairs et localisés dans les 8 langues prises en charge.
+
+### 2. Précision du Rendu des Annotations Texte (`ViewerPage`)
+- **2.1. Respect strict de la transparence :**
+  - Correction de l'arrière-plan des annotations texte : application fidèle de `Colors.Transparent` lorsqu'aucun fond n'est sélectionné.
+  - Contour de manipulation en pointillés discrets (`StrokeDashArray = { 3, 2 }`) lors de l'édition d'une boîte de texte sans bordure, disparaissant immédiatement à la validation.
+  - Synchronisation instantanée des pastilles d'options (couleur du texte, fond, bordure) lors de la sélection d'un texte existant.
+
+### 3. Normalisation Définitive des Catégories & Dossier Permanent `Default`
+- Élimination définitive de toute référence à la catégorie historique « Général » au profit exclusif du répertoire permanent `Default`.
+- Migration et alignement automatique des partitions et répertoires physiques au démarrage.
+
+### 4. Environnement de Développement & Qualité de Compilation
+- **4.1. Priorisation du framework Windows dans `MusicScoreManager.csproj` :**
+  - Placement de `net10.0-windows10.0.19041.0` en première position sous Windows pour éliminer la désynchronisation de l'analyseur IDE et les faux positifs MAUI.
+- **4.2. Configuration `.editorconfig` :**
+  - Déploiement du fichier racine `.editorconfig` pour filtrer les suggestions de style purement cosmétiques (IDE0028, IDE0300, etc.) dans l'onglet Problèmes de l'éditeur.
+- **4.3. Bilan de compilation :** **0 Erreur, 0 Avertissement, 0 Alerte** sur toutes les plateformes.
 
 ---
 
