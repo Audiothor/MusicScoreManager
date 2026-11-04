@@ -59,23 +59,18 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## v3.2.6 — 04/11/2026
 
-### 1. Performance & Réactivité : Ouverture Instantanée des Partitions
-- **1.1. Suppression totale de la compression JPEG redondante sur Android (`PdfService.cs`) :**
-  - Dans les méthodes de rendu de pages simples et doubles (`RenderPdfPageAsync` et `RenderPdfTwoPagesAsync`), suppression de l'appel bloquant `Compress(Bitmap.CompressFormat.Jpeg, 78, ms)`.
-  - Le `Bitmap` unitaire ou combiné issu de `PdfRenderer` est transmis directement à l'ImageView native via `NativeBitmap`, économisant entre 1,2 et 1,8 seconde de calcul CPU sur processeurs mobiles ARM.
-- **1.2. Suppression du gel du thread UI au lancement (`ScoresPage`, `SetlistsPage`, `SetlistEditPage`) :**
-  - Suppression de l'appel anticipé `Shell.SetTabBarIsVisible(this, false)` et de l'attente `Task.Delay(25)` sur les pages parentes avant la navigation.
-  - Évite le recalcul complet de disposition et de mesure de la `CollectionView` avant l'empilement du `ViewerPage`, éliminant le gel d'interface ressenti par l'utilisateur.
-- **1.3. Élimination de la contention de descripteur de fichier dans `PreloadFirstPageAsync` :**
-  - Suppression de l'appel concurrent `GetPdfPageCountAsync(pdfPath)` lors du préchargement. Le nombre total de pages étant déjà extrait et mis en cache par `renderer.PageCount` pendant le rendu, l'ouverture concurrente d'un second `ParcelFileDescriptor` / `PdfRenderer` est évitée.
-- **1.4. Élimination définitive du double rendu et du réaffichage parasite du message :**
-  - Correction de l'évaluation initiale du mode deux pages (`tryTwoPages`) en paysage : ne se fie plus à `_score.PageCount == 1` non initialisé, éliminant le faux départ en mode simple page qui déclenchait un second rendu consécutif et faisait réapparaître l'overlay.
-  - Verrouillage strict de `OnSizeAllocated` pendant l'ouverture initiale (`_isInitialOpenCompleted`), interdisant tout réaffichage intempestif de la boîte modale de chargement.
-- **1.5. Affichage direct sans latence dans `ImageView` :**
-  - Injection directe du bitmap en mémoire via `nativeImageView.SetImageBitmap(...)` dès la fin du rendu natif, garantissant que la partition est physiquement peinte à l'écran.
-- **1.6. Apparition unique et fermeture instantanée au moment exact de l'affichage :**
-  - La boîte modale (« Ouverture de la partition... » / « Ouverture de la setlist... ») apparaît une seule et unique fois dès le tap de l'utilisateur sur la liste.
-  - Disparition immédiate et synchronisée de l'overlay au moment exact où la partition est prête, sans clignotement, sans disparition prématurée et sans double apparition.
+### 1. Performance, Stabilité & Réactivité : Ouverture Instantanée des Partitions
+- **1.1. Élimination définitive des crashs après ouvertures successives (`PdfService.cs`) :**
+  - Suppression totale des appels manuels à `.Recycle()` sur les `NativeBitmap` en cache et lors de l'éviction LRU / nettoyage de session.
+  - Évite les erreurs critiques `Cannot draw a recycled bitmap` et SIGSEGV lorsque des bitmaps recyclés étaient encore référencés par la vue active ou le compositeur graphique.
+- **1.2. Synchronisation visuelle parfaite de la boîte de chargement :**
+  - **Message unique et sans clignotement** : L'overlay de chargement est désormais géré exclusivement par le `ViewerPage` dès son instanciation, éliminant la double boîte (apparition/disparition sur la page appelante puis réapparition sur le lecteur).
+  - **Fermeture synchronisée au rendu physique réel** : L'overlay ne se masque que lorsque le compositeur graphique Android a physiquement terminé la passe de dessin à l'écran (`nativeImageView.Post`), supprimant totalement l'écran vide et le délai de 3 secondes ressenti entre la fermeture de la boîte et l'affichage de la partition.
+- **1.3. Pipeline d'affichage optimisé et double canal Image/NativeBitmap :**
+  - Alimentation directe du composant `ImageView` natif (`SetImageBitmap`) combinée à la mise à jour MAUI (`ScoreImage.Source`), garantissant un dimensionnement exact et un affichage immédiat à pleine résolution.
+- **1.4. Suppression de la contention et des doubles rendus superflus :**
+  - Préchargement asynchrone non bloquant de la première page dès le clic.
+  - Neutralisation des recalculs concurrents dans `OnSizeAllocated` pendant l'ouverture initiale.
 
 ---
 

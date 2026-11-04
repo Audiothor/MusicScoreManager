@@ -1478,31 +1478,10 @@ public partial class ScoresPage : ContentPage
                 _ = _pdfService.PreloadFirstPageAsync(fullPath, selectedScore.Rotation);
             }
 
-            double topY = -1;
-            if (ScoreLoadingOverlay != null && ScoreLoadingBorder != null)
-            {
-                if (this.Height > 150)
-                {
-                    topY = Math.Max(0, (this.Height - 120.0) / 2.0);
-                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Start;
-                    ScoreLoadingBorder.Margin = new Thickness(0, topY, 0, 0);
-                }
-                else
-                {
-                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Center;
-                    ScoreLoadingBorder.Margin = new Thickness(0);
-                }
-
-                ScoreLoadingOverlay.Opacity = 1;
-                ScoreLoadingOverlay.IsVisible = true;
-                await Task.Delay(50);
-            }
-            await Navigation.PushAsync(new ViewerPage(selectedScore, initialLoadingTopY: topY, isSetlistOpening: false), false);
-            if (ScoreLoadingOverlay != null) ScoreLoadingOverlay.IsVisible = false;
+            await Navigation.PushAsync(new ViewerPage(selectedScore, isSetlistOpening: false), false);
         }
         catch (Exception ex)
         {
-            if (ScoreLoadingOverlay != null) ScoreLoadingOverlay.IsVisible = false;
             System.Diagnostics.Debug.WriteLine($"[ScoresPage] Erreur ouverture partition : {ex.Message}");
         }
         finally

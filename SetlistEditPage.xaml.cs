@@ -250,23 +250,6 @@ public partial class SetlistEditPage : ContentPage
             _isOpeningScore = true;
             try
             {
-                double topY = -1;
-                if (this.Height > 150)
-                {
-                    topY = Math.Max(0, (this.Height - 120.0) / 2.0);
-                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Start;
-                    ScoreLoadingBorder.Margin = new Thickness(0, topY, 0, 0);
-                }
-                else
-                {
-                    ScoreLoadingBorder.VerticalOptions = LayoutOptions.Center;
-                    ScoreLoadingBorder.Margin = new Thickness(0);
-                }
-
-                ScoreLoadingOverlay.Opacity = 1;
-                ScoreLoadingOverlay.IsVisible = true;
-                await Task.Delay(50);
-
                 var allScores = _orderedScores.Select(os => os.Score).ToList();
                 int index = _orderedScores.IndexOf(orderedScore);
                 
@@ -285,13 +268,10 @@ public partial class SetlistEditPage : ContentPage
                     index, 
                     ContinuousSwitch.IsToggled,
                     _setlist,
-                    initialLoadingTopY: topY,
                     isSetlistOpening: false), false);
-                if (ScoreLoadingOverlay != null) ScoreLoadingOverlay.IsVisible = false;
             }
             catch (Exception ex)
             {
-                ScoreLoadingOverlay.IsVisible = false;
                 System.Diagnostics.Debug.WriteLine($"[SetlistEditPage] Erreur ouverture partition: {ex.Message}");
             }
             finally

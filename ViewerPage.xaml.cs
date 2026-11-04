@@ -711,6 +711,20 @@ public partial class ViewerPage : ContentPage
                     _maxPages = 1;
                     UpdatePageIndicator();
                     _isScoreReady = true;
+#if ANDROID
+                    if (ScoreImage.Handler?.PlatformView is Android.Widget.ImageView iv)
+                    {
+                        var tcs = new TaskCompletionSource<bool>();
+                        iv.Post(() => tcs.TrySetResult(true));
+                        await Task.WhenAny(tcs.Task, Task.Delay(80));
+                    }
+                    else
+                    {
+                        await Task.Delay(40);
+                    }
+#else
+                    await Task.Delay(40);
+#endif
                     HideViewerLoadingOverlay();
                     RenderAnnotations();
                     if (_score.ShowMetronome || _score.HasMetronomeSound) StartMetronome();
@@ -981,30 +995,15 @@ public partial class ViewerPage : ContentPage
 
                 if (nativeImageView != null && rendered.NativeBitmap != null && !rendered.NativeBitmap.IsRecycled)
                 {
+                    nativeImageView.SetScaleType(Android.Widget.ImageView.ScaleType.FitCenter);
                     nativeImageView.SetImageBitmap(rendered.NativeBitmap);
+                    nativeImageView.Invalidate();
                 }
-                else if (rendered.NativeBitmap != null && !rendered.NativeBitmap.IsRecycled)
-                {
-                    void OnLoaded(object? s, EventArgs e)
-                    {
-                        ScoreImage.Loaded -= OnLoaded;
-                        if (ScoreImage.Handler?.PlatformView is Android.Widget.ImageView iv && rendered.NativeBitmap != null && !rendered.NativeBitmap.IsRecycled)
-                        {
-                            iv.SetImageBitmap(rendered.NativeBitmap);
-                        }
-                    }
-                    ScoreImage.Loaded += OnLoaded;
-                }
-                else if (rendered.ImageBytes.Length > 0)
-                {
-                    ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(rendered.ImageBytes));
-                }
-#else
+#endif
                 if (rendered.ImageBytes.Length > 0)
                 {
                     ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(rendered.ImageBytes));
                 }
-#endif
 
                 double finalW = (ActiveAnnotationsContainer?.Width > 0) ? ActiveAnnotationsContainer.Width : (this.Width > 0 ? this.Width : containerW);
                 double finalH = (ActiveAnnotationsContainer?.Height > 0) ? ActiveAnnotationsContainer.Height : (this.Height > 0 ? this.Height : containerH);
@@ -1012,6 +1011,22 @@ public partial class ViewerPage : ContentPage
                 UpdateCanvasBounds(finalW, finalH, rendered.Width, rendered.Height);
 
                 _isScoreReady = true;
+
+#if ANDROID
+                if (nativeImageView != null)
+                {
+                    var tcs = new TaskCompletionSource<bool>();
+                    nativeImageView.Post(() => tcs.TrySetResult(true));
+                    await Task.WhenAny(tcs.Task, Task.Delay(80));
+                }
+                else
+                {
+                    await Task.Delay(40);
+                }
+#else
+                await Task.Delay(40);
+#endif
+
                 HideViewerLoadingOverlay();
                 UpdatePageIndicator();
                 RenderAnnotations();
