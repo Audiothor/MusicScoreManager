@@ -871,6 +871,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v326-04112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.2.6 — 04/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.2.6 — 04/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-performance-reactivite-ouverture-instantanee-des-partitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Performance &amp; Réactivité : Ouverture Instantanée des Partitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v325-03112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3756,6 +3784,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v326-04112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.2.6 — 04/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.2.6 — 04/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-performance-reactivite-ouverture-instantanee-des-partitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Performance &amp; Réactivité : Ouverture Instantanée des Partitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v325-03112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6620,6 +6676,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v326--04112026">v3.2.6 — 04/11/2026</a></li>
 <li><a href="#v325--03112026">v3.2.5 — 03/11/2026</a></li>
 <li><a href="#v324--03112026">v3.2.4 — 03/11/2026</a></li>
 <li><a href="#v323--03112026">v3.2.3 — 03/11/2026</a></li>
@@ -6667,6 +6724,24 @@
 <li><a href="#v252--07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251--07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250--07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v326-04112026">v3.2.6 — 04/11/2026</h2>
+<h3 id="1-performance-reactivite-ouverture-instantanee-des-partitions">1. Performance &amp; Réactivité : Ouverture Instantanée des Partitions</h3>
+<ul>
+<li><strong>1.1. Suppression totale de la compression JPEG redondante sur Android (<code>PdfService.cs</code>) :</strong></li>
+<li>Dans les méthodes de rendu de pages simples et doubles (<code>RenderPdfPageAsync</code> et <code>RenderPdfTwoPagesAsync</code>), suppression de l'appel bloquant <code>Compress(Bitmap.CompressFormat.Jpeg, 78, ms)</code>.</li>
+<li>Le <code>Bitmap</code> unitaire ou combiné issu de <code>PdfRenderer</code> est transmis directement à l'ImageView native via <code>NativeBitmap</code>, économisant entre 1,2 et 1,8 seconde de calcul CPU sur processeurs mobiles ARM.</li>
+<li><strong>1.2. Suppression du gel du thread UI au lancement (<code>ScoresPage</code>, <code>SetlistsPage</code>, <code>SetlistEditPage</code>) :</strong></li>
+<li>Suppression de l'appel anticipé <code>Shell.SetTabBarIsVisible(this, false)</code> et de l'attente <code>Task.Delay(25)</code> sur les pages parentes avant la navigation.</li>
+<li>Évite le recalcul complet de disposition et de mesure de la <code>CollectionView</code> avant l'empilement du <code>ViewerPage</code>, éliminant le gel d'interface ressenti par l'utilisateur.</li>
+<li><strong>1.3. Élimination de la contention de descripteur de fichier dans <code>PreloadFirstPageAsync</code> :</strong></li>
+<li>Suppression de l'appel concurrent <code>GetPdfPageCountAsync(pdfPath)</code> lors du préchargement. Le nombre total de pages étant déjà extrait et mis en cache par <code>renderer.PageCount</code> pendant le rendu, l'ouverture concurrente d'un second <code>ParcelFileDescriptor</code> / <code>PdfRenderer</code> est évitée.</li>
+<li><strong>1.4. Initialisation préventive de <code>_maxPages</code> et suppression des doubles rendus dans <code>ViewerPage</code> :</strong></li>
+<li>Initialisation de <code>_maxPages</code> dès le constructeur du <code>ViewerPage</code> à partir du cache ou des métadonnées de la partition, évitant que l'évaluation du mode double page ne s'exécute en mode simple page par défaut pour se relancer aussitôt après.</li>
+<li>Décalage de l'initialisation des annotations, signets, métronome et requêtes SQLite audio à 300 ms en tâche de fond, allouant 100% de la puissance processeur et des accès disques au rendu de la première page.</li>
+<li><strong>1.5. Affichage direct sans latence dans <code>ImageView</code> :</strong></li>
+<li>Si le handler natif Android n'est pas encore instancié au premier cycle, attente active très brève sur le thread principal pour injecter le bitmap directement via <code>SetImageBitmap</code>, garantissant que la partition est immédiatement peinte à l'écran dès la fermeture de la boîte modale de chargement.</li>
 </ul>
 <hr />
 <h2 id="v325-03112026">v3.2.5 — 03/11/2026</h2>
