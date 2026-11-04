@@ -6742,6 +6742,9 @@
 <li>Décalage de l'initialisation des annotations, signets, métronome et requêtes SQLite audio à 300 ms en tâche de fond, allouant 100% de la puissance processeur et des accès disques au rendu de la première page.</li>
 <li><strong>1.5. Affichage direct sans latence dans <code>ImageView</code> :</strong></li>
 <li>Si le handler natif Android n'est pas encore instancié au premier cycle, attente active très brève sur le thread principal pour injecter le bitmap directement via <code>SetImageBitmap</code>, garantissant que la partition est immédiatement peinte à l'écran dès la fermeture de la boîte modale de chargement.</li>
+<li><strong>1.6. Maintien et fluidité de la boîte de message d'ouverture :</strong></li>
+<li>Préservation de l'affichage instantané de la boîte de chargement (« Ouverture de la partition... » / « Ouverture de la setlist... ») dès le tap utilisateur sur la liste, avec transition fluide vers le Viewer.</li>
+<li>Temporisation visuelle calibrée (350 ms) et disparition en fondu doux (<code>FadeTo</code>), assurant un retour visuel clair et rassurant sans aucun temps mort ni écran blanc avant l'affichage du document.</li>
 </ul>
 <hr />
 <h2 id="v325-03112026">v3.2.5 — 03/11/2026</h2>
