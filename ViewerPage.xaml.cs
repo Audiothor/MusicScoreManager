@@ -25,6 +25,7 @@ public partial class ViewerPage : ContentPage
     private int _currentRotation = 0;
     private Dictionary<int, int> _pageRotations = new();
     private DateTime _lastLoadingOverlayShowTime = DateTime.UtcNow;
+    private bool _isInitialOpenCompleted = false;
 
     private Thread? _metronomeThread;
     private volatile bool _isMetronomeRunning = false;
@@ -198,30 +199,19 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private async void HideViewerLoadingOverlay()
+    private void HideViewerLoadingOverlay()
     {
-        if (ViewerLoadingOverlay == null || !ViewerLoadingOverlay.IsVisible) return;
-
-        try
+        if (ViewerLoadingOverlay != null && ViewerLoadingOverlay.IsVisible)
         {
-            var elapsedMs = (DateTime.UtcNow - _lastLoadingOverlayShowTime).TotalMilliseconds;
-            if (elapsedMs < 350)
-            {
-                await Task.Delay((int)(350 - elapsedMs));
-            }
-
-            await ViewerLoadingOverlay.FadeTo(0, 150);
+            ViewerLoadingOverlay.Opacity = 0;
             ViewerLoadingOverlay.IsVisible = false;
             if (ViewerLoadingText != null)
             {
                 ViewerLoadingText.Text = LocalizationService.Instance.GetString("Score_Loading_Opening", "Ouverture de la partition...");
             }
         }
-        catch
-        {
-            ViewerLoadingOverlay.Opacity = 0;
-            ViewerLoadingOverlay.IsVisible = false;
-        }
+
+        _isInitialOpenCompleted = true;
 
         try
         {
@@ -892,7 +882,8 @@ public partial class ViewerPage : ContentPage
 
             bool twoPagesPref = Preferences.Default.Get("TwoPagesLandscape", true);
             bool isLandscape = (containerW > containerH);
-            bool tryTwoPages = twoPagesPref && isLandscape && (_score.PageCount <= 0 || _maxPages > 1);
+            int cachedPageCount = _pdfService.GetCachedPageCount(fullPath);
+            bool tryTwoPages = twoPagesPref && isLandscape && (cachedPageCount != 1);
 
             RenderedPdfPage? rendered = null;
 
@@ -3090,6 +3081,17 @@ public partial class ViewerPage : ContentPage
 
             if (_score?.Type == ScoreType.PDF && PdfService.IsNativePdfSupported)
             {
+                if (!_isInitialOpenCompleted)
+                {
+                    // Lors de l'ouverture initiale de la page, le rendu est déjà pris en charge par LoadContentAsync.
+                    // Ne jamais déclencher de second rendu concurrent ni réafficher l'overlay ici.
+                    if (_currentRenderedWidth > 0 && _currentRenderedHeight > 0)
+                    {
+                        UpdateCanvasBounds(width, height, _currentRenderedWidth, _currentRenderedHeight);
+                    }
+                    return;
+                }
+
                 bool isLandscape = width > height;
                 bool twoPagesPref = Preferences.Default.Get("TwoPagesLandscape", true);
                 bool shouldBeTwoPages = twoPagesPref && isLandscape && _maxPages > 1;
@@ -3103,12 +3105,6 @@ public partial class ViewerPage : ContentPage
                     }
 
                     _isTwoPagesMode = shouldBeTwoPages;
-                    if (ViewerLoadingOverlay != null)
-                    {
-                        _lastLoadingOverlayShowTime = DateTime.UtcNow;
-                        ViewerLoadingOverlay.Opacity = 1;
-                        ViewerLoadingOverlay.IsVisible = true;
-                    }
                     _ = RenderPdfCurrentAsync(_currentPage);
                     return;
                 }
