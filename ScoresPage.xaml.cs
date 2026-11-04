@@ -1498,6 +1498,7 @@ public partial class ScoresPage : ContentPage
                 await Task.Delay(25);
             }
             await Navigation.PushAsync(new ViewerPage(selectedScore, initialLoadingTopY: topY, isSetlistOpening: false), false);
+            if (ScoreLoadingOverlay != null) ScoreLoadingOverlay.IsVisible = false;
         }
         catch (Exception ex)
         {
