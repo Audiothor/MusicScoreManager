@@ -68,14 +68,14 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
   - Évite le recalcul complet de disposition et de mesure de la `CollectionView` avant l'empilement du `ViewerPage`, éliminant le gel d'interface ressenti par l'utilisateur.
 - **1.3. Élimination de la contention de descripteur de fichier dans `PreloadFirstPageAsync` :**
   - Suppression de l'appel concurrent `GetPdfPageCountAsync(pdfPath)` lors du préchargement. Le nombre total de pages étant déjà extrait et mis en cache par `renderer.PageCount` pendant le rendu, l'ouverture concurrente d'un second `ParcelFileDescriptor` / `PdfRenderer` est évitée.
-- **1.4. Initialisation préventive de `_maxPages` et suppression des doubles rendus dans `ViewerPage` :**
-  - Initialisation de `_maxPages` dès le constructeur du `ViewerPage` à partir du cache ou des métadonnées de la partition, évitant que l'évaluation du mode double page ne s'exécute en mode simple page par défaut pour se relancer aussitôt après.
-  - Décalage de l'initialisation des annotations, signets, métronome et requêtes SQLite audio à 300 ms en tâche de fond, allouant 100% de la puissance processeur et des accès disques au rendu de la première page.
+- **1.4. Élimination définitive du double rendu et du réaffichage parasite du message :**
+  - Correction de l'évaluation initiale du mode deux pages (`tryTwoPages`) en paysage : ne se fie plus à `_score.PageCount == 1` non initialisé, éliminant le faux départ en mode simple page qui déclenchait un second rendu consécutif et faisait réapparaître l'overlay.
+  - Verrouillage strict de `OnSizeAllocated` pendant l'ouverture initiale (`_isInitialOpenCompleted`), interdisant tout réaffichage intempestif de la boîte modale de chargement.
 - **1.5. Affichage direct sans latence dans `ImageView` :**
-  - Si le handler natif Android n'est pas encore instancié au premier cycle, attente active très brève sur le thread principal pour injecter le bitmap directement via `SetImageBitmap`, garantissant que la partition est immédiatement peinte à l'écran dès la fermeture de la boîte modale de chargement.
-- **1.6. Maintien et fluidité de la boîte de message d'ouverture :**
-  - Préservation de l'affichage instantané de la boîte de chargement (« Ouverture de la partition... » / « Ouverture de la setlist... ») dès le tap utilisateur sur la liste, avec transition fluide vers le Viewer.
-  - Temporisation visuelle calibrée (350 ms) et disparition en fondu doux (`FadeTo`), assurant un retour visuel clair et rassurant sans aucun temps mort ni écran blanc avant l'affichage du document.
+  - Injection directe du bitmap en mémoire via `nativeImageView.SetImageBitmap(...)` dès la fin du rendu natif, garantissant que la partition est physiquement peinte à l'écran.
+- **1.6. Apparition unique et fermeture instantanée au moment exact de l'affichage :**
+  - La boîte modale (« Ouverture de la partition... » / « Ouverture de la setlist... ») apparaît une seule et unique fois dès le tap de l'utilisateur sur la liste.
+  - Disparition immédiate et synchronisée de l'overlay au moment exact où la partition est prête, sans clignotement, sans disparition prématurée et sans double apparition.
 
 ---
 
