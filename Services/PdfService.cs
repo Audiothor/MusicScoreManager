@@ -105,6 +105,9 @@ namespace MusicScoreManager.Services
     public class RenderedPdfPage
     {
         public byte[] ImageBytes { get; set; } = Array.Empty<byte>();
+#if ANDROID
+        public Android.Graphics.Bitmap? NativeBitmap { get; set; }
+#endif
         public int Width { get; set; }
         public int Height { get; set; }
         public int PageNumber { get; set; }
@@ -134,10 +137,33 @@ namespace MusicScoreManager.Services
         {
             lock (_cacheLock)
             {
+#if ANDROID
+                foreach (var p in _pageMemoryCache.Values)
+                {
+                    if (p.NativeBitmap != null && !p.NativeBitmap.IsRecycled)
+                    {
+                        p.NativeBitmap.Recycle();
+                        p.NativeBitmap = null;
+                    }
+                }
+#endif
                 _pageMemoryCache.Clear();
                 _pageCountCache.Clear();
                 _inFlightTasks.Clear();
             }
+        }
+
+        public int GetCachedPageCount(string pdfPath)
+        {
+            if (string.IsNullOrWhiteSpace(pdfPath)) return 0;
+            lock (_cacheLock)
+            {
+                if (_pageCountCache.TryGetValue(pdfPath, out int count))
+                {
+                    return count;
+                }
+            }
+            return 0;
         }
 
         public async Task<int> GetPdfPageCountAsync(string pdfPath)
@@ -224,8 +250,8 @@ namespace MusicScoreManager.Services
                 bool isLandscape = false;
                 try
                 {
-                    var orientation = DeviceDisplay.MainDisplayInfo.Orientation;
-                    isLandscape = (orientation == DisplayOrientation.Landscape);
+                    var display = DeviceDisplay.MainDisplayInfo;
+                    isLandscape = (display.Width > display.Height);
                 }
                 catch { }
 
@@ -296,19 +322,18 @@ namespace MusicScoreManager.Services
                     int renderW = Math.Max(1, (int)(page.Width * effectiveScale));
                     int renderH = Math.Max(1, (int)(page.Height * effectiveScale));
 
-                    using var rawBmp = Bitmap.CreateBitmap(renderW, renderH, Bitmap.Config.Argb8888!);
+                    var rawBmp = Bitmap.CreateBitmap(renderW, renderH, Bitmap.Config.Argb8888!);
                     rawBmp.EraseColor(Android.Graphics.Color.White);
                     page.Render(rawBmp, null, null, PdfRenderMode.ForDisplay);
 
                     Bitmap finalBmp = rawBmp;
-                    bool recycled = false;
                     int normRot = (rotation % 360 + 360) % 360;
                     if (normRot != 0)
                     {
                         using var mat = new Android.Graphics.Matrix();
                         mat.PostRotate(normRot);
                         finalBmp = Bitmap.CreateBitmap(rawBmp, 0, 0, rawBmp.Width, rawBmp.Height, mat, true);
-                        recycled = true;
+                        rawBmp.Recycle();
                     }
 
                     using var ms = new MemoryStream();
@@ -316,11 +341,10 @@ namespace MusicScoreManager.Services
                     int fw = finalBmp.Width;
                     int fh = finalBmp.Height;
 
-                    if (recycled) finalBmp.Recycle();
-
                     return new RenderedPdfPage
                     {
                         ImageBytes = ms.ToArray(),
+                        NativeBitmap = finalBmp,
                         Width = fw,
                         Height = fh,
                         PageNumber = pageIndex + 1,
@@ -470,7 +494,17 @@ namespace MusicScoreManager.Services
                     if (_pageMemoryCache.Count >= MaxMemoryCacheEntries)
                     {
                         var firstKey = _pageMemoryCache.Keys.FirstOrDefault();
-                        if (firstKey != null) _pageMemoryCache.Remove(firstKey);
+                        if (firstKey != null)
+                        {
+#if ANDROID
+                            if (_pageMemoryCache.TryGetValue(firstKey, out var oldPage) && oldPage.NativeBitmap != null && !oldPage.NativeBitmap.IsRecycled)
+                            {
+                                oldPage.NativeBitmap.Recycle();
+                                oldPage.NativeBitmap = null;
+                            }
+#endif
+                            _pageMemoryCache.Remove(firstKey);
+                        }
                     }
                     _pageMemoryCache[cacheKey] = rendered;
                 }
@@ -588,7 +622,7 @@ namespace MusicScoreManager.Services
                     int totalW = lBmp.Width + (rBmp != null ? rBmp.Width : lBmp.Width);
                     int maxH = Math.Max(lBmp.Height, rBmp != null ? rBmp.Height : lBmp.Height);
 
-                    using var combined = Bitmap.CreateBitmap(totalW, maxH, Bitmap.Config.Argb8888!);
+                    var combined = Bitmap.CreateBitmap(totalW, maxH, Bitmap.Config.Argb8888!);
                     combined.EraseColor(Android.Graphics.Color.White);
 
                     using (var cv = new Android.Graphics.Canvas(combined))
@@ -611,6 +645,7 @@ namespace MusicScoreManager.Services
                     return new RenderedPdfPage
                     {
                         ImageBytes = ms.ToArray(),
+                        NativeBitmap = combined,
                         Width = totalW,
                         Height = maxH,
                         PageNumber = leftIdx + 1,
@@ -716,7 +751,17 @@ namespace MusicScoreManager.Services
                     if (_pageMemoryCache.Count >= MaxMemoryCacheEntries)
                     {
                         var firstKey = _pageMemoryCache.Keys.FirstOrDefault();
-                        if (firstKey != null) _pageMemoryCache.Remove(firstKey);
+                        if (firstKey != null)
+                        {
+#if ANDROID
+                            if (_pageMemoryCache.TryGetValue(firstKey, out var oldPage) && oldPage.NativeBitmap != null && !oldPage.NativeBitmap.IsRecycled)
+                            {
+                                oldPage.NativeBitmap.Recycle();
+                                oldPage.NativeBitmap = null;
+                            }
+#endif
+                            _pageMemoryCache.Remove(firstKey);
+                        }
                     }
                     _pageMemoryCache[cacheKey] = rendered;
                 }

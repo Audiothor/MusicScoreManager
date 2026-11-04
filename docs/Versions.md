@@ -72,6 +72,10 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - **1.3. Élimination du décalage visuel du message d'ouverture :**
   - Temporisation intelligente de l'activation du mode immersif : le masquage des barres système Android est synchronisé avec le retrait de l'overlay de chargement (`HideViewerLoadingOverlay()`) dès que la partition est prête.
   - La boîte modale « Ouverture de la partition... » demeure ainsi rigoureusement immobile au pixel près, éliminant tout soubresaut ou saut visuel lors de la transition.
+- **1.4. Affichage PDF Instantané & Élimination du délai post-fermeture de la boîte :**
+  - **Pipeline direct NativeBitmap Android** : Passage direct du `Bitmap` natif généré par `PdfRenderer` à l'élément `ImageView` Android, éliminant le goulet d'étranglement de compression/décompression JPEG sur le CPU mobile.
+  - **Élimination des doubles rendus concurrents** : Neutralisation des rendus superflus dans `OnSizeAllocated` et harmonisation de la détection paysage (`Width > Height`) entre le préchargement et l'affichage.
+  - **Synchronisation visuelle parfaite** : La boîte de chargement ne disparaît que lorsque la partition PDF est déjà matérialisée et peinte à l'écran, supprimant tout écran vide ou attente résiduelle.
 
 ---
 

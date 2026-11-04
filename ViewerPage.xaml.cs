@@ -830,6 +830,16 @@ public partial class ViewerPage : ContentPage
             {
                 _maxPages = _score.PageCount;
             }
+            int cachedCount = _pdfService.GetCachedPageCount(fullPath);
+            if (cachedCount > 0)
+            {
+                _maxPages = cachedCount;
+                if (_score.PageCount != cachedCount)
+                {
+                    _score.PageCount = cachedCount;
+                    _ = _databaseService.SaveScoreAsync(_score);
+                }
+            }
 
             double containerW = this.Width > 0 ? this.Width : ImageContainer.Width;
             double containerH = this.Height > 0 ? this.Height : ImageContainer.Height;
@@ -923,13 +933,32 @@ public partial class ViewerPage : ContentPage
                 }
             }
 
-            if (rendered != null && rendered.ImageBytes.Length > 0)
+            if (rendered != null && (rendered.ImageBytes.Length > 0
+#if ANDROID
+                || (rendered.NativeBitmap != null && !rendered.NativeBitmap.IsRecycled)
+#endif
+            ))
             {
                 _currentRenderedWidth = rendered.Width;
                 _currentRenderedHeight = rendered.Height;
 
                 ScoreImage.Rotation = 0;
-                ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(rendered.ImageBytes));
+#if ANDROID
+                var nativeImageView = ScoreImage.Handler?.PlatformView as Android.Widget.ImageView;
+                if (nativeImageView != null && rendered.NativeBitmap != null && !rendered.NativeBitmap.IsRecycled)
+                {
+                    nativeImageView.SetImageBitmap(rendered.NativeBitmap);
+                }
+                else if (rendered.ImageBytes.Length > 0)
+                {
+                    ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(rendered.ImageBytes));
+                }
+#else
+                if (rendered.ImageBytes.Length > 0)
+                {
+                    ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(rendered.ImageBytes));
+                }
+#endif
 
                 double finalW = (ActiveAnnotationsContainer?.Width > 0) ? ActiveAnnotationsContainer.Width : (this.Width > 0 ? this.Width : containerW);
                 double finalH = (ActiveAnnotationsContainer?.Height > 0) ? ActiveAnnotationsContainer.Height : (this.Height > 0 ? this.Height : containerH);
@@ -966,7 +995,10 @@ public partial class ViewerPage : ContentPage
         }
         finally
         {
-            HideViewerLoadingOverlay();
+            if (!_isScoreReady)
+            {
+                HideViewerLoadingOverlay();
+            }
         }
     }
 
@@ -3009,7 +3041,18 @@ public partial class ViewerPage : ContentPage
 
                 if (shouldBeTwoPages != _isTwoPagesMode)
                 {
+                    if (!_isScoreReady)
+                    {
+                        // Le premier rendu est déjà en cours, ne pas lancer un second rendu concurrent
+                        return;
+                    }
+
                     _isTwoPagesMode = shouldBeTwoPages;
+                    if (ViewerLoadingOverlay != null)
+                    {
+                        ViewerLoadingOverlay.Opacity = 1;
+                        ViewerLoadingOverlay.IsVisible = true;
+                    }
                     _ = RenderPdfCurrentAsync(_currentPage);
                     return;
                 }
