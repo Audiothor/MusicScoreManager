@@ -267,27 +267,9 @@ public partial class SetlistsPage : ContentPage
 
         try
         {
-            double topY = -1;
-            if (this.Height > 150)
-            {
-                topY = Math.Max(0, (this.Height - 120.0) / 2.0);
-                SetlistLoadingBorder.VerticalOptions = LayoutOptions.Start;
-                SetlistLoadingBorder.Margin = new Thickness(0, topY, 0, 0);
-            }
-            else
-            {
-                SetlistLoadingBorder.VerticalOptions = LayoutOptions.Center;
-                SetlistLoadingBorder.Margin = new Thickness(0);
-            }
-
-            SetlistLoadingOverlay.Opacity = 1;
-            SetlistLoadingOverlay.IsVisible = true;
-            await Task.Delay(50);
-
             var scores = await _databaseService.GetScoresForSetlistAsync(setlist.Id);
             if (scores == null || !scores.Any())
             {
-                SetlistLoadingOverlay.IsVisible = false;
                 var loc = LocalizationService.Instance;
                 await DisplayAlertAsync(loc.GetString("Setlist_Empty"), string.Format(loc.GetString("Setlist_Edit_Empty"), setlist.Name), "OK");
                 return;
@@ -296,7 +278,6 @@ public partial class SetlistsPage : ContentPage
             var firstScore = scores[0];
             if (firstScore.IsFileMissing)
             {
-                SetlistLoadingOverlay.IsVisible = false;
                 var loc = LocalizationService.Instance;
                 await DisplayAlertAsync(loc.GetString("Score_Edit_MissingFile_Title"), loc.GetString("Score_Edit_Missing_Msg"), "OK");
                 return;
@@ -309,12 +290,10 @@ public partial class SetlistsPage : ContentPage
                 _ = _pdfService.PreloadFirstPageAsync(fullPath, firstScore.Rotation);
             }
 
-            await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading, setlist, initialLoadingTopY: topY, isSetlistOpening: true), false);
-            if (SetlistLoadingOverlay != null) SetlistLoadingOverlay.IsVisible = false;
+            await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading, setlist, isSetlistOpening: true), false);
         }
         catch (Exception ex)
         {
-            SetlistLoadingOverlay.IsVisible = false;
             System.Diagnostics.Debug.WriteLine($"[SetlistsPage] Erreur ouverture setlist : {ex.Message}");
         }
         finally

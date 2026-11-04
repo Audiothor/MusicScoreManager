@@ -137,16 +137,6 @@ namespace MusicScoreManager.Services
         {
             lock (_cacheLock)
             {
-#if ANDROID
-                foreach (var p in _pageMemoryCache.Values)
-                {
-                    if (p.NativeBitmap != null && !p.NativeBitmap.IsRecycled)
-                    {
-                        p.NativeBitmap.Recycle();
-                        p.NativeBitmap = null;
-                    }
-                }
-#endif
                 _pageMemoryCache.Clear();
                 _pageCountCache.Clear();
                 _inFlightTasks.Clear();
@@ -334,12 +324,14 @@ namespace MusicScoreManager.Services
                         rawBmp.Recycle();
                     }
 
+                    using var ms = new MemoryStream();
+                    finalBmp.Compress(Bitmap.CompressFormat.Jpeg!, 70, ms);
                     int fw = finalBmp.Width;
                     int fh = finalBmp.Height;
 
                     return new RenderedPdfPage
                     {
-                        ImageBytes = Array.Empty<byte>(),
+                        ImageBytes = ms.ToArray(),
                         NativeBitmap = finalBmp,
                         Width = fw,
                         Height = fh,
@@ -492,13 +484,6 @@ namespace MusicScoreManager.Services
                         var firstKey = _pageMemoryCache.Keys.FirstOrDefault();
                         if (firstKey != null)
                         {
-#if ANDROID
-                            if (_pageMemoryCache.TryGetValue(firstKey, out var oldPage) && oldPage.NativeBitmap != null && !oldPage.NativeBitmap.IsRecycled)
-                            {
-                                oldPage.NativeBitmap.Recycle();
-                                oldPage.NativeBitmap = null;
-                            }
-#endif
                             _pageMemoryCache.Remove(firstKey);
                         }
                     }
@@ -635,9 +620,12 @@ namespace MusicScoreManager.Services
                     lBmp.Recycle();
                     if (rBmp != null) rBmp.Recycle();
 
+                    using var ms = new MemoryStream();
+                    combined.Compress(Bitmap.CompressFormat.Jpeg!, 70, ms);
+
                     return new RenderedPdfPage
                     {
-                        ImageBytes = Array.Empty<byte>(),
+                        ImageBytes = ms.ToArray(),
                         NativeBitmap = combined,
                         Width = totalW,
                         Height = maxH,
@@ -746,13 +734,6 @@ namespace MusicScoreManager.Services
                         var firstKey = _pageMemoryCache.Keys.FirstOrDefault();
                         if (firstKey != null)
                         {
-#if ANDROID
-                            if (_pageMemoryCache.TryGetValue(firstKey, out var oldPage) && oldPage.NativeBitmap != null && !oldPage.NativeBitmap.IsRecycled)
-                            {
-                                oldPage.NativeBitmap.Recycle();
-                                oldPage.NativeBitmap = null;
-                            }
-#endif
                             _pageMemoryCache.Remove(firstKey);
                         }
                     }
