@@ -263,7 +263,9 @@ public partial class SetlistEditPage : ContentPage
                     ScoreLoadingBorder.Margin = new Thickness(0);
                 }
 
+                ScoreLoadingOverlay.Opacity = 1;
                 ScoreLoadingOverlay.IsVisible = true;
+                await Task.Delay(50);
 
                 var allScores = _orderedScores.Select(os => os.Score).ToList();
                 int index = _orderedScores.IndexOf(orderedScore);

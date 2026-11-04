@@ -24,6 +24,7 @@ public partial class ViewerPage : ContentPage
     private int _maxPages = 1;
     private int _currentRotation = 0;
     private Dictionary<int, int> _pageRotations = new();
+    private DateTime _lastLoadingOverlayShowTime = DateTime.UtcNow;
 
     private Thread? _metronomeThread;
     private volatile bool _isMetronomeRunning = false;
@@ -197,16 +198,29 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private void HideViewerLoadingOverlay()
+    private async void HideViewerLoadingOverlay()
     {
-        if (ViewerLoadingOverlay != null && ViewerLoadingOverlay.IsVisible)
+        if (ViewerLoadingOverlay == null || !ViewerLoadingOverlay.IsVisible) return;
+
+        try
         {
-            ViewerLoadingOverlay.Opacity = 0;
+            var elapsedMs = (DateTime.UtcNow - _lastLoadingOverlayShowTime).TotalMilliseconds;
+            if (elapsedMs < 350)
+            {
+                await Task.Delay((int)(350 - elapsedMs));
+            }
+
+            await ViewerLoadingOverlay.FadeTo(0, 150);
             ViewerLoadingOverlay.IsVisible = false;
             if (ViewerLoadingText != null)
             {
                 ViewerLoadingText.Text = LocalizationService.Instance.GetString("Score_Loading_Opening", "Ouverture de la partition...");
             }
+        }
+        catch
+        {
+            ViewerLoadingOverlay.Opacity = 0;
+            ViewerLoadingOverlay.IsVisible = false;
         }
 
         try
@@ -658,6 +672,7 @@ public partial class ViewerPage : ContentPage
         System.Diagnostics.Debug.WriteLine($"[Viewer] --- Début chargement partition: {_score.Title} ---");
         if (ViewerLoadingOverlay != null)
         {
+            _lastLoadingOverlayShowTime = DateTime.UtcNow;
             ViewerLoadingOverlay.Opacity = 1;
             ViewerLoadingOverlay.IsVisible = true;
         }
@@ -3090,6 +3105,7 @@ public partial class ViewerPage : ContentPage
                     _isTwoPagesMode = shouldBeTwoPages;
                     if (ViewerLoadingOverlay != null)
                     {
+                        _lastLoadingOverlayShowTime = DateTime.UtcNow;
                         ViewerLoadingOverlay.Opacity = 1;
                         ViewerLoadingOverlay.IsVisible = true;
                     }
