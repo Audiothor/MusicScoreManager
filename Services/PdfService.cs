@@ -263,8 +263,6 @@ namespace MusicScoreManager.Services
                 {
                     await RenderPdfPageAsync(pdfPath, 1, rotation);
                 }
-
-                _ = GetPdfPageCountAsync(pdfPath);
             }
             catch (Exception ex)
             {
@@ -336,14 +334,12 @@ namespace MusicScoreManager.Services
                         rawBmp.Recycle();
                     }
 
-                    using var ms = new MemoryStream();
-                    finalBmp.Compress(Bitmap.CompressFormat.Jpeg!, 78, ms);
                     int fw = finalBmp.Width;
                     int fh = finalBmp.Height;
 
                     return new RenderedPdfPage
                     {
-                        ImageBytes = ms.ToArray(),
+                        ImageBytes = Array.Empty<byte>(),
                         NativeBitmap = finalBmp,
                         Width = fw,
                         Height = fh,
@@ -639,12 +635,9 @@ namespace MusicScoreManager.Services
                     lBmp.Recycle();
                     if (rBmp != null) rBmp.Recycle();
 
-                    using var ms = new MemoryStream();
-                    combined.Compress(Bitmap.CompressFormat.Jpeg!, 78, ms);
-
                     return new RenderedPdfPage
                     {
-                        ImageBytes = ms.ToArray(),
+                        ImageBytes = Array.Empty<byte>(),
                         NativeBitmap = combined,
                         Width = totalW,
                         Height = maxH,

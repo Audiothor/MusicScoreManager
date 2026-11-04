@@ -299,6 +299,25 @@ public partial class ViewerPage : ContentPage
             _currentRotation = _score.Rotation;
         }
 
+        if (_score.PageCount > 0)
+        {
+            _maxPages = _score.PageCount;
+        }
+        else if (!string.IsNullOrEmpty(_score.FilePath))
+        {
+            try
+            {
+                string fullPath = _settingsService.GetAbsolutePath(_score.FilePath);
+                int cached = _pdfService.GetCachedPageCount(fullPath);
+                if (cached > 0)
+                {
+                    _maxPages = cached;
+                    _score.PageCount = cached;
+                }
+            }
+            catch { }
+        }
+
         // 🚀 Démarrage immédiat du préchargement de la partition dès la création du Viewer
         if (_score.Type == ScoreType.PDF && PdfService.IsNativePdfSupported && !string.IsNullOrEmpty(_score.FilePath))
         {
@@ -417,11 +436,11 @@ public partial class ViewerPage : ContentPage
         // 1. Démarrer immédiatement le chargement de la partition et des rotations sans délai
         _ = LoadPageAndContentImmediatelyAsync();
 
-        // 2. Initialiser les annotations, le métronome et l'audio en tâche de fond après un court délai
+        // 2. Initialiser les annotations, le métronome et l'audio en tâche de fond après un délai
         //    afin de laisser 100% du CPU/IO au rendu de la première page PDF
         _ = Task.Run(async () => {
+            await Task.Delay(300);
             await LoadAnnotationsAsync();
-            await Task.Delay(80);
             InitializeMetronome();
             await LoadBookmarksAsync();
 
@@ -945,9 +964,30 @@ public partial class ViewerPage : ContentPage
                 ScoreImage.Rotation = 0;
 #if ANDROID
                 var nativeImageView = ScoreImage.Handler?.PlatformView as Android.Widget.ImageView;
+                if (nativeImageView == null)
+                {
+                    for (int i = 0; i < 20 && nativeImageView == null; i++)
+                    {
+                        await Task.Delay(16);
+                        nativeImageView = ScoreImage.Handler?.PlatformView as Android.Widget.ImageView;
+                    }
+                }
+
                 if (nativeImageView != null && rendered.NativeBitmap != null && !rendered.NativeBitmap.IsRecycled)
                 {
                     nativeImageView.SetImageBitmap(rendered.NativeBitmap);
+                }
+                else if (rendered.NativeBitmap != null && !rendered.NativeBitmap.IsRecycled)
+                {
+                    void OnLoaded(object? s, EventArgs e)
+                    {
+                        ScoreImage.Loaded -= OnLoaded;
+                        if (ScoreImage.Handler?.PlatformView is Android.Widget.ImageView iv && rendered.NativeBitmap != null && !rendered.NativeBitmap.IsRecycled)
+                        {
+                            iv.SetImageBitmap(rendered.NativeBitmap);
+                        }
+                    }
+                    ScoreImage.Loaded += OnLoaded;
                 }
                 else if (rendered.ImageBytes.Length > 0)
                 {

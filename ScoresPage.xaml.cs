@@ -1493,9 +1493,7 @@ public partial class ScoresPage : ContentPage
                     ScoreLoadingBorder.Margin = new Thickness(0);
                 }
 
-                Shell.SetTabBarIsVisible(this, false);
                 ScoreLoadingOverlay.IsVisible = true;
-                await Task.Delay(25);
             }
             await Navigation.PushAsync(new ViewerPage(selectedScore, initialLoadingTopY: topY, isSetlistOpening: false), false);
             if (ScoreLoadingOverlay != null) ScoreLoadingOverlay.IsVisible = false;
@@ -1503,7 +1501,6 @@ public partial class ScoresPage : ContentPage
         catch (Exception ex)
         {
             if (ScoreLoadingOverlay != null) ScoreLoadingOverlay.IsVisible = false;
-            Shell.SetTabBarIsVisible(this, true);
             System.Diagnostics.Debug.WriteLine($"[ScoresPage] Erreur ouverture partition : {ex.Message}");
         }
         finally

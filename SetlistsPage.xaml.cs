@@ -280,15 +280,12 @@ public partial class SetlistsPage : ContentPage
                 SetlistLoadingBorder.Margin = new Thickness(0);
             }
 
-            Shell.SetTabBarIsVisible(this, false);
             SetlistLoadingOverlay.IsVisible = true;
-            await Task.Delay(25);
 
             var scores = await _databaseService.GetScoresForSetlistAsync(setlist.Id);
             if (scores == null || !scores.Any())
             {
                 SetlistLoadingOverlay.IsVisible = false;
-                Shell.SetTabBarIsVisible(this, true);
                 var loc = LocalizationService.Instance;
                 await DisplayAlertAsync(loc.GetString("Setlist_Empty"), string.Format(loc.GetString("Setlist_Edit_Empty"), setlist.Name), "OK");
                 return;
@@ -298,7 +295,6 @@ public partial class SetlistsPage : ContentPage
             if (firstScore.IsFileMissing)
             {
                 SetlistLoadingOverlay.IsVisible = false;
-                Shell.SetTabBarIsVisible(this, true);
                 var loc = LocalizationService.Instance;
                 await DisplayAlertAsync(loc.GetString("Score_Edit_MissingFile_Title"), loc.GetString("Score_Edit_Missing_Msg"), "OK");
                 return;
@@ -317,7 +313,6 @@ public partial class SetlistsPage : ContentPage
         catch (Exception ex)
         {
             SetlistLoadingOverlay.IsVisible = false;
-            Shell.SetTabBarIsVisible(this, true);
             System.Diagnostics.Debug.WriteLine($"[SetlistsPage] Erreur ouverture setlist : {ex.Message}");
         }
         finally
