@@ -73,6 +73,9 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
   - Décalage de l'initialisation des annotations, signets, métronome et requêtes SQLite audio à 300 ms en tâche de fond, allouant 100% de la puissance processeur et des accès disques au rendu de la première page.
 - **1.5. Affichage direct sans latence dans `ImageView` :**
   - Si le handler natif Android n'est pas encore instancié au premier cycle, attente active très brève sur le thread principal pour injecter le bitmap directement via `SetImageBitmap`, garantissant que la partition est immédiatement peinte à l'écran dès la fermeture de la boîte modale de chargement.
+- **1.6. Maintien et fluidité de la boîte de message d'ouverture :**
+  - Préservation de l'affichage instantané de la boîte de chargement (« Ouverture de la partition... » / « Ouverture de la setlist... ») dès le tap utilisateur sur la liste, avec transition fluide vers le Viewer.
+  - Temporisation visuelle calibrée (350 ms) et disparition en fondu doux (`FadeTo`), assurant un retour visuel clair et rassurant sans aucun temps mort ni écran blanc avant l'affichage du document.
 
 ---
 

@@ -1493,7 +1493,9 @@ public partial class ScoresPage : ContentPage
                     ScoreLoadingBorder.Margin = new Thickness(0);
                 }
 
+                ScoreLoadingOverlay.Opacity = 1;
                 ScoreLoadingOverlay.IsVisible = true;
+                await Task.Delay(50);
             }
             await Navigation.PushAsync(new ViewerPage(selectedScore, initialLoadingTopY: topY, isSetlistOpening: false), false);
             if (ScoreLoadingOverlay != null) ScoreLoadingOverlay.IsVisible = false;

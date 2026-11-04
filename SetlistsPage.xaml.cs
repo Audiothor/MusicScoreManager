@@ -280,7 +280,9 @@ public partial class SetlistsPage : ContentPage
                 SetlistLoadingBorder.Margin = new Thickness(0);
             }
 
+            SetlistLoadingOverlay.Opacity = 1;
             SetlistLoadingOverlay.IsVisible = true;
+            await Task.Delay(50);
 
             var scores = await _databaseService.GetScoresForSetlistAsync(setlist.Id);
             if (scores == null || !scores.Any())
