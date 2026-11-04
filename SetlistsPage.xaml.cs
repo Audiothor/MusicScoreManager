@@ -312,6 +312,7 @@ public partial class SetlistsPage : ContentPage
             }
 
             await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading, setlist, initialLoadingTopY: topY, isSetlistOpening: true), false);
+            if (SetlistLoadingOverlay != null) SetlistLoadingOverlay.IsVisible = false;
         }
         catch (Exception ex)
         {

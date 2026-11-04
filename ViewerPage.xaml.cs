@@ -201,12 +201,8 @@ public partial class ViewerPage : ContentPage
     {
         if (ViewerLoadingOverlay != null && ViewerLoadingOverlay.IsVisible)
         {
+            ViewerLoadingOverlay.Opacity = 0;
             ViewerLoadingOverlay.IsVisible = false;
-            if (ViewerLoadingBorder != null)
-            {
-                ViewerLoadingBorder.VerticalOptions = LayoutOptions.Center;
-                ViewerLoadingBorder.Margin = new Thickness(0);
-            }
             if (ViewerLoadingText != null)
             {
                 ViewerLoadingText.Text = LocalizationService.Instance.GetString("Score_Loading_Opening", "Ouverture de la partition...");
@@ -217,7 +213,11 @@ public partial class ViewerPage : ContentPage
         {
             if (Preferences.Default.Get("ImmersiveMode", true))
             {
-                ApplyImmersiveMode(true);
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(300);
+                    ApplyImmersiveMode(true);
+                });
             }
         }
         catch (Exception ex)
@@ -393,12 +393,16 @@ public partial class ViewerPage : ContentPage
         try
         {
             bool immersiveMode = Preferences.Default.Get("ImmersiveMode", true);
-            // Si l'overlay de chargement n'est pas actif (ex: réouverture depuis l'arrière-plan), activer immédiatement l'immersion.
+            // Si l'overlay de chargement n'est pas actif (ex: réouverture depuis l'arrière-plan ou reprise), activer l'immersion après délai.
             // S'il est actif, l'immersion sera appliquée dès que l'overlay se masquera dans HideViewerLoadingOverlay()
             // pour garantir une stabilité visuelle absolue au pixel près du message de chargement.
             if (immersiveMode && (ViewerLoadingOverlay == null || !ViewerLoadingOverlay.IsVisible))
             {
-                ApplyImmersiveMode(true);
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(300);
+                    ApplyImmersiveMode(true);
+                });
             }
         }
         catch (Exception ex)
@@ -633,7 +637,11 @@ public partial class ViewerPage : ContentPage
     private async void LoadContentAsync()
     {
         System.Diagnostics.Debug.WriteLine($"[Viewer] --- Début chargement partition: {_score.Title} ---");
-        if (ViewerLoadingOverlay != null) ViewerLoadingOverlay.IsVisible = true;
+        if (ViewerLoadingOverlay != null)
+        {
+            ViewerLoadingOverlay.Opacity = 1;
+            ViewerLoadingOverlay.IsVisible = true;
+        }
 
         try
         {

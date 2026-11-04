@@ -287,6 +287,7 @@ public partial class SetlistEditPage : ContentPage
                     _setlist,
                     initialLoadingTopY: topY,
                     isSetlistOpening: false), false);
+                if (ScoreLoadingOverlay != null) ScoreLoadingOverlay.IsVisible = false;
             }
             catch (Exception ex)
             {
