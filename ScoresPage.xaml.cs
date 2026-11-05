@@ -1471,17 +1471,25 @@ public partial class ScoresPage : ContentPage
         _isOpeningScore = true;
         try
         {
+            if (ScoreLoadingOverlay != null)
+            {
+                ScoreLoadingOverlay.Opacity = 1;
+                ScoreLoadingOverlay.IsVisible = true;
+            }
+            await Task.Delay(16);
+
             // 🚀 Optimisation ouverture ultra-rapide : précharger la page 1 immédiatement en arrière-plan
             if (selectedScore.Type == Models.ScoreType.PDF && PdfService.IsNativePdfSupported && !string.IsNullOrEmpty(selectedScore.FilePath))
             {
                 string fullPath = _settingsService.GetAbsolutePath(selectedScore.FilePath);
-                _ = _pdfService.PreloadFirstPageAsync(fullPath, selectedScore.Rotation);
+                _ = _pdfService.PreloadFirstPageAsync(fullPath, selectedScore.Rotation, selectedScore.PageCount);
             }
 
             await Navigation.PushAsync(new ViewerPage(selectedScore, isSetlistOpening: false), false);
         }
         catch (Exception ex)
         {
+            if (ScoreLoadingOverlay != null) ScoreLoadingOverlay.IsVisible = false;
             System.Diagnostics.Debug.WriteLine($"[ScoresPage] Erreur ouverture partition : {ex.Message}");
         }
         finally

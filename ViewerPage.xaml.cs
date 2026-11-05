@@ -330,7 +330,7 @@ public partial class ViewerPage : ContentPage
                 string fullPath = _settingsService.GetAbsolutePath(_score.FilePath);
                 if (!string.IsNullOrEmpty(fullPath) && File.Exists(fullPath))
                 {
-                    _ = _pdfService.PreloadFirstPageAsync(fullPath, _score.Rotation);
+                    _ = _pdfService.PreloadFirstPageAsync(fullPath, _score.Rotation, _score.PageCount);
                 }
             }
             catch { }
@@ -896,8 +896,8 @@ public partial class ViewerPage : ContentPage
 
             bool twoPagesPref = Preferences.Default.Get("TwoPagesLandscape", true);
             bool isLandscape = (containerW > containerH);
-            int cachedPageCount = _pdfService.GetCachedPageCount(fullPath);
-            bool tryTwoPages = twoPagesPref && isLandscape && (cachedPageCount != 1);
+            int effectivePageCount = _score.PageCount > 0 ? _score.PageCount : _pdfService.GetCachedPageCount(fullPath);
+            bool tryTwoPages = twoPagesPref && isLandscape && (effectivePageCount != 1);
 
             RenderedPdfPage? rendered = null;
 
@@ -999,11 +999,16 @@ public partial class ViewerPage : ContentPage
                     nativeImageView.SetImageBitmap(rendered.NativeBitmap);
                     nativeImageView.Invalidate();
                 }
-#endif
+                else if (rendered.ImageBytes.Length > 0)
+                {
+                    ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(rendered.ImageBytes));
+                }
+#else
                 if (rendered.ImageBytes.Length > 0)
                 {
                     ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(rendered.ImageBytes));
                 }
+#endif
 
                 double finalW = (ActiveAnnotationsContainer?.Width > 0) ? ActiveAnnotationsContainer.Width : (this.Width > 0 ? this.Width : containerW);
                 double finalH = (ActiveAnnotationsContainer?.Height > 0) ? ActiveAnnotationsContainer.Height : (this.Height > 0 ? this.Height : containerH);
@@ -1017,14 +1022,14 @@ public partial class ViewerPage : ContentPage
                 {
                     var tcs = new TaskCompletionSource<bool>();
                     nativeImageView.Post(() => tcs.TrySetResult(true));
-                    await Task.WhenAny(tcs.Task, Task.Delay(80));
+                    await Task.WhenAny(tcs.Task, Task.Delay(50));
                 }
                 else
                 {
-                    await Task.Delay(40);
+                    await Task.Delay(20);
                 }
 #else
-                await Task.Delay(40);
+                await Task.Delay(20);
 #endif
 
                 HideViewerLoadingOverlay();
