@@ -230,12 +230,20 @@ namespace MusicScoreManager.Services
         /// Précharge en mémoire la première page (ou double page si orientation paysage) du document PDF
         /// pour une ouverture instantanée dès l'affichage du Viewer.
         /// </summary>
-        public async Task PreloadFirstPageAsync(string pdfPath, int rotation = 0)
+        public async Task PreloadFirstPageAsync(string pdfPath, int rotation = 0, int knownPageCount = -1)
         {
             if (string.IsNullOrWhiteSpace(pdfPath) || !File.Exists(pdfPath)) return;
 
             try
             {
+                if (knownPageCount > 0)
+                {
+                    lock (_cacheLock)
+                    {
+                        _pageCountCache[pdfPath] = knownPageCount;
+                    }
+                }
+
                 bool twoPagesPref = Preferences.Default.Get("TwoPagesLandscape", true);
                 bool isLandscape = false;
                 try
@@ -245,7 +253,7 @@ namespace MusicScoreManager.Services
                 }
                 catch { }
 
-                if (twoPagesPref && isLandscape)
+                if (twoPagesPref && isLandscape && knownPageCount != 1)
                 {
                     await RenderPdfTwoPagesAsync(pdfPath, 1, 2, rotation, rotation);
                 }
@@ -324,14 +332,12 @@ namespace MusicScoreManager.Services
                         rawBmp.Recycle();
                     }
 
-                    using var ms = new MemoryStream();
-                    finalBmp.Compress(Bitmap.CompressFormat.Jpeg!, 70, ms);
                     int fw = finalBmp.Width;
                     int fh = finalBmp.Height;
 
                     return new RenderedPdfPage
                     {
-                        ImageBytes = ms.ToArray(),
+                        ImageBytes = Array.Empty<byte>(),
                         NativeBitmap = finalBmp,
                         Width = fw,
                         Height = fh,
@@ -620,12 +626,9 @@ namespace MusicScoreManager.Services
                     lBmp.Recycle();
                     if (rBmp != null) rBmp.Recycle();
 
-                    using var ms = new MemoryStream();
-                    combined.Compress(Bitmap.CompressFormat.Jpeg!, 70, ms);
-
                     return new RenderedPdfPage
                     {
-                        ImageBytes = ms.ToArray(),
+                        ImageBytes = Array.Empty<byte>(),
                         NativeBitmap = combined,
                         Width = totalW,
                         Height = maxH,

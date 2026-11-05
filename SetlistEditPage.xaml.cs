@@ -250,6 +250,13 @@ public partial class SetlistEditPage : ContentPage
             _isOpeningScore = true;
             try
             {
+                if (ScoreLoadingOverlay != null)
+                {
+                    ScoreLoadingOverlay.Opacity = 1;
+                    ScoreLoadingOverlay.IsVisible = true;
+                }
+                await Task.Delay(16);
+
                 var allScores = _orderedScores.Select(os => os.Score).ToList();
                 int index = _orderedScores.IndexOf(orderedScore);
                 
@@ -259,7 +266,7 @@ public partial class SetlistEditPage : ContentPage
                 if (orderedScore.Score.Type == ScoreType.PDF && PdfService.IsNativePdfSupported && !string.IsNullOrEmpty(orderedScore.Score.FilePath))
                 {
                     string fullPath = _settingsService.GetAbsolutePath(orderedScore.Score.FilePath);
-                    _ = _pdfService.PreloadFirstPageAsync(fullPath, orderedScore.Score.Rotation);
+                    _ = _pdfService.PreloadFirstPageAsync(fullPath, orderedScore.Score.Rotation, orderedScore.Score.PageCount);
                 }
 
                 await Navigation.PushAsync(new ViewerPage(
@@ -272,6 +279,7 @@ public partial class SetlistEditPage : ContentPage
             }
             catch (Exception ex)
             {
+                if (ScoreLoadingOverlay != null) ScoreLoadingOverlay.IsVisible = false;
                 System.Diagnostics.Debug.WriteLine($"[SetlistEditPage] Erreur ouverture partition: {ex.Message}");
             }
             finally

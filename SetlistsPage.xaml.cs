@@ -267,9 +267,17 @@ public partial class SetlistsPage : ContentPage
 
         try
         {
+            if (SetlistLoadingOverlay != null)
+            {
+                SetlistLoadingOverlay.Opacity = 1;
+                SetlistLoadingOverlay.IsVisible = true;
+            }
+            await Task.Delay(16);
+
             var scores = await _databaseService.GetScoresForSetlistAsync(setlist.Id);
             if (scores == null || !scores.Any())
             {
+                if (SetlistLoadingOverlay != null) SetlistLoadingOverlay.IsVisible = false;
                 var loc = LocalizationService.Instance;
                 await DisplayAlertAsync(loc.GetString("Setlist_Empty"), string.Format(loc.GetString("Setlist_Edit_Empty"), setlist.Name), "OK");
                 return;
@@ -278,6 +286,7 @@ public partial class SetlistsPage : ContentPage
             var firstScore = scores[0];
             if (firstScore.IsFileMissing)
             {
+                if (SetlistLoadingOverlay != null) SetlistLoadingOverlay.IsVisible = false;
                 var loc = LocalizationService.Instance;
                 await DisplayAlertAsync(loc.GetString("Score_Edit_MissingFile_Title"), loc.GetString("Score_Edit_Missing_Msg"), "OK");
                 return;
@@ -287,13 +296,14 @@ public partial class SetlistsPage : ContentPage
             if (firstScore.Type == ScoreType.PDF && PdfService.IsNativePdfSupported && !string.IsNullOrEmpty(firstScore.FilePath))
             {
                 string fullPath = _settingsService.GetAbsolutePath(firstScore.FilePath);
-                _ = _pdfService.PreloadFirstPageAsync(fullPath, firstScore.Rotation);
+                _ = _pdfService.PreloadFirstPageAsync(fullPath, firstScore.Rotation, firstScore.PageCount);
             }
 
             await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading, setlist, isSetlistOpening: true), false);
         }
         catch (Exception ex)
         {
+            if (SetlistLoadingOverlay != null) SetlistLoadingOverlay.IsVisible = false;
             System.Diagnostics.Debug.WriteLine($"[SetlistsPage] Erreur ouverture setlist : {ex.Message}");
         }
         finally
