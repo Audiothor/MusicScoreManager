@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.7 — 09/11/2026](#v327--09112026)
 - [v3.2.6 — 04/11/2026](#v326--04112026)
 - [v3.2.5 — 03/11/2026](#v325--03112026)
 - [v3.2.4 — 03/11/2026](#v324--03112026)
@@ -54,6 +55,17 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.2.7 — 09/11/2026
+
+### 1. Interface & Ergonomie : Stabilité Visuelle Absolue de la Boîte de Chargement
+- **1.1. Élimination du décalage vertical de la boîte « Ouverture de la partition... » / « Ouverture de la setlist... » :**
+  - Ancrage géométrique au pixel près depuis le bord supérieur (`LayoutOptions.Start` avec `topY = (this.Height - 120.0) / 2.0`) sur les pages appelantes (`ScoresPage`, `SetlistsPage`, `SetlistEditPage`) et transmission de cette ordonnée exacte (`initialLoadingTopY`) au `ViewerPage`.
+  - Compense intégralement la disparition de la barre d'onglets inférieure (`Shell.TabBarIsVisible="False"`) lors de l'ouverture du lecteur, empêchant tout saut ou décalage vertical de la boîte modale pendant la transition.
+- **1.2. Préservation intégrale des performances et de la stabilité de la v3.2.6 :**
+  - Aucun impact sur la vitesse d'ouverture (< 0.5s grâce au pipeline `NativeBitmap` sans compression JPEG), sur la synchronisation de fermeture avec le rendu réel (`nativeImageView.Post`) ni sur la stabilité mémoire.
 
 ---
 

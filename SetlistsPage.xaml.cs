@@ -267,8 +267,21 @@ public partial class SetlistsPage : ContentPage
 
         try
         {
-            if (SetlistLoadingOverlay != null)
+            double topY = -1;
+            if (SetlistLoadingOverlay != null && SetlistLoadingBorder != null)
             {
+                if (this.Height > 150)
+                {
+                    topY = Math.Max(0, (this.Height - 120.0) / 2.0);
+                    SetlistLoadingBorder.VerticalOptions = LayoutOptions.Start;
+                    SetlistLoadingBorder.Margin = new Thickness(0, topY, 0, 0);
+                }
+                else
+                {
+                    SetlistLoadingBorder.VerticalOptions = LayoutOptions.Center;
+                    SetlistLoadingBorder.Margin = new Thickness(0);
+                }
+
                 SetlistLoadingOverlay.Opacity = 1;
                 SetlistLoadingOverlay.IsVisible = true;
             }
@@ -299,7 +312,7 @@ public partial class SetlistsPage : ContentPage
                 _ = _pdfService.PreloadFirstPageAsync(fullPath, firstScore.Rotation, firstScore.PageCount);
             }
 
-            await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading, setlist, isSetlistOpening: true), false);
+            await Navigation.PushAsync(new ViewerPage(firstScore, scores, 0, setlist.IsContinuousReading, setlist, initialLoadingTopY: topY, isSetlistOpening: true), false);
         }
         catch (Exception ex)
         {

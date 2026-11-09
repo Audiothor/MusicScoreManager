@@ -250,8 +250,21 @@ public partial class SetlistEditPage : ContentPage
             _isOpeningScore = true;
             try
             {
-                if (ScoreLoadingOverlay != null)
+                double topY = -1;
+                if (ScoreLoadingOverlay != null && ScoreLoadingBorder != null)
                 {
+                    if (this.Height > 150)
+                    {
+                        topY = Math.Max(0, (this.Height - 120.0) / 2.0);
+                        ScoreLoadingBorder.VerticalOptions = LayoutOptions.Start;
+                        ScoreLoadingBorder.Margin = new Thickness(0, topY, 0, 0);
+                    }
+                    else
+                    {
+                        ScoreLoadingBorder.VerticalOptions = LayoutOptions.Center;
+                        ScoreLoadingBorder.Margin = new Thickness(0);
+                    }
+
                     ScoreLoadingOverlay.Opacity = 1;
                     ScoreLoadingOverlay.IsVisible = true;
                 }
@@ -275,6 +288,7 @@ public partial class SetlistEditPage : ContentPage
                     index, 
                     ContinuousSwitch.IsToggled,
                     _setlist,
+                    initialLoadingTopY: topY,
                     isSetlistOpening: false), false);
             }
             catch (Exception ex)
