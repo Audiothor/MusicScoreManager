@@ -6,45 +6,253 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
-- [v3.1.11 — 11/01/2026](#v3111--11012026)
-- [v3.1.10 — 11/01/2026](#v3110--11012026)
-- [v3.1.9 — 11/01/2026](#v319--11012026)
-- [v3.1.8 — 11/01/2026](#v318--11012026)
-- [v3.1.7 — 10/31/2026](#v317--10312026)
-- [v3.1.6 — 10/31/2026](#v316--10312026)
-- [v3.1.5 — 28/10/2026](#v315--28102026)
-- [v3.1.4 — 26/10/2026](#v314--26102026)
-- [v3.1.3 — 26/10/2026](#v313--26102026)
-- [v3.1.2 — 26/10/2026](#v312--26102026)
-- [v3.1.1 — 26/10/2026](#v311--26102026)
-- [v3.1.0 — 24/10/2026](#v310--24102026)
-- [v3.0.3 — 22/10/2026](#v303--22102026)
-- [v3.0.2 — 21/10/2026](#v302--21102026)
-- [v3.0.1 — 21/10/2026](#v301--21102026)
-- [v3.0.0 — 21/10/2026](#v300--21102026)
-- [v2.8.4 — 18/10/2026](#v284--18102026)
-- [v2.8.3 — 18/10/2026](#v283--18102026)
-- [v2.8.2 — 18/10/2026](#v282--18102026)
-- [v2.8.1 — 18/10/2026](#v281--18102026)
-- [v2.8.0 — 16/10/2026](#v280--16102026)
-- [v2.7.2 — 15/10/2026](#v272--15102026)
-- [v2.7.1 — 15/10/2026](#v271--15102026)
-- [v2.7.0 — 15/10/2026](#v270--15102026)
-- [v2.6.5 — 15/10/2026](#v265--15102026)
-- [v2.6.4 — 15/10/2026](#v264--15102026)
-- [v2.6.3 — 15/10/2026](#v263--15102026)
-- [v2.6.2 — 14/10/2026](#v262--14102026)
-- [v2.6.1 — 14/10/2026](#v261--14102026)
-- [v2.6.0 — 14/10/2026](#v260--14102026)
-- [v2.5.8 — 13/10/2026](#v258--13102026)
-- [v2.5.7 — 13/10/2026](#v257--13102026)
-- [v2.5.6 — 12/10/2026](#v256--12102026)
-- [v2.5.5 — 11/10/2026](#v255--11102026)
-- [v2.5.4 — 10/10/2026](#v254--10102026)
-- [v2.5.3 — 09/10/2026](#v253--09102026)
-- [v2.5.2 — 07/10/2026](#v252--07102026)
-- [v2.5.1 — 07/10/2026](#v251--07102026)
-- [v2.5.0 — 07/10/2026](#v250--07102026)
+- [v3.2.8 — 11/11/2026](#v328-11112026)
+- [v3.2.7 — 09/11/2026](#v327-09112026)
+- [v3.2.6 — 04/11/2026](#v326-04112026)
+- [v3.2.5 — 03/11/2026](#v325-03112026)
+- [v3.2.4 — 03/11/2026](#v324-03112026)
+- [v3.2.3 — 03/11/2026](#v323-03112026)
+- [v3.2.2 — 03/11/2026](#v322-03112026)
+- [v3.2.1 — 03/11/2026](#v321-03112026)
+- [v3.2.0 — 03/11/2026](#v320-03112026)
+- [v3.1.13 — 02/11/2026](#v3113-02112026)
+- [v3.1.12 — 02/11/2026](#v3112-02112026)
+- [v3.1.11 — 11/01/2026](#v3111-11012026)
+- [v3.1.10 — 11/01/2026](#v3110-11012026)
+- [v3.1.9 — 11/01/2026](#v319-11012026)
+- [v3.1.8 — 11/01/2026](#v318-11012026)
+- [v3.1.7 — 10/31/2026](#v317-10312026)
+- [v3.1.6 — 10/31/2026](#v316-10312026)
+- [v3.1.5 — 28/10/2026](#v315-28102026)
+- [v3.1.4 — 26/10/2026](#v314-26102026)
+- [v3.1.3 — 26/10/2026](#v313-26102026)
+- [v3.1.2 — 26/10/2026](#v312-26102026)
+- [v3.1.1 — 26/10/2026](#v311-26102026)
+- [v3.1.0 — 24/10/2026](#v310-24102026)
+- [v3.0.3 — 22/10/2026](#v303-22102026)
+- [v3.0.2 — 21/10/2026](#v302-21102026)
+- [v3.0.1 — 21/10/2026](#v301-21102026)
+- [v3.0.0 — 21/10/2026](#v300-21102026)
+- [v2.8.4 — 18/10/2026](#v284-18102026)
+- [v2.8.3 — 18/10/2026](#v283-18102026)
+- [v2.8.2 — 18/10/2026](#v282-18102026)
+- [v2.8.1 — 18/10/2026](#v281-18102026)
+- [v2.8.0 — 16/10/2026](#v280-16102026)
+- [v2.7.2 — 15/10/2026](#v272-15102026)
+- [v2.7.1 — 15/10/2026](#v271-15102026)
+- [v2.7.0 — 15/10/2026](#v270-15102026)
+- [v2.6.5 — 15/10/2026](#v265-15102026)
+- [v2.6.4 — 15/10/2026](#v264-15102026)
+- [v2.6.3 — 15/10/2026](#v263-15102026)
+- [v2.6.2 — 14/10/2026](#v262-14102026)
+- [v2.6.1 — 14/10/2026](#v261-14102026)
+- [v2.6.0 — 14/10/2026](#v260-14102026)
+- [v2.5.8 — 13/10/2026](#v258-13102026)
+- [v2.5.7 — 13/10/2026](#v257-13102026)
+- [v2.5.6 — 12/10/2026](#v256-12102026)
+- [v2.5.5 — 11/10/2026](#v255-11102026)
+- [v2.5.4 — 10/10/2026](#v254-10102026)
+- [v2.5.3 — 09/10/2026](#v253-09102026)
+- [v2.5.2 — 07/10/2026](#v252-07102026)
+- [v2.5.1 — 07/10/2026](#v251-07102026)
+- [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.8 — 11/11/2026
+
+### 1. Central Action Menu Ergonomics in Score Reading (`ViewerPage`)
+- **1.1. Full piece title display under top action bar:**
+  - Pinned the score title (`MenuTitleLabel`) directly below the two top action buttons (`🏠 Return to Home` and `✕`) spanning the full modal width (up to 2 lines), eliminating any title truncation between buttons.
+- **1.2. Complete button label readability on smartphones and tablets:**
+  - Full-width vertical stacking of **« ✏️ Edit score »** and **« 📑 Modify PDF assembly »** buttons and eliminated duplicate `📑` icon, ensuring translated labels in all 8 languages are fully visible and untruncated even on narrow phone screens.
+  - Dynamic height calculation for header and content in `UpdateCentralMenuSize` preventing any vertical clipping.
+
+### 2. Score Import: « Don't ask again » Checkbox (`ScoresPage` & `ImportService`)
+- **2.1. Direct memorization of import choice:**
+  - When the default import mode is set to *« Always ask on each import »* (default setting on fresh install), the library organization dialog now includes a checkbox **« Don't ask again and remember my choice »**.
+  - If the user checks this option before choosing *Copy* or *Link*, their choice is automatically saved as the default import mode for future imports, while remaining editable at any time in *Score Settings*.
+
+### 3. Final Audit & 100% Multilingual Coverage (8 Languages)
+- **3.1. Complete localization of remaining UI strings:**
+  - Full translation of residual labels in `ViewerPage`, `ScoresPage`, `ImportService`, `QuitPage`, `PedalButtonConfigPage`, `TunerService`, and `WifiDirectTransferService`.
+  - Strict alignment of all **1,218 translation keys** across all 8 language files (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
+
+---
+
+## v3.2.7 — 09/11/2026
+
+### 1. Interface & Ergonomics: Absolute Visual Stability of Loading Modal
+- **1.1. Elimination of vertical jump on « Loading score... » / « Loading setlist... » dialog:**
+  - Pixel-perfect geometric anchoring from top edge (`LayoutOptions.Start` with `topY = (this.Height - 120.0) / 2.0`) on caller pages (`ScoresPage`, `SetlistsPage`, `SetlistEditPage`) and forwarding this exact coordinate (`initialLoadingTopY`) to `ViewerPage`.
+  - Fully compensates for the disappearance of the bottom navigation tab bar (`Shell.TabBarIsVisible="False"`) upon viewer launch, preventing any vertical bounce or visual shift of the modal during transition.
+- **1.2. Full preservation of v3.2.6 performance and stability:**
+  - Zero impact on lightning-fast opening speed (< 0.5s via `NativeBitmap` pipeline without JPEG compression), on synchronized dismissal with hardware painting (`nativeImageView.Post`), and on memory stability.
+
+---
+
+## v3.2.6 — 04/11/2026
+
+### 1. Performance, Stability & Responsiveness: Instantaneous Score Opening
+- **1.1. Permanent elimination of crashes after successive score openings (`PdfService.cs`):**
+  - Completely removed manual `.Recycle()` calls on cached `NativeBitmap` instances and during LRU eviction / session cleanup.
+  - Prevents critical `Cannot draw a recycled bitmap` errors and SIGSEGV when recycled bitmaps were still referenced by the active view or graphic compositor.
+- **1.2. Immediate tap acknowledgement and seamless loading modal continuity:**
+  - **Instant display upon tap**: As soon as a score or setlist is tapped (`ScoresPage`, `SetlistsPage`, `SetlistEditPage`), the loading modal appears immediately (0 ms) to confirm user action receipt.
+  - **Flicker-free visual continuity**: The overlay remains smoothly visible throughout the transition to the viewer, never disappearing prematurely nor flickering.
+  - **Synchronized dismissal with physical screen painting**: The overlay is dismissed at the exact moment the Android graphic compositor has physically painted the document on screen (`nativeImageView.Post`), eliminating empty screens and residual delays.
+- **1.3. Blazing opening speed & Zero-Latency NativeBitmap (`PdfService.cs`):**
+  - Completely eliminated intermediate JPEG compression/decompression on Android: the native bitmap from `PdfRenderer` is passed directly to the hardware `ImageView`, dividing CPU processing time by 10.
+- **1.4. Elimination of duplicate rendering on single-page scores:**
+  - Forwarded actual page count directly in preload call (`PreloadFirstPageAsync`), avoiding generating and discarding a 2-page landscape view before recalculating the single page view.
+
+---
+
+## v3.2.5 — 03/11/2026
+
+### 1. Score Display: Fullscreen Immersive Mode
+- **1.1. Total immersion in score reading (`ViewerPage`):**
+  - Complete hiding of Android system status bar (time, battery, notifications) and bottom navigation bar (white gesture bar).
+  - The score occupies 100% of the physical screen area, free of visual clutter and accidental touch risks.
+  - **Temporary system access preserved:** a quick swipe from the top or bottom edge reveals semi-transparent system bars for ~3 seconds before they hide automatically.
+  - Instant restoration of system bars upon exiting the viewer back to the library or menus.
+- **1.2. User control in Score Settings (`SettingsScoresPage`):**
+  - Added **« Fullscreen immersive mode »** setting under the *Display* section.
+  - Enabled by default, allowing musicians who prefer monitoring the time or battery level to disable it.
+  - Explanatory note included on temporary gesture access.
+  - Complete localization of setting label and description in all 8 languages.
+- **1.3. Elimination of visual shift of loading dialog:**
+  - Smart timing of immersive mode activation: hiding system bars is synchronized with loading overlay dismissal (`HideViewerLoadingOverlay()`) once the score is rendered.
+  - The « Loading score... » modal remains rock-solid without any jump.
+- **1.4. Instant PDF Display & Elimination of post-dismissal delay:**
+  - **Direct Android NativeBitmap pipeline**: Direct transfer of native `Bitmap` from `PdfRenderer` to Android `ImageView`, eliminating JPEG encoding bottleneck.
+  - **Eliminated duplicate concurrent renders**: Neutralized superfluous renderings in `OnSizeAllocated` and aligned landscape detection (`Width > Height`).
+  - **Flawless visual sync**: The loading modal disappears only when the PDF is already rendered on screen.
+
+---
+
+## v3.2.4 — 03/11/2026
+
+### 1. Ergonomics: Unified Tag Management
+- **1.1. Removed redundant entry in Tools menu (`ToolsPage`):**
+  - Removed "Tag Management" from Tools panel, as tag and category management logically belongs to Settings.
+- **1.2. Harmonization in Settings menu (`SettingsPage`):**
+  - Renamed "Manage Tag List" to **« Tag Management »** for direct consistency.
+  - Aligned labels across all 8 supported languages.
+
+---
+
+## v3.2.3 — 03/11/2026
+
+### 1. Application Settings: Immediate Responsiveness & Async Loading
+- **1.1. Instant visual feedback on tap (`SettingsPage`):**
+  - Immediate replacement (< 16 ms) of chevron `›` with a circular blue spinner (`ActivityIndicator`) upon selecting « Application Settings ».
+  - Eliminates user uncertainty on tap acknowledgement.
+  - Global debounce guard (`_isNavigating`) across all settings rows to prevent accidental double-taps.
+- **1.2. Instant page opening & deferred statistics computation (`SettingsAppPage`):**
+  - Removed constructor blocking: application settings page opens instantly.
+  - Score count, disk space, and available storage calculations run in the background (`Task.Run`) in `OnAppearing` after a fluid 150 ms delay to guarantee a 60 FPS transition.
+  - Discreet spinner shown in *« Library Statistics »* block during calculation, vanishing automatically once values are ready.
+
+### 2. Development Environment & Code Quality
+- **2.1. Fixed `.editorconfig` syntax & disabled cosmetic warnings:**
+  - Fixed comment placement according to official EditorConfig specification (dedicated lines).
+  - Cleared all 57 `IDE0028` info warnings in IDE Problems view.
+
+---
+
+## v3.2.2 — 03/11/2026
+
+### 1. Score Settings: Live Subtitle & Description Preview
+- **1.1. Added « Folder / Category » to live preview (`SettingsScoresPage`):**
+  - Fixed missing "Folder / Category" element in real-time preview (`UpdateSubtitlePreview`).
+  - Toggling or reordering the option displays the category pill (`📁 Classical`) alongside composer, page count, and date added.
+- **1.2. Localized toolbox button description:**
+  - Added missing `Settings_Scores_Show_Tools_Button_Desc` translation across all 8 languages.
+
+---
+
+## v3.2.1 — 03/11/2026
+
+### 1. Category (A-Z) Sorting for Scores
+- **1.1. Integration in Scores sort dialog (`ScoresPage`):**
+  - Added **« Category (A-Z) »** (`Sort_CategoryAsc`) option to sort action menu.
+  - Hierarchical ordering: alphabetical category grouping, then by score title within each category.
+  - Supported in fast alphabetical index (A-Z, #) navigating directly by category initial.
+- **1.2. Default launch sort configuration (`SettingsScoresPage`):**
+  - Added **« Category (A-Z) »** choice to default score sort selector (*Settings > Scores*).
+  - Persisted in user preferences (`DefaultScoreSort = "CategoryAsc"`).
+- **1.3. Permanent `Default` folder protection:**
+  - Hid 3-dots (⋮) options button on the "Default" folder card and breadcrumb bar, preventing unintended renaming or deletion.
+- **1.4. Modernized folder dialogs:**
+  - Replaced system action sheets with modern modal (`CategoryMenuOverlay`) with Open, Rename, and Delete actions.
+  - Modern confirmation dialog (`ShowModernConfirmDialogAsync`) with `🗑️` alert badge.
+- **1.5. Complete localization:**
+  - Translated `Sort_CategoryAsc` and `Score_Category_Open_Folder` into all 8 languages.
+
+---
+
+## v3.2.0 — 03/11/2026
+
+### 1. Tag Management in Multi-Selection (Dedicated Add & Remove Modes)
+- **1.1. Ergonomic mode selector in bulk tags overlay (`BulkTagsOverlay`):**
+  - Added **[➕ Add]** and **[➖ Remove]** modes with dynamic styling and actions.
+  - **Remove mode**: Smart filtering displaying only tags currently assigned to at least one selected score, with live counters (`Name (n)`).
+  - Targeted database removal (`RemoveTagFromScoreAsync`) for all selected scores.
+  - Clear localized messaging across all 8 languages.
+
+### 2. Text Annotation Rendering Precision (`ViewerPage`)
+- **2.1. Strict transparency adherence:**
+  - Corrected text annotation backgrounds: strictly applies `Colors.Transparent` when no background is selected.
+  - Subtle dashed manipulation outline (`StrokeDashArray = { 3, 2 }`) during editing of borderless text boxes, vanishing on confirmation.
+  - Instant pill option sync (text color, background, border) when selecting existing text.
+
+### 3. Final Category Normalization & Permanent `Default` Folder
+- Completely removed legacy "Général" category in favor of permanent `Default` directory.
+- Automatic migration and alignment of physical files and database on startup.
+
+### 4. Build Quality & Development Environment
+- Windows framework prioritization in `MusicScoreManager.csproj` to eliminate IDE analyzer false positives.
+- Clean build: **0 Errors, 0 Warnings, 0 Alerts** across all platforms.
+
+---
+
+## v3.1.13 — 02/11/2026
+
+### 1. High-Performance Optimization of PDF Score Rendering & Opening
+- **1.1. Instant pre-warming on tap:**
+  - As soon as the user taps a score or setlist (`ScoresPage`, `SetlistsPage`, `SetlistEditPage`), first-page PDF decoding starts in the background via `PdfService.PreloadFirstPageAsync`.
+  - The first page is ready in cache before MAUI navigation finishes, making perceived opening instant (< 50 ms).
+- **1.2. Smart resolution clamping:**
+  - Prevented resolution explosion on high-DPI scans (300/600 DPI): rasterization maximum dimension is clamped to 2048 px (single page) and 1536 px (dual landscape).
+  - Divides CPU/GPU time and RAM footprint by 3 to 5.
+- **1.3. In-flight task deduplication:**
+  - Thread-safe tracking of async decoding tasks (`_inFlightTasks`): prevents double decoding or concurrent file descriptor access.
+- **1.4. Optimized JPEG encoding pipeline:**
+  - Fine-tuned JPEG compression to 78% across all platforms, accelerating native compression and MAUI image decoding by ~35% with no visual loss.
+
+---
+
+## v3.1.12 — 02/11/2026
+
+### 1. Category Management & Physical Directory Alignment
+- **1.1. Default category selector (`SettingsScoresPage`):**
+  - Added **« Default Category (Folder) »** dropdown in *Settings > Scores* allowing users to choose the category assigned when importing unassigned scores (default: `"Default"`).
+  - Integrated into `SettingsService.DefaultCategory` and stored in `Preferences`.
+- **1.2. File physical organization in subdirectories (`Scores/{Category}/`):**
+  - Unified file storage in `ImportService`: imported scores are systematically stored in their category subfolder (`Scores/{Category}/`).
+  - Extended category renaming in `DatabaseService.RenameCategoryAsync`: automatically moves physical files to the new directory.
+  - Physical consolidation utility (`ConsolidatePhysicalCategoriesAsync`): moves root scores into category folders with SQLite path updates.
+
+### 2. Full Application Localization (8 Languages)
+- **2.1. Audit & elimination of hardcoded strings:**
+  - Identified and localized over 200 hardcoded strings across all `.xaml` and `.cs` files.
+- **2.2. Complete 8-language translations:**
+  - Synchronized keys across all 8 language JSON files (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
+
+### 3. Code Quality & Clean Compilation
+- Resolved `CS1998` async warnings in `PdfService.cs` on non-Windows platforms.
+- Clean build: **0 Warnings, 0 Errors**.
 
 ---
 
@@ -706,40 +914,40 @@ This document contains the official changelog of all versions of **Music Score M
 ---
 
 ## v2.5.0 — 07/10/2026
-- [v2.4.9 — 07/10/2026](#v249--07102026)
-- [v2.4.8 — 01/10/2026](#v248--01102026)
-- [v2.4.7 — 28/09/2026](#v247--28092026)
-- [v2.4.6 — 25/09/2026](#v246--25092026)
-- [v2.4.5 — 23/09/2026](#v245--23092026)
-- [v2.4.4 — 21/09/2026](#v244--21092026)
-- [v2.4.3 — 19/09/2026](#v243--19092026)
-- [v2.4.2 — 17/09/2026](#v242--17092026)
-- [v2.4.1 — 16/09/2026](#v241--16092026)
-- [v2.4.0 — 14/09/2026](#v240--14092026)
-- [v2.3.0 — 30/09/2026](#v230--30092026)
-- [v2.2.2 — 29/09/2026](#v222--29092026)
-- [v2.2.1 — 29/09/2026](#v221--29092026)
-- [v2.2.0 — 29/09/2026](#v220--29092026)
-- [v2.1.13 — 29/09/2026](#v2113--29092026)
-- [v2.1.12 — 25/09/2026](#v2112--25092026)
-- [v2.1.11 — 22/09/2026](#v2111--22092026)
-- [v2.1.10 — 22/09/2026](#v2110--22092026)
-- [v2.1.9 — 22/09/2026](#v219--22092026)
-- [v2.1.8 — 20/09/2026](#v218--20092026)
-- [v2.1.7 — 20/09/2026](#v217--20092026)
-- [v2.1.6 — 19/09/2026](#v216--19092026)
-- [v2.1.5 — 18/09/2026](#v215--18092026)
-- [v2.1.4 — 18/09/2026](#v214--18092026)
-- [v2.1.3 — 18/09/2026](#v213--18092026)
-- [v2.1.2 — 17/09/2026](#v212--17092026)
-- [v2.1.1 — 17/09/2026](#v211--17092026)
-- [v2.1.0 — 17/09/2026](#v210--17092026)
-- [v2.0.4 — 13/09/2026](#v204--13092026)
-- [v2.0.3 — 13/09/2026](#v203--13092026)
-- [v2.0.2 — 12/09/2026](#v202--12092026)
-- [v2.0.1 — 11/09/2026](#v201--11092026)
-- [v2.0.0 — 10/09/2026](#v200--10092026)
-- [v1.9.8.0 — 08/09/2026](#v1980--08092026)
+- [v2.4.9 — 07/10/2026](#v249-07102026)
+- [v2.4.8 — 01/10/2026](#v248-01102026)
+- [v2.4.7 — 28/09/2026](#v247-28092026)
+- [v2.4.6 — 25/09/2026](#v246-25092026)
+- [v2.4.5 — 23/09/2026](#v245-23092026)
+- [v2.4.4 — 21/09/2026](#v244-21092026)
+- [v2.4.3 — 19/09/2026](#v243-19092026)
+- [v2.4.2 — 17/09/2026](#v242-17092026)
+- [v2.4.1 — 16/09/2026](#v241-16092026)
+- [v2.4.0 — 14/09/2026](#v240-14092026)
+- [v2.3.0 — 30/09/2026](#v230-30092026)
+- [v2.2.2 — 29/09/2026](#v222-29092026)
+- [v2.2.1 — 29/09/2026](#v221-29092026)
+- [v2.2.0 — 29/09/2026](#v220-29092026)
+- [v2.1.13 — 29/09/2026](#v2113-29092026)
+- [v2.1.12 — 25/09/2026](#v2112-25092026)
+- [v2.1.11 — 22/09/2026](#v2111-22092026)
+- [v2.1.10 — 22/09/2026](#v2110-22092026)
+- [v2.1.9 — 22/09/2026](#v219-22092026)
+- [v2.1.8 — 20/09/2026](#v218-20092026)
+- [v2.1.7 — 20/09/2026](#v217-20092026)
+- [v2.1.6 — 19/09/2026](#v216-19092026)
+- [v2.1.5 — 18/09/2026](#v215-18092026)
+- [v2.1.4 — 18/09/2026](#v214-18092026)
+- [v2.1.3 — 18/09/2026](#v213-18092026)
+- [v2.1.2 — 17/09/2026](#v212-17092026)
+- [v2.1.1 — 17/09/2026](#v211-17092026)
+- [v2.1.0 — 17/09/2026](#v210-17092026)
+- [v2.0.4 — 13/09/2026](#v204-13092026)
+- [v2.0.3 — 13/09/2026](#v203-13092026)
+- [v2.0.2 — 12/09/2026](#v202-12092026)
+- [v2.0.1 — 11/09/2026](#v201-11092026)
+- [v2.0.0 — 10/09/2026](#v200-10092026)
+- [v1.9.8.0 — 08/09/2026](#v1980-08092026)
 
 ---
 

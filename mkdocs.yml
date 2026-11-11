@@ -71,6 +71,7 @@ plugins:
             Menu Outils: Tools Menu
             Menu Paramètres: Settings Menu
             Menu Quitter: Quit Menu
+            FAQ: FAQ
             À propos & Confidentialité: About & Privacy
             Politique de confidentialité: Privacy Policy
             Historique des Versions: Version History
@@ -101,6 +102,7 @@ nav:
       - Menu Outils: guide/tools.md
       - Menu Paramètres: guide/settings.md
       - Menu Quitter: guide/quit.md
+  - FAQ: guide/FAQ.md
   - À propos & Confidentialité:
       - Politique de confidentialité: confidentialite.md
   - Historique des Versions: Versions.md

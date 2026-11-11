@@ -1,4 +1,4 @@
-# 🚀 Chapter 1: App Description, Installation & Prerequisites
+# Description, Installation & Prerequisites
 
 ## 1.1 General Overview & Philosophy
 
@@ -11,6 +11,10 @@ The app completely replaces heavy physical sheet music binders and generic PDF v
 - **Stage-Optimized Dark Mode**: Native dark interface (`#121212`) prevents stage glare and eliminates white flashes when loading scores.
 - **Complete Hands-Free Control**: Native support for wireless Bluetooth page-turner pedals (HID and keyboard profiles) as well as MIDI controllers (USB-OTG and Bluetooth MIDI).
 - **Professional Annotation Suite**: Stylus, freehand pencil, translucent chiseled highlighters, typed text, and over 100 built-in musical stickers.
+
+***Recommendations***  
+*The application is optimized to run on A4-sized tablets (14 inches or larger). This tablet size is ideal for displaying sheet music comfortably.  
+Naturally, smaller formats work perfectly well too; it is simply a matter of comfort and budget, especially since Android tablets are readily available at accessible prices.*
 
 ---
 
@@ -112,3 +116,19 @@ For developers who want to compile and customize the application for Android or 
    # For Windows: publish standalone binary
    dotnet publish -f net10.0-windows10.0.19041.0 -c Release
    ```
+
+---
+
+### ***Contribution / Disclaimer***
+
+- The application has evolved and continues to evolve based on feedback from musicians.  
+  It is naturally not perfect, and you are welcome to submit suggestions, bug reports, or feedback on GitHub!  
+  Thank you!
+
+- The application was developed with my knowledge of C# and Python, and with the help of Gemini AI, without which I could not have accomplished this project to such an advanced level with so many features.  
+  Development tools: Visual Studio Code + Antigravity IDE + Python 3.13.
+
+- The application code is completely transparent and accessible on GitHub.
+
+- We guarantee that no personal information or data is ever collected.  
+  The app is ad-free, limitation-free, and 100% free.

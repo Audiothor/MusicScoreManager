@@ -1,58 +1,39 @@
-# User Manual - Music Score Manager
+<h1 style="text-align: center;">Music Score Manager</h1>
+<p style="text-align: center;">
+  <img src="images/MusicScoreManager.png" alt="Music Score Manager" style="max-width: 100%; height: auto;">
+</p>
 
-Welcome to the comprehensive, in-depth documentation for **Music Score Manager**, the cross-platform application (Android / Windows) tailor-made for solo musicians, ensembles, choirs, and orchestras.
+Welcome to the comprehensive, in-depth documentation for **Music Score Manager**!
 
----
+This application is **100% FREE and COMPLETELY AD-FREE**.  
+It requires no internet connection and has zero cloud dependencies.  
+It is cross-platform (**Android / Windows**).
 
-## 📑 6-Chapter Documentation Structure
+**Music Score Manager** was custom-designed for solo musicians, ensembles, choirs, and orchestras, built upon feedback from musicians in music conservatories, concert bands, bands, and self-taught performers.
 
-The official user manual and documentation are strictly organized around 6 comprehensive chapters:
+**Music Score Manager manages** your sheet music libraries, lets you read them live on stage, add annotations, organize concert programs, and much more.  
+**Music Score Manager supports** PDF sheet music, and can also import image files which are automatically converted to PDF format.
 
-```mermaid
-graph TD
-    A[Music Score Manager] --> C1[1. Description, Installation & Prerequisites]
-    A --> C2[2. Scores & Stage Viewer]
-    A --> C3[3. Setlists & Live Performance]
-    A --> C4[4. Advanced Tools & P2P]
-    A --> C5[5. Settings & Customization]
-    A --> C6[6. Technical Details & Privacy]
-```
-
-1. **[Chapter 1: Full Description of the App, Installation & Prerequisites](guide/installation.en.md)**  
-   Philosophy, highlights, 100% offline autonomy, zero latency (< 50ms), stage-optimized Dark Mode, hardware requirements (Android 12+, Windows 10/11), and installation / build procedures.
-
-2. **[Chapter 2: Scores — Actions, Library & Fullscreen Stage Viewer](guide/scores.en.md)**  
-   Real-time search, folder/category drill-down view, tag filtering, multi-criteria sorting, batch multi-selection (folder assignment, deletion, export, WiFi), PDF / image imports, score card indicators, context menu (⋮), complete metadata editing, and the fullscreen stage viewer ([`ViewerPage`](guide/viewer.en.md)) featuring 2-page landscape mode, quick tools drawer with integrated precision tuner (YIN algorithm), full annotation suite, thread-safe regulated metronome, and audio backing track player.
-
-3. **[Chapter 3: Setlists — Program Planning & Live Stage Flow](guide/setlists.en.md)**  
-   Concert planning, status filters (Active, Upcoming, Completed), direct one-tap start, 1-click setlist duplication, concert lock mode, and the **Live Setlist Progress Drawer** with automatic scrolling/centering on the current piece and color-coded status badges.
-
-4. **[Chapter 4: Tools — Advanced Utility Studio](guide/tools.en.md)**  
-   Score Scanner Studio ([`ScoreScannerPage`](guide/tools.en.md)), PDF Assembler Studio ([`PdfAssemblerPage`](guide/tools.en.md)), Wi-Fi Direct P2P & QR Code group broadcasts without internet ([`WifiTransferPage`](guide/tools.en.md)), tag management with RGB mixer ([`TagsPage`](guide/tools.en.md)), package imports (`.msmsetlist`, `.msmscore`, `.msmscores`), recursive duplicate detection via SHA-256 binary hash ([`DuplicatesPage`](guide/tools.en.md)), and database backup & restore ([`BackupsPage`](guide/tools.en.md)).
-
-5. **[Chapter 5: Settings — Configuration & Preferences](guide/settings.en.md)**  
-   Score settings (sorting, gestures, 2-page landscape mode, page number badge), Setlist settings (continuous play, progress drawer toggle), Annotation settings (custom favorite stickers & active sticker categories), Bluetooth Pedals & MIDI Events ([`SettingsPedalsPage`](guide/settings.en.md)) with real-time signal monitor, factory profiles, Learn mode, and long-press sensitivity, and App settings (8 built-in languages, available disk space, SQLite database size, and USB-accessible storage folders).
-
-6. **[Chapter 6: Technical Details, Privacy, Rights & GitHub Links](confidentialite.en.md)**  
-   Software architecture (.NET 10 MAUI, SQLite WAL, Mozilla PDF.js, SoundPool), transparent Android permissions, strict zero-data privacy policy (0 data collected, 0 telemetry, 100% local storage), free GNU General Public License v3.0 (GPLv3), and official GitHub project links.
+**Music Score Manager does not** directly edit notes on staves, transpose audio/MIDI, or synthesize MIDI notes.
 
 ---
 
-## 🧭 Quick Access to Guides
+## Table of Contents
 
-- [🚀 Quick Start Guide (Get Started in 5 Minutes)](guide/quickstart.en.md)
-- [📦 Chapter 1: Description & Installation](guide/installation.en.md)
-- [🎵 Scores Menu Guide](guide/scores.en.md)
-- [📖 Viewer & Stage Mode Guide](guide/viewer.en.md)
-- [📋 Setlists Menu Guide](guide/setlists.en.md)
-- [🛠️ Tools Menu Guide](guide/tools.en.md)
-- [⚙️ Settings Menu Guide](guide/settings.en.md)
-- [🚪 Quit Menu Guide](guide/quit.en.md)
-- [❓ FAQ](guide/FAQ.en.md)
-- [🔒 Privacy Policy & Legal Notice](confidentialite.en.md)
+- [Description, Prerequisites & Installation](guide/installation.en.md)
+- [Quick Start Guide (5 Minutes)](guide/quickstart.en.md)
+- [Scores](guide/scores.en.md)
+- [Setlists & Live Performance](guide/setlists.en.md)
+- [Fullscreen Stage Viewer](guide/viewer.en.md)
+- [Tools Studio](guide/tools.en.md)
+- [Settings & Customization](guide/settings.en.md)
+- [Quit](guide/quit.en.md)
+- [FAQ](guide/FAQ.en.md)
+- [Privacy Policy & Legal Notice](confidentialite.en.md)
+- [Version History](Versions.en.md)
 
 ---
 
 ## 💬 Community & Support
 
-Join the **[Audiothor Discord Server](https://discord.gg/EtZf8VyMz)** to get help, report issues, discuss foot pedal hardware compatibility, and request new features!
+Join the **[Audiothor Discord Server](https://discord.gg/EtZf8VyMz)** to get help, report issues, discuss hardware foot pedals, and request new features!

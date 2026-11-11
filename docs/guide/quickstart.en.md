@@ -1,6 +1,6 @@
 # Music Score Manager
 
-## Quick Start Guide (Get Started in 5 Minutes)
+### Quick Start Guide (Get Started in 5 Minutes)
 
 Welcome to **Music Score Manager**! This guide walks you step-by-step through setting up, importing your first scores, and being ready to play on stage or in rehearsal in just a few minutes.
 
@@ -9,7 +9,7 @@ Welcome to **Music Score Manager**! This guide walks you step-by-step through se
 ## At a Glance: The 5 Essential Steps
 
 1. Import scores
-2. Organize tags
+2. Organize tags and folders
 3. View the score
 4. Add annotations
 5. Create a Live Setlist and run it
@@ -23,12 +23,13 @@ As soon as the app opens, go to the **Scores** menu (in the navigation bar).
 1. Tap the **`+`** button located at the top right.
 2. The file picker opens: select one or more sheet music **PDF** or **Image** files (JPEG, PNG).
 3. **You have 2 ways to import scores:**
-   - **Copy into the application (i.e. local mode)** your selected score(s). This is the recommended solution!
+   - **Copy into the application (i.e. local mode)** your selected score(s). This is the strongly recommended solution!
    - **Base yourself on your source file without copying it into the app.** This solution is NOT recommended because if files are moved, you will always need external access to your scores.
+   *Tip:* You can check **« Don't ask again and remember my choice »** to save time on future imports.  
    Music Score Manager can easily manage several hundred scores locally.
 4. **In the case of a PDF file**:
    - The file is immediately integrated into your library.
-   - A modern window appears with the **`🎵 Open score`** button to play it right away!
+   - A modern window appears with the **`Open score`** button to play it right away!
 5. **In the case of photos or images**:
    - The application offers to automatically convert them to PDF format.
    - If you select multiple photos (e.g. photos of individual pages of a piece), the application offers to **merge them into 1 single multi-page PDF score**.
@@ -47,7 +48,7 @@ To find your pieces instantly among hundreds of scores:
    - Toggle seamlessly between **Classic List View** and **Folders View** at any time using the `📁` button at the top of the screen.
    - Assign each score to a folder (e.g. *Classical*, *Jazz*, *Choir*, *Studies*...) from its edit screen or via the 3-dots context menu `📁 Change folder`. Create new folders on the fly with the `➕` button.
 2. **Color-Coded Tags (Cross-Category Labels)**:
-   - Create your own tags with custom colors via **Tools > Tag Management** (or *Settings > Score Settings > Manage Tag List*).
+   - Create your own tags with custom colors via **Tools > Tag Management** (or *Settings > Manage Tags*).
    - A score can have multiple tags simultaneously (e.g. *Vocals*, *Piano*, *Christmas*).
 3. **Edit Musical Metadata**:
    - In **Scores**, tap the **three little dots `⋮`** on a score, then choose **`Edit score`**.
@@ -87,7 +88,7 @@ In score reading mode, tap the bottom of the screen to deploy the toolbox:
 - Any annotation can be deleted or moved.
 
 > [!TIP]
-> **Locking**: For safety, a small padlock prevents accidental manipulation errors with annotations. In green, modifications are allowed. A closed bar or a padlock in red prevents any modification.
+> **Safety Locking**: By default, an automatic lock protects your annotations from accidental touch gestures while performing. Selecting any tool unlocks editing, and closing the toolbar re-locks automatically.
 
 ---
 
@@ -101,13 +102,13 @@ Stop searching for your sheets one by one between pieces on stage: prepare your 
 4. Reorganize the order of songs simply by **drag and drop**.
 5. For any modifications, don't forget to save!
 6. Tap one of your scores in this list to start your concert at that spot, or go to the **Setlists** tab and click on the concert you want: the viewer opens on the first piece. At the end of the last page of the score, it automatically moves to the next piece according to the Setlist settings you selected!
-7. The setlist drawer lets you view upcoming pieces at any time (top center).
+7. The setlist drawer lets you view upcoming pieces at any time (tap **top-center** of the screen).
 
 ---
 
-## Step 6: Practical Built-in Tools (Metronome & Audio Player)
+## Step 6: Practical Built-in Tools (Metronome, Audio Player, Scanner...)
 
-Directly from the score viewer (or in score editing):
+Directly from the score viewer via the toolbox (or in score editing):
 
 - **Built-in Metronome**:
   - Adjust tempo (BPM).
@@ -116,15 +117,14 @@ Directly from the score viewer (or in score editing):
   - Link an audio file (MP3, WAV, AAC, FLAC) to a score to rehearse with the backing track or demo.
   - Control playback (Play / Pause, return to beginning) directly from the score viewer.
 
-and many others...
-
 In the **Tools** tab you will find numerous utilities to help you:
 
-- **Sharing between musicians**: Use the **Wi-Fi Direct P2P** menu to transmit a complete setlist with annotations to a person or even to your fellow musicians backstage, very quickly, even without an Internet connection!
-- **Import files** (which already include annotations that you or someone else exported to you).
-- **Duplicate management**, practical when you have several hundred scores.
-- **Backups**.
-- **Assembly and internal organization of your scores** (you can redefine the orientation and order of your PDF pages!).
+- **Paper Score Scanner**: Take a photo of paper sheet music, name your score, and it is compiled directly into a PDF in your library!
+- **Sharing between musicians**: Use the **Wi-Fi Direct P2P** menu to transmit a complete setlist with annotations to fellow musicians backstage in seconds, even without an Internet connection!
+- **Import files**: Load `.msmsetlist`, `.msmscore`, or `.msmscores` packages shared by other musicians.
+- **Duplicate management**: Identify duplicate PDFs via SHA-256 binary hash to free up space.
+- **Backups**: Safeguard your database and generate full `.zip` archives of all scores, folders, and audios.
+- **PDF Assembler Studio**: Reorder, rotate, clone, or insert blank pages into your PDFs.
 
 In the **Settings** tab you will find plenty of customization options for the application across all menus.
 
@@ -132,11 +132,17 @@ In the **Settings** tab you will find plenty of customization options for the ap
 
 ## Community & Support
 
-Have a question, feature request, or need help with your pedal / hardware setup?  
-Join our **[Audiothor Discord Server](https://discord.gg/EtZf8VyMz)** to connect directly with the developer and other musicians!
+Have a question, an idea, or an issue with your equipment?  
+Join our **[Audiothor Discord Server](https://discord.gg/EtZf8VyMz)** to chat with the developer and other musicians!
 
 ---
 
 ## Learn More
 
-To discover all the advanced features (PDF assembly, metadata editing, fine-tuning of MIDI foot controllers, automatic backups), and many other details, check out the [Full Guide](../index.en.md).
+To discover all the advanced features (PDF assembly, metadata editing, fine-tuning of MIDI foot controllers, automatic backups), and many other details, check out the [Full Scores Guide](scores.en.md).
+
+---
+
+## FAQ
+
+Have general questions about the application? Read the [FAQ](FAQ.en.md).

@@ -4,7 +4,7 @@
 Le menu **Partitions** constitue la porte d'entrée de votre bibliothèque musicale. Il regroupe l'ensemble de vos partitions sous forme d'une grille de cartes modernes, réactives et optimisées pour les grands écrans comme pour les smartphones.
 
 <p style="text-align: center;">
-  <img src="../../images/partitions_liste_fr" alt="Affichage des partitions sous forme de liste" style="max-width: 100%; height: auto;">
+  <img src="../../images/partitions_liste_fr.jpeg" alt="Affichage des partitions sous forme de liste" style="max-width: 100%; height: auto;">
 </p>
 
 ---
@@ -39,6 +39,7 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
 
 <p style="text-align: center;">
   <img src="../../images/partitions_categorie_fr.jpeg" alt="Affichage des partitions sous forme de dossiers" style="max-width: 100%; height: auto;">
+  <img src="../../images/partitions_categorie2_fr.jpeg" alt="Affichage des partitions sous forme de dossiers" style="max-width: 100%; height: auto;">
 </p>
 
 **[3] Bouton de Filtrage par Étiquettes (🏷️)**
@@ -67,9 +68,10 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
   - **📦 Exporter (.msmscores)** : génère une archive compressée unique regroupant tous les fichiers choisis (avec choix des annotations et des pistes audio).
   - **🗑️ Supprimer** : suppression groupée avec confirmation de sécurité.
 
-TIPS ! Si vous maintenez quelques secondes une partition en mode "Liste" ou "Catégorie", la fontion de mutli-sélection se déclenchera automatiquement !!
+TIPS !
+Si vous maintenez quelques secondes une partition en mode "Liste" ou "Catégorie", la fontion de mutli-sélection se déclenchera automatiquement !!
 
-**[6] Bouton Ajouter (➕)**
+**[6] Bouton Ajouter (➕)** : permet l'ajout de partitions
 
 - **Importation de PDF** : Contrôle strict de l'intégrité binaire empêchant tout plantage. L'import peut se faire par lot (plusieurs pdf importés en une seule fois)
 - **Importation et conversion d'Images** : La sélection d'un ou plusieurs fichiers images (PNG, JPEG, GIF, WEBP, BMP) affiche un message d'information listant les fichiers images qui vont être convertis en PDF :
@@ -80,7 +82,7 @@ TIPS ! Si vous maintenez quelques secondes une partition en mode "Liste" ou "Cat
     Le fichier PDF est copié dans le dossier interne dédié de Music Score Manager. Vos partitions restent accessibles en permanence même si le fichier original est déplacé ou supprimé de son dossier de téléchargement.
   - **Lier le fichier original (Externe)** :  
     L'application conserve le chemin d'accès absolu vers le fichier sans le dupliquer pour économiser l'espace mémoire (signalé par un badge `🔗`).
-- Pour éviter d'être sollicité en permanence par un mode d'import, vous pouvez définir le type d'import par défaut dans les paramétres de partitions.
+- Pour éviter d'être sollicité en permanence par un mode d'import, vous pouvez définir le type d'import par défaut dans les paramétres de partitions ou cocher la sélection qui vous convient pour ne plus avoir de question par la suite.
 
 ### B. Milieu de l'écran - liste des partitions référencées dans l'application
 
@@ -109,19 +111,19 @@ Si le fichier PDF associé a été déplacé, renommé sur le stockage ou est in
 
 - **[9] : Setlists**
   Il gère les groupements de partitions pour un concert par exemple
-  => Voir le chapitre dédié aux Setlists
+  => [Voir le chapitre dédié aux Setlists](setlists.md)
 
 - **[10] : Outils**
   A cet endroit sont disposés de multiples outils utiles pour vos partitions (transformations, imports, sauvegardes, gestion des étiquettes etc...)
-  => Voir le chapitre dédié aux Outils
+  => [Voir le chapitre dédié aux Outils](tools.md)
 
 - **[11] : Paramètres**
   Tous les paramètres de l'application, des partitions, Setlists etc...
-  => Voir le chapitre dédié aux Paramètres
+  => [Voir le chapitre dédié aux Paramètres](settings.md)
 
 - **[12] : Quitter**
   Tout simplement pour quitter l'application en cours
-  => Voir le chapitre dédié à la fonction de Quitter
+  => [Voir le chapitre dédié à la fonction de Quitter](quit.md)
 
 ---
 
@@ -181,7 +183,7 @@ En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et
 4. **Changer de dossier / catégorie**
    Permet d'assigner la partition à un dossier/catégorie pour mieux le classer.
 
-5. **📑 Atelier d'assemblage PDF** :
+5. **📑 Modifier l'assemblage PDF** :
 - Ouvre la partition directement dans l'**Atelier d'Assemblage PDF** pour réorganiser les pages, insérer une page blanche, supprimer des pages inutiles ou effectuer des rotations. Très pratique quand votre fichier pdf est mal organisé.
   Vous pouvez retrouver cet outil directement dans le menu "Outils" aussi.
   => Le détail des modifications d'assemblage est disponible plus en détail dans la partie "Outils"
@@ -194,8 +196,8 @@ En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et
   La partition est immédiatement envoyées et incue dans le Music Score Manager de la personne qui reçoit !
   => Le détail des envois/réceptions immédiates est disponible plus en détail dans la partie "Outils"
 7. **📦 Exporter la partition (.msmscore)** :
-- Génère une archive (=un fichier) autonome transportable avec un choix  d'options (annotations, pistes audio) d'export.
+- Génère une archive (= un fichier) autonome transportable avec un choix  d'options (annotations, pistes audio) d'export.
 8. **🏷️ Renommer la partition** :
-- Boîte de dialogue rapide pour changer le titre affiché sans entrer dans l'édition complète.
+- Boîte de dialogue rapide pour changer le titre et donc le nom de la partition PDF affichée sans entrer dans l'édition complète.
 9. **🗑️ Supprimer la partition** :
 - Supprime la partition de votre bibliothèque avec demande de confirmation sécurisée.
