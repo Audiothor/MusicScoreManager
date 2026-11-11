@@ -2478,37 +2478,53 @@ public partial class ViewerPage : ContentPage
             screenHeight = this.Height > 0 ? this.Height : DeviceDisplay.MainDisplayInfo.Height / (DeviceDisplay.MainDisplayInfo.Density > 0 ? DeviceDisplay.MainDisplayInfo.Density : 1);
         }
 
-        // Hauteur naturelle compacte requise par le contenu du menu + en-tête fixe
-        double headerAndPadding = 75;
-        double naturalContentHeight = 300;
+        double menuWidth = DeviceInfo.Idiom == DeviceIdiom.Phone ? 340 : 360;
+        double innerWidth = menuWidth - 32; // Padding 16 gauche + 16 droite
+
+        // Hauteur naturelle compacte requise par l'en-tête fixe (boutons du haut + titre complet en dessous) + marges
+        double headerAndPadding = 112;
+        try
+        {
+            if (CentralMenuHeaderStack != null)
+            {
+                var headerMeasured = CentralMenuHeaderStack.Measure(innerWidth, double.PositiveInfinity);
+                if (headerMeasured.Height > 30)
+                {
+                    headerAndPadding = headerMeasured.Height + 44; // Padding haut/bas (32) + espacement (12)
+                }
+            }
+        }
+        catch { }
+
+        double naturalContentHeight = 400;
         try
         {
             if (CentralMenuContentStack != null)
             {
-                var measured = CentralMenuContentStack.Measure(340, double.PositiveInfinity);
+                var measured = CentralMenuContentStack.Measure(innerWidth, double.PositiveInfinity);
                 if (measured.Height > 100)
                 {
-                    naturalContentHeight = measured.Height + headerAndPadding;
+                    naturalContentHeight = measured.Height + headerAndPadding + 6;
                 }
             }
         }
         catch { }
 
         // Si l'écran est trop petit pour afficher le menu en entier (ex: écran paysage de smartphone)
-        if (screenHeight > 0 && screenHeight < (naturalContentHeight + 40))
+        if (screenHeight > 0 && screenHeight < (naturalContentHeight + 36))
         {
-            double constrainedHeight = Math.Max(260, screenHeight - 40);
+            double constrainedHeight = Math.Max(260, screenHeight - 36);
             CentralMenuOverlay.HeightRequest = constrainedHeight;
             CentralMenuOverlay.MaximumHeightRequest = constrainedHeight;
             if (CentralMenuScrollView != null)
             {
-                CentralMenuScrollView.HeightRequest = Math.Max(180, constrainedHeight - headerAndPadding);
+                CentralMenuScrollView.HeightRequest = Math.Max(160, constrainedHeight - headerAndPadding);
                 CentralMenuScrollView.VerticalScrollBarVisibility = ScrollBarVisibility.Default;
             }
         }
         else
         {
-            // Écran de taille suffisante : boîte ultra-compacte ajustée pile au contenu, sans aucun ascenseur !
+            // Écran de taille suffisante : boîte ajustée au contenu complet sans aucun ascenseur !
             CentralMenuOverlay.HeightRequest = naturalContentHeight;
             CentralMenuOverlay.MaximumHeightRequest = naturalContentHeight;
             if (CentralMenuScrollView != null)
@@ -3605,7 +3621,11 @@ public partial class ViewerPage : ContentPage
         string fullPath = _settingsService.GetAbsolutePath(_score.FilePath);
         if (!File.Exists(fullPath))
         {
-            await DisplayAlertAsync("Fichier introuvable", $"Le fichier est introuvable :\n{fullPath}", "OK");
+            var loc = LocalizationService.Instance;
+            await DisplayAlertAsync(
+                loc.GetString("Viewer_File_Not_Found_Title", "Fichier introuvable"),
+                string.Format(loc.GetString("Viewer_File_Not_Found_Msg", "Le fichier est introuvable :\n{0}"), fullPath),
+                loc.GetString("Common_OK", "OK"));
             return;
         }
 
@@ -6094,7 +6114,13 @@ public partial class ViewerPage : ContentPage
             if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
             if (s is Border b && b.BindingContext is Annotation a)
             {
-                string newText = await DisplayPromptAsync("Modifier le texte", "Texte :", "OK", "Annuler", initialValue: a.Content);
+                var loc = LocalizationService.Instance;
+                string newText = await DisplayPromptAsync(
+                    loc.GetString("Viewer_Edit_Text_Title", "Modifier le texte"),
+                    loc.GetString("Viewer_Edit_Text_Prompt", "Texte :"),
+                    loc.GetString("Common_OK", "OK"),
+                    loc.GetString("Common_Cancel", "Annuler"),
+                    initialValue: a.Content);
                 if (newText != null)
                 {
                     if (string.IsNullOrWhiteSpace(newText))
@@ -6546,7 +6572,12 @@ public partial class ViewerPage : ContentPage
                 itemGrid.Children.Add(infoStack);
 
                 // Indicateur texte droite
-                string stateText = isCurrent ? "En cours" : (isPassed ? "Passé" : "À venir");
+                var locState = LocalizationService.Instance;
+                string stateText = isCurrent
+                    ? locState.GetString("Viewer_Setlist_State_Current", "En cours")
+                    : (isPassed
+                        ? locState.GetString("Viewer_Setlist_State_Passed", "Passé")
+                        : locState.GetString("Viewer_Setlist_State_Upcoming", "À venir"));
                 var stateLabel = new Label
                 {
                     Text = stateText,
@@ -6848,7 +6879,7 @@ public partial class ViewerPage : ContentPage
         {
             BookmarkChipsContainer.Children.Add(new Label
             {
-                Text = "Aucun marqueur défini",
+                Text = LocalizationService.Instance.GetString("Viewer_Bookmark_None", "Aucun marqueur défini"),
                 TextColor = Color.FromArgb("#888888"),
                 FontSize = 12,
                 VerticalOptions = LayoutOptions.Center
@@ -6918,7 +6949,8 @@ public partial class ViewerPage : ContentPage
         {
             if (BookmarkErrorLabel != null)
             {
-                BookmarkErrorLabel.Text = $"Le marqueur '{newName}' existe déjà sur cette partition.";
+                var loc = LocalizationService.Instance;
+                BookmarkErrorLabel.Text = string.Format(loc.GetString("Viewer_Bookmark_Name_Duplicate", "Le marqueur '{0}' existe déjà sur cette partition."), newName);
                 BookmarkErrorLabel.IsVisible = true;
             }
             return;

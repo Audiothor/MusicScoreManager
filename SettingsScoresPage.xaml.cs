@@ -56,7 +56,7 @@ public partial class SettingsScoresPage : ContentPage
             loc.GetString("Import_Mode_Ask", "Toujours demander à chaque import")
         };
 
-        string defaultImportMode = Preferences.Default.Get("DefaultScoreImportMode", "Copy");
+        string defaultImportMode = Preferences.Default.Get("DefaultScoreImportMode", "Ask");
         DefaultImportModePicker.SelectedIndex = defaultImportMode switch
         {
             "Copy" => 0,

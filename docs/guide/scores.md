@@ -4,7 +4,7 @@
 Le menu **Partitions** constitue la porte d'entrée de votre bibliothèque musicale. Il regroupe l'ensemble de vos partitions sous forme d'une grille de cartes modernes, réactives et optimisées pour les grands écrans comme pour les smartphones.
 
 <p style="text-align: center;">
-  <img src="../../images/Partitions_fr_2.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
+  <img src="../../images/partitions_liste_fr" alt="Affichage des partitions sous forme de liste" style="max-width: 100%; height: auto;">
 </p>
 
 ---
@@ -36,6 +36,10 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
   Le dossier par défaut où se placent les partitions lors d'imports est le dossier "Default". Il ne peut être supprimé ou renommé. Un paramètre existe pour assigner par défaut un autre répertoire : ceci est pratique lorsque vous avez beaucoup d'imports d'une même catégorie de partitions.
   Une suppression de dossier déclenche automatiquement un déplacement des partitions contenues dans le répertoire "Default" : les partitions ne sont donc pas supprimées.
   Bien entendu les partitions peuvent aussi être accessibles et donc visionnable par ce biais. Les options de partitions avec l'accès au menu menu contextuel de la partition sont aussi disponibles.
+
+<p style="text-align: center;">
+  <img src="../../images/partitions_categorie_fr.jpeg" alt="Affichage des partitions sous forme de dossiers" style="max-width: 100%; height: auto;">
+</p>
 
 **[3] Bouton de Filtrage par Étiquettes (🏷️)**
 
@@ -126,7 +130,7 @@ Si le fichier PDF associé a été déplacé, renommé sur le stockage ou est in
 En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et ergonomique s'affiche :
 
 <p style="text-align: center;">
-  <img src="../../images/Partitions_fr_3.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
+  <img src="../../images/menu_partition_fr.jpeg" alt="Menu de partition" style="max-width: 100%; height: auto;">
 </p>
 
 1. **📖 Ouvrir la partition** :
@@ -137,7 +141,7 @@ En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et
 - Ouvre la page d'édition détaillée :
 
 <p style="text-align: center;">
-  <img src="../../images/Partitions_fr_4.jpeg" alt="Affichage des partitions" style="max-width: 100%; height: auto;">
+  <img src="../../images/editer_partition_fr.jpeg" alt="Edition d'une partitions" style="max-width: 100%; height: auto;">
 </p>
 
 * **Titre** et **Compositeur / Arrangeur**.
@@ -170,7 +174,6 @@ En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et
   si on veut afficher le bouton de boîte à outils en haut à drotie de la partition
   
   NE PAS OUBLIER D'ENREGISTRER VOS MODIFICATIONS !
-  
 3. **📋 Ajouter dans un Setlist** :
 - Permet d'insérer instantanément la partition dans la setlist de votre choix.
 - **Placement prioritaire en 1ère position** (décalant les autres morceaux vers le bas).
@@ -196,5 +199,3 @@ En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et
 - Boîte de dialogue rapide pour changer le titre affiché sans entrer dans l'édition complète.
 9. **🗑️ Supprimer la partition** :
 - Supprime la partition de votre bibliothèque avec demande de confirmation sécurisée.
-
- 

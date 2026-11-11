@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>3.2.7</ApplicationDisplayVersion>
-		<ApplicationVersion>32007</ApplicationVersion>
-		<!-- Version actuelle : v3.2.7 "Alignement au pixel près et stabilité absolue de la boîte de chargement" -->
+		<ApplicationDisplayVersion>3.2.8</ApplicationDisplayVersion>
+		<ApplicationVersion>32008</ApplicationVersion>
+		<!-- Version actuelle : v3.2.8 "Ergonomie de la boîte d'actions partition, mémorisation du mode d'import et localisation intégrale 8 langues" -->
 
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
