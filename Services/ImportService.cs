@@ -13,6 +13,7 @@ namespace MusicScoreManager.Services
 
         public Func<string, string, string, string, Task<bool>>? ConfirmDialogHandler { get; set; }
         public Func<string, string, string[], Task<string?>>? ActionSheetDialogHandler { get; set; }
+        public Func<string, string, string[], Task<(string? Action, bool Remember)>>? ImportModeChoiceDialogHandler { get; set; }
         public Func<string, string, string, Task<string?>>? PromptDialogHandler { get; set; }
         public Func<string, string, Task>? AlertHandler { get; set; }
 
@@ -28,14 +29,25 @@ namespace MusicScoreManager.Services
             return await Shell.Current.DisplayActionSheetAsync(title, cancel, null, options);
         }
 
-        private async Task<string?> ShowPromptAsync(string title, string message, string initialValue, string accept = "Créer", string cancel = "Annuler")
+        private async Task<(string? Action, bool Remember)> ShowImportModeChoiceAsync(string title, string cancel, params string[] options)
         {
+            if (ImportModeChoiceDialogHandler != null) return await ImportModeChoiceDialogHandler(title, cancel, options);
+            var res = await ShowActionSheetAsync(title, cancel, options);
+            return (res, false);
+        }
+
+        private async Task<string?> ShowPromptAsync(string title, string message, string initialValue, string? accept = null, string? cancel = null)
+        {
+            var loc = LocalizationService.Instance;
+            accept ??= loc.GetString("Common_Create", "Créer");
+            cancel ??= loc.GetString("Common_Cancel", "Annuler");
             if (PromptDialogHandler != null) return await PromptDialogHandler(title, message, initialValue);
             return await Shell.Current.DisplayPromptAsync(title, message, accept: accept, cancel: cancel, initialValue: initialValue);
         }
 
-        private async Task ShowAlertAsync(string title, string message, string cancel = "OK")
+        private async Task ShowAlertAsync(string title, string message, string? cancel = null)
         {
+            cancel ??= LocalizationService.Instance.GetString("Common_OK", "OK");
             if (AlertHandler != null) await AlertHandler(title, message);
             else await Shell.Current.DisplayAlertAsync(title, message, cancel);
         }
@@ -75,9 +87,10 @@ namespace MusicScoreManager.Services
                         { DevicePlatform.MacCatalyst, new[] { "public.image", "com.adobe.pdf" } },
                     });
 
+                var loc = LocalizationService.Instance;
                 var options = new PickOptions
                 {
-                    PickerTitle = "Sélectionnez une ou plusieurs partitions (PDF ou Image)",
+                    PickerTitle = loc.GetString("Import_Picker_Title", "Sélectionnez une ou plusieurs partitions (PDF ou Image)"),
                     FileTypes = customFileType,
                 };
 
@@ -113,19 +126,19 @@ namespace MusicScoreManager.Services
                     string fileListStr = string.Join("\n• ", fileNames.Take(8));
                     if (fileNames.Count > 8)
                     {
-                        fileListStr += $"\n... et {fileNames.Count - 8} autre(s)";
+                        fileListStr += "\n" + string.Format(loc.GetString("Import_Image_More_Count", "... et {0} autre(s)"), fileNames.Count - 8);
                     }
 
-                    string alertTitle = "Importation d'images";
+                    string alertTitle = loc.GetString("Import_Image_Title", "Importation d'images");
                     string alertMessage = (imageFiles.Count == 1)
-                        ? $"Le fichier sélectionné est une image :\n• {fileListStr}\n\nIl va être converti au format PDF pour être intégré à votre bibliothèque.\n\nSouhaitez-vous continuer ?"
-                        : $"Les {imageFiles.Count} fichiers sélectionnés sont des images :\n• {fileListStr}\n\nIls vont être convertis au format PDF pour être intégrés à votre bibliothèque.\n\nSouhaitez-vous continuer ?";
+                        ? string.Format(loc.GetString("Import_Image_Confirm_Single", "Le fichier sélectionné est une image :\n• {0}\n\nIl va être converti au format PDF pour être intégré à votre bibliothèque.\n\nSouhaitez-vous continuer ?"), fileListStr)
+                        : string.Format(loc.GetString("Import_Image_Confirm_Multi", "Les {0} fichiers sélectionnés sont des images :\n• {1}\n\nIls vont être convertis au format PDF pour être intégrés à votre bibliothèque.\n\nSouhaitez-vous continuer ?"), imageFiles.Count, fileListStr);
 
                     bool acceptConversion = await ShowConfirmAsync(
                         alertTitle,
                         alertMessage,
-                        "Continuer",
-                        "Annuler");
+                        loc.GetString("Common_Continue", "Continuer"),
+                        loc.GetString("Common_Cancel", "Annuler"));
 
                     if (!acceptConversion)
                     {
@@ -137,31 +150,35 @@ namespace MusicScoreManager.Services
                 // Cas 1 : Plusieurs images acceptées -> Proposer de fusionner en un unique PDF ou partitions individuelles
                 if (imageFiles.Count > 1)
                 {
-                    string? action = await ShowActionSheetAsync(
-                        $"Sélection de {imageFiles.Count} images",
-                        "Annuler",
-                        "📑 Fusionner en 1 seule partition PDF multi-pages (Conseillé)",
-                        "📄 Convertir en partitions individuelles (PDF)");
+                    string cancelStr = loc.GetString("Common_Cancel", "Annuler");
+                    string mergeOpt = loc.GetString("Import_Image_Merge_Option", "📑 Fusionner en 1 seule partition PDF multi-pages (Conseillé)");
+                    string indivOpt = loc.GetString("Import_Image_Individual_Option", "📄 Convertir en partitions individuelles (PDF)");
 
-                    if (action == "Annuler" || string.IsNullOrEmpty(action))
+                    string? action = await ShowActionSheetAsync(
+                        string.Format(loc.GetString("Import_Image_Selection_Count", "Sélection de {0} images"), imageFiles.Count),
+                        cancelStr,
+                        mergeOpt,
+                        indivOpt);
+
+                    if (action == cancelStr || string.IsNullOrEmpty(action))
                     {
                         // L'utilisateur annule le traitement des images
                         imageFiles.Clear();
                     }
-                    else if (action.StartsWith("📑"))
+                    else if (action == mergeOpt || action.StartsWith("📑"))
                     {
                         // Fusionner en un unique PDF
                         var firstFileName = Path.GetFileNameWithoutExtension(imageFiles[0].FileName ?? imageFiles[0].FullPath);
                         var suggestedTitle = Regex.Replace(firstFileName, @"[_-]?\d+$", "").Trim();
                         if (string.IsNullOrEmpty(suggestedTitle)) suggestedTitle = firstFileName;
-                        if (string.IsNullOrWhiteSpace(suggestedTitle)) suggestedTitle = "Partition";
+                        if (string.IsNullOrWhiteSpace(suggestedTitle)) suggestedTitle = loc.GetString("Common_Score_Default_Name", "Partition");
 
                         string? inputTitle = await ShowPromptAsync(
-                            "Titre de la partition",
-                            "Entrez le titre de la nouvelle partition PDF :",
+                            loc.GetString("Import_Score_Title_Header", "Titre de la partition"),
+                            loc.GetString("Import_Score_Title_Prompt", "Entrez le titre de la nouvelle partition PDF :"),
                             suggestedTitle,
-                            "Créer",
-                            "Annuler");
+                            loc.GetString("Common_Create", "Créer"),
+                            cancelStr);
 
                         if (inputTitle != null) // non annulé
                         {
@@ -169,7 +186,7 @@ namespace MusicScoreManager.Services
                             var sortedImages = imageFiles.OrderBy(f => f.FileName ?? f.FullPath, new NaturalComparer()).ToList();
                             var tempPaths = new List<string>();
 
-                            ConversionStateChanged?.Invoke(true, $"Fusion et conversion de {sortedImages.Count} images en document PDF...");
+                            ConversionStateChanged?.Invoke(true, string.Format(loc.GetString("Import_Image_Merging_Progress", "Fusion et conversion de {0} images en document PDF..."), sortedImages.Count));
                             try
                             {
                                 foreach (var img in sortedImages)
@@ -209,7 +226,9 @@ namespace MusicScoreManager.Services
                             catch (Exception ex)
                             {
                                 System.Diagnostics.Debug.WriteLine($"[ImportService] Erreur fusion images : {ex.Message}");
-                                await ShowAlertAsync("Erreur de conversion", $"Impossible de créer la partition PDF : {ex.Message}");
+                                await ShowAlertAsync(
+                                    loc.GetString("Import_Error_Conversion_Title", "Erreur de conversion"),
+                                    string.Format(loc.GetString("Import_Error_Merge_Msg", "Impossible de créer la partition PDF : {0}"), ex.Message));
                             }
                             finally
                             {
@@ -245,7 +264,10 @@ namespace MusicScoreManager.Services
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[ImportService] Erreur lors de l'import : {ex.Message}");
-                await ShowAlertAsync("Erreur d'import", $"Une erreur est survenue lors de l'import : {ex.Message}");
+                var loc = LocalizationService.Instance;
+                await ShowAlertAsync(
+                    loc.GetString("Import_Error_General_Title", "Erreur d'import"),
+                    string.Format(loc.GetString("Import_Error_General_Msg", "Une erreur est survenue lors de l'import : {0}"), ex.Message));
             }
 
             return importedScores;
@@ -253,13 +275,14 @@ namespace MusicScoreManager.Services
 
         private async Task<List<Score>> ConvertAndImportIndividualImagesAsync(List<FileResult> imageFiles, string destDir, string category)
         {
+            var loc = LocalizationService.Instance;
             var results = new List<Score>();
             var cacheDir = FileSystem.CacheDirectory;
             if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
 
             ConversionStateChanged?.Invoke(true, imageFiles.Count > 1 
-                ? $"Conversion de {imageFiles.Count} images en cours..." 
-                : "Conversion de l'image en PDF...");
+                ? string.Format(loc.GetString("Import_Converting_Multi", "Conversion de {0} images en cours..."), imageFiles.Count)
+                : loc.GetString("Import_Converting_Single", "Conversion de l'image en PDF..."));
 
             try
             {
@@ -267,15 +290,15 @@ namespace MusicScoreManager.Services
                 {
                     var img = imageFiles[i];
                     var rawName = Path.GetFileNameWithoutExtension(img.FileName ?? img.FullPath);
-                    if (string.IsNullOrWhiteSpace(rawName)) rawName = "Partition";
+                    if (string.IsNullOrWhiteSpace(rawName)) rawName = loc.GetString("Common_Score_Default_Name", "Partition");
 
                     if (imageFiles.Count > 1)
                     {
-                        ConversionStateChanged?.Invoke(true, $"Conversion ({i + 1}/{imageFiles.Count}) :\n\"{rawName}\"...");
+                        ConversionStateChanged?.Invoke(true, string.Format(loc.GetString("Import_Converting_Item_Multi", "Conversion ({0}/{1}) :\n\"{2}\"..."), i + 1, imageFiles.Count, rawName));
                     }
                     else
                     {
-                        ConversionStateChanged?.Invoke(true, $"Conversion en cours :\n\"{rawName}\"...");
+                        ConversionStateChanged?.Invoke(true, string.Format(loc.GetString("Import_Converting_Item_Single", "Conversion en cours :\n\"{0}\"..."), rawName));
                     }
 
                     var ext = Path.GetExtension(img.FileName ?? img.FullPath);
@@ -313,7 +336,9 @@ namespace MusicScoreManager.Services
                     catch (Exception ex)
                     {
                         System.Diagnostics.Debug.WriteLine($"[ImportService] Erreur conversion image {img.FileName} : {ex.Message}");
-                        await ShowAlertAsync("Erreur de conversion", $"Impossible de convertir {Path.GetFileName(img.FileName ?? "l'image")} en PDF : {ex.Message}");
+                        await ShowAlertAsync(
+                            loc.GetString("Import_Error_Conversion_Title", "Erreur de conversion"),
+                            string.Format(loc.GetString("Import_Error_Convert_File_Msg", "Impossible de convertir {0} en PDF : {1}"), Path.GetFileName(img.FileName ?? "image"), ex.Message));
                     }
                     finally
                     {
@@ -395,7 +420,17 @@ namespace MusicScoreManager.Services
                 .Where(f => !f.AlreadyInRoot && CanBeLinkedExternally(f.File))
                 .ToList();
 
-            string? globalAction = null;
+            var loc = LocalizationService.Instance;
+            string cancelLabel = loc.GetString("Common_Cancel", "Annuler");
+            string copySingleLabel = loc.GetString("Import_Dialog_Copy_Single", "Copier vers la bibliothèque (Conseillé)");
+            string linkSingleLabel = loc.GetString("Import_Dialog_Link_Single", "Lier le fichier original (Externe)");
+            string copyMultiLabel = loc.GetString("Import_Dialog_Copy_Multi", "Copier tous les fichiers vers la bibliothèque (Conseillé)");
+            string linkMultiLabel = loc.GetString("Import_Dialog_Link_Multi", "Lier tous les fichiers originaux (Externe)");
+            string caseByCaseLabel = loc.GetString("Import_Dialog_CaseByCase", "Choisir au cas par cas");
+            string skipFileLabel = loc.GetString("Import_Dialog_Skip_File", "Passer ce fichier");
+
+            // Codes internes : "Copy", "Link", "CaseByCase"
+            string globalMode = "Copy";
 
             if (linkableExternalFiles.Count > 0)
             {
@@ -403,43 +438,60 @@ namespace MusicScoreManager.Services
 
                 if (savedMode == "Link")
                 {
-                    // Mode Liaison directe sans message intempestif
-                    globalAction = linkableExternalFiles.Count > 1
-                        ? "Lier tous les fichiers originaux (Externe)"
-                        : "Lier le fichier original (Externe)";
+                    globalMode = "Link";
                 }
                 else if (savedMode == "Ask")
                 {
-                    // Mode interactif : solliciter le choix de l'utilisateur
+                    string? chosenOption;
+                    bool rememberChoice;
+
                     if (linkableExternalFiles.Count == 1)
                     {
-                        globalAction = await ShowActionSheetAsync(
-                            "Organisation de la bibliothèque",
-                            "Annuler",
-                            "Copier vers la bibliothèque (Conseillé)",
-                            "Lier le fichier original (Externe)");
+                        (chosenOption, rememberChoice) = await ShowImportModeChoiceAsync(
+                            loc.GetString("Import_Dialog_Org_Title", "Organisation de la bibliothèque"),
+                            cancelLabel,
+                            copySingleLabel,
+                            linkSingleLabel);
                     }
                     else
                     {
-                        globalAction = await ShowActionSheetAsync(
-                            $"Organisation de la bibliothèque ({linkableExternalFiles.Count} fichiers)",
-                            "Annuler",
-                            "Copier tous les fichiers vers la bibliothèque (Conseillé)",
-                            "Lier tous les fichiers originaux (Externe)",
-                            "Choisir au cas par cas");
+                        (chosenOption, rememberChoice) = await ShowImportModeChoiceAsync(
+                            string.Format(loc.GetString("Import_Dialog_Org_Title_Multi", "Organisation de la bibliothèque ({0} fichiers)"), linkableExternalFiles.Count),
+                            cancelLabel,
+                            copyMultiLabel,
+                            linkMultiLabel,
+                            caseByCaseLabel);
                     }
 
-                    if (globalAction == "Annuler" || globalAction == null)
+                    if (chosenOption == cancelLabel || string.IsNullOrEmpty(chosenOption))
                     {
                         return imported;
+                    }
+
+                    if (chosenOption == copySingleLabel || chosenOption == copyMultiLabel)
+                    {
+                        globalMode = "Copy";
+                        if (rememberChoice)
+                        {
+                            _settingsService.DefaultScoreImportMode = "Copy";
+                        }
+                    }
+                    else if (chosenOption == linkSingleLabel || chosenOption == linkMultiLabel)
+                    {
+                        globalMode = "Link";
+                        if (rememberChoice)
+                        {
+                            _settingsService.DefaultScoreImportMode = "Link";
+                        }
+                    }
+                    else if (chosenOption == caseByCaseLabel)
+                    {
+                        globalMode = "CaseByCase";
                     }
                 }
                 else
                 {
-                    // Mode "Copy" (valeur par défaut recommandée) : copie directe automatique
-                    globalAction = linkableExternalFiles.Count > 1
-                        ? "Copier tous les fichiers vers la bibliothèque (Conseillé)"
-                        : "Copier vers la bibliothèque (Conseillé)";
+                    globalMode = "Copy";
                 }
             }
 
@@ -460,7 +512,7 @@ namespace MusicScoreManager.Services
 
                     string rawTitle = Path.GetFileNameWithoutExtension(rawFileName);
                     if (string.IsNullOrWhiteSpace(rawTitle))
-                        rawTitle = "Partition";
+                        rawTitle = loc.GetString("Common_Score_Default_Name", "Partition");
 
                     string ext = Path.GetExtension(rawFileName);
                     if (string.IsNullOrWhiteSpace(ext) || !ext.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
@@ -475,23 +527,30 @@ namespace MusicScoreManager.Services
                     else
                     {
                         bool canLink = CanBeLinkedExternally(fileResult);
-                        string? fileAction = globalAction;
+                        string fileMode = globalMode;
 
-                        if (canLink && globalAction == "Choisir au cas par cas")
+                        if (canLink && globalMode == "CaseByCase")
                         {
-                            fileAction = await ShowActionSheetAsync(
-                                $"Fichier : {rawFileName}",
-                                "Passer ce fichier",
-                                "Copier vers la bibliothèque (Conseillé)",
-                                "Lier le fichier original (Externe)");
+                            string? perFileAction = await ShowActionSheetAsync(
+                                string.Format(loc.GetString("Import_Dialog_File_Header", "Fichier : {0}"), rawFileName),
+                                skipFileLabel,
+                                copySingleLabel,
+                                linkSingleLabel);
+
+                            if (perFileAction == copySingleLabel)
+                                fileMode = "Copy";
+                            else if (perFileAction == linkSingleLabel)
+                                fileMode = "Link";
+                            else
+                                continue;
                         }
 
                         // Si le fichier vient de Google Drive / Cloud ou que l'action est Copier
-                        if (!canLink || fileAction == null || fileAction.StartsWith("Copier"))
+                        if (!canLink || fileMode == "Copy")
                         {
                             ConversionStateChanged?.Invoke(true, filesToProcess.Count > 1
-                                ? $"Importation ({i + 1}/{filesToProcess.Count}) :\n\"{rawTitle}\"..."
-                                : $"Importation en cours :\n\"{rawTitle}\"...");
+                                ? string.Format(loc.GetString("Import_Importing_Multi", "Importation ({0}/{1}) :\n\"{2}\"..."), i + 1, filesToProcess.Count, rawTitle)
+                                : string.Format(loc.GetString("Import_Importing_Single", "Importation en cours :\n\"{0}\"..."), rawTitle));
 
                             var sanitizedBase = SanitizeFileName(rawTitle);
                             if (string.IsNullOrWhiteSpace(sanitizedBase)) sanitizedBase = "Partition";
@@ -514,7 +573,7 @@ namespace MusicScoreManager.Services
                                 }
                                 else
                                 {
-                                    throw new IOException($"Le flux téléchargé pour '{rawTitle}' est vide ou inaccessible.");
+                                    throw new IOException($"Empty stream for '{rawTitle}'.");
                                 }
                             }
                             finally
@@ -522,7 +581,7 @@ namespace MusicScoreManager.Services
                                 try { if (File.Exists(tempPath)) File.Delete(tempPath); } catch { }
                             }
                         }
-                        else if (canLink && fileAction.StartsWith("Lier"))
+                        else if (canLink && fileMode == "Link")
                         {
                             finalStoredPath = fileResult.FullPath!;
                         }

@@ -44,7 +44,11 @@ namespace MusicScoreManager.Services
         public double Amplitude { get; set; }
         public bool HasSignal { get; set; }
         public bool IsInTune => HasSignal && Math.Abs(Cents) <= 3.5;
-        public string TuningAdvice => !HasSignal ? "" : (IsInTune ? "✓ Parfait" : (Cents < 0 ? "◀ Trop bas (bémol)" : "Trop haut (dièse) ▶"));
+        public string TuningAdvice => !HasSignal ? "" : (IsInTune
+            ? LocalizationService.Instance.GetString("Tuner_InTune", "✓ Parfait")
+            : (Cents < 0
+                ? LocalizationService.Instance.GetString("Tuner_TooFlat", "◀ Trop bas (bémol)")
+                : LocalizationService.Instance.GetString("Tuner_TooSharp", "Trop haut (dièse) ▶")));
     }
 
     public class TunerService

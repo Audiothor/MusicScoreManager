@@ -11,26 +11,21 @@ Ayant d'abord développé l'application dans un cadre familial, plusieurs person
 Je ne cherche ni à concurrencer ni à remplacer, juste à proposer une alternative à ce qui peut exister.
 Le language de programmation et le type de plate-forme utilisé (.NET C# & .NET MAUI) me permettent de la rendre disponible pour Android et Windows.
 
-
-- *Pourquoi ne mettre à disposition l'application sur iPad ou Mac ?*
+- *Pourquoi ne pas mettre à disposition l'application sur iPad ou Mac ?*
 
 Je pourrais compiler l'application car mon code le permet. Cependant un Mac équipé de Xcode est obligatoire pour compiler l'application pour iPad.
 Je ne dispose pas de cet ordinateur.
 Peut-être à l'avenir quelqu'un pourrait le faire via mes sources et le mettre sur l'App Store d'Apple.
-
-
 
 - *Pourquoi le rendre complètement gratuit et sans publicité ?*
 
 Le public ciblé s'adresse aux amateurs de musiques, professeurs d'écoles de musique, élèves, qui réalisent des concerts ou pas, qui animent des soirées, festivals, fêtes de la musique, animation de messes de mariages, offices religieux...
 Music Score Manager est là pour aider et donc, dans la philosophie de l'application qui est née d'un besoin familial, il n'était pas possible éthiquement de réaliser du profit sur un public qui ne l'utilise pas de manière professionelle.
 
-
 - *Pourquoi rendre les sources du programme accessibles ?*
 
 Le développement ayant été réalisé dans un language que j'utilise depuis longtemps, mais parfois ne parvenant pas à générer certaines parties de code, je me suis fait aider de l'IA (Je ne m'en cache pas).
 De ce fait il me parait tout à fait normal d'être complètement transparent avec mon code et de le partager avec tous sur Github.
-
 
 - Dans quelles langues Music Score Manager est accessible ?
 
@@ -38,7 +33,6 @@ Français, Anglais, Allemand, Italien, Polonais, Espagnol, Néerlandais, Portuga
 Pour changer de langue, aller dans le menu "Paramètres" puis "Paramètres de l'application" et vous pouvez choisir votre langue.
 Si il y a des erreurs de traduction, merci de me le signaler (ci dessous)
 Si vous souhaitez ajouter d'autres langues, merci de me contacter.(ci dessous)
-
 
 - *J'ai des bugs dans le logiciel et j'aimerais les faire partager pour que cela soit corrigé. Comment faire ?*
 
@@ -50,7 +44,6 @@ Anglais : https://discord.gg/hJNSFgW5h
 ou sur Github :
 [https://github.com/Audiothor/MusicScoreManager/issues]()
 
-
 - *J'ai des propositions d'améliorations. Comment les partager ?*
 
 L'idéal est de mettre un message sur Discord :
@@ -60,8 +53,8 @@ Anglais : https://discord.gg/kCHGh4yjY
 ou sur Github :
 [https://github.com/Audiothor/MusicScoreManager/issues]() (*feature request*)
 
-
 - *Qui a développé ce logiciel ?*
 
-Le projet a commencé début 2026 et une première version partagée dans mon entourage proche est sortie début juin 2026.
-L'application a été développée en France, par un informaticien qui est passionné de musique.
+Le projet a commencé début 2026. Une première version partagée dans mon entourage proche est sortie au mois de mai 2026.
+Après de multiples tests, remarques, corrections, l'application est sortie officiellement en novembre 2026 sur Google Play.
+L'application a été développée en France, par un informaticien qui est passionné de musique et qui pratique la musique.

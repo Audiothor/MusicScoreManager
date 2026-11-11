@@ -65,6 +65,7 @@ public partial class ScoresPage : ContentPage
         _importService.ConversionStateChanged += OnConversionStateChanged;
         _importService.ConfirmDialogHandler = ShowModernConfirmDialogAsync;
         _importService.ActionSheetDialogHandler = ShowModernChoiceDialogAsync;
+        _importService.ImportModeChoiceDialogHandler = ShowModernImportModeChoiceDialogAsync;
         _importService.PromptDialogHandler = ShowModernPromptDialogAsync;
         _importService.AlertHandler = ShowModernAlertDialogAsync;
 
@@ -472,7 +473,7 @@ public partial class ScoresPage : ContentPage
         }
 
         string title = loc.GetString("Score_Category_Picker_Title", "Dossier de destination");
-        string subtitle = $"{selectedScores.Count} partition(s) sélectionnée(s)";
+        string subtitle = string.Format(loc.GetString("Scores_Bulk_Selected_Count", "{0} partition(s) sélectionnée(s)"), selectedScores.Count);
 
         string? targetCategory = await ShowCategoryPickerModalAsync(title, subtitle, null);
         if (string.IsNullOrEmpty(targetCategory)) return;
@@ -486,7 +487,7 @@ public partial class ScoresPage : ContentPage
         await LoadScoresAsync(SearchScoreBar?.Text ?? string.Empty);
 
         string successMsg = string.Format(loc.GetString("Scores_Bulk_Move_Success", "{0} partition(s) déplacée(s) dans '{1}'"), selectedScores.Count, targetCategory);
-        await ShowModernAlertDialogAsync("Déplacement effectué", successMsg);
+        await ShowModernAlertDialogAsync(loc.GetString("Scores_Bulk_Move_Title", "Déplacement effectué"), successMsg);
     }
 
     private readonly List<int> _bulkSelectedTagIds = new();
@@ -2418,12 +2419,16 @@ public partial class ScoresPage : ContentPage
         ModernImportModalOverlay.IsVisible = false;
     }
 
+    private TaskCompletionSource<(string? Action, bool Remember)>? _modalTcsImportChoice;
+
     private async void OnModernModalBackgroundTapped(object? sender, EventArgs e)
     {
         _modalTcsBool?.TrySetResult(false);
         _modalTcsBool = null;
         _modalTcsString?.TrySetResult(null);
         _modalTcsString = null;
+        _modalTcsImportChoice?.TrySetResult((null, false));
+        _modalTcsImportChoice = null;
 
         await AnimateModalCloseAsync();
     }
@@ -2539,7 +2544,7 @@ public partial class ScoresPage : ContentPage
                 {
                     ModernModalContentContainer.Add(new Label
                     {
-                        Text = $"... et {scores.Count - 8} autre(s)",
+                        Text = string.Format(loc.GetString("Import_Image_More_Count", "... et {0} autre(s)"), scores.Count - 8),
                         TextColor = Color.FromArgb("#888888"),
                         FontSize = 11,
                         FontAttributes = FontAttributes.Italic,
@@ -2665,14 +2670,16 @@ public partial class ScoresPage : ContentPage
 
             ModernModalButtonsLayout.Clear();
 
-            foreach (var opt in options)
+            for (int i = 0; i < options.Length; i++)
             {
+                var opt = options[i];
+                bool isRecommended = (i == 0);
                 var optBtn = new Button
                 {
                     Text = opt,
-                    BackgroundColor = opt.Contains("Conseillé") ? Color.FromArgb("#007ACC") : Color.FromArgb("#282B36"),
+                    BackgroundColor = isRecommended ? Color.FromArgb("#007ACC") : Color.FromArgb("#282B36"),
                     TextColor = Colors.White,
-                    FontAttributes = opt.Contains("Conseillé") ? FontAttributes.Bold : FontAttributes.None,
+                    FontAttributes = isRecommended ? FontAttributes.Bold : FontAttributes.None,
                     FontSize = 13,
                     MinimumHeightRequest = 42,
                     Padding = new Thickness(14, 8),
@@ -2700,6 +2707,114 @@ public partial class ScoresPage : ContentPage
             {
                 await AnimateModalCloseAsync();
                 tcs.TrySetResult(cancel);
+            };
+            ModernModalButtonsLayout.Add(cancelBtn);
+
+            await AnimateModalOpenAsync();
+        });
+
+        return tcs.Task;
+    }
+
+    private Task<(string? Action, bool Remember)> ShowModernImportModeChoiceDialogAsync(string title, string cancel, string[] options)
+    {
+        var tcs = new TaskCompletionSource<(string? Action, bool Remember)>();
+        _modalTcsImportChoice = tcs;
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            ModernModalIconLabel.Text = "📁";
+            ModernModalIconLabel.TextColor = Color.FromArgb("#00B0FF");
+            ModernModalIconHalo.Stroke = Color.FromArgb("#00B0FF");
+            ModernModalIconHalo.BackgroundColor = Color.FromArgb("#1500B0FF");
+            ModernModalTitleLabel.Text = title;
+
+            ModernModalBadgeBorder.IsVisible = false;
+            ModernModalInputWrapper.IsVisible = false;
+            ModernModalContentContainer.Clear();
+            var locMode = LocalizationService.Instance;
+            ModernModalHintLabel.Text = locMode.GetString("Score_Import_Choose_Mode", "Choisissez le mode de traitement :");
+
+            var rememberCheckBox = new CheckBox
+            {
+                IsChecked = false,
+                Color = Color.FromArgb("#00B0FF"),
+                VerticalOptions = LayoutOptions.Center
+            };
+
+            var rememberLabel = new Label
+            {
+                Text = locMode.GetString("Import_Dialog_Remember_Choice", "Ne plus demander et mémoriser mon choix"),
+                TextColor = Color.FromArgb("#E2E8F0"),
+                FontSize = 12,
+                VerticalOptions = LayoutOptions.Center,
+                LineBreakMode = LineBreakMode.WordWrap
+            };
+
+            var rememberGrid = new Grid
+            {
+                ColumnDefinitions = new ColumnDefinitionCollection
+                {
+                    new ColumnDefinition { Width = GridLength.Auto },
+                    new ColumnDefinition { Width = GridLength.Star }
+                },
+                ColumnSpacing = 6,
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.Center,
+                Margin = new Thickness(0, 4, 0, 2)
+            };
+            rememberGrid.Add(rememberCheckBox, 0, 0);
+            rememberGrid.Add(rememberLabel, 1, 0);
+
+            var tapLabel = new TapGestureRecognizer();
+            tapLabel.Tapped += (s, ev) =>
+            {
+                rememberCheckBox.IsChecked = !rememberCheckBox.IsChecked;
+            };
+            rememberLabel.GestureRecognizers.Add(tapLabel);
+
+            ModernModalContentContainer.Add(rememberGrid);
+
+            ModernModalButtonsLayout.Clear();
+
+            for (int i = 0; i < options.Length; i++)
+            {
+                var opt = options[i];
+                bool isRecommended = (i == 0);
+                var optBtn = new Button
+                {
+                    Text = opt,
+                    BackgroundColor = isRecommended ? Color.FromArgb("#007ACC") : Color.FromArgb("#282B36"),
+                    TextColor = Colors.White,
+                    FontAttributes = isRecommended ? FontAttributes.Bold : FontAttributes.None,
+                    FontSize = 13,
+                    MinimumHeightRequest = 42,
+                    Padding = new Thickness(14, 8),
+                    CornerRadius = 10
+                };
+                optBtn.Clicked += async (s, ev) =>
+                {
+                    bool remember = rememberCheckBox.IsChecked;
+                    await AnimateModalCloseAsync();
+                    tcs.TrySetResult((opt, remember));
+                };
+                ModernModalButtonsLayout.Add(optBtn);
+            }
+
+            var cancelBtn = new Button
+            {
+                Text = cancel,
+                BackgroundColor = Color.FromArgb("#1E2028"),
+                TextColor = Color.FromArgb("#AAAAAA"),
+                FontSize = 12,
+                MinimumHeightRequest = 36,
+                Padding = new Thickness(14, 6),
+                CornerRadius = 8
+            };
+            cancelBtn.Clicked += async (s, ev) =>
+            {
+                await AnimateModalCloseAsync();
+                tcs.TrySetResult((cancel, false));
             };
             ModernModalButtonsLayout.Add(cancelBtn);
 

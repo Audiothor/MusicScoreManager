@@ -12,13 +12,9 @@ L'application élimine définitivement les classeurs papier volumineux et rempla
 - **Contrôle Mains-Libres Intégral** : Prise en charge native des pédaliers tourne-page sans fil Bluetooth (profils HID et clavier) ainsi que des contrôleurs MIDI (USB-OTG et Bluetooth MIDI).
 - **Écosystème d'Annotations Professionnel** : Stylet, crayon à main levée, surligneurs Stabilo translucides, textes typographiés et plus de 100 stickers musicaux intégrés.
 
-
-
 ***Recommandations***
 *L'application est optimisée pour fonctionner sur des tablettes de type A4 (14 pouces ou plus). En effet ce type de taille de tablette conviendra parfaitement pour l'affichage de partitions.
 Evidement un format inférieur peut tout à fait convenir, c'est juste une histoire de confort et de budget même si à présent on trouve facilement des tablettes de type Androïd à des tarifs relativement accessibles. (contrairement aux tablettes Apple qui sont à des prix que je trouve prohibitifs !)*
-
-
 
 ---
 
@@ -133,10 +129,12 @@ Pour les développeurs souhaitant compiler et personnaliser l'application pour A
 - L'application a évolué et continue d'évoluer d'après les remarques des musiciens.
   Elle n'est évidement pas parfaite et vous pouvez soumettre des propositions, bugs ou remarques sur Github !
   Merci !
+  
 
 - L'application a été développée avec mes connaissances en C# et Python mais aussi avec l'aide de l'IA Gemini sans laquelle je n'aurais pu réaliser ce projet de manière aussi aboutie et avec autant de fonctionnalités.
-  Visual Studio Code + Antigravity IDE.
+  Outils de dev : Visual Studio Code + Antigravity IDE + Python 3.13
 
 - Le code de l'application est totalement transparent et accessible sous Github
 
-- L'application est garantie sans publicité et totalement gratuite.
+- L'application est garantie qu'aucune information n'est collectée.
+  Elle est sans publicité, sans limitation et totalement gratuite.

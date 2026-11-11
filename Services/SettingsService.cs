@@ -41,7 +41,7 @@ namespace MusicScoreManager.Services
         /// </summary>
         public string DefaultScoreImportMode
         {
-            get => Preferences.Get(DefaultScoreImportModeKey, "Copy");
+            get => Preferences.Get(DefaultScoreImportModeKey, "Ask");
             set => Preferences.Set(DefaultScoreImportModeKey, value);
         }
 
@@ -198,12 +198,4 @@ namespace MusicScoreManager.Services
 
                 if (normFullPath.StartsWith(normRoot, StringComparison.OrdinalIgnoreCase))
                 {
-                    return Path.GetRelativePath(normRoot, normFullPath);
-                }
-            }
-            catch { }
-            
-            return fullPath; 
-        }
-    }
-}
+                    return Path.GetRelativePath(normRoot, normF

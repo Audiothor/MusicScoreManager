@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.8 — 11/11/2026](#v328--11112026)
 - [v3.2.7 — 09/11/2026](#v327--09112026)
 - [v3.2.6 — 04/11/2026](#v326--04112026)
 - [v3.2.5 — 03/11/2026](#v325--03112026)
@@ -55,6 +56,27 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252--07102026)
 - [v2.5.1 — 07/10/2026](#v251--07102026)
 - [v2.5.0 — 07/10/2026](#v250--07102026)
+
+---
+
+## v3.2.8 — 11/11/2026
+
+### 1. Ergonomie de la Boîte d'Actions en Lecture de Partition (`ViewerPage`)
+- **1.1. Affichage intégral du titre du morceau sous la barre d'actions supérieure :**
+  - Positionnement du titre de la partition (`MenuTitleLabel`) juste en dessous des deux boutons supérieurs (`🏠 Retour à l'accueil` et `✕`) sur toute la largeur de la fenêtre modale (jusqu'à 2 lignes), éliminant toute troncature entre les boutons.
+- **1.2. Lisibilité complète des boutons d'actions inférieurs sur smartphone et tablette :**
+  - Empilement vertical pleine largeur des boutons **« ✏️ Modifier la partition »** et **« 📑 Modifier l'assemblage PDF »** et suppression du doublon d'icône `📑`, garantissant l'affichage intégral des libellés traduits dans les 8 langues, même sur écran étroit de téléphone portable.
+  - Calcul dynamique de la hauteur de l'en-tête et du contenu dans `UpdateCentralMenuSize` pour éviter toute coupure verticale.
+
+### 2. Importation de Partitions : Case à Cocher « Ne plus demander » (`ScoresPage` & `ImportService`)
+- **2.1. Mémorisation directe du choix d'importation :**
+  - Lorsque le mode d'importation par défaut est positionné sur *« Toujours demander à chaque import »* (valeur par défaut à la première utilisation), la boîte de dialogue d'organisation de la bibliothèque intègre désormais une case à cocher **« Ne plus demander et mémoriser mon choix »**.
+  - Si l'utilisateur coche cette option avant de choisir *Copier* ou *Lier*, son choix est automatiquement enregistré comme mode d'importation par défaut pour les imports suivants, tout en restant modifiable à tout moment dans les *Paramètres de Partitions*.
+
+### 3. Audit Final & Couverture Multilingue à 100 % (8 Langues)
+- **3.1. Localisation intégrale des textes restants :**
+  - Traduction complète des libellés résiduels dans `ViewerPage`, `ScoresPage`, `ImportService`, `QuitPage`, `PedalButtonConfigPage`, `TunerService` et `WifiDirectTransferService`.
+  - Alignement strict des **1 218 clés de traduction** à travers les 8 fichiers de langues (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
 
 ---
 

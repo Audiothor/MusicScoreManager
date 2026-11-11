@@ -266,13 +266,13 @@ namespace MusicScoreManager.Services
                             double speed = (receivedBytes / 1024.0 / 1024.0) / Math.Max(0.001, stopwatch.Elapsed.TotalSeconds);
                             double progress = totalBytes > 0 ? (double)receivedBytes / totalBytes : 0;
 
-                            NotifyProgress($"Réception de {fileName}...", progress, receivedBytes, totalBytes, speed);
+                            NotifyProgress(string.Format(LocalizationService.Instance.GetString("Wifi_Progress_Receiving_File", "Réception de {0}..."), fileName), progress, receivedBytes, totalBytes, speed);
                         }
 
                         files.Add(new WifiFilePayload { FileName = fileName, Data = fileData });
                     }
 
-                    NotifyProgress("Réception terminée !", 1.0, totalBytes, totalBytes, 0);
+                    NotifyProgress(LocalizationService.Instance.GetString("Wifi_Progress_Receive_Done", "Réception terminée !"), 1.0, totalBytes, totalBytes, 0);
 
                     // Traitement de fin
                     await onReceiveComplete(files, senderName);
@@ -313,7 +313,8 @@ namespace MusicScoreManager.Services
                 client.SendTimeout = 10000;
                 client.ReceiveTimeout = 10000;
 
-                NotifyProgress($"Connexion à {targetDevice.Name}...", 0.0, 0, 0, 0);
+                var loc = LocalizationService.Instance;
+                NotifyProgress(string.Format(loc.GetString("Wifi_Progress_Connecting", "Connexion à {0}..."), targetDevice.Name), 0.0, 0, 0, 0);
                 await client.ConnectAsync(targetDevice.IpAddress, targetDevice.Port);
 
                 using var stream = client.GetStream();
@@ -330,13 +331,13 @@ namespace MusicScoreManager.Services
                 writer.Write(totalBytes);
                 writer.Flush();
 
-                NotifyProgress("En attente d'acceptation du destinataire...", 0.05, 0, totalBytes, 0);
+                NotifyProgress(loc.GetString("Wifi_Progress_Waiting_Accept", "En attente d'acceptation du destinataire..."), 0.05, 0, totalBytes, 0);
 
                 // Attente de l'ACK du récepteur
                 byte response = reader.ReadByte();
                 if (response != 0x01)
                 {
-                    NotifyProgress("Le destinataire a refusé le transfert.", 0, 0, totalBytes, 0);
+                    NotifyProgress(loc.GetString("Wifi_Progress_Declined", "Le destinataire a refusé le transfert."), 0, 0, totalBytes, 0);
                     return false;
                 }
 
@@ -363,18 +364,18 @@ namespace MusicScoreManager.Services
                         double speed = (bytesSent / 1024.0 / 1024.0) / Math.Max(0.001, stopwatch.Elapsed.TotalSeconds);
                         double progress = (double)bytesSent / totalBytes;
 
-                        NotifyProgress($"Envoi de {file.FileName}...", progress, bytesSent, totalBytes, speed);
+                        NotifyProgress(string.Format(loc.GetString("Wifi_Progress_Sending_File", "Envoi de {0}..."), file.FileName), progress, bytesSent, totalBytes, speed);
                     }
                     await stream.FlushAsync();
                 }
 
-                NotifyProgress("Transfert terminé avec succès !", 1.0, totalBytes, totalBytes, 0);
+                NotifyProgress(loc.GetString("Wifi_Transfer_Success", "Transfert terminé avec succès !"), 1.0, totalBytes, totalBytes, 0);
                 return true;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"[WifiTransfer] Send error: {ex.Message}");
-                NotifyProgress($"Échec du transfert : {ex.Message}", 0, 0, 0, 0);
+                NotifyProgress(string.Format(LocalizationService.Instance.GetString("Wifi_Progress_Failed_Msg", "Échec du transfert : {0}"), ex.Message), 0, 0, 0, 0);
                 return false;
             }
         }
@@ -526,6 +527,7 @@ namespace MusicScoreManager.Services
                 long received = 0;
                 var stopwatch = Stopwatch.StartNew();
 
+                var loc = LocalizationService.Instance;
                 int read;
                 while ((read = await stream.ReadAsync(buffer)) > 0)
                 {
@@ -533,7 +535,7 @@ namespace MusicScoreManager.Services
                     received += read;
                     double speed = (received / 1024.0 / 1024.0) / Math.Max(0.001, stopwatch.Elapsed.TotalSeconds);
                     double progress = totalBytes > 0 ? (double)received / totalBytes : 0.5;
-                    NotifyProgress("Téléchargement du paquet...", progress, received, totalBytes, speed);
+                    NotifyProgress(loc.GetString("Wifi_Progress_Downloading_Package", "Téléchargement du paquet..."), progress, received, totalBytes, speed);
                 }
 
                 ms.Position = 0;
@@ -542,7 +544,7 @@ namespace MusicScoreManager.Services
                 byte[] magic = reader.ReadBytes(4);
                 if (!magic.SequenceEqual(HeaderMagic))
                 {
-                    NotifyProgress("Format de paquet invalide.", 0, 0, 0, 0);
+                    NotifyProgress(loc.GetString("Wifi_Progress_Invalid_Package", "Format de paquet invalide."), 0, 0, 0, 0);
                     return false;
                 }
 
@@ -559,15 +561,15 @@ namespace MusicScoreManager.Services
                     files.Add(new WifiFilePayload { FileName = fileName, Data = fileData });
                 }
 
-                NotifyProgress("Importation du paquet...", 0.95, totalBytes, totalBytes, 0);
+                NotifyProgress(loc.GetString("Wifi_Progress_Importing_Package", "Importation du paquet..."), 0.95, totalBytes, totalBytes, 0);
                 await onReceiveComplete(files, senderName);
-                NotifyProgress("Téléchargement et importation réussis !", 1.0, totalBytes, totalBytes, 0);
+                NotifyProgress(loc.GetString("Wifi_Progress_Download_Success", "Téléchargement et importation réussis !"), 1.0, totalBytes, totalBytes, 0);
                 return true;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"[WifiTransfer] QR Download error: {ex.Message}");
-                NotifyProgress($"Erreur : {ex.Message}", 0, 0, 0, 0);
+                NotifyProgress(string.Format(LocalizationService.Instance.GetString("Wifi_Progress_Failed_Msg", "Erreur : {0}"), ex.Message), 0, 0, 0, 0);
                 return false;
             }
         }

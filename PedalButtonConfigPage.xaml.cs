@@ -21,28 +21,35 @@ namespace MusicScoreManager
         private string _detectedKeyName = string.Empty;
         private PedalInputType _detectedInputType = PedalInputType.KeyboardKey;
 
-        private readonly List<(string Name, int Code)> _manualKeys = new()
+        private List<(string Name, int Code)> GetManualKeys()
         {
-            ("PageDown (Page suivante)", 93),
-            ("PageUp (Page précédente)", 92),
-            ("ArrowRight (Flèche droite)", 22),
-            ("ArrowLeft (Flèche gauche)", 21),
-            ("ArrowDown (Flèche bas)", 20),
-            ("ArrowUp (Flèche haut)", 19),
-            ("Space (Espace)", 62),
-            ("Return (Entrée)", 66),
-            ("Home (Début)", 122),
-            ("End (Fin)", 123),
-            ("F3", 114),
-            ("F5", 116),
-            ("F6", 117),
-            ("F7", 118),
-            ("F8", 119)
-        };
+            var loc = LocalizationService.Instance;
+            return new List<(string Name, int Code)>
+            {
+                (loc.GetString("Pedal_Key_PageDown", "PageDown (Page suivante)"), 93),
+                (loc.GetString("Pedal_Key_PageUp", "PageUp (Page précédente)"), 92),
+                (loc.GetString("Pedal_Key_ArrowRight", "ArrowRight (Flèche droite)"), 22),
+                (loc.GetString("Pedal_Key_ArrowLeft", "ArrowLeft (Flèche gauche)"), 21),
+                (loc.GetString("Pedal_Key_ArrowDown", "ArrowDown (Flèche bas)"), 20),
+                (loc.GetString("Pedal_Key_ArrowUp", "ArrowUp (Flèche haut)"), 19),
+                (loc.GetString("Pedal_Key_Space", "Space (Espace)"), 62),
+                (loc.GetString("Pedal_Key_Return", "Return (Entrée)"), 66),
+                (loc.GetString("Pedal_Key_Home", "Home (Début)"), 122),
+                (loc.GetString("Pedal_Key_End", "End (Fin)"), 123),
+                ("F3", 114),
+                ("F5", 116),
+                ("F6", 117),
+                ("F7", 118),
+                ("F8", 119)
+            };
+        }
+
+        private List<(string Name, int Code)> _manualKeys = new();
 
         public PedalButtonConfigPage(PedalProfile profile, PedalBinding binding, bool isNew)
         {
             InitializeComponent();
+            _manualKeys = GetManualKeys();
             _profile = profile;
             _binding = binding;
             _isNew = isNew;
