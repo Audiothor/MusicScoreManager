@@ -2,6 +2,10 @@
 
 Le menu **Outils** regroupe la suite d'utilitaires spécialisés de Music Score Manager pour manipuler, partager, nettoyer et sécuriser vos partitions sans dépendre d'un ordinateur ou d'Internet.
 
+<p style="text-align: center;">
+  <img src="../../images/outils_fr.jpeg" alt="Affichage des Outils" style="max-width: 100%; height: auto;">
+</p>
+
 ---
 
 ## 1. Scanner de Partitions Papier (Capture Photo Haute Fidélité)
@@ -23,6 +27,7 @@ Prenez directement en photo chaque page de votre partition grâce à l'appareil 
 **Attribution des Métadonnées & Dossier / Catégorie** :
 
 - Renseignez directement le **Titre** et le **Compositeur / Arrangeur**.
+
 - **Sélection du dossier / catégorie** : choisissez le dossier de classement (par défaut "Général") ou créez un nouveau dossier à la volée avec le bouton `➕`.
 
 - **Gestion Dynamique des Pages Numérisées** :

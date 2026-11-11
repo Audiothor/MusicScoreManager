@@ -135,12 +135,15 @@ En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et
   <img src="../../images/menu_partition_fr.jpeg" alt="Menu de partition" style="max-width: 100%; height: auto;">
 </p>
 
-1. **📖 Ouvrir la partition** :
-   
-   - Ouvre immédiatement la partition dans le visualiseur plein écran (mode concert).
+1.**📖 Ouvrir la partition** :
 
-2. **✏️ Éditer la partition** :
-- Ouvre la page d'édition détaillée :
+Ouvre immédiatement la partition dans le visualiseur plein écran (mode concert).
+[Documentation du visualiseur de partitions](viewer.md)
+
+
+2.**✏️ Éditer la partition** :
+
+Ouvre la page d'édition détaillée :
 
 <p style="text-align: center;">
   <img src="../../images/editer_partition_fr.jpeg" alt="Edition d'une partitions" style="max-width: 100%; height: auto;">
@@ -170,34 +173,57 @@ En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et
 
 * **Accordéon Pistes audio** : association de fichiers audio d'accompagnement (MP3, WAV, etc.), pré-écoute et réglage du volume.
 
-* Accordéon des Options d'annotations :
-  si on veut afficher les annotations ou non par défaut pour cette partition
-  si on veut afficher les numéros de page pour cette partition
-  si on veut afficher le bouton de boîte à outils en haut à drotie de la partition
-  
-  NE PAS OUBLIER D'ENREGISTRER VOS MODIFICATIONS !
-3. **📋 Ajouter dans un Setlist** :
-- Permet d'insérer instantanément la partition dans la setlist de votre choix.
-- **Placement prioritaire en 1ère position** (décalant les autres morceaux vers le bas).
-- Gestion des setlists verrouillées.
-4. **Changer de dossier / catégorie**
-   Permet d'assigner la partition à un dossier/catégorie pour mieux le classer.
+**NE PAS OUBLIER D'ENREGISTRER VOS MODIFICATIONS !**
 
-5. **📑 Modifier l'assemblage PDF** :
+
+3.📋 **Ajouter dans un Setlis**t
+
+- Permet d'insérer instantanément la partition dans la setlist de votre choix.
+
+- **Placement prioritaire en 1ère position** (décalant les autres morceaux vers le bas).
+
+- Gestion des setlists verrouillées.
+
+
+
+4.**Changer de dossier / catégorie**
+Permet d'assigner la partition à un dossier/catégorie pour mieux le classer.
+
+
+5.**📑 Modifier l'assemblage PDF** :
+
 - Ouvre la partition directement dans l'**Atelier d'Assemblage PDF** pour réorganiser les pages, insérer une page blanche, supprimer des pages inutiles ou effectuer des rotations. Très pratique quand votre fichier pdf est mal organisé.
   Vous pouvez retrouver cet outil directement dans le menu "Outils" aussi.
   => Le détail des modifications d'assemblage est disponible plus en détail dans la partie "Outils"
-6. **Envoyer en Wi-Fi Direct**
-- Ouvre une boîte modale d'options de partage vous permettant de cocher/décocher :
-  * ☑️ *Inclure les annotations manuscrites* dessinées sur le document.
-  * ☑️ *Inclure les pistes audio rattachées* (MP3/WAV).
+  
+
+6.**Envoyer en Wi-Fi Direct**
+
+Ouvre une boîte modale d'options de partage vous permettant de cocher/décocher :
+
+☑️ *Inclure les annotations manuscrites* dessinées sur le document.
+
+☑️ *Inclure les pistes audio rattachées* (MP3/WAV).
+
 - Lance la recherche immédiate des appareils à proximité en Wi-Fi Direct P2P.
 - Il est juste nécessaire que la personne qui reçoit la partition aille dans "Outils", "Transfert Wi-Fi Direct" et clique sur "Activer la Réception"
   La partition est immédiatement envoyées et incue dans le Music Score Manager de la personne qui reçoit !
-  => Le détail des envois/réceptions immédiates est disponible plus en détail dans la partie "Outils"
+  => Le détail des envois/réceptions immédiates est disponible plus en détail dans la partie "[Outils](tools.md)"
+
+
+
 7. **📦 Exporter la partition (.msmscore)** :
-- Génère une archive (= un fichier) autonome transportable avec un choix  d'options (annotations, pistes audio) d'export.
+
+Génère une archive (= un fichier) autonome transportable avec un choix  d'options (annotations, pistes audio) d'export.
+
+
+
 8. **🏷️ Renommer la partition** :
-- Boîte de dialogue rapide pour changer le titre et donc le nom de la partition PDF affichée sans entrer dans l'édition complète.
+
+Boîte de dialogue rapide pour changer le titre et donc le nom de la partition PDF affichée sans entrer dans l'édition complète.
+
+
+
 9. **🗑️ Supprimer la partition** :
-- Supprime la partition de votre bibliothèque avec demande de confirmation sécurisée.
+
+Supprime la partition de votre bibliothèque avec demande de confirmation sécurisée.
