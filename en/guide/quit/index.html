@@ -18,7 +18,7 @@
         <link rel="prev" href="../settings/">
       
       
-        <link rel="next" href="../../confidentialite/">
+        <link rel="next" href="../FAQ/">
       
       
         
@@ -316,6 +316,25 @@
   
   
   
+    <li class="md-tabs__item">
+      <a href="../FAQ/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
     
     
       <li class="md-tabs__item">
@@ -328,6 +347,25 @@
         </a>
       </li>
     
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../Versions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Version History
+
+      </a>
+    </li>
   
 
       
@@ -732,6 +770,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#settings-customization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚙️ Settings Customization
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -744,6 +793,33 @@
           </ul>
         </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FAQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -770,10 +846,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -791,8 +867,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -837,6 +913,33 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Versions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Version History
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -874,6 +977,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#settings-customization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚙️ Settings Customization
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -900,6 +1014,8 @@
 <h2 id="safe-exit-workflow">🔒 Safe Exit Workflow</h2>
 <p>When you tap the <strong>Quit (🚪)</strong> tab in the bottom navigation bar:</p>
 <ol>
+<li><strong>Confirmation Prompt (Optional)</strong>:</li>
+<li>If enabled in settings, a confirmation prompt asks you to verify before exiting the application.</li>
 <li><strong>Session State Persistence</strong>:</li>
 <li>The application automatically commits any pending changes, active filters, last viewed scores, and SQLite database transactions to disk.</li>
 <li><strong>Resource &amp; Memory Cleanup</strong>:</li>
@@ -907,6 +1023,11 @@
 <li><strong>Graceful App Termination</strong>:</li>
 <li>A brief status animation confirms disk writes are complete before closing the application cleanly with zero risk of database corruption.</li>
 </ol>
+<hr />
+<h2 id="settings-customization">⚙️ Settings Customization</h2>
+<p>Under <strong>Settings &gt; App Settings (General)</strong>, the <strong>Application Behavior</strong> section includes two customization switches:
+- <strong>Show « Quit » tab in bottom navigation</strong>: Toggle to hide this tab if you navigate via Android system gestures or your device's physical back button.
+- <strong>Confirm Before Quitting</strong>: Protects against accidental exits with a confirmation alert.</p>
 
 
 
