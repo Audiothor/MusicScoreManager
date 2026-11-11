@@ -309,7 +309,7 @@
             <li><a href="#section-annotations">4. 🎨 Système Complet d'Annotations</a></li>
             <li><a href="#section-setlists">5. 📋 Setlists &amp; Préparation de Concerts</a></li>
             <li><a href="#section-wifi">6. 📡 Transfert Sans Fil Wi-Fi Direct &amp; Diffusion Groupe (QR Code)</a></li>
-            <li><a href="#section-tools">7. ⏱️ Métronome, Audio &amp; Sauvegardes</a></li>
+            <li><a href="#section-tools">7. 🛠️ Boîte à Outils (Scanner, Assemblage, Audio &amp; Sauvegardes)</a></li>
             <li><a href="#section-settings">8. ⚙️ Paramètres &amp; Personnalisation</a></li>
         </ul>
     </div>
@@ -335,8 +335,10 @@
         </div>
         <div class="step-box">
             <span class="step-number">3</span><span class="step-title">Mode d'importation (Copier ou Lier)</span>
-            <div class="step-desc"><strong>Copier :</strong> Duplique le fichier dans le stockage interne de l'application (autonome).<br><strong>Lier (🔗) :</strong> Référence le fichier dans son dossier d'origine sans duplication d'espace.</div>
+            <div class="step-desc"><strong>Copier :</strong> Duplique le fichier dans le stockage interne de l'application (autonome).<br><strong>Lier (🔗) :</strong> Référence le fichier dans son dossier d'origine sans duplication d'espace.<br><em>Nouveau v3.2.8 :</em> Cochez <strong>« Ne plus demander et mémoriser mon choix »</strong> lors de l'import pour mémoriser votre préférence sans avoir à la re-confirmer à chaque fois (modifiable à tout moment dans <em>Paramètres › Partitions</em>).</div>
         </div>
+
+        <p><strong>Organisation par Dossiers / Catégories :</strong> Le bouton de vue en haut vous permet d'alterner entre l'affichage en liste complète et la vue par dossiers. Les morceaux importés sont placés par défaut dans le dossier <strong>"Default"</strong> et peuvent être classés dans vos répertoires personnalisés.</p>
 
         <div class="callout callout-example">
             <div class="callout-icon">⚡</div>
@@ -356,8 +358,8 @@
 
         <p>Les <strong>Étiquettes (Tags)</strong> permettent de catégoriser vos partitions selon vos propres critères musicaux (style, instrument, tonalité, formation, niveau de difficulté).</p>
 
-        <h3>Gestion des Étiquettes (Menu Outils)</h3>
-        <p>Toutes vos étiquettes se gèrent dans l'onglet <strong>Outils › Étiquettes</strong> :</p>
+        <h3>Gestion des Étiquettes</h3>
+        <p>Toutes vos étiquettes se gèrent dans <strong>Paramètres › Gestion des étiquettes</strong> (ou depuis la page d'édition d'une partition) :</p>
         <ul>
             <li><strong>Création :</strong> Saisissez un nom et choisissez une couleur parmi la palette ou personnalisez-la avec les curseurs RVB.</li>
             <li><strong>Modification / Suppression :</strong> Cliquez sur une étiquette existante pour changer son nom, sa couleur ou la retirer.</li>
@@ -397,12 +399,22 @@
             </div>
             <div class="feature-card">
                 <strong>🎯 Menu Central Rapide</strong>
-                <span>Double-taper au centre de la partition pour afficher le menu d'options (défilement vertical fluide sur téléphone).</span>
+                <span>Double-taper au centre de la partition pour afficher le menu d'actions (titre, rotation, marqueur, édition, etc.).</span>
             </div>
         </div>
 
+        <h3>Tiroir des Outils Rapides (Haut-Droite)</h3>
+        <p>Touchez le coin supérieur droit (ou l'icône <code>[ 🛠️ ]</code>) pour ouvrir le tiroir des composants scéniques : activez ou coupez instantanément les <strong>Annotations</strong>, le <strong>Métronome</strong>, le <strong>Lecteur Audio</strong>, le <strong>Numéro de Page</strong>, l'<strong>Accordeur (Tuner)</strong> ou le <strong>Titre</strong>.</p>
+
+        <h3>Déroulement de Setlist &amp; Accordeur Multi-Instruments</h3>
+        <ul>
+            <li><strong>Déroulement de Setlist :</strong> En concert, touchez la zone tout en haut de l'écran pour afficher le déroulement complet de la setlist avec repérage instantané des morceaux passés, en cours et à venir.</li>
+            <li><strong>Accordeur Flottant (Tuner) :</strong> Détecteur de notes DSP YIN haute précision déplaçable au doigt, étalonnage du diapason A4 (415 à 444 Hz) et presets dédiés (guitare, basse, cordes, vents, bois, cuivres, chant).</li>
+            <li><strong>Mode Plein Écran Immersif :</strong> Masque l'ensemble des barres système pour 100% de lisibilité sur scène.</li>
+        </ul>
+
         <h3>Numéro de page &amp; Saut direct</h3>
-        <p>Un tap sur le badge de numéro de page ouvre une boîte de dialogue permettant de <strong>sauter directement à une page</strong> ou d'<strong>activer / désactiver l'affichage des numéros de page</strong> pour cette partition.</p>
+        <p>Un tap sur le badge de numéro de page ouvre une boîte de dialogue permettant de <strong>sauter directement à une page</strong> ou d'<strong>activer / désactiver l'affichage des numéros de page</strong> pour cette partition (taille personnalisable dans les paramètres).</p>
 
         <h3>Rotation Hybride (Page ou Partition complète)</h3>
         <p>Depuis le menu central de la partition, vous pouvez pivoter à 90° soit <strong>uniquement la page courante</strong> (idéal pour les doubles pages à l'italienne), soit <strong>toute la partition</strong>.</p>
@@ -525,12 +537,21 @@
         <p>Dans l'onglet <strong>Outils › Imports de paquets &amp; setlists</strong>, vous pouvez à tout moment importer une archive reçue par clé USB, email ou cloud. Les fichiers physiques d'export sont toujours générés dans votre dossier d'export configuré dans les Paramètres.</p>
     </div>
 
-    <!-- Section 7 : Métronome & Sauvegardes -->
+    <!-- Section 7 : Outils -->
     <div id="section-tools" class="section">
         <div class="section-header">
-            <div class="section-icon">⏱️</div>
-            <div class="section-title">7. Métronome, Audio &amp; Sauvegardes</div>
+            <div class="section-icon">🛠️</div>
+            <div class="section-title">7. Boîte à Outils (Scanner, Assemblage, Audio &amp; Sauvegardes)</div>
         </div>
+
+        <h3>Scanner de Partitions Papier</h3>
+        <p>Accessible dans <strong>Outils › Scanner de Partitions</strong> : numérisez directement vos partitions papier depuis votre pupitre via l'appareil photo ou la galerie d'images, avec recadrage et conversion PDF haute résolution.</p>
+
+        <h3>Créateur &amp; Atelier d'Assemblage PDF</h3>
+        <p>Dans <strong>Outils › Créateur &amp; Assemblage PDF</strong> : réorganisez l'ordre des pages, insérez des pages blanches, supprimez des pages inutiles ou appliquez des rotations permanentes sur vos fichiers PDF.</p>
+
+        <h3>Détecteur de Doublons</h3>
+        <p>Dans <strong>Outils › Gestion des Doublons</strong> : analysez automatiquement votre bibliothèque pour détecter et nettoyer les partitions en double.</p>
 
         <h3>Métronome Haute Précision</h3>
         <p>Chaque partition peut posséder son propre tempo (BPM). Dans le lecteur, le métronome propose :</p>
@@ -538,11 +559,11 @@
             <li><strong>Précision rigoureuse :</strong> Horloge thread-safe cadencée par <code>Stopwatch</code> sans dérive matérielle.</li>
             <li><strong>Témoin visuel LED :</strong> Clignotement synchronisé sur le tempo en haut de la partition.</li>
             <li><strong>Bip de pré-compte (880 Hz) :</strong> Pour lancer le groupe parfaitement ensemble.</li>
-            <li><strong>Interrupteur Son On/Off :</strong> Activez ou coupez le son du métronome à la volée dans le menu central sans quitter la partition.</li>
+            <li><strong>Interrupteur Son On/Off :</strong> Activez ou coupez le son du métronome à la volée sans quitter la partition.</li>
         </ul>
 
         <h3>Piste Audio d'Accompagnement (Playback)</h3>
-        <p>Associez un fichier audio (MP3, WAV, AIF) à votre partition dans la page d'édition. Le lecteur audio intégré permet de lancer l'accompagnement et de répéter en conditions réelles.</p>
+        <p>Associez un fichier audio (MP3, WAV, AIF, FLAC) à votre partition dans la page d'édition. Le lecteur audio intégré permet de lancer l'accompagnement et de répéter en conditions réelles.</p>
 
         <h3>Gestion des Sauvegardes de Sécurité</h3>
         <p>Dans <strong>Outils › Gestion des sauvegardes</strong> :</p>
