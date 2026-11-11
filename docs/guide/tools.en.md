@@ -2,6 +2,10 @@
 
 The **Tools** menu hosts Music Score Manager's powerful suite of built-in utilities designed to manipulate, share, clean up, and safeguard your music catalog without relying on a computer or internet connection.
 
+<p style="text-align: center;">
+  <img src="../../images/outils_fr.jpeg" alt="Tools overview" style="max-width: 100%; height: auto;">
+</p>
+
 ---
 
 ## 1. Paper Score Scanner (High-Definition Camera Capture)

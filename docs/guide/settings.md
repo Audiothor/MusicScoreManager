@@ -2,6 +2,10 @@
 
 Le menu **Paramètres**  vous permet d'adapter précisément Music Score Manager à vos habitudes de jeu, votre instrument et la taille de votre écran.
 
+<p style="text-align: center;">
+  <img src="../../images/parametres_fr.jpeg" alt="Affichage des Paramètres" style="max-width: 100%; height: auto;">
+</p>
+
 ---
 
 ## 1. Paramètres Partitions
@@ -74,8 +78,6 @@ Masque l'en-tête du système (heure, batterie, notifications) et la barre de na
 
 Curseur réglable de **10 px à 40 px** avec aperçu direct de la taille pour adapter la lisibilité du compteur à votre distance de lecture du pupitre. Paré défaut c'est 14px
 
-
-
 **ERGONOMIE**
 
 - **Gestes ergonomiques pour tourner les pages** :
@@ -111,7 +113,6 @@ Lors de l'ouverture des setlists, c'est le tri par défaut qui est appliqué à 
 - **Placer les setlsits terminées en bas**
 
 Permet de mieux se repérer dans les setlists actifs.
-
 
 **COMPORTEMENT PAR DEFAUT**
 
@@ -197,23 +198,34 @@ L'éditeur de profil ("Modifier les profile sélectionné") permet d'assigner le
 
 1. **Attribuez un nom de profile ou gardez celui par défaut**
    Personnalisez le nom de votre profiel de pédales.
+
 2. **Ajoutez si vous le souhaitez une description**
    Facultatif.
+
 3. **Ajouter les boutons/pédale**
    C'est ici que vous pouver ajouter une pédale dans la gestion de votre appareil.
 
 4. **Pour chaque pédale :**
    Lui donner un nom ("pédale droite"...)
+   
    1. **Détection Automatique (Mode « En écoute ») :**
+      
       * Appuyez sur la pédale physique ou la commande MIDI : l'application capture instantanément le signal, identifie son type (Clavier HID, CC, Note MIDI) et affiche son code exact.
+   
    2. **Appui Simple (⚡) vs Appui Long (⏱️) :**
+      
       * Chaque pédale physique peut accomplir **deux actions différentes** selon la durée de maintien (ex. : *Appui simple = Page suivante*, *Appui long = Morceau suivant de la setlist*).
+   
    3. **Catalogue des Actions Assignables :**
+      
       * **Tourne & Navigation :** Page suivante / précédente, Défilement haut / bas, Première / dernière page, Morceau suivant / précédent de la setlist.
+      
       * **Répétition & Outils Scéniques :** Démarrer / arrêter le métronome, Couper / activer le son du métronome, Lecture / pause de la piste audio, Recommencer le morceau.
+      
       * **Lecture & Affichage :** Signet / marqueur suivant / précédent, Zoom avant / arrière / réinitialisation, Mode Nuit (inversion des couleurs).
+      
       * **Annotations :** Verrouiller / déverrouiller le calque de dessin, Masquer / afficher les annotations, Annuler / rétablir le dernier tracé.
-
+        
         NE PAS OUBLIER DE SAUVEGARDER VOTRE PROFILE !
 
 5. **Répétez ces actions avec vos autres pédales !**
@@ -296,6 +308,6 @@ La page fournit les informations légales et techniques :
 - Numéro de version dynamique.
 - Auteur
 - Licence libre **GNU General Public License v3.0 (GPLv3)**.
-- Liste exhaustive des frameworks tiers utilisés (.NET MAUI, CommunityToolkit, SQLite, Mozilla PDF.js, SkiaSharp, ZXing).
+- Liste exhaustive des frameworks tiers utilisés (.NET MAUI, CommunityToolkit & MediaElement, SQLite, Mozilla PDF.js, Plugin.Maui.Audio, SixLabors.ImageSharp).
 - Liens directs vers le code source GitHub et la Politique de Confidentialité.
 - Lien vers le forum d'échange Discord pour tous bugs, remarques, améiorations ou messages

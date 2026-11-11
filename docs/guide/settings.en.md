@@ -2,6 +2,10 @@
 
 The **Settings** menu allows you to tailor Music Score Manager specifically to your playing habits, your instrument, and your screen size.
 
+<p style="text-align: center;">
+  <img src="../../images/parametres_fr.jpeg" alt="Settings overview" style="max-width: 100%; height: auto;">
+</p>
+
 ---
 
 ## 1. Score Settings
@@ -234,6 +238,6 @@ This page provides legal, copyright, and technical information:
 - Dynamic version number.
 - Author.
 - Open-source license: **GNU General Public License v3.0 (GPLv3)**.
-- Comprehensive list of open-source frameworks used (.NET MAUI, CommunityToolkit, SQLite, Mozilla PDF.js, SkiaSharp, ZXing).
+- Comprehensive list of open-source frameworks used (.NET MAUI, CommunityToolkit & MediaElement, SQLite, Mozilla PDF.js, Plugin.Maui.Audio, SixLabors.ImageSharp).
 - Direct links to GitHub source code and Privacy Policy.
 - Discord community link.

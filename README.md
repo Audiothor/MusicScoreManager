@@ -648,12 +648,12 @@ the Free Software Foundation, either version 3 of the License, or
 Consultez le fichier complet [LICENSE](LICENSE) pour les termes légaux exhaustifs.
 
 #### Remerciements & Licences des Bibliothèques Tierces
-- **Microsoft .NET & .NET MAUI** : Licence MIT / GPLv3 compatible — Microsoft Corporation.
-- **.NET MAUI Community Toolkit** : Licence MIT — .NET Foundation.
+- **Microsoft .NET & .NET MAUI** : Licence MIT — Microsoft Corporation.
+- **.NET MAUI Community Toolkit & MediaElement** : Licence MIT — .NET Foundation and Contributors.
 - **Mozilla PDF.js** : Licence Apache 2.0 — Mozilla Foundation.
-- **sqlite-net-pcl** : Licence MIT — Frank A. Krueger.
-- **Plugin.Maui.Audio** : Licence MIT — Gerald Versluis.
-- **ZXing.Net.Maui** : Licence Apache 2.0 — Redth.
+- **sqlite-net-pcl & SQLitePCLRaw** : Licence Apache 2.0 / MIT — Frank A. Krueger, Eric Sink.
+- **Plugin.Maui.Audio** : Licence MIT — Gerald Versluis and Contributors.
+- **SixLabors.ImageSharp** : Licence Apache 2.0 / Six Labors License — Six Labors and Contributors.
 
 ---
 
@@ -674,5 +674,5 @@ Consultez le fichier complet [LICENSE](LICENSE) pour les termes légaux exhausti
 ---
 
 <p align="center">
-  <b>Music Score Manager v3.1.11</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
+  <b>Music Score Manager v3.2.8</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
 </p>
