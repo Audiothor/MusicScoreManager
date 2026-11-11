@@ -1,4 +1,4 @@
-# 🚪 Quit Menu
+<h1 style="text-align: center;">Quit</h1>
 
 The **Quit** menu provides a clean and safe exit from the application.
 

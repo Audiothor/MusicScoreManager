@@ -22,11 +22,19 @@ Elle est multiplateforme (Android / Windows).
 ## Table des matières
 
 - [Description, prérequis et installation](guide/installation.md)
-- [Guide général de l'application](guide/viewer.md)
+- [Démarrage rapide (5 minutes)](guide/quickstart.md)
 - [Partitions](guide/scores.md)
 - [Setlists](guide/setlists.md)
+- [Visualiseur plein écran (mode scène)](guide/viewer.md)
 - [Outils](guide/tools.md)
 - [Paramètres](guide/settings.md)
 - [Quitter](guide/quit.md)
 - [FAQ](guide/FAQ.md)
 - [Politique de Confidentialité & Mentions Légales](confidentialite.md)
+- [Historique des versions](Versions.md)
+
+---
+
+## 💬 Communauté & Support
+
+Rejoignez le **[Serveur Discord Audiothor](https://discord.gg/EtZf8VyMz)** pour échanger, poser vos questions, signaler des améliorations, discuter des pédaliers et suggérer de nouvelles fonctionnalités !

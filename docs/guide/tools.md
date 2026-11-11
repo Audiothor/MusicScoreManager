@@ -92,28 +92,29 @@ L'outil gère les échanges sans fil directs entre musiciens, **sans box interne
 La manipulation nécessite juste d'activer le Wi-Fi (sans connexion Internet nécessaire !).
 Les partitions reçues sont automatiquement dirigées vers votre dossier "Général", afin de préserver votre propre organisation personnelle de répertoires sans être polluée par celle de l'expéditeur.
 
-#### A. Échange Direct de Tablette à Tablette (P2P)
+#### A. Échange Direct de Tablette à Tablette (par WIFI)
 
 ##### 1. Préparation
 
-<u>- CAS OÙ LES PERSONNES SONT SUR UN MÊME RÉSEAU WI-FI
-(à la maison, réseau du conservatoire,etc...)</u>
+> **<u>CAS OÙ LES PERSONNES SONT SUR UN MÊME RÉSEAU WI-FI</u>
+> (à la maison, réseau du conservatoire,etc...)**
+> 
+> => Le destinataire et l'émetteur se connectent au réseau wifi commun.
+> 
 
-Le destinataire et l'émetteur se connectent au réseau wifi commun.
 
-<u>- CAS OÙ LES PERSONNES NE SONT PAS SUR UN MÊME RÉSEAU WI-FI</u>
 
-##### => Créer le lien Wi-Fi entre les 2 tablettes
+> **<u>CAS OÙ LES PERSONNES NE SONT PAS SUR UN MÊME RÉSEAU WI-FI</u>**
+> 
+>  => Créer le lien Wi-Fi entre les 2 tablettes
+> 
+> **Sur la tablette 1** (n'importe laquelle des deux) :
+> - Ouvrez les réglages Android / le volet supérieur de notifications.
+> - Activez le **« Point d'accès Wi-Fi »** (ou *Partage de connexion*).
+> 
+> **Sur la tablette 2 :**
+> Activez le **Wi-Fi** et connectez-vous au réseau Wi-Fi créé par la tablette 1. *(Les deux tablettes sont désormais reliées en réseau direct)*.
 
-1. **Sur la tablette 1 (n'importe laquelle des deux) :**
-
-Ouvrez les réglages Android / le volet supérieur de notifications.
-
-Activez le **« Point d'accès Wi-Fi »** (ou *Partage de connexion*).
-
-2. **Sur la tablette 2 :**
-
-Activez le **Wi-Fi** et connectez-vous au réseau Wi-Fi créé par la tablette 1. *(Les deux tablettes sont désormais reliées en réseau direct)*.
 
 ##### 2. Réaliser le transfert dans Music Score Manager
 

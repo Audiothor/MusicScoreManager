@@ -290,7 +290,7 @@
             <li><a href="#section-annotations">4. 🎨 Complete Annotation System</a></li>
             <li><a href="#section-setlists">5. 📋 Setlists &amp; Live Concert Preparation</a></li>
             <li><a href="#section-wifi">6. 📡 Wireless Wi-Fi Direct Transfer &amp; Group QR Sharing</a></li>
-            <li><a href="#section-tools">7. ⏱️ Metronome, Audio &amp; Backups</a></li>
+            <li><a href="#section-tools">7. 🛠️ Tools Suite (Scanner, Assembler, Audio &amp; Backups)</a></li>
             <li><a href="#section-settings">8. ⚙️ Settings &amp; Customization</a></li>
         </ul>
     </div>
@@ -315,8 +315,10 @@
         </div>
         <div class="step-box">
             <span class="step-number">3</span><span class="step-title">Import Mode (Copy or Link)</span>
-            <div class="step-desc"><strong>Copy:</strong> Copies the file to the app's internal sandbox.<br><strong>Link (🔗):</strong> References the external file without using extra storage space.</div>
+            <div class="step-desc"><strong>Copy:</strong> Copies the file to the app's internal sandbox (standalone).<br><strong>Link (🔗):</strong> References the external file without using extra storage space.<br><em>New v3.2.8:</em> Check <strong>« Don't ask again and remember my choice »</strong> during import to save your preference without being prompted each time (customizable anytime under <em>Settings › Scores</em>).</div>
         </div>
+
+        <p><strong>Folder / Category Organization:</strong> The view toggle button at the top allows switching between full list and folder views. Imported scores are stored in the <strong>"Default"</strong> folder by default and can be organized into your custom categories.</p>
 
         <div class="callout callout-example">
             <div class="callout-icon">⚡</div>
@@ -336,8 +338,8 @@
 
         <p><strong>Tags</strong> let you categorize your music collection by genre, instrument, key, band lineup, or difficulty level.</p>
 
-        <h3>Managing Tags (Tools Menu)</h3>
-        <p>Manage all your tags in <strong>Tools › Tags</strong>:</p>
+        <h3>Managing Tags</h3>
+        <p>Manage all your tags in <strong>Settings › Manage Tags</strong> (or directly from the score editing page):</p>
         <ul>
             <li><strong>Creation:</strong> Enter a name and pick a vibrant color from the palette or fine-tune with RGB sliders.</li>
             <li><strong>Editing &amp; Deletion:</strong> Tap any tag to change its label, adjust its color, or remove it.</li>
@@ -377,12 +379,22 @@
             </div>
             <div class="feature-card">
                 <strong>🎯 Quick Central Menu</strong>
-                <span>Double-tap in the center of the score to open options (smooth vertical scrolling on phones).</span>
+                <span>Double-tap in the center of the score to open stage actions (title, rotation, bookmark, edit, etc.).</span>
             </div>
         </div>
 
+        <h3>Quick Tools Drawer (Top-Right)</h3>
+        <p>Tap the top-right corner (or the <code>[ 🛠️ ]</code> icon) to open the live stage components drawer: instantly toggle <strong>Annotations</strong>, <strong>Metronome</strong>, <strong>Audio Player</strong>, <strong>Page Number</strong>, <strong>Tuner</strong>, or <strong>Score Title</strong>.</p>
+
+        <h3>Setlist Progress &amp; Multi-Instrument Tuner</h3>
+        <ul>
+            <li><strong>Live Setlist Progress:</strong> During concerts, tap the top center zone to reveal the full setlist progress with Completed, In Progress, and Upcoming status badges.</li>
+            <li><strong>Floating Tuner:</strong> High-precision YIN DSP pitch detector draggable anywhere on screen, with A4 calibration (415 to 444 Hz) and instrument presets (guitar, bass, bowed strings, woodwinds, brass, vocals).</li>
+            <li><strong>Immersive Fullscreen Mode:</strong> Completely hides system status and navigation bars for 100% distraction-free stage performance.</li>
+        </ul>
+
         <h3>Page Number &amp; Jump Dialog</h3>
-        <p>Tapping the page number badge opens a modal dialog to <strong>jump directly to any page</strong> or <strong>toggle page number display on/off</strong> for this specific score.</p>
+        <p>Tapping the page number badge opens a modal dialog to <strong>jump directly to any page</strong> or <strong>toggle page number display on/off</strong> for this specific score (size adjustable in settings).</p>
 
         <h3>Hybrid Page Rotation</h3>
         <p>Rotate either the <strong>current page only</strong> (+90°) or the <strong>entire score</strong> from the central menu.</p>
@@ -482,20 +494,32 @@
         <p>Under <strong>Tools › Import Packages &amp; Setlists</strong>, you can import any standalone archive received via USB, email, or cloud storage. Physical export files are saved to your configured export directory.</p>
     </div>
 
-    <!-- Section 7 : Tools & Backups -->
+    <!-- Section 7 : Tools -->
     <div id="section-tools" class="section">
         <div class="section-header">
-            <div class="section-icon">⏱️</div>
-            <div class="section-title">7. Metronome, Audio &amp; Backups</div>
+            <div class="section-icon">🛠️</div>
+            <div class="section-title">7. Tools Suite (Scanner, Assembler, Audio &amp; Backups)</div>
         </div>
+
+        <h3>Paper Score Scanner</h3>
+        <p>Available under <strong>Tools › Score Scanner</strong>: scan physical sheet music right from your music stand using your camera or image gallery, with auto-cropping and high-definition PDF conversion.</p>
+
+        <h3>PDF Creator &amp; Assembler Studio</h3>
+        <p>Under <strong>Tools › PDF Creator &amp; Assembler</strong>: reorder pages, insert blank pages, delete unwanted sheets, or apply permanent rotations to your PDF files.</p>
+
+        <h3>Duplicate Finder</h3>
+        <p>Under <strong>Tools › Duplicate Management</strong>: automatically scan your library to detect and clean up redundant duplicate scores.</p>
 
         <h3>High-Precision Metronome</h3>
         <ul>
-            <li><strong>Thread-Safe Regularity:</strong> Driven by high-precision hardware <code>Stopwatch</code> timers.</li>
+            <li><strong>Thread-Safe Regularity:</strong> Driven by high-precision hardware <code>Stopwatch</code> timers with zero CPU drift.</li>
             <li><strong>Visual LED Beat:</strong> Flashing tempo indicator at the top of the score.</li>
             <li><strong>880 Hz Pre-Count Beep:</strong> Start songs perfectly synchronized with the band.</li>
-            <li><strong>Quick Sound On/Off:</strong> Toggle sound in the central menu on the fly.</li>
+            <li><strong>Quick Sound On/Off:</strong> Toggle sound in the quick tools drawer or central menu on the fly.</li>
         </ul>
+
+        <h3>Synchronized Backing Track Player</h3>
+        <p>Attach audio files (MP3, WAV, AAC, FLAC) to your score in the editor page. The built-in audio player lets you play along and rehearse under real conditions.</p>
 
         <h3>Automatic &amp; Manual Backups</h3>
         <p>In <strong>Tools › Backup Management</strong>, create full SQLite database backups and restore any previous version with a single tap.</p>
