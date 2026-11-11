@@ -19,6 +19,9 @@ The **Viewer** ([`ViewerPage`](file:///c:/Users/comme/Documents/GitHub/MusicScor
   - Annotations are projected with millimeter geometric accuracy on left (`leftPage`) and right (`rightPage`) pages, respecting letterbox and pillarbox margins.
 - **Clickable Page Indicator**:
   - Bottom-right page count badge (`e.g., 2/8`). Tapping it opens a direct jump dialog to any page number.
+- **Fullscreen Immersive Mode (100% of Physical Screen Area)**:
+  - Completely hides the system status bar (time, battery, notifications) and bottom navigation bar to eliminate any visual distraction on stage.
+  - *Temporary system access preserved:* a quick swipe from the top or bottom edge of the screen reveals the system bars in semi-transparency for ~3 seconds before they automatically hide. Configurable in *Settings > Score Settings*.
 
 ---
 

@@ -198,4 +198,12 @@ namespace MusicScoreManager.Services
 
                 if (normFullPath.StartsWith(normRoot, StringComparison.OrdinalIgnoreCase))
                 {
-                    return Path.GetRelativePath(normRoot, normF
+                    return Path.GetRelativePath(normRoot, normFullPath);
+                }
+            }
+            catch { }
+            
+            return fullPath; 
+        }
+    }
+}

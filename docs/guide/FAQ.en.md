@@ -11,6 +11,12 @@ Having initially developed the app for family use, several musicians asked me to
 I am not trying to compete with or replace existing tools, but simply to offer an open, accessible alternative.
 The programming language and platform used (.NET C# & .NET MAUI) allow me to make it available for both Android and Windows.
 
+- *Why isn't the application available on iPad or Mac?*
+
+I could build the application as the codebase supports it (.NET MAUI). However, a Mac computer equipped with Xcode is mandatory to compile and sign apps for iPad/iOS.
+I currently do not own a Mac.
+Perhaps in the future someone could compile it from the source code and publish it on Apple's App Store.
+
 - *Why make it completely free and without ads?*
 
 The target audience includes music lovers, music school teachers, and students—whether performing in live concerts or not, hosting parties, playing at festivals, local music celebrations, weddings, or religious services...
@@ -31,22 +37,24 @@ If you would like to help contribute other languages, please feel free to reach 
 - *I encountered bugs in the software and would like to report them. How do I do that?*
 
 First of all, I apologize for any inconvenience; bugs may occur despite regular testing...
-The best way is to post a message on Discord:
+The best way is to post a message on Discord:  
 French: https://discord.gg/B3Q2CcWcp  
 English: https://discord.gg/hJNSFgW5h  
 
 Or on GitHub:  
-https://github.com/Audiothor/MusicScoreManager/issues
+[https://github.com/Audiothor/MusicScoreManager/issues](https://github.com/Audiothor/MusicScoreManager/issues)
 
 - *I have suggestions for improvements. How can I share them?*
 
-The best way is to post a message on Discord:
+The best way is to post a message on Discord:  
 French: https://discord.gg/YJv8ktQ4F  
 English: https://discord.gg/kCHGh4yjY  
 
 Or on GitHub:  
-https://github.com/Audiothor/MusicScoreManager/issues (*feature request*)
+[https://github.com/Audiothor/MusicScoreManager/issues](https://github.com/Audiothor/MusicScoreManager/issues) (*feature request*)
 
 - *Who developed this software?*
 
-The application was developed in France (in Franche-Comté) by a software engineer passionate about music.
+The project started in early 2026. A first version shared within my close circles was released in May 2026.
+After multiple tests, feedback, and improvements, the application was officially released in November 2026 on Google Play.
+The application was developed in France by a software engineer who is passionate about music and actively plays music.
