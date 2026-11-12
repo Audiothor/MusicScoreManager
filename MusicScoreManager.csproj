@@ -89,4 +89,16 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
+
+	<!-- Automatisation de l'archive de symboles de débogage natifs pour Google Play Console -->
+	<Target Name="GenerateNativeSymbolsZip" AfterTargets="BuildApk" Condition="'$(Configuration)' == 'Release' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' and Exists('$(IntermediateOutputPath)app_shared_libraries')">
+		<ZipDirectory
+			SourceDirectory="$(IntermediateOutputPath)app_shared_libraries"
+			DestinationFile="$(OutputPath)native-symbols-$(ApplicationDisplayVersion).zip"
+			Overwrite="true" />
+		<Copy
+			SourceFiles="$(OutputPath)native-symbols-$(ApplicationDisplayVersion).zip"
+			DestinationFiles="$(OutputPath)publish\native-symbols-$(ApplicationDisplayVersion).zip"
+			Condition="Exists('$(OutputPath)publish')" />
+	</Target>
 </Project>
