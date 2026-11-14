@@ -86,9 +86,17 @@ public partial class ViewerPage : ContentPage
     private double _canvasYRel = 0.0;
     private double _canvasWRel = 1.0;
     private double _canvasHRel = 1.0;
+    private double _lastAllocatedWidth = -1;
+    private double _lastAllocatedHeight = -1;
+    private DateTime _lastSwipeTurnUtc = DateTime.MinValue;
 
     private (double x, double y) PageToScreen(double rx, double ry, int pageNumber, double containerW, double containerH)
     {
+        if (containerW > 0 && containerH > 0 && _currentRenderedWidth > 0 && _currentRenderedHeight > 0)
+        {
+            UpdateCanvasBounds(containerW, containerH, _currentRenderedWidth, _currentRenderedHeight);
+        }
+
         if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
         {
             double pageWRel = _canvasWRel / 2.0;
@@ -112,6 +120,11 @@ public partial class ViewerPage : ContentPage
     private (int pageNumber, double rx, double ry) ScreenToPage(double absX, double absY, double containerW, double containerH)
     {
         if (containerW <= 0 || containerH <= 0) return (_currentPage, 0.5, 0.5);
+
+        if (_currentRenderedWidth > 0 && _currentRenderedHeight > 0)
+        {
+            UpdateCanvasBounds(containerW, containerH, _currentRenderedWidth, _currentRenderedHeight);
+        }
 
         double relX = Math.Clamp(absX / containerW, 0.0, 1.0);
         double relY = Math.Clamp(absY / containerH, 0.0, 1.0);
@@ -145,6 +158,11 @@ public partial class ViewerPage : ContentPage
     private (double rx, double ry) ScreenToPageCoords(double absX, double absY, int targetPage, double containerW, double containerH)
     {
         if (containerW <= 0 || containerH <= 0) return (0.5, 0.5);
+
+        if (_currentRenderedWidth > 0 && _currentRenderedHeight > 0)
+        {
+            UpdateCanvasBounds(containerW, containerH, _currentRenderedWidth, _currentRenderedHeight);
+        }
 
         double relX = Math.Clamp(absX / containerW, 0.0, 1.0);
         double relY = Math.Clamp(absY / containerH, 0.0, 1.0);
@@ -182,10 +200,12 @@ public partial class ViewerPage : ContentPage
         _isAnnotationsLocked = false;
         if (ActiveAnnotationsContainer != null)
         {
+            ActiveAnnotationsContainer.IsVisible = true;
             ActiveAnnotationsContainer.InputTransparent = false;
         }
         if (AnnotationsContainer != null)
         {
+            AnnotationsContainer.IsVisible = true;
             AnnotationsContainer.InputTransparent = false;
         }
     }
@@ -195,7 +215,12 @@ public partial class ViewerPage : ContentPage
         _isAnnotationsLocked = true;
         if (ActiveAnnotationsContainer != null)
         {
+            ActiveAnnotationsContainer.IsVisible = true;
+#if ANDROID
+            ActiveAnnotationsContainer.InputTransparent = (PdfWebView != null && PdfWebView.IsVisible);
+#else
             ActiveAnnotationsContainer.InputTransparent = true;
+#endif
         }
     }
 
@@ -360,6 +385,11 @@ public partial class ViewerPage : ContentPage
             SetupNativeTouchHandling();
 #endif
         };
+        ImageContainer.HandlerChanged += (s, e) => {
+#if ANDROID
+            SetupNativeTouchHandling();
+#endif
+        };
     }
 
     public void UpdateSetlistScores(List<Score> scores, int currentIndex)
@@ -511,7 +541,7 @@ public partial class ViewerPage : ContentPage
                     RenderAnnotations();
                     if (ActiveAnnotationsContainer != null)
                     {
-                        ActiveAnnotationsContainer.IsVisible = _score.ShowAnnotations;
+                        ActiveAnnotationsContainer.IsVisible = true;
                         ActiveAnnotationsContainer.Opacity = (_score.ShowAnnotations && _isScoreReady) ? 1 : 0;
                     }
                 }
@@ -706,12 +736,13 @@ public partial class ViewerPage : ContentPage
                     ScoreImage.IsVisible = true;
                     if (PdfWebView != null) PdfWebView.IsVisible = false;
                     ImageContainer.IsVisible = true;
-                    AnnotationsContainer.IsVisible = _score.ShowAnnotations;
+                    AnnotationsContainer.IsVisible = true;
                     _currentPage = 1;
                     _maxPages = 1;
                     UpdatePageIndicator();
                     _isScoreReady = true;
 #if ANDROID
+                    SetupNativeTouchHandling();
                     if (ScoreImage.Handler?.PlatformView is Android.Widget.ImageView iv)
                     {
                         var tcs = new TaskCompletionSource<bool>();
@@ -752,7 +783,10 @@ public partial class ViewerPage : ContentPage
                     if (PdfWebView != null) PdfWebView.IsVisible = false;
                     ScoreImage.IsVisible = true;
                     ImageContainer.IsVisible = true;
-                    AnnotationsContainer.IsVisible = _score.ShowAnnotations;
+                    AnnotationsContainer.IsVisible = true;
+#if ANDROID
+                    SetupNativeTouchHandling();
+#endif
 
                     await RenderPdfCurrentAsync(_currentPage > 0 ? _currentPage : 1);
                 }
@@ -850,6 +884,66 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private (double width, double height, bool isLandscape) GetEffectiveViewportInfo()
+    {
+        double w = _lastAllocatedWidth > 0 ? _lastAllocatedWidth : (this.Width > 0 ? this.Width : ImageContainer.Width);
+        double h = _lastAllocatedHeight > 0 ? _lastAllocatedHeight : (this.Height > 0 ? this.Height : ImageContainer.Height);
+
+#if ANDROID
+        if (w <= 0 || h <= 0)
+        {
+            try
+            {
+                var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
+                var decor = activity?.Window?.DecorView;
+                float density = activity?.Resources?.DisplayMetrics?.Density ?? 1.0f;
+                if (density <= 0) density = 1.0f;
+                if (decor != null && decor.Width > 0 && decor.Height > 0)
+                {
+                    w = decor.Width / density;
+                    h = decor.Height / density;
+                }
+            }
+            catch { }
+        }
+#endif
+
+        if (w <= 0 || h <= 0)
+        {
+            try
+            {
+                var display = DeviceDisplay.MainDisplayInfo;
+                double density = Math.Max(1.0, display.Density);
+                w = display.Width / density;
+                h = display.Height / density;
+            }
+            catch { }
+        }
+
+        bool isLandscape = (w > h);
+#if ANDROID
+        try
+        {
+            var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
+            var decor = activity?.Window?.DecorView;
+            if (decor != null && decor.Width > 0 && decor.Height > 0 && _lastAllocatedWidth <= 0 && this.Width <= 0)
+            {
+                isLandscape = (decor.Width > decor.Height);
+            }
+            else if (w <= 0 || h <= 0)
+            {
+                var config = activity?.Resources?.Configuration;
+                if (config != null && config.Orientation != Android.Content.Res.Orientation.Undefined)
+                {
+                    isLandscape = (config.Orientation == Android.Content.Res.Orientation.Landscape);
+                }
+            }
+        }
+        catch { }
+#endif
+        return (w, h, isLandscape);
+    }
+
     private async Task RenderPdfCurrentAsync(int pageNum)
     {
         try
@@ -864,7 +958,7 @@ public partial class ViewerPage : ContentPage
 
             _isScoreReady = false;
 
-            if (_score.PageCount > 0)
+            if (_score.PageCount > 1)
             {
                 _maxPages = _score.PageCount;
             }
@@ -879,25 +973,10 @@ public partial class ViewerPage : ContentPage
                 }
             }
 
-            double containerW = this.Width > 0 ? this.Width : ImageContainer.Width;
-            double containerH = this.Height > 0 ? this.Height : ImageContainer.Height;
-
-            if (containerW <= 0 || containerH <= 0)
-            {
-                try
-                {
-                    var display = DeviceDisplay.MainDisplayInfo;
-                    double density = Math.Max(1.0, display.Density);
-                    containerW = display.Width / density;
-                    containerH = display.Height / density;
-                }
-                catch { }
-            }
+            var (containerW, containerH, isLandscape) = GetEffectiveViewportInfo();
 
             bool twoPagesPref = Preferences.Default.Get("TwoPagesLandscape", true);
-            bool isLandscape = (containerW > containerH);
-            int effectivePageCount = _score.PageCount > 0 ? _score.PageCount : _pdfService.GetCachedPageCount(fullPath);
-            bool tryTwoPages = twoPagesPref && isLandscape && (effectivePageCount != 1);
+            bool tryTwoPages = twoPagesPref && isLandscape && (cachedCount != 1);
 
             RenderedPdfPage? rendered = null;
 
@@ -923,12 +1002,14 @@ public partial class ViewerPage : ContentPage
                         }
                     }
 
-                    if (_maxPages <= 1)
+                    if (!rendered.IsTwoPages || _maxPages <= 1)
                     {
-                        // PDF d'une seule page : basculer proprement en rendu simple page
                         _isTwoPagesMode = false;
-                        int rot = GetRotationForPage(1);
-                        rendered = await _pdfService.RenderPdfPageAsync(fullPath, 1, rot);
+                        if (rendered.IsTwoPages)
+                        {
+                            int rot = GetRotationForPage(1);
+                            rendered = await _pdfService.RenderPdfPageAsync(fullPath, 1, rot);
+                        }
                         if (rendered != null)
                         {
                             _currentPage = rendered.PageNumber;
@@ -972,6 +1053,44 @@ public partial class ViewerPage : ContentPage
                 }
             }
 
+            if (rendered != null)
+            {
+                var (_, _, latestIsLandscape) = GetEffectiveViewportInfo();
+                bool shouldBeTwoPagesNow = twoPagesPref && latestIsLandscape && (_maxPages > 1);
+                if (shouldBeTwoPagesNow != _isTwoPagesMode)
+                {
+                    if (shouldBeTwoPagesNow)
+                    {
+                        int leftNum = (pageNum % 2 == 0) ? (pageNum - 1) : pageNum;
+                        if (leftNum < 1) leftNum = 1;
+                        int rightNum = leftNum + 1;
+                        var twoRendered = await _pdfService.RenderPdfTwoPagesAsync(fullPath, leftNum, rightNum, GetRotationForPage(leftNum), GetRotationForPage(rightNum));
+                        if (twoRendered != null && twoRendered.IsTwoPages)
+                        {
+                            rendered = twoRendered;
+                            _isTwoPagesMode = true;
+                            _leftPageNumber = rendered.LeftPage;
+                            _rightPageNumber = rendered.RightPage;
+                            _hasRightPage = rendered.HasRightPage;
+                            _currentPage = _leftPageNumber;
+                            _currentPageDisplay = _hasRightPage ? $"{_leftPageNumber}-{_rightPageNumber}" : $"{_leftPageNumber}";
+                        }
+                    }
+                    else
+                    {
+                        int pNum = Math.Clamp(pageNum, 1, Math.Max(1, _maxPages));
+                        var oneRendered = await _pdfService.RenderPdfPageAsync(fullPath, pNum, GetRotationForPage(pNum));
+                        if (oneRendered != null)
+                        {
+                            rendered = oneRendered;
+                            _isTwoPagesMode = false;
+                            _currentPage = rendered.PageNumber;
+                            _currentPageDisplay = _currentPage.ToString();
+                        }
+                    }
+                }
+            }
+
             if (rendered != null && (rendered.ImageBytes.Length > 0
 #if ANDROID
                 || (rendered.NativeBitmap != null && !rendered.NativeBitmap.IsRecycled)
@@ -1010,8 +1129,9 @@ public partial class ViewerPage : ContentPage
                 }
 #endif
 
-                double finalW = (ActiveAnnotationsContainer?.Width > 0) ? ActiveAnnotationsContainer.Width : (this.Width > 0 ? this.Width : containerW);
-                double finalH = (ActiveAnnotationsContainer?.Height > 0) ? ActiveAnnotationsContainer.Height : (this.Height > 0 ? this.Height : containerH);
+                var (vpW, vpH, _) = GetEffectiveViewportInfo();
+                double finalW = (ActiveAnnotationsContainer?.Width > 0) ? ActiveAnnotationsContainer.Width : vpW;
+                double finalH = (ActiveAnnotationsContainer?.Height > 0) ? ActiveAnnotationsContainer.Height : vpH;
 
                 UpdateCanvasBounds(finalW, finalH, rendered.Width, rendered.Height);
 
@@ -1038,8 +1158,18 @@ public partial class ViewerPage : ContentPage
 
                 if (ActiveAnnotationsContainer != null)
                 {
-                    ActiveAnnotationsContainer.IsVisible = _score.ShowAnnotations;
+                    ActiveAnnotationsContainer.IsVisible = true;
                     ActiveAnnotationsContainer.Opacity = (_score.ShowAnnotations && _isScoreReady) ? 1 : 0;
+                }
+
+                if (_lastAllocatedWidth > 0 && _lastAllocatedHeight > 0)
+                {
+                    bool finalShouldBeTwoPages = twoPagesPref && (_lastAllocatedWidth > _lastAllocatedHeight) && (_maxPages > 1);
+                    if (finalShouldBeTwoPages != _isTwoPagesMode)
+                    {
+                        _ = RenderPdfCurrentAsync(_currentPage);
+                        return;
+                    }
                 }
 
                 if (_renderStopwatch.IsRunning)
@@ -1240,6 +1370,37 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private double _panLastTotalX = 0;
+    private double _panLastTotalY = 0;
+
+    private bool TriggerPageTurnSwipe(string detectedGesture)
+    {
+        if (string.IsNullOrEmpty(detectedGesture)) return false;
+
+        var now = DateTime.UtcNow;
+        if ((now - _lastSwipeTurnUtc).TotalMilliseconds < 180)
+        {
+            return true;
+        }
+
+        string nextG = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
+        string prevG = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
+
+        if (detectedGesture == nextG)
+        {
+            _lastSwipeTurnUtc = now;
+            MainThread.BeginInvokeOnMainThread(() => OnNextTapped(this, EventArgs.Empty));
+            return true;
+        }
+        if (detectedGesture == prevG)
+        {
+            _lastSwipeTurnUtc = now;
+            MainThread.BeginInvokeOnMainThread(() => OnPrevTapped(this, EventArgs.Empty));
+            return true;
+        }
+        return false;
+    }
+
     private void OnPanUpdated(object sender, PanUpdatedEventArgs e)
     {
         if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
@@ -1248,6 +1409,8 @@ public partial class ViewerPage : ContentPage
         {
             _panStartX = ZoomLayout.TranslationX;
             _panStartY = ZoomLayout.TranslationY;
+            _panLastTotalX = 0;
+            _panLastTotalY = 0;
             return;
         }
 
@@ -1255,7 +1418,10 @@ public partial class ViewerPage : ContentPage
         {
             if (_isPinching) return;
 
-            if (ZoomLayout.Scale > 1.0)
+            _panLastTotalX = e.TotalX;
+            _panLastTotalY = e.TotalY;
+
+            if (ZoomLayout.Scale > 1.05)
             {
                 double targetX = _panStartX + e.TotalX;
                 double targetY = _panStartY + e.TotalY;
@@ -1272,6 +1438,19 @@ public partial class ViewerPage : ContentPage
         }
         else if (e.StatusType == GestureStatus.Completed || e.StatusType == GestureStatus.Canceled)
         {
+            if (!_isPinching && ZoomLayout.Scale <= 1.05)
+            {
+                double dist = Math.Sqrt(_panLastTotalX * _panLastTotalX + _panLastTotalY * _panLastTotalY);
+                if (dist >= 35)
+                {
+                    string detectedG = Math.Abs(_panLastTotalX) > Math.Abs(_panLastTotalY)
+                        ? (_panLastTotalX < 0 ? "SwipeLeft" : "SwipeRight")
+                        : (_panLastTotalY < 0 ? "SwipeUp" : "SwipeDown");
+                    TriggerPageTurnSwipe(detectedG);
+                }
+            }
+            _panLastTotalX = 0;
+            _panLastTotalY = 0;
             _panStartX = ZoomLayout.TranslationX;
             _panStartY = ZoomLayout.TranslationY;
         }
@@ -2426,7 +2605,7 @@ public partial class ViewerPage : ContentPage
     {
         if (ActiveAnnotationsContainer != null)
         {
-            ActiveAnnotationsContainer.IsVisible = isVisible;
+            ActiveAnnotationsContainer.IsVisible = true;
             ActiveAnnotationsContainer.Opacity = (isVisible && _isScoreReady) ? 1 : 0;
         }
 
@@ -2811,7 +2990,7 @@ public partial class ViewerPage : ContentPage
             _selectedAnnotation = null;
             _pendingSticker = null;
             _isAnnotationMode = false;
-            AnnotationsContainer.InputTransparent = true;
+            LockAnnotations();
 
             if (StickersCollection != null)
             {
@@ -2859,7 +3038,7 @@ public partial class ViewerPage : ContentPage
             _selectedAnnotation = null;
             _pendingSticker = null;
             _isAnnotationMode = false;
-            AnnotationsContainer.InputTransparent = true;
+            LockAnnotations();
 
             if (StickersCollection != null)
             {
@@ -2921,44 +3100,28 @@ public partial class ViewerPage : ContentPage
     {
         if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
         if (ZoomLayout.Scale > 1.05) return;
-        string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
-        string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
-
-        if (nextGesture == "SwipeLeft") OnNextTapped(this, EventArgs.Empty);
-        else if (prevGesture == "SwipeLeft") OnPrevTapped(this, EventArgs.Empty);
+        TriggerPageTurnSwipe("SwipeLeft");
     }
 
     private void OnImageSwipedRight(object? sender, SwipedEventArgs e)
     {
         if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
         if (ZoomLayout.Scale > 1.05) return;
-        string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
-        string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
-
-        if (nextGesture == "SwipeRight") OnNextTapped(this, EventArgs.Empty);
-        else if (prevGesture == "SwipeRight") OnPrevTapped(this, EventArgs.Empty);
+        TriggerPageTurnSwipe("SwipeRight");
     }
 
     private void OnImageSwipedUp(object? sender, SwipedEventArgs e)
     {
         if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
         if (ZoomLayout.Scale > 1.05) return;
-        string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
-        string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
-
-        if (nextGesture == "SwipeUp") OnNextTapped(this, EventArgs.Empty);
-        else if (prevGesture == "SwipeUp") OnPrevTapped(this, EventArgs.Empty);
+        TriggerPageTurnSwipe("SwipeUp");
     }
 
     private void OnImageSwipedDown(object? sender, SwipedEventArgs e)
     {
         if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
         if (ZoomLayout.Scale > 1.05) return;
-        string nextGesture = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
-        string prevGesture = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
-
-        if (nextGesture == "SwipeDown") OnNextTapped(this, EventArgs.Empty);
-        else if (prevGesture == "SwipeDown") OnPrevTapped(this, EventArgs.Empty);
+        TriggerPageTurnSwipe("SwipeDown");
     }
 
     private void OnImageDoubleTapped(object sender, TappedEventArgs e)
@@ -3113,6 +3276,8 @@ public partial class ViewerPage : ContentPage
         base.OnSizeAllocated(width, height);
         if (width > 0 && height > 0)
         {
+            _lastAllocatedWidth = width;
+            _lastAllocatedHeight = height;
             UpdateAnnotationOverlaysLayout(width, height);
 
             if (_score?.Type == ScoreType.PDF && PdfService.IsNativePdfSupported)
@@ -3120,7 +3285,7 @@ public partial class ViewerPage : ContentPage
                 if (!_isInitialOpenCompleted)
                 {
                     // Lors de l'ouverture initiale de la page, le rendu est déjà pris en charge par LoadContentAsync.
-                    // Ne jamais déclencher de second rendu concurrent ni réafficher l'overlay ici.
+                    // RenderPdfCurrentAsync vérifiera automatiquement _lastAllocatedWidth/_lastAllocatedHeight à la fin de son rendu.
                     if (_currentRenderedWidth > 0 && _currentRenderedHeight > 0)
                     {
                         UpdateCanvasBounds(width, height, _currentRenderedWidth, _currentRenderedHeight);
@@ -3136,7 +3301,7 @@ public partial class ViewerPage : ContentPage
                 {
                     if (!_isScoreReady)
                     {
-                        // Le premier rendu est déjà en cours, ne pas lancer un second rendu concurrent
+                        // Le rendu en cours utilisera _lastAllocatedWidth/_lastAllocatedHeight à son terme
                         return;
                     }
 
@@ -3686,7 +3851,7 @@ public partial class ViewerPage : ContentPage
                         {
                             if (PdfService.IsNativePdfSupported)
                             {
-                                _ = _pdfService.RenderPdfPageAsync(nextPath, 1, next.Rotation);
+                                _ = _pdfService.PreloadFirstPageAsync(nextPath, next.Rotation, next.PageCount);
                             }
                             else if (DeviceInfo.Platform == DevicePlatform.Android)
                             {
@@ -3722,7 +3887,7 @@ public partial class ViewerPage : ContentPage
                         {
                             if (PdfService.IsNativePdfSupported)
                             {
-                                _ = _pdfService.RenderPdfPageAsync(prevPath, 1, prev.Rotation);
+                                _ = _pdfService.PreloadFirstPageAsync(prevPath, prev.Rotation, prev.PageCount);
                             }
                             else if (DeviceInfo.Platform == DevicePlatform.Android)
                             {
@@ -3863,13 +4028,29 @@ public partial class ViewerPage : ContentPage
     private float _touchDownX = 0;
     private float _touchDownY = 0;
     private long _lastTapTime = 0;
+    private long _lastHandledTouchDownTime = -1;
+    private long _lastHandledTouchEventTime = -1;
+    private int _lastHandledTouchAction = -1;
 
     private void SetupNativeTouchHandling()
     {
-        if (AnnotationsContainer.Handler?.PlatformView is Android.Views.View nativeView)
+        if (AnnotationsContainer != null)
+        {
+            AnnotationsContainer.IsVisible = true;
+            if (_isAnnotationsLocked)
+            {
+                AnnotationsContainer.InputTransparent = (PdfWebView != null && PdfWebView.IsVisible);
+            }
+        }
+        if (AnnotationsContainer?.Handler?.PlatformView is Android.Views.View nativeView)
         {
             nativeView.Touch -= OnNativeAnnotationsContainerTouch;
             nativeView.Touch += OnNativeAnnotationsContainerTouch;
+        }
+        if (ImageContainer?.Handler?.PlatformView is Android.Views.View nativeImgContainer)
+        {
+            nativeImgContainer.Touch -= OnNativeAnnotationsContainerTouch;
+            nativeImgContainer.Touch += OnNativeAnnotationsContainerTouch;
         }
     }
 
@@ -3881,6 +4062,17 @@ public partial class ViewerPage : ContentPage
             args.Handled = false;
             return;
         }
+
+        if (_lastHandledTouchDownTime == motionEvent.DownTime &&
+            _lastHandledTouchEventTime == motionEvent.EventTime &&
+            _lastHandledTouchAction == (int)motionEvent.ActionMasked)
+        {
+            args.Handled = true;
+            return;
+        }
+        _lastHandledTouchDownTime = motionEvent.DownTime;
+        _lastHandledTouchEventTime = motionEvent.EventTime;
+        _lastHandledTouchAction = (int)motionEvent.ActionMasked;
 
         float density = Android.App.Application.Context.Resources?.DisplayMetrics?.Density ?? 1.0f;
         int pointerCount = motionEvent.PointerCount;
@@ -4088,6 +4280,7 @@ public partial class ViewerPage : ContentPage
         switch (motionEvent.ActionMasked)
         {
             case Android.Views.MotionEventActions.Down:
+                (sender as Android.Views.View)?.Parent?.RequestDisallowInterceptTouchEvent(true);
                 _touchDownTime = motionEvent.EventTime;
                 _touchDownX = curX;
                 _touchDownY = curY;
@@ -4098,6 +4291,7 @@ public partial class ViewerPage : ContentPage
                 return;
 
             case Android.Views.MotionEventActions.Move:
+                (sender as Android.Views.View)?.Parent?.RequestDisallowInterceptTouchEvent(true);
                 if (_isNativePanning && ZoomLayout.Scale > 1.05 && !_isHighlightMode)
                 {
                     float dx = curX - _panLastX;
@@ -4112,23 +4306,23 @@ public partial class ViewerPage : ContentPage
 
                     ZoomLayout.TranslationX = Math.Clamp(ZoomLayout.TranslationX + dx, -maxTx, maxTx);
                     ZoomLayout.TranslationY = Math.Clamp(ZoomLayout.TranslationY + dy, -maxTy, maxTy);
-                    args.Handled = true;
-                    return;
                 }
-                break;
+                args.Handled = true;
+                return;
 
             case Android.Views.MotionEventActions.Up:
+                (sender as Android.Views.View)?.Parent?.RequestDisallowInterceptTouchEvent(false);
                 _isNativePanning = false;
                 long duration = motionEvent.EventTime - _touchDownTime;
                 float diffX = curX - _touchDownX;
                 float diffY = curY - _touchDownY;
                 float dist = (float)Math.Sqrt(diffX * diffX + diffY * diffY);
 
-                double width = AnnotationsContainer.Width > 0 ? AnnotationsContainer.Width : this.Width;
-                double height = AnnotationsContainer.Height > 0 ? AnnotationsContainer.Height : this.Height;
+                double width = AnnotationsContainer.Width > 0 ? AnnotationsContainer.Width : (this.Width > 0 ? this.Width : ImageContainer.Width);
+                double height = AnnotationsContainer.Height > 0 ? AnnotationsContainer.Height : (this.Height > 0 ? this.Height : ImageContainer.Height);
 
-                // Tap détection (< 30px, < 400ms)
-                if (dist < 30 && duration < 400)
+                // Tap détection (< 28dp, < 400ms)
+                if (dist < 28 && duration < 400)
                 {
                     // Si la barre d'annotations est visible
                     if (AnnotationBar.IsVisible)
@@ -4257,41 +4451,34 @@ public partial class ViewerPage : ContentPage
                         }
                     }
                 }
-                // Swipe détection (>= 35px, < 800ms) - uniquement si non zoomé et barre fermée
-                else if (dist >= 35 && duration < 800 && ZoomLayout.Scale <= 1.05 && !AnnotationBar.IsVisible)
+                // Swipe détection (>= 28dp, < 1500ms) - uniquement si non zoomé et barre fermée
+                else if (dist >= 28 && duration < 1500 && ZoomLayout.Scale <= 1.05 && !AnnotationBar.IsVisible)
                 {
-                    string nextG = Preferences.Default.Get("NextPageGesture", "SwipeLeft");
-                    string prevG = Preferences.Default.Get("PrevPageGesture", "SwipeRight");
+                    string detectedG = Math.Abs(diffX) > Math.Abs(diffY)
+                        ? (diffX < 0 ? "SwipeLeft" : "SwipeRight")
+                        : (diffY < 0 ? "SwipeUp" : "SwipeDown");
 
-                    string detectedG = "";
-                    if (Math.Abs(diffX) > Math.Abs(diffY))
-                    {
-                        detectedG = diffX < 0 ? "SwipeLeft" : "SwipeRight";
-                    }
-                    else
-                    {
-                        detectedG = diffY < 0 ? "SwipeUp" : "SwipeDown";
-                    }
-
-                    if (detectedG == nextG)
-                    {
-                        MainThread.BeginInvokeOnMainThread(() => OnNextTapped(this, EventArgs.Empty));
-                        args.Handled = true;
-                        return;
-                    }
-                    else if (detectedG == prevG)
-                    {
-                        MainThread.BeginInvokeOnMainThread(() => OnPrevTapped(this, EventArgs.Empty));
-                        args.Handled = true;
-                        return;
-                    }
+                    TriggerPageTurnSwipe(detectedG);
                 }
                 args.Handled = true;
                 return;
 
             case Android.Views.MotionEventActions.Cancel:
+                (sender as Android.Views.View)?.Parent?.RequestDisallowInterceptTouchEvent(false);
                 _isNativePanning = false;
-                break;
+                long cancelDuration = motionEvent.EventTime - _touchDownTime;
+                float cancelDiffX = curX - _touchDownX;
+                float cancelDiffY = curY - _touchDownY;
+                float cancelDist = (float)Math.Sqrt(cancelDiffX * cancelDiffX + cancelDiffY * cancelDiffY);
+                if (cancelDist >= 28 && cancelDuration < 1500 && ZoomLayout.Scale <= 1.05 && !AnnotationBar.IsVisible)
+                {
+                    string detectedG = Math.Abs(cancelDiffX) > Math.Abs(cancelDiffY)
+                        ? (cancelDiffX < 0 ? "SwipeLeft" : "SwipeRight")
+                        : (cancelDiffY < 0 ? "SwipeUp" : "SwipeDown");
+                    TriggerPageTurnSwipe(detectedG);
+                }
+                args.Handled = true;
+                return;
         }
 
         args.Handled = false;
@@ -5641,6 +5828,9 @@ public partial class ViewerPage : ContentPage
 
     private async void OnPlacementTapped(object? sender, TappedEventArgs e)
     {
+        if (_isAnnotationsLocked || (!_isTextMode && (!_isAnnotationMode || string.IsNullOrEmpty(_pendingSticker))))
+            return;
+
         UnlockAnnotations();
 
         var position = e.GetPosition(ActiveAnnotationsContainer);
@@ -5900,7 +6090,7 @@ public partial class ViewerPage : ContentPage
     {
         if (ActiveAnnotationsContainer == null) return;
 
-        ActiveAnnotationsContainer.IsVisible = _score.ShowAnnotations;
+        ActiveAnnotationsContainer.IsVisible = true;
         ActiveAnnotationsContainer.Opacity = (_isScoreReady && _score.ShowAnnotations) ? 1 : 0;
 
         var elementsToRemove = ActiveAnnotationsContainer.Children
@@ -5922,6 +6112,13 @@ public partial class ViewerPage : ContentPage
             return;
         }
 
+        double containerW = ActiveAnnotationsContainer.Width;
+        double containerH = ActiveAnnotationsContainer.Height;
+        if (_currentRenderedWidth > 0 && _currentRenderedHeight > 0)
+        {
+            UpdateCanvasBounds(containerW, containerH, _currentRenderedWidth, _currentRenderedHeight);
+        }
+
         List<Annotation> visibleAnnotations;
         if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
         {
@@ -5935,9 +6132,6 @@ public partial class ViewerPage : ContentPage
                 .Where(a => a.PageNumber == _currentPage)
                 .ToList();
         }
-
-        double containerW = ActiveAnnotationsContainer.Width;
-        double containerH = ActiveAnnotationsContainer.Height;
 
         foreach (var ann in visibleAnnotations)
         {

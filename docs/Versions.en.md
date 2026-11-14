@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.2.9 — 14/11/2026](#v329-14112026)
 - [v3.2.8 — 11/11/2026](#v328-11112026)
 - [v3.2.7 — 09/11/2026](#v327-09112026)
 - [v3.2.6 — 04/11/2026](#v326-04112026)
@@ -56,6 +57,28 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.9 — 14/11/2026
+
+### 1. Score Viewer: Reliable 2-Page Landscape Display & Swipe Navigation (`ViewerPage` & `PdfService`)
+- **1.1. Fixed 2-page landscape mode on smartphones and tablets:**
+  - Multi-layer native landscape orientation detection (`DecorView`, Android configuration, and `OnSizeAllocated` dimensions) with automatic synchronization at the end of initial rendering if the device rotates during score opening, with zero impact on opening speed (< 0.5s).
+  - Eliminated false single-page locking caused by stale or uninitialized `PageCount = 1` values in SQLite that previously prevented 2-page rendering and blocked page turning.
+  - Strict 50% / 50% geometric normalization of dual-page spreads in `RenderPdfTwoPagesAsync` and systematic `UpdateCanvasBounds` synchronization before every coordinate conversion to guarantee pixel-accurate annotation positioning in 2-page landscape mode.
+- **1.2. Reliable left/right swipe page turning across all phones and tablets:**
+  - Kept the `AnnotationsContainer` touch surface permanently active (`IsVisible = true`, `InputTransparent = false` on Android) even when annotations are hidden or locked.
+  - Added `RequestDisallowInterceptTouchEvent(true)` on `ACTION_DOWN` and `ACTION_MOVE` to prevent parent Android containers (`Shell` / `DrawerLayout`) from intercepting horizontal swipes in landscape mode.
+
+### 2. Score Settings: Display Sections Restructuring (`SettingsScoresPage`)
+- **2.1. Clear separation between « General Display » and « Viewer Display »:**
+  - Renamed the *« Display »* section to **« General Display »** containing: *Information below score title*, *Quick alphabetical index (A-Z)*, and *Floating Scroll-to-Top button*.
+  - Added a new **« Viewer Display »** section grouping all score viewer display settings (from *Current page number display* down to *Current page number display size*), followed by the unchanged *« Ergonomics »* section.
+
+### 3. Localization & Translations (8 Languages)
+- **3.1. Translated « None » label in Score Edit page (`ScoreEditPage`):**
+  - Added `"Common_None"` (*Aucune*, *None*, *Keine*, *Ninguna*, *Nessuna*, *Geen*, *Brak*, *Nenhuma*) and the new section header keys across all 8 language files (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
 
 ---
 

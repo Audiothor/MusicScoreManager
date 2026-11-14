@@ -226,6 +226,38 @@ namespace MusicScoreManager.Services
             });
         }
 
+        public static bool IsScreenLandscape()
+        {
+#if ANDROID
+            try
+            {
+                var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
+                var decor = activity?.Window?.DecorView;
+                if (decor != null && decor.Width > 0 && decor.Height > 0)
+                {
+                    return decor.Width > decor.Height;
+                }
+                var config = activity?.Resources?.Configuration;
+                if (config != null && config.Orientation != Android.Content.Res.Orientation.Undefined)
+                {
+                    return config.Orientation == Android.Content.Res.Orientation.Landscape;
+                }
+            }
+            catch { }
+#endif
+            try
+            {
+                var display = DeviceDisplay.MainDisplayInfo;
+                if (display.Width > 0 && display.Height > 0)
+                {
+                    return display.Width > display.Height;
+                }
+                return display.Orientation == DisplayOrientation.Landscape;
+            }
+            catch { }
+            return false;
+        }
+
         /// <summary>
         /// Précharge en mémoire la première page (ou double page si orientation paysage) du document PDF
         /// pour une ouverture instantanée dès l'affichage du Viewer.
@@ -236,7 +268,7 @@ namespace MusicScoreManager.Services
 
             try
             {
-                if (knownPageCount > 0)
+                if (knownPageCount > 1)
                 {
                     lock (_cacheLock)
                     {
@@ -245,15 +277,9 @@ namespace MusicScoreManager.Services
                 }
 
                 bool twoPagesPref = Preferences.Default.Get("TwoPagesLandscape", true);
-                bool isLandscape = false;
-                try
-                {
-                    var display = DeviceDisplay.MainDisplayInfo;
-                    isLandscape = (display.Width > display.Height);
-                }
-                catch { }
+                bool isLandscape = IsScreenLandscape();
 
-                if (twoPagesPref && isLandscape && knownPageCount != 1)
+                if (twoPagesPref && isLandscape)
                 {
                     await RenderPdfTwoPagesAsync(pdfPath, 1, 2, rotation, rotation);
                 }
@@ -537,6 +563,49 @@ namespace MusicScoreManager.Services
                     using var renderer = new PdfRenderer(fd);
                     int totalPages = Math.Max(1, renderer.PageCount);
                     lock (_cacheLock) { _pageCountCache[pdfPath] = totalPages; }
+
+                    if (totalPages <= 1)
+                    {
+                        using var singlePage = renderer.OpenPage(0);
+                        int singleBaseDim = Math.Max(singlePage.Width, singlePage.Height);
+                        float singleScale = 1.6f;
+                        if (singleBaseDim * singleScale > 2048)
+                        {
+                            singleScale = 2048f / singleBaseDim;
+                        }
+
+                        int sW = Math.Max(1, (int)(singlePage.Width * singleScale));
+                        int sH = Math.Max(1, (int)(singlePage.Height * singleScale));
+
+                        var sRawBmp = Bitmap.CreateBitmap(sW, sH, Bitmap.Config.Argb8888!);
+                        sRawBmp.EraseColor(Android.Graphics.Color.White);
+                        singlePage.Render(sRawBmp, null, null, PdfRenderMode.ForDisplay);
+
+                        Bitmap sFinalBmp = sRawBmp;
+                        int sNormRot = (leftRot % 360 + 360) % 360;
+                        if (sNormRot != 0)
+                        {
+                            using var mat = new Android.Graphics.Matrix();
+                            mat.PostRotate(sNormRot);
+                            sFinalBmp = Bitmap.CreateBitmap(sRawBmp, 0, 0, sRawBmp.Width, sRawBmp.Height, mat, true);
+                            sRawBmp.Recycle();
+                        }
+
+                        return new RenderedPdfPage
+                        {
+                            ImageBytes = Array.Empty<byte>(),
+                            NativeBitmap = sFinalBmp,
+                            Width = sFinalBmp.Width,
+                            Height = sFinalBmp.Height,
+                            PageNumber = 1,
+                            TotalPages = 1,
+                            IsTwoPages = false,
+                            LeftPage = 1,
+                            RightPage = 1,
+                            HasRightPage = false
+                        };
+                    }
+
                     int leftIdx = Math.Clamp(leftPage - 1, 0, totalPages - 1);
                     int rightIdx = rightPage - 1;
                     bool hasRight = (rightIdx >= 0 && rightIdx < totalPages);
@@ -606,21 +675,24 @@ namespace MusicScoreManager.Services
                         }
                     }
 
-                    int totalW = lBmp.Width + (rBmp != null ? rBmp.Width : lBmp.Width);
-                    int maxH = Math.Max(lBmp.Height, rBmp != null ? rBmp.Height : lBmp.Height);
+                    int pageSlotW = rBmp != null ? Math.Max(lBmp.Width, rBmp.Width) : lBmp.Width;
+                    int maxH = rBmp != null ? Math.Max(lBmp.Height, rBmp.Height) : lBmp.Height;
+                    int totalW = pageSlotW * 2;
 
                     var combined = Bitmap.CreateBitmap(totalW, maxH, Bitmap.Config.Argb8888!);
                     combined.EraseColor(Android.Graphics.Color.White);
 
                     using (var cv = new Android.Graphics.Canvas(combined))
                     {
-                        cv.DrawBitmap(lBmp, 0, 0, null);
+                        using var destLeft = new Android.Graphics.Rect(0, 0, pageSlotW, maxH);
+                        cv.DrawBitmap(lBmp, null, destLeft, null);
                         if (rBmp != null)
                         {
-                            cv.DrawBitmap(rBmp, lBmp.Width, 0, null);
+                            using var destRight = new Android.Graphics.Rect(pageSlotW, 0, totalW, maxH);
+                            cv.DrawBitmap(rBmp, null, destRight, null);
                         }
                         using var paint = new Android.Graphics.Paint { Color = Android.Graphics.Color.Rgb(60, 60, 60), StrokeWidth = 3 };
-                        cv.DrawLine(lBmp.Width, 0, lBmp.Width, maxH, paint);
+                        cv.DrawLine(pageSlotW, 0, pageSlotW, maxH, paint);
                     }
 
                     lBmp.Recycle();
@@ -652,6 +724,11 @@ namespace MusicScoreManager.Services
                     if (leftSingle == null) return null;
 
                     int totalPages = Math.Max(1, leftSingle.TotalPages);
+                    if (totalPages <= 1)
+                    {
+                        return leftSingle;
+                    }
+
                     int rightIdx = rightPage - 1;
                     bool hasRight = (rightIdx >= 0 && rightIdx < totalPages);
 
@@ -668,8 +745,18 @@ namespace MusicScoreManager.Services
                         rightImg = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(rightSingle.ImageBytes);
                     }
 
-                    int totalW = leftImg.Width + (rightImg != null ? rightImg.Width : leftImg.Width);
-                    int maxH = Math.Max(leftImg.Height, rightImg != null ? rightImg.Height : leftImg.Height);
+                    int pageSlotW = rightImg != null ? Math.Max(leftImg.Width, rightImg.Width) : leftImg.Width;
+                    int maxH = rightImg != null ? Math.Max(leftImg.Height, rightImg.Height) : leftImg.Height;
+                    int totalW = pageSlotW * 2;
+
+                    if (leftImg.Width != pageSlotW || leftImg.Height != maxH)
+                    {
+                        leftImg.Mutate(ctx => ctx.Resize(pageSlotW, maxH));
+                    }
+                    if (rightImg != null && (rightImg.Width != pageSlotW || rightImg.Height != maxH))
+                    {
+                        rightImg.Mutate(ctx => ctx.Resize(pageSlotW, maxH));
+                    }
 
                     using var combined = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(totalW, maxH);
                     combined.Mutate(ctx =>
@@ -678,7 +765,7 @@ namespace MusicScoreManager.Services
                         ctx.DrawImage(leftImg, new SixLabors.ImageSharp.Point(0, 0), 1.0f);
                         if (rightImg != null)
                         {
-                            ctx.DrawImage(rightImg, new SixLabors.ImageSharp.Point(leftImg.Width, 0), 1.0f);
+                            ctx.DrawImage(rightImg, new SixLabors.ImageSharp.Point(pageSlotW, 0), 1.0f);
                         }
                     });
                     rightImg?.Dispose();

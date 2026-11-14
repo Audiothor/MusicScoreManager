@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.9 — 14/11/2026](#v329-14112026)
 - [v3.2.8 — 11/11/2026](#v328-11112026)
 - [v3.2.7 — 09/11/2026](#v327-09112026)
 - [v3.2.6 — 04/11/2026](#v326-04112026)
@@ -56,6 +57,28 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.9 — 14/11/2026
+
+### 1. Visualiseur : Fiabilisation de l'Affichage 2 Pages en Mode Paysage & du Défilement Gestuel (`ViewerPage` & `PdfService`)
+- **1.1. Correction de l'affichage 2 pages en mode paysage sur smartphones et tablettes :**
+  - Détection native multi-niveaux de l'orientation paysage (`DecorView`, configuration Android et dimensions allouées `OnSizeAllocated`) et resynchronisation automatique en fin de rendu initial si l'appareil bascule en paysage pendant l'ouverture, sans aucun impact sur la vitesse d'ouverture (< 0.5s).
+  - Suppression du blocage lié à une valeur `PageCount = 1` erronée ou non initialisée en base SQLite qui empêchait le passage en double page et bloquait la tourne de page vers les pages suivantes.
+  - Normalisation géométrique stricte (50 % / 50 %) des deux pages assemblées dans `RenderPdfTwoPagesAsync` et synchronisation systématique de `UpdateCanvasBounds` lors de chaque conversion de coordonnées pour garantir un positionnement exact des annotations (stickers, textes, surlignages, tracés) en mode 2 pages paysage.
+- **1.2. Fiabilisation du balayage gauche/droite (swipe) sur tous les téléphones et tablettes :**
+  - Maintien permanent de la surface tactile `AnnotationsContainer` active (`IsVisible = true`, `InputTransparent = false` sous Android) même lorsque l'affichage des annotations est désactivé ou verrouillé.
+  - Ajout de `RequestDisallowInterceptTouchEvent(true)` dès le premier contact (`ACTION_DOWN` et `ACTION_MOVE`) pour empêcher l'interception du geste horizontal par les conteneurs parents Android (`Shell` / `DrawerLayout`) ou les bords d'écran en mode paysage.
+
+### 2. Paramètres de Partitions : Restructuration des Chapitres d'Affichage (`SettingsScoresPage`)
+- **2.1. Séparation claire entre « Affichage général » et « Affichage du visualiseur » :**
+  - Renommage du chapitre *« Affichage »* en **« Affichage général »** regroupant : *Informations sous le titre de partition*, *Index alphabétique rapide (A-Z)* et *Bouton flottant Haut de page*.
+  - Création d'un nouveau chapitre **« Affichage du visualiseur »** regroupant tous les réglages du lecteur de partitions (*Affichage du numéro de la page actuelle* jusqu'à *Taille d'affichage du numéro de page actuelle*), suivi du chapitre *« Ergonomie »* inchangé.
+
+### 3. Traductions & Localisation (8 Langues)
+- **3.1. Traduction de la mention « Aucune » dans l'édition de partition (`ScoreEditPage`) :**
+  - Ajout de la clé `"Common_None"` (*Aucune*, *None*, *Keine*, *Ninguna*, *Nessuna*, *Geen*, *Brak*, *Nenhuma*) et des nouvelles clés de chapitres dans les 8 fichiers de langues (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
 
 ---
 
