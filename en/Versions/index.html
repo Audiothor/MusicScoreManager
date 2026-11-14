@@ -27,7 +27,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
     
     
       
@@ -35,10 +35,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -913,6 +913,56 @@
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v329-14112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.2.9 — 14/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.2.9 — 14/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-score-viewer-reliable-2-page-landscape-display-swipe-navigation-viewerpage-pdfservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Score Viewer: Reliable 2-Page Landscape Display &amp; Swipe Navigation (ViewerPage &amp; PdfService)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-score-settings-display-sections-restructuring-settingsscorespage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Score Settings: Display Sections Restructuring (SettingsScoresPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-localization-translations-8-languages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Localization &amp; Translations (8 Languages)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3908,6 +3958,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v329-14112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.2.9 — 14/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.2.9 — 14/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-score-viewer-reliable-2-page-landscape-display-swipe-navigation-viewerpage-pdfservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Score Viewer: Reliable 2-Page Landscape Display &amp; Swipe Navigation (ViewerPage &amp; PdfService)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-score-settings-display-sections-restructuring-settingsscorespage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Score Settings: Display Sections Restructuring (SettingsScoresPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-localization-translations-8-languages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Localization &amp; Translations (8 Languages)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v328-11112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6878,6 +6978,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v329-14112026">v3.2.9 — 14/11/2026</a></li>
 <li><a href="#v328-11112026">v3.2.8 — 11/11/2026</a></li>
 <li><a href="#v327-09112026">v3.2.7 — 09/11/2026</a></li>
 <li><a href="#v326-04112026">v3.2.6 — 04/11/2026</a></li>
@@ -6928,6 +7029,29 @@
 <li><a href="#v252-07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251-07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250-07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v329-14112026">v3.2.9 — 14/11/2026</h2>
+<h3 id="1-score-viewer-reliable-2-page-landscape-display-swipe-navigation-viewerpage-pdfservice">1. Score Viewer: Reliable 2-Page Landscape Display &amp; Swipe Navigation (<code>ViewerPage</code> &amp; <code>PdfService</code>)</h3>
+<ul>
+<li><strong>1.1. Fixed 2-page landscape mode on smartphones and tablets:</strong></li>
+<li>Multi-layer native landscape orientation detection (<code>DecorView</code>, Android configuration, and <code>OnSizeAllocated</code> dimensions) with automatic synchronization at the end of initial rendering if the device rotates during score opening, with zero impact on opening speed (&lt; 0.5s).</li>
+<li>Eliminated false single-page locking caused by stale or uninitialized <code>PageCount = 1</code> values in SQLite that previously prevented 2-page rendering and blocked page turning.</li>
+<li>Strict 50% / 50% geometric normalization of dual-page spreads in <code>RenderPdfTwoPagesAsync</code> and systematic <code>UpdateCanvasBounds</code> synchronization before every coordinate conversion to guarantee pixel-accurate annotation positioning in 2-page landscape mode.</li>
+<li><strong>1.2. Reliable left/right swipe page turning across all phones and tablets:</strong></li>
+<li>Kept the <code>AnnotationsContainer</code> touch surface permanently active (<code>IsVisible = true</code>, <code>InputTransparent = false</code> on Android) even when annotations are hidden or locked.</li>
+<li>Added <code>RequestDisallowInterceptTouchEvent(true)</code> on <code>ACTION_DOWN</code> and <code>ACTION_MOVE</code> to prevent parent Android containers (<code>Shell</code> / <code>DrawerLayout</code>) from intercepting horizontal swipes in landscape mode.</li>
+</ul>
+<h3 id="2-score-settings-display-sections-restructuring-settingsscorespage">2. Score Settings: Display Sections Restructuring (<code>SettingsScoresPage</code>)</h3>
+<ul>
+<li><strong>2.1. Clear separation between « General Display » and « Viewer Display »:</strong></li>
+<li>Renamed the <em>« Display »</em> section to <strong>« General Display »</strong> containing: <em>Information below score title</em>, <em>Quick alphabetical index (A-Z)</em>, and <em>Floating Scroll-to-Top button</em>.</li>
+<li>Added a new <strong>« Viewer Display »</strong> section grouping all score viewer display settings (from <em>Current page number display</em> down to <em>Current page number display size</em>), followed by the unchanged <em>« Ergonomics »</em> section.</li>
+</ul>
+<h3 id="3-localization-translations-8-languages">3. Localization &amp; Translations (8 Languages)</h3>
+<ul>
+<li><strong>3.1. Translated « None » label in Score Edit page (<code>ScoreEditPage</code>):</strong></li>
+<li>Added <code>"Common_None"</code> (<em>Aucune</em>, <em>None</em>, <em>Keine</em>, <em>Ninguna</em>, <em>Nessuna</em>, <em>Geen</em>, <em>Brak</em>, <em>Nenhuma</em>) and the new section header keys across all 8 language files (<code>fr</code>, <code>en</code>, <code>de</code>, <code>es</code>, <code>it</code>, <code>nl</code>, <code>pl</code>, <code>pt</code>).</li>
 </ul>
 <hr />
 <h2 id="v328-11112026">v3.2.8 — 11/11/2026</h2>
@@ -8183,10 +8307,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
     
   </body>
