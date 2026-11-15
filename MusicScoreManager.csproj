@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>3.2.10</ApplicationDisplayVersion>
-		<ApplicationVersion>32010</ApplicationVersion>
-		<!-- Version actuelle : v3.2.10 "Correction définitive du mode 2 pages en mode paysage, de la rotation dynamique et de la navigation tactile" -->
+		<ApplicationDisplayVersion>3.2.11</ApplicationDisplayVersion>
+		<ApplicationVersion>32011</ApplicationVersion>
+		<!-- Version actuelle : v3.2.11 "Correction critique de la fermeture native PdfRenderer.Page.Close() sous Android pour le mode 2 pages en paysage" -->
 
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>

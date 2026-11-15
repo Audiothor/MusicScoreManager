@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.11 — 15/11/2026](#v3211-15112026)
 - [v3.2.10 — 15/11/2026](#v3210-15112026)
 - [v3.2.9 — 14/11/2026](#v329-14112026)
 - [v3.2.8 — 11/11/2026](#v328-11112026)
@@ -58,6 +59,20 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.11 — 15/11/2026
+
+### 1. Visualiseur Android : Correction Critique de `PdfRenderer.Page.Close()` en Mode 2 Pages Paysage (`PdfService` & `ViewerPage`)
+- **1.1. Correction de l'exception native `IllegalStateException: Current page not closed` sur les partitions multipages :**
+  - Dans .NET pour Android (`Mono.Android`), `using (var lPage = renderer.OpenPage(leftIdx))` appelle uniquement `Dispose()` côté C# mais n'invoque pas la méthode Java `lPage.Close()`. Lors de l'ouverture de la seconde page (`renderer.OpenPage(rightIdx)`), le moteur natif Android `PdfRenderer` levait systématiquement `Java.Lang.IllegalStateException: Current page not closed` dès qu'un PDF comptait plus d'une page.
+  - Ajout d'appels explicites `lPage?.Close()`, `rPage?.Close()`, `singlePage?.Close()`, `page?.Close()`, `renderer?.Close()` et `fd?.Close()` dans des blocs `finally` dédiés au sein de `RenderPdfTwoPagesAsync`, `RenderPdfPageAsync`, `GetPdfPageCountAsync` et `ExtractPdfPagesAsync`.
+- **1.2. Résolution complète de l'ouverture directe en mode paysage et de la bascule Portrait ↔ Paysage :**
+  - Les partitions PDF de plus d'une page ouvertes directement en mode paysage affichent désormais immédiatement leurs deux pages côte à côte (plus aucun écran blanc).
+  - La rotation de l'écran du mode portrait vers le mode paysage bascule instantanément l'affichage sur 2 pages et permet de tourner les pages en avant/arrière sans blocage.
+- **1.3. Rendu natif `NativeBitmap` zéro latence et protection du cache mémoire :**
+  - Maintien de l'affichage matériel direct `nativeImageView.SetImageBitmap(rendered.NativeBitmap)` sans double compression JPEG inutile, avec vérification de validité (`!IsRecycled`) dans le cache mémoire et repli automatique sur 1 page en cas d'erreur de rendu.
 
 ---
 

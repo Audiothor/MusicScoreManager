@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.2.11 — 15/11/2026](#v3211-15112026)
 - [v3.2.10 — 15/11/2026](#v3210-15112026)
 - [v3.2.9 — 14/11/2026](#v329-14112026)
 - [v3.2.8 — 11/11/2026](#v328-11112026)
@@ -58,6 +59,20 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.11 — 15/11/2026
+
+### 1. Android Score Viewer: Critical Fix for `PdfRenderer.Page.Close()` in 2-Page Landscape Mode (`PdfService` & `ViewerPage`)
+- **1.1. Fixed native `IllegalStateException: Current page not closed` on multi-page PDF scores:**
+  - In .NET for Android (`Mono.Android`), `using (var lPage = renderer.OpenPage(leftIdx))` only calls C# `Dispose()` and does not invoke Java's `lPage.Close()`. When opening the right-hand page (`renderer.OpenPage(rightIdx)`), Android's native `PdfRenderer` deterministically threw `Java.Lang.IllegalStateException: Current page not closed` for any PDF with more than 1 page.
+  - Added explicit `lPage?.Close()`, `rPage?.Close()`, `singlePage?.Close()`, `page?.Close()`, `renderer?.Close()`, and `fd?.Close()` calls inside `finally` blocks across `RenderPdfTwoPagesAsync`, `RenderPdfPageAsync`, `GetPdfPageCountAsync`, and `ExtractPdfPagesAsync`.
+- **1.2. Full resolution of direct landscape opening and Portrait ↔ Landscape rotation:**
+  - Multi-page PDF scores opened directly in landscape mode now immediately display two pages side by side (no blank screen).
+  - Rotating the screen from portrait to landscape immediately switches to 2-page display and allows turning forward and backward across all spreads.
+- **1.3. Zero-latency `NativeBitmap` rendering and memory cache validation:**
+  - Restored direct hardware `nativeImageView.SetImageBitmap(rendered.NativeBitmap)` display without redundant JPEG compression, with `!IsRecycled` verification in the memory cache and automatic single-page fallback.
 
 ---
 
