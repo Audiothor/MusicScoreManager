@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.2.10 — 15/11/2026](#v3210-15112026)
 - [v3.2.9 — 14/11/2026](#v329-14112026)
 - [v3.2.8 — 11/11/2026](#v328-11112026)
 - [v3.2.7 — 09/11/2026](#v327-09112026)
@@ -57,6 +58,23 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.10 — 15/11/2026
+
+### 1. Score Viewer: Complete Fix for 2-Page Landscape Mode, Device Rotation & Page Navigation (`ViewerPage` & `PdfService`)
+- **1.1. Eliminated blank white screen when opening multi-page scores directly in landscape mode:**
+  - Guaranteed `ImageBytes` (JPEG) stream generation alongside hardware `NativeBitmap` in `RenderPdfTwoPagesAsync`, systematically assigning `ScoreImage.Source` so the MAUI layout engine accurately measures image bounds and never resets or nullifies native image drawables during view attachment.
+  - Bulletproof Android bitmap composition in `RenderPdfTwoPagesAsync`: direct coordinate-based positioning onto the native `Canvas` without passing null source rectangles, preventing native graphics engine exceptions.
+- **1.2. Instant dynamic rotation support (Portrait ↔ Landscape):**
+  - Synchronous configuration orientation checking (`Configuration.Orientation`) in both `OnSizeAllocated` and `GetEffectiveViewportInfo`, enabling immediate transition into 2-page landscape mode upon screen rotation without getting stuck on a single page.
+  - Automatic target left page calculation upon rotating (if viewing an even page, rotation into 2-page mode automatically shifts to the corresponding preceding odd page).
+- **1.3. Robust page turning in 2-page mode (taps, swipes, Bluetooth/MIDI pedals):**
+  - Added fallback calculation for `_leftPageNumber` in `OnNextTapped` and `OnPrevTapped` derived from `_currentPage` if uninitialized, ensuring uninterrupted page turns.
+  - Smooth handling of odd-paged scores (cleanly displaying the final page on the left slot with vertical divider and blank right slot).
+- **1.4. Zero impact on load times and visual alignment:**
+  - Preserved ultra-fast hardware-accelerated `NativeBitmap` rendering (zero latency) on Android and maintained exact pixel-perfect centering of score and setlist loading dialogs.
 
 ---
 

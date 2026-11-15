@@ -232,15 +232,15 @@ namespace MusicScoreManager.Services
             try
             {
                 var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
-                var decor = activity?.Window?.DecorView;
-                if (decor != null && decor.Width > 0 && decor.Height > 0)
-                {
-                    return decor.Width > decor.Height;
-                }
                 var config = activity?.Resources?.Configuration;
                 if (config != null && config.Orientation != Android.Content.Res.Orientation.Undefined)
                 {
                     return config.Orientation == Android.Content.Res.Orientation.Landscape;
+                }
+                var decor = activity?.Window?.DecorView;
+                if (decor != null && decor.Width > 0 && decor.Height > 0)
+                {
+                    return decor.Width > decor.Height;
                 }
             }
             catch { }
@@ -248,11 +248,12 @@ namespace MusicScoreManager.Services
             try
             {
                 var display = DeviceDisplay.MainDisplayInfo;
+                if (display.Orientation == DisplayOrientation.Landscape) return true;
+                if (display.Orientation == DisplayOrientation.Portrait) return false;
                 if (display.Width > 0 && display.Height > 0)
                 {
                     return display.Width > display.Height;
                 }
-                return display.Orientation == DisplayOrientation.Landscape;
             }
             catch { }
             return false;
@@ -279,7 +280,7 @@ namespace MusicScoreManager.Services
                 bool twoPagesPref = Preferences.Default.Get("TwoPagesLandscape", true);
                 bool isLandscape = IsScreenLandscape();
 
-                if (twoPagesPref && isLandscape)
+                if (twoPagesPref && isLandscape && knownPageCount != 1)
                 {
                     await RenderPdfTwoPagesAsync(pdfPath, 1, 2, rotation, rotation);
                 }
@@ -361,9 +362,13 @@ namespace MusicScoreManager.Services
                     int fw = finalBmp.Width;
                     int fh = finalBmp.Height;
 
+                    using var ms = new MemoryStream();
+                    finalBmp.Compress(Bitmap.CompressFormat.Jpeg!, 80, ms);
+                    byte[] bytes = ms.ToArray();
+
                     return new RenderedPdfPage
                     {
-                        ImageBytes = Array.Empty<byte>(),
+                        ImageBytes = bytes,
                         NativeBitmap = finalBmp,
                         Width = fw,
                         Height = fh,
@@ -591,9 +596,13 @@ namespace MusicScoreManager.Services
                             sRawBmp.Recycle();
                         }
 
+                        using var sMs = new MemoryStream();
+                        sFinalBmp.Compress(Bitmap.CompressFormat.Jpeg!, 80, sMs);
+                        byte[] sBytes = sMs.ToArray();
+
                         return new RenderedPdfPage
                         {
-                            ImageBytes = Array.Empty<byte>(),
+                            ImageBytes = sBytes,
                             NativeBitmap = sFinalBmp,
                             Width = sFinalBmp.Width,
                             Height = sFinalBmp.Height,
@@ -684,13 +693,17 @@ namespace MusicScoreManager.Services
 
                     using (var cv = new Android.Graphics.Canvas(combined))
                     {
-                        using var destLeft = new Android.Graphics.Rect(0, 0, pageSlotW, maxH);
-                        cv.DrawBitmap(lBmp, null, destLeft, null);
+                        int leftOffset = (pageSlotW - lBmp.Width) / 2;
+                        int leftTopOffset = (maxH - lBmp.Height) / 2;
+                        cv.DrawBitmap(lBmp, leftOffset, leftTopOffset, null);
+
                         if (rBmp != null)
                         {
-                            using var destRight = new Android.Graphics.Rect(pageSlotW, 0, totalW, maxH);
-                            cv.DrawBitmap(rBmp, null, destRight, null);
+                            int rightOffset = pageSlotW + (pageSlotW - rBmp.Width) / 2;
+                            int rightTopOffset = (maxH - rBmp.Height) / 2;
+                            cv.DrawBitmap(rBmp, rightOffset, rightTopOffset, null);
                         }
+
                         using var paint = new Android.Graphics.Paint { Color = Android.Graphics.Color.Rgb(60, 60, 60), StrokeWidth = 3 };
                         cv.DrawLine(pageSlotW, 0, pageSlotW, maxH, paint);
                     }
@@ -698,9 +711,13 @@ namespace MusicScoreManager.Services
                     lBmp.Recycle();
                     if (rBmp != null) rBmp.Recycle();
 
+                    using var ms = new MemoryStream();
+                    combined.Compress(Bitmap.CompressFormat.Jpeg!, 80, ms);
+                    byte[] bytes = ms.ToArray();
+
                     return new RenderedPdfPage
                     {
-                        ImageBytes = Array.Empty<byte>(),
+                        ImageBytes = bytes,
                         NativeBitmap = combined,
                         Width = totalW,
                         Height = maxH,

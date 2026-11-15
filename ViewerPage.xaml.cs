@@ -890,22 +890,35 @@ public partial class ViewerPage : ContentPage
         double h = _lastAllocatedHeight > 0 ? _lastAllocatedHeight : (this.Height > 0 ? this.Height : ImageContainer.Height);
 
 #if ANDROID
-        if (w <= 0 || h <= 0)
+        try
         {
-            try
+            var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
+            var config = activity?.Resources?.Configuration;
+            if (config != null && config.Orientation != Android.Content.Res.Orientation.Undefined)
             {
-                var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
-                var decor = activity?.Window?.DecorView;
-                float density = activity?.Resources?.DisplayMetrics?.Density ?? 1.0f;
-                if (density <= 0) density = 1.0f;
-                if (decor != null && decor.Width > 0 && decor.Height > 0)
+                bool isLandConfig = (config.Orientation == Android.Content.Res.Orientation.Landscape);
+                if (w > 0 && h > 0)
                 {
-                    w = decor.Width / density;
-                    h = decor.Height / density;
+                    if (isLandConfig && w < h) { double tmp = w; w = h; h = tmp; }
+                    else if (!isLandConfig && w > h) { double tmp = w; w = h; h = tmp; }
                 }
+                else
+                {
+                    var decor = activity?.Window?.DecorView;
+                    float density = activity?.Resources?.DisplayMetrics?.Density ?? 1.0f;
+                    if (density <= 0) density = 1.0f;
+                    if (decor != null && decor.Width > 0 && decor.Height > 0)
+                    {
+                        w = decor.Width / density;
+                        h = decor.Height / density;
+                        if (isLandConfig && w < h) { double tmp = w; w = h; h = tmp; }
+                        else if (!isLandConfig && w > h) { double tmp = w; w = h; h = tmp; }
+                    }
+                }
+                return (w, h, isLandConfig);
             }
-            catch { }
         }
+        catch { }
 #endif
 
         if (w <= 0 || h <= 0)
@@ -921,26 +934,14 @@ public partial class ViewerPage : ContentPage
         }
 
         bool isLandscape = (w > h);
-#if ANDROID
         try
         {
-            var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
-            var decor = activity?.Window?.DecorView;
-            if (decor != null && decor.Width > 0 && decor.Height > 0 && _lastAllocatedWidth <= 0 && this.Width <= 0)
-            {
-                isLandscape = (decor.Width > decor.Height);
-            }
-            else if (w <= 0 || h <= 0)
-            {
-                var config = activity?.Resources?.Configuration;
-                if (config != null && config.Orientation != Android.Content.Res.Orientation.Undefined)
-                {
-                    isLandscape = (config.Orientation == Android.Content.Res.Orientation.Landscape);
-                }
-            }
+            var display = DeviceDisplay.MainDisplayInfo;
+            if (display.Orientation == DisplayOrientation.Landscape) isLandscape = true;
+            else if (display.Orientation == DisplayOrientation.Portrait) isLandscape = false;
         }
         catch { }
-#endif
+
         return (w, h, isLandscape);
     }
 
@@ -1103,22 +1104,14 @@ public partial class ViewerPage : ContentPage
                 ScoreImage.Rotation = 0;
 #if ANDROID
                 var nativeImageView = ScoreImage.Handler?.PlatformView as Android.Widget.ImageView;
-                if (nativeImageView == null)
-                {
-                    for (int i = 0; i < 20 && nativeImageView == null; i++)
-                    {
-                        await Task.Delay(16);
-                        nativeImageView = ScoreImage.Handler?.PlatformView as Android.Widget.ImageView;
-                    }
-                }
-
                 if (nativeImageView != null && rendered.NativeBitmap != null && !rendered.NativeBitmap.IsRecycled)
                 {
                     nativeImageView.SetScaleType(Android.Widget.ImageView.ScaleType.FitCenter);
                     nativeImageView.SetImageBitmap(rendered.NativeBitmap);
                     nativeImageView.Invalidate();
                 }
-                else if (rendered.ImageBytes.Length > 0)
+
+                if (rendered.ImageBytes.Length > 0)
                 {
                     ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(rendered.ImageBytes));
                 }
@@ -1164,10 +1157,28 @@ public partial class ViewerPage : ContentPage
 
                 if (_lastAllocatedWidth > 0 && _lastAllocatedHeight > 0)
                 {
-                    bool finalShouldBeTwoPages = twoPagesPref && (_lastAllocatedWidth > _lastAllocatedHeight) && (_maxPages > 1);
+                    bool finalIsLandscape = (_lastAllocatedWidth > _lastAllocatedHeight);
+#if ANDROID
+                    try
+                    {
+                        var config = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity?.Resources?.Configuration;
+                        if (config != null && config.Orientation != Android.Content.Res.Orientation.Undefined)
+                        {
+                            finalIsLandscape = (config.Orientation == Android.Content.Res.Orientation.Landscape);
+                        }
+                    }
+                    catch { }
+#endif
+                    bool finalShouldBeTwoPages = twoPagesPref && finalIsLandscape && (_maxPages > 1);
                     if (finalShouldBeTwoPages != _isTwoPagesMode)
                     {
-                        _ = RenderPdfCurrentAsync(_currentPage);
+                        _isTwoPagesMode = finalShouldBeTwoPages;
+                        int targetPage = _currentPage;
+                        if (finalShouldBeTwoPages && targetPage % 2 == 0)
+                        {
+                            targetPage = Math.Max(1, targetPage - 1);
+                        }
+                        _ = RenderPdfCurrentAsync(targetPage);
                         return;
                     }
                 }
@@ -2883,6 +2894,12 @@ public partial class ViewerPage : ContentPage
             {
                 if (_isTwoPagesMode)
                 {
+                    if (_leftPageNumber <= 0)
+                    {
+                        _leftPageNumber = (_currentPage % 2 == 0) ? (_currentPage - 1) : _currentPage;
+                        if (_leftPageNumber < 1) _leftPageNumber = 1;
+                    }
+
                     int prevLeft = _leftPageNumber - 2;
                     if (prevLeft >= 1)
                     {
@@ -2936,6 +2953,12 @@ public partial class ViewerPage : ContentPage
             {
                 if (_isTwoPagesMode)
                 {
+                    if (_leftPageNumber <= 0)
+                    {
+                        _leftPageNumber = (_currentPage % 2 == 0) ? (_currentPage - 1) : _currentPage;
+                        if (_leftPageNumber < 1) _leftPageNumber = 1;
+                    }
+
                     int nextLeft = _leftPageNumber + 2;
                     if (nextLeft <= _maxPages)
                     {
@@ -3294,19 +3317,29 @@ public partial class ViewerPage : ContentPage
                 }
 
                 bool isLandscape = width > height;
+#if ANDROID
+                try
+                {
+                    var config = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity?.Resources?.Configuration;
+                    if (config != null && config.Orientation != Android.Content.Res.Orientation.Undefined)
+                    {
+                        isLandscape = (config.Orientation == Android.Content.Res.Orientation.Landscape);
+                    }
+                }
+                catch { }
+#endif
                 bool twoPagesPref = Preferences.Default.Get("TwoPagesLandscape", true);
                 bool shouldBeTwoPages = twoPagesPref && isLandscape && _maxPages > 1;
 
                 if (shouldBeTwoPages != _isTwoPagesMode)
                 {
-                    if (!_isScoreReady)
-                    {
-                        // Le rendu en cours utilisera _lastAllocatedWidth/_lastAllocatedHeight à son terme
-                        return;
-                    }
-
                     _isTwoPagesMode = shouldBeTwoPages;
-                    _ = RenderPdfCurrentAsync(_currentPage);
+                    int targetPage = _currentPage;
+                    if (shouldBeTwoPages && targetPage % 2 == 0)
+                    {
+                        targetPage = Math.Max(1, targetPage - 1);
+                    }
+                    _ = RenderPdfCurrentAsync(targetPage);
                     return;
                 }
 

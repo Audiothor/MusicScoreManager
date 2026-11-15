@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.10 — 15/11/2026](#v3210-15112026)
 - [v3.2.9 — 14/11/2026](#v329-14112026)
 - [v3.2.8 — 11/11/2026](#v328-11112026)
 - [v3.2.7 — 09/11/2026](#v327-09112026)
@@ -57,6 +58,23 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.10 — 15/11/2026
+
+### 1. Visualiseur : Correction Définitive de l'Affichage 2 Pages en Mode Paysage & Rotation (`ViewerPage` & `PdfService`)
+- **1.1. Élimination de la page blanche à l'ouverture directe d'une partition multipages en mode paysage :**
+  - Alimentation systématique du flux `ImageBytes` (JPEG) en complément du `NativeBitmap` Android matériel dans `RenderPdfTwoPagesAsync` et assignation directe à `ScoreImage.Source`, garantissant que le moteur de layout MAUI mesure correctement les dimensions du canevas d'image et n'efface jamais le drawable natif en cours de cycle de vie.
+  - Fiabilisation de l'assemblage Android dans `RenderPdfTwoPagesAsync` : centrage direct des pages gauche et droite sur le `Canvas` natif sans passage de rectangle source `null`, évitant toute exception native du moteur graphique Android.
+- **1.2. Prise en compte immédiate de la rotation dynamique (Portrait ↔ Paysage) :**
+  - Détection synchrone de l'orientation de configuration (`Configuration.Orientation`) dans `OnSizeAllocated` et `GetEffectiveViewportInfo`, permettant de basculer instantanément en mode double page lors de la rotation de l'appareil sans rester bloqué sur une page simple.
+  - Calcul automatique de la page gauche cible lors de la rotation (si l'utilisateur était sur une page paire, la page gauche bascule automatiquement sur la page impaire précédente correspondante).
+- **1.3. Fiabilisation de la tourne de page en mode 2 pages (taps, swipes et pédaliers) :**
+  - Initialisation de repli automatique de `_leftPageNumber` dans `OnNextTapped` et `OnPrevTapped` à partir de `_currentPage` si le numéro n'était pas encore positionné, garantissant une navigation fluide sans blocage.
+  - Gestion fluide des partitions au nombre de pages impair (affichage propre de la dernière page sur le volet gauche avec séparation centrale et slot droit vierge).
+- **1.4. Préservation intégrale des performances d'ouverture et des overlays :**
+  - Maintien du rendu instantané matériel `NativeBitmap` (zéro latence) sous Android et conservation rigoureuse du positionnement géométrique au pixel près des boîtes de dialogue de chargement de partition et de setlist.
 
 ---
 
