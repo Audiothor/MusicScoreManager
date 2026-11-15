@@ -27,7 +27,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -35,10 +35,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -913,6 +913,34 @@
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v3210-15112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.2.10 — 15/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.2.10 — 15/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-score-viewer-complete-fix-for-2-page-landscape-mode-device-rotation-page-navigation-viewerpage-pdfservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Score Viewer: Complete Fix for 2-Page Landscape Mode, Device Rotation &amp; Page Navigation (ViewerPage &amp; PdfService)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3958,6 +3986,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v3210-15112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.2.10 — 15/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.2.10 — 15/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-score-viewer-complete-fix-for-2-page-landscape-mode-device-rotation-page-navigation-viewerpage-pdfservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Score Viewer: Complete Fix for 2-Page Landscape Mode, Device Rotation &amp; Page Navigation (ViewerPage &amp; PdfService)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v329-14112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6978,6 +7034,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v3210-15112026">v3.2.10 — 15/11/2026</a></li>
 <li><a href="#v329-14112026">v3.2.9 — 14/11/2026</a></li>
 <li><a href="#v328-11112026">v3.2.8 — 11/11/2026</a></li>
 <li><a href="#v327-09112026">v3.2.7 — 09/11/2026</a></li>
@@ -7029,6 +7086,22 @@
 <li><a href="#v252-07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251-07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250-07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v3210-15112026">v3.2.10 — 15/11/2026</h2>
+<h3 id="1-score-viewer-complete-fix-for-2-page-landscape-mode-device-rotation-page-navigation-viewerpage-pdfservice">1. Score Viewer: Complete Fix for 2-Page Landscape Mode, Device Rotation &amp; Page Navigation (<code>ViewerPage</code> &amp; <code>PdfService</code>)</h3>
+<ul>
+<li><strong>1.1. Eliminated blank white screen when opening multi-page scores directly in landscape mode:</strong></li>
+<li>Guaranteed <code>ImageBytes</code> (JPEG) stream generation alongside hardware <code>NativeBitmap</code> in <code>RenderPdfTwoPagesAsync</code>, systematically assigning <code>ScoreImage.Source</code> so the MAUI layout engine accurately measures image bounds and never resets or nullifies native image drawables during view attachment.</li>
+<li>Bulletproof Android bitmap composition in <code>RenderPdfTwoPagesAsync</code>: direct coordinate-based positioning onto the native <code>Canvas</code> without passing null source rectangles, preventing native graphics engine exceptions.</li>
+<li><strong>1.2. Instant dynamic rotation support (Portrait ↔ Landscape):</strong></li>
+<li>Synchronous configuration orientation checking (<code>Configuration.Orientation</code>) in both <code>OnSizeAllocated</code> and <code>GetEffectiveViewportInfo</code>, enabling immediate transition into 2-page landscape mode upon screen rotation without getting stuck on a single page.</li>
+<li>Automatic target left page calculation upon rotating (if viewing an even page, rotation into 2-page mode automatically shifts to the corresponding preceding odd page).</li>
+<li><strong>1.3. Robust page turning in 2-page mode (taps, swipes, Bluetooth/MIDI pedals):</strong></li>
+<li>Added fallback calculation for <code>_leftPageNumber</code> in <code>OnNextTapped</code> and <code>OnPrevTapped</code> derived from <code>_currentPage</code> if uninitialized, ensuring uninterrupted page turns.</li>
+<li>Smooth handling of odd-paged scores (cleanly displaying the final page on the left slot with vertical divider and blank right slot).</li>
+<li><strong>1.4. Zero impact on load times and visual alignment:</strong></li>
+<li>Preserved ultra-fast hardware-accelerated <code>NativeBitmap</code> rendering (zero latency) on Android and maintained exact pixel-perfect centering of score and setlist loading dialogs.</li>
 </ul>
 <hr />
 <h2 id="v329-14112026">v3.2.9 — 14/11/2026</h2>
@@ -8307,10 +8380,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
