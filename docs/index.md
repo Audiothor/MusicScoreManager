@@ -8,7 +8,7 @@ Bienvenue sur la documentation complète et détaillée de **Music Score Manager
 Cette application est **GRATUITE et SANS PUBLICITE**
 Elle ne nécessite pas internet, n'a aucun lien sur le Cloud.
 Elle est multiplateforme (Android / Windows).
-
+Son code source est totalement transparent sous **GitHub**
 
 **Music Score Manager** a été conçue sur mesure pour les musiciens solistes, ensembles, chorales et orchestres avec les remarques de musiciens issus de conservatoires, harmonies, groupes de musique et autodidactes.
 
@@ -32,6 +32,7 @@ Elle est multiplateforme (Android / Windows).
 - [FAQ](guide/FAQ.md)
 - [Politique de Confidentialité & Mentions Légales](confidentialite.md)
 - [Historique des versions](Versions.md)
+- [ROADMAP](guide/ROADMAP.md)
 
 ---
 

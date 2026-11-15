@@ -245,13 +245,13 @@
                 <VerticalStackLayout Spacing="8">
                     <!-- Header : Titre et Bouton Fermer -->
                     <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,2">
-                        <Label Grid.Column="0" Text="{Binding [Viewer_Stickers_Settings], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Label x:Name="StickerSettingsTitleLabel" Grid.Column="0" Text="{Binding [Viewer_Stickers_Settings], Source={x:Static services:LocalizationService.Instance}}" TextColor="#AAAAAA" FontSize="11" FontAttributes="Bold" VerticalOptions="Center" />
                         <Button Grid.Column="1" Text="✕" TextColor="#FF5555" BackgroundColor="Transparent" FontSize="18" FontAttributes="Bold" Padding="0" WidthRequest="32" HeightRequest="32" VerticalOptions="Center" HorizontalOptions="Center" Clicked="OnCloseStickerPickerClicked" />
                     </Grid>
 
                     <!-- Ligne Couleurs Texte : Défilement fluide -->
                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
-                        <Label Grid.Column="0" Text="{Binding [Viewer_Sticker_Text_Color], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" VerticalOptions="Center" FontSize="11" FontAttributes="Bold" />
+                        <Label x:Name="StickerTextColorLabel" Grid.Column="0" Text="{Binding [Viewer_Sticker_Text_Color], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" VerticalOptions="Center" FontSize="11" FontAttributes="Bold" />
                         <ScrollView Grid.Column="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never" VerticalOptions="Center">
                             <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
                                 <!-- Rouge (défaut) -->
@@ -288,7 +288,7 @@
 
                     <!-- Ligne Couleurs Fond : Défilement fluide -->
                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
-                        <Label Grid.Column="0" Text="{Binding [Viewer_Sticker_Bg_Color], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" VerticalOptions="Center" FontSize="11" FontAttributes="Bold" />
+                        <Label x:Name="StickerBgColorLabel" Grid.Column="0" Text="{Binding [Viewer_Sticker_Bg_Color], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" VerticalOptions="Center" FontSize="11" FontAttributes="Bold" />
                         <ScrollView Grid.Column="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never" VerticalOptions="Center">
                             <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
                                 <!-- Noir (défaut) -->
@@ -331,7 +331,7 @@
 
                     <!-- Ligne 3: Taille Slider large et tactile -->
                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="10" VerticalOptions="Center">
-                        <Label Grid.Column="0" Text="{Binding [Viewer_Tool_Size], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" VerticalOptions="Center" FontSize="13" FontAttributes="Bold" />
+                        <Label x:Name="StickerSizeLabel" Grid.Column="0" Text="{Binding [Viewer_Tool_Size], Source={x:Static services:LocalizationService.Instance}}" TextColor="White" VerticalOptions="Center" FontSize="13" FontAttributes="Bold" />
                         <Slider Grid.Column="1" x:Name="StickerSizeSlider" 
                                 Minimum="0.5" Maximum="3.0" Value="1.0" 
                                 HeightRequest="36" 
@@ -457,7 +457,7 @@
 
                 <!-- Choix de largeur de stabilo + Bouton fermer -->
                 <HorizontalStackLayout Spacing="4" VerticalOptions="Center" HorizontalOptions="Center">
-                    <Label Text="{Binding [Viewer_Tool_Size], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" VerticalOptions="Center" />
+                    <Label x:Name="HighlightOptionsSizeLabel" Text="{Binding [Viewer_Tool_Size], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" VerticalOptions="Center" />
                     <!-- Bouton Fin (5mm) -->
                     <Button x:Name="HighlightSizeSmallBtn" Text="5mm" BackgroundColor="#333333" TextColor="White" FontSize="11" HeightRequest="26" Padding="6,0" CornerRadius="5" Clicked="OnHighlightSizeSelected" CommandParameter="15" />
                     <!-- Bouton Moyen (10mm - Défaut) -->
@@ -524,6 +524,7 @@
 
                 <!-- Choix de largeur de crayon (1mm, 2mm, 3mm, 4mm, 5mm) + Bouton fermer -->
                 <HorizontalStackLayout Spacing="3" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Label x:Name="DrawOptionsSizeLabel" Text="{Binding [Viewer_Tool_Size], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" VerticalOptions="Center" Margin="0,0,2,0" />
                     <Button x:Name="DrawSize1Btn" Text="1mm" MinimumWidthRequest="0" WidthRequest="32" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnDrawSizeSelected" CommandParameter="3" />
                     <Button x:Name="DrawSize2Btn" Text="2mm" MinimumWidthRequest="0" WidthRequest="32" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnDrawSizeSelected" CommandParameter="6" />
                     <Button x:Name="DrawSize3Btn" Text="3mm" MinimumWidthRequest="0" WidthRequest="32" BackgroundColor="#007ACC" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" FontAttributes="Bold" Clicked="OnDrawSizeSelected" CommandParameter="9" />
@@ -552,7 +553,7 @@
             <VerticalStackLayout x:Name="TextOptionsLayout" Spacing="6" VerticalOptions="Center" HorizontalOptions="Center">
                 <!-- Ligne 1 : Pastilles de couleurs de texte (Noir par défaut, Rouge, Bleu, Vert, Jaune, Blanc) -->
                 <HorizontalStackLayout Spacing="6" VerticalOptions="Center" HorizontalOptions="Start">
-                    <Label Text="{Binding [Viewer_Text_Color_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="58" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
+                    <Label x:Name="TextColorLabel" Text="{Binding [Viewer_Text_Color_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="58" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
                     <!-- Noir (défaut) -->
                     <Border x:Name="TextBlackBtn" BackgroundColor="#000000" WidthRequest="22" HeightRequest="22" Stroke="White" StrokeThickness="2">
                         <Border.StrokeShape><RoundRectangle CornerRadius="11" /></Border.StrokeShape>
@@ -587,7 +588,7 @@
 
                 <!-- Ligne 2 : Choix de taille en pixel (8, 10, 12, 14, 16, 18) -->
                 <HorizontalStackLayout Spacing="4" VerticalOptions="Center" HorizontalOptions="Start">
-                    <Label Text="{Binding [Viewer_Text_Size_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="58" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
+                    <Label x:Name="TextSizeLabel" Text="{Binding [Viewer_Text_Size_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="58" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
                     <Button x:Name="TextSize8Btn" Text="8" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="8" />
                     <Button x:Name="TextSize10Btn" Text="10" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="10" />
                     <Button x:Name="TextSize12Btn" Text="12" MinimumWidthRequest="0" WidthRequest="26" BackgroundColor="#333333" TextColor="White" FontSize="10" HeightRequest="26" Padding="0" CornerRadius="5" Clicked="OnTextSizeSelected" CommandParameter="12" />
@@ -598,7 +599,7 @@
 
                 <!-- Ligne 3 : Choix de couleur de fond de texte -->
                 <HorizontalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="Start">
-                    <Label Text="{Binding [Viewer_Text_Bg_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="58" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
+                    <Label x:Name="TextBgLabel" Text="{Binding [Viewer_Text_Bg_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="58" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
                     <!-- Sans fond (Transparent) -->
                     <Border x:Name="TextBgNoneBtn" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" BackgroundColor="Transparent" Stroke="White" StrokeThickness="2">
                         <Border.StrokeShape><RoundRectangle CornerRadius="11" /></Border.StrokeShape>
@@ -639,7 +640,7 @@
 
                 <!-- Ligne 4 : Choix de cadre / bordure avec couleur -->
                 <HorizontalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="Start">
-                    <Label Text="{Binding [Viewer_Text_Border_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="58" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
+                    <Label x:Name="TextBorderLabel" Text="{Binding [Viewer_Text_Border_Label], Source={x:Static services:LocalizationService.Instance}}" TextColor="#CCCCCC" FontSize="11" MinimumWidthRequest="58" VerticalOptions="Center" VerticalTextAlignment="Center" Margin="0,0,2,0" />
                     <!-- Sans cadre (Transparent) -->
                     <Border x:Name="TextBorderNoneBtn" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" BackgroundColor="Transparent" Stroke="White" StrokeThickness="2">
                         <Border.StrokeShape><RoundRectangle CornerRadius="11" /></Border.StrokeShape>
@@ -718,10 +719,10 @@
                 <!-- Zone d'outils défilable horizontalement sur petits écrans -->
                 <ScrollView Grid.Column="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HorizontalOptions="Fill">
                     <Grid ColumnDefinitions="Auto, Auto, Auto, Auto, *, Auto, Auto, Auto, Auto" ColumnSpacing="{OnIdiom Phone=1, Tablet=2}" Padding="{OnIdiom Phone='2,0', Tablet='4,0'}" MinimumWidthRequest="{OnIdiom Phone=0, Tablet=300}">
-                        <Button Grid.Column="0" x:Name="HighlightBtn" Text="🖌" BackgroundColor="Transparent" TextColor="#FFD700" Clicked="OnAnnotationHighlightClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                        <Button Grid.Column="1" x:Name="TextAnnotationBtn" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" FontAttributes="Bold" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                        <Button Grid.Column="2" x:Name="DrawBtn" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                        <Button Grid.Column="3" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                        <Button Grid.Column="0" x:Name="HighlightBtn" Text="🖌" BackgroundColor="Transparent" TextColor="#FFD700" Clicked="OnAnnotationHighlightClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" ToolTipProperties.Text="{Binding [Annotation_Highlighter], Source={x:Static services:LocalizationService.Instance}}" />
+                        <Button Grid.Column="1" x:Name="TextAnnotationBtn" Text="T" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationTextClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" FontAttributes="Bold" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" ToolTipProperties.Text="{Binding [Annotation_Text], Source={x:Static services:LocalizationService.Instance}}" />
+                        <Button Grid.Column="2" x:Name="DrawBtn" Text="✎" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationDrawClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" ToolTipProperties.Text="{Binding [Annotation_Pencil], Source={x:Static services:LocalizationService.Instance}}" />
+                        <Button Grid.Column="3" x:Name="StickersBtn" Text="❏" BackgroundColor="Transparent" TextColor="White" Clicked="OnAnnotationStickersClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" ToolTipProperties.Text="{Binding [Annotation_Stickers], Source={x:Static services:LocalizationService.Instance}}" />
                         
                         <!-- Zone vide centrale permettant également de déplacer la barre -->
                         <BoxView Grid.Column="4" Color="Transparent">
@@ -731,16 +732,16 @@
                         </BoxView>
                         
                         <!-- Boutons Undo et Redo -->
-                        <Button Grid.Column="5" x:Name="UndoBtn" Text="↩" BackgroundColor="Transparent" TextColor="White" Clicked="OnUndoAnnotationClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" />
-                        <Button Grid.Column="6" x:Name="RedoBtn" Text="↪" BackgroundColor="Transparent" TextColor="White" Clicked="OnRedoAnnotationClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" />
+                        <Button Grid.Column="5" x:Name="UndoBtn" Text="↩" BackgroundColor="Transparent" TextColor="White" Clicked="OnUndoAnnotationClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" ToolTipProperties.Text="{Binding [Annotation_Undo], Source={x:Static services:LocalizationService.Instance}}" />
+                        <Button Grid.Column="6" x:Name="RedoBtn" Text="↪" BackgroundColor="Transparent" TextColor="White" Clicked="OnRedoAnnotationClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" Opacity="0.4" ToolTipProperties.Text="{Binding [Annotation_Redo], Source={x:Static services:LocalizationService.Instance}}" />
 
                         <!-- Bouton Reset Nettoyage complet -->
-                        <Button Grid.Column="7" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
-                        <Button Grid.Column="8" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" />
+                        <Button Grid.Column="7" x:Name="ResetAnnotationsBtn" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" ToolTipProperties.Text="{Binding [Annotation_Clean], Source={x:Static services:LocalizationService.Instance}}" />
+                        <Button Grid.Column="8" x:Name="DeleteAnnotationBtn" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" ToolTipProperties.Text="{Binding [Annotation_Delete], Source={x:Static services:LocalizationService.Instance}}" />
                     </Grid>
                 </ScrollView>
                 <!-- Bouton Croix Fermer (toujours fixe et visible à droite sur Phone comme sur Tablette) -->
-                <Button Grid.Column="2" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" FontAttributes="Bold" WidthRequest="{OnIdiom Phone=32, Tablet=36}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" Margin="{OnIdiom Phone='0,0,4,0', Tablet='0,0,6,0'}" VerticalOptions="Center" HorizontalOptions="Center" />
+                <Button Grid.Column="2" x:Name="CloseAnnotationBarBtn" Text="✕" BackgroundColor="Transparent" TextColor="White" Clicked="OnCloseAnnotationBarClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" FontAttributes="Bold" WidthRequest="{OnIdiom Phone=32, Tablet=36}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" Margin="{OnIdiom Phone='0,0,4,0', Tablet='0,0,6,0'}" VerticalOptions="Center" HorizontalOptions="Center" ToolTipProperties.Text="{Binding [Common_Close], Source={x:Static services:LocalizationService.Instance}}" />
             </Grid>
         </Border>
 

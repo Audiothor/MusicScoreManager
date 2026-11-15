@@ -390,6 +390,9 @@ public partial class ViewerPage : ContentPage
             SetupNativeTouchHandling();
 #endif
         };
+
+        UpdateAnnotationsLanguage();
+        LocalizationService.Instance.LanguageChanged += OnLanguageChanged;
     }
 
     public void UpdateSetlistScores(List<Score> scores, int currentIndex)
@@ -419,6 +422,7 @@ public partial class ViewerPage : ContentPage
         }
 
         UpdateTopScoreTitleUI();
+        UpdateAnnotationsLanguage();
         LockAnnotations();
         PedalMidiService.Instance.ActionTriggered += OnPedalActionTriggered;
 
@@ -2643,6 +2647,61 @@ public partial class ViewerPage : ContentPage
         }
     }
 
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            UpdateAnnotationsLanguage();
+        });
+    }
+
+    private void UpdateAnnotationsLanguage()
+    {
+        var loc = LocalizationService.Instance;
+
+        // Overlays d'options d'annotations
+        if (HighlightOptionsSizeLabel != null)
+            HighlightOptionsSizeLabel.Text = loc.GetString("Viewer_Tool_Size", "Taille :");
+        if (DrawOptionsSizeLabel != null)
+            DrawOptionsSizeLabel.Text = loc.GetString("Viewer_Tool_Size", "Taille :");
+        if (StickerSizeLabel != null)
+            StickerSizeLabel.Text = loc.GetString("Viewer_Tool_Size", "Taille :");
+        if (StickerSettingsTitleLabel != null)
+            StickerSettingsTitleLabel.Text = loc.GetString("Viewer_Stickers_Settings", "Réglages des stickers");
+        if (StickerTextColorLabel != null)
+            StickerTextColorLabel.Text = loc.GetString("Viewer_Sticker_Text_Color", "Texte :");
+        if (StickerBgColorLabel != null)
+            StickerBgColorLabel.Text = loc.GetString("Viewer_Sticker_Bg_Color", "Fond :");
+        if (TextColorLabel != null)
+            TextColorLabel.Text = loc.GetString("Viewer_Text_Color_Label", "Couleur");
+        if (TextSizeLabel != null)
+            TextSizeLabel.Text = loc.GetString("Viewer_Text_Size_Label", "Taille");
+        if (TextBgLabel != null)
+            TextBgLabel.Text = loc.GetString("Viewer_Text_Bg_Label", "Fond");
+        if (TextBorderLabel != null)
+            TextBorderLabel.Text = loc.GetString("Viewer_Text_Border_Label", "Bordure");
+
+        // Tooltips de la barre d'annotations
+        if (HighlightBtn != null)
+            ToolTipProperties.SetText(HighlightBtn, loc.GetString("Annotation_Highlighter", "Surligneur"));
+        if (TextAnnotationBtn != null)
+            ToolTipProperties.SetText(TextAnnotationBtn, loc.GetString("Annotation_Text", "Texte"));
+        if (DrawBtn != null)
+            ToolTipProperties.SetText(DrawBtn, loc.GetString("Annotation_Pencil", "Crayon"));
+        if (StickersBtn != null)
+            ToolTipProperties.SetText(StickersBtn, loc.GetString("Annotation_Stickers", "Stickers"));
+        if (UndoBtn != null)
+            ToolTipProperties.SetText(UndoBtn, loc.GetString("Annotation_Undo", "Annuler"));
+        if (RedoBtn != null)
+            ToolTipProperties.SetText(RedoBtn, loc.GetString("Annotation_Redo", "Rétablir"));
+        if (ResetAnnotationsBtn != null)
+            ToolTipProperties.SetText(ResetAnnotationsBtn, loc.GetString("Annotation_Clean", "Effacer la page"));
+        if (DeleteAnnotationBtn != null)
+            ToolTipProperties.SetText(DeleteAnnotationBtn, loc.GetString("Annotation_Delete", "Supprimer"));
+        if (CloseAnnotationBarBtn != null)
+            ToolTipProperties.SetText(CloseAnnotationBarBtn, loc.GetString("Common_Close", "Fermer"));
+    }
+
     private void ApplyAnnotationsVisibility(bool isVisible)
     {
         if (ActiveAnnotationsContainer != null)
@@ -3404,6 +3463,7 @@ public partial class ViewerPage : ContentPage
 
         PedalMidiService.Instance.ClearOverrideProfile();
         PedalMidiService.Instance.ActionTriggered -= OnPedalActionTriggered;
+        LocalizationService.Instance.LanguageChanged -= OnLanguageChanged;
         // Laisser le cache mémoire actif (plafonné à 12 pages) pour un rendu instantané à 0ms en réouverture
         CancelPreCount();
 
