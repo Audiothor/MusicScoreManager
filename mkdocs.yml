@@ -43,6 +43,9 @@ extra:
       link: /MusicScoreManager/en/
       lang: en
 
+extra_javascript:
+  - javascripts/refresh-source.js
+
 plugins:
   - search
   - i18n:

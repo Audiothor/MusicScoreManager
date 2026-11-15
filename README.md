@@ -674,5 +674,5 @@ Consultez le fichier complet [LICENSE](LICENSE) pour les termes légaux exhausti
 ---
 
 <p align="center">
-  <b>Music Score Manager v3.2.8</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
+  <b>Music Score Manager v3.2.11</b> — Développé avec passion pour les musiciens par <b>Audiothor</b>
 </p>
