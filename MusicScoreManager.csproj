@@ -29,14 +29,8 @@
 		<AndroidPackageFormats Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">aab;apk</AndroidPackageFormats>
 	</PropertyGroup>
 
-	<!-- Signature Android Release automatique avec le keystore officiel -->
-	<PropertyGroup Condition="'$(Configuration)' == 'Release' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' and Exists('$(MSBuildProjectDirectory)\keystore\musicscoremanager-release.keystore')">
-		<AndroidKeyStore>true</AndroidKeyStore>
-		<AndroidSigningKeyStore>$(MSBuildProjectDirectory)\keystore\musicscoremanager-release.keystore</AndroidSigningKeyStore>
-		<AndroidSigningStorePass>YOUR_KEYSTORE_PASSWORD</AndroidSigningStorePass>
-		<AndroidSigningKeyAlias>musicscoremanager</AndroidSigningKeyAlias>
-		<AndroidSigningKeyPass>YOUR_KEYSTORE_PASSWORD</AndroidSigningKeyPass>
-	</PropertyGroup>
+	<!-- Signature Android Release automatique via configuration locale hors-Git (keystore/signing.props) -->
+	<Import Project="$(MSBuildProjectDirectory)\keystore\signing.props" Condition="Exists('$(MSBuildProjectDirectory)\keystore\signing.props')" />
 
 	<!-- Optimisations et Obscurcissement R8 DEX pour Google Play (Seuil d'obscurcissement > 25%) -->
 	<PropertyGroup Condition="'$(Configuration)' == 'Release' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
@@ -60,7 +54,7 @@
 
 	<PropertyGroup>
 		<!-- Chemins SDK Android / Java par défaut si non fournis en ligne de commande -->
-		<AndroidSdkDirectory Condition="'$(AndroidSdkDirectory)' == '' and Exists('C:\Users\USERNAME\AppData\Local\Android\Sdk')">C:\Users\USERNAME\AppData\Local\Android\Sdk</AndroidSdkDirectory>
+		<AndroidSdkDirectory Condition="'$(AndroidSdkDirectory)' == '' and '$(LOCALAPPDATA)' != '' and Exists('$(LOCALAPPDATA)\Android\Sdk')">$(LOCALAPPDATA)\Android\Sdk</AndroidSdkDirectory>
 		<JavaSdkDirectory Condition="'$(JavaSdkDirectory)' == '' and Exists('C:\Program Files\Android\Android Studio\jbr')">C:\Program Files\Android\Android Studio\jbr</JavaSdkDirectory>
 
 		<!-- Désactiver les avertissements d'audit pour les paquets transitifs -->

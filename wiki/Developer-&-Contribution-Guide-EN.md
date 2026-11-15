@@ -88,7 +88,7 @@ Music Score Manager's localization engine is 100% decoupled. **No C# code modifi
      "Common_Back": "戻る"
    }
    ```
-4. In [`SettingsAppPage.xaml`](file:///c:/Users/USERNAME/Documents/GitHub/MusicScoreManager/SettingsAppPage.xaml), add the new language option to the modal selection list.
+4. In `SettingsAppPage.xaml`, add the new language option to the modal selection list.
 5. Rebuild and test: the new language is instantly selectable in settings!
 
 ---

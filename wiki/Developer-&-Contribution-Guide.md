@@ -88,7 +88,7 @@ L'architecture multilingue de Music Score Manager est 100% découplée. **Aucune
      "Common_Back": "戻る"
    }
    ```
-4. Dans [`SettingsAppPage.xaml`](file:///c:/Users/USERNAME/Documents/GitHub/MusicScoreManager/SettingsAppPage.xaml), ajoutez l'entrée correspondante dans la liste du modal de sélection de langue.
+4. Dans `SettingsAppPage.xaml`, ajoutez l'entrée correspondante dans la liste du modal de sélection de langue.
 5. Compilez et testez : la nouvelle langue est immédiatement opérationnelle !
 
 ---
