@@ -977,7 +977,8 @@ public partial class ViewerPage : ContentPage
             var (containerW, containerH, isLandscape) = GetEffectiveViewportInfo();
 
             bool twoPagesPref = Preferences.Default.Get("TwoPagesLandscape", true);
-            bool tryTwoPages = twoPagesPref && isLandscape && (cachedCount != 1);
+            int effectivePageCount = cachedCount > 0 ? cachedCount : _score.PageCount;
+            bool tryTwoPages = twoPagesPref && isLandscape && (effectivePageCount != 1);
 
             RenderedPdfPage? rendered = null;
 
@@ -1025,6 +1026,27 @@ public partial class ViewerPage : ContentPage
                         _hasRightPage = rendered.HasRightPage;
                         _currentPage = _leftPageNumber;
                         _currentPageDisplay = _hasRightPage ? $"{_leftPageNumber}-{_rightPageNumber}" : $"{_leftPageNumber}";
+                    }
+                }
+                else
+                {
+                    // Sécurité : repli sur le rendu 1 page si le rendu 2 pages échoue
+                    _isTwoPagesMode = false;
+                    int pNum = _maxPages > 0 ? Math.Clamp(pageNum, 1, _maxPages) : Math.Max(1, pageNum);
+                    rendered = await _pdfService.RenderPdfPageAsync(fullPath, pNum, GetRotationForPage(pNum));
+                    if (rendered != null)
+                    {
+                        if (rendered.TotalPages > 0)
+                        {
+                            _maxPages = rendered.TotalPages;
+                            if (_score.PageCount != _maxPages)
+                            {
+                                _score.PageCount = _maxPages;
+                                _ = _databaseService.SaveScoreAsync(_score);
+                            }
+                        }
+                        _currentPage = rendered.PageNumber;
+                        _currentPageDisplay = _currentPage.ToString();
                     }
                 }
             }
@@ -1104,14 +1126,23 @@ public partial class ViewerPage : ContentPage
                 ScoreImage.Rotation = 0;
 #if ANDROID
                 var nativeImageView = ScoreImage.Handler?.PlatformView as Android.Widget.ImageView;
+                for (int i = 0; i < 20 && nativeImageView == null; i++)
+                {
+                    await Task.Delay(16);
+                    nativeImageView = ScoreImage.Handler?.PlatformView as Android.Widget.ImageView;
+                }
+
                 if (nativeImageView != null && rendered.NativeBitmap != null && !rendered.NativeBitmap.IsRecycled)
                 {
+                    if (ScoreImage.Source != null)
+                    {
+                        ScoreImage.Source = null;
+                    }
                     nativeImageView.SetScaleType(Android.Widget.ImageView.ScaleType.FitCenter);
                     nativeImageView.SetImageBitmap(rendered.NativeBitmap);
                     nativeImageView.Invalidate();
                 }
-
-                if (rendered.ImageBytes.Length > 0)
+                else if (rendered.ImageBytes.Length > 0)
                 {
                     ScoreImage.Source = ImageSource.FromStream(() => new MemoryStream(rendered.ImageBytes));
                 }

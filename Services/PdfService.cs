@@ -171,13 +171,15 @@ namespace MusicScoreManager.Services
             return await Task.Run(async () =>
             {
 #if ANDROID
+                ParcelFileDescriptor? fd = null;
+                PdfRenderer? renderer = null;
                 try
                 {
                     var file = new Java.IO.File(pdfPath);
-                    using var fd = ParcelFileDescriptor.Open(file, ParcelFileMode.ReadOnly);
+                    fd = ParcelFileDescriptor.Open(file, ParcelFileMode.ReadOnly);
                     if (fd != null)
                     {
-                        using var renderer = new PdfRenderer(fd);
+                        renderer = new PdfRenderer(fd);
                         int count = Math.Max(1, renderer.PageCount);
                         lock (_cacheLock) { _pageCountCache[pdfPath] = count; }
                         return count;
@@ -186,6 +188,13 @@ namespace MusicScoreManager.Services
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine($"[PdfService] Android GetPdfPageCountAsync error: {ex.Message}");
+                }
+                finally
+                {
+                    try { renderer?.Close(); } catch { }
+                    try { renderer?.Dispose(); } catch { }
+                    try { fd?.Close(); } catch { }
+                    try { fd?.Dispose(); } catch { }
                 }
 #endif
 #if WINDOWS
@@ -306,7 +315,15 @@ namespace MusicScoreManager.Services
             {
                 if (_pageMemoryCache.TryGetValue(cacheKey, out var cached))
                 {
+#if ANDROID
+                    if (cached.NativeBitmap != null && !cached.NativeBitmap.IsRecycled)
+                    {
+                        return cached;
+                    }
+                    _pageMemoryCache.Remove(cacheKey);
+#else
                     return cached;
+#endif
                 }
 
                 if (_inFlightTasks.TryGetValue(cacheKey, out existingTask))
@@ -323,17 +340,20 @@ namespace MusicScoreManager.Services
             var renderTask = Task.Run(async () =>
             {
 #if ANDROID
+                ParcelFileDescriptor? fd = null;
+                PdfRenderer? renderer = null;
+                PdfRenderer.Page? page = null;
                 try
                 {
                     var file = new Java.IO.File(pdfPath);
-                    using var fd = ParcelFileDescriptor.Open(file, ParcelFileMode.ReadOnly);
+                    fd = ParcelFileDescriptor.Open(file, ParcelFileMode.ReadOnly);
                     if (fd == null) return null;
 
-                    using var renderer = new PdfRenderer(fd);
+                    renderer = new PdfRenderer(fd);
                     int totalPages = Math.Max(1, renderer.PageCount);
                     lock (_cacheLock) { _pageCountCache[pdfPath] = totalPages; }
                     int pageIndex = Math.Clamp(pageNumber - 1, 0, totalPages - 1);
-                    using var page = renderer.OpenPage(pageIndex);
+                    page = renderer.OpenPage(pageIndex);
 
                     int baseDim = Math.Max(page.Width, page.Height);
                     float effectiveScale = scale;
@@ -349,6 +369,10 @@ namespace MusicScoreManager.Services
                     rawBmp.EraseColor(Android.Graphics.Color.White);
                     page.Render(rawBmp, null, null, PdfRenderMode.ForDisplay);
 
+                    try { page.Close(); } catch { }
+                    try { page.Dispose(); } catch { }
+                    page = null;
+
                     Bitmap finalBmp = rawBmp;
                     int normRot = (rotation % 360 + 360) % 360;
                     if (normRot != 0)
@@ -362,13 +386,9 @@ namespace MusicScoreManager.Services
                     int fw = finalBmp.Width;
                     int fh = finalBmp.Height;
 
-                    using var ms = new MemoryStream();
-                    finalBmp.Compress(Bitmap.CompressFormat.Jpeg!, 80, ms);
-                    byte[] bytes = ms.ToArray();
-
                     return new RenderedPdfPage
                     {
-                        ImageBytes = bytes,
+                        ImageBytes = Array.Empty<byte>(),
                         NativeBitmap = finalBmp,
                         Width = fw,
                         Height = fh,
@@ -380,6 +400,15 @@ namespace MusicScoreManager.Services
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine($"[PdfService] Android RenderPdfPageAsync error: {ex.Message}");
+                }
+                finally
+                {
+                    try { page?.Close(); } catch { }
+                    try { page?.Dispose(); } catch { }
+                    try { renderer?.Close(); } catch { }
+                    try { renderer?.Dispose(); } catch { }
+                    try { fd?.Close(); } catch { }
+                    try { fd?.Dispose(); } catch { }
                 }
 #endif
 #if WINDOWS
@@ -542,7 +571,15 @@ namespace MusicScoreManager.Services
             {
                 if (_pageMemoryCache.TryGetValue(cacheKey, out var cached))
                 {
+#if ANDROID
+                    if (cached.NativeBitmap != null && !cached.NativeBitmap.IsRecycled)
+                    {
+                        return cached;
+                    }
+                    _pageMemoryCache.Remove(cacheKey);
+#else
                     return cached;
+#endif
                 }
 
                 if (_inFlightTasks.TryGetValue(cacheKey, out existingTask))
@@ -559,60 +596,67 @@ namespace MusicScoreManager.Services
             var renderTask = Task.Run<RenderedPdfPage?>(async () =>
             {
 #if ANDROID
+                ParcelFileDescriptor? fd = null;
+                PdfRenderer? renderer = null;
                 try
                 {
                     var file = new Java.IO.File(pdfPath);
-                    using var fd = ParcelFileDescriptor.Open(file, ParcelFileMode.ReadOnly);
+                    fd = ParcelFileDescriptor.Open(file, ParcelFileMode.ReadOnly);
                     if (fd == null) return null;
 
-                    using var renderer = new PdfRenderer(fd);
+                    renderer = new PdfRenderer(fd);
                     int totalPages = Math.Max(1, renderer.PageCount);
                     lock (_cacheLock) { _pageCountCache[pdfPath] = totalPages; }
 
                     if (totalPages <= 1)
                     {
-                        using var singlePage = renderer.OpenPage(0);
-                        int singleBaseDim = Math.Max(singlePage.Width, singlePage.Height);
-                        float singleScale = 1.6f;
-                        if (singleBaseDim * singleScale > 2048)
+                        PdfRenderer.Page? singlePage = null;
+                        try
                         {
-                            singleScale = 2048f / singleBaseDim;
+                            singlePage = renderer.OpenPage(0);
+                            int singleBaseDim = Math.Max(singlePage.Width, singlePage.Height);
+                            float singleScale = 1.6f;
+                            if (singleBaseDim * singleScale > 2048)
+                            {
+                                singleScale = 2048f / singleBaseDim;
+                            }
+
+                            int sW = Math.Max(1, (int)(singlePage.Width * singleScale));
+                            int sH = Math.Max(1, (int)(singlePage.Height * singleScale));
+
+                            var sRawBmp = Bitmap.CreateBitmap(sW, sH, Bitmap.Config.Argb8888!);
+                            sRawBmp.EraseColor(Android.Graphics.Color.White);
+                            singlePage.Render(sRawBmp, null, null, PdfRenderMode.ForDisplay);
+
+                            Bitmap sFinalBmp = sRawBmp;
+                            int sNormRot = (leftRot % 360 + 360) % 360;
+                            if (sNormRot != 0)
+                            {
+                                using var mat = new Android.Graphics.Matrix();
+                                mat.PostRotate(sNormRot);
+                                sFinalBmp = Bitmap.CreateBitmap(sRawBmp, 0, 0, sRawBmp.Width, sRawBmp.Height, mat, true);
+                                sRawBmp.Recycle();
+                            }
+
+                            return new RenderedPdfPage
+                            {
+                                ImageBytes = Array.Empty<byte>(),
+                                NativeBitmap = sFinalBmp,
+                                Width = sFinalBmp.Width,
+                                Height = sFinalBmp.Height,
+                                PageNumber = 1,
+                                TotalPages = 1,
+                                IsTwoPages = false,
+                                LeftPage = 1,
+                                RightPage = 1,
+                                HasRightPage = false
+                            };
                         }
-
-                        int sW = Math.Max(1, (int)(singlePage.Width * singleScale));
-                        int sH = Math.Max(1, (int)(singlePage.Height * singleScale));
-
-                        var sRawBmp = Bitmap.CreateBitmap(sW, sH, Bitmap.Config.Argb8888!);
-                        sRawBmp.EraseColor(Android.Graphics.Color.White);
-                        singlePage.Render(sRawBmp, null, null, PdfRenderMode.ForDisplay);
-
-                        Bitmap sFinalBmp = sRawBmp;
-                        int sNormRot = (leftRot % 360 + 360) % 360;
-                        if (sNormRot != 0)
+                        finally
                         {
-                            using var mat = new Android.Graphics.Matrix();
-                            mat.PostRotate(sNormRot);
-                            sFinalBmp = Bitmap.CreateBitmap(sRawBmp, 0, 0, sRawBmp.Width, sRawBmp.Height, mat, true);
-                            sRawBmp.Recycle();
+                            try { singlePage?.Close(); } catch { }
+                            try { singlePage?.Dispose(); } catch { }
                         }
-
-                        using var sMs = new MemoryStream();
-                        sFinalBmp.Compress(Bitmap.CompressFormat.Jpeg!, 80, sMs);
-                        byte[] sBytes = sMs.ToArray();
-
-                        return new RenderedPdfPage
-                        {
-                            ImageBytes = sBytes,
-                            NativeBitmap = sFinalBmp,
-                            Width = sFinalBmp.Width,
-                            Height = sFinalBmp.Height,
-                            PageNumber = 1,
-                            TotalPages = 1,
-                            IsTwoPages = false,
-                            LeftPage = 1,
-                            RightPage = 1,
-                            HasRightPage = false
-                        };
                     }
 
                     int leftIdx = Math.Clamp(leftPage - 1, 0, totalPages - 1);
@@ -621,8 +665,10 @@ namespace MusicScoreManager.Services
 
                     Bitmap lBmp;
                     int lNormRot = (leftRot % 360 + 360) % 360;
-                    using (var lPage = renderer.OpenPage(leftIdx))
+                    PdfRenderer.Page? lPage = null;
+                    try
                     {
+                        lPage = renderer.OpenPage(leftIdx);
                         int baseDim = Math.Max(lPage.Width, lPage.Height);
                         float effectiveScale = scale;
                         if (baseDim * effectiveScale > 1536)
@@ -649,13 +695,20 @@ namespace MusicScoreManager.Services
                             lBmp = lRawBmp;
                         }
                     }
+                    finally
+                    {
+                        try { lPage?.Close(); } catch { }
+                        try { lPage?.Dispose(); } catch { }
+                    }
 
                     Bitmap? rBmp = null;
                     if (hasRight)
                     {
                         int rNormRot = (rightRot % 360 + 360) % 360;
-                        using (var rPage = renderer.OpenPage(rightIdx))
+                        PdfRenderer.Page? rPage = null;
+                        try
                         {
+                            rPage = renderer.OpenPage(rightIdx);
                             int baseDimR = Math.Max(rPage.Width, rPage.Height);
                             float effectiveScaleR = scale;
                             if (baseDimR * effectiveScaleR > 1536)
@@ -681,6 +734,11 @@ namespace MusicScoreManager.Services
                             {
                                 rBmp = rRawBmp;
                             }
+                        }
+                        finally
+                        {
+                            try { rPage?.Close(); } catch { }
+                            try { rPage?.Dispose(); } catch { }
                         }
                     }
 
@@ -711,13 +769,9 @@ namespace MusicScoreManager.Services
                     lBmp.Recycle();
                     if (rBmp != null) rBmp.Recycle();
 
-                    using var ms = new MemoryStream();
-                    combined.Compress(Bitmap.CompressFormat.Jpeg!, 80, ms);
-                    byte[] bytes = ms.ToArray();
-
                     return new RenderedPdfPage
                     {
-                        ImageBytes = bytes,
+                        ImageBytes = Array.Empty<byte>(),
                         NativeBitmap = combined,
                         Width = totalW,
                         Height = maxH,
@@ -732,6 +786,13 @@ namespace MusicScoreManager.Services
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine($"[PdfService] Android RenderPdfTwoPagesAsync error: {ex.Message}");
+                }
+                finally
+                {
+                    try { renderer?.Close(); } catch { }
+                    try { renderer?.Dispose(); } catch { }
+                    try { fd?.Close(); } catch { }
+                    try { fd?.Dispose(); } catch { }
                 }
 #endif
 #if WINDOWS
@@ -904,13 +965,15 @@ namespace MusicScoreManager.Services
                 }
 
 #if ANDROID
+                ParcelFileDescriptor? fileDescriptor = null;
+                PdfRenderer? renderer = null;
                 try
                 {
                     var file = new Java.IO.File(pdfPath);
-                    using var fileDescriptor = ParcelFileDescriptor.Open(file, ParcelFileMode.ReadOnly);
+                    fileDescriptor = ParcelFileDescriptor.Open(file, ParcelFileMode.ReadOnly);
                     if (fileDescriptor != null)
                     {
-                        using var renderer = new PdfRenderer(fileDescriptor);
+                        renderer = new PdfRenderer(fileDescriptor);
                         int pageCount = renderer.PageCount;
 
                         for (int i = 0; i < pageCount; i++)
@@ -959,6 +1022,13 @@ namespace MusicScoreManager.Services
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine($"[PdfService] Android ExtractPdfPagesAsync error: {ex.Message}");
+                }
+                finally
+                {
+                    try { renderer?.Close(); } catch { }
+                    try { renderer?.Dispose(); } catch { }
+                    try { fileDescriptor?.Close(); } catch { }
+                    try { fileDescriptor?.Dispose(); } catch { }
                 }
 #endif
 #if WINDOWS
