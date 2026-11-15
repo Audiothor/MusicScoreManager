@@ -917,6 +917,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v3211-15112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.2.11 — 15/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.2.11 — 15/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-android-score-viewer-critical-fix-for-pdfrendererpageclose-in-2-page-landscape-mode-pdfservice-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Android Score Viewer: Critical Fix for PdfRenderer.Page.Close() in 2-Page Landscape Mode (PdfService &amp; ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v3210-15112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3986,6 +4014,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v3211-15112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.2.11 — 15/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.2.11 — 15/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-android-score-viewer-critical-fix-for-pdfrendererpageclose-in-2-page-landscape-mode-pdfservice-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Android Score Viewer: Critical Fix for PdfRenderer.Page.Close() in 2-Page Landscape Mode (PdfService &amp; ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v3210-15112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7034,6 +7090,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v3211-15112026">v3.2.11 — 15/11/2026</a></li>
 <li><a href="#v3210-15112026">v3.2.10 — 15/11/2026</a></li>
 <li><a href="#v329-14112026">v3.2.9 — 14/11/2026</a></li>
 <li><a href="#v328-11112026">v3.2.8 — 11/11/2026</a></li>
@@ -7086,6 +7143,19 @@
 <li><a href="#v252-07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251-07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250-07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v3211-15112026">v3.2.11 — 15/11/2026</h2>
+<h3 id="1-android-score-viewer-critical-fix-for-pdfrendererpageclose-in-2-page-landscape-mode-pdfservice-viewerpage">1. Android Score Viewer: Critical Fix for <code>PdfRenderer.Page.Close()</code> in 2-Page Landscape Mode (<code>PdfService</code> &amp; <code>ViewerPage</code>)</h3>
+<ul>
+<li><strong>1.1. Fixed native <code>IllegalStateException: Current page not closed</code> on multi-page PDF scores:</strong></li>
+<li>In .NET for Android (<code>Mono.Android</code>), <code>using (var lPage = renderer.OpenPage(leftIdx))</code> only calls C# <code>Dispose()</code> and does not invoke Java's <code>lPage.Close()</code>. When opening the right-hand page (<code>renderer.OpenPage(rightIdx)</code>), Android's native <code>PdfRenderer</code> deterministically threw <code>Java.Lang.IllegalStateException: Current page not closed</code> for any PDF with more than 1 page.</li>
+<li>Added explicit <code>lPage?.Close()</code>, <code>rPage?.Close()</code>, <code>singlePage?.Close()</code>, <code>page?.Close()</code>, <code>renderer?.Close()</code>, and <code>fd?.Close()</code> calls inside <code>finally</code> blocks across <code>RenderPdfTwoPagesAsync</code>, <code>RenderPdfPageAsync</code>, <code>GetPdfPageCountAsync</code>, and <code>ExtractPdfPagesAsync</code>.</li>
+<li><strong>1.2. Full resolution of direct landscape opening and Portrait ↔ Landscape rotation:</strong></li>
+<li>Multi-page PDF scores opened directly in landscape mode now immediately display two pages side by side (no blank screen).</li>
+<li>Rotating the screen from portrait to landscape immediately switches to 2-page display and allows turning forward and backward across all spreads.</li>
+<li><strong>1.3. Zero-latency <code>NativeBitmap</code> rendering and memory cache validation:</strong></li>
+<li>Restored direct hardware <code>nativeImageView.SetImageBitmap(rendered.NativeBitmap)</code> display without redundant JPEG compression, with <code>!IsRecycled</code> verification in the memory cache and automatic single-page fallback.</li>
 </ul>
 <hr />
 <h2 id="v3210-15112026">v3.2.10 — 15/11/2026</h2>
