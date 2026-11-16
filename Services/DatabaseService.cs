@@ -171,26 +171,10 @@ namespace MusicScoreManager.Services
         {
             if (scores == null || scores.Count == 0 || _database == null) return;
             
-            // Si on a un très grand nombre de scores (> 150), on charge les tables de jointure complètes
-            // Sinon on requête de manière ciblée uniquement les IDs concernés
-            List<ScoreTag> allScoreTags;
-            List<Tag> allTags;
-            List<ScoreAudioFile> allAudioFiles;
-
-            if (scores.Count > 150)
-            {
-                allScoreTags = await _database.Table<ScoreTag>().ToListAsync();
-                allTags = await _database.Table<Tag>().ToListAsync();
-                allAudioFiles = await _database.Table<ScoreAudioFile>().ToListAsync();
-            }
-            else
-            {
-                var ids = scores.Select(s => s.Id).ToList();
-                allScoreTags = await _database.Table<ScoreTag>().Where(st => ids.Contains(st.ScoreId)).ToListAsync();
-                var tagIds = allScoreTags.Select(st => st.TagId).Distinct().ToList();
-                allTags = await _database.Table<Tag>().Where(t => tagIds.Contains(t.Id)).ToListAsync();
-                allAudioFiles = await _database.Table<ScoreAudioFile>().Where(af => ids.Contains(af.ScoreId)).ToListAsync();
-            }
+            // Chargement direct des tables de jointure légères pour un mapping mémoire rapide et garanti sans bug de requête SQL IN
+            var allScoreTags = await _database.Table<ScoreTag>().ToListAsync();
+            var allTags = await _database.Table<Tag>().ToListAsync();
+            var allAudioFiles = await _database.Table<ScoreAudioFile>().ToListAsync();
 
             var tagsLookup = allTags.ToDictionary(t => t.Id);
             var scoreTagsGrouped = allScoreTags.GroupBy(st => st.ScoreId).ToDictionary(g => g.Key, g => g.ToList());

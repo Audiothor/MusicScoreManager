@@ -3,7 +3,7 @@
 The **Settings** menu allows you to tailor Music Score Manager specifically to your playing habits, your instrument, and your screen size.
 
 <p style="text-align: center;">
-  <img src="../../images/parametres_fr.jpeg" alt="Settings overview" style="max-width: 100%; height: auto;">
+  <img src="../../images/parametres_en.jpeg" alt="Settings overview" style="max-width: 100%; height: auto;">
 </p>
 
 ---
@@ -131,6 +131,7 @@ Hands-free reading is essential during rehearsals and live stage performances. M
 * **MIDI Controllers & Pedals (USB-OTG & Bluetooth BLE):**  
   Direct driver-free connection via USB-OTG adapter (Boss, Behringer FCB1010, Morningstar, Line 6 Helix, etc.) or wireless Bluetooth MIDI adapter.  
   Native message interception:
+  
   - **Control Change (CC)**: Standard sustain pedal (`CC 64`), `CC 66`, or any custom CC from 0 to 127.
   - **MIDI Notes**: Trigger actions from a synthesizer key or bass pedal note.
   - **Program Change (PC)**: Automatic song synchronization with your multi-effects units or keyboards.
@@ -153,9 +154,12 @@ To adapt to your diverse performance settings (classical orchestra, rock band, s
 The profile editor ("Edit selected profile") lets you map pedals in seconds using live signal learning:
 
 1. **Assign a profile name** or keep the default name.
+
 2. **Add a description** (optional).
+
 3. **Add pedal buttons:**  
    Give each pedal a name (e.g., "Right pedal", "Sustain switch"...).
+   
    - **Automatic Signal Detection ("Listening" mode):**  
      Press the physical pedal or send the MIDI command: the app instantly captures the signal, detects its type (HID Keyboard, CC, MIDI Note), and displays its exact code.
    - **Short Press (⚡) vs Long Press (⏱️):**  
@@ -165,7 +169,7 @@ The profile editor ("Edit selected profile") lets you map pedals in seconds usin
      - **Stage Tools & Timing:** Start / stop metronome, Mute / unmute metronome click, Play / pause audio backing track, Restart song.
      - **Display & Reading:** Next / Previous bookmark marker, Zoom in / out / reset 100%, Night Mode (color inversion).
      - **Annotations:** Lock / unlock drawing layer, Hide / show annotations, Undo / Redo last stroke.
-
+   
    *DO NOT FORGET TO SAVE YOUR PROFILE!*
 
 4. **Repeat for your other pedal switches!**
@@ -199,8 +203,8 @@ This page manages global application preferences and system environment:
 - **🌐 Interface Language Selector**:  
   Interactive modal offering **8 built-in languages**:  
   * 🇫🇷 **Français**, 🇬🇧 **English**, 🇩🇪 **Deutsch**, 🇪🇸 **Español**, 🇮🇹 **Italiano**, 🇵🇱 **Polski**, 🇳🇱 **Nederlands**, 🇵🇹 **Português**.  
-  Dynamic instant translation across the entire interface without restarting the app.  
-  *Note:* The default language matches your tablet's operating system language. If unsupported, English is selected automatically.
+    Dynamic instant translation across the entire interface without restarting the app.  
+    *Note:* The default language matches your tablet's operating system language. If unsupported, English is selected automatically.
 
 **APPLICATION BEHAVIOR**
 
@@ -212,12 +216,14 @@ This page manages global application preferences and system environment:
 **LIBRARY (Statistics)**
 
 - **📊 Library Statistics & Storage Metrics**:  
+  
   - **Total number of PDF scores** saved.
   - **Total disk space occupied** by PDF scores (in MB).
   - **Available storage space**: Remaining free capacity on device (in GB).
   - **Database file size**: Storage occupied by SQLite (`scores.db3` + WAL/SHM journals).
 
 - **📁 Customizable Directory Locations**:  
+  
   - Root scores folder, audio tracks folder, and exports folder.
   - Supports public Android storage directories for easy USB cable file transfers to a PC.
 
@@ -226,6 +232,7 @@ This page manages global application preferences and system environment:
 ## 7. Built-in Help
 
 This page includes offline quick help guides and stage advice:
+
 - Quick start tutorial.
 - Link to the complete documentation (available in French and English).
 - Discord community link to report bugs, suggest features, or say thanks!
@@ -235,6 +242,7 @@ This page includes offline quick help guides and stage advice:
 ## 8. About
 
 This page provides legal, copyright, and technical information:
+
 - Dynamic version number.
 - Author.
 - Open-source license: **GNU General Public License v3.0 (GPLv3)**.

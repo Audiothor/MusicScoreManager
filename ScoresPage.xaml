@@ -140,7 +140,7 @@
 
             <CollectionView x:Name="ScoresCollectionView"
                             Grid.Row="1"
-                            ItemSizingStrategy="MeasureFirstItem"
+                            ItemSizingStrategy="MeasureAllItems"
                             SelectionMode="None"
                             Scrolled="OnScoresScrolled"
                             Margin="{OnIdiom Phone='0,0,24,0', Tablet='0,0,28,0'}">

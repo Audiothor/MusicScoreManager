@@ -4,7 +4,7 @@
 The **Scores** menu is the primary gateway to your digital sheet music library. It displays all your scores in a responsive, modern card grid optimized for large tablets and phones alike.
 
 <p style="text-align: center;">
-  <img src="../../images/partitions_liste_fr.jpeg" alt="Scores list display" style="max-width: 100%; height: auto;">
+  <img src="../../images/partitions_liste_en.jpeg" alt="Scores viewer list" style="max-width: 100%; height: auto;">
 </p>
 
 ---
@@ -36,8 +36,8 @@ If you have never launched the app or imported scores, the application will info
   Scores remain directly viewable and accessible from this view, with full access to the score context menu (⋮).
 
 <p style="text-align: center;">
-  <img src="../../images/partitions_categorie_fr.jpeg" alt="Folder view of scores" style="max-width: 100%; height: auto;">
-  <img src="../../images/partitions_categorie2_fr.jpeg" alt="Folder view of scores" style="max-width: 100%; height: auto;">
+  <img src="../../images/partitions_categorie_en.jpeg" alt="Folder view of scores" style="max-width: 100%; height: auto;">
+  <img src="../../images/partitions_categorie2_en.jpeg" alt="Folder view of scores" style="max-width: 100%; height: auto;">
 </p>
 
 **[3] Tag Filter Button (🏷️)**
@@ -89,12 +89,13 @@ If you have never launched the app or imported scores, the application will info
 - **[6] The Score Card**:
 
 Each score is represented by a visual card:
-  - a. **Main piece title**.
-  - b. **Customizable subtitle** (configurable in settings: composer, date added, page count, category...).
-  - c. **Color-coded tag badges** to identify categories at a glance.
-  - **🔗 External file badge** if stored outside internal storage.
-  - **⚠️ Red warning badge (!) and red title**:  
-    If the PDF file was moved, renamed, or is missing on storage, a bright red warning badge appears to the left of the ⋮ button to alert you that it cannot be opened in concert.
+
+- a. **Main piece title**.
+- b. **Customizable subtitle** (configurable in settings: composer, date added, page count, category...).
+- c. **Color-coded tag badges** to identify categories at a glance.
+- **🔗 External file badge** if stored outside internal storage.
+- **⚠️ Red warning badge (!) and red title**:  
+  If the PDF file was moved, renamed, or is missing on storage, a bright red warning badge appears to the left of the ⋮ button to alert you that it cannot be opened in concert.
 
 - **[7] Context menu**:  
   Access to the score context menu (see Section 2 below).
@@ -118,50 +119,67 @@ Each score is represented by a visual card:
 Tapping the **⋮** button on any score card opens a modern, ergonomic card:
 
 <p style="text-align: center;">
-  <img src="../../images/menu_partition_fr.jpeg" alt="Score context menu" style="max-width: 100%; height: auto;">
+  <img src="../../images/menu_partition_en.jpeg" alt="Score context menu" style="max-width: 100%; height: auto;">
 </p>
 
 1. **📖 Open score**:
+   
    - Immediately opens the score in the fullscreen stage viewer (concert mode).
 
 2. **✏️ Edit score**:
+   
    - Opens the detailed metadata editing page:
 
 <p style="text-align: center;">
-  <img src="../../images/editer_partition_fr.jpeg" alt="Score editing" style="max-width: 100%; height: auto;">
+  <img src="../../images/editer_partition_en.jpeg" alt="Score editing" style="max-width: 100%; height: auto;">
 </p>
 
-   * **Title** and **Composer / Arranger**.
-   * **Folder / Category** assigned to this score.
-   * **Technical details**: File path, file size, modification date, date added, and indicator if annotations exist. Includes a button to re-link the file if moved.
-   * **PDF Assembler Studio**: Direct link to perform page operations on your PDF file.
-   * **Tags**: Dynamic selection (create tags in Tools or Settings).
-   * **Reference Tempo (BPM)**: Initial value for the metronome.
-   * **Musical Key** (classical *Do, Ré, Mi...* and international *A, B, C...*).
-   * **Rating (1 to 5 stars)**: Personal rating.
-   * **Full PDF file path** for reference.
-   * **Metronome Accordion**: Time signature (2/4, 3/4, 4/4, 6/8...), subdivision, pre-count measures, and default mute/sound toggle.
-   * **Audio Tracks Accordion**: Link backing audio files (MP3, WAV, etc.), preview playback, and relative volume adjustment.
-   * **Annotation Options Accordion**:
-     - Choose whether annotations are shown by default for this score.
-     - Choose whether page numbers are displayed for this score.
-     - Choose whether the toolbox button appears in the top-right corner.
-   
-   *DO NOT FORGET TO SAVE YOUR CHANGES!*
+* **Title** and **Composer / Arranger**.
 
+* **Folder / Category** assigned to this score.
+
+* **Technical details**: File path, file size, modification date, date added, and indicator if annotations exist. Includes a button to re-link the file if moved.
+
+* **PDF Assembler Studio**: Direct link to perform page operations on your PDF file.
+
+* **Tags**: Dynamic selection (create tags in Tools or Settings).
+
+* **Reference Tempo (BPM)**: Initial value for the metronome.
+
+* **Musical Key** (classical *Do, Ré, Mi...* and international *A, B, C...*).
+
+* **Rating (1 to 5 stars)**: Personal rating.
+
+* **Full PDF file path** for reference.
+
+* **Metronome Accordion**: Time signature (2/4, 3/4, 4/4, 6/8...), subdivision, pre-count measures, and default mute/sound toggle.
+
+* **Audio Tracks Accordion**: Link backing audio files (MP3, WAV, etc.), preview playback, and relative volume adjustment.
+
+* **Annotation Options Accordion**:
+  
+  - Choose whether annotations are shown by default for this score.
+  - Choose whether page numbers are displayed for this score.
+  - Choose whether the toolbox button appears in the top-right corner.
+  
+  *DO NOT FORGET TO SAVE YOUR CHANGES!*
 3. **📋 Add to Setlist**:
+   
    - Inserts the score immediately into the chosen setlist.
    - **High-priority 1st position placement** (shifts other songs down).
    - Handles locked setlists.
 
 4. **📁 Change folder / category**:
+   
    - Move the score to another folder or create a new category on the fly.
 
 5. **📑 Modify PDF assembly**:
+   
    - Opens the piece directly in the **PDF Assembler Studio** to rearrange pages, insert blank sheets, rotate pages, or delete unnecessary sheets. Very convenient when your PDF is poorly arranged.
    - Also directly accessible from the "Tools" menu.
 
 6. **📡 Send via Wi-Fi Direct**:
+   
    - Opens the sharing options modal asking you to choose:
      * ☑️ *Include handwritten annotations*.
      * ☑️ *Include attached audio tracks* (MP3/WAV).
@@ -170,10 +188,13 @@ Tapping the **⋮** button on any score card opens a modern, ergonomic card:
    - The score is transferred and added directly into the recipient's library within seconds!
 
 7. **📦 Export score (.msmscore)**:
+   
    - Generates a standalone, transportable archive file with selectable export options (annotations, audio tracks).
 
 8. **🏷️ Rename score**:
+   
    - Quick dialog to change the title of the displayed PDF without opening the full editor.
 
 9. **🗑️ Delete score**:
+   
    - Removes the piece from your library with a secure confirmation prompt.

@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.12 — 16/11/2026](#v3212-16112026)
 - [v3.2.11 — 15/11/2026](#v3211-15112026)
 - [v3.2.10 — 15/11/2026](#v3210-15112026)
 - [v3.2.9 — 14/11/2026](#v329-14112026)
@@ -59,6 +60,26 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.12 — 16/11/2026
+
+### 1. Bibliothèque : Correction Critique de la Perte d'Affichage des Étiquettes après Import de Partition (`ScoresPage` & `DatabaseService`)
+- **1.1. Résolution du masquage des étiquettes par `MeasureFirstItem` dans la CollectionView :**
+  - Passage de `ItemSizingStrategy="MeasureFirstItem"` à `ItemSizingStrategy="MeasureAllItems"` sur `ScoresCollectionView` dans `ScoresPage.xaml` et `ScoreSelectionPage.xaml`.
+  - Explication technique : lors d'un import de partition, la nouvelle partition (qui ne possède initialement aucun tag) est placée en haut de liste (tri décroissant par date d'ajout). Avec `MeasureFirstItem`, la `CollectionView` imposait la hauteur compacte de cette première partition sans tag à toutes les cartes de la liste, tronquant ainsi la rangée des pastilles d'étiquettes de toutes les autres partitions. Le basculement sur `MeasureAllItems` garantit que chaque carte adapte dynamiquement et précisément sa hauteur à ses métadonnées.
+- **1.2. Fiabilisation du chargement des détails et associations en base de données :**
+  - Dans `DatabaseService.LoadDetailsForScoresAsync`, élimination des requêtes LINQ `Where(st => ids.Contains(st.ScoreId))` et chargement direct en mémoire des tables légères `ScoreTags`, `Tags` et `ScoreAudioFiles` via `ToListAsync()`.
+  - Suppression de tout risque d'échec sur les clauses SQL `IN ()` vides sous SQLite-net-pcl et garantie d'un mapping instantané et robuste de `AppliedTags` pour toutes les partitions de la bibliothèque.
+- **1.3. Synchronisation immédiate des étiquettes lors de l'import :**
+  - Rafraîchissement automatique de la liste globale des étiquettes (`_allTags`) lors de l'import d'une partition dans `ScoresPage.xaml.cs` avant le rafraîchissement des partitions.
+
+### 2. Documentation Multilingue & Captures d'Écran (`docs/`)
+- **2.1. Mise à jour complète de la documentation en anglais :**
+  - Actualisation et traduction intégrale des pages guides : partitions (`scores.en.md`), listes de partitions / setlists (`setlists.en.md`), réglages (`settings.en.md`), outils (`tools.en.md`), roadmap (`ROADMAP.en.md`) et page d'accueil (`index.en.md`).
+- **2.2. Intégration de nouvelles captures d'écran haute définition :**
+  - Ajout des captures localisées en anglais et français pour les menus partitions, dossiers, réglages, outils et éditeur de setlists dans `docs/images/`.
 
 ---
 

@@ -31,6 +31,7 @@ It is cross-platform (**Android / Windows**).
 - [FAQ](guide/FAQ.en.md)
 - [Privacy Policy & Legal Notice](confidentialite.en.md)
 - [Version History](Versions.en.md)
+- [ROADMAP](ROADMAP.en.md)
 
 ---
 

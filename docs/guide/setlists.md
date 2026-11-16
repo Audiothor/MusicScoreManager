@@ -2,6 +2,10 @@
 
 Le menu **Setlists** est spécialement conçu pour planifier, structurer et exécuter vos programmes de concert, auditions, offices liturgiques et répétitions générales sans temps mort.
 
+<p style="text-align: center;">
+  <img src="../../images/editer_setlist_fr.jpeg" alt="Editer un setlist" style="max-width: 100%; height: auto;">
+</p>
+
 ---
 
 ## 📋 Présentation & Organisation de la Liste
@@ -10,20 +14,23 @@ L'onglet Setlists affiche la liste de tous vos programmes créés :
 
 - **Barre supérieure** : Recherche instantanée, tri multi-critères (Nom A-Z/Z-A, Date de création, Statut) et bouton de création rapide (**➕**) pour créer un nouveau SetList.
 
-
-
 - **Filtres par Statut en Carrousel Horizontal** :
-  - *Toutes*
-  - *Active* (badge vert) : programmes en cours de tournée ou répétés actuellement.
-  - *À venir* (badge orange) : concerts en préparation future.
-  - *Terminée* (badge gris) : archives de prestations passées.
 
+   . *Toutes*
 
+   . *Active* (badge vert) : programmes en cours de tournée ou répétés actuellement.
+
+   . *À venir* (badge orange) : concerts en préparation future.
+
+   . *Terminée* (badge gris) : archives de prestations passées.
 
 - **Cartes de Setlists** :
-  - Nom du programme, date de création, badge de statut et cadenas de verrouillage `🔒` si il a été positionné.
-  - Glissement latéral (Swipe) pour accéder immédiatement à *Renommer* et *Supprimer*.
-  - Affichage d'un menu contextuel via  ⋮  (Voir plus bas)
+
+   . Nom du programme, date de création, badge de statut et cadenas de verrouillage `🔒` si il a été positionné.
+
+   . Glissement latéral (Swipe) pour accéder immédiatement à *Renommer* et *Supprimer*.
+
+   . Affichage d'un menu contextuel via  ⋮  (Voir plus bas)
 
 ---
 
@@ -32,9 +39,9 @@ L'onglet Setlists affiche la liste de tous vos programmes créés :
 Dans Music Score Manager, le passage sur scène est instantané :
 
 - **Un simple toucher sur la carte d'une setlist** lance **directement la lecture de la première partition** dans le visualiseur plein écran.
-  
+
 - Si la setlist est vide (aucun morceau associé), un message d'information vous avertit et vous invite à lui assigner des partitions.
-  
+
 - Pendant la lecture, la setlist active le **mode enchaînement continu** : lorsque vous tournez la dernière page d'un morceau, l'application bascule automatiquement sur la première page du morceau suivant du programme !
   Ce paramètre peut bien entendu être défini dans les caractéristiques de votre SetList...
 
@@ -46,16 +53,24 @@ Dans Music Score Manager, le passage sur scène est instantané :
 
 - **Ouverture Discrète depuis le Haut** : Un simple appui tout en haut au centre de l'écran (barre tactile transparente) fait descendre le volet d'avancement fixé au sommet de l'écran.
   
+
 - **Centrage Automatique Immédiat** : À l'ouverture, la boîte défile automatiquement pour centrer le morceau actuellement joué dans la liste.
   
+
 - **Palette Visuelle Dédiée par Statut** :
-  - **Partition en cours** : Fond contrasté bleu nuit, contour lumineux cyan, badge `▶` vert éclatant, titre blanc éclatant et libellé *« En cours »*.
-  - **Partitions déjà passées** : Badge coché `✓` vert sauge, texte gris et libellé « Passé »
-  - **Partitions à venir** : Numéro en bleu pastel, texte en blanc , compositeur et libellé *« À venir »*.
-    
+
+   . **Partition en cours** : Fond contrasté bleu nuit, contour lumineux cyan, badge `▶` vert éclatant, titre blanc éclatant et libellé *« En cours »*.
+
+   . **Partitions déjà passées** : Badge coché `✓` vert sauge, texte gris et libellé « Passé »
+
+   . **Partitions à venir** : Numéro en bleu pastel, texte en blanc , compositeur et libellé *« À venir »*.
+   
+
 - **Navigation & Fermeture** :
-  - Cliquez sur n'importe quel morceau pour y sauter directement et instantanément.
-  - Fermez le volet via la croix `✕`, en tapant sur le fond semi-transparent ou en cliquant sur le morceau courant.
+
+   . Cliquez sur n'importe quel morceau pour y sauter directement et instantanément.
+
+   . Fermez le volet via la croix `✕`, en tapant sur le fond semi-transparent ou en cliquant sur le morceau courant.
 
 ---
 
@@ -64,52 +79,57 @@ Dans Music Score Manager, le passage sur scène est instantané :
 Chaque setlist dispose de son propre menu d'options via le bouton **⋮** :
 
 1. **▶️ Démarrer la setlist** :
-   
-   - Lance le concert directement sur le premier morceau en mode plein écran.
+
+   Lance le concert directement sur le premier morceau en mode plein écran.
+
+
 
 2. **✏️ Éditer la setlist** :
-   
-   - Ouvre la fenêtre d'édition :
-     * **Titre, Statut & Date et heure du Concert** : nom du programme, pastille de statut et date planifiée de la prestation.
-       
-     * **Vérouillage par un cadenas.**
-       Evite de mauvaises manipulations pendant un concert et verrouille la setlist.
-       
-     * **Volet repliable « Options avancées »** :
-       . activez le mode enchaînement continu de lecture des partitions dans l'ordre spécifié plus bas
-       . assignez un **profil de pédalier Bluetooth dédié** (prioritaire pendant cette setlist puis restauré automatiquement à la sortie)
-       . supprimez la setlist en toute sécurité.
-       
-     * **Ajout de partitions ultra-fluide** : fenêtre de sélection avec recherche instantanée, tri et **bouton de filtre par dossier / catégorie `[📁]`** pour cibler rapidement un répertoire.
-     * **Réorganisation & Gestion** : réordonnez les morceaux par glisser-déposer, dupliquer un morceau et supprimez un titre avec la corbeille.
-       
 
-        3.**📡 Envoyer en Wi-Fi Direct** :
+Ouvre la fenêtre d'édition :
 
+* **Titre, Statut & Date et heure du Concert** : nom du programme, pastille de statut et date planifiée de la prestation.
+
+* **Vérouillage par un cadenas.**
+  Evite de mauvaises manipulations pendant un concert et verrouille la setlist.
+
+* **Volet repliable « Options avancées »** :
+  . activez le mode enchaînement continu de lecture des partitions dans l'ordre spécifié plus bas
+  . assignez un **profil de pédalier Bluetooth dédié** (prioritaire pendant cette setlist puis restauré automatiquement à la sortie)
+  . supprimez la setlist en toute sécurité.
+
+* **Ajout de partitions ultra-fluide** : fenêtre de sélection avec recherche instantanée, tri et **bouton de filtre par dossier / catégorie `[📁]`** pour cibler rapidement un répertoire.
+
+* **Réorganisation & Gestion** : réordonnez les morceaux par glisser-déposer, dupliquer un morceau et supprimez un titre avec la corbeille.
+
+
+
+
+3. **📡 Envoyer en Wi-Fi Direct** :
 - Permet de transmettre la setlist entière ainsi que tous ses fichiers de partitions associés vers les tablettes des autres musiciens en streaming direct sans Internet.
+
 - Boîte de dialogue d'options :
-  * ☑️ *Inclure les annotations manuscrites*.
-  * ☑️ *Inclure les pistes audio rattachées*.
+
+   . ☑️ *Inclure les annotations manuscrites*.
+
+   . ☑️ *Inclure les pistes audio rattachées*.
 
 
-        4.**📦 Exporter (.msmsetlist)** :
 
+4. **📦 Export (.msmsetlist)**:
 - Génère un paquet autonome `.msmsetlist` contenant le programme complet, les métadonnées de l'ordre de passage, les PDF et (en option) les annotations et pistes audio.
 
 
 
-        5.**📑 Dupliquer la setlist** :
-
+5. **📑 Dupliquer la setlist** :
 - Crée instantanément une copie complète de la setlist avec l'ensemble des morceaux conservés dans le même ordre.
 
 
 
-        6.**🏷️ Renommer** :
-
+6. **🏷️ Renommer** :
 - Modifie rapidement l'intitulé de la setlist.
 
 
 
-7.**🗑️ Supprimer** :
-
+7. **🗑️ Supprimer** :
 - Supprime la setlist (vos partitions restent intactes dans votre bibliothèque).

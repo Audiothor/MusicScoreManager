@@ -54,7 +54,7 @@
                         x:Name="ScoresCollectionView"
                         Margin="15,0"
                         SelectionMode="None"
-                        ItemSizingStrategy="MeasureFirstItem">
+                        ItemSizingStrategy="MeasureAllItems">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="1" VerticalItemSpacing="10" />
             </CollectionView.ItemsLayout>

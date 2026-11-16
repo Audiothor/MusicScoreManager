@@ -3,7 +3,7 @@
 The **Tools** menu hosts Music Score Manager's powerful suite of built-in utilities designed to manipulate, share, clean up, and safeguard your music catalog without relying on a computer or internet connection.
 
 <p style="text-align: center;">
-  <img src="../../images/outils_fr.jpeg" alt="Tools overview" style="max-width: 100%; height: auto;">
+  <img src="../../images/outils_en.jpeg" alt="Tools overview" style="max-width: 100%; height: auto;">
 </p>
 
 ---
@@ -16,20 +16,24 @@ The **Score Scanner** allows you to digitize physical sheet music directly from 
   Take photos of each page of your score using your camera (`Take Photo`) or import previously captured photos (`Pick Image`).
 
 - **High-Visibility Enhancement Filters**:  
+  
   - **Optimized B&W Score (High Contrast)**: applies an adaptive thresholding algorithm to eliminate music stand shadows, whiten the background, and make staves and musical notes razor-sharp.  
   - **Grayscale**: smooths tonal gradients while maintaining a compact file size.  
   - **Original Color**: preserves the raw appearance of the original document and colored handwritten markings.
 
 - **Metadata & Folder / Category Assignment**:  
+  
   - Enter the **Title** and **Composer / Arranger** directly.  
   - **Folder / Category Selection**: choose the destination folder (defaults to "Default") or create a new folder on the fly with the `➕` button.
 
 - **Dynamic Page Management**:  
+  
   - Thumbnail preview of every page with sequence number.  
   - Individual 90° rotation (`↻`) and targeted deletion (`🗑️`).  
   - `Delete All` button to reset the scanning session.
 
 - **Immediate Multi-Page PDF Generation**:  
+  
   - The **Generate Score** buttons (at top and bottom) compile your processed pages into a multi-page PDF, register it in your library, and open it immediately in the viewer!
 
 ---
@@ -81,6 +85,7 @@ Both devices simply connect to the shared local Wi-Fi network.
 
 <u>- CASE 2: NO EXISTING WI-FI NETWORK AVAILABLE (backstage, outdoors, festival, church)</u>  
 **=> Create a direct Wi-Fi link between the two tablets:**  
+
 1. **On Tablet 1 (either device):**  
    Open Android settings / notification drawer and turn on **« Wi-Fi Hotspot »** (or *Mobile Hotspot / Tethering*).  
 2. **On Tablet 2:**  
@@ -93,12 +98,14 @@ Both devices simply connect to the shared local Wi-Fi network.
    Click the large green button **« 🟢 Activate Reception (Make Visible) »**.
 
 2. **On the sending tablet:**  
+   
    - On the score or setlist to share, tap the **⋮** (3 dots) menu > **« Send via Wi-Fi Direct »** (or check multiple scores in multi-selection mode).  
    - The recipient tablet appears immediately in the discovered devices list.  
    - Choose whether to include handwritten annotations and attached audio tracks.  
    - Tap its name to begin sending.
 
 3. **On the receiving tablet:**  
+   
    - A confirmation dialog appears: tap **« Accept »**.  
    - Scores, annotations, and audio tracks are received and integrated directly into your library in seconds!
 

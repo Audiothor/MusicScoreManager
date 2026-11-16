@@ -1314,6 +1314,7 @@ public partial class ScoresPage : ContentPage
             {
                 SearchScoreBar.Text = string.Empty;
             }
+            _allTags = await _databaseService.GetTagsAsync();
             await LoadScoresAsync(string.Empty);
 
             await ShowModernImportSuccessAsync(scores);
