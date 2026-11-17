@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.2.12 — 16/11/2026](#v3212-16112026)
 - [v3.2.11 — 15/11/2026](#v3211-15112026)
 - [v3.2.10 — 15/11/2026](#v3210-15112026)
 - [v3.2.9 — 14/11/2026](#v329-14112026)
@@ -59,6 +60,26 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.12 — 16/11/2026
+
+### 1. Library: Critical Fix for Tag Display Loss after Score Import (`ScoresPage` & `DatabaseService`)
+- **1.1. Resolution of tag clipping caused by `MeasureFirstItem` in CollectionView:**
+  - Switched from `ItemSizingStrategy="MeasureFirstItem"` to `ItemSizingStrategy="MeasureAllItems"` on `ScoresCollectionView` in `ScoresPage.xaml` and `ScoreSelectionPage.xaml`.
+  - Technical explanation: when importing a score, the new untagged score is placed at the top of the list (descending date order). With `MeasureFirstItem`, the `CollectionView` forced the compact height of this first untagged score onto all other cards, clipping the tags row across the library. Switching to `MeasureAllItems` guarantees that every card dynamically and accurately adapts its height to its metadata.
+- **1.2. Reliability of details and database join table loading:**
+  - In `DatabaseService.LoadDetailsForScoresAsync`, removed LINQ `Where(st => ids.Contains(st.ScoreId))` queries and switched to direct in-memory loading of lightweight tables `ScoreTags`, `Tags`, and `ScoreAudioFiles` via `ToListAsync()`.
+  - Eliminated any risk of failure from empty SQL `IN ()` clauses in SQLite-net-pcl, guaranteeing an instantaneous and robust mapping of `AppliedTags` across all library scores.
+- **1.3. Immediate tag synchronization upon import:**
+  - Automatic refresh of the global tags cache (`_allTags`) in `ScoresPage.xaml.cs` prior to refreshing scores.
+
+### 2. Multilingual Documentation & High-Definition Screenshots (`docs/`)
+- **2.1. Full English documentation update:**
+  - Updated and fully translated guide pages: scores (`scores.en.md`), setlists (`setlists.en.md`), settings (`settings.en.md`), tools (`tools.en.md`), roadmap (`ROADMAP.en.md`), and homepage (`index.en.md`).
+- **2.2. Integration of new high-definition screenshots:**
+  - Added localized screenshots in English and French for scores, folders, settings, tools, and setlist editor in `docs/images/`.
 
 ---
 

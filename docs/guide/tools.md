@@ -2,9 +2,11 @@
 
 Le menu **Outils** regroupe la suite d'utilitaires spécialisés de Music Score Manager pour manipuler, partager, nettoyer et sécuriser vos partitions sans dépendre d'un ordinateur ou d'Internet.
 
-<p style="text-align: center;">
-  <img src="../../images/outils_fr.jpeg" alt="Affichage des Outils" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Affichage des Outils](../images/outils_fr.jpeg)
+
+</div>
 
 ---
 

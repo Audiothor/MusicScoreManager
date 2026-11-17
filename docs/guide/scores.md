@@ -3,9 +3,11 @@
 
 Le menu **Partitions** constitue la porte d'entrée de votre bibliothèque musicale. Il regroupe l'ensemble de vos partitions sous forme d'une grille de cartes modernes, réactives et optimisées pour les grands écrans comme pour les smartphones.
 
-<p style="text-align: center;">
-  <img src="../../images/partitions_liste_fr.jpeg" alt="Affichage des partitions sous forme de liste" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Affichage des partitions sous forme de liste](../images/partitions_liste_fr.jpeg)
+
+</div>
 
 ---
 
@@ -37,10 +39,12 @@ Si vous n'avez jamais lancé et donc importé de partitions, l'application vous 
   Une suppression de dossier déclenche automatiquement un déplacement des partitions contenues dans le répertoire "Default" : les partitions ne sont donc pas supprimées.
   Bien entendu les partitions peuvent aussi être accessibles et donc visionnable par ce biais. Les options de partitions avec l'accès au menu menu contextuel de la partition sont aussi disponibles.
 
-<p style="text-align: center;">
-  <img src="../../images/partitions_categorie_fr.jpeg" alt="Affichage des partitions sous forme de dossiers" style="max-width: 100%; height: auto;">
-  <img src="../../images/partitions_categorie2_fr.jpeg" alt="Affichage des partitions sous forme de dossiers" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Affichage des partitions sous forme de dossiers](../images/partitions_categorie_fr.jpeg)
+![Affichage des partitions sous forme de dossiers](../images/partitions_categorie2_fr.jpeg)
+
+</div>
 
 **[3] Bouton de Filtrage par Étiquettes (🏷️)**
 
@@ -131,9 +135,11 @@ Si le fichier PDF associé a été déplacé, renommé sur le stockage ou est in
 
 En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et ergonomique s'affiche :
 
-<p style="text-align: center;">
-  <img src="../../images/menu_partition_fr.jpeg" alt="Menu de partition" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Menu de partition](../images/menu_partition_fr.jpeg)
+
+</div>
 
 1.**📖 Ouvrir la partition** :
 
@@ -145,9 +151,11 @@ Ouvre immédiatement la partition dans le visualiseur plein écran (mode concert
 
 Ouvre la page d'édition détaillée :
 
-<p style="text-align: center;">
-  <img src="../../images/editer_partition_fr.jpeg" alt="Edition d'une partitions" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Edition d'une partition](../images/editer_partition_fr.jpeg)
+
+</div>
 
 * **Titre** et **Compositeur / Arrangeur**.
 

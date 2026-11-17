@@ -2,9 +2,11 @@
 
 The **Settings** menu allows you to tailor Music Score Manager specifically to your playing habits, your instrument, and your screen size.
 
-<p style="text-align: center;">
-  <img src="../../images/parametres_en.jpeg" alt="Settings overview" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Settings overview](../images/parametres_en.jpeg)
+
+</div>
 
 ---
 

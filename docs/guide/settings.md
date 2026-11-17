@@ -2,9 +2,11 @@
 
 Le menu **Paramètres**  vous permet d'adapter précisément Music Score Manager à vos habitudes de jeu, votre instrument et la taille de votre écran.
 
-<p style="text-align: center;">
-  <img src="../../images/parametres_fr.jpeg" alt="Affichage des Paramètres" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Affichage des Paramètres](../images/parametres_fr.jpeg)
+
+</div>
 
 ---
 

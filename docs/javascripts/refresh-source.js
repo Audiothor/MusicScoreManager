@@ -1,7 +1,7 @@
 (function () {
   try {
-    // 1. Invalider immédiatement tout cache sessionStorage obsolète antérieur à v3.2.11
-    var expectedMinVersion = "v3.2.11";
+    // 1. Invalider immédiatement tout cache sessionStorage obsolète antérieur à v3.2.12
+    var expectedMinVersion = "v3.2.12";
     for (var i = sessionStorage.length - 1; i >= 0; i--) {
       var key = sessionStorage.key(i);
       if (key && key.indexOf("__source") !== -1) {

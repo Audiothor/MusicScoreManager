@@ -1,7 +1,9 @@
 <h1 style="text-align: center;">Music Score Manager</h1>
-<p style="text-align: center;">
-  <img src="images/MusicScoreManager.png" alt="Music Score Manager" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Music Score Manager](images/MusicScoreManager.png)
+
+</div>
 
 Welcome to the comprehensive, in-depth documentation for **Music Score Manager**!
 
@@ -31,7 +33,7 @@ It is cross-platform (**Android / Windows**).
 - [FAQ](guide/FAQ.en.md)
 - [Privacy Policy & Legal Notice](confidentialite.en.md)
 - [Version History](Versions.en.md)
-- [ROADMAP](ROADMAP.en.md)
+- [ROADMAP](guide/ROADMAP.en.md)
 
 ---
 

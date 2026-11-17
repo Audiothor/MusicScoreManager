@@ -2,9 +2,11 @@
 
 Le menu **Setlists** est spécialement conçu pour planifier, structurer et exécuter vos programmes de concert, auditions, offices liturgiques et répétitions générales sans temps mort.
 
-<p style="text-align: center;">
-  <img src="../../images/editer_setlist_fr.jpeg" alt="Editer un setlist" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Editer un setlist](../images/editer_setlist_fr.jpeg)
+
+</div>
 
 ---
 

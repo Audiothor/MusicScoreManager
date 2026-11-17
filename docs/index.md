@@ -1,7 +1,9 @@
 <h1 style="text-align: center;">Music Score Manager</h1>
-<p style="text-align: center;">
-  <img src="images/MusicScoreManager.png" alt="Music Score Manager" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Music Score Manager](images/MusicScoreManager.png)
+
+</div>
 
 Bienvenue sur la documentation complète et détaillée de **Music Score Manager** !
 

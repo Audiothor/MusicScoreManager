@@ -3,9 +3,11 @@
 
 Le **Visualiseur** est l'espace où la musique prend vie. Conçu pour éliminer toute distraction visuelle, il offre une lisibilité maximale, un rendu synchrone ultra-fluide et des commandes gestuelles ultra-rapides.
 
-<p style="text-align: center;">
-  <img src="../../images/partition_fr.jpeg" alt="Affichage des Zones de clics sur la partition" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Affichage des Zones de clics sur la partition](../images/partition_fr.jpeg)
+
+</div>
 
 ---
 

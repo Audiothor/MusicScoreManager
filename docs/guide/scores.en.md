@@ -3,9 +3,11 @@
 
 The **Scores** menu is the primary gateway to your digital sheet music library. It displays all your scores in a responsive, modern card grid optimized for large tablets and phones alike.
 
-<p style="text-align: center;">
-  <img src="../../images/partitions_liste_en.jpeg" alt="Scores viewer list" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Scores viewer list](../images/partitions_liste_en.jpeg)
+
+</div>
 
 ---
 
@@ -35,10 +37,12 @@ If you have never launched the app or imported scores, the application will info
   Deleting a folder automatically moves the contained scores back to the "Default" directory: no scores are ever lost or deleted.  
   Scores remain directly viewable and accessible from this view, with full access to the score context menu (⋮).
 
-<p style="text-align: center;">
-  <img src="../../images/partitions_categorie_en.jpeg" alt="Folder view of scores" style="max-width: 100%; height: auto;">
-  <img src="../../images/partitions_categorie2_en.jpeg" alt="Folder view of scores" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Folder view of scores](../images/partitions_categorie_en.jpeg)
+![Folder view of scores](../images/partitions_categorie2_en.jpeg)
+
+</div>
 
 **[3] Tag Filter Button (🏷️)**
 
@@ -118,9 +122,11 @@ Each score is represented by a visual card:
 
 Tapping the **⋮** button on any score card opens a modern, ergonomic card:
 
-<p style="text-align: center;">
-  <img src="../../images/menu_partition_en.jpeg" alt="Score context menu" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Score context menu](../images/menu_partition_en.jpeg)
+
+</div>
 
 1. **📖 Open score**:
    
@@ -130,9 +136,11 @@ Tapping the **⋮** button on any score card opens a modern, ergonomic card:
    
    - Opens the detailed metadata editing page:
 
-<p style="text-align: center;">
-  <img src="../../images/editer_partition_en.jpeg" alt="Score editing" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Score editing](../images/editer_partition_en.jpeg)
+
+</div>
 
 * **Title** and **Composer / Arranger**.
 

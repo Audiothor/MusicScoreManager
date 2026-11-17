@@ -3,9 +3,11 @@
 
 The **Stage Viewer** is where your music comes to life. Designed to eliminate every visual distraction, it provides maximum legibility, ultra-fluid synchronous rendering, and lightning-fast touch gestures.
 
-<p style="text-align: center;">
-  <img src="../../images/partition_fr.jpeg" alt="Click zones on the score viewer" style="max-width: 100%; height: auto;">
-</p>
+<div style="text-align: center;" markdown="1">
+
+![Click zones on the score viewer](../images/partition_fr.jpeg)
+
+</div>
 
 ---
 
