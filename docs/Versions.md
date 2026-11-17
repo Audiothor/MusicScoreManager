@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.13 — 17/11/2026](#v3213-17112026)
 - [v3.2.12 — 16/11/2026](#v3212-16112026)
 - [v3.2.11 — 15/11/2026](#v3211-15112026)
 - [v3.2.10 — 15/11/2026](#v3210-15112026)
@@ -60,6 +61,26 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.13 — 17/11/2026
+
+### 1. Annotations Manuscrites : Élimination des Déclenchements Multiples de Traits (`ViewerPage`)
+- **1.1. Résolution du cumul de gestes concurrents (Surligneur et Crayon) :**
+  - Sur Android, l'écouteur tactile natif (`OnNativeAnnotationsContainerTouch`), le `PointerGestureRecognizer` et le `PanGestureRecognizer` de MAUI se déclenchaient simultanément lors d'un tracé au doigt.
+  - Chaque tracé enregistrait ainsi 3 annotations superposées et créait 3 entrées d'annulation (Undo), rendant le surlignage artificiellement sombre (~63% au lieu de 28%).
+  - Neutralisation des écouteurs `PointerGestureRecognizer` sous Android (`#if ANDROID return; #endif`), suppression du `PanGestureRecognizer` redondant et mise en place d'un verrou anti-réentrance (`_isFinishingStroke`) garantissant un enregistrement unique et synchrone par geste.
+
+### 2. Sélecteur d'Opacité pour le Surligneur et le Crayon (`ViewerPage` & `Models`)
+- **2.1. Niveaux d'opacité configurables :**
+  - **Surligneur / Stabilo** : Choix entre Clair (**28% par défaut**), Moyen (50%) et Foncé (75%).
+  - **Crayon** : Choix entre Clair (40%), Moyen (70%) et Opaque (**100% par défaut**).
+  - Mémorisation persistante du choix d'opacité via `Preferences` et application rétroactive lors de la sélection d'une annotation existante.
+- **2.2. Internationalisation complète :**
+  - Traduction des intitulés d'opacité dans les 8 langues officielles de l'application (Français, Anglais, Allemand, Espagnol, Italien, Néerlandais, Polonais, Portugais).
+- **2.3. Persistance en base de données :**
+  - Ajout de la colonne `Opacity` sur le modèle `Annotation` avec migration automatique SQLite.
 
 ---
 

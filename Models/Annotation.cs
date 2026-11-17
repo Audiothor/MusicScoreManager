@@ -34,6 +34,8 @@ public class Annotation
     public string BackgroundColor { get; set; } = "Transparent";
     public string BorderColor { get; set; } = "Transparent";
 
+    public double Opacity { get; set; } = 1.0;
+
     public int PageNumber { get; set; } = 1;
 
     public DateTime DateCreated { get; set; } = DateTime.Now;

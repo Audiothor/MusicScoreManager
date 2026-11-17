@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.2.13 — 17/11/2026](#v3213-17112026)
 - [v3.2.12 — 16/11/2026](#v3212-16112026)
 - [v3.2.11 — 15/11/2026](#v3211-15112026)
 - [v3.2.10 — 15/11/2026](#v3210-15112026)
@@ -60,6 +61,26 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.13 — 17/11/2026
+
+### 1. Handwritten Annotations: Elimination of Concurrent Duplicate Strokes (`ViewerPage`)
+- **1.1. Resolution of concurrent gesture handling (Highlighter and Pencil):**
+  - On Android, the native touch listener (`OnNativeAnnotationsContainerTouch`), MAUI `PointerGestureRecognizer`, and MAUI `PanGestureRecognizer` were all triggering concurrently on a single finger swipe.
+  - Each stroke was recorded 3 times in SQLite and created 3 separate Undo history entries, making the highlighter appear artificially dark (~63% instead of 28%).
+  - Disabled `PointerGestureRecognizer` on Android (`#if ANDROID return; #endif`), removed redundant `PanGestureRecognizer`, and introduced a re-entrancy lock (`_isFinishingStroke`) to guarantee strictly one stroke per physical swipe.
+
+### 2. Opacity Selector for Highlighter and Pencil (`ViewerPage` & `Models`)
+- **2.1. Configurable opacity presets:**
+  - **Highlighter**: Select between Light (**28% default**), Medium (50%), and Dark (75%).
+  - **Pencil**: Select between Light (40%), Medium (70%), and Opaque (**100% default**).
+  - Persistent preference storage via `Preferences` and retroactive application when selecting an existing annotation.
+- **2.2. Full 8-language localization:**
+  - Translated all opacity labels and presets across all 8 supported languages (FR, EN, DE, ES, IT, NL, PL, PT).
+- **2.3. Database persistence:**
+  - Added `Opacity` field on `Annotation` model with SQLite automatic schema migration.
 
 ---
 
