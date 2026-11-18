@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.2.14 — 18/11/2026](#v3214-18112026)
 - [v3.2.13 — 17/11/2026](#v3213-17112026)
 - [v3.2.12 — 16/11/2026](#v3212-16112026)
 - [v3.2.11 — 15/11/2026](#v3211-15112026)
@@ -61,6 +62,18 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.14 — 18/11/2026
+
+### 1. Internationalization & Dialogs: Complete Resolution of Untranslated Strings
+- **1.1. Import confirmation modal (`ScoresPage`):**
+  - Translated primary action buttons "🎵 Open score" (`Score_Open_Btn`) and "✓ View library" (`Score_View_Library_Btn`) across all 8 official languages.
+  - Localized dynamic page count (`Score_Pages_Single`, `Score_Pages_Plural`, `Score_Format_Pdf`), eliminating all hardcoded fallback labels.
+- **1.2. Comprehensive audit and injection of 57 missing keys:**
+  - Systematically resolved all 57 localization keys used across message boxes, alerts (`DisplayAlertAsync`), export modals, sticker management, Wi-Fi direct transfers, and stage viewer/PDF assembler error messages.
+  - Synchronously populated in all 8 JSON language dictionaries (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`) and in-memory fallback dictionaries in `LocalizationService`.
 
 ---
 

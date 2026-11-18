@@ -1607,7 +1607,7 @@ public partial class ScoresPage : ContentPage
         if (setlists == null || setlists.Count == 0)
         {
             string emptyMsg = LocalizationService.Instance.GetString("Alert_No_Setlist", "Aucune setlist n'a été créée pour le moment.");
-            await DisplayAlertAsync("Setlists", emptyMsg, ok);
+            await DisplayAlertAsync(LocalizationService.Instance.GetString("Nav_Setlists", "Setlists"), emptyMsg, ok);
             return;
         }
 
@@ -2475,7 +2475,13 @@ public partial class ScoresPage : ContentPage
                 };
                 ModernModalContentContainer.Add(titleLbl);
 
-                string pageInfo = singleScore.PageCount > 0 ? $"📄 {singleScore.PageCount} page(s)" : "📄 Format PDF";
+                string pageInfo;
+                if (singleScore.PageCount > 1)
+                    pageInfo = $"📄 {string.Format(loc.GetString("Score_Pages_Plural", "{0} pages"), singleScore.PageCount)}";
+                else if (singleScore.PageCount == 1)
+                    pageInfo = $"📄 {loc.GetString("Score_Pages_Single", "1 page")}";
+                else
+                    pageInfo = $"📄 {loc.GetString("Score_Format_Pdf", "Format PDF")}";
                 var pageLbl = new Label
                 {
                     Text = pageInfo,

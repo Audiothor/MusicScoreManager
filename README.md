@@ -678,5 +678,5 @@ See the full [LICENSE](LICENSE) file for exhaustive legal terms.
 ---
 
 <p align="center">
-  <b>Music Score Manager v3.2.13</b> — Crafted with passion for musicians by <b>Audiothor</b>
+  <b>Music Score Manager v3.2.14</b> — Crafted with passion for musicians by <b>Audiothor</b>
 </p>

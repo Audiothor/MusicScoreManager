@@ -415,7 +415,15 @@ public class LocalizationService : INotifyPropertyChanged
                 ["Common_Warning"] = "Warning",
                 ["Common_Info"] = "Information",
                 ["Common_Score_Singular"] = "score",
-                ["Common_Scores_Plural"] = "scores"
+                ["Common_Scores_Plural"] = "scores",
+                ["Score_Open_Btn"] = "🎵 Open score",
+                ["Score_View_Library_Btn"] = "✓ View library",
+                ["Score_Format_Pdf"] = "PDF Format",
+                ["Score_Import_Success_Title"] = "Import Successful",
+                ["Score_Import_Single_Added"] = "Score successfully added!",
+                ["Score_Import_Available_Single"] = "Available in your library",
+                ["Score_Import_Plural_Added"] = "{0} scores added",
+                ["Score_Import_Available_Plural"] = "Immediately available in your library"
             },
             "de" => new Dictionary<string, string>
             {
@@ -578,7 +586,15 @@ public class LocalizationService : INotifyPropertyChanged
                 ["Common_Warning"] = "Warnung",
                 ["Common_Info"] = "Information",
                 ["Common_Score_Singular"] = "Partitur",
-                ["Common_Scores_Plural"] = "Partituren"
+                ["Common_Scores_Plural"] = "Partituren",
+                ["Score_Open_Btn"] = "🎵 Partitur öffnen",
+                ["Score_View_Library_Btn"] = "✓ Bibliothek anzeigen",
+                ["Score_Format_Pdf"] = "PDF-Format",
+                ["Score_Import_Success_Title"] = "Import erfolgreich",
+                ["Score_Import_Single_Added"] = "1 Partitur hinzugefügt",
+                ["Score_Import_Available_Single"] = "Sofort in Ihrer Bibliothek verfügbar",
+                ["Score_Import_Plural_Added"] = "{0} Partituren hinzugefügt",
+                ["Score_Import_Available_Plural"] = "Sofort in Ihrer Bibliothek verfügbar"
             },
             "es" => new Dictionary<string, string>
             {
@@ -742,7 +758,15 @@ public class LocalizationService : INotifyPropertyChanged
                 ["Common_Warning"] = "Advertencia",
                 ["Common_Info"] = "Información",
                 ["Common_Score_Singular"] = "partitura",
-                ["Common_Scores_Plural"] = "partituras"
+                ["Common_Scores_Plural"] = "partituras",
+                ["Score_Open_Btn"] = "🎵 Abrir partitura",
+                ["Score_View_Library_Btn"] = "✓ Ver biblioteca",
+                ["Score_Format_Pdf"] = "Formato PDF",
+                ["Score_Import_Success_Title"] = "Importación exitosa",
+                ["Score_Import_Single_Added"] = "1 partitura añadida",
+                ["Score_Import_Available_Single"] = "Disponible inmediatamente en su biblioteca",
+                ["Score_Import_Plural_Added"] = "{0} partituras añadidas",
+                ["Score_Import_Available_Plural"] = "Disponibles inmediatamente en su biblioteca"
             },
             _ => new Dictionary<string, string>
             {
@@ -912,7 +936,15 @@ public class LocalizationService : INotifyPropertyChanged
                 ["Common_Warning"] = "Attention",
                 ["Common_Info"] = "Information",
                 ["Common_Score_Singular"] = "partition",
-                ["Common_Scores_Plural"] = "partitions"
+                ["Common_Scores_Plural"] = "partitions",
+                ["Score_Open_Btn"] = "🎵 Ouvrir la partition",
+                ["Score_View_Library_Btn"] = "✓ Voir la bibliothèque",
+                ["Score_Format_Pdf"] = "Format PDF",
+                ["Score_Import_Success_Title"] = "Importation réussie !",
+                ["Score_Import_Single_Added"] = "1 partition ajoutée",
+                ["Score_Import_Available_Single"] = "Disponible immédiatement dans votre bibliothèque",
+                ["Score_Import_Plural_Added"] = "{0} partitions ajoutées",
+                ["Score_Import_Available_Plural"] = "Disponibles immédiatement dans votre bibliothèque"
             }
         };
     }

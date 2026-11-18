@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.14 — 18/11/2026](#v3214-18112026)
 - [v3.2.13 — 17/11/2026](#v3213-17112026)
 - [v3.2.12 — 16/11/2026](#v3212-16112026)
 - [v3.2.11 — 15/11/2026](#v3211-15112026)
@@ -61,6 +62,18 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.14 — 18/11/2026
+
+### 1. Internationalisation & Boîtes de Dialogue : Résolution Complète des Textes Non Traduits
+- **1.1. Modale de confirmation d'importation (`ScoresPage`) :**
+  - Traduction du bouton principal « 🎵 Ouvrir la partition » (`Score_Open_Btn`) et du bouton « ✓ Voir la bibliothèque » (`Score_View_Library_Btn`) dans les 8 langues officielles.
+  - Dynamisation du décompte de pages (`Score_Pages_Single`, `Score_Pages_Plural`, `Score_Format_Pdf`) supprimant tout libellé codé en dur.
+- **1.2. Audit et injection globale des 57 clés manquantes :**
+  - Intégration systématique des 57 clés de localisation utilisées dans les dialogues et alertes (`DisplayAlertAsync`, modales d'export, gestion des stickers, transferts Wi-Fi, messages d'erreur du visualiseur et de l'assembleur PDF).
+  - Déploiement synchrone dans les 8 dictionnaires JSON (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`) et dans les dictionnaires de secours en mémoire de `LocalizationService`.
 
 ---
 
