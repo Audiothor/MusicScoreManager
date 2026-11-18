@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.2.15 — 18/11/2026](#v3215-18112026)
 - [v3.2.14 — 18/11/2026](#v3214-18112026)
 - [v3.2.13 — 17/11/2026](#v3213-17112026)
 - [v3.2.12 — 16/11/2026](#v3212-16112026)
@@ -62,6 +63,15 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.15 — 18/11/2026
+
+### 1. Google Play Hardware Eligibility & Compliance (`AndroidManifest.xml`)
+- **1.1. Explicit optional Wi-Fi feature declaration:**
+  - Added `<uses-feature android:name="android.hardware.wifi" android:required="false" />` in AndroidManifest.
+  - Technical note: Network permissions `ACCESS_WIFI_STATE` and `CHANGE_WIFI_STATE` implicitly inferred strict hardware requirement for Wi-Fi. Declaring it optional guarantees universal device compatibility across Google Play (tablets, phones, Desktop/Chromebook, and Android XR).
 
 ---
 

@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.15 — 18/11/2026](#v3215-18112026)
 - [v3.2.14 — 18/11/2026](#v3214-18112026)
 - [v3.2.13 — 17/11/2026](#v3213-17112026)
 - [v3.2.12 — 16/11/2026](#v3212-16112026)
@@ -62,6 +63,15 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.15 — 18/11/2026
+
+### 1. Conformité & Éligibilité Matérielle Google Play (`AndroidManifest.xml`)
+- **1.1. Déclaration explicite de la fonctionnalité Wi-Fi comme facultative :**
+  - Ajout de `<uses-feature android:name="android.hardware.wifi" android:required="false" />` dans le manifeste Android.
+  - Explication technique : les permissions réseau `ACCESS_WIFI_STATE` et `CHANGE_WIFI_STATE` déduisaient implicitement une exigence matérielle stricte en Wi-Fi. Cette déclaration facultative garantit l'éligibilité maximale de l'application sur tous les appareils du Google Play Store (tablettes, téléphones, Chromebooks/Desktop et appareils Android XR).
 
 ---
 
