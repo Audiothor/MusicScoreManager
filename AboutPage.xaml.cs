@@ -21,7 +21,7 @@ public partial class AboutPage : ContentPage
             }
             else
             {
-                version = asm.GetName().Version?.ToString(3) ?? "3.2.15";
+                version = asm.GetName().Version?.ToString(3) ?? "3.2.16";
             }
         }
         VersionLabel.Text = $"v{version}";

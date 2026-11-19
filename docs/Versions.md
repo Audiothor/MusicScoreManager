@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.2.16 — 19/11/2026](#v3216-19112026)
 - [v3.2.15 — 18/11/2026](#v3215-18112026)
 - [v3.2.14 — 18/11/2026](#v3214-18112026)
 - [v3.2.13 — 17/11/2026](#v3213-17112026)
@@ -63,6 +64,27 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.2.16 — 19/11/2026
+
+### 1. Ergonomie & Mise en Page Adaptative de l'Édition de Setlist (`SetlistEditPage`)
+- **1.1. Architecture adaptative multi-colonnes en mode paysage :**
+  - Refonte dynamique de la page lors de la bascule en orientation paysage (`OnSizeAllocated`) : séparation en 2 colonnes indépendantes.
+  - **Colonne de gauche :** Formulaire de configuration de la setlist (nom, date, heure, statut, verrouillage, options avancées) encapsulé dans un `ScrollView` dédié.
+  - **Colonne de droite :** En-tête des partitions et `CollectionView` des partitions occupant 100 % de la hauteur de l'écran.
+- **1.2. Résolution du blocage de défilement tactile :**
+  - Élimination de l'écrasement de la liste de partitions causé par la hauteur du formulaire en mode paysage.
+  - La liste des partitions dispose d'un espace tactile continu pour le défilement, la réorganisation par glisser-déposer (`CanReorderItems`), la duplication et la suppression sans aucun conflit de geste.
+- **1.3. Préservation et sécurité en mode portrait :**
+  - Maintien de l'empilement vertical avec plafonnement adaptatif de la hauteur maximale du formulaire (`MaximumHeightRequest` à 45 % de la vue) pour garantir qu'au moins 55 % de la hauteur reste dédiée aux partitions.
+
+### 2. Fiabilisation du Déploiement Windows & Assets Graphiques
+- **2.1. Résolution dynamique de version :**
+  - Fiabilisation du composant À Propos (`AboutPage`) via introspection directe de l'assembly exécutable (`AssemblyInformationalVersionAttribute` / `AssemblyVersion`), évitant toute incohérence avec d'anciens caches de build Windows.
+- **2.2. Intégration des images pour Windows Unpackaged :**
+  - Déclaration explicite `<MauiImage Include="Resources\Images\*" />` et copie des ressources dans le dossier de publication autonome.
 
 ---
 

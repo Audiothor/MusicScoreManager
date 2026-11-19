@@ -303,6 +303,94 @@ public partial class SetlistEditPage : ContentPage
         }
     }
 
+    private bool? _lastAppliedOrientationWasLandscape = null;
+
+    protected override void OnSizeAllocated(double width, double height)
+    {
+        base.OnSizeAllocated(width, height);
+        if (width <= 0 || height <= 0) return;
+
+        bool isLandscape = width > height && width >= 500;
+        ApplyOrientationLayout(isLandscape, width, height);
+    }
+
+    private void ApplyOrientationLayout(bool isLandscape, double totalWidth, double totalHeight)
+    {
+        if (ContentGrid == null || DetailsScrollView == null || ScoresContainerGrid == null) return;
+
+        if (_lastAppliedOrientationWasLandscape == isLandscape && !isLandscape)
+        {
+            AdjustPortraitMaxHeight(totalHeight);
+            return;
+        }
+
+        _lastAppliedOrientationWasLandscape = isLandscape;
+
+        if (isLandscape)
+        {
+            // Mode Paysage : 2 Colonnes côte à côte
+            // Colonne 0 (Gauche) : Formulaire Détails Setlist défilable
+            // Colonne 1 (Droite) : Liste des Partitions prenant toute la hauteur de l'écran
+            double formWidth = Math.Clamp(totalWidth * 0.42, 320, 440);
+
+            ContentGrid.RowDefinitions.Clear();
+            ContentGrid.RowDefinitions.Add(new RowDefinition(GridLength.Star));
+
+            ContentGrid.ColumnDefinitions.Clear();
+            ContentGrid.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(formWidth, GridUnitType.Absolute)));
+            ContentGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+            ContentGrid.ColumnSpacing = 16;
+            ContentGrid.RowSpacing = 0;
+
+            Grid.SetRow(DetailsScrollView, 0);
+            Grid.SetColumn(DetailsScrollView, 0);
+
+            Grid.SetRow(ScoresContainerGrid, 0);
+            Grid.SetColumn(ScoresContainerGrid, 1);
+
+            DetailsScrollView.MaximumHeightRequest = double.PositiveInfinity;
+            DetailsScrollView.Margin = new Thickness(0);
+            ScoresContainerGrid.Margin = new Thickness(0);
+        }
+        else
+        {
+            // Mode Portrait : 2 Lignes empilées verticalement
+            // Ligne 0 (Haut) : Formulaire Détails Setlist
+            // Ligne 1 (Bas) : Liste des Partitions
+            ContentGrid.RowDefinitions.Clear();
+            ContentGrid.RowDefinitions.Add(new RowDefinition(GridLength.Auto));
+            ContentGrid.RowDefinitions.Add(new RowDefinition(GridLength.Star));
+
+            ContentGrid.ColumnDefinitions.Clear();
+            ContentGrid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
+            ContentGrid.ColumnSpacing = 0;
+            ContentGrid.RowSpacing = DeviceInfo.Idiom == DeviceIdiom.Phone ? 8 : 12;
+
+            Grid.SetRow(DetailsScrollView, 0);
+            Grid.SetColumn(DetailsScrollView, 0);
+
+            Grid.SetRow(ScoresContainerGrid, 1);
+            Grid.SetColumn(ScoresContainerGrid, 0);
+
+            AdjustPortraitMaxHeight(totalHeight);
+            ScoresContainerGrid.Margin = new Thickness(0);
+        }
+    }
+
+    private void AdjustPortraitMaxHeight(double totalHeight)
+    {
+        if (DetailsScrollView == null) return;
+        // En portrait, s'assurer que le formulaire ne bloque jamais la liste des partitions
+        if (totalHeight > 300)
+        {
+            DetailsScrollView.MaximumHeightRequest = totalHeight * 0.45;
+        }
+        else
+        {
+            DetailsScrollView.MaximumHeightRequest = double.PositiveInfinity;
+        }
+    }
+
     protected override async void OnAppearing()
     {
         base.OnAppearing();

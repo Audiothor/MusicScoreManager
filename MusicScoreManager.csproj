@@ -16,9 +16,9 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>3.2.15</ApplicationDisplayVersion>
-		<ApplicationVersion>32015</ApplicationVersion>
-		<!-- Version actuelle : v3.2.15 "Compatibilité matérielle universelle Google Play (déclaration facultative android.hardware.wifi)" -->
+		<ApplicationDisplayVersion>3.2.16</ApplicationDisplayVersion>
+		<ApplicationVersion>32016</ApplicationVersion>
+		<!-- Version actuelle : v3.2.16 "Mise en page adaptative édition setlist en mode paysage (2 colonnes, défilement indépendant)" -->
 
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
