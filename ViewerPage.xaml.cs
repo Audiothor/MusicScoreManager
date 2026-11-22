@@ -82,6 +82,8 @@ public partial class ViewerPage : ContentPage
     private int _leftPageNumber = 1;
     private int _rightPageNumber = 2;
     private bool _hasRightPage = false;
+    private bool _isEraserMode = false;
+    private int _lastSinglePageNumber = 1;
     private double _canvasXRel = 0.0;
     private double _canvasYRel = 0.0;
     private double _canvasWRel = 1.0;
@@ -190,7 +192,18 @@ public partial class ViewerPage : ContentPage
     {
         if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
         {
-            return 0.65;
+            if (ActiveAnnotationsContainer != null && ActiveAnnotationsContainer.Width > 0 && ActiveAnnotationsContainer.Height > 0)
+            {
+                double containerW = ActiveAnnotationsContainer.Width;
+                double containerH = ActiveAnnotationsContainer.Height;
+                double singlePageW = (_canvasWRel / 2.0) * containerW;
+                double portraitRefW = Math.Min(containerW, containerH) * _canvasWRel;
+                if (portraitRefW > 0 && singlePageW > 0)
+                {
+                    return Math.Clamp(singlePageW / portraitRefW, 0.50, 0.85);
+                }
+            }
+            return 0.707;
         }
         return 1.0;
     }
@@ -743,7 +756,41 @@ public partial class ViewerPage : ContentPage
                     AnnotationsContainer.IsVisible = true;
                     _currentPage = 1;
                     _maxPages = 1;
+                    _lastSinglePageNumber = 1;
                     UpdatePageIndicator();
+
+                    try
+                    {
+#if ANDROID
+                        var opts = new Android.Graphics.BitmapFactory.Options { InJustDecodeBounds = true };
+                        Android.Graphics.BitmapFactory.DecodeFile(fullPath, opts);
+                        if (opts.OutWidth > 0 && opts.OutHeight > 0)
+                        {
+                            _currentRenderedWidth = (_currentRotation % 180 != 0) ? opts.OutHeight : opts.OutWidth;
+                            _currentRenderedHeight = (_currentRotation % 180 != 0) ? opts.OutWidth : opts.OutHeight;
+                        }
+#else
+                        try
+                        {
+                            var imgInfo = SixLabors.ImageSharp.Image.Identify(fullPath);
+                            if (imgInfo != null)
+                            {
+                                _currentRenderedWidth = (_currentRotation % 180 != 0) ? imgInfo.Height : imgInfo.Width;
+                                _currentRenderedHeight = (_currentRotation % 180 != 0) ? imgInfo.Width : imgInfo.Height;
+                            }
+                        }
+                        catch { }
+#endif
+                        if (_currentRenderedWidth > 0 && _currentRenderedHeight > 0)
+                        {
+                            var (vpW, vpH, _) = GetEffectiveViewportInfo();
+                            double finalW = (ActiveAnnotationsContainer?.Width > 0) ? ActiveAnnotationsContainer.Width : vpW;
+                            double finalH = (ActiveAnnotationsContainer?.Height > 0) ? ActiveAnnotationsContainer.Height : vpH;
+                            UpdateCanvasBounds(finalW, finalH, _currentRenderedWidth, _currentRenderedHeight);
+                        }
+                    }
+                    catch { }
+
                     _isScoreReady = true;
 #if ANDROID
                     SetupNativeTouchHandling();
@@ -1019,6 +1066,7 @@ public partial class ViewerPage : ContentPage
                         if (rendered != null)
                         {
                             _currentPage = rendered.PageNumber;
+                            _lastSinglePageNumber = _currentPage;
                             _currentPageDisplay = _currentPage.ToString();
                         }
                     }
@@ -1050,6 +1098,7 @@ public partial class ViewerPage : ContentPage
                             }
                         }
                         _currentPage = rendered.PageNumber;
+                        _lastSinglePageNumber = _currentPage;
                         _currentPageDisplay = _currentPage.ToString();
                     }
                 }
@@ -1208,11 +1257,9 @@ public partial class ViewerPage : ContentPage
                     if (finalShouldBeTwoPages != _isTwoPagesMode)
                     {
                         _isTwoPagesMode = finalShouldBeTwoPages;
-                        int targetPage = _currentPage;
-                        if (finalShouldBeTwoPages && targetPage % 2 == 0)
-                        {
-                            targetPage = Math.Max(1, targetPage - 1);
-                        }
+                        int targetPage = finalShouldBeTwoPages
+                            ? ((_lastSinglePageNumber % 2 == 0) ? Math.Max(1, _lastSinglePageNumber - 1) : _lastSinglePageNumber)
+                            : (_lastSinglePageNumber > 0 ? _lastSinglePageNumber : _currentPage);
                         _ = RenderPdfCurrentAsync(targetPage);
                         return;
                     }
@@ -2714,8 +2761,8 @@ public partial class ViewerPage : ContentPage
             ToolTipProperties.SetText(RedoBtn, loc.GetString("Annotation_Redo", "Rétablir"));
         if (ResetAnnotationsBtn != null)
             ToolTipProperties.SetText(ResetAnnotationsBtn, loc.GetString("Annotation_Clean", "Effacer la page"));
-        if (DeleteAnnotationBtn != null)
-            ToolTipProperties.SetText(DeleteAnnotationBtn, loc.GetString("Annotation_Delete", "Supprimer"));
+        if (EraserBtn != null)
+            ToolTipProperties.SetText(EraserBtn, loc.GetString("Annotation_Eraser", "Gomme"));
         if (CloseAnnotationBarBtn != null)
             ToolTipProperties.SetText(CloseAnnotationBarBtn, loc.GetString("Common_Close", "Fermer"));
     }
@@ -3442,11 +3489,9 @@ public partial class ViewerPage : ContentPage
                 if (shouldBeTwoPages != _isTwoPagesMode)
                 {
                     _isTwoPagesMode = shouldBeTwoPages;
-                    int targetPage = _currentPage;
-                    if (shouldBeTwoPages && targetPage % 2 == 0)
-                    {
-                        targetPage = Math.Max(1, targetPage - 1);
-                    }
+                    int targetPage = shouldBeTwoPages
+                        ? ((_lastSinglePageNumber % 2 == 0) ? Math.Max(1, _lastSinglePageNumber - 1) : _lastSinglePageNumber)
+                        : (_lastSinglePageNumber > 0 ? _lastSinglePageNumber : _currentPage);
                     _ = RenderPdfCurrentAsync(targetPage);
                     return;
                 }
@@ -4221,6 +4266,29 @@ public partial class ViewerPage : ContentPage
         float density = Android.App.Application.Context.Resources?.DisplayMetrics?.Density ?? 1.0f;
         int pointerCount = motionEvent.PointerCount;
 
+        // 0. GESTION DU MODE GOMME (1 doigt, mode actif et déverrouillé)
+        if (_isEraserMode && !_isAnnotationsLocked)
+        {
+            double touchX = motionEvent.GetX() / density;
+            double touchY = motionEvent.GetY() / density;
+
+            switch (motionEvent.ActionMasked)
+            {
+                case Android.Views.MotionEventActions.Down:
+                case Android.Views.MotionEventActions.Move:
+                    (sender as Android.Views.View)?.Parent?.RequestDisallowInterceptTouchEvent(true);
+                    EraseAnnotationsAtPoint(touchX, touchY);
+                    args.Handled = true;
+                    return;
+
+                case Android.Views.MotionEventActions.Up:
+                case Android.Views.MotionEventActions.Cancel:
+                    (sender as Android.Views.View)?.Parent?.RequestDisallowInterceptTouchEvent(false);
+                    args.Handled = true;
+                    return;
+            }
+        }
+
         // 1. GESTION DU MODE SURLIGNAGE ET DU MODE DESSIN (1 doigt, mode actif et déverrouillé)
         if ((_isHighlightMode || _isDrawMode) && !_isAnnotationsLocked)
         {
@@ -4665,6 +4733,7 @@ public partial class ViewerPage : ContentPage
             _isAnnotationMode = false;
             _pendingSticker = null;
             StickerPickerOverlay.IsVisible = false;
+            DeactivateEraserMode();
 
             UpdateHighlightOpacityButtons();
             HighlightBtn.BackgroundColor = Color.FromArgb("#40007ACC");
@@ -4756,9 +4825,17 @@ public partial class ViewerPage : ContentPage
     private void OnHighlightPointerPressed(object? sender, PointerEventArgs e)
     {
 #if !ANDROID
-        if ((!_isHighlightMode && !_isDrawMode) || _isAnnotationsLocked) return;
+        if (_isAnnotationsLocked) return;
         var pos = e.GetPosition(ActiveAnnotationsContainer);
         if (pos == null) return;
+
+        if (_isEraserMode)
+        {
+            EraseAnnotationsAtPoint(pos.Value.X, pos.Value.Y);
+            return;
+        }
+
+        if ((!_isHighlightMode && !_isDrawMode)) return;
 
         if (_isHighlightMode) StartLiveHighlightStroke(pos.Value);
         else if (_isDrawMode) StartLiveDrawStroke(pos.Value);
@@ -4768,9 +4845,17 @@ public partial class ViewerPage : ContentPage
     private void OnHighlightPointerMoved(object? sender, PointerEventArgs e)
     {
 #if !ANDROID
-        if ((!_isHighlightMode && !_isDrawMode) || _isAnnotationsLocked || _activeLivePolyline == null) return;
+        if (_isAnnotationsLocked) return;
         var pos = e.GetPosition(ActiveAnnotationsContainer);
         if (pos == null) return;
+
+        if (_isEraserMode)
+        {
+            EraseAnnotationsAtPoint(pos.Value.X, pos.Value.Y);
+            return;
+        }
+
+        if ((!_isHighlightMode && !_isDrawMode) || _activeLivePolyline == null) return;
 
         if (_isHighlightMode) AddLiveHighlightPoint(pos.Value);
         else if (_isDrawMode) AddLiveDrawPoint(pos.Value);
@@ -4816,11 +4901,20 @@ public partial class ViewerPage : ContentPage
         {
             var last = _activeLivePoints[_activeLivePoints.Count - 1];
             double dist = Math.Sqrt(Math.Pow(pt.X - last.X, 2) + Math.Pow(pt.Y - last.Y, 2));
-            if (dist < 4.0) return;
+            if (dist < 3.0) return;
         }
 
         _activeLivePoints.Add(pt);
-        _activeLivePolyline?.Points.Add(pt);
+        if (_activeLivePolyline != null)
+        {
+            _activeLivePolyline.Points = new PointCollection(_activeLivePoints.ToArray());
+#if ANDROID
+            if (_activeLivePolyline.Handler?.PlatformView is Android.Views.View nv)
+            {
+                nv.Invalidate();
+            }
+#endif
+        }
     }
 
     private async Task FinishLiveHighlightStrokeAsync()
@@ -4869,6 +4963,7 @@ public partial class ViewerPage : ContentPage
                 PageNumber = targetPage
             };
 
+            _lastSinglePageNumber = targetPage;
             await _databaseService.SaveAnnotationAsync(annotation);
             _annotations.Add(annotation);
 
@@ -4934,6 +5029,7 @@ public partial class ViewerPage : ContentPage
             _isAnnotationMode = false;
             _pendingSticker = null;
             StickerPickerOverlay.IsVisible = false;
+            DeactivateEraserMode();
 
             UpdateDrawOpacityButtons();
             DrawBtn.BackgroundColor = Color.FromArgb("#40007ACC");
@@ -5063,7 +5159,16 @@ public partial class ViewerPage : ContentPage
         }
 
         _activeLivePoints.Add(pt);
-        _activeLivePolyline?.Points.Add(pt);
+        if (_activeLivePolyline != null)
+        {
+            _activeLivePolyline.Points = new PointCollection(_activeLivePoints.ToArray());
+#if ANDROID
+            if (_activeLivePolyline.Handler?.PlatformView is Android.Views.View nv)
+            {
+                nv.Invalidate();
+            }
+#endif
+        }
     }
 
     private async Task FinishLiveDrawStrokeAsync()
@@ -5112,6 +5217,7 @@ public partial class ViewerPage : ContentPage
                 PageNumber = targetPage
             };
 
+            _lastSinglePageNumber = targetPage;
             await _databaseService.SaveAnnotationAsync(annotation);
             _annotations.Add(annotation);
 
@@ -5169,6 +5275,7 @@ public partial class ViewerPage : ContentPage
             _isAnnotationMode = false;
             _pendingSticker = null;
             StickerPickerOverlay.IsVisible = false;
+            DeactivateEraserMode();
 
             TextAnnotationBtn.BackgroundColor = Color.FromArgb("#40007ACC");
             ActiveAnnotationsContainer.InputTransparent = false;
@@ -5449,6 +5556,7 @@ public partial class ViewerPage : ContentPage
                     PageNumber = targetPage
                 };
 
+                _lastSinglePageNumber = targetPage;
                 await _databaseService.SaveAnnotationAsync(annotation);
                 _annotations.Add(annotation);
                 _selectedAnnotation = annotation;
@@ -5484,6 +5592,7 @@ public partial class ViewerPage : ContentPage
         _isTextMode = false;
         TextOptionsOverlay.IsVisible = false;
         TextAnnotationBtn.BackgroundColor = Colors.Transparent;
+        DeactivateEraserMode();
 
         ActiveAnnotationsContainer.InputTransparent = false;
         StickerPickerOverlay.IsVisible = !StickerPickerOverlay.IsVisible;
@@ -5527,6 +5636,7 @@ public partial class ViewerPage : ContentPage
         _isHighlightMode = false;
         _isDrawMode = false;
         _isTextMode = false;
+        DeactivateEraserMode();
         HighlightBtn.BackgroundColor = Colors.Transparent;
         DrawBtn.BackgroundColor = Colors.Transparent;
         TextAnnotationBtn.BackgroundColor = Colors.Transparent;
@@ -5647,6 +5757,8 @@ public partial class ViewerPage : ContentPage
             PageNumber = targetPage
         };
 
+        _lastSinglePageNumber = targetPage;
+        _lastSinglePageNumber = targetPage;
         await _databaseService.SaveAnnotationAsync(annotation);
         _annotations.Add(annotation);
         _selectedAnnotation = annotation;
@@ -6023,6 +6135,8 @@ public partial class ViewerPage : ContentPage
             PageNumber = targetPage
         };
 
+        _lastSinglePageNumber = targetPage;
+        _lastSinglePageNumber = targetPage;
         await _databaseService.SaveAnnotationAsync(annotation);
         _annotations.Add(annotation);
         _selectedAnnotation = annotation;
@@ -6197,30 +6311,93 @@ public partial class ViewerPage : ContentPage
         RenderAnnotations();
     }
 
-    private async void OnDeleteSelectedAnnotationClicked(object? sender, EventArgs e)
+    private void DeactivateEraserMode()
     {
-        var loc = LocalizationService.Instance;
+        _isEraserMode = false;
+        if (EraserBtn != null)
+        {
+            EraserBtn.BackgroundColor = Colors.Transparent;
+            EraserBtn.TextColor = Color.FromArgb("#FF7043");
+        }
+    }
+
+    private async void OnAnnotationEraserClicked(object? sender, EventArgs e)
+    {
         if (_isAnnotationsLocked)
         {
+            var loc = LocalizationService.Instance;
             await DisplayAlertAsync(loc.GetString("Viewer_Annotations_Locked_Title"), loc.GetString("Viewer_Annotations_Locked_Msg"), "OK");
             return;
         }
 
-        if (_selectedAnnotation == null)
+        // Si une annotation est déjà sélectionnée, la gommer/supprimer immédiatement
+        if (_selectedAnnotation != null)
         {
-            await DisplayAlertAsync(loc.GetString("Viewer_Annotations_Delete_Title"), loc.GetString("Viewer_Annotations_Select_First"), "OK");
+            var annToDelete = _selectedAnnotation;
+            _selectedAnnotation = null;
+            await DeleteAnnotationWithUndoAsync(annToDelete);
             return;
         }
 
-        var annToDelete = _selectedAnnotation;
+        _isEraserMode = !_isEraserMode;
+
+        if (_isEraserMode)
+        {
+            _isHighlightMode = false;
+            _isDrawMode = false;
+            _isTextMode = false;
+            _isAnnotationMode = false;
+            _pendingSticker = string.Empty;
+
+            HighlightOptionsOverlay.IsVisible = false;
+            DrawOptionsOverlay.IsVisible = false;
+            TextOptionsOverlay.IsVisible = false;
+            StickerPickerOverlay.IsVisible = false;
+
+            HighlightBtn.BackgroundColor = Colors.Transparent;
+            DrawBtn.BackgroundColor = Colors.Transparent;
+            TextAnnotationBtn.BackgroundColor = Colors.Transparent;
+            StickersBtn.BackgroundColor = Colors.Transparent;
+
+            EraserBtn.BackgroundColor = Color.FromArgb("#40FF5555");
+            EraserBtn.TextColor = Color.FromArgb("#FF5555");
+        }
+        else
+        {
+            EraserBtn.BackgroundColor = Colors.Transparent;
+            EraserBtn.TextColor = Color.FromArgb("#FF7043");
+        }
+    }
+
+    private async Task DeleteAnnotationWithUndoAsync(Annotation annToDelete)
+    {
         await _databaseService.DeleteAnnotationAsync(annToDelete);
         _annotations.Remove(annToDelete);
         _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Delete, Annotation = annToDelete });
         _redoStack.Clear();
         UpdateUndoRedoButtons();
 
-        _selectedAnnotation = null;
+        if (_selectedAnnotation == annToDelete) _selectedAnnotation = null;
         RenderAnnotations();
+    }
+
+    private async void EraseAnnotationsAtPoint(double touchX, double touchY)
+    {
+        if (!_isEraserMode || _isAnnotationsLocked || ActiveAnnotationsContainer == null) return;
+        double containerW = ActiveAnnotationsContainer.Width;
+        double containerH = ActiveAnnotationsContainer.Height;
+        if (containerW <= 0 || containerH <= 0) return;
+
+        var hit = FindAnnotationAtPoint(touchX, touchY, containerW, containerH);
+        if (hit != null)
+        {
+            await DeleteAnnotationWithUndoAsync(hit);
+        }
+    }
+
+    private async void OnDeleteSelectedAnnotationClicked(object? sender, EventArgs e)
+    {
+        OnAnnotationEraserClicked(sender, e);
     }
 
     private async void OnResetAnnotationsClicked(object? sender, EventArgs e)
@@ -6262,7 +6439,7 @@ public partial class ViewerPage : ContentPage
         if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
         {
             visibleAnnotations = _annotations
-                .Where(a => a.PageNumber == _leftPageNumber || (_hasRightPage && a.PageNumber == _rightPageNumber))
+                .Where(a => a.PageNumber == _leftPageNumber || (_rightPageNumber <= _maxPages && a.PageNumber == _rightPageNumber))
                 .Reverse()
                 .ToList();
         }
@@ -6349,7 +6526,7 @@ public partial class ViewerPage : ContentPage
         if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
         {
             visibleAnnotations = _annotations
-                .Where(a => a.PageNumber == _leftPageNumber || (_hasRightPage && a.PageNumber == _rightPageNumber))
+                .Where(a => a.PageNumber == _leftPageNumber || (_rightPageNumber <= _maxPages && a.PageNumber == _rightPageNumber))
                 .ToList();
         }
         else
@@ -6401,12 +6578,16 @@ public partial class ViewerPage : ContentPage
             : (isSelected ? (1.5 * displayScale) : 0);
 
         Label? label = border.Content as Label ?? (border.Content as Grid)?.Children.OfType<Label>().FirstOrDefault();
+        if (label != null)
+        {
+            label.FontSize = fontSize;
+        }
         Size size = label != null ? label.Measure(double.PositiveInfinity, double.PositiveInfinity) : Size.Zero;
 
         double charCount = string.IsNullOrEmpty(ann.Content) ? 1 : ann.Content.Length;
-        double minTextW = charCount * (fontSize * 0.58);
-        double measuredW = Math.Max(size.Width, minTextW);
-        double measuredH = Math.Max(size.Height, fontSize * 1.2);
+        double minTextW = charCount * (fontSize * 0.60);
+        double measuredW = (size.Width > 0) ? Math.Max(size.Width, minTextW) : minTextW;
+        double measuredH = (size.Height > 0) ? Math.Max(size.Height, fontSize * 1.25) : (fontSize * 1.25);
 
         double padX = ((hasBorder || hasBg) ? 8 : 4) * displayScale;
         double padY = ((hasBorder || hasBg) ? 4 : 2) * displayScale;
@@ -6597,6 +6778,7 @@ public partial class ViewerPage : ContentPage
                             a.PageNumber = newPage;
                             a.X = newRx;
                             a.Y = newRy;
+                            _lastSinglePageNumber = newPage;
                         }
                         b.TranslationX = 0;
                         b.TranslationY = 0;
@@ -6857,6 +7039,7 @@ public partial class ViewerPage : ContentPage
                             a.PageNumber = newPage;
                             a.X = newRx;
                             a.Y = newRy;
+                            _lastSinglePageNumber = newPage;
                         }
                         b.TranslationX = 0;
                         b.TranslationY = 0;

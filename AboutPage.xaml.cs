@@ -10,8 +10,8 @@ public partial class AboutPage : ContentPage
         InitializeComponent();
 
         // Résolution robuste de la version de l'application
-        string version = AppInfo.Current.VersionString;
-        if (string.IsNullOrWhiteSpace(version) || version.StartsWith("0.0") || version.StartsWith("2.8.0"))
+        string version = "3.3.0";
+        try
         {
             var asm = typeof(AboutPage).Assembly;
             var infoVersion = asm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
@@ -21,8 +21,20 @@ public partial class AboutPage : ContentPage
             }
             else
             {
-                version = asm.GetName().Version?.ToString(3) ?? "3.2.16";
+                var v = AppInfo.Current.VersionString;
+                if (!string.IsNullOrWhiteSpace(v) && !v.StartsWith("0.0") && !v.StartsWith("2.8"))
+                {
+                    version = v;
+                }
+                else
+                {
+                    version = asm.GetName().Version?.ToString(3) ?? "3.3.0";
+                }
             }
+        }
+        catch
+        {
+            version = "3.3.0";
         }
         VersionLabel.Text = $"v{version}";
 

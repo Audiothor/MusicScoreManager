@@ -53,6 +53,8 @@ namespace MusicScoreManager.Services
         public double Scale { get; set; } = 1.0;
         public string Color { get; set; } = "#FF0000";
         public string BackgroundColor { get; set; } = "Transparent";
+        public string BorderColor { get; set; } = "Transparent";
+        public double Opacity { get; set; } = 1.0;
     }
 
     public class ScoreTransferMetadata

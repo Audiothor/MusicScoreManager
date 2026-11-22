@@ -48,6 +48,7 @@ bld/
 .DS_Store
 
 # Windows
+publish/
 Thumbs.db
 
 # Internal Context

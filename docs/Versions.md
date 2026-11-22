@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.3.0 — 22/11/2026](#v330-22112026)
 - [v3.2.16 — 19/11/2026](#v3216-19112026)
 - [v3.2.15 — 18/11/2026](#v3215-18112026)
 - [v3.2.14 — 18/11/2026](#v3214-18112026)
@@ -64,6 +65,37 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.3.0 — 22/11/2026
+
+### 1. Améliorations Majeures des Annotations (`ViewerPage`)
+- **1.1. Outil Gomme dynamique (`EraserBtn`) :**
+  - Remplacement du bouton corbeille par un outil gomme interactif (`⌫`), accessible directement dans la barre d'outils.
+  - Suppression continue et fluide au passage du doigt sur n'importe quel élément (surlignage, tracé crayon, texte, sticker) dès qu'une partie est touchée.
+  - Prise en charge de la suppression immédiate de l'élément sélectionné lors d'un tap ponctuel.
+  - Historisation complète dans la pile d'annulation/rétablissement (`Undo`/`Redo`).
+- **1.2. Aperçu du tracé en temps réel :**
+  - Affichage instantané du tracé du crayon et du surligneur sous le doigt pendant le dessin, sans attendre le relâchement de la pression sur l'écran.
+  - Réassignation dynamique et invalidation continue de la polyline native sous Android et Windows.
+
+### 2. Corrections de Bugs Critiques (Annotations)
+- **2.1. Préservation de l'opacité et de la bordure lors des exports et transferts Wi-Fi :**
+  - Ajout des propriétés `Opacity` et `BorderColor` dans `AnnotationMetadata` (`IWifiDirectTransferService`).
+  - Restauration exacte des niveaux d'opacité et des bordures lors des exports/imports de fichiers (`.msmscores`, `.msmsetlist`) et des échanges Wi-Fi Direct.
+- **2.2. Cohérence du positionnement des textes entre mode portrait et paysage 2 pages :**
+  - Élimination du décalage lors de la bascule en mode paysage 2 pages grâce au calcul dynamique de l'échelle d'affichage de page et à la synchronisation systématique de la taille de police (`FontSize`).
+- **2.3. Résolution de la disparition d'annotations entre portrait et paysage :**
+  - Suivi persistant de la dernière page active/annotée (`_lastSinglePageNumber`), évitant de basculer systématiquement sur la page 1 lors du retour en mode portrait.
+  - Fiabilisation du filtre d'annotations visibles pour inclure continuellement la page de droite en mode 2 pages (`_rightPageNumber <= _maxPages`).
+  - Détection exacte des dimensions et du cadrage pour les partitions de type Image (`ScoreType.Image`).
+
+### 3. Compatibilité Google Play & Internationalisation
+- **3.1. Déclaration de fonctionnalités matérielles optionnelles :**
+  - Ajout des attributs `android:required="false"` pour `android.hardware.wifi`, `wifi.direct`, `touchscreen`, `screen.portrait`, `screen.landscape` dans `AndroidManifest.xml` pour étendre la disponibilité sur tous les appareils (tablettes, chromebooks, Android XR).
+- **3.2. Localisation multilingue intégrale :**
+  - Traduction des nouveaux libellés dans les 8 langues officielles de l'application (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
 
 ---
 

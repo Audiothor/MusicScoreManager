@@ -764,7 +764,7 @@
 
                         <!-- Bouton Reset Nettoyage complet -->
                         <Button Grid.Column="7" x:Name="ResetAnnotationsBtn" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" ToolTipProperties.Text="{Binding [Annotation_Clean], Source={x:Static services:LocalizationService.Instance}}" />
-                        <Button Grid.Column="8" x:Name="DeleteAnnotationBtn" Text="🗑" BackgroundColor="Transparent" TextColor="#FF5555" Clicked="OnDeleteSelectedAnnotationClicked" FontSize="{OnIdiom Phone=14, Tablet=16}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" ToolTipProperties.Text="{Binding [Annotation_Delete], Source={x:Static services:LocalizationService.Instance}}" />
+                        <Button Grid.Column="8" x:Name="EraserBtn" Text="⌫" BackgroundColor="Transparent" TextColor="#FF7043" Clicked="OnAnnotationEraserClicked" FontSize="{OnIdiom Phone=15, Tablet=17}" FontAttributes="Bold" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" ToolTipProperties.Text="{Binding [Annotation_Eraser], Source={x:Static services:LocalizationService.Instance}}" />
                     </Grid>
                 </ScrollView>
                 <!-- Bouton Croix Fermer (toujours fixe et visible à droite sur Phone comme sur Tablette) -->

@@ -6,6 +6,8 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.3.0 — 22/11/2026](#v330-22112026)
+- [v3.2.16 — 19/11/2026](#v3216-19112026)
 - [v3.2.15 — 18/11/2026](#v3215-18112026)
 - [v3.2.14 — 18/11/2026](#v3214-18112026)
 - [v3.2.13 — 17/11/2026](#v3213-17112026)
@@ -63,6 +65,44 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.3.0 — 22/11/2026
+
+### 1. Major Annotation Improvements (`ViewerPage`)
+- **1.1. Dynamic Eraser Tool (`EraserBtn`):**
+  - Replaced the trash icon with an interactive eraser tool (`⌫`) directly accessible from the annotation toolbar.
+  - Continuous touch erasing: dragging a finger over any element (highlight, pencil stroke, text, sticker) erases it instantly as soon as any part is intersected.
+  - Instant deletion of the currently selected element upon tapping the eraser button.
+  - Fully integrated with the `Undo`/`Redo` history stack.
+- **1.2. Real-Time Drawing Stroke Preview:**
+  - Real-time stroke preview under the user's finger while drawing with the pencil or highlighter, without having to wait until releasing screen contact.
+  - Dynamic re-assignment and continuous invalidation of the native polyline on both Android and Windows.
+
+### 2. Critical Bug Fixes (Annotations)
+- **2.1. Annotation Opacity & Border Preservation in Exports and Wi-Fi Transfers:**
+  - Added `Opacity` and `BorderColor` properties to `AnnotationMetadata` (`IWifiDirectTransferService`).
+  - Restores exact opacity levels and borders across file export/import archives (`.msmscores`, `.msmsetlist`) and Wi-Fi Direct transfers.
+- **2.2. Text Annotation Alignment Consistency Across Portrait and Landscape 2-Pages:**
+  - Fixed text repositioning drifts during orientation transitions via dynamic page display scale calculation and synchronized font size (`FontSize`).
+- **2.3. Resolved Disappearing Annotations Between Portrait and Landscape:**
+  - Persistent tracking of the last active/annotated page (`_lastSinglePageNumber`), preventing unintended resets to page 1 upon switching back to portrait mode.
+  - Ensured annotations on the right-hand page in 2-page mode are consistently rendered (`_rightPageNumber <= _maxPages`).
+  - Added native dimension detection and accurate aspect ratio canvas bounds for image scores (`ScoreType.Image`).
+
+### 3. Google Play Store Compatibility & Localization
+- **3.1. Non-Essential Hardware Features Declaration:**
+  - Added `android:required="false"` for `android.hardware.wifi`, `wifi.direct`, `touchscreen`, `screen.portrait`, `screen.landscape` in `AndroidManifest.xml` to broaden device availability.
+- **3.2. Complete 8-Language Localization:**
+  - Added all new localization keys across all 8 supported languages (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
+
+---
+
+## v3.2.16 — 19/11/2026
+
+### 1. Setlist Edit Adaptive Layout (`SetlistEditPage`)
+- Responsive multi-column layout for setlist editing in landscape orientation, with independent vertical scrolling for both the form and the score collection.
 
 ---
 

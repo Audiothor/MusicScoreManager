@@ -100,6 +100,8 @@ namespace MusicScoreManager.Services
                     Scale = a.Scale,
                     Color = a.Color,
                     BackgroundColor = a.BackgroundColor,
+                    BorderColor = a.BorderColor,
+                    Opacity = a.Opacity,
                     PageNumber = a.PageNumber
                 }).ToList()
             };
@@ -453,7 +455,9 @@ namespace MusicScoreManager.Services
                                 Y = a.Y,
                                 Scale = a.Scale,
                                 Color = a.Color,
-                                BackgroundColor = a.BackgroundColor
+                                BackgroundColor = a.BackgroundColor,
+                                BorderColor = string.IsNullOrEmpty(a.BorderColor) ? "Transparent" : a.BorderColor,
+                                Opacity = a.Opacity > 0 ? a.Opacity : 1.0
                             };
                             await _databaseService.SaveAnnotationAsync(ann);
                         }
@@ -585,7 +589,9 @@ namespace MusicScoreManager.Services
                             Y = a.Y,
                             Scale = a.Scale,
                             Color = a.Color,
-                            BackgroundColor = a.BackgroundColor
+                            BackgroundColor = a.BackgroundColor,
+                            BorderColor = string.IsNullOrEmpty(a.BorderColor) ? "Transparent" : a.BorderColor,
+                            Opacity = a.Opacity > 0 ? a.Opacity : 1.0
                         };
                         await _databaseService.SaveAnnotationAsync(ann);
                     }
