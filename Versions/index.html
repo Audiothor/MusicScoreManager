@@ -917,6 +917,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v331-22112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.3.1 — 22/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.3.1 — 22/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-annotations-ergonomie-trace-temps-reel-gomme-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Annotations — Ergonomie, Tracé Temps Réel &amp; Gomme (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-wi-fi-direct-fluidite-formatage-synchronisation-dannotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Wi-Fi Direct — Fluidité, Formatage &amp; Synchronisation d'Annotations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v330-22112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4237,6 +4276,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v331-22112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.3.1 — 22/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.3.1 — 22/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-annotations-ergonomie-trace-temps-reel-gomme-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Annotations — Ergonomie, Tracé Temps Réel &amp; Gomme (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-wi-fi-direct-fluidite-formatage-synchronisation-dannotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Wi-Fi Direct — Fluidité, Formatage &amp; Synchronisation d'Annotations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v330-22112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7536,6 +7614,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v331-22112026">v3.3.1 — 22/11/2026</a></li>
 <li><a href="#v330-22112026">v3.3.0 — 22/11/2026</a></li>
 <li><a href="#v3216-19112026">v3.2.16 — 19/11/2026</a></li>
 <li><a href="#v3215-18112026">v3.2.15 — 18/11/2026</a></li>
@@ -7595,6 +7674,34 @@
 <li><a href="#v252-07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251-07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250-07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v331-22112026">v3.3.1 — 22/11/2026</h2>
+<h3 id="1-annotations-ergonomie-trace-temps-reel-gomme-viewerpage">1. Annotations — Ergonomie, Tracé Temps Réel &amp; Gomme (<code>ViewerPage</code>)</h3>
+<ul>
+<li><strong>1.1. Liberté totale dans les marges blanches + repère discret (Option C) :</strong></li>
+<li>Suppression du blocage vertical invisible sur les PDF/Images dont le ratio diffère de l'écran portrait : les textes, stickers et dessins peuvent être placés librement sur toute la surface blanche.</li>
+<li>Ajout d'un filet pointillé bleu très discret délimitant les bords réels de la page <strong>uniquement</strong> lorsque la barre d'annotations est ouverte (fond 100 % blanc uniforme en mode lecture).</li>
+<li>Sécurité automatique en mode paysage : les annotations placées dans les marges en portrait restent toujours visibles au bord haut/bas de l'écran sans jamais disparaître hors-écran.</li>
+<li><strong>1.2. Tracé temps réel continu pour Crayon et Surligneur :</strong></li>
+<li>Attribution explicite des limites plein conteneur (<code>AbsoluteLayoutFlags.All</code>, <code>Rect(0, 0, 1, 1)</code>) sur la polyline active et les polylines enregistrées, supprimant totalement le découpage (clipping) qui faisait disparaître le trait par zones pendant le tracé.</li>
+<li>Mise à l'échelle immédiate de l'épaisseur du trait en cours pour correspondre exactement au rendu final.</li>
+<li><strong>1.3. Nouvelle icône Gomme vectorielle &amp; précision d'effacement :</strong></li>
+<li>Remplacement du symbole <code>⌫</code> par une véritable icône vectorielle de gomme bicolore (rose/blanc) rendue nettement sur toutes les résolutions.</li>
+<li>Correction de <code>InputTransparent</code> en mode gomme sur tous les éléments (traits crayon, surlignages, textes, stickers) pour qu'ils ne bloquent plus le passage du doigt.</li>
+<li>Calcul géométrique de distance point-à-segment (<code>DistanceToSegment</code>) pour effacer n'importe quel trait crayon/surligneur au premier passage, et détection sur toute la largeur réelle des mots/stickers.</li>
+<li>Prévention de la fermeture intempestive de la barre d'annotations lors d'un tap en mode gomme.</li>
+</ul>
+<h3 id="2-wi-fi-direct-fluidite-formatage-synchronisation-dannotations">2. Wi-Fi Direct — Fluidité, Formatage &amp; Synchronisation d'Annotations</h3>
+<ul>
+<li><strong>2.1. Correction du message de confirmation d'envoi de Setlist :</strong></li>
+<li>Formatage effectif du nom de la setlist et du nombre de partitions (<code>string.Format</code>) dans <code>SetlistsPage</code> et harmonisation des modèles dans les 8 langues (<code>fr</code>, <code>en</code>, <code>de</code>, <code>es</code>, <code>it</code>, <code>nl</code>, <code>pl</code>, <code>pt</code>).</li>
+<li><strong>2.2. Élimination des lenteurs et saccades après réception Wi-Fi Direct :</strong></li>
+<li>Arrêt automatique de l'écoute UDP/TCP (<code>StopListeningAsync</code>) dès la fin de réception dans <code>ScoresPage</code>.</li>
+<li>Limitation de la fréquence des notifications de progression (max 10 fois/seconde au lieu de chaque bloc de 64 Ko) pour ne plus saturer le thread UI.</li>
+<li>Déport de l'importation lourde hors du thread UI (<code>Task.Run</code>), désabonnement propre des événements dans <code>WifiTransferPage</code> et libération immédiate des buffers mémoire.</li>
+<li><strong>2.3. Synchronisation des annotations sur partitions déjà existantes :</strong></li>
+<li>Dans <code>ExportImportService.ImportWifiSetlistAsync</code>, si le destinataire possède déjà une partition portant le même titre, les annotations incluses par l'expéditeur sont désormais fusionnées/importées au lieu d'être ignorées.</li>
 </ul>
 <hr />
 <h2 id="v330-22112026">v3.3.0 — 22/11/2026</h2>
