@@ -754,7 +754,7 @@
   "Wifi_Setlist_Connecting": "A ligar a {0}...",
   "Wifi_Setlist_Progress_Default": "Transferência em curso...",
   "Wifi_Setlist_Success_Title": "Transferência com sucesso",
-  "Wifi_Setlist_Success_Msg": "A setlist e todos os ficheiros de partituras foram enviados com sucesso!",
+  "Wifi_Setlist_Success_Msg": "A setlist '{0}' ({1} partitura(s)) foi enviada com sucesso via Wi-Fi Direct!",
   "Wifi_Setlist_Failed_Title": "Transferência falhou",
   "Wifi_Setlist_Failed_Msg": "A transferência falhou: {0}",
   "Wifi_Setlist_Error_Title": "Erro",

@@ -83,6 +83,8 @@ public partial class ViewerPage : ContentPage
     private int _rightPageNumber = 2;
     private bool _hasRightPage = false;
     private bool _isEraserMode = false;
+    private bool _isPointerEraserPressed = false;
+    private readonly HashSet<int> _erasingAnnotationIds = new();
     private int _lastSinglePageNumber = 1;
     private double _canvasXRel = 0.0;
     private double _canvasYRel = 0.0;
@@ -99,6 +101,8 @@ public partial class ViewerPage : ContentPage
             UpdateCanvasBounds(containerW, containerH, _currentRenderedWidth, _currentRenderedHeight);
         }
 
+        double screenX;
+        double screenY;
         if (_score.Type == ScoreType.PDF && _isTwoPagesMode)
         {
             double pageWRel = _canvasWRel / 2.0;
@@ -107,16 +111,19 @@ public partial class ViewerPage : ContentPage
                 ? (_canvasXRel + pageWRel)
                 : _canvasXRel;
 
-            double screenX = (pageXStartRel + rx * pageWRel) * containerW;
-            double screenY = (_canvasYRel + ry * pageHRel) * containerH;
-            return (screenX, screenY);
+            screenX = (pageXStartRel + rx * pageWRel) * containerW;
+            screenY = (_canvasYRel + ry * pageHRel) * containerH;
         }
         else
         {
-            double screenX = (_canvasXRel + rx * _canvasWRel) * containerW;
-            double screenY = (_canvasYRel + ry * _canvasHRel) * containerH;
-            return (screenX, screenY);
+            screenX = (_canvasXRel + rx * _canvasWRel) * containerW;
+            screenY = (_canvasYRel + ry * _canvasHRel) * containerH;
         }
+
+        // Option C : garantir qu'une annotation placée dans la marge blanche en portrait reste toujours visible au bord de l'écran en paysage
+        if (containerW > 8) screenX = Math.Clamp(screenX, 4.0, containerW - 4.0);
+        if (containerH > 8) screenY = Math.Clamp(screenY, 4.0, containerH - 4.0);
+        return (screenX, screenY);
     }
 
     private (int pageNumber, double rx, double ry) ScreenToPage(double absX, double absY, double containerW, double containerH)
@@ -140,20 +147,21 @@ public partial class ViewerPage : ContentPage
             {
                 double rx = pageWRel > 0 ? (relX - midXRel) / pageWRel : 0.0;
                 double ry = _canvasHRel > 0 ? (relY - _canvasYRel) / _canvasHRel : 0.0;
-                return (_rightPageNumber, Math.Clamp(rx, 0.0, 1.0), Math.Clamp(ry, 0.0, 1.0));
+                return (_rightPageNumber, Math.Clamp(rx, 0.0, 1.0), Math.Clamp(ry, -0.5, 1.5));
             }
             else
             {
                 double rx = pageWRel > 0 ? (relX - _canvasXRel) / pageWRel : 0.0;
                 double ry = _canvasHRel > 0 ? (relY - _canvasYRel) / _canvasHRel : 0.0;
-                return (_leftPageNumber, Math.Clamp(rx, 0.0, 1.0), Math.Clamp(ry, 0.0, 1.0));
+                return (_leftPageNumber, Math.Clamp(rx, 0.0, 1.0), Math.Clamp(ry, -0.5, 1.5));
             }
         }
         else
         {
             double rx = _canvasWRel > 0 ? (relX - _canvasXRel) / _canvasWRel : 0.0;
             double ry = _canvasHRel > 0 ? (relY - _canvasYRel) / _canvasHRel : 0.0;
-            return (_currentPage, Math.Clamp(rx, 0.0, 1.0), Math.Clamp(ry, 0.0, 1.0));
+            // Option C : liberté de placer dans les marges blanches haut/bas/gauche/droite en mode 1 page
+            return (_currentPage, Math.Clamp(rx, -0.25, 1.25), Math.Clamp(ry, -0.5, 1.5));
         }
     }
 
@@ -178,13 +186,13 @@ public partial class ViewerPage : ContentPage
 
             double rx = pageWRel > 0 ? (relX - pageXStartRel) / pageWRel : 0.0;
             double ry = _canvasHRel > 0 ? (relY - _canvasYRel) / _canvasHRel : 0.0;
-            return (Math.Clamp(rx, 0.0, 1.0), Math.Clamp(ry, 0.0, 1.0));
+            return (Math.Clamp(rx, 0.0, 1.0), Math.Clamp(ry, -0.5, 1.5));
         }
         else
         {
             double rx = _canvasWRel > 0 ? (relX - _canvasXRel) / _canvasWRel : 0.0;
             double ry = _canvasHRel > 0 ? (relY - _canvasYRel) / _canvasHRel : 0.0;
-            return (Math.Clamp(rx, 0.0, 1.0), Math.Clamp(ry, 0.0, 1.0));
+            return (Math.Clamp(rx, -0.25, 1.25), Math.Clamp(ry, -0.5, 1.5));
         }
     }
 
@@ -1496,7 +1504,7 @@ public partial class ViewerPage : ContentPage
 
     private void OnPanUpdated(object sender, PanUpdatedEventArgs e)
     {
-        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
+        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode || _isEraserMode) return;
 
         if (e.StatusType == GestureStatus.Started)
         {
@@ -3160,7 +3168,7 @@ public partial class ViewerPage : ContentPage
     {
         if (AnnotationBar.IsVisible)
         {
-            if (_isAnnotationMode || _isTextMode || _isHighlightMode || _isDrawMode) return;
+            if (_isAnnotationMode || _isTextMode || _isHighlightMode || _isDrawMode || _isEraserMode) return;
 
             AnnotationBar.IsVisible = false;
             BottomTouchBar.IsVisible = true; // Réactive la zone tactile du bas !
@@ -3203,9 +3211,9 @@ public partial class ViewerPage : ContentPage
                 _ = HandleTextPlacementAsync(x, y);
                 return;
             }
-            if (_isHighlightMode || _isDrawMode)
+            if (_isHighlightMode || _isDrawMode || _isEraserMode)
             {
-                // En mode dessin ou surlignage, ne jamais fermer la barre sur un tap
+                // En mode dessin, surlignage ou gomme, ne jamais fermer la barre sur un tap
                 return;
             }
 
@@ -3276,28 +3284,28 @@ public partial class ViewerPage : ContentPage
 
     private void OnImageSwipedLeft(object? sender, SwipedEventArgs e)
     {
-        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
+        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode || _isEraserMode) return;
         if (ZoomLayout.Scale > 1.05) return;
         TriggerPageTurnSwipe("SwipeLeft");
     }
 
     private void OnImageSwipedRight(object? sender, SwipedEventArgs e)
     {
-        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
+        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode || _isEraserMode) return;
         if (ZoomLayout.Scale > 1.05) return;
         TriggerPageTurnSwipe("SwipeRight");
     }
 
     private void OnImageSwipedUp(object? sender, SwipedEventArgs e)
     {
-        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
+        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode || _isEraserMode) return;
         if (ZoomLayout.Scale > 1.05) return;
         TriggerPageTurnSwipe("SwipeUp");
     }
 
     private void OnImageSwipedDown(object? sender, SwipedEventArgs e)
     {
-        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode) return;
+        if (AnnotationBar.IsVisible || _isHighlightMode || _isDrawMode || _isEraserMode) return;
         if (ZoomLayout.Scale > 1.05) return;
         TriggerPageTurnSwipe("SwipeDown");
     }
@@ -4831,6 +4839,7 @@ public partial class ViewerPage : ContentPage
 
         if (_isEraserMode)
         {
+            _isPointerEraserPressed = true;
             EraseAnnotationsAtPoint(pos.Value.X, pos.Value.Y);
             return;
         }
@@ -4851,7 +4860,10 @@ public partial class ViewerPage : ContentPage
 
         if (_isEraserMode)
         {
-            EraseAnnotationsAtPoint(pos.Value.X, pos.Value.Y);
+            if (_isPointerEraserPressed)
+            {
+                EraseAnnotationsAtPoint(pos.Value.X, pos.Value.Y);
+            }
             return;
         }
 
@@ -4865,6 +4877,7 @@ public partial class ViewerPage : ContentPage
     private async void OnHighlightPointerReleased(object? sender, PointerEventArgs e)
     {
 #if !ANDROID
+        _isPointerEraserPressed = false;
         if ((!_isHighlightMode && !_isDrawMode) || _isAnnotationsLocked || _activeLivePolyline == null) return;
         if (_isHighlightMode) await FinishLiveHighlightStrokeAsync();
         else if (_isDrawMode) await FinishLiveDrawStrokeAsync();
@@ -4881,17 +4894,23 @@ public partial class ViewerPage : ContentPage
         _activeLivePoints.Clear();
         _activeLivePoints.Add(pt);
 
+        double displayScale = GetPageDisplayScale();
         _activeLivePolyline = new Microsoft.Maui.Controls.Shapes.Polyline
         {
             Stroke = ParseColor(_currentHighlightColor),
-            StrokeThickness = _currentHighlightThickness,
+            StrokeThickness = _currentHighlightThickness * displayScale,
             StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Flat,
             StrokeLineJoin = Microsoft.Maui.Controls.Shapes.PenLineJoin.Round,
             Opacity = _currentHighlightOpacity,
             InputTransparent = true,
-            Points = new PointCollection { pt }
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+            ZIndex = 50,
+            Points = new PointCollection { pt, new Point(pt.X + 0.5, pt.Y) }
         };
 
+        AbsoluteLayout.SetLayoutFlags(_activeLivePolyline, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.All);
+        AbsoluteLayout.SetLayoutBounds(_activeLivePolyline, new Rect(0, 0, 1, 1));
         ActiveAnnotationsContainer.Children.Add(_activeLivePolyline);
     }
 
@@ -5135,17 +5154,23 @@ public partial class ViewerPage : ContentPage
         _activeLivePoints.Clear();
         _activeLivePoints.Add(pt);
 
+        double displayScale = GetPageDisplayScale();
         _activeLivePolyline = new Microsoft.Maui.Controls.Shapes.Polyline
         {
             Stroke = ParseColor(_currentDrawColor),
-            StrokeThickness = _currentDrawThickness,
+            StrokeThickness = _currentDrawThickness * displayScale,
             StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Round,
             StrokeLineJoin = Microsoft.Maui.Controls.Shapes.PenLineJoin.Round,
             Opacity = _currentDrawOpacity,
             InputTransparent = true,
-            Points = new PointCollection { pt }
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+            ZIndex = 50,
+            Points = new PointCollection { pt, new Point(pt.X + 0.5, pt.Y) }
         };
 
+        AbsoluteLayout.SetLayoutFlags(_activeLivePolyline, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.All);
+        AbsoluteLayout.SetLayoutBounds(_activeLivePolyline, new Rect(0, 0, 1, 1));
         ActiveAnnotationsContainer.Children.Add(_activeLivePolyline);
     }
 
@@ -6313,11 +6338,16 @@ public partial class ViewerPage : ContentPage
 
     private void DeactivateEraserMode()
     {
+        bool wasActive = _isEraserMode;
         _isEraserMode = false;
+        _isPointerEraserPressed = false;
         if (EraserBtn != null)
         {
             EraserBtn.BackgroundColor = Colors.Transparent;
-            EraserBtn.TextColor = Color.FromArgb("#FF7043");
+        }
+        if (wasActive)
+        {
+            RenderAnnotations();
         }
     }
 
@@ -6340,9 +6370,25 @@ public partial class ViewerPage : ContentPage
         }
 
         _isEraserMode = !_isEraserMode;
+        _isPointerEraserPressed = false;
 
         if (_isEraserMode)
         {
+            UnlockAnnotations();
+            _score.ShowAnnotations = true;
+            if (AnnotationsContainer != null)
+            {
+                AnnotationsContainer.Opacity = 1;
+                AnnotationsContainer.IsVisible = true;
+                AnnotationsContainer.InputTransparent = false;
+            }
+            if (ActiveAnnotationsContainer != null)
+            {
+                ActiveAnnotationsContainer.Opacity = 1;
+                ActiveAnnotationsContainer.IsVisible = true;
+                ActiveAnnotationsContainer.InputTransparent = false;
+            }
+
             _isHighlightMode = false;
             _isDrawMode = false;
             _isTextMode = false;
@@ -6359,26 +6405,36 @@ public partial class ViewerPage : ContentPage
             TextAnnotationBtn.BackgroundColor = Colors.Transparent;
             StickersBtn.BackgroundColor = Colors.Transparent;
 
-            EraserBtn.BackgroundColor = Color.FromArgb("#40FF5555");
-            EraserBtn.TextColor = Color.FromArgb("#FF5555");
+            EraserBtn.BackgroundColor = Color.FromArgb("#45FF5555");
         }
         else
         {
             EraserBtn.BackgroundColor = Colors.Transparent;
-            EraserBtn.TextColor = Color.FromArgb("#FF7043");
         }
+
+        // Re-rendre immédiatement pour basculer InputTransparent sur tous les éléments existants
+        RenderAnnotations();
     }
 
     private async Task DeleteAnnotationWithUndoAsync(Annotation annToDelete)
     {
-        await _databaseService.DeleteAnnotationAsync(annToDelete);
-        _annotations.Remove(annToDelete);
-        _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Delete, Annotation = annToDelete });
-        _redoStack.Clear();
-        UpdateUndoRedoButtons();
+        if (!_erasingAnnotationIds.Add(annToDelete.Id)) return;
+        try
+        {
+            _annotations.Remove(annToDelete);
+            _undoStack.Push(new AnnotationHistoryEntry { ActionType = AnnotationActionType.Delete, Annotation = annToDelete });
+            _redoStack.Clear();
+            UpdateUndoRedoButtons();
 
-        if (_selectedAnnotation == annToDelete) _selectedAnnotation = null;
-        RenderAnnotations();
+            if (_selectedAnnotation == annToDelete) _selectedAnnotation = null;
+            RenderAnnotations();
+
+            await _databaseService.DeleteAnnotationAsync(annToDelete);
+        }
+        finally
+        {
+            _erasingAnnotationIds.Remove(annToDelete.Id);
+        }
     }
 
     private async void EraseAnnotationsAtPoint(double touchX, double touchY)
@@ -6393,6 +6449,21 @@ public partial class ViewerPage : ContentPage
         {
             await DeleteAnnotationWithUndoAsync(hit);
         }
+    }
+
+    private static double DistanceToSegment(double px, double py, double x1, double y1, double x2, double y2)
+    {
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+        double lenSq = dx * dx + dy * dy;
+        if (lenSq <= 0.0001)
+        {
+            return Math.Sqrt((px - x1) * (px - x1) + (py - y1) * (py - y1));
+        }
+        double t = Math.Clamp(((px - x1) * dx + (py - y1) * dy) / lenSq, 0.0, 1.0);
+        double projX = x1 + t * dx;
+        double projY = y1 + t * dy;
+        return Math.Sqrt((px - projX) * (px - projX) + (py - projY) * (py - projY));
     }
 
     private void OnDeleteSelectedAnnotationClicked(object? sender, EventArgs e)
@@ -6456,10 +6527,25 @@ public partial class ViewerPage : ContentPage
         foreach (var ann in visibleAnnotations)
         {
             var (ax, ay) = PageToScreen(ann.X, ann.Y, ann.PageNumber, containerW, containerH);
-            if (ann.Type == AnnotationType.Sticker || ann.Type == AnnotationType.Text)
+            if (ann.Type == AnnotationType.Text)
             {
-                double radius = Math.Max(25.0, 30.0 * Math.Max(0.6, ann.Scale) * displayScale);
-                if (Math.Abs(x - ax) <= radius && Math.Abs(y - ay) <= radius)
+                double fontSize = (ann.Scale <= 0 ? 14.0 : ann.Scale) * displayScale;
+                double charCount = string.IsNullOrEmpty(ann.Content) ? 1 : ann.Content.Length;
+                double halfW = Math.Max(28.0, (charCount * fontSize * 0.65) / 2.0 + 18.0);
+                double halfH = Math.Max(24.0, (fontSize * 1.4) / 2.0 + 14.0);
+                if (Math.Abs(x - ax) <= halfW && Math.Abs(y - ay) <= halfH)
+                {
+                    return ann;
+                }
+            }
+            else if (ann.Type == AnnotationType.Sticker)
+            {
+                double effScale = Math.Max(0.5, ann.Scale <= 0 ? 1.0 : ann.Scale) * displayScale;
+                double fontSize = 15.0 * effScale;
+                double charCount = string.IsNullOrEmpty(ann.Content) ? 1 : ann.Content.Length;
+                double halfW = Math.Max(28.0, (charCount * fontSize * 0.75 + 22.0 * effScale) / 2.0 + 12.0);
+                double halfH = Math.Max(24.0, (fontSize * 1.5 + 10.0 * effScale) / 2.0 + 12.0);
+                if (Math.Abs(x - ax) <= halfW && Math.Abs(y - ay) <= halfH)
                 {
                     return ann;
                 }
@@ -6468,7 +6554,11 @@ public partial class ViewerPage : ContentPage
             {
                 if (!string.IsNullOrEmpty(ann.Content))
                 {
+                    double baseThick = (ann.Category == "Pencil" ? ann.Scale * 9.0 : ann.Scale * 30.0) * displayScale;
+                    double hitRadius = Math.Max(22.0, (baseThick / 2.0) + 14.0);
                     var pairs = ann.Content.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                    double? prevX = null;
+                    double? prevY = null;
                     foreach (var pair in pairs)
                     {
                         var coords = pair.Split(',');
@@ -6477,10 +6567,22 @@ public partial class ViewerPage : ContentPage
                             double.TryParse(coords[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double ry))
                         {
                             var (px, py) = PageToScreen(rx, ry, ann.PageNumber, containerW, containerH);
-                            if (Math.Abs(x - px) <= 25.0 * displayScale && Math.Abs(y - py) <= 25.0 * displayScale)
+                            if (prevX.HasValue && prevY.HasValue)
                             {
-                                return ann;
+                                if (DistanceToSegment(x, y, prevX.Value, prevY.Value, px, py) <= hitRadius)
+                                {
+                                    return ann;
+                                }
                             }
+                            else
+                            {
+                                if (Math.Sqrt((x - px) * (x - px) + (y - py) * (y - py)) <= hitRadius)
+                                {
+                                    return ann;
+                                }
+                            }
+                            prevX = px;
+                            prevY = py;
                         }
                     }
                 }
@@ -6520,6 +6622,23 @@ public partial class ViewerPage : ContentPage
         if (_currentRenderedWidth > 0 && _currentRenderedHeight > 0)
         {
             UpdateCanvasBounds(containerW, containerH, _currentRenderedWidth, _currentRenderedHeight);
+        }
+
+        // Option C : repère pointillé très discret des bords réels de la feuille uniquement en mode édition d'annotations
+        if (AnnotationBar != null && AnnotationBar.IsVisible && !_isAnnotationsLocked && (_canvasYRel > 0.015 || _canvasXRel > 0.015))
+        {
+            var pageGuide = new Border
+            {
+                BackgroundColor = Colors.Transparent,
+                Stroke = Color.FromArgb("#38007ACC"),
+                StrokeThickness = 1,
+                StrokeDashArray = new DoubleCollection { 4, 4 },
+                InputTransparent = true,
+                ZIndex = -1
+            };
+            AbsoluteLayout.SetLayoutFlags(pageGuide, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
+            AbsoluteLayout.SetLayoutBounds(pageGuide, new Rect(_canvasXRel * containerW, _canvasYRel * containerH, _canvasWRel * containerW, _canvasHRel * containerH));
+            ActiveAnnotationsContainer.Children.Add(pageGuide);
         }
 
         List<Annotation> visibleAnnotations;
@@ -6595,7 +6714,9 @@ public partial class ViewerPage : ContentPage
         double h = Math.Max(measuredH + (padY * 2) + (strokeThick * 2), 20 * displayScale);
 
         var (absX, absY) = PageToScreen(ann.X, ann.Y, ann.PageNumber, containerW, containerH);
-        AbsoluteLayout.SetLayoutBounds(border, new Rect(absX - (w / 2.0), absY - (h / 2.0), w, h));
+        double left = Math.Clamp(absX - (w / 2.0), 2.0, Math.Max(2.0, containerW - w - 2.0));
+        double top = Math.Clamp(absY - (h / 2.0), 2.0, Math.Max(2.0, containerH - h - 2.0));
+        AbsoluteLayout.SetLayoutBounds(border, new Rect(left, top, w, h));
     }
 
     private Border CreateTextBorder(Annotation ann, double containerW, double containerH)
@@ -6684,7 +6805,7 @@ public partial class ViewerPage : ContentPage
             StrokeDashArray = dashArray,
             BackgroundColor = bgColor,
             Content = contentGrid,
-            InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode
+            InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode
         };
 
         AbsoluteLayout.SetLayoutFlags(border, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
@@ -6693,7 +6814,7 @@ public partial class ViewerPage : ContentPage
 
         var selectTap = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
         selectTap.Tapped += (s, e) => {
-            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode) return;
             if (s is Border b && b.BindingContext is Annotation a)
             {
                 _selectedAnnotation = a;
@@ -6712,7 +6833,7 @@ public partial class ViewerPage : ContentPage
 
         var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
         doubleTap.Tapped += async (s, e) => {
-            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode) return;
             if (s is Border b && b.BindingContext is Annotation a)
             {
                 var loc = LocalizationService.Instance;
@@ -6747,7 +6868,7 @@ public partial class ViewerPage : ContentPage
         var pan = new PanGestureRecognizer();
         double startX = 0, startY = 0;
         pan.PanUpdated += async (s, e) => {
-            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode) return;
             if (s is Border b && b.BindingContext is Annotation a)
             {
                 switch (e.StatusType)
@@ -6828,13 +6949,17 @@ public partial class ViewerPage : ContentPage
             StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Round,
             StrokeLineJoin = Microsoft.Maui.Controls.Shapes.PenLineJoin.Round,
             Opacity = (ann == _selectedAnnotation) ? Math.Min(1.0, effectiveOpacity * 0.7) : effectiveOpacity,
-            InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+            InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode
         };
+        AbsoluteLayout.SetLayoutFlags(polyline, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.All);
+        AbsoluteLayout.SetLayoutBounds(polyline, new Rect(0, 0, 1, 1));
 
         var tap = new TapGestureRecognizer();
         tap.Tapped += (s, e) =>
         {
-            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode) return;
             if (s is Microsoft.Maui.Controls.Shapes.Polyline p && p.BindingContext is Annotation a)
             {
                 _selectedAnnotation = a;
@@ -6846,7 +6971,7 @@ public partial class ViewerPage : ContentPage
         var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
         doubleTap.Tapped += async (s, e) =>
         {
-            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode) return;
             if (s is Microsoft.Maui.Controls.Shapes.Polyline p && p.BindingContext is Annotation a)
             {
                 await _databaseService.DeleteAnnotationAsync(a);
@@ -6894,13 +7019,17 @@ public partial class ViewerPage : ContentPage
             StrokeLineCap = Microsoft.Maui.Controls.Shapes.PenLineCap.Flat,
             StrokeLineJoin = Microsoft.Maui.Controls.Shapes.PenLineJoin.Round,
             Opacity = (ann == _selectedAnnotation) ? Math.Min(1.0, effectiveOpacity + 0.3) : effectiveOpacity,
-            InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+            InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode
         };
+        AbsoluteLayout.SetLayoutFlags(polyline, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.All);
+        AbsoluteLayout.SetLayoutBounds(polyline, new Rect(0, 0, 1, 1));
 
         var tap = new TapGestureRecognizer();
         tap.Tapped += (s, e) =>
         {
-            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode) return;
             if (s is Microsoft.Maui.Controls.Shapes.Polyline p && p.BindingContext is Annotation a)
             {
                 _selectedAnnotation = a;
@@ -6912,7 +7041,7 @@ public partial class ViewerPage : ContentPage
         var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
         doubleTap.Tapped += async (s, e) =>
         {
-            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode) return;
             if (s is Microsoft.Maui.Controls.Shapes.Polyline p && p.BindingContext is Annotation a)
             {
                 await _databaseService.DeleteAnnotationAsync(a);
@@ -6960,7 +7089,7 @@ public partial class ViewerPage : ContentPage
             Stroke = (ann == _selectedAnnotation) ? Colors.Red : Colors.Transparent,
             BackgroundColor = ParseColor(ann.BackgroundColor),
             Content = label,
-            InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode
+            InputTransparent = _isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode
         };
 
         AbsoluteLayout.SetLayoutFlags(border, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.None);
@@ -6973,12 +7102,13 @@ public partial class ViewerPage : ContentPage
         double w = Math.Max(Math.Max(size.Width + (18 * displayScale), estimatedTextWidth + (22 * effectiveScale)), 28 * effectiveScale);
         double h = Math.Max(Math.Max(size.Height + (8 * displayScale), (fontSize * 1.5) + (10 * effectiveScale)), 22 * effectiveScale);
         var (absX, absY) = PageToScreen(ann.X, ann.Y, ann.PageNumber, containerW, containerH);
-
-        AbsoluteLayout.SetLayoutBounds(border, new Rect(absX - (w / 2), absY - (h / 2), w, h));
+        double sLeft = Math.Clamp(absX - (w / 2.0), 2.0, Math.Max(2.0, containerW - w - 2.0));
+        double sTop = Math.Clamp(absY - (h / 2.0), 2.0, Math.Max(2.0, containerH - h - 2.0));
+        AbsoluteLayout.SetLayoutBounds(border, new Rect(sLeft, sTop, w, h));
 
         var selectTap = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
         selectTap.Tapped += (s, e) => {
-            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode) return;
             if (s is Border b && b.BindingContext is Annotation a)
             {
                 _selectedAnnotation = a;
@@ -6992,7 +7122,7 @@ public partial class ViewerPage : ContentPage
 
         var doubleTap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
         doubleTap.Tapped += async (s, e) => {
-            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode) return;
             if (s is Border b && b.BindingContext is Annotation a)
             {
                 await _databaseService.DeleteAnnotationAsync(a);
@@ -7010,7 +7140,7 @@ public partial class ViewerPage : ContentPage
         var pan = new PanGestureRecognizer();
         double startX = 0, startY = 0;
         pan.PanUpdated += async (s, e) => {
-            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode) return;
+            if (_isAnnotationsLocked || _isHighlightMode || _isDrawMode || _isEraserMode) return;
             if (s is Border b && b.BindingContext is Annotation a)
             {
                 switch (e.StatusType)

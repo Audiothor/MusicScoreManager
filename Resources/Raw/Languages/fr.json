@@ -750,7 +750,7 @@
   "Wifi_Setlist_Preparing": "Préparation du paquet Setlist...",
   "Wifi_Setlist_Connecting": "Connexion à {0}...",
   "Wifi_Setlist_Success_Title": "Succès",
-  "Wifi_Setlist_Success_Msg": "La Setlist '{0}' ({1} partition(s)/fichiers) a été envoyée avec succès via Wi-Fi Direct !",
+  "Wifi_Setlist_Success_Msg": "La Setlist '{0}' ({1} partition(s)) a été envoyée avec succès via Wi-Fi Direct !",
   "Wifi_Setlist_Failed_Title": "Échec",
   "Wifi_Setlist_Failed_Msg": "Le transfert de la Setlist a échoué ou a été refusé par le destinataire.",
   "Wifi_Setlist_Error_Title": "Erreur",

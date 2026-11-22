@@ -754,7 +754,7 @@
   "Wifi_Setlist_Connecting": "Łączenie z {0}...",
   "Wifi_Setlist_Progress_Default": "Transfer w toku...",
   "Wifi_Setlist_Success_Title": "Transfer udany",
-  "Wifi_Setlist_Success_Msg": "Setlista i wszystkie pliki partytur zostały pomyślnie wysłane!",
+  "Wifi_Setlist_Success_Msg": "Setlista '{0}' ({1} partytur(a)) została pomyślnie wysłana przez Wi-Fi Direct!",
   "Wifi_Setlist_Failed_Title": "Transfer nieudany",
   "Wifi_Setlist_Failed_Msg": "Transfer nie powiódł się: {0}",
   "Wifi_Setlist_Error_Title": "Błąd",

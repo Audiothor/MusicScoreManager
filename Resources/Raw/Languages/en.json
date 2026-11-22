@@ -757,7 +757,7 @@
   "Wifi_Setlist_Connecting": "Connecting to {0}...",
   "Wifi_Setlist_Progress_Default": "Transfer in progress...",
   "Wifi_Setlist_Success_Title": "Transfer Succeeded",
-  "Wifi_Setlist_Success_Msg": "Setlist and all score files were sent successfully!",
+  "Wifi_Setlist_Success_Msg": "Setlist '{0}' ({1} score(s)) was sent successfully via Wi-Fi Direct!",
   "Wifi_Setlist_Failed_Title": "Transfer Failed",
   "Wifi_Setlist_Failed_Msg": "Transfer failed: {0}",
   "Wifi_Setlist_Error_Title": "Error",

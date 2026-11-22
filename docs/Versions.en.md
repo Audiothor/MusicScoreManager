@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.3.1 — 22/11/2026](#v331-22112026)
 - [v3.3.0 — 22/11/2026](#v330-22112026)
 - [v3.2.16 — 19/11/2026](#v3216-19112026)
 - [v3.2.15 — 18/11/2026](#v3215-18112026)
@@ -65,6 +66,32 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.3.1 — 22/11/2026
+
+### 1. Annotations — Free Margins, Live Drawing & Precision Eraser (`ViewerPage`)
+- **1.1. Free placement in white margins + subtle dashed guide (Option C):**
+  - Removed the invisible top/bottom clamping barrier in Portrait mode for PDFs/Images with wider aspect ratios.
+  - Added a subtle dashed guide showing the true page boundary **only** while the annotation bar is open (keeping a clean 100% uniform white background in reading mode).
+  - Automatic viewport edge clamping in Landscape mode so annotations placed in Portrait margins remain visible at the screen edge without ever going off-screen.
+- **1.2. Unclipped Real-Time Pencil & Highlighter Drawing:**
+  - Set full-container `AbsoluteLayoutFlags.All` / `Rect(0, 0, 1, 1)` bounds on active and saved polylines, completely fixing stroke clipping/disappearing mid-drag for both pencil and highlighter.
+- **1.3. Dedicated Vector Eraser Icon & Precision Hit-Testing:**
+  - Replaced `⌫` with a crisp two-tone vector eraser icon.
+  - Added `_isEraserMode` to `InputTransparent` on all rendered annotations so touches pass directly to the eraser.
+  - Implemented point-to-segment distance (`DistanceToSegment`) for pencil/highlighter strokes and full bounding-box hit-testing for text/stickers.
+
+### 2. Wi-Fi Direct — Smoothness, Formatting & Annotation Sync
+- **2.1. Setlist Transfer Success Message Formatting:**
+  - Applied `string.Format` with setlist name and score count in `SetlistsPage` and aligned placeholders across all 8 languages.
+- **2.2. Fixed UI Lag/Stuttering After Wi-Fi Direct Reception:**
+  - Automatically stops UDP/TCP listeners (`StopListeningAsync`) after reception completes.
+  - Throttled transfer progress notifications (100 ms interval) to prevent MainThread flooding.
+  - Offloaded heavy import work to `Task.Run`, properly unsubscribed `TransferProgressChanged` in `WifiTransferPage`, and released payload byte buffers.
+- **2.3. Annotation Sync on Existing Scores:**
+  - When receiving a setlist containing scores already present on the receiver, incoming annotations are now imported/merged instead of being skipped.
 
 ---
 

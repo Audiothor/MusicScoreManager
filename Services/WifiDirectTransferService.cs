@@ -246,6 +246,7 @@ namespace MusicScoreManager.Services
                     var files = new List<WifiFilePayload>();
                     long receivedBytes = 0;
                     var stopwatch = Stopwatch.StartNew();
+                    long lastNotifyMs = -200;
 
                     for (int i = 0; i < fileCount; i++)
                     {
@@ -263,10 +264,15 @@ namespace MusicScoreManager.Services
                             fileBytesRead += read;
                             receivedBytes += read;
 
-                            double speed = (receivedBytes / 1024.0 / 1024.0) / Math.Max(0.001, stopwatch.Elapsed.TotalSeconds);
-                            double progress = totalBytes > 0 ? (double)receivedBytes / totalBytes : 0;
+                            long nowMs = stopwatch.ElapsedMilliseconds;
+                            if (nowMs - lastNotifyMs >= 100 || receivedBytes >= totalBytes)
+                            {
+                                lastNotifyMs = nowMs;
+                                double speed = (receivedBytes / 1024.0 / 1024.0) / Math.Max(0.001, stopwatch.Elapsed.TotalSeconds);
+                                double progress = totalBytes > 0 ? (double)receivedBytes / totalBytes : 0;
 
-                            NotifyProgress(string.Format(LocalizationService.Instance.GetString("Wifi_Progress_Receiving_File", "Réception de {0}..."), fileName), progress, receivedBytes, totalBytes, speed);
+                                NotifyProgress(string.Format(LocalizationService.Instance.GetString("Wifi_Progress_Receiving_File", "Réception de {0}..."), fileName), progress, receivedBytes, totalBytes, speed);
+                            }
                         }
 
                         files.Add(new WifiFilePayload { FileName = fileName, Data = fileData });
@@ -344,6 +350,7 @@ namespace MusicScoreManager.Services
                 // Streaming des fichiers
                 long bytesSent = 0;
                 var stopwatch = Stopwatch.StartNew();
+                long lastNotifyMs = -200;
 
                 foreach (var file in files)
                 {
@@ -361,10 +368,15 @@ namespace MusicScoreManager.Services
                         offset += currentChunk;
                         bytesSent += currentChunk;
 
-                        double speed = (bytesSent / 1024.0 / 1024.0) / Math.Max(0.001, stopwatch.Elapsed.TotalSeconds);
-                        double progress = (double)bytesSent / totalBytes;
+                        long nowMs = stopwatch.ElapsedMilliseconds;
+                        if (nowMs - lastNotifyMs >= 100 || bytesSent >= totalBytes)
+                        {
+                            lastNotifyMs = nowMs;
+                            double speed = (bytesSent / 1024.0 / 1024.0) / Math.Max(0.001, stopwatch.Elapsed.TotalSeconds);
+                            double progress = totalBytes > 0 ? (double)bytesSent / totalBytes : 0;
 
-                        NotifyProgress(string.Format(loc.GetString("Wifi_Progress_Sending_File", "Envoi de {0}..."), file.FileName), progress, bytesSent, totalBytes, speed);
+                            NotifyProgress(string.Format(loc.GetString("Wifi_Progress_Sending_File", "Envoi de {0}..."), file.FileName), progress, bytesSent, totalBytes, speed);
+                        }
                     }
                     await stream.FlushAsync();
                 }

@@ -40,11 +40,14 @@ namespace MusicScoreManager
             base.OnAppearing();
             var loc = LocalizationService.Instance;
             DeviceNameLabel.Text = DeviceInfo.Name ?? loc.GetString("Wifi_Transfer_Device_Default", "Tablette Musique");
+            _wifiService.TransferProgressChanged -= OnTransferProgressChanged;
+            _wifiService.TransferProgressChanged += OnTransferProgressChanged;
         }
 
         protected override async void OnDisappearing()
         {
             base.OnDisappearing();
+            _wifiService.TransferProgressChanged -= OnTransferProgressChanged;
             if (_isListening)
             {
                 await _wifiService.StopListeningAsync();
@@ -110,11 +113,10 @@ namespace MusicScoreManager
 
         private async Task ProcessReceivedFilesAsync(List<WifiFilePayload> files, string senderName)
         {
-            await MainThread.InvokeOnMainThreadAsync(async () =>
+            try
             {
-                try
+                bool success = await Task.Run(async () =>
                 {
-                    bool success = false;
                     var zipFile = files.FirstOrDefault(f => f.FileName.EndsWith(".msmsetlist", StringComparison.OrdinalIgnoreCase) 
                                                          || f.FileName.EndsWith(".msmscore", StringComparison.OrdinalIgnoreCase) 
                                                          || f.FileName.EndsWith(".msmscores", StringComparison.OrdinalIgnoreCase));
@@ -122,14 +124,20 @@ namespace MusicScoreManager
                     {
                         string tempPath = Path.Combine(FileSystem.CacheDirectory, zipFile.FileName);
                         await File.WriteAllBytesAsync(tempPath, zipFile.Data);
-                        success = await _exportImportService.ImportPackageFromFileAsync(tempPath);
+                        bool res = await _exportImportService.ImportPackageFromFileAsync(tempPath);
                         try { File.Delete(tempPath); } catch { }
+                        return res;
                     }
                     else
                     {
-                        success = await _exportImportService.ImportPackageFromWifiPayloadsAsync(files);
+                        return await _exportImportService.ImportPackageFromWifiPayloadsAsync(files);
                     }
+                });
 
+                files.Clear();
+
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
                     var loc = LocalizationService.Instance;
                     if (success)
                     {
@@ -145,16 +153,19 @@ namespace MusicScoreManager
                             loc.GetString("Wifi_Transfer_Integration_Warning", "Les données ont été reçues mais une anomalie s'est produite lors de l'intégration."), 
                             loc.GetString("Common_OK", "OK"));
                     }
-                }
-                catch (Exception ex)
+                });
+            }
+            catch (Exception ex)
+            {
+                await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
                     var loc = LocalizationService.Instance;
                     await DisplayAlertAsync(
                         loc.GetString("Common_Error", "Erreur"), 
                         $"{loc.GetString("Wifi_Transfer_Import_Error", "Erreur lors de l'importation")} : {ex.Message}", 
                         loc.GetString("Common_OK", "OK"));
-                }
-            });
+                });
+            }
         }
 
         private async void OnDownloadQrClicked(object? sender, EventArgs e)
@@ -184,21 +195,24 @@ namespace MusicScoreManager
 
         private void OnTransferProgressChanged(object? sender, WifiTransferProgressEventArgs e)
         {
-            ProgressBorder.IsVisible = true;
-            ProgressStatusLabel.Text = e.Status;
-            TransferProgressBar.Progress = e.Progress;
-
-            if (e.SpeedMBps > 0)
+            MainThread.BeginInvokeOnMainThread(() =>
             {
-                ProgressSpeedLabel.Text = $"{e.SpeedMBps:F1} Mo/s";
-            }
+                ProgressBorder.IsVisible = true;
+                ProgressStatusLabel.Text = e.Status;
+                TransferProgressBar.Progress = e.Progress;
 
-            if (e.TotalBytes > 0)
-            {
-                double currentMb = e.BytesTransferred / 1024.0 / 1024.0;
-                double totalMb = e.TotalBytes / 1024.0 / 1024.0;
-                ProgressDetailsLabel.Text = $"{currentMb:F1} / {totalMb:F1} Mo";
-            }
+                if (e.SpeedMBps > 0)
+                {
+                    ProgressSpeedLabel.Text = $"{e.SpeedMBps:F1} Mo/s";
+                }
+
+                if (e.TotalBytes > 0)
+                {
+                    double currentMb = e.BytesTransferred / 1024.0 / 1024.0;
+                    double totalMb = e.TotalBytes / 1024.0 / 1024.0;
+                    ProgressDetailsLabel.Text = $"{currentMb:F1} / {totalMb:F1} Mo";
+                }
+            });
         }
     }
 }

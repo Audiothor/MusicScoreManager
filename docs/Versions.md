@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.3.1 — 22/11/2026](#v331-22112026)
 - [v3.3.0 — 22/11/2026](#v330-22112026)
 - [v3.2.16 — 19/11/2026](#v3216-19112026)
 - [v3.2.15 — 18/11/2026](#v3215-18112026)
@@ -65,6 +66,34 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.3.1 — 22/11/2026
+
+### 1. Annotations — Ergonomie, Tracé Temps Réel & Gomme (`ViewerPage`)
+- **1.1. Liberté totale dans les marges blanches + repère discret (Option C) :**
+  - Suppression du blocage vertical invisible sur les PDF/Images dont le ratio diffère de l'écran portrait : les textes, stickers et dessins peuvent être placés librement sur toute la surface blanche.
+  - Ajout d'un filet pointillé bleu très discret délimitant les bords réels de la page **uniquement** lorsque la barre d'annotations est ouverte (fond 100 % blanc uniforme en mode lecture).
+  - Sécurité automatique en mode paysage : les annotations placées dans les marges en portrait restent toujours visibles au bord haut/bas de l'écran sans jamais disparaître hors-écran.
+- **1.2. Tracé temps réel continu pour Crayon et Surligneur :**
+  - Attribution explicite des limites plein conteneur (`AbsoluteLayoutFlags.All`, `Rect(0, 0, 1, 1)`) sur la polyline active et les polylines enregistrées, supprimant totalement le découpage (clipping) qui faisait disparaître le trait par zones pendant le tracé.
+  - Mise à l'échelle immédiate de l'épaisseur du trait en cours pour correspondre exactement au rendu final.
+- **1.3. Nouvelle icône Gomme vectorielle & précision d'effacement :**
+  - Remplacement du symbole `⌫` par une véritable icône vectorielle de gomme bicolore (rose/blanc) rendue nettement sur toutes les résolutions.
+  - Correction de `InputTransparent` en mode gomme sur tous les éléments (traits crayon, surlignages, textes, stickers) pour qu'ils ne bloquent plus le passage du doigt.
+  - Calcul géométrique de distance point-à-segment (`DistanceToSegment`) pour effacer n'importe quel trait crayon/surligneur au premier passage, et détection sur toute la largeur réelle des mots/stickers.
+  - Prévention de la fermeture intempestive de la barre d'annotations lors d'un tap en mode gomme.
+
+### 2. Wi-Fi Direct — Fluidité, Formatage & Synchronisation d'Annotations
+- **2.1. Correction du message de confirmation d'envoi de Setlist :**
+  - Formatage effectif du nom de la setlist et du nombre de partitions (`string.Format`) dans `SetlistsPage` et harmonisation des modèles dans les 8 langues (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`).
+- **2.2. Élimination des lenteurs et saccades après réception Wi-Fi Direct :**
+  - Arrêt automatique de l'écoute UDP/TCP (`StopListeningAsync`) dès la fin de réception dans `ScoresPage`.
+  - Limitation de la fréquence des notifications de progression (max 10 fois/seconde au lieu de chaque bloc de 64 Ko) pour ne plus saturer le thread UI.
+  - Déport de l'importation lourde hors du thread UI (`Task.Run`), désabonnement propre des événements dans `WifiTransferPage` et libération immédiate des buffers mémoire.
+- **2.3. Synchronisation des annotations sur partitions déjà existantes :**
+  - Dans `ExportImportService.ImportWifiSetlistAsync`, si le destinataire possède déjà une partition portant le même titre, les annotations incluses par l'expéditeur sont désormais fusionnées/importées au lieu d'être ignorées.
 
 ---
 

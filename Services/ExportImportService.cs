@@ -407,6 +407,73 @@ namespace MusicScoreManager.Services
                     if (existingScore != null)
                     {
                         scoreToUse = existingScore;
+                        if (scoreMeta.Annotations != null && scoreMeta.Annotations.Any())
+                        {
+                            // Remplacer/synchroniser les annotations si l'expéditeur a inclus les annotations
+                            var oldAnns = await _databaseService.GetAnnotationsForScoreAsync(scoreToUse.Id);
+                            if (oldAnns.Count == 0)
+                            {
+                                scoreToUse.ShowAnnotations = scoreMeta.ShowAnnotations;
+                                await _databaseService.SaveScoreAsync(scoreToUse);
+                                foreach (var a in scoreMeta.Annotations)
+                                {
+                                    var ann = new Annotation
+                                    {
+                                        ScoreId = scoreToUse.Id,
+                                        PageNumber = a.PageNumber,
+                                        Type = a.Type,
+                                        Category = a.Category,
+                                        Content = a.Content,
+                                        X = a.X,
+                                        Y = a.Y,
+                                        Scale = a.Scale,
+                                        Color = a.Color,
+                                        BackgroundColor = a.BackgroundColor,
+                                        BorderColor = string.IsNullOrEmpty(a.BorderColor) ? "Transparent" : a.BorderColor,
+                                        Opacity = a.Opacity > 0 ? a.Opacity : 1.0
+                                    };
+                                    await _databaseService.SaveAnnotationAsync(ann);
+                                }
+                            }
+                            else
+                            {
+                                // Ajouter uniquement les annotations absentes pour fusionner proprement sans doublons
+                                foreach (var a in scoreMeta.Annotations)
+                                {
+                                    bool alreadyExists = oldAnns.Any(oa =>
+                                        oa.PageNumber == a.PageNumber &&
+                                        oa.Type == a.Type &&
+                                        oa.Category == a.Category &&
+                                        oa.Content == a.Content &&
+                                        Math.Abs(oa.X - a.X) < 0.002 &&
+                                        Math.Abs(oa.Y - a.Y) < 0.002);
+                                    if (!alreadyExists)
+                                    {
+                                        var ann = new Annotation
+                                        {
+                                            ScoreId = scoreToUse.Id,
+                                            PageNumber = a.PageNumber,
+                                            Type = a.Type,
+                                            Category = a.Category,
+                                            Content = a.Content,
+                                            X = a.X,
+                                            Y = a.Y,
+                                            Scale = a.Scale,
+                                            Color = a.Color,
+                                            BackgroundColor = a.BackgroundColor,
+                                            BorderColor = string.IsNullOrEmpty(a.BorderColor) ? "Transparent" : a.BorderColor,
+                                            Opacity = a.Opacity > 0 ? a.Opacity : 1.0
+                                        };
+                                        await _databaseService.SaveAnnotationAsync(ann);
+                                    }
+                                }
+                                if (scoreMeta.ShowAnnotations && !scoreToUse.ShowAnnotations)
+                                {
+                                    scoreToUse.ShowAnnotations = true;
+                                    await _databaseService.SaveScoreAsync(scoreToUse);
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -442,7 +509,7 @@ namespace MusicScoreManager.Services
                         }
 
                         // Annotations
-                        foreach (var a in scoreMeta.Annotations)
+                        foreach (var a in scoreMeta.Annotations ?? Enumerable.Empty<AnnotationMetadata>())
                         {
                             var ann = new Annotation
                             {

@@ -1071,7 +1071,14 @@ public partial class ScoresPage : ContentPage
                 WifiTransferProgressBar.Progress = 0.95;
             });
 
-            bool success = await _exportImportService.ImportPackageFromWifiPayloadsAsync(receivedFiles);
+            // Arrêter l'écoute réseau immédiatement après réception pour libérer CPU/sockets
+            await _wifiService.StopListeningAsync();
+
+            // Exécuter l'importation lourde en arrière-plan pour ne jamais bloquer le thread UI
+            bool success = await Task.Run(() => _exportImportService.ImportPackageFromWifiPayloadsAsync(receivedFiles));
+
+            // Libérer les gros tableaux d'octets en mémoire
+            receivedFiles.Clear();
 
             await MainThread.InvokeOnMainThreadAsync(async () =>
             {
@@ -1096,6 +1103,7 @@ public partial class ScoresPage : ContentPage
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error processing received files: {ex.Message}");
+            await _wifiService.StopListeningAsync();
             await MainThread.InvokeOnMainThreadAsync(async () =>
             {
                 var loc = LocalizationService.Instance;

@@ -550,8 +550,11 @@ public partial class SetlistsPage : ContentPage
 
             if (success)
             {
+                var setlistScores = await _databaseService.GetScoresForSetlistAsync(setlist.Id);
+                int scoreCount = setlistScores?.Count ?? Math.Max(0, payloads.Count - 1);
                 string successTitle = LocalizationService.Instance.GetString("Wifi_Setlist_Success_Title");
-                string successMsg = LocalizationService.Instance.GetString("Wifi_Setlist_Success_Msg");
+                string successTemplate = LocalizationService.Instance.GetString("Wifi_Setlist_Success_Msg");
+                string successMsg = string.Format(successTemplate, setlist.Name, scoreCount);
                 await DisplayAlertAsync(successTitle, successMsg, LocalizationService.Instance.GetString("Common_OK"));
             }
             else

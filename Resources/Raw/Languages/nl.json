@@ -754,7 +754,7 @@
   "Wifi_Setlist_Connecting": "Verbinden met {0}...",
   "Wifi_Setlist_Progress_Default": "Overdracht bezig...",
   "Wifi_Setlist_Success_Title": "Overdracht voltooid",
-  "Wifi_Setlist_Success_Msg": "Setlist en alle partituurbestanden zijn succesvol verzonden!",
+  "Wifi_Setlist_Success_Msg": "Setlist '{0}' ({1} partituur/partituren) is succesvol verzonden via Wi-Fi Direct!",
   "Wifi_Setlist_Failed_Title": "Overdracht mislukt",
   "Wifi_Setlist_Failed_Msg": "Overdracht mislukt: {0}",
   "Wifi_Setlist_Error_Title": "Fout",

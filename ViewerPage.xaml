@@ -764,7 +764,16 @@
 
                         <!-- Bouton Reset Nettoyage complet -->
                         <Button Grid.Column="7" x:Name="ResetAnnotationsBtn" Text="✧" BackgroundColor="Transparent" TextColor="White" Clicked="OnResetAnnotationsClicked" FontSize="{OnIdiom Phone=16, Tablet=18}" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" ToolTipProperties.Text="{Binding [Annotation_Clean], Source={x:Static services:LocalizationService.Instance}}" />
-                        <Button Grid.Column="8" x:Name="EraserBtn" Text="⌫" BackgroundColor="Transparent" TextColor="#FF7043" Clicked="OnAnnotationEraserClicked" FontSize="{OnIdiom Phone=15, Tablet=17}" FontAttributes="Bold" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" ToolTipProperties.Text="{Binding [Annotation_Eraser], Source={x:Static services:LocalizationService.Instance}}" />
+                        <Border Grid.Column="8" x:Name="EraserBtn" BackgroundColor="Transparent" StrokeThickness="0" StrokeShape="RoundRectangle 6" WidthRequest="{OnIdiom Phone=28, Tablet=34}" HeightRequest="{OnIdiom Phone=32, Tablet=36}" Padding="0" VerticalOptions="Center" HorizontalOptions="Center" ToolTipProperties.Text="{Binding [Annotation_Eraser], Source={x:Static services:LocalizationService.Instance}}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnAnnotationEraserClicked" />
+                            </Border.GestureRecognizers>
+                            <Grid WidthRequest="20" HeightRequest="20" HorizontalOptions="Center" VerticalOptions="Center" InputTransparent="True">
+                                <Path Data="M 11,3 L 18,10 L 11,17 L 4,10 Z" Fill="#FF8A80" Stroke="#FFFFFF" StrokeThickness="1.2" StrokeLineJoin="Round" />
+                                <Path Data="M 7.5,6.5 L 14.5,13.5 L 11,17 L 5,17 L 3,15 L 4,10 Z" Fill="#F5F5F5" Stroke="#FFFFFF" StrokeThickness="1.1" StrokeLineJoin="Round" />
+                                <Path Data="M 4,18.5 L 17,18.5" Stroke="#FF8A80" StrokeThickness="1.5" StrokeLineCap="Round" />
+                            </Grid>
+                        </Border>
                     </Grid>
                 </ScrollView>
                 <!-- Bouton Croix Fermer (toujours fixe et visible à droite sur Phone comme sur Tablette) -->
