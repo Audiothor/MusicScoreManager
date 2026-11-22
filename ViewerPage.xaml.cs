@@ -6395,7 +6395,7 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private async void OnDeleteSelectedAnnotationClicked(object? sender, EventArgs e)
+    private void OnDeleteSelectedAnnotationClicked(object? sender, EventArgs e)
     {
         OnAnnotationEraserClicked(sender, e);
     }

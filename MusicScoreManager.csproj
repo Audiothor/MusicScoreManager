@@ -26,7 +26,7 @@
 
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<NoWarn>$(NoWarn);IDE0028;IDE0300;IDE0301;IDE0305;IDE0290;IDE0005;IDE0090</NoWarn>
+		<NoWarn>$(NoWarn);IDE0028;IDE0300;IDE0301;IDE0305;IDE0290;IDE0005;IDE0090;IDE0044;IDE0051;IDE0052;IDE0060;IDE0059;IDE0063;IDE0130;IDE0160;IDE0161;IDE0270;IDE0079;CS1998</NoWarn>
 		
 		<!-- Support universel : ARM32, ARM64 et x64 (émulateur) -->
 		<RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">android-arm;android-arm64;android-x64</RuntimeIdentifiers>

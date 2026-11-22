@@ -17,5 +17,21 @@ dotnet_diagnostic.IDE0290.severity = none
 dotnet_diagnostic.IDE0005.severity = none
 # 'new' peut etre simplifie
 dotnet_diagnostic.IDE0090.severity = none
+# Champs en lecture seule
+dotnet_diagnostic.IDE0044.severity = none
+# Membres prives non utilises ou jamais lus
+dotnet_diagnostic.IDE0051.severity = none
+dotnet_diagnostic.IDE0052.severity = none
+# Parametres et affectations inutiles
+dotnet_diagnostic.IDE0060.severity = none
+dotnet_diagnostic.IDE0059.severity = none
+# Formulations de code et espaces de noms
+dotnet_diagnostic.IDE0063.severity = none
+dotnet_diagnostic.IDE0130.severity = none
+dotnet_diagnostic.IDE0160.severity = none
+dotnet_diagnostic.IDE0161.severity = none
+dotnet_diagnostic.IDE0270.severity = none
+dotnet_diagnostic.IDE0079.severity = none
+
 
 
