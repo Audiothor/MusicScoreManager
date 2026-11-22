@@ -917,6 +917,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v330-22112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.3.0 — 22/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.3.0 — 22/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ameliorations-majeures-des-annotations-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Améliorations Majeures des Annotations (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-corrections-de-bugs-critiques-annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Corrections de Bugs Critiques (Annotations)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-compatibilite-google-play-internationalisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Compatibilité Google Play &amp; Internationalisation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v3216-19112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4187,6 +4237,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v330-22112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.3.0 — 22/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.3.0 — 22/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ameliorations-majeures-des-annotations-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Améliorations Majeures des Annotations (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-corrections-de-bugs-critiques-annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Corrections de Bugs Critiques (Annotations)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-compatibilite-google-play-internationalisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Compatibilité Google Play &amp; Internationalisation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v3216-19112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7436,6 +7536,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v330-22112026">v3.3.0 — 22/11/2026</a></li>
 <li><a href="#v3216-19112026">v3.2.16 — 19/11/2026</a></li>
 <li><a href="#v3215-18112026">v3.2.15 — 18/11/2026</a></li>
 <li><a href="#v3214-18112026">v3.2.14 — 18/11/2026</a></li>
@@ -7494,6 +7595,38 @@
 <li><a href="#v252-07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251-07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250-07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v330-22112026">v3.3.0 — 22/11/2026</h2>
+<h3 id="1-ameliorations-majeures-des-annotations-viewerpage">1. Améliorations Majeures des Annotations (<code>ViewerPage</code>)</h3>
+<ul>
+<li><strong>1.1. Outil Gomme dynamique (<code>EraserBtn</code>) :</strong></li>
+<li>Remplacement du bouton corbeille par un outil gomme interactif (<code>⌫</code>), accessible directement dans la barre d'outils.</li>
+<li>Suppression continue et fluide au passage du doigt sur n'importe quel élément (surlignage, tracé crayon, texte, sticker) dès qu'une partie est touchée.</li>
+<li>Prise en charge de la suppression immédiate de l'élément sélectionné lors d'un tap ponctuel.</li>
+<li>Historisation complète dans la pile d'annulation/rétablissement (<code>Undo</code>/<code>Redo</code>).</li>
+<li><strong>1.2. Aperçu du tracé en temps réel :</strong></li>
+<li>Affichage instantané du tracé du crayon et du surligneur sous le doigt pendant le dessin, sans attendre le relâchement de la pression sur l'écran.</li>
+<li>Réassignation dynamique et invalidation continue de la polyline native sous Android et Windows.</li>
+</ul>
+<h3 id="2-corrections-de-bugs-critiques-annotations">2. Corrections de Bugs Critiques (Annotations)</h3>
+<ul>
+<li><strong>2.1. Préservation de l'opacité et de la bordure lors des exports et transferts Wi-Fi :</strong></li>
+<li>Ajout des propriétés <code>Opacity</code> et <code>BorderColor</code> dans <code>AnnotationMetadata</code> (<code>IWifiDirectTransferService</code>).</li>
+<li>Restauration exacte des niveaux d'opacité et des bordures lors des exports/imports de fichiers (<code>.msmscores</code>, <code>.msmsetlist</code>) et des échanges Wi-Fi Direct.</li>
+<li><strong>2.2. Cohérence du positionnement des textes entre mode portrait et paysage 2 pages :</strong></li>
+<li>Élimination du décalage lors de la bascule en mode paysage 2 pages grâce au calcul dynamique de l'échelle d'affichage de page et à la synchronisation systématique de la taille de police (<code>FontSize</code>).</li>
+<li><strong>2.3. Résolution de la disparition d'annotations entre portrait et paysage :</strong></li>
+<li>Suivi persistant de la dernière page active/annotée (<code>_lastSinglePageNumber</code>), évitant de basculer systématiquement sur la page 1 lors du retour en mode portrait.</li>
+<li>Fiabilisation du filtre d'annotations visibles pour inclure continuellement la page de droite en mode 2 pages (<code>_rightPageNumber &lt;= _maxPages</code>).</li>
+<li>Détection exacte des dimensions et du cadrage pour les partitions de type Image (<code>ScoreType.Image</code>).</li>
+</ul>
+<h3 id="3-compatibilite-google-play-internationalisation">3. Compatibilité Google Play &amp; Internationalisation</h3>
+<ul>
+<li><strong>3.1. Déclaration de fonctionnalités matérielles optionnelles :</strong></li>
+<li>Ajout des attributs <code>android:required="false"</code> pour <code>android.hardware.wifi</code>, <code>wifi.direct</code>, <code>touchscreen</code>, <code>screen.portrait</code>, <code>screen.landscape</code> dans <code>AndroidManifest.xml</code> pour étendre la disponibilité sur tous les appareils (tablettes, chromebooks, Android XR).</li>
+<li><strong>3.2. Localisation multilingue intégrale :</strong></li>
+<li>Traduction des nouveaux libellés dans les 8 langues officielles de l'application (<code>fr</code>, <code>en</code>, <code>de</code>, <code>es</code>, <code>it</code>, <code>nl</code>, <code>pl</code>, <code>pt</code>).</li>
 </ul>
 <hr />
 <h2 id="v3216-19112026">v3.2.16 — 19/11/2026</h2>
