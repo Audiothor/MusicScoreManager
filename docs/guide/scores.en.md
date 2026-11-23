@@ -194,6 +194,7 @@ Tapping the **⋮** button on any score card opens a modern, ergonomic card:
    - Starts immediate search for nearby devices via Wi-Fi Direct P2P.
    - The recipient simply goes to "Tools" > "Wi-Fi Direct Transfer" and clicks "Activate Reception".
    - The score is transferred and added directly into the recipient's library within seconds!
+   - *Note*: If someone sends you a score with the annotations option enabled for a score you already own with your own annotations, the newly received annotations overwrite your own annotations by default.
 
 7. **📦 Export score (.msmscore)**:
    

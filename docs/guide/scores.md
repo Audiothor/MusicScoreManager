@@ -146,7 +146,6 @@ En cliquant sur le bouton **⋮** d'une carte de partition, une carte moderne et
 Ouvre immédiatement la partition dans le visualiseur plein écran (mode concert).
 [Documentation du visualiseur de partitions](viewer.md)
 
-
 2.**✏️ Éditer la partition** :
 
 Ouvre la page d'édition détaillée :
@@ -183,7 +182,6 @@ Ouvre la page d'édition détaillée :
 
 **NE PAS OUBLIER D'ENREGISTRER VOS MODIFICATIONS !**
 
-
 3.📋 **Ajouter dans un Setlis**t
 
 - Permet d'insérer instantanément la partition dans la setlist de votre choix.
@@ -192,18 +190,14 @@ Ouvre la page d'édition détaillée :
 
 - Gestion des setlists verrouillées.
 
-
-
 4.**Changer de dossier / catégorie**
 Permet d'assigner la partition à un dossier/catégorie pour mieux le classer.
-
 
 5.**📑 Modifier l'assemblage PDF** :
 
 - Ouvre la partition directement dans l'**Atelier d'Assemblage PDF** pour réorganiser les pages, insérer une page blanche, supprimer des pages inutiles ou effectuer des rotations. Très pratique quand votre fichier pdf est mal organisé.
   Vous pouvez retrouver cet outil directement dans le menu "Outils" aussi.
   => Le détail des modifications d'assemblage est disponible plus en détail dans la partie "Outils"
-  
 
 6.**Envoyer en Wi-Fi Direct**
 
@@ -217,20 +211,14 @@ Ouvre une boîte modale d'options de partage vous permettant de cocher/décocher
 - Il est juste nécessaire que la personne qui reçoit la partition aille dans "Outils", "Transfert Wi-Fi Direct" et clique sur "Activer la Réception"
   La partition est immédiatement envoyées et incue dans le Music Score Manager de la personne qui reçoit !
   => Le détail des envois/réceptions immédiates est disponible plus en détail dans la partie "[Outils](tools.md)"
-
-
-
+  Nota : si on vous envoi une partition avec l'option annotation poru une partition que vous possédez déjà avec vos propres annotations, les nouvelles annotations reçues écrasent vos propres annotations par défaut. 
 7. **📦 Exporter la partition (.msmscore)** :
 
 Génère une archive (= un fichier) autonome transportable avec un choix  d'options (annotations, pistes audio) d'export.
 
-
-
 8. **🏷️ Renommer la partition** :
 
 Boîte de dialogue rapide pour changer le titre et donc le nom de la partition PDF affichée sans entrer dans l'édition complète.
-
-
 
 9. **🗑️ Supprimer la partition** :
 

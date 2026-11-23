@@ -170,12 +170,10 @@ The annotation toolbar expands from the bottom of the screen and adapts to your 
   - Large touch-friendly slider to adjust sticker size on the fly.
 - **↩️ Undo / ↪️ Redo**:
   - Complete dynamic undo/redo history stack for all drawing actions.
-- **🔒/🔓 Security Lock**:
-  - Automatic safety lock upon opening the toolbar to safeguard the score against accidental pen marks during concerts.
-  - Unlocks automatically when selecting an editing tool.
-  - Locks automatically upon closing the toolbar (`✕`).
 - **✧ Clear Page**: Clears all annotations on the current page with confirmation prompt.
-- **🗑️ Delete Selected**: Touch selection of an existing annotation to delete it with finger tap or double-tap.
+- **Eraser**: Once activated, any touched or selected annotation element is deleted. Tapping the eraser icon again deactivates eraser mode.
+
+The small cross (`✕`) on the right side of the annotation bar closes this toolbar and prevents any further editing actions on annotations.
 
 ---
 

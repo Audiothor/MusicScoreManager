@@ -109,7 +109,6 @@ Permet d'afficher ou non le titre de la partition (ce qui correspond au nom du f
 
 Faites un **double-clic ou double-tap au centre de l'écran** pour afficher le menu d'actions rapides sans quitter votre partition :
 
-
 **Retour à l'accueil** : Permet de revenir au menu précédent (permet donc de quitter l'affichage de la partition en cours ou de la setlsit en cours).
 Sortie propre du visualiseur.
 
@@ -121,17 +120,20 @@ Le nom de la partition est affichée en dessous.
    En actionnant le bouton cela permet de positioner un petit marque page qui peut être utilise lors de commandes directes via une pédale bluetooth par exemple.
    Le marque page est éditable si on clique dessus. On peut lui donner un nom sur 3 lettres maximum et d'accéder au marque page suivant ou précédent si il existe.
    Il est aussi possible de la supprimer par ce petit menu.
-   
+
 2. **↻ Rotation (+90°)** :
+   
    - Fait pivoter la partition de 90° dans le sens des aiguilles d'une montre.
    - **Option « Appliquer à cette page uniquement »** : permet de pivoter uniquement une page spécifique scannée en paysage.
    - **Interrupteur « Mémoriser les rotations »** : enregistre l'orientation dans la base de données locale.
+
 3. **🔍 Rétablir la taille d'origine (100%)** :
+   
    - Réinitialise immédiatement le zoom et recadre parfaitement la page sur l'écran.
+
 4. ✏️ **Modifier la partition** : Accès direct à l'édition des métadonnées musicales.
+
 5. **📑 Modifier l'assemblage PDF** : Bascule directement dans l'Atelier d'Assemblage PDF. (Cf voir [outils](tools.md))
-
-
 
 ---
 
@@ -153,9 +155,6 @@ Le nom de la partition est affichée en dessous.
 - **Mode Plein Écran Immersif (100% de la surface physique)** :
   - Masquage complet de l'en-tête système (heure, batterie, notifications) et de la barre de navigation inférieure pour éliminer toute distraction sur scène.
   - *Accès système temporaire préservé* : un simple glissement rapide depuis le bord supérieur ou inférieur de l'écran fait réapparaître les barres système en transparence pendant ~3 secondes. Configurable dans *Paramètres > Partitions*.
-
-
-
 
 ---
 
@@ -180,12 +179,13 @@ La barre d'annotation se déploie depuis le bas de l'écran et s'adapte à vos m
   - Réglette grand format ergonomique pour ajuster la taille du sticker au doigt.
 - **↩️ Annuler (Undo) / ↪️ Rétablir (Redo)** :
   - Historique dynamique complet pour annuler ou rétablir chaque modification.
-- **🔒/🔓 Cadenas de Verrouillage de Sécurité** :
-  - Verrouillage automatique systématique à l'ouverture pour sanctuariser la partition contre toute fausse manipulation.
-  - Déverrouillage automatique au choix d'un outil d'édition.
-  - Re-verrouillage automatique à la fermeture de la barre (bouton ✕).
+
 - **✧ Nettoyage Général** : Réinitialise toutes les annotations de la page avec confirmation de sécurité.
-- **🗑️ Suppression Ciblée** : Sélection tactile d'une annotation existante pour la supprimer au doigt ou par double-tap.
+- **G Gomme** : Une fois activée, tout élement d'annotation sélectionné est supprimé. Une nouvelle pression sur l'icone de gomme désactive l'utilisation de la gomme.
+
+
+
+La petite croix à droite de la barre d'annotation ferme cette option et ne permet plus d'action sur des annotations.
 
 ---
 
