@@ -760,6 +760,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#7-practice-audio-recorder-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Practice Audio Recorder (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1176,6 +1187,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#7-practice-audio-recorder-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Practice Audio Recorder (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1278,6 +1300,7 @@ The "Completed", "In Progress", and "Upcoming" status indicators let you quickly
 <li><strong>📄 Page Number</strong>: Enables or disables the page indicator in the bottom-right corner.</li>
 <li><strong>🎛️ Tuner</strong>: Opens the high-precision floating multi-instrument tuner.</li>
 <li><strong>🏷️ Score Title</strong>: Shows or hides the top banner displaying the piece name.</li>
+<li><strong>🎙️ Recorder</strong>: Opens the optional floating practice recorder to record and review audio takes directly over your score.</li>
 </ol>
 <p>All modifications apply instantly in real time on the score upon tapping each tile.</p>
 <hr />
@@ -1336,6 +1359,23 @@ Note that in score settings, you can toggle global page number display across al
 <hr />
 <h4 id="6-score-title">6. Score Title</h4>
 <p>Allows showing or hiding the score title (derived from the PDF file name) at the top of the sheet music page.</p>
+<hr />
+<h4 id="7-practice-audio-recorder-optional">7. Practice Audio Recorder (Optional)</h4>
+<p>Accessible on demand from the Quick Tools Drawer (<code>🎙️ Recorder</code>), this unobtrusive tool lets you record yourself playing while reading your score:</p>
+<ul>
+<li><strong>Draggable Floating Panel</strong>: Move the recorder box anywhere on screen so no measures are hidden.</li>
+<li><strong>Multi-Take <code>.wav</code> Recording</strong>:</li>
+<li><strong><code>⏺</code> / <code>⏹</code></strong> toggle with a pulsing red indicator and live timer (<code>00:00</code>).</li>
+<li>Each take is saved locally in <code>&lt;Audio&gt;/Recordings/</code> and automatically linked to the current score (marked with the <code>🎙️</code> badge).</li>
+<li><strong>Instant Review &amp; Management</strong>:</li>
+<li><strong><code>▶</code> / <code>⏹</code></strong>: Immediate preview playback directly inside the overlay.</li>
+<li><strong><code>✏️</code></strong>: Quick rename of any take (e.g., <em>"Slow tempo"</em>, <em>"Final run"</em>).</li>
+<li><strong><code>🗑️</code></strong>: Permanent deletion with confirmation (also deletes the underlying <code>.wav</code> file on disk).</li>
+<li><strong>Smart Mutual Exclusion with the Tuner</strong>:</li>
+<li>Opening the recorder automatically stops and closes the tuner to avoid microphone conflicts.</li>
+<li>Opening the tuner automatically closes an idle recorder, while blocking access with an alert if a recording is actively in progress to protect your take.</li>
+<li><strong>Private by Default</strong>: Practice recordings remain strictly private and are excluded by default from file exports and Wi-Fi Direct shares (an opt-in checkbox, unchecked by default, allows including them explicitly when desired).</li>
+</ul>
 <hr />
 <h2 id="3-central-quick-menu-double-tap">[3] Central Quick Menu (Double-Tap)</h2>
 <p><strong>Double-click or double-tap in the center of the screen</strong> to display the quick action dialog without leaving your sheet music:</p>
