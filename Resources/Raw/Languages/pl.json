@@ -765,7 +765,7 @@
   "Wifi_Setlist_Qr_Connected": "Połączono! ({0} pobrań ukończonych)",
   "Wifi_Setlist_Qr_Help": "Muzycy w tej samej sieci Wi-Fi mogą zeskanować ten kod QR aparatem lub otworzyć adres URL w przeglądarce, aby pobrać pakiet setlisty.",
   "Wifi_Setlist_Qr_Close": "Zamknij transmisję",
-  "Wifi_Setlist_Qr_Start_Error": "Nie można uruchomić lokalnego serwera WWW: {0}",
+  "Wifi_Setlist_Qr_Start_Error": "Nie można uruchomić lokalnego serwera WWW.",
   "Duplicates_None_Found_Success": "Nie wykryto żadnych duplikatów w Twojej bibliotece!",
   "Duplicates_Found_Summary": "Analiza zakończona: znaleziono {0} grup(ę/y) duplikatów ({1} potencjalnych duplikatów).",
   "Duplicates_Group_Header": "Grupa #{0} • {1} zduplikowanych plików",

@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.3.2 — 26/11/2026](#v332-26112026)
 - [v3.3.1 — 22/11/2026](#v331-22112026)
 - [v3.3.0 — 22/11/2026](#v330-22112026)
 - [v3.2.16 — 19/11/2026](#v3216-19112026)
@@ -66,6 +67,31 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.3.2 — 26/11/2026
+
+### 1. Modular Architecture & Maintainability (`ViewerPage`)
+- **1.1. Split `ViewerPage.xaml.cs` (~8,200 lines) into 8 dedicated partial classes:**
+  - `ViewerPage.xaml.cs` (lifecycle, initialization, loading, menus, layout).
+  - `ViewerPage.Pdf.cs` (1/2-page PDF rendering, preloading, navigation, setlist progress, bookmarks).
+  - `ViewerPage.Annotations.cs` (highlighter, pencil, text, stickers, eraser, undo/redo, rendering).
+  - `ViewerPage.Touch.cs` (pinch/pan, gestures, native Android touch handler).
+  - `ViewerPage.Metronome.cs` (metronome engine & settings modal).
+  - `ViewerPage.Audio.cs` (audio player, pre-count, backing tracks).
+  - `ViewerPage.Tuner.cs` (floating multi-instrument tuner).
+  - `ViewerPage.Pedals.cs` (Bluetooth HID pedals & MIDI controllers).
+- **1.2. Pure Geometry Helper (`Services/AnnotationGeometryHelper.cs`):**
+  - Centralized canvas bounds, page/screen coordinate conversions, and point-to-segment distance calculations into a UI-independent, unit-testable helper.
+
+### 2. Automated Unit Tests & Localization Reliability (`MusicScoreManager.Tests`)
+- **2.1. Added xUnit Test Suite (11 fast tests running in ~200 ms via `dotnet test`):**
+  - Automated validation across all 8 language JSON files (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`) for valid JSON, missing keys, and exact `{0}`/`{1}`/`{2}` format placeholder parity.
+  - Geometry tests covering 1-page portrait, 2-page landscape, Option C white-margin clamping, and eraser `DistanceToSegment`.
+  - JSON (`AnnotationMetadata`) and SQLite (`Annotation`) round-trip tests locking in `Opacity` and `BorderColor` preservation.
+- **2.2. Fixed 8 localization placeholder mismatches caught by the new test suite:**
+  - Fixed a potential French `FormatException` in `DuplicatesPage` (`Duplicates_Group_Header`) and aligned format placeholders across all 8 languages for `Duplicates_Used_In_Setlists`, `Duplicates_Delete_Warning_Setlist`, `Duplicates_Deleted_Success_Msg`, `Setlist_Duplicate_Copy_Suffix`, `Setlist_Export_Success_Msg`, `Wifi_Setlist_Failed_Msg`, and `Wifi_Setlist_Qr_Start_Error`.
 
 ---
 

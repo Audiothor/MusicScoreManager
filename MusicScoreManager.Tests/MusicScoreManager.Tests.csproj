@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2" />
+    <PackageReference Include="Microsoft.Maui.Graphics" Version="10.0.41" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Microsoft.Maui.Graphics" />
+  </ItemGroup>
+
+  <!-- Inclusion directe des modules métier purs pour une exécution ultra-rapide sans dépendance UI MAUI -->
+  <ItemGroup>
+    <Compile Include="..\Services\AnnotationGeometryHelper.cs" Link="Linked\AnnotationGeometryHelper.cs" />
+    <Compile Include="..\Services\IWifiDirectTransferService.cs" Link="Linked\IWifiDirectTransferService.cs" />
+    <Compile Include="..\Models\MusicalKey.cs" Link="Linked\MusicalKey.cs" />
+    <Compile Include="..\Models\Annotation.cs" Link="Linked\Annotation.cs" />
+    <Compile Include="..\Models\Score.cs" Link="Linked\Score.cs" />
+    <Compile Include="..\Models\Setlist.cs" Link="Linked\Setlist.cs" />
+    <Compile Include="..\Models\Tag.cs" Link="Linked\Tag.cs" />
+    <Compile Include="..\Models\ScoreTag.cs" Link="Linked\ScoreTag.cs" />
+    <Compile Include="..\Models\SetlistScore.cs" Link="Linked\SetlistScore.cs" />
+    <Compile Include="..\Models\ScoreAudioFile.cs" Link="Linked\ScoreAudioFile.cs" />
+    <Compile Include="..\Models\ScoreBookmark.cs" Link="Linked\ScoreBookmark.cs" />
+  </ItemGroup>
+
+</Project>

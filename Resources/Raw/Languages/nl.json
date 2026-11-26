@@ -765,7 +765,7 @@
   "Wifi_Setlist_Qr_Connected": "Verbonden! ({0} download(s) voltooid)",
   "Wifi_Setlist_Qr_Help": "Muzikanten op hetzelfde wifi-netwerk kunnen deze QR-code scannen met hun camera of de URL in een browser openen om het setlistpakket te downloaden.",
   "Wifi_Setlist_Qr_Close": "Uitzending sluiten",
-  "Wifi_Setlist_Qr_Start_Error": "Kan lokale webserver niet starten: {0}",
+  "Wifi_Setlist_Qr_Start_Error": "Kan lokale webserver niet starten.",
   "Duplicates_None_Found_Success": "Geen duplicaten gevonden in uw bibliotheek!",
   "Duplicates_Found_Summary": "Analyse voltooid: {0} duplicaatgroep(en) gevonden ({1} mogelijke duplicaten).",
   "Duplicates_Group_Header": "Groep #{0} • {1} dubbele bestanden",

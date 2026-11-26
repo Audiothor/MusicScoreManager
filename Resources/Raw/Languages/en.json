@@ -768,7 +768,7 @@
   "Wifi_Setlist_Qr_Connected": "Connected! ({0} download(s) completed)",
   "Wifi_Setlist_Qr_Help": "Musicians on the same Wi-Fi can scan this QR code with their camera or open the URL in a browser to download the setlist package.",
   "Wifi_Setlist_Qr_Close": "Close Broadcast",
-  "Wifi_Setlist_Qr_Start_Error": "Unable to start local web server: {0}",
+  "Wifi_Setlist_Qr_Start_Error": "Unable to start local web server.",
   "Duplicates_None_Found_Success": "No duplicates detected in your library!",
   "Duplicates_Found_Summary": "Analysis complete: {0} duplicate group(s) found ({1} potential duplicates).",
   "Duplicates_Group_Header": "Group #{0} • {1} duplicate files",

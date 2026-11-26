@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.3.2 — 26/11/2026](#v332-26112026)
 - [v3.3.1 — 22/11/2026](#v331-22112026)
 - [v3.3.0 — 22/11/2026](#v330-22112026)
 - [v3.2.16 — 19/11/2026](#v3216-19112026)
@@ -66,6 +67,31 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.3.2 — 26/11/2026
+
+### 1. Architecture Modulaire & Maintenabilité (`ViewerPage`)
+- **1.1. Découpage de `ViewerPage.xaml.cs` (~8 200 lignes) en 8 classes partielles dédiées :**
+  - `ViewerPage.xaml.cs` (cycle de vie, initialisation, chargement, menus et mise en page).
+  - `ViewerPage.Pdf.cs` (rendu PDF 1/2 pages, préchargement, navigation, progression setlist et marque-pages).
+  - `ViewerPage.Annotations.cs` (surligneur, crayon, texte, stickers, gomme, annuler/rétablir et rendu).
+  - `ViewerPage.Touch.cs` (zoom/pan, gestes tactiles et gestionnaire tactile natif Android).
+  - `ViewerPage.Metronome.cs` (moteur métronome et fenêtre de réglages).
+  - `ViewerPage.Audio.cs` (lecteur audio, pré-compte et pistes d'accompagnement).
+  - `ViewerPage.Tuner.cs` (accordeur multi-instruments flottant).
+  - `ViewerPage.Pedals.cs` (pédales Bluetooth HID et contrôleurs MIDI).
+- **1.2. Extraction d'un moteur géométrique pur (`Services/AnnotationGeometryHelper.cs`) :**
+  - Centralisation des calculs de cadrage (`ComputeCanvasBounds`), de conversion de coordonnées (`PageToScreen`, `ScreenToPage`, `ScreenToPageCoords`) et de distance point-à-segment (`DistanceToSegment`) dans un module testable indépendamment de l'UI.
+
+### 2. Tests Automatisés & Fiabilisation Multilingue (`MusicScoreManager.Tests`)
+- **2.1. Création d'une suite de 11 tests unitaires xUnit (exécutée en ~200 ms via `dotnet test`) :**
+  - Validation automatique des 8 fichiers de langues (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`) : intégrité JSON, exhaustivité des clés et correspondance stricte des marqueurs `{0}` / `{1}` / `{2}`.
+  - Validation mathématique des coordonnées 1 page portrait, 2 pages paysage, marges blanches (Option C) et précision de la gomme (`DistanceToSegment`).
+  - Validation aller-retour JSON (`AnnotationMetadata`) et SQLite (`Annotation`) garantissant la conservation de `Opacity` et `BorderColor`.
+- **2.2. Correction immédiate de 8 clés de traduction incohérentes détectées par les tests :**
+  - Correction en français d'un risque de `FormatException` sur la page Doublons (`Duplicates_Group_Header`) et de marqueurs `{0}`/`{1}` erronés sur `Duplicates_Used_In_Setlists`, `Duplicates_Delete_Warning_Setlist`, `Duplicates_Deleted_Success_Msg`, `Setlist_Duplicate_Copy_Suffix`, `Setlist_Export_Success_Msg`, `Wifi_Setlist_Failed_Msg` et `Wifi_Setlist_Qr_Start_Error` dans les 8 langues.
 
 ---
 

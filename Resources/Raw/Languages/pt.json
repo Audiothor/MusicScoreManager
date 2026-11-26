@@ -765,7 +765,7 @@
   "Wifi_Setlist_Qr_Connected": "Ligado! ({0} descarregamento(s) concluído(s))",
   "Wifi_Setlist_Qr_Help": "Os músicos na mesma rede Wi-Fi podem digitalizar este código QR com a câmara ou abrir o URL num navegador para descarregar o pacote da setlist.",
   "Wifi_Setlist_Qr_Close": "Fechar transmissão",
-  "Wifi_Setlist_Qr_Start_Error": "Não foi possível iniciar o servidor web local: {0}",
+  "Wifi_Setlist_Qr_Start_Error": "Não foi possível iniciar o servidor web local.",
   "Duplicates_None_Found_Success": "Nenhum duplicado detetado na sua biblioteca!",
   "Duplicates_Found_Summary": "Análise concluída: {0} grupo(s) de duplicados encontrado(s) ({1} potenciais duplicados).",
   "Duplicates_Group_Header": "Grupo #{0} • {1} ficheiros duplicados",

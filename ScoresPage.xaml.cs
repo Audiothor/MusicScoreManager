@@ -985,7 +985,7 @@ public partial class ScoresPage : ContentPage
             {
                 await DisplayAlertAsync(
                     locService.GetString("Wifi_Setlist_Failed_Title", "Échec"),
-                    locService.GetString("Wifi_Setlist_Failed_Msg", "Le transfert a échoué ou a été refusé par le destinataire."),
+                    string.Format(locService.GetString("Wifi_Setlist_Failed_Msg", "Le transfert a échoué ou a été refusé par {0}."), targetDevice.Name),
                     locService.GetString("Common_OK", "OK"));
             }
         }
