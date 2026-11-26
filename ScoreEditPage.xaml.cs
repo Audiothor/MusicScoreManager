@@ -386,6 +386,8 @@ public partial class ScoreEditPage : ContentPage
         RefreshAllTagsPickerUI(e.NewTextValue);
     }
 
+    private readonly List<string> _deletedRecordingPaths = new();
+
     private void RefreshAudioFilesUI()
     {
         AudioFilesList.Children.Clear();
@@ -393,49 +395,143 @@ public partial class ScoreEditPage : ContentPage
         string audioTitle = LocalizationService.Instance.GetString("Score_Edit_Audio_Section", "Fichiers Audio");
         AudioAccordionTitleLabel.Text = count > 0 ? $"{audioTitle} ({count})" : audioTitle;
 
-        foreach (var af in _score.AudioFiles)
+        var loc = LocalizationService.Instance;
+        for (int idx = 0; idx < _score.AudioFiles.Count; idx++)
         {
-            var grid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { 
-                new ColumnDefinition { Width = GridLength.Auto }, 
-                new ColumnDefinition { Width = GridLength.Star }, 
-                new ColumnDefinition { Width = GridLength.Auto },
-                new ColumnDefinition { Width = GridLength.Auto } 
-            }, ColumnSpacing = 10 };
-            
+            int currentIndex = idx;
+            var af = _score.AudioFiles[currentIndex];
+
+            var grid = new Grid
+            {
+                ColumnDefinitions = new ColumnDefinitionCollection
+                {
+                    new ColumnDefinition { Width = GridLength.Auto },
+                    new ColumnDefinition { Width = GridLength.Star },
+                    new ColumnDefinition { Width = GridLength.Auto }
+                },
+                ColumnSpacing = 8
+            };
+
             var checkbox = new CheckBox { IsChecked = af.IsSelected, Color = Color.FromArgb("#007ACC"), VerticalOptions = LayoutOptions.Center };
-            checkbox.CheckedChanged += (s, e) => {
-                if (e.Value) {
+            checkbox.CheckedChanged += (s, e) =>
+            {
+                if (e.Value)
+                {
                     foreach (var other in _score.AudioFiles.Where(x => x != af)) other.IsSelected = false;
                     af.IsSelected = true;
                     RefreshAudioFilesUI();
-                } else af.IsSelected = false;
+                }
+                else af.IsSelected = false;
             };
 
             var nameStack = new HorizontalStackLayout { Spacing = 5, VerticalOptions = LayoutOptions.Center };
+            nameStack.Children.Add(new Label
+            {
+                Text = af.IsRecording ? "🎙️" : "🎵",
+                FontSize = 14,
+                VerticalOptions = LayoutOptions.Center
+            });
             if (Path.IsPathRooted(af.FilePath))
             {
                 nameStack.Children.Add(new Label { Text = "🔗", TextColor = Color.FromArgb("#007ACC"), VerticalOptions = LayoutOptions.Center });
             }
             nameStack.Children.Add(new Label { Text = af.FileName, TextColor = Colors.White, VerticalOptions = LayoutOptions.Center, LineBreakMode = LineBreakMode.TailTruncation });
 
-            var actionsStack = new HorizontalStackLayout { Spacing = 5 };
+            var actionsStack = new HorizontalStackLayout { Spacing = 4, VerticalOptions = LayoutOptions.Center };
+
+            if (count > 1)
+            {
+                var upBtn = new Button
+                {
+                    Text = "▲",
+                    FontSize = 11,
+                    WidthRequest = 30,
+                    HeightRequest = 30,
+                    Padding = 0,
+                    CornerRadius = 6,
+                    BackgroundColor = currentIndex > 0 ? Color.FromArgb("#2C2C3E") : Color.FromArgb("#1E1E26"),
+                    TextColor = currentIndex > 0 ? Colors.White : Color.FromArgb("#555566"),
+                    IsEnabled = currentIndex > 0
+                };
+                upBtn.Clicked += (s, e) =>
+                {
+                    if (currentIndex <= 0) return;
+                    (_score.AudioFiles[currentIndex - 1], _score.AudioFiles[currentIndex]) = (_score.AudioFiles[currentIndex], _score.AudioFiles[currentIndex - 1]);
+                    RefreshAudioFilesUI();
+                };
+                actionsStack.Children.Add(upBtn);
+
+                var downBtn = new Button
+                {
+                    Text = "▼",
+                    FontSize = 11,
+                    WidthRequest = 30,
+                    HeightRequest = 30,
+                    Padding = 0,
+                    CornerRadius = 6,
+                    BackgroundColor = currentIndex < count - 1 ? Color.FromArgb("#2C2C3E") : Color.FromArgb("#1E1E26"),
+                    TextColor = currentIndex < count - 1 ? Colors.White : Color.FromArgb("#555566"),
+                    IsEnabled = currentIndex < count - 1
+                };
+                downBtn.Clicked += (s, e) =>
+                {
+                    if (currentIndex >= _score.AudioFiles.Count - 1) return;
+                    (_score.AudioFiles[currentIndex + 1], _score.AudioFiles[currentIndex]) = (_score.AudioFiles[currentIndex], _score.AudioFiles[currentIndex + 1]);
+                    RefreshAudioFilesUI();
+                };
+                actionsStack.Children.Add(downBtn);
+            }
+
+            var renameBtn = new Button
+            {
+                Text = "✏️",
+                FontSize = 12,
+                WidthRequest = 30,
+                HeightRequest = 30,
+                Padding = 0,
+                CornerRadius = 6,
+                BackgroundColor = Color.FromArgb("#2C2C3E"),
+                TextColor = Colors.White
+            };
+            renameBtn.Clicked += async (s, e) =>
+            {
+                string? newName = await this.DisplayPromptAsync(
+                    loc.GetString("Score_Edit_Audio_Rename_Title", "Renommer le fichier audio"),
+                    loc.GetString("Score_Edit_Audio_Rename_Prompt", "Nouveau nom :"),
+                    loc.GetString("Common_OK", "OK"),
+                    loc.GetString("Common_Cancel", "Annuler"),
+                    initialValue: af.FileName);
+                if (!string.IsNullOrWhiteSpace(newName))
+                {
+                    af.FileName = newName.Trim();
+                    RefreshAudioFilesUI();
+                }
+            };
+            actionsStack.Children.Add(renameBtn);
 
             if (Path.IsPathRooted(af.FilePath))
             {
-                var importBtn = new Button { 
-                    Text = LocalizationService.Instance.GetString("Score_Edit_Import_Action", "Rapatrier"), 
-                    FontSize = 10, 
-                    HeightRequest = 30, 
-                    Padding = new Thickness(5, 0), 
-                    BackgroundColor = Color.FromArgb("#007ACC"), 
-                    TextColor = Colors.White 
+                var importBtn = new Button
+                {
+                    Text = loc.GetString("Score_Edit_Import_Action", "Rapatrier"),
+                    FontSize = 10,
+                    HeightRequest = 30,
+                    Padding = new Thickness(5, 0),
+                    BackgroundColor = Color.FromArgb("#007ACC"),
+                    TextColor = Colors.White
                 };
                 importBtn.Clicked += async (s, e) => await OnImportAudioToLibraryClicked(af);
                 actionsStack.Children.Add(importBtn);
             }
 
-            var deleteBtn = new Button { Text = "✕", BackgroundColor = Colors.Transparent, TextColor = Colors.Red, WidthRequest = 40, HeightRequest = 40, VerticalOptions = LayoutOptions.Center };
-            deleteBtn.Clicked += (s, e) => {
+            var deleteBtn = new Button { Text = "✕", BackgroundColor = Colors.Transparent, TextColor = Colors.Red, WidthRequest = 34, HeightRequest = 34, Padding = 0, VerticalOptions = LayoutOptions.Center };
+            deleteBtn.Clicked += (s, e) =>
+            {
+                if (af.IsRecording && !string.IsNullOrWhiteSpace(af.FilePath))
+                {
+                    string absPath = _settingsService.GetAbsolutePath(af.FilePath, isAudio: true);
+                    _deletedRecordingPaths.Add(absPath);
+                }
                 _score.AudioFiles.Remove(af);
                 RefreshAudioFilesUI();
             };
@@ -770,12 +866,21 @@ public partial class ScoreEditPage : ContentPage
             }
         }
 
-        foreach (var af in _score.AudioFiles)
+        for (int i = 0; i < _score.AudioFiles.Count; i++)
         {
+            var af = _score.AudioFiles[i];
             af.Id = 0; // Réinitialiser l'Id pour garantir une insertion correcte suite à la suppression précédente
             af.ScoreId = _score.Id;
+            af.SortOrder = i;
             await _databaseService.SaveAudioFileAsync(af);
         }
+
+        // Nettoyage physique des prises micro supprimées (uniquement les fichiers internes d'enregistrement)
+        foreach (var path in _deletedRecordingPaths)
+        {
+            try { if (File.Exists(path)) File.Delete(path); } catch { }
+        }
+        _deletedRecordingPaths.Clear();
 
         await Navigation.PopAsync();
     }

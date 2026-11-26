@@ -108,4 +108,82 @@ public class MetadataAndDatabaseTests
             try { if (File.Exists(tempDb)) File.Delete(tempDb); } catch { }
         }
     }
+
+    [Fact]
+    public void ScoreTransferMetadata_JsonRoundTrip_PreservesRecordingAudioFiles()
+    {
+        var original = new ScoreTransferMetadata
+        {
+            Title = "Nocturne Op.9 No.2",
+            FileName = "nocturne.pdf",
+            AudioFiles = ["backing_track.mp3", "take_01.wav"],
+            RecordingAudioFiles = ["take_01.wav"]
+        };
+
+        string json = JsonSerializer.Serialize(original);
+        var restored = JsonSerializer.Deserialize<ScoreTransferMetadata>(json);
+
+        Assert.NotNull(restored);
+        Assert.Equal(2, restored!.AudioFiles.Count);
+        Assert.Single(restored.RecordingAudioFiles);
+        Assert.Equal("take_01.wav", restored.RecordingAudioFiles[0]);
+    }
+
+    [Fact]
+    public async Task SqliteDatabase_ScoreAudioFile_PreservesIsRecordingAndSortOrder()
+    {
+        string tempDb = Path.Combine(Path.GetTempPath(), $"msm_audio_test_{Guid.NewGuid():N}.db3");
+        var db = new SQLiteAsyncConnection(tempDb);
+        try
+        {
+            await db.CreateTableAsync<Score>();
+            await db.CreateTableAsync<ScoreAudioFile>();
+
+            var score = new Score { Title = "Etude", FilePath = "etude.pdf", Type = ScoreType.PDF };
+            await db.InsertAsync(score);
+
+            await db.InsertAsync(new ScoreAudioFile
+            {
+                ScoreId = score.Id,
+                FileName = "Prise 2",
+                FilePath = "Recordings/take2.wav",
+                IsRecording = true,
+                SortOrder = 2
+            });
+            await db.InsertAsync(new ScoreAudioFile
+            {
+                ScoreId = score.Id,
+                FileName = "Backing Track",
+                FilePath = "backing.mp3",
+                IsRecording = false,
+                SortOrder = 0
+            });
+            await db.InsertAsync(new ScoreAudioFile
+            {
+                ScoreId = score.Id,
+                FileName = "Prise 1",
+                FilePath = "Recordings/take1.wav",
+                IsRecording = true,
+                SortOrder = 1
+            });
+
+            var loaded = (await db.Table<ScoreAudioFile>().Where(a => a.ScoreId == score.Id).ToListAsync())
+                .OrderBy(a => a.SortOrder)
+                .ThenBy(a => a.Id)
+                .ToList();
+
+            Assert.Equal(3, loaded.Count);
+            Assert.Equal("Backing Track", loaded[0].FileName);
+            Assert.False(loaded[0].IsRecording);
+            Assert.Equal("Prise 1", loaded[1].FileName);
+            Assert.True(loaded[1].IsRecording);
+            Assert.Equal("Prise 2", loaded[2].FileName);
+            Assert.True(loaded[2].IsRecording);
+        }
+        finally
+        {
+            await db.CloseAsync();
+            try { if (File.Exists(tempDb)) File.Delete(tempDb); } catch { }
+        }
+    }
 }

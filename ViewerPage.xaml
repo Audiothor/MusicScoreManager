@@ -1590,6 +1590,31 @@
                     </Grid>
                 </Border>
 
+                <!-- Tuile 5b : Enregistreur (Prises micro) -->
+                <Border x:Name="DrawerRecorderTile"
+                        BackgroundColor="#252532"
+                        Stroke="#444455"
+                        StrokeThickness="1"
+                        Padding="10,8">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="8" />
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnDrawerRecorderTapped" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+                        <Label Grid.Column="0" Text="🎙️" FontSize="16" VerticalOptions="Center" Margin="0,0,8,0" />
+                        <Label Grid.Column="1" Text="{Binding [Viewer_Tools_Recorder], Source={x:Static services:LocalizationService.Instance}}" 
+                               TextColor="White" FontSize="12" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Border Grid.Column="2" x:Name="DrawerRecorderBadge" BackgroundColor="#444444" Padding="6,2">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="4" />
+                            </Border.StrokeShape>
+                            <Label x:Name="DrawerRecorderStatusLabel" Text="OFF" TextColor="#CCCCCC" FontSize="10" FontAttributes="Bold" />
+                        </Border>
+                    </Grid>
+                </Border>
+
                 <!-- Tuile 6 : Titre de la partition en haut -->
                 <Border x:Name="DrawerScoreTitleTile"
                         BackgroundColor="#252532"
@@ -1614,6 +1639,104 @@
                         </Border>
                     </Grid>
                 </Border>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Overlay ENREGISTREUR Flottant & Déplaçable (v3.4.0) -->
+        <Border x:Name="RecorderOverlay"
+                IsVisible="False"
+                HorizontalOptions="Center"
+                VerticalOptions="Start"
+                Margin="0,52,0,0"
+                WidthRequest="330"
+                BackgroundColor="#F2181926"
+                Stroke="#E74C3C"
+                StrokeThickness="1.5"
+                Padding="14,10"
+                ZIndex="1205">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="14" />
+            </Border.StrokeShape>
+            <Border.Shadow>
+                <Shadow Brush="#000000" Offset="0,6" Radius="16" Opacity="0.85" />
+            </Border.Shadow>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnRecorderBoxTapped" NumberOfTapsRequired="1" />
+                <TapGestureRecognizer Tapped="OnRecorderBoxTapped" NumberOfTapsRequired="2" />
+                <PanGestureRecognizer PanUpdated="OnRecorderPanUpdated" />
+            </Border.GestureRecognizers>
+            <VerticalStackLayout Spacing="10">
+                <!-- En-tête déplaçable -->
+                <Grid ColumnDefinitions="Auto, *, Auto">
+                    <Label Grid.Column="0" Text="⠿" TextColor="#888899" FontSize="18" VerticalOptions="Center" Margin="0,0,8,0" />
+                    <Label Grid.Column="1"
+                           Text="{Binding [Recorder_Overlay_Title], Source={x:Static services:LocalizationService.Instance}}"
+                           TextColor="White"
+                           FontSize="15"
+                           FontAttributes="Bold"
+                           VerticalOptions="Center" />
+                    <Button Grid.Column="2"
+                            Text="✕"
+                            BackgroundColor="Transparent"
+                            TextColor="#CCCCCC"
+                            FontSize="16"
+                            FontAttributes="Bold"
+                            WidthRequest="32"
+                            HeightRequest="32"
+                            Padding="0"
+                            Clicked="OnCloseRecorderClicked" />
+                </Grid>
+
+                <!-- Zone de commande Enregistrer / Stop + Chrono -->
+                <Border BackgroundColor="#232436" Stroke="#3A3B52" StrokeThickness="1" Padding="10,8">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <Grid ColumnDefinitions="Auto, Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
+                        <Button Grid.Column="0"
+                                x:Name="RecorderToggleBtn"
+                                Text="⏺"
+                                BackgroundColor="#C0392B"
+                                TextColor="White"
+                                FontSize="18"
+                                WidthRequest="44"
+                                HeightRequest="44"
+                                CornerRadius="22"
+                                Padding="0"
+                                Clicked="OnRecorderToggleClicked" />
+                        <BoxView Grid.Column="1"
+                                 x:Name="RecorderPulseDot"
+                                 WidthRequest="10"
+                                 HeightRequest="10"
+                                 CornerRadius="5"
+                                 Color="#666677"
+                                 VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="1">
+                            <Label x:Name="RecorderTimerLabel"
+                                   Text="00:00"
+                                   TextColor="White"
+                                   FontSize="18"
+                                   FontAttributes="Bold" />
+                            <Label x:Name="RecorderStatusLabel"
+                                   Text="{Binding [Recorder_Status_Ready], Source={x:Static services:LocalizationService.Instance}}"
+                                   TextColor="#AAAAAA"
+                                   FontSize="11"
+                                   LineBreakMode="TailTruncation" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="3"
+                               x:Name="RecorderTakesCountLabel"
+                               Text=""
+                               TextColor="#88CCFF"
+                               FontSize="11"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <!-- Liste des prises enregistrées pour cette partition -->
+                <ScrollView MaximumHeightRequest="190">
+                    <VerticalStackLayout x:Name="RecorderTakesList" Spacing="6" />
+                </ScrollView>
             </VerticalStackLayout>
         </Border>
 

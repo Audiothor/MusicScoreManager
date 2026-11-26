@@ -790,6 +790,11 @@ public partial class ViewerPage
 
         CancelPreCount();
         StopMetronome();
+        if (AudioRecorderService.Instance.IsRecording)
+        {
+            await StopAndSaveRecordingAsync();
+        }
+        AudioRecorderService.Instance.StopPreview();
         try
         {
             AudioPlayer.Stop();
@@ -852,6 +857,10 @@ public partial class ViewerPage
         await LoadBookmarksAsync();
         InitializeAudio(forceReload: true);
         InitializeMetronome();
+        if (RecorderOverlay != null && RecorderOverlay.IsVisible)
+        {
+            RefreshRecorderTakesUI();
+        }
 
         string fullPath = _settingsService.GetAbsolutePath(_score.FilePath);
         if (!File.Exists(fullPath))

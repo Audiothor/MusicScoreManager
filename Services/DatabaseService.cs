@@ -100,6 +100,16 @@ namespace MusicScoreManager.Services
                     await db.CreateTableAsync<Tag>();
                     await db.CreateTableAsync<ScoreTag>();
                     await db.CreateTableAsync<ScoreAudioFile>();
+                    try
+                    {
+                        await db.ExecuteAsync("ALTER TABLE ScoreAudioFile ADD COLUMN IsRecording INTEGER DEFAULT 0;");
+                    }
+                    catch { }
+                    try
+                    {
+                        await db.ExecuteAsync("ALTER TABLE ScoreAudioFile ADD COLUMN SortOrder INTEGER DEFAULT 0;");
+                    }
+                    catch { }
                     await db.CreateTableAsync<Annotation>();
                     try
                     {
@@ -178,7 +188,9 @@ namespace MusicScoreManager.Services
 
             var tagsLookup = allTags.ToDictionary(t => t.Id);
             var scoreTagsGrouped = allScoreTags.GroupBy(st => st.ScoreId).ToDictionary(g => g.Key, g => g.ToList());
-            var audioFilesGrouped = allAudioFiles.GroupBy(af => af.ScoreId).ToDictionary(g => g.Key, g => g.ToList());
+            var audioFilesGrouped = allAudioFiles
+                .GroupBy(af => af.ScoreId)
+                .ToDictionary(g => g.Key, g => g.OrderBy(af => af.SortOrder).ThenBy(af => af.Id).ToList());
 
             foreach (var score in scores)
             {
@@ -289,7 +301,8 @@ namespace MusicScoreManager.Services
         public async Task<List<ScoreAudioFile>> GetAudioFilesForScoreAsync(int scoreId)
         {
             await Init();
-            return await _database!.Table<ScoreAudioFile>().Where(af => af.ScoreId == scoreId).ToListAsync();
+            var list = await _database!.Table<ScoreAudioFile>().Where(af => af.ScoreId == scoreId).ToListAsync();
+            return list.OrderBy(af => af.SortOrder).ThenBy(af => af.Id).ToList();
         }
 
         public async Task SetSelectedAudioFileAsync(int scoreId, int audioFileId)

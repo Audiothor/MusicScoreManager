@@ -770,7 +770,15 @@ public partial class ScoresPage : ContentPage
         ScoreOptionsTitle.Text = string.Format(loc.GetString("Scores_Bulk_Export_Title", "Exporter {0} partition(s)"), selectedScores.Count);
         ScoreOptSendWifiActionButton.IsVisible = false;
         ScoreOptExportFileActionButton.IsVisible = true;
+        ConfigureScoreRecordingsOption(selectedScores);
         ScoreOptionsOverlay.IsVisible = true;
+    }
+
+    private void ConfigureScoreRecordingsOption(List<Models.Score> scores)
+    {
+        bool hasRecordings = scores.Any(s => s.AudioFiles != null && s.AudioFiles.Any(a => a.IsRecording));
+        if (ScoreOptRecordingsCheckBox != null) ScoreOptRecordingsCheckBox.IsChecked = false;
+        if (ScoreOptRecordingsRow != null) ScoreOptRecordingsRow.IsVisible = hasRecordings;
     }
 
     private async void OnBulkExchangeClicked(object sender, EventArgs e)
@@ -792,6 +800,7 @@ public partial class ScoresPage : ContentPage
         ScoreOptionsTitle.Text = string.Format(loc.GetString("Scores_Bulk_Share_Title", "Partager {0} partition(s)"), selectedScores.Count);
         ScoreOptSendWifiActionButton.IsVisible = true;
         ScoreOptExportFileActionButton.IsVisible = false;
+        ConfigureScoreRecordingsOption(selectedScores);
         ScoreOptionsOverlay.IsVisible = true;
     }
 
@@ -1994,6 +2003,7 @@ public partial class ScoresPage : ContentPage
             ScoreOptionsTitle.Text = $"Partager '{_selectedScoreForMenu.Title}'";
             ScoreOptSendWifiActionButton.IsVisible = true;
             ScoreOptExportFileActionButton.IsVisible = false;
+            ConfigureScoreRecordingsOption(_scoresToSendForExchange);
             ScoreOptionsOverlay.IsVisible = true;
         }
     }
@@ -2007,6 +2017,7 @@ public partial class ScoresPage : ContentPage
             ScoreOptionsTitle.Text = $"Exporter '{_selectedScoreForMenu.Title}'";
             ScoreOptSendWifiActionButton.IsVisible = false;
             ScoreOptExportFileActionButton.IsVisible = true;
+            ConfigureScoreRecordingsOption(_scoresToSendForExchange);
             ScoreOptionsOverlay.IsVisible = true;
         }
     }
@@ -2017,7 +2028,8 @@ public partial class ScoresPage : ContentPage
         _currentExportOptions = new ExportOptions
         {
             IncludeAnnotations = ScoreOptAnnotationsCheckBox.IsChecked,
-            IncludeAudio = ScoreOptAudioCheckBox.IsChecked
+            IncludeAudio = ScoreOptAudioCheckBox.IsChecked,
+            IncludeRecordings = ScoreOptRecordingsRow.IsVisible && ScoreOptRecordingsCheckBox.IsChecked
         };
 
         if (_scoresToSendForExchange != null && _scoresToSendForExchange.Any())
@@ -2032,7 +2044,8 @@ public partial class ScoresPage : ContentPage
         _currentExportOptions = new ExportOptions
         {
             IncludeAnnotations = ScoreOptAnnotationsCheckBox.IsChecked,
-            IncludeAudio = ScoreOptAudioCheckBox.IsChecked
+            IncludeAudio = ScoreOptAudioCheckBox.IsChecked,
+            IncludeRecordings = ScoreOptRecordingsRow.IsVisible && ScoreOptRecordingsCheckBox.IsChecked
         };
 
         if (_scoresToSendForExchange != null && _scoresToSendForExchange.Any())

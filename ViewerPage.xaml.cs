@@ -837,6 +837,14 @@ public partial class ViewerPage : ContentPage
             DrawerTunerTile.Stroke = isTunerOn ? Color.FromArgb("#007ACC") : Color.FromArgb("#444455");
         }
 
+        bool isRecorderOn = RecorderOverlay != null && RecorderOverlay.IsVisible;
+        if (DrawerRecorderStatusLabel != null && DrawerRecorderBadge != null && DrawerRecorderTile != null)
+        {
+            DrawerRecorderStatusLabel.Text = isRecorderOn ? "ON" : "OFF";
+            DrawerRecorderBadge.BackgroundColor = isRecorderOn ? Color.FromArgb("#E74C3C") : Color.FromArgb("#444444");
+            DrawerRecorderTile.Stroke = isRecorderOn ? Color.FromArgb("#E74C3C") : Color.FromArgb("#444455");
+        }
+
         bool isTitleOn = TopScoreTitleBar != null && TopScoreTitleBar.IsVisible;
         if (DrawerScoreTitleStatusLabel != null && DrawerScoreTitleBadge != null && DrawerScoreTitleTile != null)
         {
@@ -846,17 +854,35 @@ public partial class ViewerPage : ContentPage
         }
     }
 
-    private void OnDrawerTunerTapped(object sender, EventArgs e)
+    private async void OnDrawerTunerTapped(object sender, EventArgs e)
     {
         if (TunerOverlay == null) return;
         bool newState = !TunerOverlay.IsVisible;
-        TunerOverlay.IsVisible = newState;
         if (newState)
         {
+            // Sécurité micro : bloquer l'accordeur si une prise est en train d'enregistrer
+            if (AudioRecorderService.Instance.IsRecording)
+            {
+                var loc = LocalizationService.Instance;
+                await DisplayAlertAsync(
+                    loc.GetString("Recorder_Overlay_Title", "🎙️ Enregistreur"),
+                    loc.GetString("Recorder_Stop_Before_Tuner", "Arrêtez d'abord l'enregistrement en cours avant d'ouvrir l'accordeur."),
+                    loc.GetString("Common_OK", "OK"));
+                return;
+            }
+            // Sinon bascule fluide : fermer l'enregistreur ouvert à l'arrêt
+            if (RecorderOverlay != null && RecorderOverlay.IsVisible)
+            {
+                AudioRecorderService.Instance.StopPreview();
+                RecorderOverlay.IsVisible = false;
+            }
+
+            TunerOverlay.IsVisible = true;
             InitTunerUIIfNeeded();
         }
         else
         {
+            TunerOverlay.IsVisible = false;
             StopTunerListening();
         }
         UpdateToolsDrawerUI();
@@ -1428,6 +1454,7 @@ public partial class ViewerPage : ContentPage
         try
         {
             StopTunerListening();
+            CleanupRecorderOnExit();
         }
         catch { }
 

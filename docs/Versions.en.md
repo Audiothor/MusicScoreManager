@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.4.0 — 27/11/2026](#v340-27112026)
 - [v3.3.2 — 26/11/2026](#v332-26112026)
 - [v3.3.1 — 22/11/2026](#v331-22112026)
 - [v3.3.0 — 22/11/2026](#v330-22112026)
@@ -67,6 +68,39 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.4.0 — 27/11/2026
+
+### 1. Practice Audio Recorder (`ViewerPage`, Optional)
+- **1.1. New Floating `🎙️ Recorder` Tool in the Quick Tools Drawer:**
+  - Optional on-demand overlay accessible from the viewer's tools drawer without cluttering normal reading mode.
+  - Draggable floating panel with `⏺`/`⏹` toggle, pulsing status indicator, and live timer (`00:00`).
+  - Saves multiple `.wav` takes per score in `<Audio>/Recordings/`, automatically linked to the score (`ScoreAudioFile.IsRecording = true`).
+  - Instant preview playback (`▶`/`⏹`), renaming (`✏️`), and permanent deletion (`🗑️` with physical `.wav` cleanup) directly from the overlay.
+- **1.2. Smart Mutual Exclusion with the Tuner:**
+  - Opening the recorder automatically stops and closes the tuner to release the microphone.
+  - Opening the tuner automatically closes an idle recorder, while blocking access with an alert if a recording is actively in progress to protect the live take.
+
+### 2. Enhanced Audio Track Management (`ScoreEditPage`)
+- **2.1. Visual Badges, Reordering & Renaming:**
+  - Clear visual distinction: `🎙️` badge for mic recordings vs `🎵` for standard backing tracks.
+  - **`▲` / `▼`** buttons to reorder audio files freely (persisted in SQLite via `ScoreAudioFile.SortOrder`).
+  - **`✏️`** button to rename any audio track or recording.
+  - Automatic physical `.wav` file cleanup on disk when deleting an internal recording.
+
+### 3. Privacy-First Export & Wi-Fi Direct Sharing
+- **3.1. Conditional "Include my mic recordings (private)" Option:**
+  - Personal recordings are excluded by default from file exports (`.msmscores`, `.msmsetlist`) and Wi-Fi Direct / Group QR transfers.
+  - A 3rd checkbox (unchecked by default) appears dynamically in `ScoresPage` and `SetlistsPage` export/share modals **only when** at least one selected score contains mic recordings.
+  - Preserves `IsRecording` status on import (`ScoreTransferMetadata.RecordingAudioFiles`).
+
+### 4. Localization & Automated Tests
+- **4.1. Complete 8-Language Localization (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`):**
+  - Added and test-verified 18 new localization keys across all 8 languages.
+- **4.2. Expanded xUnit Test Suite (`MusicScoreManager.Tests`):**
+  - Added JSON round-trip and SQLite tests for `RecordingAudioFiles`, `IsRecording`, and `SortOrder` (13 automated tests total).
 
 ---
 

@@ -16,13 +16,13 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>3.3.2</ApplicationDisplayVersion>
-		<ApplicationVersion>33002</ApplicationVersion>
-		<Version>3.3.2</Version>
-		<AssemblyVersion>3.3.2.0</AssemblyVersion>
-		<FileVersion>3.3.2.0</FileVersion>
-		<InformationalVersion>3.3.2</InformationalVersion>
-		<!-- Version actuelle : v3.3.2 "Architecture modulaire ViewerPage (8 classes partielles), moteur géométrique dédié, suite de tests automatisés xUnit et correction de 8 clés multilingues" -->
+		<ApplicationDisplayVersion>3.4.0</ApplicationDisplayVersion>
+		<ApplicationVersion>34000</ApplicationVersion>
+		<Version>3.4.0</Version>
+		<AssemblyVersion>3.4.0.0</AssemblyVersion>
+		<FileVersion>3.4.0.0</FileVersion>
+		<InformationalVersion>3.4.0</InformationalVersion>
+		<!-- Version actuelle : v3.4.0 "Enregistreur audio de prises de travail (ViewerPage), réorganisation/renommage audio (ScoreEditPage), exclusion mutuelle Accordeur/Enregistreur et option conditionnelle d'export des enregistrements privés" -->
 
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>

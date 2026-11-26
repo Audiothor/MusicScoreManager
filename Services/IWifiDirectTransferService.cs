@@ -78,6 +78,7 @@ namespace MusicScoreManager.Services
         public List<string> TagColors { get; set; } = new();
         public List<AnnotationMetadata> Annotations { get; set; } = new();
         public List<string> AudioFiles { get; set; } = new();
+        public List<string> RecordingAudioFiles { get; set; } = new();
     }
 
     public class SetlistTransferMetadata

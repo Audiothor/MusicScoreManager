@@ -334,7 +334,15 @@ public partial class SetlistsPage : ContentPage
         }
     }
 
-    private void OnMenuSendWifiTriggerClicked(object sender, EventArgs e)
+    private async Task ConfigureSetlistRecordingsOptionAsync(Setlist setlist)
+    {
+        var scores = await _databaseService.GetScoresForSetlistAsync(setlist.Id);
+        bool hasRecordings = scores.Any(s => s.AudioFiles != null && s.AudioFiles.Any(a => a.IsRecording));
+        if (OptRecordingsCheckBox != null) OptRecordingsCheckBox.IsChecked = false;
+        if (OptRecordingsRow != null) OptRecordingsRow.IsVisible = hasRecordings;
+    }
+
+    private async void OnMenuSendWifiTriggerClicked(object sender, EventArgs e)
     {
         SetlistMenuOverlay.IsVisible = false;
         if (_selectedSetlistForAction != null)
@@ -343,11 +351,12 @@ public partial class SetlistsPage : ContentPage
             SetlistOptionsTitle.Text = string.Format(template, _selectedSetlistForAction.Name);
             OptSendWifiActionButton.IsVisible = true;
             OptExportFileActionButton.IsVisible = false;
+            await ConfigureSetlistRecordingsOptionAsync(_selectedSetlistForAction);
             SetlistOptionsOverlay.IsVisible = true;
         }
     }
 
-    private void OnMenuExportSetlistTriggerClicked(object sender, EventArgs e)
+    private async void OnMenuExportSetlistTriggerClicked(object sender, EventArgs e)
     {
         SetlistMenuOverlay.IsVisible = false;
         if (_selectedSetlistForAction != null)
@@ -356,6 +365,7 @@ public partial class SetlistsPage : ContentPage
             SetlistOptionsTitle.Text = string.Format(template, _selectedSetlistForAction.Name);
             OptSendWifiActionButton.IsVisible = false;
             OptExportFileActionButton.IsVisible = true;
+            await ConfigureSetlistRecordingsOptionAsync(_selectedSetlistForAction);
             SetlistOptionsOverlay.IsVisible = true;
         }
     }
@@ -424,7 +434,8 @@ public partial class SetlistsPage : ContentPage
             var options = new ExportOptions
             {
                 IncludeAnnotations = OptAnnotationsCheckBox.IsChecked,
-                IncludeAudio = OptAudioCheckBox.IsChecked
+                IncludeAudio = OptAudioCheckBox.IsChecked,
+                IncludeRecordings = OptRecordingsRow.IsVisible && OptRecordingsCheckBox.IsChecked
             };
 
             string exportedPath = await _exportImportService.ExportSetlistToFileAsync(setlist, options);
@@ -536,7 +547,8 @@ public partial class SetlistsPage : ContentPage
             var options = new ExportOptions
             {
                 IncludeAnnotations = OptAnnotationsCheckBox.IsChecked,
-                IncludeAudio = OptAudioCheckBox.IsChecked
+                IncludeAudio = OptAudioCheckBox.IsChecked,
+                IncludeRecordings = OptRecordingsRow.IsVisible && OptRecordingsCheckBox.IsChecked
             };
 
             var payloads = await _exportImportService.CreateWifiPayloadsForSetlistAsync(setlist, options);
@@ -585,7 +597,8 @@ public partial class SetlistsPage : ContentPage
         var options = new ExportOptions
         {
             IncludeAnnotations = OptAnnotationsCheckBox.IsChecked,
-            IncludeAudio = OptAudioCheckBox.IsChecked
+            IncludeAudio = OptAudioCheckBox.IsChecked,
+            IncludeRecordings = OptRecordingsRow.IsVisible && OptRecordingsCheckBox.IsChecked
         };
 
         var payloads = await _exportImportService.CreateWifiPayloadsForSetlistAsync(setlist, options);

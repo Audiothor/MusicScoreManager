@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.4.0 — 27/11/2026](#v340-27112026)
 - [v3.3.2 — 26/11/2026](#v332-26112026)
 - [v3.3.1 — 22/11/2026](#v331-22112026)
 - [v3.3.0 — 22/11/2026](#v330-22112026)
@@ -67,6 +68,39 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.4.0 — 27/11/2026
+
+### 1. Enregistreur Audio de Prises de Travail (`ViewerPage`, optionnel)
+- **1.1. Nouvel outil flottant `🎙️ Enregistreur` dans la Boîte à outils :**
+  - Accessible à la demande depuis le tiroir d'outils de la visionneuse, sans encombrer l'écran en mode lecture normal.
+  - Fenêtre flottante déplaçable avec bouton `⏺`/`⏹`, témoin lumineux pulsant et chronomètre temps réel (`00:00`).
+  - Mémorisation de multiples prises par partition au format `.wav` dans le sous-dossier dédié `<Audio>/Recordings/`, liées automatiquement à la partition (`ScoreAudioFile.IsRecording = true`).
+  - Réécoute immédiate (`▶`/`⏹`), renommage (`✏️`) et suppression définitive (`🗑️` avec nettoyage du fichier `.wav` sur disque) directement depuis l'enregistreur.
+- **1.2. Exclusion mutuelle intelligente avec l'Accordeur :**
+  - Ouvrir l'enregistreur ferme et libère automatiquement l'accordeur s'il était actif.
+  - Ouvrir l'accordeur ferme automatiquement l'enregistreur au repos, mais bloque l'ouverture avec une alerte si un enregistrement est activement en cours afin de protéger votre prise.
+
+### 2. Gestion Avancée des Pistes Audio (`ScoreEditPage`)
+- **2.1. Distinction visuelle, réorganisation et renommage :**
+  - Badge distinctif `🎙️` pour les prises enregistrées au micro vs `🎵` pour les pistes d'accompagnement.
+  - Boutons **`▲` / `▼`** permettant de réorganiser librement l'ordre des fichiers audio (persisté en base SQLite via `ScoreAudioFile.SortOrder`).
+  - Bouton **`✏️`** permettant de renommer chaque piste ou prise audio.
+  - Suppression physique automatique du fichier `.wav` interne lors de la suppression d'une prise enregistrée.
+
+### 3. Protection de la Vie Privée à l'Export & Partage Wi-Fi Direct
+- **3.1. Option conditionnelle « Inclure mes enregistrements micro (privés) » :**
+  - Par défaut, les enregistrements personnels ne sont **jamais** inclus dans les exports fichiers (`.msmscores`, `.msmsetlist`) ni dans les transferts Wi-Fi Direct / QR Code de groupe.
+  - Une 3ᵉ case à cocher (décochée par défaut) apparaît dynamiquement dans les modales d'export/partage (`ScoresPage` et `SetlistsPage`) **uniquement** lorsqu'au moins une partition concernée possède une ou plusieurs prises micro.
+  - Conservation du statut `IsRecording` lors de l'importation chez le destinataire (`ScoreTransferMetadata.RecordingAudioFiles`).
+
+### 4. Internationalisation & Tests Automatisés
+- **4.1. Traduction complète dans les 8 langues (`fr`, `en`, `de`, `es`, `it`, `nl`, `pl`, `pt`) :**
+  - Ajout et validation automatisée des 18 nouvelles clés de localisation.
+- **4.2. Extension de la suite xUnit (`MusicScoreManager.Tests`) :**
+  - Ajout des tests de sérialisation `RecordingAudioFiles` et de persistance SQLite `IsRecording` / `SortOrder` (13 tests au total).
 
 ---
 

@@ -13,6 +13,7 @@ namespace MusicScoreManager.Services
     {
         public bool IncludeAnnotations { get; set; } = true;
         public bool IncludeAudio { get; set; } = true;
+        public bool IncludeRecordings { get; set; } = false;
     }
 
     public class SetlistExportPackage
@@ -106,10 +107,13 @@ namespace MusicScoreManager.Services
                 }).ToList()
             };
 
-            if (options.IncludeAudio && score.AudioFiles != null && score.AudioFiles.Any())
+            if ((options.IncludeAudio || options.IncludeRecordings) && score.AudioFiles != null && score.AudioFiles.Any())
             {
                 foreach (var af in score.AudioFiles)
                 {
+                    if (af.IsRecording && !options.IncludeRecordings) continue;
+                    if (!af.IsRecording && !options.IncludeAudio) continue;
+
                     string audioPath = _settingsService.GetAbsolutePath(af.FilePath, isAudio: true);
                     if (File.Exists(audioPath))
                     {
@@ -117,6 +121,10 @@ namespace MusicScoreManager.Services
                         if (!scoreMeta.AudioFiles.Contains(audioName))
                         {
                             scoreMeta.AudioFiles.Add(audioName);
+                        }
+                        if (af.IsRecording && !scoreMeta.RecordingAudioFiles.Contains(audioName))
+                        {
+                            scoreMeta.RecordingAudioFiles.Add(audioName);
                         }
                     }
                 }
@@ -161,10 +169,13 @@ namespace MusicScoreManager.Services
                     }
                 }
 
-                if (options.IncludeAudio && score.AudioFiles != null && score.AudioFiles.Any())
+                if ((options.IncludeAudio || options.IncludeRecordings) && score.AudioFiles != null && score.AudioFiles.Any())
                 {
                     foreach (var af in score.AudioFiles)
                     {
+                        if (af.IsRecording && !options.IncludeRecordings) continue;
+                        if (!af.IsRecording && !options.IncludeAudio) continue;
+
                         string audioPath = _settingsService.GetAbsolutePath(af.FilePath, isAudio: true);
                         if (File.Exists(audioPath))
                         {
@@ -211,10 +222,13 @@ namespace MusicScoreManager.Services
                     }
                 }
 
-                if (options.IncludeAudio && score.AudioFiles != null && score.AudioFiles.Any())
+                if ((options.IncludeAudio || options.IncludeRecordings) && score.AudioFiles != null && score.AudioFiles.Any())
                 {
                     foreach (var af in score.AudioFiles)
                     {
+                        if (af.IsRecording && !options.IncludeRecordings) continue;
+                        if (!af.IsRecording && !options.IncludeAudio) continue;
+
                         string audioPath = _settingsService.GetAbsolutePath(af.FilePath, isAudio: true);
                         if (File.Exists(audioPath))
                         {
@@ -533,12 +547,16 @@ namespace MusicScoreManager.Services
                     // Audio
                     if (scoreMeta.AudioFiles.Any())
                     {
+                        int audioOrder = 0;
                         foreach (var audioFileName in scoreMeta.AudioFiles)
                         {
                             var audioPayload = payloads.FirstOrDefault(p => p.FileName == audioFileName);
                             if (audioPayload != null)
                             {
-                                string targetAudioPath = Path.Combine(audioRootDir, audioFileName);
+                                bool isRec = scoreMeta.RecordingAudioFiles != null && scoreMeta.RecordingAudioFiles.Contains(audioFileName);
+                                string targetAudioDir = isRec ? Path.Combine(audioRootDir, "Recordings") : audioRootDir;
+                                if (!Directory.Exists(targetAudioDir)) Directory.CreateDirectory(targetAudioDir);
+                                string targetAudioPath = Path.Combine(targetAudioDir, audioFileName);
                                 if (!File.Exists(targetAudioPath))
                                 {
                                     await File.WriteAllBytesAsync(targetAudioPath, audioPayload.Data);
@@ -549,7 +567,9 @@ namespace MusicScoreManager.Services
                                     ScoreId = scoreToUse.Id,
                                     FileName = Path.GetFileName(audioFileName),
                                     FilePath = _settingsService.GetRelativePath(targetAudioPath, isAudio: true),
-                                    IsSelected = true
+                                    IsSelected = !isRec,
+                                    IsRecording = isRec,
+                                    SortOrder = audioOrder++
                                 };
                                 await _databaseService.SaveAudioFileAsync(audioFileModel);
                             }
@@ -665,12 +685,16 @@ namespace MusicScoreManager.Services
 
                     if (scoreMeta.AudioFiles.Any())
                     {
+                        int audioOrder = 0;
                         foreach (var audioFileName in scoreMeta.AudioFiles)
                         {
                             var audioPayload = payloads.FirstOrDefault(p => p.FileName == audioFileName);
                             if (audioPayload != null)
                             {
-                                string targetAudioPath = Path.Combine(audioRootDir, audioFileName);
+                                bool isRec = scoreMeta.RecordingAudioFiles != null && scoreMeta.RecordingAudioFiles.Contains(audioFileName);
+                                string targetAudioDir = isRec ? Path.Combine(audioRootDir, "Recordings") : audioRootDir;
+                                if (!Directory.Exists(targetAudioDir)) Directory.CreateDirectory(targetAudioDir);
+                                string targetAudioPath = Path.Combine(targetAudioDir, audioFileName);
                                 if (!File.Exists(targetAudioPath))
                                 {
                                     await File.WriteAllBytesAsync(targetAudioPath, audioPayload.Data);
@@ -681,7 +705,9 @@ namespace MusicScoreManager.Services
                                     ScoreId = newScore.Id,
                                     FileName = Path.GetFileName(audioFileName),
                                     FilePath = _settingsService.GetRelativePath(targetAudioPath, isAudio: true),
-                                    IsSelected = true
+                                    IsSelected = !isRec,
+                                    IsRecording = isRec,
+                                    SortOrder = audioOrder++
                                 };
                                 await _databaseService.SaveAudioFileAsync(audioFileModel);
                             }
