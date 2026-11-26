@@ -917,6 +917,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v340-27112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.4.0 — 27/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.4.0 — 27/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-practice-audio-recorder-viewerpage-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Practice Audio Recorder (ViewerPage, Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-enhanced-audio-track-management-scoreeditpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Enhanced Audio Track Management (ScoreEditPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-privacy-first-export-wi-fi-direct-sharing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Privacy-First Export &amp; Wi-Fi Direct Sharing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-localization-automated-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Localization &amp; Automated Tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v332-26112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4304,6 +4365,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v340-27112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.4.0 — 27/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.4.0 — 27/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-practice-audio-recorder-viewerpage-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Practice Audio Recorder (ViewerPage, Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-enhanced-audio-track-management-scoreeditpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Enhanced Audio Track Management (ScoreEditPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-privacy-first-export-wi-fi-direct-sharing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Privacy-First Export &amp; Wi-Fi Direct Sharing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-localization-automated-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Localization &amp; Automated Tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v332-26112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7670,6 +7792,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v340-27112026">v3.4.0 — 27/11/2026</a></li>
 <li><a href="#v332-26112026">v3.3.2 — 26/11/2026</a></li>
 <li><a href="#v331-22112026">v3.3.1 — 22/11/2026</a></li>
 <li><a href="#v330-22112026">v3.3.0 — 22/11/2026</a></li>
@@ -7731,6 +7854,41 @@
 <li><a href="#v252-07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251-07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250-07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v340-27112026">v3.4.0 — 27/11/2026</h2>
+<h3 id="1-practice-audio-recorder-viewerpage-optional">1. Practice Audio Recorder (<code>ViewerPage</code>, Optional)</h3>
+<ul>
+<li><strong>1.1. New Floating <code>🎙️ Recorder</code> Tool in the Quick Tools Drawer:</strong></li>
+<li>Optional on-demand overlay accessible from the viewer's tools drawer without cluttering normal reading mode.</li>
+<li>Draggable floating panel with <code>⏺</code>/<code>⏹</code> toggle, pulsing status indicator, and live timer (<code>00:00</code>).</li>
+<li>Saves multiple <code>.wav</code> takes per score in <code>&lt;Audio&gt;/Recordings/</code>, automatically linked to the score (<code>ScoreAudioFile.IsRecording = true</code>).</li>
+<li>Instant preview playback (<code>▶</code>/<code>⏹</code>), renaming (<code>✏️</code>), and permanent deletion (<code>🗑️</code> with physical <code>.wav</code> cleanup) directly from the overlay.</li>
+<li><strong>1.2. Smart Mutual Exclusion with the Tuner:</strong></li>
+<li>Opening the recorder automatically stops and closes the tuner to release the microphone.</li>
+<li>Opening the tuner automatically closes an idle recorder, while blocking access with an alert if a recording is actively in progress to protect the live take.</li>
+</ul>
+<h3 id="2-enhanced-audio-track-management-scoreeditpage">2. Enhanced Audio Track Management (<code>ScoreEditPage</code>)</h3>
+<ul>
+<li><strong>2.1. Visual Badges, Reordering &amp; Renaming:</strong></li>
+<li>Clear visual distinction: <code>🎙️</code> badge for mic recordings vs <code>🎵</code> for standard backing tracks.</li>
+<li><strong><code>▲</code> / <code>▼</code></strong> buttons to reorder audio files freely (persisted in SQLite via <code>ScoreAudioFile.SortOrder</code>).</li>
+<li><strong><code>✏️</code></strong> button to rename any audio track or recording.</li>
+<li>Automatic physical <code>.wav</code> file cleanup on disk when deleting an internal recording.</li>
+</ul>
+<h3 id="3-privacy-first-export-wi-fi-direct-sharing">3. Privacy-First Export &amp; Wi-Fi Direct Sharing</h3>
+<ul>
+<li><strong>3.1. Conditional "Include my mic recordings (private)" Option:</strong></li>
+<li>Personal recordings are excluded by default from file exports (<code>.msmscores</code>, <code>.msmsetlist</code>) and Wi-Fi Direct / Group QR transfers.</li>
+<li>A 3rd checkbox (unchecked by default) appears dynamically in <code>ScoresPage</code> and <code>SetlistsPage</code> export/share modals <strong>only when</strong> at least one selected score contains mic recordings.</li>
+<li>Preserves <code>IsRecording</code> status on import (<code>ScoreTransferMetadata.RecordingAudioFiles</code>).</li>
+</ul>
+<h3 id="4-localization-automated-tests">4. Localization &amp; Automated Tests</h3>
+<ul>
+<li><strong>4.1. Complete 8-Language Localization (<code>fr</code>, <code>en</code>, <code>de</code>, <code>es</code>, <code>it</code>, <code>nl</code>, <code>pl</code>, <code>pt</code>):</strong></li>
+<li>Added and test-verified 18 new localization keys across all 8 languages.</li>
+<li><strong>4.2. Expanded xUnit Test Suite (<code>MusicScoreManager.Tests</code>):</strong></li>
+<li>Added JSON round-trip and SQLite tests for <code>RecordingAudioFiles</code>, <code>IsRecording</code>, and <code>SortOrder</code> (13 automated tests total).</li>
 </ul>
 <hr />
 <h2 id="v332-26112026">v3.3.2 — 26/11/2026</h2>
