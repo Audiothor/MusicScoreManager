@@ -1848,7 +1848,9 @@ public partial class ViewerPage
     {
         bool wasActive = _isEraserMode;
         _isEraserMode = false;
+#if !ANDROID
         _isPointerEraserPressed = false;
+#endif
         if (EraserBtn != null)
         {
             EraserBtn.BackgroundColor = Colors.Transparent;
@@ -1878,7 +1880,9 @@ public partial class ViewerPage
         }
 
         _isEraserMode = !_isEraserMode;
+#if !ANDROID
         _isPointerEraserPressed = false;
+#endif
 
         if (_isEraserMode)
         {

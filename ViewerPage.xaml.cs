@@ -83,7 +83,9 @@ public partial class ViewerPage : ContentPage
     private int _rightPageNumber = 2;
     private bool _hasRightPage = false;
     private bool _isEraserMode = false;
+#if !ANDROID
     private bool _isPointerEraserPressed = false;
+#endif
     private readonly HashSet<int> _erasingAnnotationIds = new();
     private int _lastSinglePageNumber = 1;
     private double _canvasXRel = 0.0;
