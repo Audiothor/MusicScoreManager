@@ -917,6 +917,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v332-26112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.3.2 — 26/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.3.2 — 26/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-architecture-modulaire-maintenabilite-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Architecture Modulaire &amp; Maintenabilité (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-tests-automatises-fiabilisation-multilingue-musicscoremanagertests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Tests Automatisés &amp; Fiabilisation Multilingue (MusicScoreManager.Tests)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v331-22112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4276,6 +4315,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v332-26112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.3.2 — 26/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.3.2 — 26/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-architecture-modulaire-maintenabilite-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Architecture Modulaire &amp; Maintenabilité (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-tests-automatises-fiabilisation-multilingue-musicscoremanagertests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Tests Automatisés &amp; Fiabilisation Multilingue (MusicScoreManager.Tests)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v331-22112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7614,6 +7692,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v332-26112026">v3.3.2 — 26/11/2026</a></li>
 <li><a href="#v331-22112026">v3.3.1 — 22/11/2026</a></li>
 <li><a href="#v330-22112026">v3.3.0 — 22/11/2026</a></li>
 <li><a href="#v3216-19112026">v3.2.16 — 19/11/2026</a></li>
@@ -7674,6 +7753,31 @@
 <li><a href="#v252-07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251-07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250-07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v332-26112026">v3.3.2 — 26/11/2026</h2>
+<h3 id="1-architecture-modulaire-maintenabilite-viewerpage">1. Architecture Modulaire &amp; Maintenabilité (<code>ViewerPage</code>)</h3>
+<ul>
+<li><strong>1.1. Découpage de <code>ViewerPage.xaml.cs</code> (~8 200 lignes) en 8 classes partielles dédiées :</strong></li>
+<li><code>ViewerPage.xaml.cs</code> (cycle de vie, initialisation, chargement, menus et mise en page).</li>
+<li><code>ViewerPage.Pdf.cs</code> (rendu PDF 1/2 pages, préchargement, navigation, progression setlist et marque-pages).</li>
+<li><code>ViewerPage.Annotations.cs</code> (surligneur, crayon, texte, stickers, gomme, annuler/rétablir et rendu).</li>
+<li><code>ViewerPage.Touch.cs</code> (zoom/pan, gestes tactiles et gestionnaire tactile natif Android).</li>
+<li><code>ViewerPage.Metronome.cs</code> (moteur métronome et fenêtre de réglages).</li>
+<li><code>ViewerPage.Audio.cs</code> (lecteur audio, pré-compte et pistes d'accompagnement).</li>
+<li><code>ViewerPage.Tuner.cs</code> (accordeur multi-instruments flottant).</li>
+<li><code>ViewerPage.Pedals.cs</code> (pédales Bluetooth HID et contrôleurs MIDI).</li>
+<li><strong>1.2. Extraction d'un moteur géométrique pur (<code>Services/AnnotationGeometryHelper.cs</code>) :</strong></li>
+<li>Centralisation des calculs de cadrage (<code>ComputeCanvasBounds</code>), de conversion de coordonnées (<code>PageToScreen</code>, <code>ScreenToPage</code>, <code>ScreenToPageCoords</code>) et de distance point-à-segment (<code>DistanceToSegment</code>) dans un module testable indépendamment de l'UI.</li>
+</ul>
+<h3 id="2-tests-automatises-fiabilisation-multilingue-musicscoremanagertests">2. Tests Automatisés &amp; Fiabilisation Multilingue (<code>MusicScoreManager.Tests</code>)</h3>
+<ul>
+<li><strong>2.1. Création d'une suite de 11 tests unitaires xUnit (exécutée en ~200 ms via <code>dotnet test</code>) :</strong></li>
+<li>Validation automatique des 8 fichiers de langues (<code>fr</code>, <code>en</code>, <code>de</code>, <code>es</code>, <code>it</code>, <code>nl</code>, <code>pl</code>, <code>pt</code>) : intégrité JSON, exhaustivité des clés et correspondance stricte des marqueurs <code>{0}</code> / <code>{1}</code> / <code>{2}</code>.</li>
+<li>Validation mathématique des coordonnées 1 page portrait, 2 pages paysage, marges blanches (Option C) et précision de la gomme (<code>DistanceToSegment</code>).</li>
+<li>Validation aller-retour JSON (<code>AnnotationMetadata</code>) et SQLite (<code>Annotation</code>) garantissant la conservation de <code>Opacity</code> et <code>BorderColor</code>.</li>
+<li><strong>2.2. Correction immédiate de 8 clés de traduction incohérentes détectées par les tests :</strong></li>
+<li>Correction en français d'un risque de <code>FormatException</code> sur la page Doublons (<code>Duplicates_Group_Header</code>) et de marqueurs <code>{0}</code>/<code>{1}</code> erronés sur <code>Duplicates_Used_In_Setlists</code>, <code>Duplicates_Delete_Warning_Setlist</code>, <code>Duplicates_Deleted_Success_Msg</code>, <code>Setlist_Duplicate_Copy_Suffix</code>, <code>Setlist_Export_Success_Msg</code>, <code>Wifi_Setlist_Failed_Msg</code> et <code>Wifi_Setlist_Qr_Start_Error</code> dans les 8 langues.</li>
 </ul>
 <hr />
 <h2 id="v331-22112026">v3.3.1 — 22/11/2026</h2>
