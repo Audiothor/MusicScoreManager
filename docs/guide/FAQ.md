@@ -53,6 +53,10 @@ Anglais : https://discord.gg/kCHGh4yjY
 ou sur Github :
 [https://github.com/Audiothor/MusicScoreManager/issues]() (*feature request*)
 
+- *Où sont stockés mes enregistrements micro et sont-ils partagés quand j'envoie une partition ?*
+
+Vos prises enregistrées depuis l'enregistreur intégré (`🎙️`) sont sauvegardées **100 % localement** au format `.wav` dans le sous-dossier `Recordings/` de votre répertoire audio configuré. Elles sont considérées comme **privées par défaut** : elles ne sont jamais incluses dans un export (`.msmscore` / `.msmsetlist`) ni dans un envoi Wi-Fi Direct, sauf si vous cochez explicitement la case optionnelle *« Inclure mes enregistrements micro (privés) »* (qui n'apparaît que si des prises existent).
+
 - *Qui a développé ce logiciel ?*
 
 Le projet a commencé début 2026. Une première version partagée dans mon entourage proche est sortie au mois de mai 2026.

@@ -29,6 +29,7 @@ Tap the upper right corner of the screen (or the `[ 🛠️ ]` icon if enabled i
 4. **📄 Page Number**: Enables or disables the page indicator in the bottom-right corner.
 5. **🎛️ Tuner**: Opens the high-precision floating multi-instrument tuner.
 6. **🏷️ Score Title**: Shows or hides the top banner displaying the piece name.
+7. **🎙️ Recorder**: Opens the optional floating practice recorder to record and review audio takes directly over your score.
 
 All modifications apply instantly in real time on the score upon tapping each tile.
 
@@ -102,6 +103,25 @@ Music Score Manager includes a professional stage tuner directly accessible duri
 #### 6. Score Title
 
 Allows showing or hiding the score title (derived from the PDF file name) at the top of the sheet music page.
+
+---
+
+#### 7. Practice Audio Recorder (Optional)
+
+Accessible on demand from the Quick Tools Drawer (`🎙️ Recorder`), this unobtrusive tool lets you record yourself playing while reading your score:
+
+- **Draggable Floating Panel**: Move the recorder box anywhere on screen so no measures are hidden.
+- **Multi-Take `.wav` Recording**:
+  - **`⏺` / `⏹`** toggle with a pulsing red indicator and live timer (`00:00`).
+  - Each take is saved locally in `<Audio>/Recordings/` and automatically linked to the current score (marked with the `🎙️` badge).
+- **Instant Review & Management**:
+  - **`▶` / `⏹`**: Immediate preview playback directly inside the overlay.
+  - **`✏️`**: Quick rename of any take (e.g., *"Slow tempo"*, *"Final run"*).
+  - **`🗑️`**: Permanent deletion with confirmation (also deletes the underlying `.wav` file on disk).
+- **Smart Mutual Exclusion with the Tuner**:
+  - Opening the recorder automatically stops and closes the tuner to avoid microphone conflicts.
+  - Opening the tuner automatically closes an idle recorder, while blocking access with an alert if a recording is actively in progress to protect your take.
+- **Private by Default**: Practice recordings remain strictly private and are excluded by default from file exports and Wi-Fi Direct shares (an opt-in checkbox, unchecked by default, allows including them explicitly when desired).
 
 ---
 

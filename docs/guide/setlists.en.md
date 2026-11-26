@@ -115,6 +115,7 @@ Options dialog:
 
 * ☑️ *Include handwritten annotations*.
 * ☑️ *Include attached audio backing tracks*.
+* ☐ *Include my mic recordings (private)* *(only displayed when at least one score in the setlist has recorded takes — unchecked by default)*.
 
 
 

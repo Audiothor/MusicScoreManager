@@ -178,7 +178,7 @@ Ouvre la page d'édition détaillée :
 
 * **Accordéon Métronome** : chiffrage de mesure (2/4, 3/4, 4/4, 6/8...), subdivision, pré-compte et coupure/activation du son par défaut.
 
-* **Accordéon Pistes audio** : association de fichiers audio d'accompagnement (MP3, WAV, etc.), pré-écoute et réglage du volume.
+* **Accordéon Pistes audio** : association de fichiers audio d'accompagnement (MP3, WAV, etc.), pré-écoute et réglage du volume. Les prises enregistrées au micro depuis le visualiseur apparaissent avec le badge **`🎙️`** (contre **`🎵`** pour les accompagnements). Vous pouvez **réorganiser** librement l'ordre des pistes avec les boutons **`▲` / `▼`**, **renommer** chaque élément (`✏️`) et supprimer définitivement vos prises (nettoyage automatique du fichier `.wav` interne).
 
 **NE PAS OUBLIER D'ENREGISTRER VOS MODIFICATIONS !**
 
@@ -206,6 +206,8 @@ Ouvre une boîte modale d'options de partage vous permettant de cocher/décocher
 ☑️ *Inclure les annotations manuscrites* dessinées sur le document.
 
 ☑️ *Inclure les pistes audio rattachées* (MP3/WAV).
+
+☐ *Inclure mes enregistrements micro (privés)* — **décochée par défaut**, cette 3ᵉ case n'apparaît que si au moins une partition concernée comporte des prises enregistrées au micro.
 
 - Lance la recherche immédiate des appareils à proximité en Wi-Fi Direct P2P.
 - Il est juste nécessaire que la personne qui reçoit la partition aille dans "Outils", "Transfert Wi-Fi Direct" et clique sur "Activer la Réception"

@@ -1,6 +1,6 @@
 # Politique de Confidentialité / Privacy Policy
 
-*Dernière mise à jour : 11 novembre 2026 (v3.2.8) / Last updated: November 11, 2026*
+*Dernière mise à jour : 27 novembre 2026 (v3.4.0) / Last updated: November 27, 2026*
 
 ---
 
@@ -24,7 +24,9 @@ L'application **Music Score Manager** (identifiant de package : `com.audiothor.m
 L'application demande uniquement les autorisations matérielles et système strictement indispensables à l'exécution de ses fonctionnalités :
 - **Fichiers & Stockage (`MANAGE_EXTERNAL_STORAGE`, `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`)** : Utilisé exclusivement pour vous permettre d'importer, lire et afficher vos partitions (PDF, images), associer vos fichiers audio locaux et créer/restaurer des sauvegardes complètes (.zip).
 - **Appareil Photo (`CAMERA`)** : Utilisé **exclusivement et à la demande** par la fonction *Scanner de Partitions Papier* (`ScoreScannerPage`). Il permet aux musiciens de prendre en photo les feuillets physiques d'une partition pour les numériser. Le traitement d'image et la génération PDF s'effectuent **à 100 % localement sur l'appareil**. Aucune photo n'est jamais transmise via Internet.
-- **Microphone (`RECORD_AUDIO`)** : Utilisé **exclusivement et à la demande** pour l'outil d'accordeur intégré (*Tuner*). Le flux audio capté par le microphone est analysé en temps réel dans la mémoire vive volatile (RAM) de l'appareil par un algorithme DSP (YIN) pour déterminer la hauteur des notes ($F_0$). **Aucun enregistrement audio n'est conservé, écrit sur le stockage ou téléversé.** L'accès au microphone s'arrête instantanément dès la fermeture de l'accordeur.
+- **Microphone (`RECORD_AUDIO`)** : Utilisé **exclusivement et à la demande** par deux outils optionnels du visualiseur :
+  1. **Accordeur intégré (*Tuner*)** : le flux audio capté est analysé en temps réel dans la mémoire vive volatile (RAM) par un algorithme DSP (YIN) pour déterminer la hauteur des notes ($F_0$). Aucun enregistrement n'est créé ni écrit sur le stockage par l'accordeur, et l'accès au micro s'arrête instantanément dès sa fermeture.
+  2. **Enregistreur audio de prises de travail** : lorsque vous déclenchez manuellement un enregistrement, le fichier audio (`.wav`) est sauvegardé **exclusivement en local** sur votre appareil (dans votre dossier audio configuré, sous-dossier `Recordings/`). Vos prises restent strictement privées (exclues par défaut de tout export ou partage Wi-Fi Direct), ne sont jamais envoyées vers Internet et peuvent être supprimées définitivement à tout moment en un clic.
 - **Réseau Local Wi-Fi & P2P (`INTERNET`, `ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`, `ACCESS_NETWORK_STATE`)** : Utilisé **strictement en réseau local** pour l'échange direct de partitions sans fil de tablette à tablette (*Wi-Fi Direct P2P*) et la diffusion par QR Code entre musiciens à proximité. Aucune donnée n'est transmise via Internet.
 - **Bluetooth & MIDI (`BLUETOOTH`, `BLUETOOTH_CONNECT`, `BLUETOOTH_SCAN`)** : Utilisé pour la communication avec vos pédaliers tourne-page sans fil et contrôleurs MIDI. Seuls les signaux de commande sont interceptés localement.
 - **Aucune géolocalisation** : L'application n'utilise, ne demande et n'a accès à aucune autorisation de localisation (`LOCATION`).
@@ -61,7 +63,9 @@ Toutes les données étant conservées localement sur votre terminal, vous dispo
 The application requests only the permissions strictly necessary for its musical capabilities:
 - **Files & Storage (`MANAGE_EXTERNAL_STORAGE`, `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`):** Used strictly to allow you to select, open, render, annotate, and manage your sheet music files and local audio tracks, and to create/restore full backups (.zip).
 - **Camera (`CAMERA`):** Used **strictly on-demand** by the *Paper Score Scanner* feature (`ScoreScannerPage`) to photograph paper sheet music. Image processing and PDF creation are performed **100% locally on the device**. No photos or videos are ever uploaded or transmitted across any network.
-- **Microphone (`RECORD_AUDIO`):** Used **strictly on-demand** for the built-in Chromatic Tuner. The incoming audio stream is analyzed in real time in volatile system memory (RAM) via a DSP pitch-detection algorithm (YIN) to determine musical pitch ($F_0$). **No audio is ever recorded, written to disk, or uploaded.** Microphone access ceases immediately when the tuner is closed.
+- **Microphone (`RECORD_AUDIO`):** Used **strictly on-demand** by two optional viewer utilities:
+  1. **Built-in Chromatic Tuner:** the incoming audio stream is analyzed in real time in volatile system memory (RAM) via a DSP pitch-detection algorithm (YIN) to determine musical pitch ($F_0$). No audio is saved to disk by the tuner, and microphone access ceases immediately when closed.
+  2. **Practice Audio Recorder:** when you manually start a recording, the resulting `.wav` take is stored **100% locally** on your device (inside your configured audio folder, under `Recordings/`). Your recordings remain strictly private (excluded by default from all file exports and Wi-Fi Direct shares), are never uploaded to the internet, and can be permanently deleted at any time in one click.
 - **Local Network & Wi-Fi (`INTERNET`, `ACCESS_WIFI_STATE`, `CHANGE_WIFI_STATE`, `ACCESS_NETWORK_STATE`):** Used **strictly on local networks** for peer-to-peer wireless sharing (Wi-Fi Direct P2P) and QR Code broadcasting between nearby musicians. No data is sent over the internet.
 - **Bluetooth & MIDI (`BLUETOOTH`, `BLUETOOTH_CONNECT`, `BLUETOOTH_SCAN`):** Used for wireless Bluetooth page turners and MIDI controllers. Only hardware command signals are intercepted locally.
 - **Zero Location Tracking:** The application does not use, request, or require any location (`LOCATION`) permissions.

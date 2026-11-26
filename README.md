@@ -34,7 +34,7 @@ The application permanently eliminates heavy paper binders and replaces generic 
 - **Stage Visual Comfort**: Pure Dark Mode theme (`#121212`) preventing stage glare and eliminating white flashes during score loading.
 - **Complete Hands-Free Control**: Native support for wireless Bluetooth page-turner pedals (HID and keyboard profiles) as well as MIDI controllers (USB-OTG and Bluetooth MIDI).
 - **Professional Annotation Suite**: Stylus, freehand pen, translucent Stabilo highlighters, typed text, and over 100 built-in musical symbols/stickers.
-- **Integrated Stand Utilities**: High-precision metronome (thread-safe SoundPool engine) and live chromatic tuner embedded directly inside the score viewer.
+- **Integrated Stand Utilities**: High-precision metronome (thread-safe SoundPool engine), live chromatic tuner, and optional multi-take practice audio recorder embedded directly inside the score viewer.
 
 ---
 
@@ -68,7 +68,7 @@ For devices without Google Play services or for fully autonomous usage:
 1. Download the latest signed APK file (`MusicScoreManager-vX.Y.Z.apk`) from the [GitHub Releases page](https://github.com/Audiothor/MusicScoreManager/releases).
 2. On your Android device, allow installation from unknown sources (*Settings > Security > Install unknown apps*).
 3. Open the APK file and confirm installation.
-4. On first launch, grant the necessary permissions for score files, microphone (tuner), and camera (paper score scanner).
+4. On first launch, grant the necessary permissions for score files, microphone (tuner & practice recorder), and camera (paper score scanner).
 
 ---
 
@@ -291,6 +291,13 @@ The annotation toolbar floats on demand and can be repositioned vertically by dr
 - Compact transport bar with Play/Pause button.
 - Interactive scrub bar to navigate freely within the track, showing elapsed and total time.
 - Ideal for rehearsing with orchestra accompaniments, backing tracks, or reference recordings.
+- In the score editor (`ScoreEditPage`), tracks can be freely **reordered** (`▲` / `▼`), **renamed** (`✏️`), and clearly distinguished between backing tracks (`🎵`) and mic recordings (`🎙️`).
+
+#### Optional Practice Audio Recorder (`🎙️`)
+- **Floating Multi-Take Recorder**: Accessible on demand from the Quick Tools Drawer (`🎙️ Recorder`) without cluttering reading mode. Record `.wav` takes directly while reading your score (`⏺`/`⏹`, pulsing indicator, live timer `00:00`).
+- **Instant Playback & Management**: Play (`▶`/`⏹`), rename (`✏️`), or permanently delete (`🗑️` with disk cleanup) any take directly inside the overlay.
+- **Smart Tuner Mutual Exclusion**: Opening the recorder automatically releases the tuner; opening the tuner protects any active recording from interruption.
+- **Private by Default**: Recordings are stored locally in `<Audio>/Recordings/` and excluded by default from file exports and Wi-Fi Direct shares (an opt-in checkbox appears dynamically only when recordings exist).
 
 ---
 

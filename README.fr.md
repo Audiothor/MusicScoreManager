@@ -34,7 +34,7 @@ L'application élimine définitivement les classeurs papier volumineux et rempla
 - **Confort Visuel Scénique** : Interface native sombre (Dark Mode `#121212`) prévenant tout éblouissement sur scène et éliminant tout flash blanc lors du chargement des partitions.
 - **Contrôle Mains-Libres Intégral** : Prise en charge native des pédaliers tourne-page sans fil Bluetooth (profils HID et clavier) ainsi que des contrôleurs MIDI (USB-OTG et Bluetooth MIDI).
 - **Écosystème d'Annotations Professionnel** : Stylet, crayon à main levée, surligneurs Stabilo translucides, textes typographiés et plus de 100 stickers musicaux intégrés.
-- **Outils Intégrés au Pupitre** : Métronome haute précision (moteur thread-safe SoundPool) et accordeur chromatique en direct intégrés directement dans le visualiseur.
+- **Outils Intégrés au Pupitre** : Métronome haute précision (moteur thread-safe SoundPool), accordeur chromatique en direct et enregistreur audio multi-prises optionnel intégrés directement dans le visualiseur.
 
 ---
 
@@ -68,7 +68,7 @@ Pour les appareils sans Google Play ou pour une utilisation 100% autonome :
 1. Téléchargez la dernière version du fichier APK signé (`MusicScoreManager-vX.Y.Z.apk`) depuis les [Releases du dépôt GitHub](https://github.com/Audiothor/MusicScoreManager/releases).
 2. Sur votre appareil Android, autorisez l'installation d'applications de sources inconnues (*Paramètres > Sécurité > Installer applications inconnues*).
 3. Ouvrez le fichier APK et validez l'installation.
-4. Au premier lancement, accordez les permissions requises pour les fichiers de partitions, le micro (accordeur) et la caméra (scanner de partitions papier).
+4. Au premier lancement, accordez les permissions requises pour les fichiers de partitions, le micro (accordeur & enregistreur de prises) et la caméra (scanner de partitions papier).
 
 ---
 
@@ -291,6 +291,13 @@ La barre d'outils d'annotation apparaît sur demande et peut être translatée v
 - Déploiement d'une barre de transport compacte avec bouton Lecture/Pause.
 - Barre de progression interactive permettant de se déplacer librement dans le morceau avec affichage du temps écoulé et de la durée totale.
 - Idéal pour répéter avec bandes orchestre, playbacks ou enregistrements de témoins.
+- Dans l'éditeur de partition (`ScoreEditPage`), les pistes peuvent être **réorganisées** (`▲` / `▼`), **renommées** (`✏️`) et distinguées par badge (`🎵` accompagnement vs `🎙️` prise micro).
+
+#### Enregistreur Audio de Prises de Travail (`🎙️`, optionnel)
+- **Enregistreur Flottant Multi-Prises** : Accessible à la demande depuis la Boîte à outils (`🎙️ Enregistreur`) sans encombrer l'écran en lecture normale. Enregistrez vos prises `.wav` en direct face à votre partition (`⏺`/`⏹`, témoin pulsant, chronomètre `00:00`).
+- **Réécoute & Gestion Immédiate** : Réécoutez (`▶`/`⏹`), renommez (`✏️`) ou supprimez définitivement (`🗑️` avec nettoyage sur disque) chaque prise directement dans la fenêtre flottante.
+- **Exclusion Mutuelle Accordeur / Enregistreur** : Ouvrir l'enregistreur libère automatiquement l'accordeur ; ouvrir l'accordeur protège tout enregistrement en cours.
+- **Privé par Défaut** : Les prises sont stockées localement dans `<Audio>/Recordings/` et exclues par défaut des exports fichiers et partages Wi-Fi Direct (une case optionnelle n'apparaît que si des prises existent).
 
 ---
 

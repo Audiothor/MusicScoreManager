@@ -116,6 +116,8 @@ Ouvre la fenêtre d'édition :
 
    . ☑️ *Inclure les pistes audio rattachées*.
 
+   . ☐ *Inclure mes enregistrements micro (privés)* *(affichée uniquement si au moins une partition de la setlist possède des prises enregistrées — décochée par défaut)*.
+
 
 
 4. **📦 Export (.msmsetlist)**:

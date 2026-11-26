@@ -29,6 +29,7 @@ Touchez le coin supérieur droit de l'écran (ou l'icône `[ 🛠️ ]` si elle 
 4. **📄 Numéro de Page** : Active ou masque l'indicateur de page en bas à droite.
 5. **🎛️ Accordeur** : Ouvre l'accordeur flottant multi-instruments haute précision.
 6. **🏷️ Titre de la Partition** : Affiche ou masque le bandeau supérieur avec le nom du morceau.
+7. **🎙️ Enregistreur** : Ouvre l'enregistreur audio flottant (optionnel) pour enregistrer et réécouter vos prises de travail directement face à la partition.
 
 Les modifications sont immédiatement réactives en temps réel sur la partition dès le clic sur une tuile.
 
@@ -102,6 +103,25 @@ Music Score Manager intègre un accordeur de scène professionnel accessible dir
 #### 6. Titre de la partition
 
 Permet d'afficher ou non le titre de la partition (ce qui correspond au nom du fichier PDF de la partition) au dessus de la page de partition.
+
+---
+
+#### 7. Enregistreur Audio de Prises de Travail (Optionnel)
+
+Accessible à la demande depuis le tiroir d'outils (`🎙️ Enregistreur`), cet outil discret vous permet de vous enregistrer avec votre instrument pendant vos répétitions sans encombrer l'écran de lecture :
+
+- **Fenêtre Flottante Déplaçable** : Glissez la boîte où vous le souhaitez sur la partition pour garder vos mesures visibles.
+- **Capture Multi-Prises (`.wav`)** :
+  - Bouton **`⏺` / `⏹`** accompagné d'un témoin lumineux rouge pulsant et d'un chronomètre temps réel (`00:00`).
+  - Chaque prise est enregistrée localement dans `<Audio>/Recordings/` et automatiquement rattachée à la partition en cours (identifiée par le badge `🎙️`).
+- **Réécoute & Gestion Immédiate** :
+  - **`▶` / `⏹`** : réécoute directe de n'importe quelle prise depuis la liste.
+  - **`✏️`** : renommage rapide de la prise (ex. *"Tempo lent"*, *"Prise concert"*).
+  - **`🗑️`** : suppression définitive avec confirmation (supprime également le fichier `.wav` sur le stockage).
+- **Exclusion Mutuelle Intelligente avec l'Accordeur** :
+  - Ouvrir l'enregistreur libère et ferme automatiquement l'accordeur s'il était actif (évitant tout conflit d'accès au microphone).
+  - Ouvrir l'accordeur ferme automatiquement l'enregistreur au repos, mais bloque l'ouverture par une alerte si un enregistrement est activement en cours afin de protéger votre prise.
+- **Confidentialité par Défaut** : Vos prises enregistrées restent privées et ne sont jamais incluses automatiquement dans vos exports ou partages Wi-Fi Direct (une option dédiée, décochée par défaut, permet toutefois de les joindre volontairement si besoin).
 
 ---
 

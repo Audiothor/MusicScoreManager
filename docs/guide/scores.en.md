@@ -162,7 +162,7 @@ Tapping the **⋮** button on any score card opens a modern, ergonomic card:
 
 * **Metronome Accordion**: Time signature (2/4, 3/4, 4/4, 6/8...), subdivision, pre-count measures, and default mute/sound toggle.
 
-* **Audio Tracks Accordion**: Link backing audio files (MP3, WAV, etc.), preview playback, and relative volume adjustment.
+* **Audio Tracks Accordion**: Link backing audio files (MP3, WAV, etc.), preview playback, and adjust volume. Mic recordings captured from the viewer are clearly distinguished with a **`🎙️`** badge (vs **`🎵`** for backing tracks). You can **reorder** tracks freely using **`▲` / `▼`**, **rename** any track or take (`✏️`), and delete internal recordings with automatic `.wav` cleanup on disk.
 
 * **Annotation Options Accordion**:
   
@@ -191,6 +191,7 @@ Tapping the **⋮** button on any score card opens a modern, ergonomic card:
    - Opens the sharing options modal asking you to choose:
      * ☑️ *Include handwritten annotations*.
      * ☑️ *Include attached audio tracks* (MP3/WAV).
+     * ☐ *Include my mic recordings (private)* — **unchecked by default**; this 3rd option only appears when at least one selected score contains recorded takes.
    - Starts immediate search for nearby devices via Wi-Fi Direct P2P.
    - The recipient simply goes to "Tools" > "Wi-Fi Direct Transfer" and clicks "Activate Reception".
    - The score is transferred and added directly into the recipient's library within seconds!

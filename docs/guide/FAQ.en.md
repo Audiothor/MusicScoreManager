@@ -53,6 +53,10 @@ English: https://discord.gg/kCHGh4yjY
 Or on GitHub:  
 [https://github.com/Audiothor/MusicScoreManager/issues](https://github.com/Audiothor/MusicScoreManager/issues) (*feature request*)
 
+- *Where are my practice mic recordings stored, and are they shared when I export or send a score?*
+
+Practice takes recorded with the built-in recorder (`🎙️`) are stored **100% locally** as `.wav` files inside the `Recordings/` subfolder of your configured audio directory. They are **private by default**: they are never included in file exports (`.msmscore` / `.msmsetlist`) or Wi-Fi Direct transfers unless you explicitly check the optional *"Include my mic recordings (private)"* box (which only appears when recordings exist).
+
 - *Who developed this software?*
 
 The project started in early 2026. A first version shared within my close circles was released in May 2026.
