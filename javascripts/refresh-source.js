@@ -1,24 +1,9 @@
 (function () {
   try {
-    // 1. Invalider immédiatement tout cache sessionStorage obsolète antérieur à v3.2.15
-    var expectedMinVersion = "v3.2.15";
-    for (var i = sessionStorage.length - 1; i >= 0; i--) {
-      var key = sessionStorage.key(i);
-      if (key && key.indexOf("__source") !== -1) {
-        try {
-          var val = JSON.parse(sessionStorage.getItem(key));
-          if (val && val.version && val.version !== expectedMinVersion) {
-            val.version = expectedMinVersion;
-            sessionStorage.setItem(key, JSON.stringify(val));
-          }
-        } catch (e) {
-          sessionStorage.removeItem(key);
-        }
-      }
-    }
+    var latestVersion = null;
 
-    // 2. Mettre à jour le badge DOM immédiatement s'il a déjà été rendu avec l'ancienne valeur en cache
     function syncBadge(versionText) {
+      if (!versionText) return;
       var badges = document.querySelectorAll(".md-source__fact--version");
       badges.forEach(function (el) {
         if (el.textContent !== versionText) {
@@ -27,30 +12,41 @@
       });
     }
 
-    syncBadge(expectedMinVersion);
-    document.addEventListener("DOMContentLoaded", function () {
-      syncBadge(expectedMinVersion);
-      setTimeout(function () { syncBadge(expectedMinVersion); }, 300);
-    });
+    function updateSessionStorage(versionText) {
+      if (!versionText) return;
+      for (var i = 0; i < sessionStorage.length; i++) {
+        var k = sessionStorage.key(i);
+        if (k && k.indexOf("__source") !== -1) {
+          try {
+            var v = JSON.parse(sessionStorage.getItem(k)) || {};
+            v.version = versionText;
+            sessionStorage.setItem(k, JSON.stringify(v));
+          } catch (e) {
+            sessionStorage.removeItem(k);
+          }
+        }
+      }
+    }
 
-    // 3. Synchroniser avec la dernière release GitHub en direct
-    fetch("https://api.github.com/repos/Audiothor/MusicScoreManager/releases/latest")
+    // 1. Récupérer dynamiquement la dernière release officielle GitHub (sans jamais forcer une vieille version en dur)
+    fetch("https://api.github.com/repos/Audiothor/MusicScoreManager/releases/latest", { cache: "no-store" })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         if (data && data.tag_name) {
-          for (var j = 0; j < sessionStorage.length; j++) {
-            var k = sessionStorage.key(j);
-            if (k && k.indexOf("__source") !== -1) {
-              try {
-                var v = JSON.parse(sessionStorage.getItem(k)) || {};
-                v.version = data.tag_name;
-                sessionStorage.setItem(k, JSON.stringify(v));
-              } catch (e) {}
-            }
-          }
-          syncBadge(data.tag_name);
+          latestVersion = data.tag_name;
+          updateSessionStorage(latestVersion);
+          syncBadge(latestVersion);
+          // Re-synchroniser après le rendu asynchrone du composant md-source de MkDocs Material
+          setTimeout(function () { syncBadge(latestVersion); }, 300);
+          setTimeout(function () { syncBadge(latestVersion); }, 1000);
         }
       })
       .catch(function () {});
+
+    document.addEventListener("DOMContentLoaded", function () {
+      if (latestVersion) {
+        syncBadge(latestVersion);
+      }
+    });
   } catch (err) {}
 })();
