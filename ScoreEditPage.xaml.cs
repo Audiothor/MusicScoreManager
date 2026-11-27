@@ -12,6 +12,34 @@ public partial class ScoreEditPage : ContentPage
     private List<Tag> _allTags = new List<Tag>();
     private readonly List<MusicalKey> _musicalKeyValues = new();
     private int _currentRating = 0;
+    private ScoreAudioFile? _playingPreviewAudio;
+    private bool _isPreviewEventSubscribed = false;
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        StopAudioPreview();
+        if (_isPreviewEventSubscribed)
+        {
+            AudioRecorderService.Instance.PreviewPlaybackEnded -= OnScoreEditPreviewEnded;
+            _isPreviewEventSubscribed = false;
+        }
+    }
+
+    private void OnScoreEditPreviewEnded(object? sender, EventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            _playingPreviewAudio = null;
+            RefreshAudioFilesUI();
+        });
+    }
+
+    private void StopAudioPreview()
+    {
+        _playingPreviewAudio = null;
+        AudioRecorderService.Instance.StopPreview();
+    }
 
     public ScoreEditPage(Score score, DatabaseService databaseService)
     {
@@ -482,6 +510,53 @@ public partial class ScoreEditPage : ContentPage
                 actionsStack.Children.Add(downBtn);
             }
 
+            // Bouton Lecture / Arrêt (entre les flèches de tri et le crayon de renommage)
+            bool isPlayingThis = ReferenceEquals(_playingPreviewAudio, af) && AudioRecorderService.Instance.IsPlayingPreview;
+            var playBtn = new Button
+            {
+                Text = isPlayingThis ? "⏹" : "▶",
+                FontSize = 12,
+                WidthRequest = 30,
+                HeightRequest = 30,
+                Padding = 0,
+                CornerRadius = 6,
+                BackgroundColor = isPlayingThis ? Color.FromArgb("#E67E22") : Color.FromArgb("#007ACC"),
+                TextColor = Colors.White
+            };
+            playBtn.Clicked += async (s, e) =>
+            {
+                if (!_isPreviewEventSubscribed)
+                {
+                    AudioRecorderService.Instance.PreviewPlaybackEnded += OnScoreEditPreviewEnded;
+                    _isPreviewEventSubscribed = true;
+                }
+
+                if (ReferenceEquals(_playingPreviewAudio, af) && AudioRecorderService.Instance.IsPlayingPreview)
+                {
+                    StopAudioPreview();
+                    RefreshAudioFilesUI();
+                }
+                else
+                {
+                    string absPath = _settingsService.GetAbsolutePath(af.FilePath, isAudio: true);
+                    bool ok = AudioRecorderService.Instance.PlayPreview(absPath, af.Id);
+                    if (ok)
+                    {
+                        _playingPreviewAudio = af;
+                    }
+                    else
+                    {
+                        _playingPreviewAudio = null;
+                        await this.DisplayAlertAsync(
+                            loc.GetString("Common_Error", "Erreur"),
+                            loc.GetString("Recorder_Play_Error", "Fichier audio introuvable ou illisible."),
+                            loc.GetString("Common_OK", "OK"));
+                    }
+                    RefreshAudioFilesUI();
+                }
+            };
+            actionsStack.Children.Add(playBtn);
+
             var renameBtn = new Button
             {
                 Text = "✏️",
@@ -527,6 +602,10 @@ public partial class ScoreEditPage : ContentPage
             var deleteBtn = new Button { Text = "✕", BackgroundColor = Colors.Transparent, TextColor = Colors.Red, WidthRequest = 34, HeightRequest = 34, Padding = 0, VerticalOptions = LayoutOptions.Center };
             deleteBtn.Clicked += (s, e) =>
             {
+                if (ReferenceEquals(_playingPreviewAudio, af))
+                {
+                    StopAudioPreview();
+                }
                 if (af.IsRecording && !string.IsNullOrWhiteSpace(af.FilePath))
                 {
                     string absPath = _settingsService.GetAbsolutePath(af.FilePath, isAudio: true);

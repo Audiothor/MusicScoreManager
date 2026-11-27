@@ -1322,5 +1322,9 @@
   "Recorder_Stop_Before_Tuner": "Zatrzymaj aktywne nagrywanie przed otwarciem stroika.",
   "Score_Edit_Audio_Rename_Title": "Zmień nazwę pliku audio",
   "Score_Edit_Audio_Rename_Prompt": "Nowa nazwa:",
-  "Options_Include_Recordings": "Dołącz moje nagrania z mikrofonu (prywatne)"
+  "Options_Include_Recordings": "Dołącz moje nagrania z mikrofonu (prywatne)",
+  "Viewer_Audio_TrackList_Tooltip": "Wybierz ścieżkę audio",
+  "Viewer_Audio_PrevTrack": "Poprzednia ścieżka",
+  "Viewer_Audio_NextTrack": "Następna ścieżka",
+  "Viewer_Audio_Volume": "Głośność audio"
 }

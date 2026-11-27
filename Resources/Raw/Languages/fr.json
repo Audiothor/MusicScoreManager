@@ -1322,5 +1322,9 @@
   "Recorder_Stop_Before_Tuner": "Arrêtez d'abord l'enregistrement en cours avant d'ouvrir l'accordeur.",
   "Score_Edit_Audio_Rename_Title": "Renommer le fichier audio",
   "Score_Edit_Audio_Rename_Prompt": "Nouveau nom :",
-  "Options_Include_Recordings": "Inclure mes enregistrements micro (privés)"
+  "Options_Include_Recordings": "Inclure mes enregistrements micro (privés)",
+  "Viewer_Audio_TrackList_Tooltip": "Choisir une piste audio",
+  "Viewer_Audio_PrevTrack": "Piste précédente",
+  "Viewer_Audio_NextTrack": "Piste suivante",
+  "Viewer_Audio_Volume": "Volume audio"
 }

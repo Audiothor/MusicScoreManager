@@ -923,11 +923,20 @@ public partial class ViewerPage : ContentPage
             {
                 InitializeAudio(forceReload: true);
             }
+            else
+            {
+                UpdateAudioTrackNavigationUI();
+            }
             AudioPlayerOverlay.IsVisible = (_selectedAudioFile != null);
+            if (AudioTrackListContainer != null) AudioTrackListContainer.IsVisible = false;
+            // Fermer le tiroir d'outils pour dégager la vue sur le lecteur audio
+            if (ToolsDrawerOverlay != null) ToolsDrawerOverlay.IsVisible = false;
+            if (ToolsDrawerBackdrop != null) ToolsDrawerBackdrop.IsVisible = false;
         }
         else
         {
             AudioPlayerOverlay.IsVisible = false;
+            if (AudioTrackListContainer != null) AudioTrackListContainer.IsVisible = false;
         }
 
         await _databaseService.SaveScoreAsync(_score);

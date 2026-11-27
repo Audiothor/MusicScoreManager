@@ -10,7 +10,7 @@ public partial class AboutPage : ContentPage
         InitializeComponent();
 
         // Résolution robuste de la version de l'application
-        string version = "3.4.0";
+        string version = "3.4.1";
         try
         {
             var asm = typeof(AboutPage).Assembly;
@@ -28,13 +28,13 @@ public partial class AboutPage : ContentPage
                 }
                 else
                 {
-                    version = asm.GetName().Version?.ToString(3) ?? "3.4.0";
+                    version = asm.GetName().Version?.ToString(3) ?? "3.4.1";
                 }
             }
         }
         catch
         {
-            version = "3.4.0";
+            version = "3.4.1";
         }
         VersionLabel.Text = $"v{version}";
 

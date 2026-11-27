@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.4.1 — 27/11/2026](#v341-27112026)
 - [v3.4.0 — 27/11/2026](#v340-27112026)
 - [v3.3.2 — 26/11/2026](#v332-26112026)
 - [v3.3.1 — 22/11/2026](#v331-22112026)
@@ -68,6 +69,24 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.4.1 — 27/11/2026
+
+### 1. Floating Audio Player Fixes & Upgrades (`ViewerPage`)
+- **1.1. Clear Placement & Unrestricted Full-Screen Dragging:**
+  - Centered initial placement (`HorizontalOptions="Center"`, `ZIndex="1202"`) and automatic closure of the Tools Drawer on open, eliminating overlap underneath the drawer.
+  - Fixed pan clamping math (`OnAudioPlayerPanUpdated`) that previously blocked dragging leftward; the audio player can now be moved freely anywhere across the entire screen.
+- **1.2. Multi-Track Dropdown, Prev/Next Track, Volume Control & Auto-Rewind:**
+  - When a score has **more than 1 audio track**, displays a compact **`☰ ▾`** dropdown toggle to pick any track (auto-collapsing upon selection) plus **Previous Track (`⏮`)** and **Next Track (`⏭`)** buttons.
+  - Keeps the dedicated **Return to Start (`↺`)** button and **automatically rewinds the playback cursor to `0:00` when playback ends** on the same track (never auto-advancing to the next track).
+  - Added a **Volume bar** (`🔊`/`🔇` mute toggle + `0–100%` slider, persisted across sessions).
+
+### 2. Direct Audio Preview in Score Editor (`ScoreEditPage`)
+- **2.1. Inline Play / Stop (`▶` / `⏹`) Button per Track:**
+  - Added a preview button between the reorder arrows (`▲`/`▼`) and the rename icon (`✏️`).
+  - Toggles cleanly between **`▶`** and **`⏹`** while playing, with automatic stop on deletion or page exit.
 
 ---
 

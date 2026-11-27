@@ -160,6 +160,7 @@ public partial class ViewerPage
         }
 
         RefreshRecorderTakesUI();
+        UpdateAudioTrackNavigationUI();
         UpdateToolsDrawerUI();
     }
 

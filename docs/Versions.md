@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.4.1 — 27/11/2026](#v341-27112026)
 - [v3.4.0 — 27/11/2026](#v340-27112026)
 - [v3.3.2 — 26/11/2026](#v332-26112026)
 - [v3.3.1 — 22/11/2026](#v331-22112026)
@@ -68,6 +69,24 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.4.1 — 27/11/2026
+
+### 1. Corrections & Enrichissement du Lecteur Audio Flottant (`ViewerPage`)
+- **1.1. Affichage dégagé et déplacement 100 % libre sur tout l'écran :**
+  - Recentrage initial du lecteur audio (`HorizontalOptions="Center"`, `ZIndex="1202"`) et fermeture automatique de la Boîte à outils à l'ouverture, éliminant toute superposition sous le tiroir d'outils.
+  - Correction des bornes de déplacement (`OnAudioPlayerPanUpdated`) qui bloquaient auparavant la translation vers la gauche : le lecteur se déplace désormais librement partout sur l'écran (gauche, droite, haut, bas).
+- **1.2. Sélecteur multi-pistes, navigation Préc./Suiv., Volume & Retour début automatique :**
+  - Lorsque la partition comporte **plus d'une piste audio**, affichage d'un bouton déroulant **`☰ ▾`** qui déploie la liste des pistes sous l'en-tête et se referme automatiquement après sélection, ainsi que des boutons **Piste précédente (`⏮`)** et **Piste suivante (`⏭`)**.
+  - Conservation du bouton **Retour au début du morceau (`↺`)** et **retour automatique du curseur à `0:00` en fin de lecture** sur la même piste (sans passage automatique à la piste suivante).
+  - Ajout d'une barre de **réglage du volume** (`🔊`/`🔇` + curseur `0–100 %`, mémorisé entre les sessions).
+
+### 2. Pré-écoute Audio Directe dans l'Édition de Partition (`ScoreEditPage`)
+- **2.1. Bouton Lecture / Arrêt (`▶` / `⏹`) par piste :**
+  - Ajout d'un bouton de pré-écoute directement entre les flèches de réorganisation (`▲`/`▼`) et le crayon de renommage (`✏️`).
+  - Bascule instantanée de **`▶`** en **`⏹`** pendant la lecture, avec arrêt automatique à la suppression de la piste ou à la fermeture de la page.
 
 ---
 

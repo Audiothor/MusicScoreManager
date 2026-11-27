@@ -1322,5 +1322,9 @@
   "Recorder_Stop_Before_Tuner": "Stop the active recording before opening the tuner.",
   "Score_Edit_Audio_Rename_Title": "Rename audio file",
   "Score_Edit_Audio_Rename_Prompt": "New name:",
-  "Options_Include_Recordings": "Include my mic recordings (private)"
+  "Options_Include_Recordings": "Include my mic recordings (private)",
+  "Viewer_Audio_TrackList_Tooltip": "Choose an audio track",
+  "Viewer_Audio_PrevTrack": "Previous track",
+  "Viewer_Audio_NextTrack": "Next track",
+  "Viewer_Audio_Volume": "Audio volume"
 }

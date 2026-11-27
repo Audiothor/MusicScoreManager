@@ -1322,5 +1322,9 @@
   "Recorder_Stop_Before_Tuner": "Stop de actieve opname voordat u de stemmer opent.",
   "Score_Edit_Audio_Rename_Title": "Audiobestand hernoemen",
   "Score_Edit_Audio_Rename_Prompt": "Nieuwe naam:",
-  "Options_Include_Recordings": "Mijn microfoonopnames opnemen (privé)"
+  "Options_Include_Recordings": "Mijn microfoonopnames opnemen (privé)",
+  "Viewer_Audio_TrackList_Tooltip": "Kies een audiotrack",
+  "Viewer_Audio_PrevTrack": "Vorige track",
+  "Viewer_Audio_NextTrack": "Volgende track",
+  "Viewer_Audio_Volume": "Audiovolume"
 }

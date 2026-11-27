@@ -1322,5 +1322,9 @@
   "Recorder_Stop_Before_Tuner": "Interrompi la registrazione attiva prima di aprire l'accordatore.",
   "Score_Edit_Audio_Rename_Title": "Rinomina file audio",
   "Score_Edit_Audio_Rename_Prompt": "Nuovo nome:",
-  "Options_Include_Recordings": "Includi le mie registrazioni microfoniche (private)"
+  "Options_Include_Recordings": "Includi le mie registrazioni microfoniche (private)",
+  "Viewer_Audio_TrackList_Tooltip": "Scegli una traccia audio",
+  "Viewer_Audio_PrevTrack": "Traccia precedente",
+  "Viewer_Audio_NextTrack": "Traccia successiva",
+  "Viewer_Audio_Volume": "Volume audio"
 }

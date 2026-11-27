@@ -1322,5 +1322,9 @@
   "Recorder_Stop_Before_Tuner": "Stoppen Sie zuerst die laufende Aufnahme, bevor Sie das Stimmgerät öffnen.",
   "Score_Edit_Audio_Rename_Title": "Audiodatei umbenennen",
   "Score_Edit_Audio_Rename_Prompt": "Neuer Name:",
-  "Options_Include_Recordings": "Meine Mikrofonaufnahmen einschließen (privat)"
+  "Options_Include_Recordings": "Meine Mikrofonaufnahmen einschließen (privat)",
+  "Viewer_Audio_TrackList_Tooltip": "Audiospur auswählen",
+  "Viewer_Audio_PrevTrack": "Vorherige Spur",
+  "Viewer_Audio_NextTrack": "Nächste Spur",
+  "Viewer_Audio_Volume": "Audiolautstärke"
 }

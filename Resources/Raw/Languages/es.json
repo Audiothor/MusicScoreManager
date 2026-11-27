@@ -1322,5 +1322,9 @@
   "Recorder_Stop_Before_Tuner": "Detenga la grabación activa antes de abrir el afinador.",
   "Score_Edit_Audio_Rename_Title": "Renombrar archivo de audio",
   "Score_Edit_Audio_Rename_Prompt": "Nuevo nombre:",
-  "Options_Include_Recordings": "Incluir mis grabaciones de micrófono (privadas)"
+  "Options_Include_Recordings": "Incluir mis grabaciones de micrófono (privadas)",
+  "Viewer_Audio_TrackList_Tooltip": "Elegir una pista de audio",
+  "Viewer_Audio_PrevTrack": "Pista anterior",
+  "Viewer_Audio_NextTrack": "Pista siguiente",
+  "Viewer_Audio_Volume": "Volumen de audio"
 }
