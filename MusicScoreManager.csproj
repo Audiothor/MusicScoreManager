@@ -16,13 +16,13 @@
 		<ApplicationId>com.audiothor.musicscoremanager</ApplicationId>
 		<ApplicationIdGuid>3E6F90A1-B8D2-4E05-98E3-C9E2BCBE0F1F</ApplicationIdGuid>
 
-		<ApplicationDisplayVersion>3.4.1</ApplicationDisplayVersion>
-		<ApplicationVersion>34001</ApplicationVersion>
-		<Version>3.4.1</Version>
-		<AssemblyVersion>3.4.1.0</AssemblyVersion>
-		<FileVersion>3.4.1.0</FileVersion>
-		<InformationalVersion>3.4.1</InformationalVersion>
-		<!-- Version actuelle : v3.4.1 "Correction position/déplacement libre du lecteur audio, sélecteur multi-pistes, pistes préc./suiv., volume, retour début en fin de lecture et pré-écoute Play/Stop dans l'édition de partition" -->
+		<ApplicationDisplayVersion>3.4.2</ApplicationDisplayVersion>
+		<ApplicationVersion>34002</ApplicationVersion>
+		<Version>3.4.2</Version>
+		<AssemblyVersion>3.4.2.0</AssemblyVersion>
+		<FileVersion>3.4.2.0</FileVersion>
+		<InformationalVersion>3.4.2</InformationalVersion>
+		<!-- Version actuelle : v3.4.2 "Maintien de la boîte à outils ouverte lors de l'activation du lecteur audio et pré-compte audio échantillon-précis sans gigue" -->
 
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>

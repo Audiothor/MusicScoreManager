@@ -374,6 +374,30 @@ public partial class ViewerPage
 
     private CancellationTokenSource? _preCountCts;
     private bool _isPreCounting = false;
+    private IAudioPlayer? _activePreCountSequencePlayer;
+    private MemoryStream? _activePreCountSequenceStream;
+
+    private void DisposePreCountSequencePlayer()
+    {
+        try
+        {
+            if (_activePreCountSequencePlayer != null)
+            {
+                if (_activePreCountSequencePlayer.IsPlaying)
+                    _activePreCountSequencePlayer.Stop();
+                _activePreCountSequencePlayer.Dispose();
+                _activePreCountSequencePlayer = null;
+            }
+        }
+        catch { }
+
+        try
+        {
+            _activePreCountSequenceStream?.Dispose();
+            _activePreCountSequenceStream = null;
+        }
+        catch { }
+    }
 
     private void CancelPreCount()
     {
@@ -383,6 +407,8 @@ public partial class ViewerPage
             _preCountCts?.Cancel();
         }
         catch { }
+
+        DisposePreCountSequencePlayer();
 
         MainThread.BeginInvokeOnMainThread(() =>
         {
@@ -450,6 +476,62 @@ public partial class ViewerPage
         }
     }
 
+    private static MemoryStream BuildPreCountSequenceWavStream(int totalBeeps, double bpm, double volume)
+    {
+        const int sampleRate = 44100;
+        const double freqHz = 880.0;
+        const double beepDurationSec = 0.065;
+        const int fadeInSamples = 132;   // ~3 ms
+        const int fadeOutSamples = 441;  // ~10 ms
+
+        double intervalSec = 60.0 / bpm;
+        int totalSamples = Math.Max(1, (int)Math.Round(totalBeeps * intervalSec * sampleRate));
+        int beepSamples = Math.Min((int)(sampleRate * beepDurationSec), Math.Max(1, (int)(intervalSec * sampleRate) - 10));
+        double amplitude = short.MaxValue * 0.65 * Math.Clamp(volume, 0.15, 1.0);
+
+        short[] pcm = new short[totalSamples];
+
+        for (int b = 0; b < totalBeeps; b++)
+        {
+            int startSample = (int)Math.Round(b * intervalSec * sampleRate);
+            for (int i = 0; i < beepSamples && (startSample + i) < totalSamples; i++)
+            {
+                double env = 1.0;
+                if (i < fadeInSamples)
+                    env = (double)i / fadeInSamples;
+                else if (i > beepSamples - fadeOutSamples)
+                    env = (double)(beepSamples - i) / fadeOutSamples;
+
+                double sample = Math.Sin(2.0 * Math.PI * freqHz * i / sampleRate) * amplitude * env;
+                pcm[startSample + i] = (short)Math.Clamp(sample, short.MinValue, short.MaxValue);
+            }
+        }
+
+        var ms = new MemoryStream(44 + totalSamples * 2);
+        using (var bw = new BinaryWriter(ms, System.Text.Encoding.ASCII, leaveOpen: true))
+        {
+            bw.Write(new[] { 'R', 'I', 'F', 'F' });
+            bw.Write(36 + totalSamples * 2);
+            bw.Write(new[] { 'W', 'A', 'V', 'E' });
+            bw.Write(new[] { 'f', 'm', 't', ' ' });
+            bw.Write(16);
+            bw.Write((short)1);               // PCM
+            bw.Write((short)1);               // Mono
+            bw.Write(sampleRate);
+            bw.Write(sampleRate * 2);         // ByteRate
+            bw.Write((short)2);               // BlockAlign
+            bw.Write((short)16);              // BitsPerSample
+            bw.Write(new[] { 'd', 'a', 't', 'a' });
+            bw.Write(totalSamples * 2);
+            for (int i = 0; i < totalSamples; i++)
+            {
+                bw.Write(pcm[i]);
+            }
+        }
+        ms.Position = 0;
+        return ms;
+    }
+
     private async Task RunPreCountAndPlayAsync()
     {
         _isPreCounting = true;
@@ -460,46 +542,86 @@ public partial class ViewerPage
 
         bool wasMetronomeRunning = _isMetronomePlaying;
         StopMetronome();
+        DisposePreCountSequencePlayer();
 
         int totalBeeps = _score.PreCountMeasures;
         double bpm = _score.BPM > 0 ? _score.BPM : 120.0;
         double intervalMs = 60000.0 / bpm;
+        double volume = Math.Clamp(_score.MetronomeVolume, 0.15, 1.0);
 
-        bool completed = await Task.Run(() =>
+        bool completed = false;
+        try
         {
-            var sw = Stopwatch.StartNew();
+            // Générer une séquence WAV unique précise à l'échantillon près (0 ms de gigue entre les temps)
+            _activePreCountSequenceStream = BuildPreCountSequenceWavStream(totalBeeps, bpm, volume);
+            _activePreCountSequencePlayer = AudioManager.Current.CreatePlayer(_activePreCountSequenceStream);
+            _activePreCountSequencePlayer.Volume = 1.0;
 
-            for (int i = 0; i < totalBeeps; i++)
+            var playbackEndedTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            void OnEnded(object? s, EventArgs e) => playbackEndedTcs.TrySetResult(true);
+            _activePreCountSequencePlayer.PlaybackEnded += OnEnded;
+
+            using var reg = token.Register(() => playbackEndedTcs.TrySetCanceled(token));
+
+            // Démarrer la lecture audio échantillon-précise
+            _activePreCountSequencePlayer.Play();
+
+            // Thread dédié haute priorité pour la synchronisation visuelle LED / compteur uniquement
+            var visualDoneTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var visualThread = new Thread(() =>
             {
-                if (token.IsCancellationRequested) return false;
-
-                // 1. Déclencher le tick sonore et visuel synchro métronome
-                MetronomeTick(isPreCount: true, preCountBeat: i + 1, preCountTotal: totalBeeps);
-
-                // 2. Attente ultra-précise sans dérive temporelle cumulée
-                double targetMs = (i + 1) * intervalMs;
-                while (sw.Elapsed.TotalMilliseconds < targetMs)
+                try
                 {
-                    if (token.IsCancellationRequested) return false;
+                    var sw = Stopwatch.StartNew();
+                    for (int i = 0; i < totalBeeps; i++)
+                    {
+                        if (token.IsCancellationRequested) break;
+                        int beat = i + 1;
+                        FlashPreCountVisualOnly(beat, totalBeeps);
 
-                    double remainingMs = targetMs - sw.Elapsed.TotalMilliseconds;
-                    if (remainingMs > 15.0)
-                    {
-                        Thread.Sleep((int)(remainingMs - 10.0));
-                    }
-                    else if (remainingMs > 1.0)
-                    {
-                        Thread.Sleep(1);
-                    }
-                    else if (remainingMs > 0)
-                    {
-                        Thread.SpinWait(30);
+                        double targetMs = (i + 1) * intervalMs;
+                        while (sw.Elapsed.TotalMilliseconds < targetMs)
+                        {
+                            if (token.IsCancellationRequested) break;
+                            double rem = targetMs - sw.Elapsed.TotalMilliseconds;
+                            if (rem > 15.0) Thread.Sleep((int)(rem - 10.0));
+                            else if (rem > 1.0) Thread.Sleep(1);
+                            else Thread.SpinWait(30);
+                        }
                     }
                 }
-            }
+                finally
+                {
+                    visualDoneTcs.TrySetResult(true);
+                }
+            })
+            {
+                Priority = ThreadPriority.Highest,
+                IsBackground = true,
+                Name = "PreCountVisualSyncThread"
+            };
+            visualThread.Start();
 
-            return !token.IsCancellationRequested;
-        });
+            // Attendre la fin exacte de la séquence audio (avec garde-fou temporel)
+            var timeoutTask = Task.Delay((int)(totalBeeps * intervalMs) + 1500, token);
+            await Task.WhenAny(playbackEndedTcs.Task, timeoutTask);
+            completed = !token.IsCancellationRequested;
+
+            _activePreCountSequencePlayer.PlaybackEnded -= OnEnded;
+        }
+        catch (OperationCanceledException)
+        {
+            completed = false;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[Viewer] Erreur séquence pré-compte: {ex.Message}");
+            completed = false;
+        }
+        finally
+        {
+            DisposePreCountSequencePlayer();
+        }
 
         _isPreCounting = false;
 
@@ -538,6 +660,27 @@ public partial class ViewerPage
                 AudioPlayBtn.Text = "▶";
             });
             _isAudioPlaying = false;
+        }
+    }
+
+    private void FlashPreCountVisualOnly(int preCountBeat, int preCountTotal)
+    {
+        if (_score.ShowMetronome || (MetronomeOverlay != null && MetronomeOverlay.IsVisible))
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                try
+                {
+                    if (MetronomeBpmLabel != null)
+                        MetronomeBpmLabel.Text = $"● {preCountBeat} / {preCountTotal}";
+                    if (MetronomeLight != null)
+                        MetronomeLight.Color = Color.FromArgb("#FF9800");
+                    await Task.Delay(60);
+                    if (MetronomeLight != null)
+                        MetronomeLight.Color = Color.FromArgb("#333333");
+                }
+                catch { }
+            });
         }
     }
 

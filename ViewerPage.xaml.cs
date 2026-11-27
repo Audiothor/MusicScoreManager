@@ -929,9 +929,6 @@ public partial class ViewerPage : ContentPage
             }
             AudioPlayerOverlay.IsVisible = (_selectedAudioFile != null);
             if (AudioTrackListContainer != null) AudioTrackListContainer.IsVisible = false;
-            // Fermer le tiroir d'outils pour dégager la vue sur le lecteur audio
-            if (ToolsDrawerOverlay != null) ToolsDrawerOverlay.IsVisible = false;
-            if (ToolsDrawerBackdrop != null) ToolsDrawerBackdrop.IsVisible = false;
         }
         else
         {

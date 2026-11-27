@@ -6,6 +6,7 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 
 ## Sommaire des Versions
 
+- [v3.4.2 — 27/11/2026](#v342-27112026)
 - [v3.4.1 — 27/11/2026](#v341-27112026)
 - [v3.4.0 — 27/11/2026](#v340-27112026)
 - [v3.3.2 — 26/11/2026](#v332-26112026)
@@ -69,6 +70,17 @@ Ce document consigne l'historique officiel de toutes les versions de l'applicati
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.4.2 — 27/11/2026
+
+### 1. Corrections de Bugs (`ViewerPage`)
+- **1.1. Maintien de la Boîte à outils ouverte lors de l'activation du Lecteur Audio :**
+  - Cliquer sur la tuile `🎧 Lecteur audio` (OFF → ON) affiche désormais le lecteur audio centré tout en laissant la Boîte à outils ouverte, de manière cohérente avec tous les autres outils du tiroir.
+- **1.2. Régularité absolue du Pré-compte audio (précision à l'échantillon près) :**
+  - Remplacement de la boucle de déclenchements séparés (sujette à la latence variable du moteur audio système) par la synthèse en mémoire d'une séquence `.wav` unique à 44 100 Hz contenant tous les temps du pré-compte calés à l'échantillon exact selon le BPM de la partition (`0 ms` de gigue entre les temps sur Windows comme sur Android).
+  - Conservation de la synchronisation visuelle du voyant LED sur un thread haute priorité et annulation instantanée au clic sur `⏸`.
 
 ---
 

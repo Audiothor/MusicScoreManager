@@ -6,6 +6,7 @@ This document contains the official changelog of all versions of **Music Score M
 
 ## Versions Index
 
+- [v3.4.2 — 27/11/2026](#v342-27112026)
 - [v3.4.1 — 27/11/2026](#v341-27112026)
 - [v3.4.0 — 27/11/2026](#v340-27112026)
 - [v3.3.2 — 26/11/2026](#v332-26112026)
@@ -69,6 +70,17 @@ This document contains the official changelog of all versions of **Music Score M
 - [v2.5.2 — 07/10/2026](#v252-07102026)
 - [v2.5.1 — 07/10/2026](#v251-07102026)
 - [v2.5.0 — 07/10/2026](#v250-07102026)
+
+---
+
+## v3.4.2 — 27/11/2026
+
+### 1. Bug Fixes (`ViewerPage`)
+- **1.1. Keep Quick Tools Drawer Open When Toggling Audio Player:**
+  - Tapping the `🎧 Audio Player` tile (OFF → ON) now shows the centered audio player without closing the Quick Tools Drawer, matching all other drawer tiles.
+- **1.2. Sample-Accurate Pre-Count Timing (Zero Jitter):**
+  - Replaced repeated per-beat audio triggers (which suffered from variable OS audio pipeline latency) with a single in-memory 44.1 kHz PCM `.wav` sequence synthesized with sample-exact beat spacing matching the score's BPM (`0 ms` inter-beat jitter on both Windows and Android).
+  - Keeps high-priority visual LED synchronization and instant cancellation when tapping `⏸`.
 
 ---
 
