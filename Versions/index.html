@@ -917,6 +917,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v341-27112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.4.1 — 27/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.4.1 — 27/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-corrections-enrichissement-du-lecteur-audio-flottant-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Corrections &amp; Enrichissement du Lecteur Audio Flottant (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-pre-ecoute-audio-directe-dans-ledition-de-partition-scoreeditpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Pré-écoute Audio Directe dans l'Édition de Partition (ScoreEditPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v340-27112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4376,6 +4415,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v341-27112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.4.1 — 27/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.4.1 — 27/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-corrections-enrichissement-du-lecteur-audio-flottant-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Corrections &amp; Enrichissement du Lecteur Audio Flottant (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-pre-ecoute-audio-directe-dans-ledition-de-partition-scoreeditpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Pré-écoute Audio Directe dans l'Édition de Partition (ScoreEditPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v340-27112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7814,6 +7892,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v341-27112026">v3.4.1 — 27/11/2026</a></li>
 <li><a href="#v340-27112026">v3.4.0 — 27/11/2026</a></li>
 <li><a href="#v332-26112026">v3.3.2 — 26/11/2026</a></li>
 <li><a href="#v331-22112026">v3.3.1 — 22/11/2026</a></li>
@@ -7876,6 +7955,24 @@
 <li><a href="#v252-07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251-07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250-07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v341-27112026">v3.4.1 — 27/11/2026</h2>
+<h3 id="1-corrections-enrichissement-du-lecteur-audio-flottant-viewerpage">1. Corrections &amp; Enrichissement du Lecteur Audio Flottant (<code>ViewerPage</code>)</h3>
+<ul>
+<li><strong>1.1. Affichage dégagé et déplacement 100 % libre sur tout l'écran :</strong></li>
+<li>Recentrage initial du lecteur audio (<code>HorizontalOptions="Center"</code>, <code>ZIndex="1202"</code>) et fermeture automatique de la Boîte à outils à l'ouverture, éliminant toute superposition sous le tiroir d'outils.</li>
+<li>Correction des bornes de déplacement (<code>OnAudioPlayerPanUpdated</code>) qui bloquaient auparavant la translation vers la gauche : le lecteur se déplace désormais librement partout sur l'écran (gauche, droite, haut, bas).</li>
+<li><strong>1.2. Sélecteur multi-pistes, navigation Préc./Suiv., Volume &amp; Retour début automatique :</strong></li>
+<li>Lorsque la partition comporte <strong>plus d'une piste audio</strong>, affichage d'un bouton déroulant <strong><code>☰ ▾</code></strong> qui déploie la liste des pistes sous l'en-tête et se referme automatiquement après sélection, ainsi que des boutons <strong>Piste précédente (<code>⏮</code>)</strong> et <strong>Piste suivante (<code>⏭</code>)</strong>.</li>
+<li>Conservation du bouton <strong>Retour au début du morceau (<code>↺</code>)</strong> et <strong>retour automatique du curseur à <code>0:00</code> en fin de lecture</strong> sur la même piste (sans passage automatique à la piste suivante).</li>
+<li>Ajout d'une barre de <strong>réglage du volume</strong> (<code>🔊</code>/<code>🔇</code> + curseur <code>0–100 %</code>, mémorisé entre les sessions).</li>
+</ul>
+<h3 id="2-pre-ecoute-audio-directe-dans-ledition-de-partition-scoreeditpage">2. Pré-écoute Audio Directe dans l'Édition de Partition (<code>ScoreEditPage</code>)</h3>
+<ul>
+<li><strong>2.1. Bouton Lecture / Arrêt (<code>▶</code> / <code>⏹</code>) par piste :</strong></li>
+<li>Ajout d'un bouton de pré-écoute directement entre les flèches de réorganisation (<code>▲</code>/<code>▼</code>) et le crayon de renommage (<code>✏️</code>).</li>
+<li>Bascule instantanée de <strong><code>▶</code></strong> en <strong><code>⏹</code></strong> pendant la lecture, avec arrêt automatique à la suppression de la piste ou à la fermeture de la page.</li>
 </ul>
 <hr />
 <h2 id="v340-27112026">v3.4.0 — 27/11/2026</h2>

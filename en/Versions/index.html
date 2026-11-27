@@ -917,6 +917,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v341-27112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.4.1 — 27/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.4.1 — 27/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-floating-audio-player-fixes-upgrades-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Floating Audio Player Fixes &amp; Upgrades (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-direct-audio-preview-in-score-editor-scoreeditpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Direct Audio Preview in Score Editor (ScoreEditPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v340-27112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4365,6 +4404,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v341-27112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.4.1 — 27/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.4.1 — 27/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-floating-audio-player-fixes-upgrades-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Floating Audio Player Fixes &amp; Upgrades (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-direct-audio-preview-in-score-editor-scoreeditpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Direct Audio Preview in Score Editor (ScoreEditPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v340-27112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7792,6 +7870,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v341-27112026">v3.4.1 — 27/11/2026</a></li>
 <li><a href="#v340-27112026">v3.4.0 — 27/11/2026</a></li>
 <li><a href="#v332-26112026">v3.3.2 — 26/11/2026</a></li>
 <li><a href="#v331-22112026">v3.3.1 — 22/11/2026</a></li>
@@ -7854,6 +7933,24 @@
 <li><a href="#v252-07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251-07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250-07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v341-27112026">v3.4.1 — 27/11/2026</h2>
+<h3 id="1-floating-audio-player-fixes-upgrades-viewerpage">1. Floating Audio Player Fixes &amp; Upgrades (<code>ViewerPage</code>)</h3>
+<ul>
+<li><strong>1.1. Clear Placement &amp; Unrestricted Full-Screen Dragging:</strong></li>
+<li>Centered initial placement (<code>HorizontalOptions="Center"</code>, <code>ZIndex="1202"</code>) and automatic closure of the Tools Drawer on open, eliminating overlap underneath the drawer.</li>
+<li>Fixed pan clamping math (<code>OnAudioPlayerPanUpdated</code>) that previously blocked dragging leftward; the audio player can now be moved freely anywhere across the entire screen.</li>
+<li><strong>1.2. Multi-Track Dropdown, Prev/Next Track, Volume Control &amp; Auto-Rewind:</strong></li>
+<li>When a score has <strong>more than 1 audio track</strong>, displays a compact <strong><code>☰ ▾</code></strong> dropdown toggle to pick any track (auto-collapsing upon selection) plus <strong>Previous Track (<code>⏮</code>)</strong> and <strong>Next Track (<code>⏭</code>)</strong> buttons.</li>
+<li>Keeps the dedicated <strong>Return to Start (<code>↺</code>)</strong> button and <strong>automatically rewinds the playback cursor to <code>0:00</code> when playback ends</strong> on the same track (never auto-advancing to the next track).</li>
+<li>Added a <strong>Volume bar</strong> (<code>🔊</code>/<code>🔇</code> mute toggle + <code>0–100%</code> slider, persisted across sessions).</li>
+</ul>
+<h3 id="2-direct-audio-preview-in-score-editor-scoreeditpage">2. Direct Audio Preview in Score Editor (<code>ScoreEditPage</code>)</h3>
+<ul>
+<li><strong>2.1. Inline Play / Stop (<code>▶</code> / <code>⏹</code>) Button per Track:</strong></li>
+<li>Added a preview button between the reorder arrows (<code>▲</code>/<code>▼</code>) and the rename icon (<code>✏️</code>).</li>
+<li>Toggles cleanly between <strong><code>▶</code></strong> and <strong><code>⏹</code></strong> while playing, with automatic stop on deletion or page exit.</li>
 </ul>
 <hr />
 <h2 id="v340-27112026">v3.4.0 — 27/11/2026</h2>
