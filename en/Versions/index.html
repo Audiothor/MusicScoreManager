@@ -917,6 +917,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v342-27112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.4.2 — 27/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.4.2 — 27/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-bug-fixes-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Bug Fixes (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v341-27112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4404,6 +4432,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v342-27112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.4.2 — 27/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.4.2 — 27/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-bug-fixes-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Bug Fixes (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v341-27112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7870,6 +7926,7 @@
 <hr />
 <h2 id="versions-index">Versions Index</h2>
 <ul>
+<li><a href="#v342-27112026">v3.4.2 — 27/11/2026</a></li>
 <li><a href="#v341-27112026">v3.4.1 — 27/11/2026</a></li>
 <li><a href="#v340-27112026">v3.4.0 — 27/11/2026</a></li>
 <li><a href="#v332-26112026">v3.3.2 — 26/11/2026</a></li>
@@ -7933,6 +7990,16 @@
 <li><a href="#v252-07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251-07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250-07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v342-27112026">v3.4.2 — 27/11/2026</h2>
+<h3 id="1-bug-fixes-viewerpage">1. Bug Fixes (<code>ViewerPage</code>)</h3>
+<ul>
+<li><strong>1.1. Keep Quick Tools Drawer Open When Toggling Audio Player:</strong></li>
+<li>Tapping the <code>🎧 Audio Player</code> tile (OFF → ON) now shows the centered audio player without closing the Quick Tools Drawer, matching all other drawer tiles.</li>
+<li><strong>1.2. Sample-Accurate Pre-Count Timing (Zero Jitter):</strong></li>
+<li>Replaced repeated per-beat audio triggers (which suffered from variable OS audio pipeline latency) with a single in-memory 44.1 kHz PCM <code>.wav</code> sequence synthesized with sample-exact beat spacing matching the score's BPM (<code>0 ms</code> inter-beat jitter on both Windows and Android).</li>
+<li>Keeps high-priority visual LED synchronization and instant cancellation when tapping <code>⏸</code>.</li>
 </ul>
 <hr />
 <h2 id="v341-27112026">v3.4.1 — 27/11/2026</h2>

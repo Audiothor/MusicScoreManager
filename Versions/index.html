@@ -917,6 +917,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v342-27112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.4.2 — 27/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.4.2 — 27/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-corrections-de-bugs-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Corrections de Bugs (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v341-27112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4415,6 +4443,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v342-27112026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v3.4.2 — 27/11/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.4.2 — 27/11/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-corrections-de-bugs-viewerpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Corrections de Bugs (ViewerPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v341-27112026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7892,6 +7948,7 @@
 <hr />
 <h2 id="sommaire-des-versions">Sommaire des Versions</h2>
 <ul>
+<li><a href="#v342-27112026">v3.4.2 — 27/11/2026</a></li>
 <li><a href="#v341-27112026">v3.4.1 — 27/11/2026</a></li>
 <li><a href="#v340-27112026">v3.4.0 — 27/11/2026</a></li>
 <li><a href="#v332-26112026">v3.3.2 — 26/11/2026</a></li>
@@ -7955,6 +8012,16 @@
 <li><a href="#v252-07102026">v2.5.2 — 07/10/2026</a></li>
 <li><a href="#v251-07102026">v2.5.1 — 07/10/2026</a></li>
 <li><a href="#v250-07102026">v2.5.0 — 07/10/2026</a></li>
+</ul>
+<hr />
+<h2 id="v342-27112026">v3.4.2 — 27/11/2026</h2>
+<h3 id="1-corrections-de-bugs-viewerpage">1. Corrections de Bugs (<code>ViewerPage</code>)</h3>
+<ul>
+<li><strong>1.1. Maintien de la Boîte à outils ouverte lors de l'activation du Lecteur Audio :</strong></li>
+<li>Cliquer sur la tuile <code>🎧 Lecteur audio</code> (OFF → ON) affiche désormais le lecteur audio centré tout en laissant la Boîte à outils ouverte, de manière cohérente avec tous les autres outils du tiroir.</li>
+<li><strong>1.2. Régularité absolue du Pré-compte audio (précision à l'échantillon près) :</strong></li>
+<li>Remplacement de la boucle de déclenchements séparés (sujette à la latence variable du moteur audio système) par la synthèse en mémoire d'une séquence <code>.wav</code> unique à 44 100 Hz contenant tous les temps du pré-compte calés à l'échantillon exact selon le BPM de la partition (<code>0 ms</code> de gigue entre les temps sur Windows comme sur Android).</li>
+<li>Conservation de la synchronisation visuelle du voyant LED sur un thread haute priorité et annulation instantanée au clic sur <code>⏸</code>.</li>
 </ul>
 <hr />
 <h2 id="v341-27112026">v3.4.1 — 27/11/2026</h2>
